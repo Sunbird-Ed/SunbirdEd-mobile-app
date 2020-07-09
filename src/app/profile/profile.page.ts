@@ -1015,6 +1015,12 @@ export class ProfilePage implements OnInit {
           case 'declared-district':
             districtCode = ele.id;
             break;
+          case 'declared-phone':
+            this.selfDeclaredTeacherDetails.mobile = ele.id;
+            break;
+          case 'declared-email':
+            this.selfDeclaredTeacherDetails.email = ele.id;
+            break;
           case 'declared-school-name':
             this.selfDeclaredTeacherDetails.schoolName = ele.id;
             break;

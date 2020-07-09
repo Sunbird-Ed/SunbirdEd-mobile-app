@@ -70,3 +70,16 @@ global.SyncStatus = {
     INSTALLING_UPDATE: 'INSTALLING_UPDATE',
     ERROR: 'ERROR'
 }
+
+global.plugins = {
+    webViewChecker: {
+        getCurrentWebViewPackageInfo: () => Promise.resolve({versionName: '0'}),
+        openGooglePlayPage: () => Promise.resolve()
+    }
+}
+global.FCMPlugin = {
+    getToken: () => {},
+    onNotification: () => {},
+    onTokenRefresh: () => {},
+    subscribeToTopic: () => {}
+}

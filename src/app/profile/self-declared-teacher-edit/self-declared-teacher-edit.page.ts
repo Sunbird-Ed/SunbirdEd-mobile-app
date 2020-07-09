@@ -49,7 +49,7 @@ import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 export class SelfDeclaredTeacherEditPage {
 
   private profile: ServerProfile;
-  private initialExternalIds: any;
+  private initialExternalIds: any = {};
   private backButtonFunc: Subscription;
   private availableLocationDistrict: string;
   private availableLocationState: string;
@@ -106,10 +106,10 @@ export class SelfDeclaredTeacherEditPage {
 
   async ionViewDidEnter() {
     this.appName = await this.appVersion.getAppName();
-    this.getTeacherDetailsFormApi();
+    this.getTeacherDetailsFormApi(undefined, false);
   }
 
-  async getTeacherDetailsFormApi(rootOrgId?) {
+  async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
 
     const req: FormRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
@@ -129,7 +129,7 @@ export class SelfDeclaredTeacherEditPage {
     if (formData && formData.form && formData.form.data) {
       const formConfig = formData.form.data.fields;
       if (formConfig.length) {
-        this.initializeFormData(formConfig, !!rootOrgId);
+        this.initializeFormData(formConfig, isFormLoaded);
       }
     }
 
@@ -143,7 +143,7 @@ export class SelfDeclaredTeacherEditPage {
     });
   }
 
-  async initializeFormData(formConfig, formLoaded) {
+  async initializeFormData(formConfig, isFormLoaded) {
 
     this.teacherDetailsForm = formConfig.map((config: FieldConfig<any>) => {
       if (config.code === 'externalIds' && config.children) {
@@ -161,30 +161,60 @@ export class SelfDeclaredTeacherEditPage {
                 }
                 stateCode = stateDetails && stateDetails.id;
               }
+              if (!isFormLoaded) {
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: stateCode
+                };
+              }
               childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
             } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
               let districtDetails;
               if (this.profile.externalIds && this.profile.externalIds.length) {
                 districtDetails = this.profile.externalIds.find(eId => eId.idType === childConfig.code);
               }
-              childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, formLoaded);
+
+              if (!isFormLoaded) {
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: districtDetails && districtDetails.id
+                } ;
+              }
+              childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
             }
             return childConfig;
           }
 
           if (childConfig.asyncValidation) {
+            childConfig = this.assignDefaultValue(childConfig, isFormLoaded);
+
+            const telemetryData = {
+              type: InteractType.TOUCH,
+              subType: '',
+              env: Environment.USER,
+              pageId: PageId.TEACHER_SELF_DECLARATION,
+              id: ''
+            };
+            const initialValue = this.initialExternalIds[childConfig.code] && this.initialExternalIds[childConfig.code].value;
+
             if (childConfig.asyncValidation.marker === 'MOBILE_OTP_VALIDATION') {
+              telemetryData['id'] = ID.VALIDATE_MOBILE;
+
               childConfig.asyncValidation.asyncValidatorFactory =
-                this.formValidationAsyncFactory.mobileVerificationAsyncFactory(childConfig, this.profile);
+                this.formValidationAsyncFactory.mobileVerificationAsyncFactory(
+                  childConfig, this.profile, initialValue, telemetryData
+                );
             } else if (childConfig.asyncValidation.marker === 'EMAIL_OTP_VALIDATION') {
+              telemetryData['id'] = ID.VALIDATE_EMAIL;
               childConfig.asyncValidation.asyncValidatorFactory =
-                this.formValidationAsyncFactory.emailVerificationAsyncFactory(childConfig, this.profile);
+                this.formValidationAsyncFactory.emailVerificationAsyncFactory(
+                  childConfig, this.profile, initialValue, telemetryData
+                );
             }
-            childConfig = this.assignDefaultValue(childConfig, formLoaded);
             return childConfig;
           }
 
-          this.assignDefaultValue(childConfig, formLoaded);
+          this.assignDefaultValue(childConfig, isFormLoaded);
 
           return childConfig;
         });
@@ -208,8 +238,8 @@ export class SelfDeclaredTeacherEditPage {
 
   }
 
-  private assignDefaultValue(childConfig: FieldConfig<any>, formLoaded) {
-    if (formLoaded) {
+  private assignDefaultValue(childConfig: FieldConfig<any>, isFormLoaded) {
+    if (isFormLoaded) {
       if (this.latestFormValue && this.latestFormValue.children.externalIds) {
         childConfig.default = this.latestFormValue.children.externalIds[childConfig.code];
       }
@@ -231,6 +261,13 @@ export class SelfDeclaredTeacherEditPage {
       if (childConfig.code === 'declared-email') {
         childConfig.default = this.profile['maskedEmail'];
       }
+    }
+
+    if (!isFormLoaded) {
+      this.initialExternalIds[childConfig.code] = {
+        name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+        value: childConfig.default || undefined
+      };
     }
     return childConfig;
   }
@@ -417,17 +454,9 @@ export class SelfDeclaredTeacherEditPage {
   getUpdatedValues(formVal) {
     const telemetryValue = [];
 
-    this.profile['userLocations'].forEach(ele => {
-      if (ele.type === 'state' && ele.id !== formVal.state) {
-        telemetryValue.push('State');
-      }
-      if (ele.type === 'district' && ele.id !== formVal.district) {
-        telemetryValue.push('District');
-      }
-    });
-
     for (const data in this.initialExternalIds) {
-      if (data !== 'state' && data !== 'district' && this.initialExternalIds[data].value !== formVal[data]) {
+      if (this.initialExternalIds[data] && this.initialExternalIds[data].value !== null &&
+        this.initialExternalIds[data].value !== undefined && this.initialExternalIds[data].value !== formVal[data]) {
         telemetryValue.push(this.initialExternalIds[data].name);
       }
     }
@@ -516,7 +545,7 @@ export class SelfDeclaredTeacherEditPage {
     };
   }
 
-  private buildDistrictListClosure(districtCode?, formLoaded?): FieldConfigOptionsBuilder<string> {
+  private buildDistrictListClosure(districtCode?, isFormLoaded?): FieldConfigOptionsBuilder<string> {
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
         return of([]);
@@ -554,8 +583,7 @@ export class SelfDeclaredTeacherEditPage {
                   formDistrictList.push({ label: districtData.name, value: districtData.code });
                 });
 
-                if (!formLoaded) {
-
+                if (!isFormLoaded) {
                   if (this.editType === 'add' && this.availableLocationDistrict) {
                     selectedDistrict = this.districtList.find(s =>
                       (s.name === this.availableLocationDistrict)
@@ -597,7 +625,7 @@ export class SelfDeclaredTeacherEditPage {
       if (event.children.externalIds['declared-state'] && this.selectedStateCode && this.selectedStateCode !== event.children.externalIds['declared-state']) {
         this.selectedStateCode = event.children.externalIds['declared-state'];
         const selectedState = this.getStateIdFromCode(this.selectedStateCode);
-        this.getTeacherDetailsFormApi(selectedState && selectedState.id);
+        this.getTeacherDetailsFormApi(selectedState && selectedState.id, true);
       }
     }
   }

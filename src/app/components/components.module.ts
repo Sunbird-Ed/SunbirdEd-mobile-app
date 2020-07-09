@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { TextBookCardComponent } from './text-book-card/text-book-card.component';
@@ -51,6 +50,7 @@ import { ToastNavigationComponent } from './popups/toast-navigation/toast-naviga
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-popup/sb-course-completion-popup.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +94,8 @@ import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/
     ToastNavigationComponent,
     CommonFormsComponent,
     SbTutorialPopupComponent,
-    SbGenericFormPopoverComponent
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -137,7 +138,8 @@ import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/
     ToastNavigationComponent,
     CommonFormsComponent,
     SbTutorialPopupComponent,
-    SbGenericFormPopoverComponent
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -179,7 +181,8 @@ import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/
     ToastNavigationComponent,
     CommonFormsComponent,
     SbTutorialPopupComponent,
-    SbGenericFormPopoverComponent
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

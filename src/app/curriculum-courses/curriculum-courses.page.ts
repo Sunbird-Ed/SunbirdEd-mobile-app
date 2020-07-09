@@ -6,7 +6,7 @@ import {
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
-import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest } from '@project-sunbird/sunbird-sdk';
+import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest, CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
@@ -72,21 +72,9 @@ export class CurriculumCoursesPage implements OnInit {
       PageId.COURSE_LIST,
       Environment.HOME
     );
-  }
-
-  ionViewWillLeave(): void {
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
-  }
-
-  ngOnInit() {
     if (this.appGlobalService.isUserLoggedIn()) {
       // TODO: get the current userId
-      this.appGlobalService.getActiveProfileUid()
+      await this.appGlobalService.getActiveProfileUid()
         .then(async (uid) => {
           try {
             this.enrolledCourses = await this.getEnrolledCourses(uid);
@@ -98,6 +86,18 @@ export class CurriculumCoursesPage implements OnInit {
 
     this.mergeCourseList(this.enrolledCourses, this.courseList);
     this.isLoading = false;
+  }
+
+  ionViewWillLeave(): void {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+  }
+
+  async ngOnInit() {
   }
 
   openCourseDetails(course) {
@@ -123,6 +123,7 @@ export class CurriculumCoursesPage implements OnInit {
   async getEnrolledCourses(userId: string) {
     this.appliedFilter.subject = [this.subjectName];
     const enrolledCourseRequest: GetUserEnrolledCoursesRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
       request: {
         userId,
         filters: this.appliedFilter

@@ -76,13 +76,18 @@
         </ion-item>
 
         <ng-container *ngIf="field.asyncValidation?.trigger">
-          <div class="verification-btn" [hidden]="formControl.status === 'VALID' || formControl.status !== 'PENDING' || !formControl.value">
-            <ion-button class="ion-text-capitalize"
-              shape="round"
-              #validationTrigger
-              [attr.data-marker]="field.asyncValidation.marker">
+          <div class="async-validator" [hidden]="formControl.status === 'VALID' || formControl.status !== 'PENDING' || !formControl.value">
+            <div class="cf-error" *ngIf="field.asyncValidation?.message">
+              {{ field.asyncValidation.message | translate }}
+            </div>
+            <div class="verification-btn">
+              <ion-button class="ion-text-capitalize"
+                shape="round"
+                #validationTrigger
+                [attr.data-marker]="field.asyncValidation.marker">
                 {{field.asyncValidation.trigger}}
-            </ion-button>
+              </ion-button>
+            </div>
           </div>
         </ng-container>
       </ng-container>

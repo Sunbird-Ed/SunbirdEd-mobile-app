@@ -174,7 +174,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   private eventSubscription: Subscription;
 
   toast: any;
-  headerObservable: any;
+  headerObservable: Subscription;
   scrollEventRemover: any;
   subjects: any;
   searchGroupingContents: any;
@@ -429,7 +429,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
   }
 
-  /**
+    /**
 	 * Load/get recently viewed content
 	 */
   // hide recently viewed as part of school@home
@@ -691,7 +691,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
             if (section.contents) {
               if (section.contents.length === 1) {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1');
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1', 1);
               } else {
                 countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
               }
@@ -1294,6 +1294,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.networkSubscription) {
       this.networkSubscription.unsubscribe();
+    }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
     }
   }
 

@@ -1,6 +1,12 @@
 import { GroupDetailsPage } from './group-details.page';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService, FormAndFrameworkUtilService, CommonUtilService, AppGlobalService } from '../../../services';
+import {
+    AppHeaderService,
+    FormAndFrameworkUtilService,
+    CommonUtilService,
+    AppGlobalService,
+    TelemetryGeneratorService, ImpressionType, PageId, Environment, InteractType, InteractSubtype
+} from '../../../services';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
@@ -30,6 +36,7 @@ describe('GroupDetailsPage', () => {
             }
         })) as any
     };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
         groupDetailsPage = new GroupDetailsPage(
@@ -42,7 +49,8 @@ describe('GroupDetailsPage', () => {
             mockPopoverCtrl as PopoverController,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockCommonUtilService as CommonUtilService,
-            mockFilterPipe as FilterPipe
+            mockFilterPipe as FilterPipe,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -93,7 +101,7 @@ describe('GroupDetailsPage', () => {
         expect(data.name).toBe('back');
     });
 
-    it('should returu header with back button', (done) => {
+    it('should return header with back button', (done) => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = of({
             subscribe: jest.fn(() => ({
@@ -108,10 +116,17 @@ describe('GroupDetailsPage', () => {
         });
         mockGroupService.getById = jest.fn(() => of({ groupId: 'sample-group-id', members: [] })) as any;
         // act
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         groupDetailsPage.ionViewWillEnter();
         // assert
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW,
+            '',
+            PageId.GROUP_DETAIL,
+            Environment.GROUP
+        );
         setTimeout(() => {
             expect(mockGroupService.getById).toHaveBeenCalled();
             expect(groupDetailsPage.memberList).toStrictEqual([]);
@@ -119,7 +134,7 @@ describe('GroupDetailsPage', () => {
         }, 0);
     });
 
-    it('should returu header with back button', (done) => {
+    it('should return header with back button in error case', (done) => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = of({
             subscribe: jest.fn(() => ({
@@ -133,11 +148,18 @@ describe('GroupDetailsPage', () => {
             return;
         });
         mockGroupService.getById = jest.fn(() => throwError({ error: 'error' })) as any;
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         // act
         groupDetailsPage.ionViewWillEnter();
         // assert
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW,
+            '',
+            PageId.GROUP_DETAIL,
+            Environment.GROUP
+        );
         setTimeout(() => {
             expect(mockGroupService.getById).toHaveBeenCalled();
             done();
@@ -146,9 +168,15 @@ describe('GroupDetailsPage', () => {
 
     it('should navigate To AddUserPage', () => {
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         groupDetailsPage.navigateToAddUserPage();
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`],
             { state: { groupId: 'sample-group-id' } });
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.ADD_MEMBER_CLICKED,
+            Environment.GROUP,
+            PageId.GROUP_DETAIL);
     });
 
     it('should unsubscribe registerBackButton', () => {
@@ -464,9 +492,15 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.ADD_ACTIVITY_CLICKED,
+                    Environment.GROUP,
+                    PageId.GROUP_DETAIL);
                 expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
@@ -490,9 +524,15 @@ describe('GroupDetailsPage', () => {
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.ADD_ACTIVITY_CLICKED,
+                    Environment.GROUP,
+                    PageId.GROUP_DETAIL);
                 expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
