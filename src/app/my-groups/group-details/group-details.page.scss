@@ -62,6 +62,7 @@
             border-bottom: 2px solid $blue;
             .gd-tab-name {
                 font-weight: bold;
+                color: $blue;
             }
         }
     }
@@ -71,7 +72,7 @@
         text-align: center;
         margin-bottom: 5px;
         margin-top: 8px;
-        color: $blue;
+        color: $gray-400;
         font-size: 16px;
 
         &.gd-tab-border {
@@ -92,7 +93,7 @@
         top: 8px;
         left: 8px;
         font-size: 20px;
-        color: $gray-400;
+        color: map-get($colors, gray_96);
     }
 
     input {
@@ -101,6 +102,9 @@
         padding: 0 8px 0 30px;
         border: 1px solid $blue;
         border-radius: 4px;
+        &::placeholder{
+            color: map-get($colors, gray_96);
+        }
     }
 }
 

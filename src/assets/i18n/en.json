@@ -802,5 +802,7 @@
   "SPECIAL_CHARACTERS_NOT_SUPPORTED": "Special characters not supported",
   "PLEASE_VALIDATE_YOUR_MOBILE_NUMBER": "Please validate your mobile number",
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
-  "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time."
+  "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
+  "ACTIVITIESE_SEARCH_PLACEHOLDER": "Search for group's activities",
+  "GROUP_MEMBER_SEARCH_PLACEHOLDER": "Search within group"
 }
