@@ -557,8 +557,18 @@ describe('GroupDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({
                     data: {
-                        selectedVal:
-                            { activityType: 'Content', activityValues: 'value' }
+                        selectedVal: {
+                            index: 0,
+                            title: 'ACTIVITY_COURSE_TITLE',
+                            desc: 'ACTIVITY_COURSE_DESC',
+                            activityType: 'Content',
+                            isEnabled: true,
+                            filters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }
+                        }
                     }
                 }))
             } as any)));
@@ -579,7 +589,15 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
-                    { state: { contentType: 'value', groupId: 'sample-group-id', source: 'group-detail' } });
+                    {
+                        state: {
+                            activityFilters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }, groupId: 'sample-group-id', source: 'group-detail'
+                        }
+                    });
                 done();
             });
         });
@@ -590,8 +608,18 @@ describe('GroupDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({
                     data: {
-                        selectedVal:
-                            { activityType: '', activityValues: 'value' }
+                        selectedVal: {
+                            index: 0,
+                            title: 'ACTIVITY_COURSE_TITLE',
+                            desc: 'ACTIVITY_COURSE_DESC',
+                            activityType: 'Content',
+                            isEnabled: true,
+                            filters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }
+                        }
                     }
                 }))
             } as any)));
