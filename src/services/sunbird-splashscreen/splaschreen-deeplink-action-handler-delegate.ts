@@ -57,7 +57,7 @@ import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 
 @Injectable()
-export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
+export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;
 
   private _isDelegateReady = false;
@@ -124,10 +124,69 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private async handleDeeplink(payloadUrl: string) {
     const dialCode = await this.qrScannerResultHandler.parseDialCode(payloadUrl);
+
     const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     const urlMatch = payloadUrl.match(urlRegex);
 
     // TODO: Is supported URL or not.
+
+    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number }[] = [
+      {
+        name: 'Dialcode parser',
+        code: 'dialcode',
+        values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))',
+        route: 'search'
+      },
+      {
+        name: 'content deatil',
+        code: 'contentDetail',
+        values: '(?:\\/(?:resources\\/play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
+        route: 'content-details'
+      },
+      {
+        name: 'Textbook detail',
+        code: 'textbookDetail',
+        values: '(?:\\/play\\/(?:content|collection)\\/(?<contentId>\\w+))',
+        route: 'collection-detail-etb'
+      },
+      {
+        name: 'Course Detail',
+        code: 'courseDetail',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+))',
+        route: 'enrolled-course-details',
+        priority: 2
+      },
+      {
+        name: 'Module Detail',
+        code: 'moduleDetail',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+)\\?(?=.*\\bmoduleId\\b=(?<moduleId>([^&]*)).*))',
+        route: 'module-details',
+        priority: 1
+      },
+      {
+        name: 'Course Content Detail',
+        code: 'courseContentDetail',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
+        route: 'course-content-details',
+        priority: 1
+      },
+      {
+        name: 'Course tab',
+        code: 'courseTab',
+        values: '^.*explore-course(\\?.*|$)',
+        route: 'tabs/courses'
+      }
+    ];
+
+    const matchedConfig = deepLinkUrlConfig.find(config => {
+      // Logic for priority check
+      return !!payloadUrl.match(new RegExp(config.values));
+    });
+
+    if (!matchedConfig) {
+      // TODO, toast message
+      return;
+    }
 
     let identifier;
     if (urlMatch && urlMatch.groups && Object.keys(urlMatch.groups).length) {
@@ -159,7 +218,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await this.setOnboradingData(payloadUrl);
       }
 
-      this.handleNavigation(payloadUrl, identifier, dialCode);
+      this.handleNavigation(payloadUrl, identifier, dialCode, matchedConfig.route);
     }
   }
 
@@ -407,13 +466,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async handleNavigation(payloadUrl, identifier, dialCode) {
+  private async handleNavigation(payloadUrl, identifier, dialCode, route) {
     if (!this._isDelegateReady) {
       this.closeProgressLoader();
       this.savedPayloadUrl = payloadUrl;
     } else if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
-      this.router.navigate([RouterLinks.SEARCH],
+      this.router.navigate([route],
         {
           state: {
             dialCode,
@@ -426,19 +485,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (!content) {
         this.closeProgressLoader();
       } else {
-        this.navigateContent(identifier, true, content, payloadUrl);
+        this.navigateContent(identifier, true, content, payloadUrl, route);
       }
-    // } else if (isAnyRouteAvailable) {
-    //   this.router.navigate([RouterLinks.SEARCH]);
     } else {
-      // Show generic error message 'Deeplink not suppoerted'
+      this.router.navigate([route]);
       this.closeProgressLoader();
     }
   }
 
   /////////////////////////////////////////////////
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string) {
+  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string) {
     try {
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
@@ -450,38 +507,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
 
       // this.appGlobalServices.skipCoachScreenForDeeplink = true;
-      if (content && content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-        this.navigateToCourseDetail(identifier, content, payloadUrl);
-      } else if (content && content.mimeType === MimeType.COLLECTION) {
-        if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
-          this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, { content });
-          this.closeProgressLoader();
-          return;
-        }
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-          {
-            state: {
-              content,
-              corRelation: this.getCorrelationList(payloadUrl)
-            }
-          });
-      } else {
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-          this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-          this.appGlobalServices.skipCoachScreenForDeeplink = false;
-          this.closeProgressLoader();
-          return;
-        }
-        if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-          this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
+      if (content) {
+        if (content.mimeType === MimeType.COLLECTION) {
+          this.navigateToCollection(identifier, content, payloadUrl);
         } else {
-          await this.router.navigate([RouterLinks.CONTENT_DETAILS],
+          await this.router.navigate([route],
             {
               state: {
                 content,
                 corRelation: this.getCorrelationList(payloadUrl)
               }
             });
+        }
+      } else {
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+          this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          this.appGlobalServices.skipCoachScreenForDeeplink = false;
+          this.closeProgressLoader();
+          return;
         }
       }
     } catch (err) {
@@ -585,36 +628,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
   }
 
-  async onChannelDetected(event): Promise<boolean> {
-    if (this.isOnboardingCompleted) {
-      this.navigateToCourse(event.courseId, event.url);
-      return true;
-    }
-
-    this.setAppLanguage(event.extras.profile.langCode);
-    this.setUserType(event.extras.profile.userType);
-
-    if (await this.setCourseOnboardingFlow(event)) {
-      // this.appGlobalServices.skipCoachScreenForDeeplink = true;
-      return true;
-    }
-    return false;
-  }
-
-  async navigateToCourse(courseId, payloadUrl) {
-    if (courseId) {
-      const content: any = await this.getContentData(courseId);
-      if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
-        this.navigateToCourseDetail(content.identifier, content, payloadUrl, false, true);
-        await this.sbProgressLoader.hide({ id: 'login' });
-      }
-    } else {
-      this.router.navigateByUrl(RouterLinks.TABS_COURSE);
-      await this.sbProgressLoader.hide({ id: 'login' });
-    }
-  }
-
-  async navigateToCourseDetail(identifier, content: Content | null, payloadUrl: string, isOnboardingSkipped = false, isFromChannelDeeplink = false) {
+  async navigateToCollection(
+    identifier, content: Content | null, payloadUrl: string, isOnboardingSkipped = false, isFromChannelDeeplink = false, route?: string
+  ) {
     let childContentId;
     if (payloadUrl) {
       childContentId = this.getQueryParamValue(payloadUrl, 'moduleId');
@@ -641,17 +657,27 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (this.childContent) {
       if (this.childContent.mimeType === MimeType.COLLECTION) {
-        const chapterParams: NavigationExtras = {
-          state: {
-            courseContent: content,
-            chapterData: this.childContent,
-            isOnboardingSkipped,
-            isFromDeeplink: true
-          }
-        };
+        if (content.contentType === ContentType.COURSE.toLowerCase()) {
+          const chapterParams: NavigationExtras = {
+            state: {
+              courseContent: content,
+              chapterData: this.childContent,
+              isOnboardingSkipped,
+              isFromDeeplink: true
+            }
+          };
 
-        this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
-          chapterParams);
+          this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+            chapterParams);
+        } else {
+          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
+            {
+              state: {
+                content,
+                corRelation: this.getCorrelationList(payloadUrl)
+              }
+            });
+        }
       } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
@@ -661,110 +687,33 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             isChildContent: true,
             // corRelation: this.corRelationList,
             corRelation: undefined,
-            isCourse: true,
+            isCourse: content.contentType === ContentType.COURSE.toLowerCase(),
             // course: this.updatedCourseCardData, // check in chapter detail page
             isOnboardingSkipped
           }
         });
       }
     } else {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-        {
-          state: {
-            content,
-            isOnboardingSkipped,
-            isFromChannelDeeplink,
-            corRelation: this.getCorrelationList(payloadUrl)
-          }
-        });
-    }
-  }
-
-  private setCourseOnboardingFlow(event) {
-
-    return new Promise(async resolve => {
-      try {
-        const channelDetails: Channel = await this.frameworkService.getChannelDetails({ channelId: event.channelId }).toPromise();
-        const frameworkId = channelDetails.defaultFramework;
-        const syllabus = frameworkId;
-
-        const categories = [
-          { code: FrameworkCategoryCode.BOARD, prevCode: null },
-          { code: FrameworkCategoryCode.MEDIUM, prevCode: FrameworkCategoryCode.BOARD },
-          { code: FrameworkCategoryCode.GRADE_LEVEL, prevCode: FrameworkCategoryCode.MEDIUM }
-        ];
-        const categoryData: any = {};
-        for (const category of categories) {
-          const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            from: category.code === FrameworkCategoryCode.BOARD ? CachedItemRequestSourceFrom.SERVER : null,
-            frameworkId,
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-            currentCategoryCode: category.code,
-            language: this.translateService.currentLang,
-            selectedTermsCodes: category.prevCode ? [category.prevCode] : null
-          };
-          const terms = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise());
-          categoryData[category.code] = terms[0].code;
-        }
-
-        const payload = {
-          syllabus,
-          board: categoryData[FrameworkCategoryCode.BOARD],
-          medium: categoryData[FrameworkCategoryCode.MEDIUM],
-          grade: categoryData[FrameworkCategoryCode.GRADE_LEVEL],
-          courseId: event.courseId
-        };
-        await this.submitProfileSettings(payload, event.url);
-        resolve(true);
-      } catch (e) {
-        resolve(false);
-        this.closeProgressLoader();
+      if (content.contentType === ContentType.COURSE.toLowerCase()) {
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+          {
+            state: {
+              content,
+              isOnboardingSkipped,
+              isFromChannelDeeplink,
+              corRelation: this.getCorrelationList(payloadUrl)
+            }
+          });
+      } else {
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
+          {
+            state: {
+              content,
+              corRelation: this.getCorrelationList(payloadUrl)
+            }
+          });
       }
-    });
-  }
-
-  private async submitProfileSettings(payload, payloadUrl) {
-    try {
-      const activeSessionProfile = await this.profileService.getActiveSessionProfile({
-        requiredFields: ProfileConstants.REQUIRED_FIELDS
-      }).toPromise();
-      const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-
-      const updateProfileRequest: Profile = {
-        ...activeSessionProfile,
-        syllabus: [payload.syllabus],
-        board: [payload.board],
-        medium: [payload.medium],
-        grade: [payload.grade],
-        handle: 'Guest1',
-        profileType: userType as any,
-        source: ProfileSource.LOCAL
-      };
-
-      const profile: Profile = await this.profileService.updateProfile(updateProfileRequest).toPromise();
-      initTabs(this.container, GUEST_TEACHER_TABS);
-      this.events.publish('refresh:profile');
-      this.appGlobalServices.guestUserProfile = profile;
-
-      this.commonUtilService.handleToTopicBasedNotification();
-
-      setTimeout(async () => {
-        this.appGlobalServices.setOnBoardingCompleted();
-        this.navigateToCourse(payload.courseId, payloadUrl);
-        this.loginHandlerService.setDefaultProfileDetails();
-      }, 1000);
-
-      this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
-      this.events.publish('refresh:profile');
-      this.appGlobalServices.guestUserProfile = profile;
-      this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
-        PageId.HOME, profile, 'auto', Environment.ONBOARDING, ContentUtil.extractBaseUrl(payloadUrl)
-      );
-
-    } catch (e) {
-      console.log(e);
     }
-    return;
   }
 
   private getCorrelationList(payloadUrl): Array<CorrelationData> {
