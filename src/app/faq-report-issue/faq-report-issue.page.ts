@@ -373,7 +373,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory && this.formValues.children.subcategory.board &&
       this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
-      element.contactinfo.email) {
+      element.email) {
         this.supportEmail = element.contactinfo.email;
       }
     });
@@ -394,7 +394,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory.board.code === element.id) {
-        if (this.isFormValid && element.conteactInfo.contactinfo && element.conteactInfo.contactinfo.number) {
+        if (this.isFormValid && element.contactinfo && element.contactinfo.number) {
           this.boardContact = element;
           this.showSupportContact = true;
         }
