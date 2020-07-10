@@ -711,7 +711,7 @@ export class GroupDetailsPage implements OnInit {
     //   PageId.COURSES);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: data.selectedVal.activityValues,
+        activityFilters: data.selectedVal.filters,
         source: PageId.GROUP_DETAIL,
         groupId: this.groupId
       }

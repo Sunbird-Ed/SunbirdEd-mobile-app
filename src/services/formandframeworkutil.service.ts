@@ -357,6 +357,7 @@ export class FormAndFrameworkUtilService {
             type: 'group',
             subType: 'activities',
             action: 'list',
+            component: 'app'
         };
 
         // form api call
