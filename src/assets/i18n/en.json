@@ -160,7 +160,7 @@
   "CREDITS_LICENCE_INFO": "Credits & License Info",
   "CSV_DOWNLOAD_SUCCESS": "{{%s}} saved in ‘Downloads’",
   "CURRENT_LANGUAGE": "Current Language ",
-  "REQUEST_CONTENT": "Request for Content",
+  "REQUEST_CONTENT": "Let us know here",
   "SEE_MORE_BOOKS": "See more books and content",
   "DATA_SYNC": "Data Sync",
   "DATA_SYNC_FAILURE": "Could not sync data,  try again later",
@@ -757,5 +757,6 @@
   "INTERACTIVE_MATERIAL": "interactive study material",
   "THANKING_NOTE": "We will notify you as soon as your state board uploads your requested books on {{%s}}",
   "EXPLORE_HEADING": "Explore following on {{%s}}",
-  "SEE_MORE_CONTENT": "See more content"
+  "SEE_MORE_CONTENT": "See more content",
+  "NO_BOOKS_TEXT": "Couldn't find your subject's textbook on {{%s}}?"
 }
