@@ -49,7 +49,9 @@ import {
   AuthService,
   DownloadTracking,
   DownloadService,
-  AuditState
+  AuditState,
+  GroupService,
+  AddActivitiesRequest
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -235,6 +237,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -2018,8 +2021,40 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
-  addToGroupActivity() {
-    this.location.back();
+  async addToGroupActivity() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const addActivitiesRequest: AddActivitiesRequest = {
+      groupId: this.groupId,
+      addActivitiesRequest: {
+        activities: [
+          {
+            id: this.identifier,
+            type: 'course'
+          }
+        ]
+      }
+    };
+    try {
+      await this.groupService.addActivities(addActivitiesRequest).toPromise();
+      await loader.dismiss();
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SUCCESS,
+        '',
+        Environment.GROUP,
+        PageId.COURSE_DETAIL,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.ADD_ACTIVITY_TO_GROUP
+      );
+      window.history.go(-2);
+    } catch (e) {
+      await loader.dismiss();
+      console.error(e);
+      this.location.back();
+    }
   }
 
 }
