@@ -57,6 +57,7 @@ import { truncate } from 'fs';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { isJsObject } from '@angular/core/src/change_detection/change_detection_util';
+import { doesNotReject } from 'assert';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -191,88 +192,268 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
     });
 
-    it('shouldn\'t  show PlayAsPopup if limitedShareContentFlag flag is true', (done) => {
-        // arrange
-        contentDetailsPage.userCount = 3;
-        contentDetailsPage.shouldOpenPlayAsPopup = true;
-        mockNetwork.type = '3g';
-        contentDetailsPage.limitedShareContentFlag = true;
-        jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
-        // act
-        contentDetailsPage.showSwitchUserAlert(false);
-        // assert
-        expect(contentDetailsPage.openPlayAsPopup).toHaveBeenCalledTimes(0);
-        done();
-    });
-
-    it('shouldn playContent if network is available and more than 2g and user count is not more than 2', (done) => {
-        // arrange
-        contentDetailsPage.userCount = 2;
-        contentDetailsPage.apiLevel = 19;
-        contentDetailsPage.appAvailability = 'false';
-        contentDetailsPage.shouldOpenPlayAsPopup = true;
-        mockNetwork.type = '3g';
-        contentDetailsPage.limitedShareContentFlag = false;
-        mockCommonUtilService.translateMessage = jest.fn(() => '');
-        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
-        mockPopoverController.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-        } as any)));
-        // act
-        contentDetailsPage.showSwitchUserAlert(true).then(() => {
+    describe('showSwitchUserAlert', () => {
+        it('should return tost for offline', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
             // assert
-            expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
-            done();
+            setTimeout(() => {
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
+                done();
+            }, 0);
         });
-    });
 
-    it('should  show LowBandwidth Popup for 2g type network connection', (done) => {
-        // arrange
-        contentDetailsPage.content = { identifier: 'do_1234' };
-        contentDetailsPage.userCount = 3;
-        contentDetailsPage.shouldOpenPlayAsPopup = true;
-        mockNetwork.type = '2g';
-        mockCommonUtilService.translateMessage = jest.fn(() => '');
-        mockPopoverController.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-        } as any)));
-        // act
-        contentDetailsPage.showSwitchUserAlert(false);
-        // assert
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        done();
-    });
+        it('should invoked openPlayAsPopup', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 3;
+            mockNetwork.type = '4g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '4g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(contentDetailsPage.userCount).toBeGreaterThan(2);
+                expect(mockNetwork.type).toBe('4g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
 
-    it('should  show PlayAs Popup  When LowBandwidth popup Ok button click', (done) => {
-        // arrange
-        contentDetailsPage.content = { identifier: 'do_1234', hierarchyInfo: [{ id: '' }] };
-        contentDetailsPage.userCount = 3;
-        contentDetailsPage.shouldOpenPlayAsPopup = false;
-        mockNetwork.type = '2g';
-        contentDetailsPage.limitedShareContentFlag = false;
-        mockCommonUtilService.translateMessage = jest.fn(() => '');
-        mockPopoverController.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
-        } as any)));
-        const profile = {
-            handle: 'handle'
-        };
-        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
-        jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
-        mockChildContentHandler.contentHierarchyInfo = ['1'];
-        // act
-        contentDetailsPage.showSwitchUserAlert(false);
-        // assert
-        setTimeout(() => {
-            expect(contentDetailsPage.content).toBeTruthy();
-            expect(contentDetailsPage.userCount).toBeTruthy();
-            expect(contentDetailsPage.shouldOpenPlayAsPopup).toBeFalsy();
-            done();
-        }, 0);
+        it('should return a popup if network is 2g and dismiss data is null', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '2g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            contentDetailsPage.content = {
+                identifier: 'id'
+            };
+            contentDetailsPage.contentDownloadable = {
+                'id': false
+            } as any;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: null }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '2g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(mockNetwork.type).toBe('2g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
+                done();
+            }, 0);
+        });
 
+        it('should return a popup if network is 2g, isLeftButtonClicked and userCount is 2 ', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 2;
+            mockNetwork.type = '2g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            contentDetailsPage.content = {
+                identifier: 'id'
+            };
+            contentDetailsPage.contentDownloadable = {
+                'id': false
+            } as any;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn();
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '2g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(mockNetwork.type).toBe('2g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
+                done();
+            }, 0);
+        });
+
+        it('should return a popup if network is 2g, isLeftButtonClicked and player is launched ', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '2g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            contentDetailsPage.content = {
+                identifier: 'id'
+            };
+            contentDetailsPage.contentDownloadable = {
+                'id': false
+            } as any;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '2g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(mockNetwork.type).toBe('2g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
+                done();
+            }, 0);
+        });
+
+        it('should invoked downloadContent()', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '2g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            contentDetailsPage.content = {
+                identifier: 'id'
+            };
+            contentDetailsPage.contentDownloadable = {
+                'id': false
+            } as any;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: false} }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '2g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(mockNetwork.type).toBe('2g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'LOW_BANDWIDTH');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LOW_BANDWIDTH_DETECTED');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'PLAY_ONLINE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'DOWNLOAD');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(5, 'CONSIDER_DOWNLOAD');
+                done();
+            }, 0);
+        });
+
+        it('should invoked playContent()', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '4g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    {networkType: '4g'},
+                    undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(mockNetwork.type).toBe('4g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
     });
 
     describe('generateTelemetry', () => {
@@ -314,8 +495,8 @@ describe('ContentDetailsPage', () => {
             );
             expect(mockTelemetryGeneratorService.generateStartTelemetry).toHaveBeenCalledWith(
                 PageId.CONTENT_DETAIL,
-                {id: 'do-123', type: undefined, version: 'v-3'},
-                {l1: undefined}, [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }]
+                { id: 'do-123', type: undefined, version: 'v-3' },
+                { l1: undefined }, [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }]
             );
         });
 
@@ -325,7 +506,62 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.generateTelemetry();
             expect(contentDetailsPage.didViewLoad).toBeTruthy();
             expect(contentDetailsPage.isContentPlayed).toBeTruthy();
-        })
+        });
+    });
+
+    describe('downloadContent', () => {
+        it('should return event for download initiated', (done) => {
+            // arrange
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            contentDetailsPage.content = {
+                contentData: {
+                    size: '64kb'
+                }
+            };
+            mockNetwork.type = '4g';
+            // jest.spyOn(contentDetailsPage, 'importContent').mockImplementation();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const values = {
+                'network-type': '4g',
+                size: '64kb'
+            };
+            mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
+            mockContentService.importContent = jest.fn(() => of([{ status: -1 }]));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.downloadContent();
+            // assert
+            setTimeout(() => {
+                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_INITIATE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'do-123', type: undefined, version: 'v-3' },
+                    values, { l1: undefined },
+                    [{ id: 'do-123', type: 'Content' }, { id: 'content-detail', type: 'ChildUi' }]
+                );
+                done();
+            }, 0);
+        });
+
+        it('should return null for else part', (done) => {
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            contentDetailsPage.downloadContent();
+            setTimeout(() => {
+                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                done();
+            }, 0);
+        });
     });
 
     describe('extractApiResponse', () => {
@@ -826,7 +1062,7 @@ describe('ContentDetailsPage', () => {
                 Mode.PLAY,
                 pageId,
                 Environment.HOME,
-                {id: 'QR1234', type: 'qr', version: ''}, undefined,
+                { id: 'QR1234', type: 'qr', version: '' }, undefined,
                 [{ id: 'do-123', type: 'Content' }, { id: PageId.CONTENT_DETAIL, type: 'ChildUi' }]
             );
         });
@@ -848,7 +1084,7 @@ describe('ContentDetailsPage', () => {
             // assert
             expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
             expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`],
-            { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+                { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
         });
 
         it('should goback to 3steps for single content', () => {
@@ -1178,7 +1414,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockNgZone.run).toHaveBeenCalled();
                 expect(mockEvents.publish).toHaveBeenCalledWith('savedResources:update', {
                     update: true
-                  });
+                });
                 done();
             }, 0);
         });
@@ -1781,28 +2017,141 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('cancelDownload', () => {
-        it('should generate telemetry for cancel download', () => {
+        it('should generate telemetry for cancel download', (done) => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockContentService.cancelDownload = jest.fn(() => of(undefined));
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockTelemetryGeneratorService.generateContentCancelClickedTelemetry = jest.fn();
+            contentDetailsPage.isUpdateAvail = false;
             // act
             contentDetailsPage.cancelDownload();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                InteractType.SELECT_CLOSE,
-                InteractSubtype.CANCEL,
-                Environment.HOME,
-                PageId.CONTENT_DETAIL,
-                { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
-                [{ id: 'download-popup', type: 'ChildUi' }]
-            );
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                InteractType.TOUCH,
-                InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
-                Environment.HOME,
-                PageId.CONTENT_DETAIL,
-                { id: 'do_12345', type: '', version: '1' },
-                undefined, { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.SELECT_CLOSE,
+                    InteractSubtype.CANCEL,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
+                    [{ id: 'download-popup', type: 'ChildUi' }]
+                );
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'do_12345', type: '', version: '1' },
+                    undefined, { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
+                );
+                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateContentCancelClickedTelemetry).toHaveBeenCalled();
+                expect(contentDetailsPage.isDownloadStarted).toBeFalsy();
+                expect(contentDetailsPage.showDownload).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should generate telemetry for update available', (done) => {
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockContentService.cancelDownload = jest.fn(() => of(undefined));
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockTelemetryGeneratorService.generateContentCancelClickedTelemetry = jest.fn();
+            contentDetailsPage.isUpdateAvail = true;
+            // act
+            contentDetailsPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.SELECT_CLOSE,
+                    InteractSubtype.CANCEL,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
+                    [{ id: 'download-popup', type: 'ChildUi' }]
+                );
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'do_12345', type: '', version: '1' },
+                    undefined, { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
+                );
+                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateContentCancelClickedTelemetry).toHaveBeenCalled();
+                expect(contentDetailsPage.isDownloadStarted).toBeFalsy();
+                expect(contentDetailsPage.showDownload).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should generate telemetry for cancel download for catch part', (done) => {
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockContentService.cancelDownload = jest.fn(() => throwError({ error: 'error' }));
+            mockNgZone.run = jest.fn((fn) => fn());
+            // act
+            contentDetailsPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.SELECT_CLOSE,
+                    InteractSubtype.CANCEL,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
+                    [{ id: 'download-popup', type: 'ChildUi' }]
+                );
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    { id: 'do_12345', type: '', version: '1' },
+                    undefined, { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
+                );
+                expect(mockNgZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('handleContentPlay', () => {
+        it('should return null if content is undefined', (done) => {
+            contentDetailsPage.limitedShareContentFlag = true;
+            contentDetailsPage.content = {
+                contentData: undefined
+            };
+            contentDetailsPage.handleContentPlay('');
+            setTimeout(() => {
+                expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should invoked promotToLogIn page', (done) => {
+            contentDetailsPage.limitedShareContentFlag = true;
+            contentDetailsPage.content = {
+                contentData: {
+                    streamingUrl: 'streamingUrl'
+                }
+            };
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            contentDetailsPage.handleContentPlay('');
+            setTimeout(() => {
+                expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should invoked showSwitchUserAlert page', (done) => {
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            contentDetailsPage.handleContentPlay('');
+            setTimeout(() => {
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
         });
     });
 
@@ -1881,7 +2230,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.checkLimitedContentSharingFlag(request);
             // assert
-            expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+            expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
             expect(contentDetailsPage.content).not.toBeUndefined();
             expect(contentDetailsPage.playingContent).not.toBeUndefined();
             expect(contentDetailsPage.identifier).toBe('sample_doId');
@@ -1897,7 +2246,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.checkLimitedContentSharingFlag(request);
             // assert
-            expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+            expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
         });
     });
 
@@ -2011,7 +2360,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => of([{status: -1}]));
+            mockContentService.importContent = jest.fn(() => of([{ status: -1 }]));
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.importContent(identifiers, isChild);
@@ -2032,7 +2381,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => of([{status: 2}]));
+            mockContentService.importContent = jest.fn(() => of([{ status: 2 }]));
             mockCommonUtilService.showToast = jest.fn();
             // act
             contentDetailsPage.importContent(identifiers, isChild);
@@ -2050,7 +2399,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => throwError({error: 'error'}));
+            mockContentService.importContent = jest.fn(() => throwError({ error: 'error' }));
             contentDetailsPage.isDownloadStarted = true;
             contentDetailsPage.content = {
                 identifier: 'id'
@@ -2078,7 +2427,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'getImportContentRequestBody').mockImplementation(() => {
                 return [];
             });
-            mockContentService.importContent = jest.fn(() => throwError({error: 'error'}));
+            mockContentService.importContent = jest.fn(() => throwError({ error: 'error' }));
             contentDetailsPage.isDownloadStarted = false;
             contentDetailsPage.content = {
                 identifier: 'id'
