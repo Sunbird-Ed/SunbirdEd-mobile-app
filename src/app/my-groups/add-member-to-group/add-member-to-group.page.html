@@ -39,9 +39,11 @@
         </div>
         <div class="au-desc">{{'ADD_MEMBER_CONFIRMATION' | translate: {'app_name': appName} }}</div>
     </div>
-    <div *ngIf="sunbirdGoogleCaptchaKey">
-        <re-captcha #cap (resolved)="captchaResolved($event)" size="invisible" siteKey={{sunbirdGoogleCaptchaKey}}>
-        </re-captcha>
+    <div>
+        <div *ngIf="isCaptchaEnabled === true">
+            <re-captcha #cap (resolved)="captchaResolved($event)" size="invisible" siteKey={{sunbirdGoogleCaptchaKey}}>
+            </re-captcha>
+        </div>
     </div>
 </ion-content>
 <ion-footer>

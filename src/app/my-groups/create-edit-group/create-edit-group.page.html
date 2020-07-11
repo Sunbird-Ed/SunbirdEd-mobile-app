@@ -31,12 +31,10 @@
 </ion-content>
 
 <ion-footer>
-  <ion-row class="padding-12">
-    <ion-col size-md="10" offset-md="1">
+    <div class="padding-16">
       <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
         <img src="assets/imgs/ic_group_add_white.svg">
         {{'CREATE_GROUP' | translate}}
       </button>
-    </ion-col>
-  </ion-row>
+    </div>
 </ion-footer>

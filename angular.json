@@ -51,7 +51,7 @@
               "vendor": true
             },
             "styles": [
-              "node_modules/common-consumption-styles/assets/_styles.scss",
+              "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               {
                 "input": "src/global.scss"
               }

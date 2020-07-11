@@ -1,5 +1,5 @@
 import { GroupDetailsPage } from './group-details.page';
-import { GroupService } from '@project-sunbird/sunbird-sdk';
+import { GroupService, GroupMemberRole, GroupEntityStatus } from '@project-sunbird/sunbird-sdk';
 import {
     AppHeaderService,
     FormAndFrameworkUtilService,
@@ -56,6 +56,7 @@ describe('GroupDetailsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should be create a instance of groupDetailsPage', () => {
@@ -70,7 +71,10 @@ describe('GroupDetailsPage', () => {
 
     it('should navigate to previous page', () => {
         mockLocation.back = jest.fn();
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
         groupDetailsPage.handleBackButton(true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.GROUP_DETAIL, Environment.GROUP, true);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -90,7 +94,7 @@ describe('GroupDetailsPage', () => {
         expect(mockPlatform.backButton).not.toBeUndefined();
     });
 
-    it('should handel device back button', () => {
+    it('should handle device back button', () => {
         const data = {
             name: 'back'
         };
@@ -102,6 +106,13 @@ describe('GroupDetailsPage', () => {
     });
 
     it('should return header with back button', (done) => {
+        groupDetailsPage.userId = 'sample-uid';
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = of({
             subscribe: jest.fn(() => ({
@@ -114,7 +125,15 @@ describe('GroupDetailsPage', () => {
         jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
             return;
         });
-        mockGroupService.getById = jest.fn(() => of({ groupId: 'sample-group-id', members: [] })) as any;
+        mockGroupService.getById = jest.fn(() => of({
+            groupId: 'sample-group-id', members: [{
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }]
+        })) as any;
         // act
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         groupDetailsPage.ionViewWillEnter();
@@ -128,13 +147,27 @@ describe('GroupDetailsPage', () => {
             Environment.GROUP
         );
         setTimeout(() => {
+            expect(presentFn).toHaveBeenCalled();
+            expect(dismissFn).toHaveBeenCalled();
             expect(mockGroupService.getById).toHaveBeenCalled();
-            expect(groupDetailsPage.memberList).toStrictEqual([]);
+            expect(groupDetailsPage.memberList).toStrictEqual([{
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }]);
             done();
         }, 0);
     });
 
     it('should return header with back button in error case', (done) => {
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = of({
             subscribe: jest.fn(() => ({
@@ -161,6 +194,8 @@ describe('GroupDetailsPage', () => {
             Environment.GROUP
         );
         setTimeout(() => {
+            expect(presentFn).toHaveBeenCalled();
+            expect(dismissFn).toHaveBeenCalled();
             expect(mockGroupService.getById).toHaveBeenCalled();
             done();
         }, 0);
@@ -208,6 +243,12 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should invoked showDeleteGroupPopup', (done) => {
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP' } }))
@@ -222,6 +263,8 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.groupMenuClick();
             // assert
             setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'DELETE_GROUP_POPUP_TITLE');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE');
@@ -299,7 +342,11 @@ describe('GroupDetailsPage', () => {
     describe('memberMenuClick', () => {
         it('should invoked showMakeGroupAdminPopup', (done) => {
             groupDetailsPage.memberList = [{
-                userId: 'sample-uid'
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
             }];
             const req = {
                 data: {
@@ -314,7 +361,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Making the group admin gives them admin permissions');
             mockGroupService.updateMembers = jest.fn(() => of());
-            groupDetailsPage.memberMenuClick(req).then((e) => {
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -330,7 +377,11 @@ describe('GroupDetailsPage', () => {
 
         it('should invoked showRemoveMemberPopup', (done) => {
             groupDetailsPage.memberList = [{
-                userId: 'sample-uid'
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
             }];
             const req = {
                 data: {
@@ -346,7 +397,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'permanently removes him/her from the group');
             mockGroupService.removeMembers = jest.fn(() => of({}));
             // act
-            groupDetailsPage.memberMenuClick(req).then((e) => {
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -362,7 +413,11 @@ describe('GroupDetailsPage', () => {
 
         it('should invoked showRemoveMemberPopup for catch part', (done) => {
             groupDetailsPage.memberList = [{
-                userId: 'sample-uid'
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
             }];
             const req = {
                 data: {
@@ -378,7 +433,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'permanently removes him/her from the group');
             mockGroupService.removeMembers = jest.fn(() => throwError({ error: 'error' }));
             // act
-            groupDetailsPage.memberMenuClick(req).then((e) => {
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -394,7 +449,11 @@ describe('GroupDetailsPage', () => {
 
         it('should invoked showDismissAsGroupAdminPopup', (done) => {
             groupDetailsPage.memberList = [{
-                userId: 'sample-uid'
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
             }];
             const req = {
                 data: {
@@ -410,7 +469,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dissmissing group admin removes admin permissions from the member');
             mockGroupService.updateMembers = jest.fn(() => of({}));
             // act
-            groupDetailsPage.memberMenuClick(req).then((e) => {
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -426,7 +485,11 @@ describe('GroupDetailsPage', () => {
 
         it('should invoked showDismissAsGroupAdminPopup catch part', (done) => {
             groupDetailsPage.memberList = [{
-                userId: 'sample-uid'
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
             }];
             const req = {
                 data: {
@@ -442,7 +505,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dissmissing group admin removes admin permissions from the member');
             mockGroupService.updateMembers = jest.fn(() => throwError({ error: 'error' }));
             // act
-            groupDetailsPage.memberMenuClick(req).then((e) => {
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -474,7 +537,17 @@ describe('GroupDetailsPage', () => {
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         groupDetailsPage.navigateToActivityDetails('');
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-            { state: { groupId: 'sample-group-id', memberList: [{ userId: 'sample-uid' }] } });
+            {
+                state: {
+                    groupId: 'sample-group-id', memberList: [{
+                        groupId: '',
+                        role: GroupMemberRole.MEMBER,
+                        status: GroupEntityStatus.ACTIVE,
+                        userId: 'sample-uid',
+                        username: 'SOME_NAME'
+                    }]
+                }
+            });
     });
 
     describe('showAddActivityPopup', () => {
@@ -506,7 +579,7 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
-                    {state: {contentType: 'value', groupId: 'sample-group-id', source: 'group-detail'}});
+                    { state: { contentType: 'value', groupId: 'sample-group-id', source: 'group-detail' } });
                 done();
             });
         });

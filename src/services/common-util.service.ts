@@ -39,7 +39,7 @@ export class CommonUtilService {
     };
 
     private alert?: any;
-    googleCaptchaSiteKey;
+    googleCaptchaConfig = new Map();
     private _currentTabName: string;
     appName: any;
     private toast: any;
@@ -394,12 +394,13 @@ export class CommonUtilService {
         }
     }
 
-    setGoogleCaptchaSitekey(key) {
-        this.googleCaptchaSiteKey = key;
+    setGoogleCaptchaConfig(key, isEnabled) {
+        this.googleCaptchaConfig.set('key', key);
+        this.googleCaptchaConfig.set('isEnabled', isEnabled);
     }
 
-    getGoogleCaptchaSitekey() {
-        return this.googleCaptchaSiteKey;
+    getGoogleCaptchaConfig() {
+        return this.googleCaptchaConfig;
     }
     // return org location details for logged in user
     getOrgLocation(organisation: any) {
