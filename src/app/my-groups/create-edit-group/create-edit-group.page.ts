@@ -4,7 +4,7 @@ import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  GroupService, GroupCreateRequest, GroupMembershipType
+  GroupService, GroupCreateRequest, GroupMembershipType, UpdateByIdRequest
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -13,6 +13,7 @@ import { UtilityService } from '@app/services';
 import { RouterLinks } from '@app/app/app.constant';
 import {Environment, ID, ImpressionSubtype, ImpressionType, InteractType, PageId,
   TelemetryGeneratorService, InteractSubtype} from '@app/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-edit-group',
@@ -35,6 +36,8 @@ export class CreateEditGroupPage {
     }
   };
   headerObservable: Subscription;
+  extras: any;
+  groupDetails: any;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -46,8 +49,14 @@ export class CreateEditGroupPage {
     private platform: Platform,
     private alertCtrl: AlertController,
     private utilityService: UtilityService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private router: Router
   ) {
+    const extras = this.router.getCurrentNavigation().extras.state;
+    if (extras && extras.groupDetails) {
+      this.groupDetails = extras.groupDetails;
+      console.log('this.groupDetails', this.groupDetails);
+    }
     this.initializeForm();
   }
 
@@ -103,9 +112,9 @@ export class CreateEditGroupPage {
 
   initializeForm() {
     this.createGroupForm = this.fb.group({
-      groupName: ['', Validators.required],
-      groupDesc: '',
-      groupTerms: ['', Validators.required]
+      groupName: [(this.groupDetails && this.groupDetails.name) || '', Validators.required],
+      groupDesc: (this.groupDetails && this.groupDetails.description) || '',
+      groupTerms: [(this.groupDetails && true || ''), Validators.required]
     });
   }
 
@@ -117,7 +126,11 @@ export class CreateEditGroupPage {
     this.createGroupFormSubmitted = true;
     const formVal = this.createGroupForm.value;
     if (this.createGroupForm.valid) {
-      this.createGroup(formVal);
+      if (this.groupDetails) {
+        this.editGroup(formVal);
+      } else {
+        this.createGroup(formVal);
+      }
     }
   }
 
@@ -148,6 +161,20 @@ export class CreateEditGroupPage {
       console.error(err);
       await loader.dismiss();
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+    });
+  }
+
+  private editGroup(formVal) {
+    const updateCreateRequest: UpdateByIdRequest = {
+      id: this.groupDetails.id,
+      updateRequest: {
+        name: formVal.groupName,
+        description: formVal.groupDesc
+      }
+    };
+    this.groupService.updateById(updateCreateRequest).toPromise().then((res) => {
+      this.commonUtilService.showToast('GROUP_UPDATE_SUCCESS');
+      this.location.back();
     });
   }
 
