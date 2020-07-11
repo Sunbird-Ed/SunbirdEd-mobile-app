@@ -8,7 +8,7 @@ import { Events, PopoverController, Platform, IonContent } from '@ionic/angular'
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import {
     AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService,
-    ComingSoonMessageService, InteractSubtype, Environment, ImpressionType
+    InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
     InteractType, PageId, ID, Mode, ErrorType
@@ -31,10 +31,9 @@ import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType, ContentType } from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
-import { connect } from 'http2';
 import { isObject } from 'util';
 import { MimeType } from '../../app/app.constant';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -1776,7 +1775,7 @@ describe('collectionDetailEtbPage', () => {
             }));
             mockzone.run = jest.fn((fn) => fn());
             collectionDetailEtbPage.cardData = {
-                hierarchyInfo: [{identifier: 'do-1234'}]
+                hierarchyInfo: [{ identifier: 'do-1234' }]
             };
             // act
             collectionDetailEtbPage.subscribeSdkEvent();
@@ -1793,6 +1792,6 @@ describe('collectionDetailEtbPage', () => {
         // act
         collectionDetailEtbPage.ionViewDidEnter();
         // assert
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
     });
 });

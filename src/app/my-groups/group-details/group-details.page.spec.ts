@@ -206,7 +206,17 @@ describe('GroupDetailsPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         groupDetailsPage.navigateToAddUserPage();
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`],
-            { state: { groupId: 'sample-group-id' } });
+            {
+                state: {
+                    groupId: 'sample-group-id', memberList: [{
+                        groupId: '',
+                        role: 'member',
+                        status: 'active',
+                        userId: 'sample-uid',
+                        username: 'SOME_NAME',
+                    }]
+                }
+            });
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
             InteractSubtype.ADD_MEMBER_CLICKED,
@@ -223,12 +233,20 @@ describe('GroupDetailsPage', () => {
     });
 
     it('should switch to tabs', () => {
-        groupDetailsPage.switchTabs('courses');
-        expect(groupDetailsPage.activeTab).toStrictEqual('courses');
+        groupDetailsPage.switchTabs('activities');
+        expect(groupDetailsPage.activeTab).toStrictEqual('activities');
     });
 
     describe('groupMenuClick', () => {
         it('should navigate to my_GROUP page', (done) => {
+            groupDetailsPage.userId = 'some-userId';
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                username: 'some-username',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_EDIT_GROUP_DETAILS' } }))
@@ -291,7 +309,7 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.groupDetails = {
                 name: 'sample-group'
             } as any;
-            mockGroupService.deleteById = jest.fn(() => throwError({error: 'error'})) as any;
+            mockGroupService.deleteById = jest.fn(() => throwError({ error: 'error' })) as any;
             mockLocation.back = jest.fn();
             // act
             groupDetailsPage.groupMenuClick({});
@@ -323,6 +341,14 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should return null if data is undefined', (done) => {
+            groupDetailsPage.userId = 'some-userId';
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                username: 'some-username',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
@@ -352,7 +378,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeActivities = jest.fn(() => of({error: {members: undefined}})) as any;
+            mockGroupService.removeActivities = jest.fn(() => of({ error: { members: undefined } })) as any;
             // act
             groupDetailsPage.activityMenuClick(true).then(() => {
                 setTimeout(() => {
@@ -405,7 +431,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeActivities = jest.fn(() => of({error: {members: ['member-1']}})) as any;
+            mockGroupService.removeActivities = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
             // act
             groupDetailsPage.activityMenuClick(true).then(() => {
                 setTimeout(() => {
@@ -447,7 +473,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeActivities = jest.fn(() => throwError({error: {}})) as any;
+            mockGroupService.removeActivities = jest.fn(() => throwError({ error: {} })) as any;
             // act
             groupDetailsPage.activityMenuClick(true).then(() => {
                 setTimeout(() => {
