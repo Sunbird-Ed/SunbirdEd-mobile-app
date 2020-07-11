@@ -5,7 +5,7 @@ import {
     FormAndFrameworkUtilService,
     CommonUtilService,
     AppGlobalService,
-    TelemetryGeneratorService, ImpressionType, PageId, Environment, InteractType, InteractSubtype
+    TelemetryGeneratorService, ImpressionType, PageId, Environment, InteractType, InteractSubtype, ID
 } from '../../../services';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
@@ -206,7 +206,17 @@ describe('GroupDetailsPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         groupDetailsPage.navigateToAddUserPage();
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`],
-            { state: { groupId: 'sample-group-id' } });
+            {
+                state: {
+                    groupId: 'sample-group-id', memberList: [{
+                        groupId: '',
+                        role: 'member',
+                        status: 'active',
+                        userId: 'sample-uid',
+                        username: 'SOME_NAME',
+                    }]
+                }
+            });
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
             InteractSubtype.ADD_MEMBER_CLICKED,
@@ -223,18 +233,26 @@ describe('GroupDetailsPage', () => {
     });
 
     it('should switch to tabs', () => {
-        groupDetailsPage.switchTabs('courses');
-        expect(groupDetailsPage.activeTab).toStrictEqual('courses');
+        groupDetailsPage.switchTabs('activities');
+        expect(groupDetailsPage.activeTab).toStrictEqual('activities');
     });
 
     describe('groupMenuClick', () => {
         it('should navigate to my_GROUP page', (done) => {
+            groupDetailsPage.userId = 'some-userId';
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                username: 'some-username',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_EDIT_GROUP_DETAILS' } }))
             } as any)));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            groupDetailsPage.groupMenuClick();
+            groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
@@ -260,7 +278,7 @@ describe('GroupDetailsPage', () => {
             mockGroupService.deleteById = jest.fn(() => of({})) as any;
             mockLocation.back = jest.fn();
             // act
-            groupDetailsPage.groupMenuClick();
+            groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
@@ -276,12 +294,45 @@ describe('GroupDetailsPage', () => {
             }, 0);
         });
 
+        it('should invoked showDeleteGroupPopup for catch part', (done) => {
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group'
+            } as any;
+            mockGroupService.deleteById = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockLocation.back = jest.fn();
+            // act
+            groupDetailsPage.groupMenuClick({});
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'DELETE_GROUP_POPUP_TITLE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'DELETE_GROUP_DESC',
+                    { group_name: groupDetailsPage.groupDetails.name });
+                expect(mockGroupService.deleteById).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
         it('should return null if selected Item is not matched or undefined', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: undefined } }))
             } as any)));
-            groupDetailsPage.groupMenuClick();
+            groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -290,11 +341,19 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should return null if data is undefined', (done) => {
+            groupDetailsPage.userId = 'some-userId';
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                username: 'some-username',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
             } as any)));
-            groupDetailsPage.groupMenuClick();
+            groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
@@ -312,7 +371,14 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
-            mockGroupService.removeActivities = jest.fn(() => of({}));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.removeActivities = jest.fn(() => of({ error: { members: undefined } })) as any;
             // act
             groupDetailsPage.activityMenuClick(true).then(() => {
                 setTimeout(() => {
@@ -320,7 +386,73 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_ACTIVITY');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_ACTIVITY_GROUP_DESC');
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_ACTIVITY
+                    );
                     expect(mockGroupService.removeActivities).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                        InteractType.SUCCESS,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_ACTIVITY
+                    );
+                }, 0);
+                done();
+            });
+        });
+
+        it('should return showRemoveActivityPopup if data is error members', (done) => {
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.removeActivities = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
+            // act
+            groupDetailsPage.activityMenuClick(true).then(() => {
+                setTimeout(() => {
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_ACTIVITY');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_ACTIVITY_GROUP_DESC');
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_ACTIVITY
+                    );
+                    expect(mockGroupService.removeActivities).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
                 }, 0);
                 done();
             });
@@ -329,11 +461,41 @@ describe('GroupDetailsPage', () => {
         it('should not return showRemoveActivityPopup if data undefined', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
             } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.removeActivities = jest.fn(() => throwError({ error: {} })) as any;
             // act
             groupDetailsPage.activityMenuClick(true).then(() => {
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                setTimeout(() => {
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_ACTIVITY');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_ACTIVITY_GROUP_DESC');
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_ACTIVITY
+                    );
+                    expect(mockGroupService.removeActivities).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
+                }, 0);
                 done();
             });
         });
@@ -360,7 +522,16 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Making the group admin gives them admin permissions');
-            mockGroupService.updateMembers = jest.fn(() => of());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.updateMembers = jest.fn(() => of({ error: { members: undefined } }));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
             groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
                     expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
@@ -369,7 +540,144 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'MAKE_ADMIN');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'MAKE_GROUP_ADMIN_POPUP_DESC',
                         { member_name: undefined });
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.MAKE_GROUP_ADMIN
+                    );
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                        InteractType.SUCCESS,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.MAKE_GROUP_ADMIN);
                     expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
+                }, 0);
+                done();
+            });
+        });
+
+        it('should invoked showMakeGroupAdminPopup for error part', (done) => {
+            groupDetailsPage.memberList = [{
+                groupId: '',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }];
+            const req = {
+                data: {
+                    userId: 'sample-uid'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Making the group admin gives them admin permissions');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.updateMembers = jest.fn(() => of({
+                error: {
+                    members: ['member-1']
+                }
+            })) as any;
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
+                setTimeout(() => {
+                    expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'MAKE_GROUP_ADMIN_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'MAKE_ADMIN');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'MAKE_GROUP_ADMIN_POPUP_DESC',
+                        { member_name: undefined });
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.MAKE_GROUP_ADMIN
+                    );
+                    expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
+                }, 0);
+                done();
+            });
+        });
+
+        it('should invoked showMakeGroupAdminPopup for catch part', (done) => {
+            groupDetailsPage.memberList = [{
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }];
+            const req = {
+                data: {
+                    userId: 'sample-uid'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Making the group admin gives them admin permissions');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.updateMembers = jest.fn(() => throwError({ error: {} })) as any;
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
+                setTimeout(() => {
+                    expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'MAKE_GROUP_ADMIN_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'MAKE_ADMIN');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'MAKE_GROUP_ADMIN_POPUP_DESC',
+                        { member_name: undefined });
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.MAKE_GROUP_ADMIN
+                    );
+                    expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
                 }, 0);
                 done();
             });
@@ -395,7 +703,15 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
             mockCommonUtilService.translateMessage = jest.fn(() => 'permanently removes him/her from the group');
-            mockGroupService.removeMembers = jest.fn(() => of({}));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.removeMembers = jest.fn(() => of({ error: { members: undefined } }));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
@@ -406,6 +722,88 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_MEMBER_GROUP_DESC',
                         { member_name: undefined });
                     expect(mockGroupService.removeMembers).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_MEMBER
+                    );
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                        InteractType.SUCCESS,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_MEMBER);
+                    expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
+                }, 0);
+                done();
+            });
+        });
+
+        it('should invoked showRemoveMemberPopup', (done) => {
+            groupDetailsPage.memberList = [{
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }];
+            const req = {
+                data: {
+                    userId: 'sample-uid'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_REMOVE_FROM_GROUP' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'permanently removes him/her from the group');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.removeMembers = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
+                setTimeout(() => {
+                    expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_MEMBER_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_MEMBER');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_MEMBER_GROUP_DESC',
+                        { member_name: undefined });
+                    expect(mockGroupService.removeMembers).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_MEMBER
+                    );
+                    expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
                 }, 0);
                 done();
             });
@@ -432,6 +830,13 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
             mockCommonUtilService.translateMessage = jest.fn(() => 'permanently removes him/her from the group');
             mockGroupService.removeMembers = jest.fn(() => throwError({ error: 'error' }));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
             // act
             groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
@@ -441,6 +846,20 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_MEMBER');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_MEMBER_GROUP_DESC',
                         { member_name: undefined });
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.REMOVE_MEMBER
+                    );
+
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalledWith();
                     expect(mockGroupService.removeMembers).toHaveBeenCalled();
                 }, 0);
                 done();
@@ -468,6 +887,14 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dissmissing group admin removes admin permissions from the member');
             mockGroupService.updateMembers = jest.fn(() => of({}));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
                 setTimeout(() => {
@@ -478,6 +905,90 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
                         { member_name: undefined });
                     expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.DISMISS_GROUP_ADMIN
+                    );
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.SUCCESS,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.DISMISS_GROUP_ADMIN
+                    );
+                }, 0);
+                done();
+            });
+        });
+
+        it('should invoked showDismissAsGroupAdminPopup', (done) => {
+            groupDetailsPage.memberList = [{
+                groupId: '',
+                role: GroupMemberRole.MEMBER,
+                status: GroupEntityStatus.ACTIVE,
+                userId: 'sample-uid',
+                username: 'SOME_NAME'
+            }];
+            const req = {
+                data: {
+                    userId: 'sample-uid'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN' } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Dissmissing group admin removes admin permissions from the member');
+            mockGroupService.updateMembers = jest.fn(() => of({
+                error: {
+                    members: ['member-1']
+                }
+            })) as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            // act
+            groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
+                setTimeout(() => {
+                    expect(groupDetailsPage.memberList[0].userId).toEqual(req.data.userId);
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'DISMISS_AS_GROUP_ADMIN_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'DISMISS_AS_GROUP_ADMIN');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
+                        { member_name: undefined });
+                    expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.DISMISS_GROUP_ADMIN
+                    );
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalled();
                 }, 0);
                 done();
             });
@@ -503,6 +1014,13 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dissmissing group admin removes admin permissions from the member');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
             mockGroupService.updateMembers = jest.fn(() => throwError({ error: 'error' }));
             // act
             groupDetailsPage.memberMenuClick(req, groupDetailsPage.memberList[0]).then((e) => {
@@ -514,6 +1032,19 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
                         { member_name: undefined });
                     expect(mockGroupService.updateMembers).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.INITIATED,
+                        '',
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        ID.DISMISS_GROUP_ADMIN
+                    );
+                    expect(presentFn).toHaveBeenCalled();
+                    expect(dismissFn).toHaveBeenCalled();
                 }, 0);
                 done();
             });
@@ -557,8 +1088,18 @@ describe('GroupDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({
                     data: {
-                        selectedVal:
-                            { activityType: 'Content', activityValues: 'value' }
+                        selectedVal: {
+                            index: 0,
+                            title: 'ACTIVITY_COURSE_TITLE',
+                            desc: 'ACTIVITY_COURSE_DESC',
+                            activityType: 'Content',
+                            isEnabled: true,
+                            filters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }
+                        }
                     }
                 }))
             } as any)));
@@ -579,7 +1120,15 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
                 expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
-                    { state: { contentType: 'value', groupId: 'sample-group-id', source: 'group-detail' } });
+                    {
+                        state: {
+                            activityFilters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }, groupId: 'sample-group-id', source: 'group-detail'
+                        }
+                    });
                 done();
             });
         });
@@ -590,8 +1139,18 @@ describe('GroupDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({
                     data: {
-                        selectedVal:
-                            { activityType: '', activityValues: 'value' }
+                        selectedVal: {
+                            index: 0,
+                            title: 'ACTIVITY_COURSE_TITLE',
+                            desc: 'ACTIVITY_COURSE_DESC',
+                            activityType: 'Content',
+                            isEnabled: true,
+                            filters: {
+                                contentTypes: [
+                                    'Course'
+                                ]
+                            }
+                        }
                     }
                 }))
             } as any)));

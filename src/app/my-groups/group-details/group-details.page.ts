@@ -32,13 +32,16 @@ export class GroupDetailsPage implements OnInit {
   headerObservable: any;
   groupId: string;
   groupDetails: Group;
-  activeTab = 'courses';
+  activeTab = 'activities';
   activityList = [];
+  filteredActivityList = [];
   memberList: GroupMember[] = [];
   filteredMemberList = [];
-  searchValue: string;
+  memberSearchQuery: string;
+  activitySearchQuery: string;
   private unregisterBackButton: Subscription;
-  showMenu = false;
+  loggedinUser: GroupMember;
+  groupCreator: GroupMember;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -106,7 +109,8 @@ export class GroupDetailsPage implements OnInit {
       InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     const navigationExtras: NavigationExtras = {
       state: {
-        groupId: this.groupId
+        groupId: this.groupId,
+        memberList: this.memberList
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
@@ -127,9 +131,13 @@ export class GroupDetailsPage implements OnInit {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
       this.memberList = this.groupDetails.members;
-      const loggedinUser = this.memberList.find(m => m.userId === this.userId);
-      this.showMenu = loggedinUser.role === GroupMemberRole.ADMIN;
+      this.activityList = this.groupDetails.activities;
+
+      this.loggedinUser = this.memberList.find(m => m.userId === this.userId);
+      this.groupCreator = this.memberList.find(m => m.userId === this.groupDetails.createdBy);
+
       this.filteredMemberList = new Array(...this.memberList);
+      this.filteredActivityList = new Array(...this.activityList);
 
       await loader.dismiss();
     } catch (e) {
@@ -149,11 +157,12 @@ export class GroupDetailsPage implements OnInit {
     //   Environment.DOWNLOADS,
     // PageId.GROUP_DETAIL);
 
-    const menuList = MenuOverflow.MENU_GROUP_ADMIN;
-    // TODO: Handle below condition while API intigration.
-    // if (!isAdmin) {
-    //   menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
-    // }
+    let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
+    if (this.groupCreator.userId === this.userId) {
+      menuList = MenuOverflow.MENU_GROUP_CREATOR;
+    } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
+      menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    }
 
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
@@ -448,7 +457,7 @@ export class GroupDetailsPage implements OnInit {
           },
         ],
         icon: null,
-        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: selectedMember.name })
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: selectedMember.userName })
       },
       cssClass: 'sb-popover danger',
     });
@@ -520,7 +529,7 @@ export class GroupDetailsPage implements OnInit {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_DESC',
-          { member_name: selectedMember.name })
+          { member_name: selectedMember.userName })
       },
       cssClass: 'sb-popover',
     });
@@ -595,7 +604,7 @@ export class GroupDetailsPage implements OnInit {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
-          { member_name: selectedMember.name })
+          { member_name: selectedMember.userName })
       },
       cssClass: 'sb-popover',
     });
@@ -651,10 +660,16 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  onSearch(searchText) {
-    console.log('onsearch', searchText);
-    this.searchValue = searchText;
-    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
+  onMemberSearch(query) {
+    console.log('onMemberSearch', query);
+    this.memberSearchQuery = query;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', query)];
+  }
+
+  onActivitySearch(query) {
+    console.log('onActivitySearch', query);
+    this.activitySearchQuery = query;
+    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'title', query)];
   }
 
   extractInitial(name) {
@@ -711,7 +726,7 @@ export class GroupDetailsPage implements OnInit {
     //   PageId.COURSES);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: data.selectedVal.activityValues,
+        activityFilters: data.selectedVal.filters,
         source: PageId.GROUP_DETAIL,
         groupId: this.groupId
       }

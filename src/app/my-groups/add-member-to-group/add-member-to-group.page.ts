@@ -7,6 +7,7 @@ import {
   AddMembersRequest,
   GroupMemberRole,
   SystemSettingsService
+  GroupMember
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -32,6 +33,7 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
+
   userId = '';
   captchaResponse: string;
   isUserIdVerified = false;
@@ -41,6 +43,7 @@ export class AddMemberToGroupPage {
   isCaptchaEnabled: boolean;
   groupId: string;
   sunbirdGoogleCaptchaKey;
+  memberList: GroupMember[] = [];
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
@@ -77,6 +80,7 @@ export class AddMemberToGroupPage {
       this.isCaptchaEnabled = captchaConfig['isEnabled'];
       this.sunbirdGoogleCaptchaKey = captchaConfig['key'];
     }
+    this.memberList = extras.memberList;
   }
 
   ionViewWillEnter() {
@@ -142,7 +146,9 @@ export class AddMemberToGroupPage {
     }
     this.showErrorMsg = false;
     const req: ServerProfileDetailsRequest = {
-      userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
+      // userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
+      // userId: '95e4942d-cbe8-477d-aebd-ad8e6de4bfc8',
+      userId: 'e846e88c-26d1-4a40-9b28-181f76dc7746',
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -188,6 +194,13 @@ export class AddMemberToGroupPage {
   }
 
   async onAddToGroupClick() {
+    const userExist = this.memberList.find(m => m.userId === this.userDetails.userId);
+    // Check if user already exist in group
+    if (userExist) {
+      this.commonUtilService.showToast('MEMBER_ALREADY_EXISTS_IN_GROUP');
+      return;
+    }
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
@@ -240,7 +253,7 @@ export class AddMemberToGroupPage {
       });
   }
 
-  async openinfopopup() {
+  async openInfoPopup() {
     const popover = await this.popoverCtrl.create({
       component: MyGroupsPopoverComponent,
       componentProps: {
