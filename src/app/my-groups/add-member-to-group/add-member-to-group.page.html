@@ -12,7 +12,7 @@
                 </span>
             </div>
             <input [ngClass]="{'error' : showErrorMsg}" type="text"
-                placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}" [(ngModel)]="userId">
+                placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}" [(ngModel)]="username">
             <p *ngIf="showErrorMsg" class="au-ip-error-msg">
                 {{'INVALID_MEMBER_ID' | translate:  {'app_name': appName} }}
             </p>
@@ -29,13 +29,13 @@
                 </span>
             </div>
             <input type="text" placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}"
-                [(ngModel)]="userDetails.userName" disabled>
+                [(ngModel)]="userDetails.name" disabled>
             <ion-icon class="au-clear-icon" ios="ios-close" md="md-close" (click)="onClearUser()">
             </ion-icon>
         </div>
         <div class="au-avatar">
-            <app-profile-avatar [username]="userName"></app-profile-avatar>
-            <h3>{{userName}}</h3>
+            <app-profile-avatar [username]="userDetails.name"></app-profile-avatar>
+            <h3>{{userDetails.name}}</h3>
         </div>
         <div class="au-desc">{{'ADD_MEMBER_CONFIRMATION' | translate: {'app_name': appName} }}</div>
     </div>
@@ -48,7 +48,7 @@
 </ion-content>
 <ion-footer>
     <div class="au-btn" *ngIf="!isUserIdVerified">
-        <button class="sb-btn-large" [class.inactive]="!userId" [disabled]="!userId" (click)="onVerifyClick()">
+        <button class="sb-btn-large" [class.inactive]="!username" [disabled]="!username" (click)="onVerifyClick()">
             {{'VERIFY' | translate}}
         </button>
     </div>
