@@ -6,7 +6,7 @@ import {
   GroupService,
   AddMembersRequest,
   GroupMemberRole,
-  SystemSettingsService
+  SystemSettingsService,
   GroupMember
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
@@ -33,7 +33,7 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
-
+  extras: any;
   userId = '';
   captchaResponse: string;
   isUserIdVerified = false;
@@ -61,8 +61,8 @@ export class AddMemberToGroupPage {
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
-    const extras = this.router.getCurrentNavigation().extras.state;
-    this.groupId = extras.groupId;
+    this.extras = this.router.getCurrentNavigation().extras.state;
+    this.groupId = this.extras.groupId;
     this.getGoogleCaptchaSiteKey();
   }
 
@@ -80,7 +80,7 @@ export class AddMemberToGroupPage {
       this.isCaptchaEnabled = captchaConfig['isEnabled'];
       this.sunbirdGoogleCaptchaKey = captchaConfig['key'];
     }
-    this.memberList = extras.memberList;
+    this.memberList = this.extras.memberList;
   }
 
   ionViewWillEnter() {
@@ -129,7 +129,6 @@ export class AddMemberToGroupPage {
   }
 
   async onVerifyClick() {
-    this.cap.execute();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VERIFY_CLICKED,
@@ -140,6 +139,7 @@ export class AddMemberToGroupPage {
       return;
     }
     if (this.isCaptchaEnabled) {
+      this.cap.execute();
       if (!this.captchaResponse) {
         return false;
       }
