@@ -125,6 +125,9 @@ export class CreateEditGroupPage {
   onSubmit() {
     this.createGroupFormSubmitted = true;
     const formVal = this.createGroupForm.value;
+    if (!formVal.groupTerms) {
+      this.createGroupForm.controls['groupTerms'].setErrors({incorrect: true});
+    }
     if (this.createGroupForm.valid) {
       if (this.groupDetails) {
         this.editGroup(formVal);
@@ -143,6 +146,7 @@ export class CreateEditGroupPage {
       membershipType: GroupMembershipType.MODERATED
     };
     this.groupService.create(groupCreateRequest).toPromise().then(async (res) => {
+      console.log('create suc');
       await loader.dismiss();
       this.commonUtilService.showToast('GROUP_CREATED');
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -164,7 +168,9 @@ export class CreateEditGroupPage {
     });
   }
 
-  private editGroup(formVal) {
+  private async editGroup(formVal) {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const updateCreateRequest: UpdateByIdRequest = {
       id: this.groupDetails.id,
       updateRequest: {
@@ -172,9 +178,23 @@ export class CreateEditGroupPage {
         description: formVal.groupDesc
       }
     };
-    this.groupService.updateById(updateCreateRequest).toPromise().then((res) => {
+    this.groupService.updateById(updateCreateRequest).toPromise().then(async (res) => {
+      await loader.dismiss();
       this.commonUtilService.showToast('GROUP_UPDATE_SUCCESS');
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.CREATE_GROUP,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          ID.CREATE_GROUP
+      );
       this.location.back();
+    }).catch(async (err) => {
+      await loader.dismiss();
     });
   }
 
