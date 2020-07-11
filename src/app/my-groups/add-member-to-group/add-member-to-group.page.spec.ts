@@ -18,11 +18,17 @@ describe('AddMemberToGroupPage', () => {
     let addMemberToGroupPage: AddMemberToGroupPage;
     const mockGroupService: Partial<GroupService> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {
-        getSystemSettings : jest.fn(() => of({value: 'sample value'}) as any )
+        getSystemSettings: jest.fn(() => of({
+            value: JSON.stringify({
+                isEnabled: true,
+                key: 'e344ijewjee43'
+            })
+        })) as any
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getGoogleCaptchaSitekey: jest.fn(() => { }),
-        setGoogleCaptchaSitekey: jest.fn()
+        setGoogleCaptchaSitekey: jest.fn(),
+        getGoogleCaptchaConfig: jest.fn(() => [[]])
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
@@ -130,7 +136,7 @@ describe('AddMemberToGroupPage', () => {
     describe('onVerifyClick', () => {
         it('should return errorMessage if userId is undefined', (done) => {
             addMemberToGroupPage.cap = {
-                execute : jest.fn()
+                execute: jest.fn()
             };
             addMemberToGroupPage.userId = undefined;
             addMemberToGroupPage.username = undefined;
@@ -151,7 +157,7 @@ describe('AddMemberToGroupPage', () => {
 
         it('should return userDetails for serverProfile', (done) => {
             addMemberToGroupPage.cap = {
-                execute : jest.fn()
+                execute: jest.fn()
             };
             addMemberToGroupPage.captchaResponse = {
                 value: 'sample'
@@ -426,6 +432,32 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.openInfoPopup();
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    xdescribe('getGoogleCaptchaSiteKey', () => {
+        it('should return empty map', (done) => {
+            mockCommonUtilService.getGoogleCaptchaConfig = jest.fn(
+                () => []
+            );
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of({
+                value: JSON.stringify({
+                    isEnabled: true,
+                    key: 'e344ijewjee43'
+                })
+            })) as any;
+            mockCommonUtilService.setGoogleCaptchaConfig = jest.fn();
+            addMemberToGroupPage.getGoogleCaptchaSitekey();
+            setTimeout(() => {
+                expect(mockCommonUtilService.getGoogleCaptchaConfig).toHaveBeenCalled();
+                expect(mockSystemSettingService.getSystemSettings).toHaveBeenCalled();
+                expect(addMemberToGroupPage.isCaptchaEnabled).toBeTruthy();
+                expect(addMemberToGroupPage.sunbirdGoogleCaptchaKey).toBe('e344ijewjee43');
+                expect(mockCommonUtilService.setGoogleCaptchaConfig).toHaveBeenCalledWith(
+                    addMemberToGroupPage.sunbirdGoogleCaptchaKey, addMemberToGroupPage.isCaptchaEnabled
+                );
                 done();
             }, 0);
         });

@@ -67,6 +67,7 @@ export class AddMemberToGroupPage {
   }
 
   getGoogleCaptchaSiteKey() {
+    console.log('****' ,this.commonUtilService.getGoogleCaptchaConfig().size );
     if (this.commonUtilService.getGoogleCaptchaConfig().size === 0) {
       this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
         .then((res) => {
