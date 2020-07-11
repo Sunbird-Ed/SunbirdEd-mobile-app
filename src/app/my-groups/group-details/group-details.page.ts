@@ -34,9 +34,11 @@ export class GroupDetailsPage implements OnInit {
   groupDetails: Group;
   activeTab = 'activities';
   activityList = [];
+  filteredActivityList = [];
   memberList: GroupMember[] = [];
   filteredMemberList = [];
-  searchValue: string;
+  memberSearchQuery: string;
+  activitySearchQuery: string;
   private unregisterBackButton: Subscription;
   loggedinUser: GroupMember;
   groupCreator: GroupMember;
@@ -129,11 +131,13 @@ export class GroupDetailsPage implements OnInit {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
       this.memberList = this.groupDetails.members;
+      this.activityList = this.groupDetails.activities;
 
       this.loggedinUser = this.memberList.find(m => m.userId === this.userId);
       this.groupCreator = this.memberList.find(m => m.userId === this.groupDetails.createdBy);
 
       this.filteredMemberList = new Array(...this.memberList);
+      this.filteredActivityList = new Array(...this.activityList);
 
       await loader.dismiss();
     } catch (e) {
@@ -656,10 +660,16 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  onSearch(searchText) {
-    console.log('onsearch', searchText);
-    this.searchValue = searchText;
-    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
+  onMemberSearch(query) {
+    console.log('onMemberSearch', query);
+    this.memberSearchQuery = query;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', query)];
+  }
+
+  onActivitySearch(query) {
+    console.log('onActivitySearch', query);
+    this.activitySearchQuery = query;
+    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'title', query)];
   }
 
   extractInitial(name) {

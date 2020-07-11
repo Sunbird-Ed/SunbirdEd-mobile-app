@@ -27,7 +27,7 @@
         <div class="gd-member-search">
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
           <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}"
-            (ngModelChange)="onSearch(searchMember)">
+            (ngModelChange)="onMemberSearch(searchMember)">
         </div>
         <div class="gd-add-member-container">
           <div class="gd-add-member" (click)="navigateToAddUserPage()">
@@ -38,9 +38,9 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
-          <div *ngIf="!filteredMemberList || !filteredMemberList.length" class="text-center">
-            <img *ngIf="!searchValue" src="assets/imgs/no_member.svg" alt="">
-            <img *ngIf="searchValue" src="assets/imgs/empty_search_result.svg" alt="">
+          <div *ngIf="!filteredMemberList && !filteredMemberList.length" class="text-center">
+            <img *ngIf="!memberSearchQuery" src="assets/imgs/no_member.svg" alt="">
+            <img *ngIf="memberSearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
           </div>
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
@@ -51,22 +51,22 @@
             </sb-member-card>
           </div>
         </div>
-        <!-- <div class="cd-btn" *ngIf="!memberList.length">
-          <button class="sb-btn-large" (click)="navigateToAddUserPage()">
-            <img src="assets/imgs/ic_person_add_white.svg">
-            {{'ADD_MEMBER' | translate}}
-          </button>
-        </div> -->
       </div>
-      <div class="gd-tab-content" *ngIf="activeTab=='courses'">
+      <div class="gd-tab-content" *ngIf="activeTab=='activities'">
         <div class="gd-member-search">
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
-          <input type="text" [(ngModel)]="searchMember" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
-            (ngModelChange)="onSearch(searchMember)">
+          <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
+            (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)"
-          [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event)">
-        </sb-course-card>
+        <div *ngIf="!filteredActivityList && !filteredActivityList.length" class="text-center">
+          <img *ngIf="!activitySearchQuery" src="assets/imgs/no_activity.svg" alt="">
+          <img *ngIf="activitySearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
+        </div>
+        <div *ngFor="let activity of filteredActivityList; let i = index">
+          <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)"
+            [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event)">
+          </sb-course-card>
+        </div>
 
         <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
           (click)="openCourseDetails(course)"></sb-course-card> -->
@@ -79,7 +79,7 @@
 
 </ion-content>
 
-<ion-footer *ngIf="activeTab=='courses'">
+<ion-footer *ngIf="activeTab=='activities'">
   <div class="cd-btn" *ngIf="!activityList.length">
     <button class="sb-btn-large" (click)="showAddActivityPopup()">
       + {{'ADD_ACTIVITY' | translate}}
