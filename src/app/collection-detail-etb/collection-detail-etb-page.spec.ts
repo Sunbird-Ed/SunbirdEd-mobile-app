@@ -7,7 +7,8 @@ import {
 import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import {
-    AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService,
+    AppGlobalService, CommonUtilService,
+    TelemetryGeneratorService, AppHeaderService,
     InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
