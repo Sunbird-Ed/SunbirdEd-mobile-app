@@ -190,7 +190,7 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  async activityMenuClick(event) {
+  async activityMenuClick(event, selectedActivity) {
     // this.telemetryGeneratorService.generateInteractTelemetry(
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
@@ -210,7 +210,7 @@ export class GroupDetailsPage implements OnInit {
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
-      this.showRemoveActivityPopup(data);
+      this.showRemoveActivityPopup(selectedActivity);
     }
   }
 
@@ -462,7 +462,7 @@ export class GroupDetailsPage implements OnInit {
           },
         ],
         icon: null,
-        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: selectedMember.userName })
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover danger',
     });
@@ -534,7 +534,7 @@ export class GroupDetailsPage implements OnInit {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_DESC',
-          { member_name: selectedMember.userName })
+          { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover',
     });
@@ -609,7 +609,7 @@ export class GroupDetailsPage implements OnInit {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
-          { member_name: selectedMember.userName })
+          { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover',
     });
@@ -668,13 +668,13 @@ export class GroupDetailsPage implements OnInit {
   onMemberSearch(query) {
     console.log('onMemberSearch', query);
     this.memberSearchQuery = query;
-    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', query)];
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'name', query)];
   }
 
   onActivitySearch(query) {
     console.log('onActivitySearch', query);
     this.activitySearchQuery = query;
-    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'title', query)];
+    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
   }
 
   extractInitial(name) {

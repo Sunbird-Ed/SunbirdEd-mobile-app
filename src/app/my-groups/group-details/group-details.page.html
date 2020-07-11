@@ -5,7 +5,7 @@
         <div class="gd-name">
           {{groupDetails?.name}}
           <div class="gd-created-by" *ngIf="groupCreator">
-            {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.userName} }}
+            {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
           </div>
         </div>
         <div class="gd-opts">
@@ -45,7 +45,7 @@
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
               [identifier]="member.userId" [indexOfMember]="i"
-              [initial]="commonUtilService.extractInitial(member.userName)" [title]="member.userName"
+              [initial]="commonUtilService.extractInitial(member.name)" [title]="member.name"
               [isMenu]="(loggedinUser.role === 'admin' && member.userId !== groupCreator.userId)"
               [isAdmin]="member.role === 'admin'" (menuClick)="memberMenuClick($event, member)">
             </sb-member-card>
@@ -64,7 +64,7 @@
         </div>
         <div *ngFor="let activity of filteredActivityList; let i = index">
           <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)"
-            [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event)">
+            [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event, activity)">
           </sb-course-card>
         </div>
 
@@ -80,7 +80,7 @@
 </ion-content>
 
 <ion-footer *ngIf="activeTab=='activities'">
-  <div class="cd-btn" *ngIf="!activityList.length">
+  <div class="cd-btn">
     <button class="sb-btn-large" (click)="showAddActivityPopup()">
       + {{'ADD_ACTIVITY' | translate}}
     </button>

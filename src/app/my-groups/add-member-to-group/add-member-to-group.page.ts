@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
-  ServerProfileDetailsRequest,
+  CheckUserExistsRequest,
   ProfileService,
   GroupService,
   AddMembersRequest,
@@ -10,7 +10,6 @@ import {
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
 import {
   AppHeaderService,
@@ -33,11 +32,10 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
 })
 export class AddMemberToGroupPage {
 
-  userId = '';
+  username = '';
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
-  userName = 'Rahul';
   groupId: string;
   memberList: GroupMember[] = [];
   userDetails;
@@ -105,16 +103,17 @@ export class AddMemberToGroupPage {
       InteractSubtype.VERIFY_CLICKED,
       Environment.GROUP,
       PageId.ADD_MEMBER);
-    if (!this.userId) {
+    if (!this.username) {
       this.showErrorMsg = true;
       return;
     }
     this.showErrorMsg = false;
-    const req: ServerProfileDetailsRequest = {
-      // userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
-      // userId: '95e4942d-cbe8-477d-aebd-ad8e6de4bfc8',
-      userId: 'e846e88c-26d1-4a40-9b28-181f76dc7746',
-      requiredFields: ProfileConstants.REQUIRED_FIELDS
+    const checkUserExistsRequest: CheckUserExistsRequest = {
+      matching: {
+        key: 'email',
+        value: this.username
+      },
+      captchaResponseToken: ''
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
@@ -128,13 +127,11 @@ export class AddMemberToGroupPage {
       ID.VERIFY_MEMBER);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.profileService.getServerProfilesDetails(req).toPromise()
-      .then(async (serverProfile) => {
+    this.profileService.checkServerProfileExists(checkUserExistsRequest).toPromise()
+      .then(async (checkUserExistsResponse) => {
         await loader.dismiss();
-        if (serverProfile) {
-          this.userDetails = serverProfile;
-          this.userName = serverProfile.firstName ? serverProfile.firstName : '';
-          this.userName += serverProfile.lastName ? serverProfile.lastName : '';
+        if (checkUserExistsResponse && checkUserExistsResponse.exists) {
+          this.userDetails = checkUserExistsResponse;
           this.isUserIdVerified = true;
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
@@ -146,16 +143,18 @@ export class AddMemberToGroupPage {
             undefined,
             undefined,
             ID.VERIFY_MEMBER);
-          console.log('this.userName', this.userName);
+        } else {
+          this.showErrorMsg = true;
         }
-      }).catch(async () => {
+      }).catch(async (e) => {
+        console.error(e);
         await loader.dismiss();
       });
   }
 
   onClearUser() {
     this.isUserIdVerified = false;
-    this.userId = '';
+    this.username = '';
   }
 
   async onAddToGroupClick() {
@@ -187,7 +186,7 @@ export class AddMemberToGroupPage {
       groupId: this.groupId,
       addMembersRequest: {
         members: [{
-          userId: this.userDetails.userId,
+          userId: this.userDetails.id,
           role: GroupMemberRole.MEMBER
         }]
       }
