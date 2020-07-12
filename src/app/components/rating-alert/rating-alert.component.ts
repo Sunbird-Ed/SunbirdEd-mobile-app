@@ -6,7 +6,6 @@ import { UtilityService } from '@app/services/utility-service';
 import { SharedPreferences, TelemetryService } from 'sunbird-sdk';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Observable } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 import { PreferenceKey, StoreRating } from '@app/app/app.constant';
 import {
   Environment,
@@ -61,7 +60,6 @@ export class AppRatingAlertComponent implements OnInit {
     private appVersion: AppVersion,
     private utilityService: UtilityService,
     private appRatingService: AppRatingService,
-    private translate: TranslateService,
     private platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private navParams: NavParams,
@@ -72,8 +70,7 @@ export class AppRatingAlertComponent implements OnInit {
     );
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss(null);
-      this.backButtonFunc.unsubscribe();
+      this.closePopover();
     });
   }
 
@@ -83,9 +80,7 @@ export class AppRatingAlertComponent implements OnInit {
       ImpressionType.VIEW,
       ImpressionSubtype.APP_RATING_POPUP,
       this.pageId,
-      Environment.HOME, '', '', '',
-      undefined,
-      undefined
+      Environment.HOME
     );
     this.appRatePopup();
   }
@@ -106,14 +101,13 @@ export class AppRatingAlertComponent implements OnInit {
 
   async rateLater() {
     this.rateLaterClickedCount = await this.appRatingService.rateLaterClickedCount();
-    const paramsMap = new Map();
-    paramsMap['rateLaterCount'] = this.rateLaterClickedCount;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATE_LATER_CLICKED,
       Environment.HOME,
-      this.pageId, undefined, paramsMap,
-      undefined, undefined
+      this.pageId,
+      undefined,
+      { rateLaterCount: this.rateLaterClickedCount }
     );
     this.closePopover();
   }
@@ -122,43 +116,32 @@ export class AppRatingAlertComponent implements OnInit {
     this.appVersion.getPackageName().then((pkg: any) => {
       this.utilityService.openPlayStore(pkg);
       this.appRatingService.setEndStoreRate(this.appRate);
-      const paramsMap = new Map();
-      paramsMap['appRating'] = this.appRate;
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.PLAY_STORE_BUTTON_CLICKED,
         Environment.HOME,
-        this.pageId, undefined, paramsMap,
-        undefined, undefined
+        this.pageId,
+        undefined,
+        { appRating: this.appRate }
       );
       this.popOverCtrl.dismiss(StoreRating.RETURN_CLOSE);
     });
   }
 
   submitRating() {
-    if (this.appRate >= StoreRating.APP_MIN_RATE) {
-      this.currentViewText = this.appRateView[ViewType.STORE_RATE];
-      const paramsMap = new Map();
-      paramsMap['appRating'] = this.appRate;
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.RATING_SUBMITTED,
-        Environment.HOME,
-        this.pageId, undefined, paramsMap,
-        undefined, undefined
-      );
-      return;
-    }
-    this.currentViewText = this.appRateView[ViewType.HELP_DESK];
-    const paramsMap = new Map();
-    paramsMap['appRating'] = this.appRate;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
       Environment.HOME,
-      this.pageId, undefined, paramsMap,
-      undefined, undefined
+      this.pageId,
+      undefined,
+      { appRating: this.appRate }
     );
+    if (this.appRate >= StoreRating.APP_MIN_RATE) {
+      this.currentViewText = this.appRateView[ViewType.STORE_RATE];
+    } else {
+      this.currentViewText = this.appRateView[ViewType.HELP_DESK];
+    }
   }
 
   goToHelpSection() {
@@ -166,19 +149,20 @@ export class AppRatingAlertComponent implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.HELP_SECTION_CLICKED,
       Environment.HOME,
-      this.pageId, undefined, undefined, undefined
+      this.pageId
     );
     this.popOverCtrl.dismiss(StoreRating.RETURN_HELP);
   }
 
   private async appRatePopup() {
     this.appRatingPopCount = await this.countAppRatingPopupAppeared();
-    const paramsMap = new Map();
-    paramsMap['appRatingPopAppearedCount'] = this.appRatingPopCount;
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER, InteractSubtype.APP_RATING_APPEARED,
-      this.pageId, Environment.HOME, undefined, paramsMap,
-      undefined, undefined
+      InteractType.OTHER,
+      InteractSubtype.APP_RATING_APPEARED,
+      this.pageId,
+      Environment.HOME,
+      undefined,
+      { appRatingPopAppearedCount: this.appRatingPopCount }
     );
   }
 

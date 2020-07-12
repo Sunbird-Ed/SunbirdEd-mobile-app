@@ -93,15 +93,13 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   public onConfirmationChange(event) {
-    const valuesMap = new Map();
-    valuesMap['isChecked'] = event.target.checked;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACCEPTANCE_CHECKBOX_CLICKED,
       Environment.HOME,
       PageId.TERMS_N_CONDITIONS,
       undefined,
-      valuesMap
+      {isChecked :  event.target.checked }
     );
     this.termsAgreed = event.target.checked;
   }
@@ -138,10 +136,7 @@ export class TermsAndConditionsPage implements OnInit {
 
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
-            if (loader) {
-              await loader.dismiss();
-              loader = undefined;
-            }
+            this.dismissLoader(loader);
             if (!this.appGlobalService.signinOnboardingLoader) {
               this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
               await this.appGlobalService.signinOnboardingLoader.present();
@@ -176,26 +171,16 @@ export class TermsAndConditionsPage implements OnInit {
                 }
               });
             }
-            console.log("inside can load");
           }).catch(async e => {
-            if (loader) {
-              await loader.dismiss();
-              loader = undefined;
-            }
+            this.dismissLoader(loader);
           });
       } else {
-        if (loader) {
-          await loader.dismiss();
-          loader = undefined;
-        }
+        this.dismissLoader(loader);
         await this.logoutOnSecondBackNavigation();
       }
       await tncUpdateHandlerService.dismissTncPage();
     } catch (e) {
-      if (loader) {
-        await loader.dismiss();
-        loader = undefined;
-      }
+      this.dismissLoader(loader);
       await this.logoutOnSecondBackNavigation();
     }
   }
@@ -218,5 +203,12 @@ export class TermsAndConditionsPage implements OnInit {
     this.unregisterBackButtonAction = this.platform.backButton.subscribeWithPriority(999, async () => {
       await this.logoutOnSecondBackNavigation();
     });
+  }
+
+  private async dismissLoader(loader: any) {
+    if (loader) {
+      await loader.dismiss();
+      loader = undefined;
+    }
   }
 }
