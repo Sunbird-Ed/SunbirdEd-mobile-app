@@ -255,7 +255,10 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+                    expect.anything()
+                );
                 done();
             }, 0);
         });

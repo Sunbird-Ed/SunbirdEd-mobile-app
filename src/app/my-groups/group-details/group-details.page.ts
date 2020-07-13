@@ -178,7 +178,12 @@ export class GroupDetailsPage implements OnInit {
     if (data) {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+        this.router.navigate(
+          [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+          {
+            state: { groupDetails: this.groupDetails }
+          }
+        );
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
       }
