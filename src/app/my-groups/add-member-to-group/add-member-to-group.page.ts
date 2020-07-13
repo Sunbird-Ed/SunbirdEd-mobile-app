@@ -32,13 +32,10 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
-  extras: any;
-  userId = '';
   captchaResponse: string;
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
-  userName = 'Rahul';
   isCaptchaEnabled: boolean;
   username = '';
   groupId: string;
@@ -61,8 +58,9 @@ export class AddMemberToGroupPage {
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
-    this.extras = this.router.getCurrentNavigation().extras.state;
-    this.groupId = this.extras.groupId;
+    const extras = this.router.getCurrentNavigation().extras.state;
+    this.groupId = extras.groupId;
+    this.memberList = extras.memberList;
     this.getGoogleCaptchaSiteKey();
   }
 
@@ -71,16 +69,15 @@ export class AddMemberToGroupPage {
       this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
         .then((res) => {
           const captchaConfig = JSON.parse(res.value);
-          this.isCaptchaEnabled = captchaConfig.isEnabled;
-          this.sunbirdGoogleCaptchaKey = captchaConfig.key;
+          this.isCaptchaEnabled =  captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+          this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
           this.commonUtilService.setGoogleCaptchaConfig(this.sunbirdGoogleCaptchaKey, this.isCaptchaEnabled);
         });
     } else if (Boolean(this.commonUtilService.getGoogleCaptchaConfig())) {
       const captchaConfig = this.commonUtilService.getGoogleCaptchaConfig();
-      this.isCaptchaEnabled = captchaConfig['isEnabled'];
-      this.sunbirdGoogleCaptchaKey = captchaConfig['key'];
+      this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+      this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
     }
-    this.memberList = this.extras.memberList;
   }
 
   ionViewWillEnter() {
@@ -123,12 +120,13 @@ export class AddMemberToGroupPage {
   }
 
   async captchaResolved(res) {
-    if (this.isCaptchaEnabled) {
       this.captchaResponse = res;
-    }
   }
 
   async onVerifyClick() {
+    if (this.isCaptchaEnabled) {
+      this.cap.execute();
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VERIFY_CLICKED,
@@ -139,7 +137,6 @@ export class AddMemberToGroupPage {
       return;
     }
     if (this.isCaptchaEnabled) {
-      this.cap.execute();
       if (!this.captchaResponse) {
         return false;
       }
