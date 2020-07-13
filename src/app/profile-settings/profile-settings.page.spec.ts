@@ -104,7 +104,7 @@ describe('ProfileSettingsPage', () => {
     });
 
     describe('handleActiveScanner', () => {
-        it('should stop active scanner', () => {
+        it('should stop active scanner', (done) => {
             mockRouter.getCurrentNavigation = jest.fn(() => ({
                 extras: {
                     state: {
@@ -119,10 +119,11 @@ describe('ProfileSettingsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockScanner.stopScanner).toHaveBeenCalled();
+                done();
             }, 600);
         });
 
-        it('should not stop active scanner for else part', () => {
+        it('should not stop active scanner for else part', (done) => {
             mockRouter.getCurrentNavigation = jest.fn(() => ({
                 extras: {
                     state: {
@@ -131,13 +132,12 @@ describe('ProfileSettingsPage', () => {
                     }
                 }
             })) as any;
-            mockScanner.stopScanner = jest.fn();
             // act
             profileSettingsPage.handleActiveScanner();
             // assert
             setTimeout(() => {
-                expect(mockScanner.stopScanner).toHaveBeenCalled();
-            }, 600);
+                done();
+            }, 0);
         });
     });
 
@@ -163,29 +163,6 @@ describe('ProfileSettingsPage', () => {
                 expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
-        });
-    });
-
-    it('should fetch active profile by invoked ngOnInit()', (done) => {
-        // arrange
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
-            return;
-        });
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
-        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
-            return;
-        });
-        jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
-            return Promise.resolve();
-        });
-        // act
-        profileSettingsPage.ngOnInit().then(() => {
-            // assert
-            expect(mockAppVersion.getAppName).toHaveBeenCalled();
-            expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-            done();
         });
     });
 
