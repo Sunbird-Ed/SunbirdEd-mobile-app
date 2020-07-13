@@ -1423,6 +1423,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = id || '';
     corRelation.type = type;
+    if (this.source === PageId.GROUP_DETAIL) {
+      corRelation.id = PageId.GROUP_DETAIL;
+      corRelation.type = CorReleationDataType.FROM_PAGE;
+    }
     this.corRelationList.push(corRelation);
   }
 

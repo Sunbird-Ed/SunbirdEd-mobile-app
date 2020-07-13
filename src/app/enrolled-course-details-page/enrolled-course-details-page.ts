@@ -2022,8 +2022,24 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async addToGroupActivity() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.ADD_TO_GROUP_CLICKED,
+        Environment.GROUP,
+        PageId.COURSE_DETAIL);
+
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.COURSE_DETAIL,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.ADD_ACTIVITY_TO_GROUP);
     const addActivitiesRequest: AddActivitiesRequest = {
       groupId: this.groupId,
       addActivitiesRequest: {

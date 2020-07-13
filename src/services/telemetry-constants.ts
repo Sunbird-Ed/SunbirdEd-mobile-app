@@ -154,7 +154,8 @@ export enum PageId {
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
     MY_GROUP = 'my-group',
-    ADD_MEMBER = 'add-member'
+    ADD_MEMBER = 'add-member',
+    ACTIVITY_DETAIL = 'activity-detail'
 }
 
 export enum LogType {
@@ -500,7 +501,8 @@ export enum InteractSubtype {
     REMOVE_MEMBER_CLICKED = 'remove-member-clicked',
     REMOVE_ACTIVITY_CLICKED = 'remove-activity-clicked',
     VERIFY_CLICKED = 'verify-clicked',
-    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked'
+    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked',
+    ADD_TO_GROUP_CLICKED = 'add-to-group-clicked'
 }
 
 export enum ID {
