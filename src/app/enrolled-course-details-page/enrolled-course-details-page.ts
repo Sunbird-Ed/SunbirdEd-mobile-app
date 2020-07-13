@@ -2039,6 +2039,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         undefined,
         undefined,
         undefined,
+        this.corRelationList,
         ID.ADD_ACTIVITY_TO_GROUP);
     const addActivitiesRequest: AddActivitiesRequest = {
       groupId: this.groupId,
@@ -2051,23 +2052,34 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         ]
       }
     };
+
     try {
-      await this.groupService.addActivities(addActivitiesRequest).toPromise();
+      const addActivityResponse = await this.groupService.addActivities(addActivitiesRequest).toPromise();
+
       await loader.dismiss();
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.SUCCESS,
-        '',
-        Environment.GROUP,
-        PageId.COURSE_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        ID.ADD_ACTIVITY_TO_GROUP
-      );
-      window.history.go(-2);
+      if (addActivityResponse.error
+        && addActivityResponse.error.activities
+        && addActivityResponse.error.activities.length) {
+        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        this.location.back();
+      } else {
+        this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.COURSE_DETAIL,
+          undefined,
+          undefined,
+          undefined,
+          this.corRelationList,
+          ID.ADD_ACTIVITY_TO_GROUP
+        );
+        window.history.go(-2);
+      }
     } catch (e) {
       await loader.dismiss();
+      this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
       console.error(e);
       this.location.back();
     }
