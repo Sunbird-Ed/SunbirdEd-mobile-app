@@ -386,6 +386,7 @@
   "LOADING_USER_LIST": "Loading user list, please wait",
   "LOAD_FILE": "Load File",
   "LOGGED_IN_AS": "Logged In As",
+  "LOGGED_IN_MEMBER": "{{member_name}} (You)",
   "LOGGED_OUT": "Logged out",
   "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "The first step towards creating your own group, study circle or classroom is to log in",
   "LOGIN_TO_JOIN_TRAINING": "Log in to join a course",

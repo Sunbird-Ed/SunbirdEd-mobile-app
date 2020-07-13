@@ -31,6 +31,7 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 })
 export class GroupDetailsPage implements OnInit {
 
+  isGroupLoading = false;
   userId: string;
   headerObservable: any;
   groupId: string;
@@ -120,8 +121,7 @@ export class GroupDetailsPage implements OnInit {
   }
 
   private async fetchGroupDetails() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.isGroupLoading = true;
     const getByIdRequest: GetByIdRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       id: this.groupId,
@@ -142,11 +142,19 @@ export class GroupDetailsPage implements OnInit {
       this.filteredMemberList = new Array(...this.memberList);
       this.filteredActivityList = new Array(...this.activityList);
 
-      await loader.dismiss();
+      this.isGroupLoading = false;
     } catch (e) {
-      await loader.dismiss();
+      this.isGroupLoading = false;
       console.error(e);
     }
+  }
+
+  getMemberName(member) {
+    let memberName = member.name;
+    if (this.loggedinUser.userId === member.userId) {
+      memberName = this.commonUtilService.translateMessage('LOGGED_IN_MEMBER', { member_name: member.name });
+    }
+    return memberName;
   }
 
   switchTabs(tab) {
@@ -154,12 +162,6 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async groupMenuClick(event) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
-
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
     if (this.groupCreator.userId === this.userId) {
       menuList = MenuOverflow.MENU_GROUP_CREATOR;
@@ -196,12 +198,6 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async activityMenuClick(event, selectedActivity) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
-
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
       componentProps: {
@@ -220,11 +216,6 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async memberMenuClick(event, selectedMember) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
     let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
 
     if (selectedMember.role === GroupMemberRole.ADMIN) {  // Is admin and creator
