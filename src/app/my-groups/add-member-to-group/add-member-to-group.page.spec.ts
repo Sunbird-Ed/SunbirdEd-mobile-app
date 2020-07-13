@@ -26,12 +26,13 @@ describe('AddMemberToGroupPage', () => {
         })) as any
     };
     const captchaConfig = new Map();
-    captchaConfig.set('isEnabled' , true);
-    captchaConfig.set('key' , 'dasewqe33414');
+    // captchaConfig.set('isEnabled', true);
+    // captchaConfig.set('key', 'dasewqe33414');
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getGoogleCaptchaSitekey: jest.fn(() => { }),
         setGoogleCaptchaSitekey: jest.fn(),
-        getGoogleCaptchaConfig: jest.fn(() => captchaConfig)
+        getGoogleCaptchaConfig: jest.fn(() => captchaConfig),
+        setGoogleCaptchaConfig: jest.fn()
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
