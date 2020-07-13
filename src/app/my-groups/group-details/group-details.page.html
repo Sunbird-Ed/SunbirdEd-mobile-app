@@ -38,7 +38,7 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
-          <div *ngIf="!filteredMemberList && !filteredMemberList.length" class="text-center">
+          <div *ngIf="!filteredMemberList && !filteredMemberList.length" class="gd-empty-search-result text-center">
             <img *ngIf="!memberSearchQuery" src="assets/imgs/no_member.svg" alt="">
             <img *ngIf="memberSearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
           </div>
@@ -58,7 +58,7 @@
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!filteredActivityList && !filteredActivityList.length" class="text-center">
+        <div *ngIf="!filteredActivityList || !filteredActivityList.length" class="gd-empty-search-result text-center">
           <img *ngIf="!activitySearchQuery" src="assets/imgs/no_activity.svg" alt="">
           <img *ngIf="activitySearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
         </div>
