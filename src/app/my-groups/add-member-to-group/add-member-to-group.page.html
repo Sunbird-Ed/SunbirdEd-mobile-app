@@ -24,8 +24,7 @@
         <div class="au-ip">
             <div class="au-ip-info clearfix">
                 <span class="pull-left">{{'MEMBER_ID' | translate: {'app_name': appName} }}</span>
-                <span class="pull-right">
-                    {{'WHAT_IS_MEMBER_ID' | translate: {'app_name': appName} }}
+                <span class="pull-right" (click)="openInfoPopup()">
                     <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                 </span>
             </div>

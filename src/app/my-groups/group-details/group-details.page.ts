@@ -727,7 +727,7 @@ export class GroupDetailsPage implements OnInit {
           icon: null,
           formItems: supportedActivityList
         },
-        cssClass: 'sb-popover info',
+        cssClass: 'sb-popover info select-activity-popover',
       });
       await selectActivityPopup.present();
       const { data } = await selectActivityPopup.onDidDismiss();
