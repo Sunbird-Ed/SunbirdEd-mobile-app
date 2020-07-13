@@ -103,7 +103,7 @@ describe('ProfileSettingsPage', () => {
         expect(profileSettingsPage).toBeTruthy();
     });
 
-    it('should fetch active profile by invoked ngOnInit()', (done) => {
+    xit('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
