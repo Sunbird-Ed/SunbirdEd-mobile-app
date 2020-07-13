@@ -85,6 +85,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   headerObservable: Subscription;
   backButtonFunc: Subscription;
   public objRollup: Rollup;
+  private deeplinkContent;
+
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -129,6 +131,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
+    this.deeplinkContent = this.extrasData.deeplinkContent;
   }
 
   ngOnInit() {
@@ -221,6 +224,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   ionViewDidEnter(): void {
     this.sbProgressLoader.hide({id: 'login'});
     this.sbProgressLoader.hide({ id: this.courseContent.identifier });
+    if (this.deeplinkContent) {
+      const event = {
+        data: this.deeplinkContent,
+        isFromDeeplink: true
+      };
+      this.openContentDetails(event);
+      this.deeplinkContent = null;
+    }
   }
 
   ngOnDestroy() {
@@ -514,7 +525,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   openContentDetails(event) {
-    if (Object.keys(event.event).length !== 0) {
+    if ((event.event && Object.keys(event.event).length !== 0) || event.isFromDeeplink) {
       if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
@@ -649,7 +660,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async joinTraining() {
-    if (!this.batches.length) {
+    if (!this.batches || !this.batches.length) {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
     } else if (

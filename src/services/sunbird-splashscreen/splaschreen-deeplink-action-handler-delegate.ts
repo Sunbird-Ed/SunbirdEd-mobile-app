@@ -125,10 +125,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private async handleDeeplink(payloadUrl: string) {
     const dialCode = await this.qrScannerResultHandler.parseDialCode(payloadUrl);
 
-    const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
-    const urlMatch = payloadUrl.match(urlRegex);
+    // const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
+    // const urlMatch = payloadUrl.match(urlRegex);
 
     // TODO: Is supported URL or not.
+    // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
     const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number }[] = [
       {
@@ -146,51 +147,76 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         name: 'Textbook detail',
         code: 'textbookDetail',
-        values: '(?:\\/play\\/(?:content|collection)\\/(?<contentId>\\w+))',
-        route: 'collection-detail-etb'
+        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+))',
+        route: 'collection-detail-etb',
+        priority: 2
+      },
+      {
+        name: 'Textbook content detail',
+        code: 'textbookContentDetail',
+        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
+        route: 'collection-detail-etb',
+        priority: 1
       },
       {
         name: 'Course Detail',
         code: 'courseDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+))',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+))',
         route: 'enrolled-course-details',
-        priority: 2
+        priority: 3
       },
       {
         name: 'Module Detail',
         code: 'moduleDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+)\\?(?=.*\\bmoduleId\\b=(?<moduleId>([^&]*)).*))',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+)\\?(?=.*\\bmoduleId\\b=(?<moduleId>([^&]*)).*))',
         route: 'module-details',
         priority: 1
       },
       {
         name: 'Course Content Detail',
         code: 'courseContentDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<courseId>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
+        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
         route: 'course-content-details',
-        priority: 1
+        priority: 2
       },
       {
         name: 'Course tab',
         code: 'courseTab',
         values: '^.*explore-course(\\?.*|$)',
-        route: 'tabs/courses'
+        route: 'tabs/courses',
+        priority: 4
+      },
+      {
+        name: 'Library',
+        code: 'library',
+        values: '\\/(resources|explore)$',
+        route: 'tabs/resources'
       }
     ];
 
-    const matchedConfig = deepLinkUrlConfig.find(config => {
-      // Logic for priority check
-      return !!payloadUrl.match(new RegExp(config.values));
+    let matchedDeeplinkConfig: { name: string, code: string, values: string, route: string, priority?: number } = null;
+    let urlMatch;
+
+    deepLinkUrlConfig.forEach(config => {
+      const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
+      if (!!urlRegexMatch) {
+        if (!matchedDeeplinkConfig ||
+          (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
+          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
+          matchedDeeplinkConfig = config;
+          urlMatch = urlRegexMatch;
+        }
+      }
     });
 
-    if (!matchedConfig) {
+    if (!matchedDeeplinkConfig) {
       // TODO, toast message
       return;
     }
 
     let identifier;
     if (urlMatch && urlMatch.groups && Object.keys(urlMatch.groups).length) {
-      identifier = urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId;
+      identifier = urlMatch.groups.quizId || urlMatch.groups.content_id || urlMatch.groups.course_id;
     }
 
     await this.sbProgressLoader.show(this.generateProgressLoaderContext(payloadUrl, identifier, dialCode));
@@ -218,7 +244,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await this.setOnboradingData(payloadUrl);
       }
 
-      this.handleNavigation(payloadUrl, identifier, dialCode, matchedConfig.route);
+      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route);
     }
   }
 
@@ -367,6 +393,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         console.error(e);
       }
     }
+
+    // initTabs(this.container, GUEST_TEACHER_TABS);
+    // this.events.publish('refresh:profile');
   }
 
   private async setAppLanguage(langCode: string) {
@@ -467,10 +496,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async handleNavigation(payloadUrl, identifier, dialCode, route) {
-    if (!this._isDelegateReady) {
-      this.closeProgressLoader();
-      this.savedPayloadUrl = payloadUrl;
-    } else if (dialCode) {
+
+    if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.router.navigate([route],
         {
@@ -497,6 +524,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string) {
     try {
+      // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
         content = await this.getContentData(identifier);
@@ -509,7 +537,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       // this.appGlobalServices.skipCoachScreenForDeeplink = true;
       if (content) {
         if (content.mimeType === MimeType.COLLECTION) {
-          this.navigateToCollection(identifier, content, payloadUrl);
+          this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
           await this.router.navigate([route],
             {
@@ -617,7 +645,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     this.loginPopup = null;
   }
-
   // This method is called only when a deeplink is clicked before Onboarding is not completed
   eventToSetDefaultOnboardingData(): void {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
@@ -629,7 +656,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCollection(
-    identifier, content: Content | null, payloadUrl: string, isOnboardingSkipped = false, isFromChannelDeeplink = false, route?: string
+    identifier, content: Content | null, payloadUrl: string, route?: string,
+    isOnboardingSkipped = false, isFromChannelDeeplink = false
   ) {
     let childContentId;
     if (payloadUrl) {
@@ -657,16 +685,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (this.childContent) {
       if (this.childContent.mimeType === MimeType.COLLECTION) {
-        if (content.contentType === ContentType.COURSE.toLowerCase()) {
+        if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
           const chapterParams: NavigationExtras = {
             state: {
               courseContent: content,
               chapterData: this.childContent,
               isOnboardingSkipped,
-              isFromDeeplink: true
+              isFromDeeplink: true,
+              deeplinkContent: this.childContent
             }
           };
-
+          this.closeProgressLoader();
           this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
             chapterParams);
         } else {
@@ -679,22 +708,44 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             });
         }
       } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content: this.childContent,
-            depth: 1,
-            // contentState,  // check in chapter detail page
-            isChildContent: true,
-            // corRelation: this.corRelationList,
-            corRelation: undefined,
-            isCourse: content.contentType === ContentType.COURSE.toLowerCase(),
-            // course: this.updatedCourseCardData, // check in chapter detail page
-            isOnboardingSkipped
+        if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+          if (this.appGlobalServices.isGuestUser) {
+            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+              {
+                state: {
+                  content,
+                  isFromChannelDeeplink,
+                  corRelation: this.getCorrelationList(payloadUrl)
+                }
+              });
           }
-        });
+        } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
+          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
+            {
+              state: {
+                content,
+                deeplinkContent: this.childContent,
+                corRelation: this.getCorrelationList(payloadUrl)
+              }
+            });
+        } else {
+          this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+            state: {
+              content: this.childContent,
+              depth: 1,
+              // contentState,  // check in chapter detail page
+              isChildContent: true,
+              // corRelation: this.corRelationList,
+              corRelation: undefined,
+              isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
+              // course: this.updatedCourseCardData, // check in chapter detail page
+              isOnboardingSkipped
+            }
+          });
+        }
       }
     } else {
-      if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
           {
             state: {
