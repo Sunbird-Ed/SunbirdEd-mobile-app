@@ -103,14 +103,52 @@ describe('ProfileSettingsPage', () => {
         expect(profileSettingsPage).toBeTruthy();
     });
 
-    xit('should fetch active profile by invoked ngOnInit()', (done) => {
+    describe('handleActiveScanner', () => {
+        it('should stop active scanner', () => {
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        id: 'sample-id',
+                        stopScanner: true
+                    }
+                }
+            })) as any;
+            mockScanner.stopScanner = jest.fn();
+            // act
+            profileSettingsPage.handleActiveScanner();
+            // assert
+            setTimeout(() => {
+                expect(mockScanner.stopScanner).toHaveBeenCalled();
+            }, 600);
+        });
+
+        it('should not stop active scanner for else part', () => {
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        id: 'sample-id',
+                        stopScanner: false
+                    }
+                }
+            })) as any;
+            mockScanner.stopScanner = jest.fn();
+            // act
+            profileSettingsPage.handleActiveScanner();
+            // assert
+            setTimeout(() => {
+                expect(mockScanner.stopScanner).toHaveBeenCalled();
+            }, 600);
+        });
+    });
+
+    it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
             return;
         });
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
             return;
         });
@@ -403,84 +441,6 @@ describe('ProfileSettingsPage', () => {
         });
     });
 
-    it('should control Scanner to called handleActiveScanner()', (done) => {
-        // arrange
-        mockRouter.getCurrentNavigation = jest.fn(() => ({
-            extras: null
-        } as any));
-        profileSettingsPage = new ProfileSettingsPage(
-            mockProfileService as ProfileService,
-            mockFrameworkService as FrameworkService,
-            mockFrameworkUtilService as FrameworkUtilService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockTranslate as TranslateService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService,
-            mockEvents as Events,
-            mockScanner as SunbirdQRScanner,
-            mockPlatform as Platform,
-            mockCommonUtilService as CommonUtilService,
-            mockContainer as ContainerService,
-            mockHeaderService as AppHeaderService,
-            mockRouter as Router,
-            mockAppVersion as AppVersion,
-            mockAlertCtrl as AlertController,
-            mockLocation as Location,
-            mockSplashScreenService as SplashScreenService,
-            mockActivatedRoute as ActivatedRoute
-        );
-        mockScanner.stopScanner = jest.fn();
-        // act
-        profileSettingsPage.handleActiveScanner();
-        // assert
-        setTimeout(() => {
-            expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
-            done();
-        }, 0);
-    });
-
-    it('should control Scanner to called handleActiveScanner()', (done) => {
-        // arrange
-        mockRouter.getCurrentNavigation = jest.fn(() => ({
-            extras: {
-                state: {
-                    stopScanner: true,
-                    forwardMigration: true
-                }
-            }
-        } as any));
-        profileSettingsPage = new ProfileSettingsPage(
-            mockProfileService as ProfileService,
-            mockFrameworkService as FrameworkService,
-            mockFrameworkUtilService as FrameworkUtilService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockTranslate as TranslateService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService,
-            mockEvents as Events,
-            mockScanner as SunbirdQRScanner,
-            mockPlatform as Platform,
-            mockCommonUtilService as CommonUtilService,
-            mockContainer as ContainerService,
-            mockHeaderService as AppHeaderService,
-            mockRouter as Router,
-            mockAppVersion as AppVersion,
-            mockAlertCtrl as AlertController,
-            mockLocation as Location,
-            mockSplashScreenService as SplashScreenService,
-            mockActivatedRoute as ActivatedRoute
-        );
-        mockScanner.stopScanner = jest.fn();
-        // act
-        profileSettingsPage.handleActiveScanner();
-        // assert
-        setTimeout(() => {
-            expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
-            expect(mockScanner.stopScanner).toHaveBeenCalled();
-            done();
-        }, 500);
-    });
-
     it('should handle all header events by invoked ionViewWillEnter()', (done) => {
         // arrange
         const data = jest.fn((fn => fn()));
@@ -605,17 +565,16 @@ describe('ProfileSettingsPage', () => {
         // assert
         expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
             expect.anything(),
-            'failed',
+            'passed',
             PageId.ONBOARDING_PROFILE_PREFERENCES,
             InteractSubtype.FINISH_CLICKED
         );
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            'submit-clicked',
-            Environment.HOME,
-            PageId.ONBOARDING_PROFILE_PREFERENCES,
-            undefined,
-            values
+            InteractType.SELECT_SUBMIT, '',
+            Environment.ONBOARDING,
+            PageId.MANUAL_PROFILE,
+            undefined, undefined, undefined,
+            []
         );
     });
 
