@@ -416,8 +416,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.REMOVE_ACTIVITY);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
         removeActivitiesRequest: {
@@ -426,7 +427,8 @@ export class GroupDetailsPage implements OnInit {
       };
       try {
         const removeActivitiesResponse = await this.groupService.removeActivities(removeActivitiesRequest).toPromise();
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (removeActivitiesResponse.error
           && removeActivitiesResponse.error.activities
           && removeActivitiesResponse.error.activities.length) {
@@ -446,7 +448,8 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
       }
@@ -488,8 +491,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.REMOVE_MEMBER);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
         removeMembersRequest: {
@@ -499,7 +503,8 @@ export class GroupDetailsPage implements OnInit {
       try {
         const removeMemberResponse = await this.groupService.removeMembers(removeMembersRequest).toPromise();
 
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (removeMemberResponse.error
           && removeMemberResponse.error.members
           && removeMemberResponse.error.members.length) {
@@ -519,7 +524,8 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
       }
@@ -562,8 +568,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.MAKE_GROUP_ADMIN);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
         updateMembersRequest: {
@@ -576,7 +583,8 @@ export class GroupDetailsPage implements OnInit {
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
 
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
@@ -596,7 +604,8 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
@@ -639,8 +648,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.DISMISS_GROUP_ADMIN);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
         updateMembersRequest: {
@@ -652,7 +662,8 @@ export class GroupDetailsPage implements OnInit {
       };
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
@@ -672,7 +683,8 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
         this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
@@ -727,7 +739,7 @@ export class GroupDetailsPage implements OnInit {
           icon: null,
           formItems: supportedActivityList
         },
-        cssClass: 'sb-popover info',
+        cssClass: 'sb-popover info select-activity-popover',
       });
       await selectActivityPopup.present();
       const { data } = await selectActivityPopup.onDidDismiss();
