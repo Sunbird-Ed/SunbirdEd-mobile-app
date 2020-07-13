@@ -179,10 +179,15 @@ describe('MyGroupsPage', () => {
             const data = {
                 name: 'groupInfo'
             };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
                 return Promise.resolve();
             });
             myGroupsPage.handleHeaderEvents(data);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+            );
             expect(data.name).toBe('groupInfo');
         });
         it('should return popup for groupInfo', () => {
