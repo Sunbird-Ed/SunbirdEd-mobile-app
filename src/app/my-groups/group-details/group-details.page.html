@@ -30,7 +30,7 @@
             (ngModelChange)="onMemberSearch(searchMember)">
         </div>
         <div class="gd-add-member-container">
-          <div class="gd-add-member" (click)="navigateToAddUserPage()">
+          <div *ngIf="loggedinUser.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
             <span class="gd-add-member-icon">
               <img src="assets/imgs/ic_person_add_white.svg">
             </span>
@@ -44,9 +44,8 @@
           </div>
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-              [identifier]="member.userId" [indexOfMember]="i"
-              [initial]="commonUtilService.extractInitial(member.name)" [title]="member.name"
-              [isMenu]="(loggedinUser.role === 'admin' && member.userId !== groupCreator.userId)"
+              [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
+              [title]="member.name" [isMenu]="(loggedinUser.role === 'admin' && member.userId !== groupCreator.userId)"
               [isAdmin]="member.role === 'admin'" (menuClick)="memberMenuClick($event, member)">
             </sb-member-card>
           </div>
@@ -63,7 +62,8 @@
           <img *ngIf="activitySearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
         </div>
         <div *ngFor="let activity of filteredActivityList; let i = index">
-          <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)"
+          <sb-course-card *ngIf="activity.type === 'course' && activity.activityInfo" [section]="null"
+            [course]="activity.activityInfo" (click)="navigateToActivityDetails($event)"
             [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event, activity)">
           </sb-course-card>
         </div>
@@ -79,7 +79,7 @@
 
 </ion-content>
 
-<ion-footer *ngIf="activeTab=='activities'">
+<ion-footer *ngIf="activeTab=='activities' && loggedinUser.role === 'admin'">
   <div class="cd-btn">
     <button class="sb-btn-large" (click)="showAddActivityPopup()">
       + {{'ADD_ACTIVITY' | translate}}

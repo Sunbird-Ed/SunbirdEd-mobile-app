@@ -4,7 +4,8 @@ import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
   FormAndFrameworkUtilService,
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService, InteractType, InteractSubtype, Environment, ImpressionType, ID
+  CommonUtilService, AppGlobalService, TelemetryGeneratorService,
+  InteractType, InteractSubtype, Environment, ImpressionType, ID
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
@@ -13,7 +14,9 @@ import {
   GroupService, GetByIdRequest, Group,
   GroupMember, GroupMemberRole, DeleteByIdRequest,
   RemoveMembersRequest,
-  UpdateMembersRequest, RemoveActivitiesRequest, CachedItemRequestSourceFrom, GroupUpdateMembersResponse, GroupRemoveActivitiesResponse
+  UpdateMembersRequest, RemoveActivitiesRequest,
+  CachedItemRequestSourceFrom, GroupUpdateMembersResponse,
+  GroupActivity
 } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
@@ -33,7 +36,7 @@ export class GroupDetailsPage implements OnInit {
   groupId: string;
   groupDetails: Group;
   activeTab = 'activities';
-  activityList = [];
+  activityList: GroupActivity[] = [];
   filteredActivityList = [];
   memberList: GroupMember[] = [];
   filteredMemberList = [];
@@ -181,6 +184,8 @@ export class GroupDetailsPage implements OnInit {
         this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
+      } else if (data.selectedItem === 'MENU_LEAVE_GROUP') {
+        this.showLeaveGroupPopup();
       }
     }
   }
@@ -350,23 +355,33 @@ export class GroupDetailsPage implements OnInit {
         }
       };
       try {
-        this.groupService.removeMembers(removeMembersRequest).toPromise();
-        this.location.back();
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.SUCCESS,
-          '',
-          Environment.GROUP,
-          PageId.GROUP_DETAIL,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          ID.LEAVE_GROUP);
+        const removeMemberResponse = await this.groupService.removeMembers(removeMembersRequest).toPromise();
+
+        await loader.dismiss();
+        if (removeMemberResponse.error
+          && removeMemberResponse.error.members
+          && removeMemberResponse.error.members.length) {
+          this.commonUtilService.showToast('LEAVE_GROUP_ERROR_MSG');
+        } else {
+          this.location.back();
+
+          this.commonUtilService.showToast('LEAVE_GROUP_SUCCESS_MSG');
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SUCCESS,
+            '',
+            Environment.GROUP,
+            PageId.GROUP_DETAIL,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.LEAVE_GROUP);
+        }
       } catch (e) {
         console.error(e);
+        await loader.dismiss();
+        this.commonUtilService.showToast('LEAVE_GROUP_ERROR_MSG');
       }
-      await loader.dismiss();
-      this.location.back();
     }
   }
 
@@ -419,8 +434,9 @@ export class GroupDetailsPage implements OnInit {
         if (removeActivitiesResponse.error
           && removeActivitiesResponse.error.activities
           && removeActivitiesResponse.error.activities.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
         } else {
+          this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -436,6 +452,7 @@ export class GroupDetailsPage implements OnInit {
       } catch (e) {
         await loader.dismiss();
         console.error(e);
+        this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
       }
     }
   }
@@ -490,8 +507,9 @@ export class GroupDetailsPage implements OnInit {
         if (removeMemberResponse.error
           && removeMemberResponse.error.members
           && removeMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
         } else {
+          this.commonUtilService.showToast('REMOVE_MEMBER_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -507,6 +525,7 @@ export class GroupDetailsPage implements OnInit {
       } catch (e) {
         await loader.dismiss();
         console.error(e);
+        this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
       }
     }
   }
@@ -565,8 +584,9 @@ export class GroupDetailsPage implements OnInit {
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
+          this.commonUtilService.showToast('MAKE_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -582,6 +602,7 @@ export class GroupDetailsPage implements OnInit {
       } catch (e) {
         await loader.dismiss();
         console.error(e);
+        this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
     }
   }
@@ -639,8 +660,9 @@ export class GroupDetailsPage implements OnInit {
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
+          this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -656,6 +678,7 @@ export class GroupDetailsPage implements OnInit {
       } catch (e) {
         await loader.dismiss();
         console.error(e);
+        this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
     }
   }
