@@ -77,8 +77,8 @@
           </div>
         </div>
         <div *ngFor="let activity of filteredActivityList; let i = index" class="mb-8">
-          <sb-course-card *ngIf="activity.type === 'course' && activity.activityInfo" [section]="null"
-            [course]="activity.activityInfo" (click)="navigateToActivityDetails($event)"
+          <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
+            [course]="activity.activityInfo" (click)="navigateToActivityDetails(activity)"
             [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event, activity)">
           </sb-course-card>
         </div>

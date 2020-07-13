@@ -2041,7 +2041,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         activities: [
           {
             id: this.identifier,
-            type: 'course'
+            type: 'Course'
           }
         ]
       }

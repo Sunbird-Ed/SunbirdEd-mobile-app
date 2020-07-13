@@ -740,15 +740,12 @@ export class GroupDetailsPage implements OnInit {
   }
 
   private async search(data) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.SEARCH_BUTTON_CLICKED,
-    //   Environment.HOME,
-    //   PageId.COURSES);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
         activityFilters: data.selectedVal.filters,
         source: PageId.GROUP_DETAIL,
-        groupId: this.groupId
+        groupId: this.groupId,
+        activityList: this.activityList
       }
     });
   }
