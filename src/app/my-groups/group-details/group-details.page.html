@@ -38,9 +38,12 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
-          <div *ngIf="!filteredMemberList && !filteredMemberList.length" class="gd-empty-search-result text-center">
+          <div *ngIf="!filteredMemberList || !filteredMemberList.length" class="gd-empty-search-result text-center">
             <img *ngIf="!memberSearchQuery" src="assets/imgs/no_member.svg" alt="">
-            <img *ngIf="memberSearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
+            <div *ngIf="memberSearchQuery">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
           </div>
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
@@ -60,10 +63,13 @@
         </div>
         <div *ngIf="!filteredActivityList || !filteredActivityList.length" class="gd-empty-search-result text-center">
           <img *ngIf="!activitySearchQuery" src="assets/imgs/no_activity.svg" alt="">
-          <img *ngIf="activitySearchQuery" src="assets/imgs/empty_search_result.svg" alt="">
+          <div *ngIf="activitySearchQuery">
+            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
         </div>
-        <div *ngFor="let activity of filteredActivityList; let i = index">
-          <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)"
+        <div *ngFor="let activity of filteredActivityList; let i = index" class="mb-8">
+          <sb-course-card [section]="null" (click)="navigateToActivityDetails(activity)"
             [isMenu]="loggedinUser.role === 'admin'" (menuClick)="activityMenuClick($event, activity)">
           </sb-course-card>
         </div>

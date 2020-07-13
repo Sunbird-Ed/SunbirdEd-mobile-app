@@ -683,11 +683,12 @@ export class GroupDetailsPage implements OnInit {
     return split[0];
   }
 
-  navigateToActivityDetails(event) {
+  navigateToActivityDetails(activity) {
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId,
-        memberList: this.memberList
+        memberList: this.memberList,
+        activity
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
