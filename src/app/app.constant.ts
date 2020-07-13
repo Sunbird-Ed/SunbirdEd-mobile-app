@@ -193,7 +193,7 @@ export class MenuOverflow {
     public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
     public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP'];
-    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
