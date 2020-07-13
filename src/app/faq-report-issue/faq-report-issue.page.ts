@@ -373,7 +373,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory && this.formValues.children.subcategory.board &&
       this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
-      element.email) {
+      element.contactinfo.email) {
         this.supportEmail = element.contactinfo.email;
       }
     });
