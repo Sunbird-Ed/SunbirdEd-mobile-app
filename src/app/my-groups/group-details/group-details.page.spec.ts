@@ -367,6 +367,9 @@ describe('GroupDetailsPage', () => {
 
     describe('activityMenuClick', () => {
         it('should return showRemoveActivityPopup if data is not undefined', (done) => {
+            const request = {
+                id: 'sample-id'
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
@@ -383,7 +386,7 @@ describe('GroupDetailsPage', () => {
             }));
             mockGroupService.removeActivities = jest.fn(() => of({ error: { members: undefined } })) as any;
             // act
-            groupDetailsPage.activityMenuClick(true).then(() => {
+            groupDetailsPage.activityMenuClick(true, request).then(() => {
                 setTimeout(() => {
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
@@ -420,6 +423,9 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should return showRemoveActivityPopup if data is error members', (done) => {
+            const request = {
+                id: 'sample-id'
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
@@ -436,7 +442,7 @@ describe('GroupDetailsPage', () => {
             }));
             mockGroupService.removeActivities = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
             // act
-            groupDetailsPage.activityMenuClick(true).then(() => {
+            groupDetailsPage.activityMenuClick(true, request).then(() => {
                 setTimeout(() => {
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
@@ -462,6 +468,9 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should not return showRemoveActivityPopup if data undefined', (done) => {
+            const request = {
+                id: 'sample-id'
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
@@ -478,7 +487,7 @@ describe('GroupDetailsPage', () => {
             }));
             mockGroupService.removeActivities = jest.fn(() => throwError({ error: {} })) as any;
             // act
-            groupDetailsPage.activityMenuClick(true).then(() => {
+            groupDetailsPage.activityMenuClick(true, request).then(() => {
                 setTimeout(() => {
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
