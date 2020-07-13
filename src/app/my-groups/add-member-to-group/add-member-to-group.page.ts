@@ -1,15 +1,15 @@
 import { Component, Inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
-  ServerProfileDetailsRequest,
+  CheckUserExistsRequest,
   ProfileService,
   GroupService,
   AddMembersRequest,
-  GroupMemberRole
+  GroupMemberRole,
+  GroupMember
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
 import {
   AppHeaderService,
@@ -31,12 +31,13 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
-  userId = '';
+
+  username = '';
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
-  userName = 'Rahul';
   groupId: string;
+  memberList: GroupMember[] = [];
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
@@ -54,6 +55,7 @@ export class AddMemberToGroupPage {
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
+    this.memberList = extras.memberList;
   }
 
   ionViewWillEnter() {
@@ -97,84 +99,94 @@ export class AddMemberToGroupPage {
 
   async onVerifyClick() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.VERIFY_CLICKED,
-        Environment.GROUP,
-        PageId.ADD_MEMBER);
-    if (!this.userId) {
+      InteractType.TOUCH,
+      InteractSubtype.VERIFY_CLICKED,
+      Environment.GROUP,
+      PageId.ADD_MEMBER);
+    if (!this.username) {
       this.showErrorMsg = true;
       return;
     }
     this.showErrorMsg = false;
-    const req: ServerProfileDetailsRequest = {
-      userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
-      requiredFields: ProfileConstants.REQUIRED_FIELDS
+    const checkUserExistsRequest: CheckUserExistsRequest = {
+      matching: {
+        key: 'email',
+        value: this.username
+      },
+      captchaResponseToken: ''
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.ADD_MEMBER,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        ID.VERIFY_MEMBER);
+      InteractType.INITIATED,
+      '',
+      Environment.GROUP,
+      PageId.ADD_MEMBER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.VERIFY_MEMBER);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.profileService.getServerProfilesDetails(req).toPromise()
-      .then(async (serverProfile) => {
+    this.profileService.checkServerProfileExists(checkUserExistsRequest).toPromise()
+      .then(async (checkUserExistsResponse) => {
         await loader.dismiss();
-        if (serverProfile) {
-          this.userDetails = serverProfile;
-          this.userName = serverProfile.firstName ? serverProfile.firstName : '';
-          this.userName += serverProfile.lastName ? serverProfile.lastName : '';
+        if (checkUserExistsResponse && checkUserExistsResponse.exists) {
+          this.userDetails = checkUserExistsResponse;
           this.isUserIdVerified = true;
           this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.SUCCESS,
-              '',
-              Environment.GROUP,
-              PageId.ADD_MEMBER,
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              ID.VERIFY_MEMBER);
-          console.log('this.userName', this.userName);
+            InteractType.SUCCESS,
+            '',
+            Environment.GROUP,
+            PageId.ADD_MEMBER,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.VERIFY_MEMBER);
+        } else {
+          this.showErrorMsg = true;
         }
-      }).catch(async () => {
+      }).catch(async (e) => {
+        console.error(e);
         await loader.dismiss();
       });
   }
 
   onClearUser() {
     this.isUserIdVerified = false;
-    this.userId = '';
+    this.username = '';
   }
 
   async onAddToGroupClick() {
+    const userExist = this.memberList.find(m => m.userId === this.userDetails.userId);
+    // Check if user already exist in group
+    if (userExist) {
+      this.commonUtilService.showToast('MEMBER_ALREADY_EXISTS_IN_GROUP');
+      return;
+    }
+
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
-        Environment.GROUP,
-        PageId.ADD_MEMBER);
+      InteractType.TOUCH,
+      InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.ADD_MEMBER);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.ADD_MEMBER,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        ID.ADD_MEMBER_TO_GROUP);
+      InteractType.INITIATED,
+      '',
+      Environment.GROUP,
+      PageId.ADD_MEMBER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.ADD_MEMBER_TO_GROUP);
     const addMemberToGroupReq: AddMembersRequest = {
       groupId: this.groupId,
       addMembersRequest: {
         members: [{
-          userId: this.userDetails.userId,
+          userId: this.userDetails.id,
           role: GroupMemberRole.MEMBER
         }]
       }
@@ -186,15 +198,15 @@ export class AddMemberToGroupPage {
         } else {
           await loader.dismiss();
           this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.SUCCESS,
-              '',
-              Environment.GROUP,
-              PageId.ADD_MEMBER,
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              ID.ADD_MEMBER_TO_GROUP);
+            InteractType.SUCCESS,
+            '',
+            Environment.GROUP,
+            PageId.ADD_MEMBER,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.ADD_MEMBER_TO_GROUP);
           this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
           this.location.back();
         }
@@ -205,7 +217,7 @@ export class AddMemberToGroupPage {
       });
   }
 
-  async openinfopopup() {
+  async openInfoPopup() {
     const popover = await this.popoverCtrl.create({
       component: MyGroupsPopoverComponent,
       componentProps: {

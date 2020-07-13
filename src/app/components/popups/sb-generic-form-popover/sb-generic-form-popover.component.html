@@ -30,7 +30,7 @@
 
       <ion-item *ngFor="let item of formItems;">
         <ion-label>{{item.title | translate }}</ion-label>
-        <ion-radio slot="start" value="{{item.index}}">
+        <ion-radio slot="start" value="{{item.index}}" [disabled]="!item.isEnabled">
         </ion-radio>
       </ion-item>
 

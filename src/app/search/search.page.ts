@@ -61,6 +61,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   contentType: Array<string> = [];
   source: string;
   groupId: string;
+  activityFilters: any = {};
   isFromGroupFlow = false;
   dialCode: string;
   dialCodeResult: Array<any> = [];
@@ -148,6 +149,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.isFromGroupFlow = true;
       }
       this.groupId = extras.groupId;
+      this.activityFilters = extras.activityFilters;
       this.enrolledCourses = extras.enrolledCourses;
       this.guestUser = extras.guestUser;
       this.userId = extras.userId;
@@ -774,7 +776,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       audience: this.audienceFilter,
       mode: 'soft',
       framework: this.currentFrameworkId,
-      languageCode: this.selectedLanguageCode
+      languageCode: this.selectedLanguageCode,
+      ... (this.activityFilters ? this.activityFilters : {})
     };
 
     this.isDialCodeSearch = false;
@@ -990,7 +993,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
             const corRelationList: Array<CorrelationData> = [];
-            corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
+            corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
 
             if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
               this.telemetryGeneratorService.generateAuditTelemetry(
@@ -1426,8 +1429,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   private generateImpressionEvent(dialCodeResult?) {
     if (dialCodeResult && dialCodeResult.length) {
       const corRelationList: Array<CorrelationData> = [];
-      corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
-      corRelationList.push({id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK});
+      corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
+      corRelationList.push({ id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK });
       this.telemetryGeneratorService.generatePageLoadedTelemetry(
         PageId.QR_BOOK_RESULT,
         this.source = PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,

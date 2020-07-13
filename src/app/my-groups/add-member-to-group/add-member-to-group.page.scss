@@ -31,14 +31,15 @@
             &.error{
                 border: 1px solid $red;
             }
+            &:disabled{
+                background-color: #fff;
+            }
             width: 100%;
             height: 40px;
             border: 1px solid $gray-800;
             padding: 0 16px;
             color: $gray-800;
-            &:disabled{
-                background-color: #fff;
-            }
+            border-radius: 2px;
         }
         .au-clear-icon{
             position: absolute;
@@ -54,8 +55,7 @@
     }
     .au-avatar{
         padding: 16px;
-        // background-color: #E5EDF5;
-        background-color: $gray-100;
+        background-color: map-get($colors, pale_blue);
         text-align: center;
     }
     .au-desc{

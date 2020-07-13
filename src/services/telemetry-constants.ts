@@ -542,7 +542,8 @@ export enum ID {
     REMOVE_MEMBER = 'remove-member',
     REMOVE_ACTIVITY = 'remove-activity',
     VERIFY_MEMBER = 'verify-member',
-    ADD_MEMBER_TO_GROUP = 'add-member-to-group'
+    ADD_MEMBER_TO_GROUP = 'add-member-to-group',
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group'
 }
 
 export enum ActionButtonType {

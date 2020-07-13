@@ -62,7 +62,8 @@ var formRequestArray = [{
     {
         'type': 'group',
         'subType': 'activities',
-        'action': 'list'
+        'action': 'list',
+        'component': 'app'
     }
 ];
 

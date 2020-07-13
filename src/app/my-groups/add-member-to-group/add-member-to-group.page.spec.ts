@@ -12,7 +12,7 @@ import {
     TelemetryGeneratorService
 } from '@app/services';
 import { Location } from '@angular/common';
-import { of, throwError, Subscription } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('AddMemberToGroupPage', () => {
     let addMemberToGroupPage: AddMemberToGroupPage;
@@ -22,7 +22,7 @@ describe('AddMemberToGroupPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {
         backButton: {
-            subscribeWithPriority: jest.fn(() => ({data: 's-id', unsubscribe: jest.fn()})) as any,
+            subscribeWithPriority: jest.fn(() => ({ data: 's-id', unsubscribe: jest.fn() })) as any,
         } as any
     };
     const mockPopoverCtrl: Partial<PopoverController> = {};
@@ -54,6 +54,7 @@ describe('AddMemberToGroupPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should create a instance of addMemberToGroupPage', () => {
@@ -103,7 +104,7 @@ describe('AddMemberToGroupPage', () => {
     it('should show header with back button', () => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = of({
-            subscribe: jest.fn((fn) => fn({name: 'sample-event'}))
+            subscribe: jest.fn((fn) => fn({ name: 'sample-event' }))
         });
         jest.spyOn(addMemberToGroupPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
@@ -121,7 +122,7 @@ describe('AddMemberToGroupPage', () => {
 
     describe('onVerifyClick', () => {
         it('should return errorMessage if userId is undefined', (done) => {
-            addMemberToGroupPage.userId = undefined;
+            addMemberToGroupPage.username = undefined;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
@@ -131,23 +132,23 @@ describe('AddMemberToGroupPage', () => {
                     Environment.GROUP,
                     PageId.ADD_MEMBER
                 );
-                expect(addMemberToGroupPage.userId).toBeUndefined();
+                expect(addMemberToGroupPage.username).toBeUndefined();
                 expect(addMemberToGroupPage.showErrorMsg).toBeTruthy();
                 done();
             }, 0);
         });
 
         it('should return userDetails for serverProfile', (done) => {
-            addMemberToGroupPage.userId = 'sample-user-id';
+            addMemberToGroupPage.username = 'sample-user-id';
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of({
-                firstName: 'jhon',
-                lastName: 'snow'
+            mockProfileService.checkServerProfileExists = jest.fn(() => of({
+                exists: true,
+                name: 'jhon'
             })) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -165,13 +166,13 @@ describe('AddMemberToGroupPage', () => {
                     undefined,
                     ID.VERIFY_MEMBER
                 );
-                expect(addMemberToGroupPage.userId).not.toBeUndefined();
+                expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 expect(addMemberToGroupPage.userDetails).toStrictEqual({
-                    firstName: 'jhon',
-                    lastName: 'snow'
+                    exists: true,
+                    name: 'jhon'
                 });
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.SUCCESS,
@@ -184,78 +185,35 @@ describe('AddMemberToGroupPage', () => {
                     undefined,
                     ID.VERIFY_MEMBER
                 );
-                expect(addMemberToGroupPage.userName).toBe('jhonsnow');
-                expect(addMemberToGroupPage.isUserIdVerified).toBeTruthy();
-                done();
-            }, 0);
-        });
-
-        it('should return userDetails for firstName and lastName are undefined', (done) => {
-            addMemberToGroupPage.userId = 'sample-user-id';
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of({
-                firstName: undefined,
-                lastName: undefined
-            })) as any;
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            addMemberToGroupPage.onVerifyClick();
-            // assert
-            setTimeout(() => {
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.INITIATED,
-                    '',
-                    Environment.GROUP,
-                    PageId.ADD_MEMBER,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    ID.VERIFY_MEMBER
-                );
-                expect(addMemberToGroupPage.userId).not.toBeUndefined();
-                expect(presentFn).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
-                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
-                expect(addMemberToGroupPage.userDetails).toStrictEqual({
-                    firstName: undefined,
-                    lastName: undefined
-                });
-                expect(addMemberToGroupPage.userName).toBe('');
                 expect(addMemberToGroupPage.isUserIdVerified).toBeTruthy();
                 done();
             }, 0);
         });
 
         it('should not return userDetails if serverProfile is undefined', (done) => {
-            addMemberToGroupPage.userId = 'sample-user-id';
+            addMemberToGroupPage.username = 'sample-user-id';
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined)) as any;
+            mockProfileService.checkServerProfileExists = jest.fn(() => of(undefined)) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
             setTimeout(() => {
-                expect(addMemberToGroupPage.userId).not.toBeUndefined();
+                expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 done();
             }, 0);
         });
 
         it('should not return userDetails for catch part', (done) => {
-            addMemberToGroupPage.userId = 'sample-user-id';
+            addMemberToGroupPage.username = 'sample-user-id';
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -263,15 +221,15 @@ describe('AddMemberToGroupPage', () => {
                 dismiss: dismissFn,
             }));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockProfileService.getServerProfilesDetails = jest.fn(() => throwError({error: 'error'})) as any;
+            mockProfileService.checkServerProfileExists = jest.fn(() => throwError({ error: 'error' })) as any;
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
             setTimeout(() => {
-                expect(addMemberToGroupPage.userId).not.toBeUndefined();
+                expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -280,7 +238,7 @@ describe('AddMemberToGroupPage', () => {
     it('should clear all user', () => {
         addMemberToGroupPage.onClearUser();
         expect(addMemberToGroupPage.isUserIdVerified).toBeFalsy();
-        expect(addMemberToGroupPage.userId).toBe('');
+        expect(addMemberToGroupPage.username).toBe('');
     });
 
     describe('onAddToGroupClick', () => {
@@ -291,9 +249,14 @@ describe('AddMemberToGroupPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            addMemberToGroupPage.userDetails = {userId: 'sample-user-id'};
-          //  GroupMemberRole.MEMBER;
-            mockGroupService.addMembers = jest.fn(() => of({errors: ['error']})) as any;
+            addMemberToGroupPage.memberList = [
+                {
+                    userId: 'some-user-id'
+                }
+            ];
+            addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
+            //  GroupMemberRole.MEMBER;
+            mockGroupService.addMembers = jest.fn(() => of({ errors: ['error'] })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();
@@ -315,7 +278,12 @@ describe('AddMemberToGroupPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            addMemberToGroupPage.userDetails = {userId: 'sample-user-id'};
+            addMemberToGroupPage.memberList = [
+                {
+                    userId: 'some-user-id'
+                }
+            ];
+            addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
             mockGroupService.addMembers = jest.fn(() => of({})) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
@@ -333,21 +301,49 @@ describe('AddMemberToGroupPage', () => {
             }, 0);
         });
 
+        it('should not add member into group if already exists', (done) => {
+            addMemberToGroupPage.memberList = [
+                {
+                    userId: 'sample-user-id'
+                }
+            ];
+            addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            addMemberToGroupPage.onAddToGroupClick();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('MEMBER_ALREADY_EXISTS_IN_GROUP');
+                done();
+            }, 0);
+        });
+
         it('should add member into group for catch part', (done) => {
+            addMemberToGroupPage.memberList = [
+                {
+                    userId: 'some-user-id'
+                }
+            ];
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            addMemberToGroupPage.userDetails = {userId: 'sample-user-id'};
-            mockGroupService.addMembers = jest.fn(() => throwError({error: 'error'})) as any;
+            addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockGroupService.addMembers = jest.fn(() => throwError({ error: 'error' })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();
             // assert
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER);
                 expect(addMemberToGroupPage.userDetails).not.toBeNull();
                 expect(mockGroupService.addMembers).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
@@ -367,13 +363,13 @@ describe('AddMemberToGroupPage', () => {
         addMemberToGroupPage.ionViewWillLeave();
     });
 
-    describe('openinfopopup', () => {
+    describe('openInfoPopup', () => {
         it('should return undefined for backDrop clicked', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
             } as any)));
-            addMemberToGroupPage.openinfopopup();
+            addMemberToGroupPage.openInfoPopup();
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
@@ -383,9 +379,9 @@ describe('AddMemberToGroupPage', () => {
         it('should close popup for clicked on close icpn', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {closeDeletePopOver: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { closeDeletePopOver: true } }))
             } as any)));
-            addMemberToGroupPage.openinfopopup();
+            addMemberToGroupPage.openInfoPopup();
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
@@ -395,9 +391,9 @@ describe('AddMemberToGroupPage', () => {
         it('should delete popup', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
-            addMemberToGroupPage.openinfopopup();
+            addMemberToGroupPage.openInfoPopup();
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
@@ -407,9 +403,9 @@ describe('AddMemberToGroupPage', () => {
         it('should not delete popup', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: false} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
             } as any)));
-            addMemberToGroupPage.openinfopopup();
+            addMemberToGroupPage.openInfoPopup();
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
