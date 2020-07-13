@@ -95,6 +95,7 @@
     "grapheme-splitter": "^1.0.4",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
+    "ng-recaptcha": "^5.0.0",
     "rxjs": "^6.5.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",

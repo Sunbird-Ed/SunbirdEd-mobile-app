@@ -39,6 +39,7 @@ export class CommonUtilService {
     };
 
     private alert?: any;
+    googleCaptchaConfig = new Map();
     private _currentTabName: string;
     appName: any;
     private toast: any;
@@ -393,6 +394,14 @@ export class CommonUtilService {
         }
     }
 
+    setGoogleCaptchaConfig(key, isEnabled) {
+        this.googleCaptchaConfig.set('key', key);
+        this.googleCaptchaConfig.set('isEnabled', isEnabled);
+    }
+
+    getGoogleCaptchaConfig() {
+        return this.googleCaptchaConfig;
+    }
     // return org location details for logged in user
     getOrgLocation(organisation: any) {
         const location = { 'state': '', 'district': '', 'block': '' };

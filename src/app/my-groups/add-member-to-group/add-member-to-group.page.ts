@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
   CheckUserExistsRequest,
@@ -6,6 +6,7 @@ import {
   GroupService,
   AddMembersRequest,
   GroupMemberRole,
+  SystemSettingsService,
   GroupMember
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
@@ -31,20 +32,25 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
-
-  username = '';
+  captchaResponse: string;
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
+  isCaptchaEnabled: boolean;
+  showLoader: boolean;
+  username = '';
   groupId: string;
+  sunbirdGoogleCaptchaKey;
   memberList: GroupMember[] = [];
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
+  @ViewChild('cap') cap;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('GROUP_SERVICE') public groupService: GroupService,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
@@ -56,6 +62,23 @@ export class AddMemberToGroupPage {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
     this.memberList = extras.memberList;
+    this.getGoogleCaptchaSiteKey();
+  }
+
+  getGoogleCaptchaSiteKey() {
+    if (this.commonUtilService.getGoogleCaptchaConfig().size === 0) {
+      this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
+        .then((res) => {
+          const captchaConfig = JSON.parse(res.value);
+          this.isCaptchaEnabled =  captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+          this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
+          this.commonUtilService.setGoogleCaptchaConfig(this.sunbirdGoogleCaptchaKey, this.isCaptchaEnabled);
+        });
+    } else if (Boolean(this.commonUtilService.getGoogleCaptchaConfig())) {
+      const captchaConfig = this.commonUtilService.getGoogleCaptchaConfig();
+      this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+      this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
+    }
   }
 
   ionViewWillEnter() {
@@ -97,7 +120,14 @@ export class AddMemberToGroupPage {
     }
   }
 
+  async captchaResolved(res) {
+      this.captchaResponse = res;
+  }
+
   async onVerifyClick() {
+    if (this.isCaptchaEnabled) {
+      this.cap.execute();
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VERIFY_CLICKED,
@@ -107,13 +137,18 @@ export class AddMemberToGroupPage {
       this.showErrorMsg = true;
       return;
     }
+    if (this.isCaptchaEnabled) {
+      if (!this.captchaResponse) {
+        return false;
+      }
+    }
     this.showErrorMsg = false;
     const checkUserExistsRequest: CheckUserExistsRequest = {
       matching: {
         key: 'userName',
         value: this.username
       },
-      captchaResponseToken: ''
+      captchaResponseToken: this.captchaResponse || undefined
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
@@ -125,11 +160,10 @@ export class AddMemberToGroupPage {
       undefined,
       undefined,
       ID.VERIFY_MEMBER);
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.showLoader = true;
     this.profileService.checkServerProfileExists(checkUserExistsRequest).toPromise()
       .then(async (checkUserExistsResponse) => {
-        await loader.dismiss();
+        this.showLoader = false;
         if (checkUserExistsResponse && checkUserExistsResponse.exists) {
           this.userDetails = checkUserExistsResponse;
           this.isUserIdVerified = true;
@@ -148,7 +182,7 @@ export class AddMemberToGroupPage {
         }
       }).catch(async (e) => {
         console.error(e);
-        await loader.dismiss();
+        this.showLoader = false;
       });
   }
 
@@ -211,7 +245,7 @@ export class AddMemberToGroupPage {
           this.location.back();
         }
       }).catch(async (e) => {
-        console.error(e);
+        console.log(e);
         await loader.dismiss();
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       });

@@ -79,3 +79,49 @@
         }
     }
 }
+
+.loader {
+    border: 4px solid $gray-300;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border-top: 4px solid transparent;
+    width: 48px;
+    float: center;
+    height: 48px;
+    margin-left: 45%;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-container {
+    text-align: center;
+    padding: 30px;
+    border-radius: 2px;
+    background-color: map-get($colors, pale_blue);
+}
+
+.loader-text {
+    font-size: 12px;
+    color: $gray-300;
+}
