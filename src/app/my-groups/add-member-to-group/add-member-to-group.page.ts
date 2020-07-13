@@ -37,6 +37,7 @@ export class AddMemberToGroupPage {
   showErrorMsg = false;
   headerObservable: any;
   isCaptchaEnabled: boolean;
+  showLoader: boolean;
   username = '';
   groupId: string;
   sunbirdGoogleCaptchaKey;
@@ -159,11 +160,10 @@ export class AddMemberToGroupPage {
       undefined,
       undefined,
       ID.VERIFY_MEMBER);
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.showLoader = true;
     this.profileService.checkServerProfileExists(checkUserExistsRequest).toPromise()
       .then(async (checkUserExistsResponse) => {
-        await loader.dismiss();
+        this.showLoader = false;
         if (checkUserExistsResponse && checkUserExistsResponse.exists) {
           this.userDetails = checkUserExistsResponse;
           this.isUserIdVerified = true;
@@ -182,7 +182,7 @@ export class AddMemberToGroupPage {
         }
       }).catch(async (e) => {
         console.error(e);
-        await loader.dismiss();
+        this.showLoader = false;
       });
   }
 

@@ -7,8 +7,9 @@
                     {{'MEMBER_ID' | translate: {'app_name': appName} }}<sup>*</sup>
                 </span>
                 <span class="pull-right" (click)="openInfoPopup()">
-                    {{'WHAT_IS_MEMBER_ID' | translate: {'app_name': appName} }}
-                    <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                    <span>
+                        <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                    </span>
                 </span>
             </div>
             <input [ngClass]="{'error' : showErrorMsg}" type="text"
@@ -43,6 +44,12 @@
         <div *ngIf="isCaptchaEnabled === true">
             <re-captcha #cap (resolved)="captchaResolved($event)" size="invisible" siteKey={{sunbirdGoogleCaptchaKey}}>
             </re-captcha>
+        </div>
+    </div>
+    <div *ngIf="showLoader" class="ion-padding-start ion-padding-end">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <h6 class="loader-text">Verifying please wait</h6>
         </div>
     </div>
 </ion-content>
