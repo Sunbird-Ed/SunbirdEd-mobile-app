@@ -634,7 +634,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
               };
               options.push(value);
 
-              if (this.profile && this.profile.medium && this.profile.medium.length
+              if (!context.dirty && this.profile && this.profile.medium && this.profile.medium.length
               && this.profile.medium[0] === element.code) {
                 control.patchValue(value.value);
               }
@@ -689,7 +689,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
               };
               options.push(value);
 
-              if (this.profile && this.profile.grade && this.profile.grade.length
+              if (!context.dirty && this.profile && this.profile.grade && this.profile.grade.length
               && this.profile.grade[0] === element.code) {
                 control.patchValue(value.value);
               }
@@ -745,7 +745,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
               };
               options.push(value);
 
-              if (this.profile && this.profile.subject && this.profile.subject.length
+              if (!context.dirty && this.profile && this.profile.subject && this.profile.subject.length
               && this.profile.subject[0] === element.code) {
                 control.patchValue(value.value);
               }
