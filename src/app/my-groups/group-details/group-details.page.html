@@ -38,13 +38,6 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
-          <div *ngIf="!isGroupLoading && !filteredMemberList && !filteredMemberList.length"
-            class="gd-empty-search-result text-center">
-            <img *ngIf="!memberSearchQuery" src="assets/imgs/no_member.svg" alt="">
-            <div *ngIf="memberSearchQuery">
-              <img src="assets/imgs/empty_search_result.svg" alt="">
-              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
-          </div>
           </div>
           <div *ngIf="isGroupLoading">
             <div *ngFor="let item of [0,1,2,3,4]">
@@ -61,6 +54,15 @@
               </sb-member-card>
             </div>
           </div>
+          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+            class="text-center">
+            <div *ngIf="!memberSearchQuery">
+              <img src="assets/imgs/no_member.svg" alt="">
+            </div>
+            <div class="gd-empty-search-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
         </div>
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='activities'">
@@ -69,9 +71,9 @@
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!filteredActivityList || !filteredActivityList.length" class="gd-empty-search-result text-center">
+        <div *ngIf="!filteredActivityList || !filteredActivityList.length" class="text-center">
           <img *ngIf="!activitySearchQuery" src="assets/imgs/no_activity.svg" alt="">
-          <div *ngIf="activitySearchQuery">
+          <div class="gd-empty-search-result" *ngIf="activitySearchQuery">
             <img src="assets/imgs/empty_search_result.svg" alt="">
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
