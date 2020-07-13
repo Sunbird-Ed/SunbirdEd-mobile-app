@@ -19,19 +19,21 @@
       </div>
     </div>
     <div class="mg-popup-container" *ngIf="isFromAddMember">
-      <div class="mg-popup-content">
+      <div class="mg-popup-content-member">
         <!-- <ion-icon class="mg-popup-close" name="md-close-circle" (click)="close()"></ion-icon> -->
         <div class="mg-popup-title mg-popup-flex-item">
           <p class="am-title" [innerHTML]="'ADD_MEMBER_POPUP_TITLE' | translate:  {'%s': appName }"></p>
           <p class="am-desc" [innerHTML]="'ADD_MEMBER_POPUP_DESC' | translate:  {'%s': appName }"></p>
         </div>
-        <div class="mg-flex-item text-center">
-          <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_1' | translate"></p>
-          <img src="assets/imgs/add_member_step_1.png" alt="">
-        </div>
-        <div class="mg-popup-flex-item text-center">
-          <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_2' | translate:  {'%s': appName }"></p>
-          <img src="assets/imgs/add_member_step_2.png" alt="">
+        <div>
+          <div class="mg-flex-item text-center mb-32">
+            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_1' | translate"></p>
+            <img src="assets/imgs/add_member_step_1.png" alt="">
+          </div>
+          <div class="mg-popup-flex-item text-center">
+            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_2' | translate:  {'%s': appName }"></p>
+            <img src="assets/imgs/add_member_step_2.png" alt="">
+          </div>
         </div>
       </div>
     </div>

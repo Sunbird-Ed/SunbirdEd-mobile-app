@@ -1086,13 +1086,15 @@ describe('GroupDetailsPage', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
             {
                 state: {
-                    groupId: 'sample-group-id', memberList: [{
+                    groupId: 'sample-group-id',
+                    activity: '',
+                    memberList: [{
                         groupId: '',
                         role: GroupMemberRole.MEMBER,
                         status: GroupEntityStatus.ACTIVE,
                         userId: 'sample-uid',
                         name: 'SOME_NAME'
-                    }]
+                   }]
                 }
             });
     });
