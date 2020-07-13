@@ -148,7 +148,7 @@ export class AddMemberToGroupPage {
         key: 'email',
         value: this.username
       },
-      captchaResponseToken: this.captchaResponse || ''
+      captchaResponseToken: this.captchaResponse || undefined
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
