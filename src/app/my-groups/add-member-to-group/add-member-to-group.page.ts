@@ -110,7 +110,7 @@ export class AddMemberToGroupPage {
     this.showErrorMsg = false;
     const checkUserExistsRequest: CheckUserExistsRequest = {
       matching: {
-        key: 'email',
+        key: 'userName',
         value: this.username
       },
       captchaResponseToken: ''
