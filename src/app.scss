@@ -1415,3 +1415,9 @@ ion-modal.sb-progress-loader {
     padding-top: 16px;
   }
 }
+.select-activity-popover {
+  .sb-popover-title {
+    text-align: left !important;
+    margin-left: 1.5rem;
+  }
+}
