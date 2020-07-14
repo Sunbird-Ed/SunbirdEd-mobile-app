@@ -83,3 +83,7 @@ global.FCMPlugin = {
     onTokenRefresh: () => {},
     subscribeToTopic: () => {}
 }
+
+global.sbsync = {
+    onSyncSuccess: () => {}
+}

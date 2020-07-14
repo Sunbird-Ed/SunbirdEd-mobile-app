@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../../components/components.module';
 import { AddMemberToGroupPage } from './add-member-to-group.page';
 import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
+import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
 
 const routes: Routes = [
   {
@@ -26,7 +27,9 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule
+    ComponentsModule,
+    RecaptchaModule,
+    RecaptchaFormsModule
   ],
   declarations: [AddMemberToGroupPage],
   entryComponents: [OverflowMenuComponent]

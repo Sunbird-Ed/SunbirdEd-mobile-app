@@ -4,7 +4,8 @@ import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
   FormAndFrameworkUtilService,
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService, InteractType, InteractSubtype, Environment, ImpressionType, ID
+  CommonUtilService, AppGlobalService, TelemetryGeneratorService,
+  InteractType, InteractSubtype, Environment, ImpressionType, ID
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
@@ -13,7 +14,9 @@ import {
   GroupService, GetByIdRequest, Group,
   GroupMember, GroupMemberRole, DeleteByIdRequest,
   RemoveMembersRequest,
-  UpdateMembersRequest, RemoveActivitiesRequest, CachedItemRequestSourceFrom, GroupUpdateMembersResponse, GroupRemoveActivitiesResponse
+  UpdateMembersRequest, RemoveActivitiesRequest,
+  CachedItemRequestSourceFrom, GroupUpdateMembersResponse,
+  GroupActivity
 } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
@@ -28,17 +31,21 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 })
 export class GroupDetailsPage implements OnInit {
 
+  isGroupLoading = false;
   userId: string;
   headerObservable: any;
   groupId: string;
   groupDetails: Group;
-  activeTab = 'courses';
-  activityList = [];
+  activeTab = 'activities';
+  activityList: GroupActivity[] = [];
+  filteredActivityList = [];
   memberList: GroupMember[] = [];
   filteredMemberList = [];
-  searchValue: string;
+  memberSearchQuery: string;
+  activitySearchQuery: string;
   private unregisterBackButton: Subscription;
-  showMenu = false;
+  loggedinUser: GroupMember;
+  groupCreator: GroupMember;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -106,15 +113,15 @@ export class GroupDetailsPage implements OnInit {
       InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     const navigationExtras: NavigationExtras = {
       state: {
-        groupId: this.groupId
+        groupId: this.groupId,
+        memberList: this.memberList
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
   }
 
   private async fetchGroupDetails() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.isGroupLoading = true;
     const getByIdRequest: GetByIdRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       id: this.groupId,
@@ -127,15 +134,53 @@ export class GroupDetailsPage implements OnInit {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
       this.memberList = this.groupDetails.members;
-      const loggedinUser = this.memberList.find(m => m.userId === this.userId);
-      this.showMenu = loggedinUser.role === GroupMemberRole.ADMIN;
-      this.filteredMemberList = new Array(...this.memberList);
+      this.activityList = this.groupDetails.activities;
 
-      await loader.dismiss();
+      if (this.memberList) {
+        this.memberList.sort((a, b) => {
+          if (b.userId === this.userId) {
+            return 1;
+          } else if (a.userId === this.userId) {
+            return -1;
+          }
+          if (b.role === GroupMemberRole.ADMIN && a.role === GroupMemberRole.MEMBER) {
+            return 1;
+          } else if (b.role === GroupMemberRole.MEMBER && a.role === GroupMemberRole.ADMIN) {
+            return -1;
+          }
+          return a.name.localeCompare(b.name);
+        });
+      }
+
+      this.loggedinUser = this.memberList.find(m => m.userId === this.userId);
+      this.groupCreator = this.memberList.find(m => m.userId === this.groupDetails.createdBy);
+
+      this.filteredMemberList = new Array(...this.memberList);
+      this.filteredActivityList = new Array(...this.activityList);
+
+      this.isGroupLoading = false;
     } catch (e) {
-      await loader.dismiss();
+      this.isGroupLoading = false;
       console.error(e);
     }
+  }
+
+  getMemberName(member) {
+    let memberName = member.name;
+    if (this.loggedinUser.userId === member.userId) {
+      memberName = this.commonUtilService.translateMessage('LOGGED_IN_MEMBER', { member_name: member.name });
+    }
+    return memberName;
+  }
+
+  showMemberMenu(member) {
+    let showMenu = false;
+    if (this.loggedinUser.role === GroupMemberRole.ADMIN
+      && member.userId !== this.groupCreator.userId
+      && member.userId !== this.loggedinUser.userId) {
+      showMenu = true;
+    }
+    return showMenu;
   }
 
   switchTabs(tab) {
@@ -143,17 +188,12 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async groupMenuClick(event) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
-
-    const menuList = MenuOverflow.MENU_GROUP_ADMIN;
-    // TODO: Handle below condition while API intigration.
-    // if (!isAdmin) {
-    //   menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
-    // }
+    let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
+    if (this.groupCreator.userId === this.userId) {
+      menuList = MenuOverflow.MENU_GROUP_CREATOR;
+    } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
+      menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    }
 
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
@@ -169,20 +209,21 @@ export class GroupDetailsPage implements OnInit {
     if (data) {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+        this.router.navigate(
+          [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+          {
+            state: { groupDetails: this.groupDetails }
+          }
+        );
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
+      } else if (data.selectedItem === 'MENU_LEAVE_GROUP') {
+        this.showLeaveGroupPopup();
       }
     }
   }
 
-  async activityMenuClick(event) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
-
+  async activityMenuClick(event, selectedActivity) {
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
       componentProps: {
@@ -196,16 +237,11 @@ export class GroupDetailsPage implements OnInit {
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
-      this.showRemoveActivityPopup(data);
+      this.showRemoveActivityPopup(selectedActivity);
     }
   }
 
   async memberMenuClick(event, selectedMember) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.SORT_OPTION_CLICKED,
-    //   Environment.DOWNLOADS,
-    // PageId.GROUP_DETAIL);
     let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
 
     if (selectedMember.role === GroupMemberRole.ADMIN) {  // Is admin and creator
@@ -341,23 +377,33 @@ export class GroupDetailsPage implements OnInit {
         }
       };
       try {
-        this.groupService.removeMembers(removeMembersRequest).toPromise();
-        this.location.back();
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.SUCCESS,
-          '',
-          Environment.GROUP,
-          PageId.GROUP_DETAIL,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          ID.LEAVE_GROUP);
+        const removeMemberResponse = await this.groupService.removeMembers(removeMembersRequest).toPromise();
+
+        await loader.dismiss();
+        if (removeMemberResponse.error
+          && removeMemberResponse.error.members
+          && removeMemberResponse.error.members.length) {
+          this.commonUtilService.showToast('LEAVE_GROUP_ERROR_MSG');
+        } else {
+          this.location.back();
+
+          this.commonUtilService.showToast('LEAVE_GROUP_SUCCESS_MSG');
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SUCCESS,
+            '',
+            Environment.GROUP,
+            PageId.GROUP_DETAIL,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.LEAVE_GROUP);
+        }
       } catch (e) {
         console.error(e);
+        await loader.dismiss();
+        this.commonUtilService.showToast('LEAVE_GROUP_ERROR_MSG');
       }
-      await loader.dismiss();
-      this.location.back();
     }
   }
 
@@ -396,8 +442,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.REMOVE_ACTIVITY);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
         removeActivitiesRequest: {
@@ -406,12 +453,14 @@ export class GroupDetailsPage implements OnInit {
       };
       try {
         const removeActivitiesResponse = await this.groupService.removeActivities(removeActivitiesRequest).toPromise();
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (removeActivitiesResponse.error
           && removeActivitiesResponse.error.activities
           && removeActivitiesResponse.error.activities.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
         } else {
+          this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -425,8 +474,10 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
+        this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
       }
     }
   }
@@ -466,8 +517,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.REMOVE_MEMBER);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
         removeMembersRequest: {
@@ -477,12 +529,14 @@ export class GroupDetailsPage implements OnInit {
       try {
         const removeMemberResponse = await this.groupService.removeMembers(removeMembersRequest).toPromise();
 
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (removeMemberResponse.error
           && removeMemberResponse.error.members
           && removeMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
         } else {
+          this.commonUtilService.showToast('REMOVE_MEMBER_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -496,8 +550,10 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
+        this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
       }
     }
   }
@@ -538,8 +594,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.MAKE_GROUP_ADMIN);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
         updateMembersRequest: {
@@ -552,12 +609,14 @@ export class GroupDetailsPage implements OnInit {
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
 
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
+          this.commonUtilService.showToast('MAKE_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -571,8 +630,10 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
+        this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
     }
   }
@@ -613,8 +674,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         ID.DISMISS_GROUP_ADMIN);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      // const loader = await this.commonUtilService.getLoader();
+      // await loader.present();
+      this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
         updateMembersRequest: {
@@ -626,12 +688,14 @@ export class GroupDetailsPage implements OnInit {
       };
       try {
         const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         if (updateMemberResponse.error
           && updateMemberResponse.error.members
           && updateMemberResponse.error.members.length) {
-          // TODO: Add the error toast.
+          this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
+          this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -645,17 +709,34 @@ export class GroupDetailsPage implements OnInit {
           this.fetchGroupDetails();
         }
       } catch (e) {
-        await loader.dismiss();
+        // await loader.dismiss();
+        this.isGroupLoading = false;
         console.error(e);
+        this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
     }
   }
 
-  onSearch(searchText) {
-    console.log('onsearch', searchText);
-    this.searchValue = searchText;
-    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
+  onMemberSearch(query) {
+    console.log('onMemberSearch', query);
+    this.memberSearchQuery = query;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'name', query)];
   }
+
+  onActivitySearch(query) {
+    console.log('onActivitySearch', query);
+    this.activitySearchQuery = query;
+    // this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
+    this.filteredActivityList = this.activityList.filter(
+      (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  // sortActivityList() {
+  //   this.filteredActivityList.sort((a, b) => {
+  //     return a.activityInfo.name.localeCompare(b.activityInfo.name);
+  //   });
+  // }
 
   extractInitial(name) {
     const splitter = new GraphemeSplitter();
@@ -663,11 +744,16 @@ export class GroupDetailsPage implements OnInit {
     return split[0];
   }
 
-  navigateToActivityDetails(event) {
+  navigateToActivityDetails(activity) {
+    if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
+      return;
+    }
+
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId,
-        memberList: this.memberList
+        memberList: this.memberList,
+        activity
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
@@ -692,7 +778,7 @@ export class GroupDetailsPage implements OnInit {
           icon: null,
           formItems: supportedActivityList
         },
-        cssClass: 'sb-popover info',
+        cssClass: 'sb-popover info select-activity-popover',
       });
       await selectActivityPopup.present();
       const { data } = await selectActivityPopup.onDidDismiss();
@@ -705,15 +791,12 @@ export class GroupDetailsPage implements OnInit {
   }
 
   private async search(data) {
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.SEARCH_BUTTON_CLICKED,
-    //   Environment.HOME,
-    //   PageId.COURSES);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
         activityFilters: data.selectedVal.filters,
         source: PageId.GROUP_DETAIL,
-        groupId: this.groupId
+        groupId: this.groupId,
+        activityList: this.activityList
       }
     });
   }

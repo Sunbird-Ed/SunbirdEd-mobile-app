@@ -31,9 +31,11 @@ interface GroupData extends Group {
   templateUrl: './my-groups.page.html',
   styleUrls: ['./my-groups.page.scss'],
 })
-export class MyGroupsPage implements OnInit, OnDestroy {
+export class MyGroupsPage implements OnInit {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
+  themeColors: string[] = ['#FFDFC7', '#C2ECE6', '#FFE59B', '#DAD4FF',  '#80CBC4', '#E6EE9C', '#FFE082'];
+  fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00'];
   groupListLoader = false;
   headerObservable: any;
   userId: string;
@@ -60,34 +62,34 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     if (!this.isGuestUser) {
       this.groupListLoader = true;
     }
-    this.appGlobalService.getActiveProfileUid()
-      .then(async (uid) => {
-        this.userId = uid;
-        const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
-        if (!groupInfoScreen) {
-          this.openinfopopup();
-          this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
-        }
-      });
   }
 
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.handleBackButton();
     this.headerService.showHeaderWithBackButton(['groupInfo']);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    try {
+      this.userId = await this.appGlobalService.getActiveProfileUid();
+      const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
+      if (!groupInfoScreen) {
+        this.openinfopopup();
+        this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+      }
+    } catch (err) {
+    }
+    if (!this.isGuestUser) {
+      this.fetchGroupList();
+    }
   }
 
   async ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
-    if (!this.isGuestUser) {
-      this.fetchGroupList();
-    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -96,7 +98,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
@@ -109,6 +111,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
         this.openinfopopup();
         break;
       case 'back':
@@ -151,10 +155,12 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         }
       };
       this.groupList = (await this.groupService.search(groupSearchCriteria).toPromise())
-        .map<GroupData>((group) => {
+        .map<GroupData>((group , index) => {
           return {
             ...group,
-            initial: this.commonUtilService.extractInitial(group.name)
+            initial: this.commonUtilService.extractInitial(group.name),
+            cardBgColor: this.themeColors[index % this.themeColors.length],
+            cardTitleColor: this.fontColor[index % this.fontColor.length]
           };
         });
       this.groupListLoader = false;

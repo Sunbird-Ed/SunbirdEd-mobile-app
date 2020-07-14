@@ -1235,6 +1235,12 @@ app-resources{
     height: 100%;
     justify-content: space-between;
   }
+  .mg-popup-content-member{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+  }
   .mg-popup-close{
     position: absolute;
     top: 0;
@@ -1415,3 +1421,21 @@ ion-modal.sb-progress-loader {
     padding-top: 16px;
   }
 }
+.select-activity-popover {
+  .sb-popover-title {
+    text-align: left !important;
+    margin-left: 1.5rem;
+  }
+  .content-share{
+    margin-bottom: 16px !important;
+  }
+  .sb-popover-footer .sb-popover-action-btn {
+    padding: 16px !important;
+    width: 100%;
+    height: unset !important;
+  }
+}
+.grecaptcha-badge {
+   opacity:0;
+   visibility: hidden;
+  }

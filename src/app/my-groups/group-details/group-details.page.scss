@@ -1,6 +1,9 @@
 @import "src/assets/styles/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 
+.font-16{
+    font-size: 16px;
+}
 .gd-page {
     padding: 8px;
 }
@@ -173,5 +176,14 @@
 
 .showGroupOptions{
     padding: 16px;
+}
+
+.gd-empty-result{
+    img{
+        max-width: 65%;
+        margin-top: 20%;
+        margin-bottom: 16px;
+        font-size: 16px;
+    }
     
 }
