@@ -34,10 +34,8 @@ interface GroupData extends Group {
 export class MyGroupsPage implements OnInit {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
-  themeColors: string[] = ['#FFD6EB', '#FFDFD9', '#DAFFD8', '#DAD4FF',  '#C2E2E9', '#FFE59B', '#C2ECE6',
-                            '#FFDFC7'];
-  fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00']
-
+  themeColors: string[] = ['#FFDFC7', '#C2ECE6', '#FFE59B', '#DAD4FF',  '#80CBC4', '#E6EE9C', '#FFE082'];
+  fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00'];
   groupListLoader = false;
   headerObservable: any;
   userId: string;
