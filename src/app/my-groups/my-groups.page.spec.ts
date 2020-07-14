@@ -179,12 +179,32 @@ describe('MyGroupsPage', () => {
             const data = {
                 name: 'groupInfo'
             };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
                 return Promise.resolve();
             });
             myGroupsPage.handleHeaderEvents(data);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+            );
             expect(data.name).toBe('groupInfo');
         });
+        it('should return popup for groupInfo', () => {
+        const data = {
+            name: 'groupInfo'
+        };
+        jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        myGroupsPage.handleHeaderEvents(data);
+        expect(data.name).toBe('groupInfo');
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+        );
+    });
 
         it('should return back telemetry for back clicked', () => {
             const data = {

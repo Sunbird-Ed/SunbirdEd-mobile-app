@@ -420,6 +420,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }
+      const correlationData: CorrelationData = new CorrelationData();
+      if (this.source === PageId.GROUP_DETAIL) {
+        correlationData.id = PageId.GROUP_DETAIL;
+        correlationData.type = CorReleationDataType.FROM_PAGE;
+        if (params && params.corRelation) {
+          params.corRelation.push(correlationData);
+        }
+      }
+
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           source: this.source,
