@@ -14,12 +14,13 @@
           </div>
         </div>
       </div>
-        <div class="m-n" *ngIf="isGroupLoading">
-          <div class="skeleton-header mb-8">
-            <app-skeleton-item height="18px" width="75%" style="height:18px; width:50%;"></app-skeleton-item>
-            <app-skeleton-item height="14px" width="75%" style="height:14px; width:90%; margin-top:8px;"></app-skeleton-item>
-          </div>
+      <div class="m-n" *ngIf="isGroupLoading">
+        <div class="skeleton-header mb-8">
+          <app-skeleton-item height="18px" width="75%" style="height:18px; width:50%;"></app-skeleton-item>
+          <app-skeleton-item height="14px" width="75%" style="height:14px; width:90%; margin-top:8px;">
+          </app-skeleton-item>
         </div>
+      </div>
       <div class="gd-tab-header">
         <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}">
           <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
@@ -76,6 +77,7 @@
             <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
               <img src="assets/imgs/empty_search_result.svg" alt="">
               <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+            </div>
           </div>
         </div>
       </div>
