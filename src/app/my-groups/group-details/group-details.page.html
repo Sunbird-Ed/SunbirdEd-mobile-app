@@ -1,17 +1,25 @@
 <ion-content>
   <div class="gd-page">
     <div class="gd-header">
-      <div class="gd-title">
-        <div class="gd-name">
-          {{groupDetails?.name}}
-          <div class="gd-created-by" *ngIf="groupCreator">
-            {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
+      <div *ngIf="!isGroupLoading">
+        <div class="gd-title">
+          <div class="gd-name">
+            {{groupDetails?.name}}
+            <div class="gd-created-by" *ngIf="groupCreator">
+              {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
+            </div>
+          </div>
+          <div class="gd-opts">
+            <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
           </div>
         </div>
-        <div class="gd-opts">
-          <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
-        </div>
       </div>
+        <div class="m-n" *ngIf="isGroupLoading">
+          <div class="skeleton-header mb-8">
+            <app-skeleton-item height="18px" width="75%" style="height:18px; width:50%;"></app-skeleton-item>
+            <app-skeleton-item height="14px" width="75%" style="height:14px; width:90%; margin-top:8px;"></app-skeleton-item>
+          </div>
+        </div>
       <div class="gd-tab-header">
         <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}">
           <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
@@ -38,21 +46,27 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
+        </div>
+        <div *ngIf="isGroupLoading">
+          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
+            <sb-member-card [isLoading]="true"
+              [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
           </div>
-          <div *ngIf="isGroupLoading">
-            <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
-              <sb-member-card [isLoading]="true"></sb-member-card>
-            </div>
+        </div>
+        <div *ngIf="!isGroupLoading">
+          <div *ngFor="let member of filteredMemberList; let i = index">
+            <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+              [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
+              [title]="getMemberName(member)"
+              [isMenu]="(loggedinUser.role === 'admin' && member.userId !== groupCreator.userId)"
+              [isAdmin]="member.role === 'admin'" (menuClick)="memberMenuClick($event, member)">
+            </sb-member-card>
           </div>
-          <div *ngIf="!isGroupLoading">
-            <div *ngFor="let member of filteredMemberList; let i = index">
-              <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-                [identifier]="member.userId" [indexOfMember]="i"
-                [initial]="commonUtilService.extractInitial(member.name)" [title]="getMemberName(member)"
-                [isMenu]="(loggedinUser.role === 'admin' && member.userId !== groupCreator.userId)"
-                [isAdmin]="member.role === 'admin'" (menuClick)="memberMenuClick($event, member)">
-              </sb-member-card>
-            </div>
+        </div>
+        <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+          class="text-center">
+          <div *ngIf="!memberSearchQuery">
+            <img src="assets/imgs/no_member.svg" alt="">
           </div>
           <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
             class="text-center">
