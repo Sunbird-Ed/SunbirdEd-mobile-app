@@ -94,6 +94,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   showThanksResponse: boolean;
   formContext: any;
   supportEmail: any;
+  relevantTerms: any;
 
   constructor(
     private router: Router,
@@ -306,9 +307,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.takeAction();
       }
     }
-    if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
-    this.formValues.children.subcategory.notify) {
+    if (this.formValues && this.formValues.children && this.formValues.children.subcategory && 
+    this.formValues.subcategory === 'contentavailability') {
       const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
+      if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
+      this.formValues.children.subcategory.notify) {
+        corRelationList.push({ id: 'true', type: 'Notify' });
+      }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SUPPORT,
         '', Environment.HOME,
@@ -352,6 +357,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         [this.formValues.children.subcategory.medium.name] : undefined,
         geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
         [this.formValues.children.subcategory.grade.name] : undefined,
+        subjectList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.subject) ?
+        [this.formValues.children.subcategory.subject.name] : undefined,
+        relevantTerms: this.relevantTerms,
         curLang: this.translate.currentLang
       }
     });
@@ -529,16 +537,18 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     switch (dataSrc.marker) {
       case 'ACTIVE_CHANNEL.SUGGESTED_FRAMEWORK_LIST.MAPPED_TO_FRAMEWORKCATEGORIES':
         templateOptions.options = this.getClosure('board');
-        // delete templateOptions.dataSrc;
         break;
       case 'FRAMEWORK_CATEGORY_TERMS':
         templateOptions.options = this.getClosure(dataSrc.params.categoryCode);
-        // delete templateOptions.dataSrc;
         break;
     }
     if (dataSrc && dataSrc.action) {
       this.callToAction[templateOptions.value] = dataSrc.action;
     }
+    if (dataSrc && dataSrc.params && dataSrc.params.relevantTerms) {
+      this.relevantTerms = dataSrc.params.relevantTerms;
+    }
+    delete templateOptions.dataSrc;
   }
 
   getClosure(type: string) {
