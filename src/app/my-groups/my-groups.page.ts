@@ -34,6 +34,10 @@ interface GroupData extends Group {
 export class MyGroupsPage implements OnInit {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
+  themeColors: string[] = ['#FFD6EB', '#FFDFD9', '#DAFFD8', '#DAD4FF',  '#C2E2E9', '#FFE59B', '#C2ECE6',
+                            '#FFDFC7'];
+  fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00']
+
   groupListLoader = false;
   headerObservable: any;
   userId: string;
@@ -153,10 +157,12 @@ export class MyGroupsPage implements OnInit {
         }
       };
       this.groupList = (await this.groupService.search(groupSearchCriteria).toPromise())
-        .map<GroupData>((group) => {
+        .map<GroupData>((group , index) => {
           return {
             ...group,
-            initial: this.commonUtilService.extractInitial(group.name)
+            initial: this.commonUtilService.extractInitial(group.name),
+            cardBgColor: this.themeColors[index % this.themeColors.length],
+            cardTitleColor: this.fontColor[index % this.fontColor.length]
           };
         });
       this.groupListLoader = false;
