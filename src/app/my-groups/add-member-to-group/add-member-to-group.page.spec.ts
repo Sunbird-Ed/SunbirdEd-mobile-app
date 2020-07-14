@@ -111,6 +111,11 @@ describe('AddMemberToGroupPage', () => {
     });
 
     it('should handle DeviceBackButton', () => {
+        if (mockPlatform.backButton) {
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn({ data: 's-id', unsubscribe: jest.fn() })) as any,
+            } as any;
+        }
         jest.spyOn(addMemberToGroupPage, 'handleBackButton').mockImplementation(() => {
             return;
         });
@@ -313,7 +318,7 @@ describe('AddMemberToGroupPage', () => {
             ];
             addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
             //  GroupMemberRole.MEMBER;
-            mockGroupService.addMembers = jest.fn(() => of({ error: {members: ['member-1']} })) as any;
+            mockGroupService.addMembers = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();

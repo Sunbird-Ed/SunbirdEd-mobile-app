@@ -243,7 +243,6 @@ describe('GroupDetailsPage', () => {
 
     describe('groupMenuClick', () => {
         it('should navigate to my_GROUP page', (done) => {
-            groupDetailsPage.userId = 'some-userId';
             groupDetailsPage.groupCreator = {
                 userId: 'some-userId',
                 name: 'some-name',
@@ -251,6 +250,7 @@ describe('GroupDetailsPage', () => {
                 role: GroupMemberRole.ADMIN,
                 status: GroupEntityStatus.ACTIVE
             };
+            groupDetailsPage.userId = 'some-userId';
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_EDIT_GROUP_DETAILS' } }))
@@ -268,6 +268,17 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should invoked showDeleteGroupPopup', (done) => {
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'admin'
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -302,6 +313,17 @@ describe('GroupDetailsPage', () => {
         });
 
         it('should invoked showDeleteGroupPopup for catch part', (done) => {
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'creator'
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -415,7 +437,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeMembers = jest.fn(() => of({error: {members: ['sample-member']}})) as any;
+            mockGroupService.removeMembers = jest.fn(() => of({ error: { members: ['sample-member'] } })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             groupDetailsPage.groupMenuClick({});
@@ -466,7 +488,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeMembers = jest.fn(() => throwError({error: 'error'})) as any;
+            mockGroupService.removeMembers = jest.fn(() => throwError({ error: 'error' })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             groupDetailsPage.groupMenuClick({});
@@ -612,7 +634,8 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockGroupService.removeActivities = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
+            mockGroupService.removeActivities = jest.fn(() => of({ error: { activities: ['activity-1'] } })) as any;
+            mockCommonUtilService.showToast = jest.fn();
             // act
             groupDetailsPage.activityMenuClick(true, request).then(() => {
                 setTimeout(() => {
@@ -634,6 +657,7 @@ describe('GroupDetailsPage', () => {
                     expect(mockGroupService.removeActivities).toHaveBeenCalled();
                     expect(presentFn).toHaveBeenCalled();
                     expect(dismissFn).toHaveBeenCalledWith();
+                    expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('REMOVE_ACTIVITY_ERROR_MSG');
                 }, 0);
                 done();
             });
@@ -1262,7 +1286,7 @@ describe('GroupDetailsPage', () => {
                         status: GroupEntityStatus.ACTIVE,
                         userId: 'sample-uid',
                         name: 'SOME_NAME'
-                   }]
+                    }]
                 }
             });
     });
@@ -1388,5 +1412,17 @@ describe('GroupDetailsPage', () => {
             // act
             groupDetailsPage.getMemberName(member);
         });
+    });
+
+    it('should return filter memberList', () => {
+        mockFilterPipe.transform = jest.fn(() => []);
+        groupDetailsPage.onMemberSearch('');
+        expect(mockFilterPipe.transform).toHaveBeenCalled();
+    });
+
+    it('should return filter activityList', () => {
+        mockFilterPipe.transform = jest.fn(() => []);
+        groupDetailsPage.onActivitySearch('');
+        expect(mockFilterPipe.transform).toHaveBeenCalled();
     });
 });
