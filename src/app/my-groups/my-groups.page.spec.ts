@@ -140,35 +140,20 @@ describe('MyGroupsPage', () => {
     describe('ngOnInit', () => {
         it('should open openinfopopup by invoked ngOnInit', (done) => {
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
-            mockPreferences.getBoolean = jest.fn(() => of(false));
-            jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            mockPreferences.putBoolean = jest.fn(() => of(true));
             myGroupsPage.ngOnInit();
             setTimeout(() => {
                 expect(myGroupsPage.isGuestUser).toBeFalsy();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-                expect(myGroupsPage.userId).toBe('sample-uid');
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
-                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP, true);
                 done();
             }, 0);
         });
 
         it('should not open openinfopopup by invoked ngOnInit', (done) => {
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
-            mockPreferences.getBoolean = jest.fn(() => of(true));
             myGroupsPage.ngOnInit();
             setTimeout(() => {
                 expect(myGroupsPage.isGuestUser).toBeTruthy();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-                expect(myGroupsPage.userId).toBe('sample-uid');
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
                 done();
             }, 0);
         });
@@ -250,37 +235,75 @@ describe('MyGroupsPage', () => {
         });
     });
 
-    it('should handled headerService and fetch group list', (done) => {
-        mockHeaderService.showHeaderWithBackButton = jest.fn();
-        mockHeaderService.headerEventEmitted$ = {
-            subscribe: jest.fn((fn) => fn({ name: 'sample-event' }))
-        } as any;
-        jest.spyOn(myGroupsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+    describe('ionViewWillEnter', () => {
+
+        let subscribeWithPriorityData;
+        beforeEach(() => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn) => fn({ name: 'sample-event' }))
+            } as any;
+            jest.spyOn(myGroupsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(myGroupsPage, 'fetchGroupList').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
         });
-        jest.spyOn(myGroupsPage, 'fetchGroupList').mockImplementation(() => {
-            return Promise.resolve();
+        it('should open openinfopopup by invoked ionViewWillEnter', (done) => {
+            // arrange
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockPreferences.putBoolean = jest.fn(() => of(true));
+            // act
+            myGroupsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(subscribeWithPriorityData).toBeTruthy();
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.MY_GROUP,
+                    Environment.GROUP,
+                    false);
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(myGroupsPage.userId).toBe('sample-uid');
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
+                done();
+            }, 0);
         });
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
-        mockPlatform.backButton = {
-            subscribeWithPriority: subscribeWithPriorityData
-        } as any;
-        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-        mockLocation.back = jest.fn();
-        // act
-        myGroupsPage.ionViewWillEnter();
-        // assert
-        setTimeout(() => {
-            expect(subscribeWithPriorityData).toBeTruthy();
-            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
-            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                PageId.MY_GROUP,
-                Environment.GROUP,
-                false);
-            expect(mockLocation.back).toHaveBeenCalled();
-            done();
-        }, 0);
+        it('should not open openinfopopup by invoked ionViewWillEnter', (done) => {
+            // arrange
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            // act
+            myGroupsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(subscribeWithPriorityData).toBeTruthy();
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.MY_GROUP,
+                    Environment.GROUP,
+                    false);
+                expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(myGroupsPage.userId).toBe('sample-uid');
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
+                done();
+            }, 0);
+        });
     });
 
     describe('ionViewDidEnter', () => {

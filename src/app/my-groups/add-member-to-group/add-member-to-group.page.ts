@@ -1,30 +1,30 @@
-import { Component, Inject, ViewChild, OnInit, OnChanges } from '@angular/core';
-import { Subscription } from 'rxjs';
+import {Component, Inject, ViewChild} from '@angular/core';
+import {Subscription} from 'rxjs';
 import {
-  CheckUserExistsRequest,
-  ProfileService,
-  GroupService,
   AddMembersRequest,
+  CheckUserExistsRequest,
+  GroupMember,
   GroupMemberRole,
-  SystemSettingsService,
-  GroupMember
+  GroupService,
+  ProfileService,
+  SystemSettingsService
 } from 'sunbird-sdk';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { Platform } from '@ionic/angular';
+import {Location} from '@angular/common';
+import {Router} from '@angular/router';
+import {Platform, PopoverController} from '@ionic/angular';
 import {
   AppHeaderService,
   CommonUtilService,
-  Environment, ID,
+  Environment,
+  ID,
   InteractSubtype,
   InteractType,
   PageId,
   TelemetryGeneratorService
 } from '@app/services';
-import { PopoverController } from '@ionic/angular';
-import { animationGrowInTopRight } from '../../animations/animation-grow-in-top-right';
-import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
-import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
+import {MyGroupsPopoverComponent} from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import {animationGrowInFromEvent} from '@app/app/animations/animation-grow-in-from-event';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -251,13 +251,13 @@ export class AddMemberToGroupPage {
       });
   }
 
-  async openInfoPopup() {
+  async openInfoPopup(event: MouseEvent) {
     const popover = await this.popoverCtrl.create({
       component: MyGroupsPopoverComponent,
       componentProps: {
         isFromAddMember: true
       },
-      enterAnimation: animationGrowInTopRight,
+      enterAnimation: animationGrowInFromEvent(event),
       leaveAnimation: animationShrinkOutTopRight,
       backdropDismiss: false,
       showBackdrop: true,

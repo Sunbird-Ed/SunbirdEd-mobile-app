@@ -1,4 +1,4 @@
-import { Animation } from '@ionic/core';
+import {Animation} from '@ionic/core';
 
 export function animationShrinkOutTopRight(AnimationC: Animation, baseEl: HTMLElement): Promise<Animation> {
 
@@ -21,7 +21,7 @@ export function animationShrinkOutTopRight(AnimationC: Animation, baseEl: HTMLEl
 
     return Promise.resolve(baseAnimation
         .addElement(baseEl)
-        .easing('ease-out')
+        .easing('cubic-bezier(0.36,0.66,0.04,1)')
         .duration(800)
         .add(backdropAnimation)
         .add(wrapperAnimation));
