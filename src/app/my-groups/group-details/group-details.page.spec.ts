@@ -1413,16 +1413,23 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.getMemberName(member);
         });
     });
-
-    it('should return filter memberList', () => {
-        mockFilterPipe.transform = jest.fn(() => []);
-        groupDetailsPage.onMemberSearch('');
-        expect(mockFilterPipe.transform).toHaveBeenCalled();
+    describe('Search', () => {
+        it('should return filter memberList', () => {
+            mockFilterPipe.transform = jest.fn(() => []);
+            groupDetailsPage.onMemberSearch('');
+            expect(mockFilterPipe.transform).toHaveBeenCalled();
+        });
+        it('should return filtered activityList', () => {
+            // assert
+            groupDetailsPage.activityList = [
+                {activityInfo: {name: 'name1'}},
+                {activityInfo: {name: 'name2'}}
+            ] as any;
+            // act
+            groupDetailsPage.onActivitySearch('name1');
+            // assert
+            expect(groupDetailsPage.filteredActivityList).toEqual([{activityInfo: {name: 'name1'}}]);
+        });
     });
 
-    it('should return filter activityList', () => {
-        mockFilterPipe.transform = jest.fn(() => []);
-        groupDetailsPage.onActivitySearch('');
-        expect(mockFilterPipe.transform).toHaveBeenCalled();
-    });
 });

@@ -68,9 +68,14 @@
           <div *ngIf="!memberSearchQuery">
             <img src="assets/imgs/no_member.svg" alt="">
           </div>
-          <div class="font-16" *ngIf="memberSearchQuery && !filteredMemberList.length">
-            <img src="assets/imgs/empty_search_result.svg" alt="">
-            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+            class="text-center">
+            <div class="gd-empty-result" *ngIf="!memberSearchQuery">
+              <img src="assets/imgs/no_member.svg" alt="">
+            </div>
+            <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
         </div>
       </div>
@@ -84,7 +89,7 @@
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
             <img src="assets/imgs/no_activity.svg" alt="">
           </div>
-          <div class="font-16" *ngIf="activitySearchQuery">
+          <div class="gd-empty-result" *ngIf="activitySearchQuery">
             <img src="assets/imgs/empty_search_result.svg" alt="">
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>

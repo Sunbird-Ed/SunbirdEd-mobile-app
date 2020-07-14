@@ -716,8 +716,17 @@ export class GroupDetailsPage implements OnInit {
   onActivitySearch(query) {
     console.log('onActivitySearch', query);
     this.activitySearchQuery = query;
-    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
+    // this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
+    this.filteredActivityList = this.activityList.filter(
+      (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
+    );
   }
+
+  // sortActivityList() {
+  //   this.filteredActivityList.sort((a, b) => {
+  //     return a.activityInfo.name.localeCompare(b.activityInfo.name);
+  //   });
+  // }
 
   extractInitial(name) {
     const splitter = new GraphemeSplitter();
