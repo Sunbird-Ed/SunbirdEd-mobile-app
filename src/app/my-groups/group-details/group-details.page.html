@@ -65,9 +65,6 @@
         </div>
         <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
           class="text-center">
-          <div *ngIf="!memberSearchQuery">
-            <img src="assets/imgs/no_member.svg" alt="">
-          </div>
           <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
             class="text-center">
             <div class="gd-empty-result" *ngIf="!memberSearchQuery">
