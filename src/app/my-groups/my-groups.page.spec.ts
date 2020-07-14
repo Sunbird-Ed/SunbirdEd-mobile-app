@@ -328,24 +328,24 @@ describe('MyGroupsPage', () => {
         });
     });
 
-    describe('ngOnDestroy', () => {
+    describe('ionViewWillLeave', () => {
         it('should unsubscribe headerService', () => {
             myGroupsPage.headerObservable = {
                 unsubscribe: jest.fn()
             };
-            myGroupsPage.ngOnDestroy();
+            myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.headerObservable).toBeTruthy();
         });
 
         it('should unsubscribe headerService', () => {
             myGroupsPage.headerObservable = undefined;
-            myGroupsPage.ngOnDestroy();
+            myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.headerObservable).toBeUndefined();
         });
 
         it('should unsubscribe unregisterBackButton', () => {
             myGroupsPage.unregisterBackButton = {unsubscribe: jest.fn()} as any;
-            myGroupsPage.ngOnDestroy();
+            myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.unregisterBackButton).toBeDefined();
         });
     });

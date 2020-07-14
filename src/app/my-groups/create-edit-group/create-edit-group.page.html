@@ -18,7 +18,7 @@
       <div class="input-item cr-input-primary" lines="none">
         <ion-checkbox class="cr-terms-checkbox" formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
         <p class="cr-terms-checkbox-label"> 
-          <span>{{'I_AGREE_TO' | translate}} {{appName}} </span><span class="cr-terms" (click)="openTermsOfUse()">{{'TERMS_OF_SERVICES' | translate}}</span>
+          <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }}</span><span class="cr-terms" (click)="openTermsOfUse()">{{'TERMS_OF_SERVICES' | translate}}</span>
         </p>
         </div>
       <p

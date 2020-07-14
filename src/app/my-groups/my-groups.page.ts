@@ -31,7 +31,7 @@ interface GroupData extends Group {
   templateUrl: './my-groups.page.html',
   styleUrls: ['./my-groups.page.scss'],
 })
-export class MyGroupsPage implements OnInit, OnDestroy {
+export class MyGroupsPage implements OnInit {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
   groupListLoader = false;
@@ -96,7 +96,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }

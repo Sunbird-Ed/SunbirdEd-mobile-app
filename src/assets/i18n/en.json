@@ -13,6 +13,7 @@
   "ACTIVE_DOWNLOADS": "Active Downloads",
   "ACTIVITIES": "Activities",
   "ACTIVITIESE_SEARCH_PLACEHOLDER": "Search for group's activities",
+  "ACTIVITY_ALREADY_ADDED_IN_GROUP": "This activity is already added",
   "ACTIVITY_COURSE_TITLE": "Courses",
   "ACTIVITY_TEXTBOOK_TITLE": "Textbook (Coming soon)",
   "ADD": "Add",
@@ -774,6 +775,7 @@
   "VERSION": "Version",
   "VIDEOS": "Video",
   "VIEW": "View",
+  "VERYFYING_PLEASE_WAIT": "Verifying please wait",
   "VIEW_ALL": "View all",
   "VIEW_ALL_BATCHES": "Select a batch to proceed",
   "VIEW_CREDITS_INFO": "View licensing information",
@@ -806,7 +808,7 @@
   "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
   "DETAIL_TUTORIAL": "{{%appName}}'s library has a host of {{%explainVideos}}, {{%quesBanks}} and other {{%interactiveMaterial}}. Click on a textbook to start exploring the library!",
   "CHARACTERS_REMAINING": "Characters remaining",
-  "I_AGREE_TO": "I agree to",
+  "I_AGREE_TO": "I agree to {{app_name}}",
   "TERMS_OF_SERVICES": "terms of services",
   "LAST_UPDATED": "Last updated: {{%s}}",
   "PRIVACY_POLICY": "Privacy Policy",
@@ -815,5 +817,6 @@
   "SPECIAL_CHARACTERS_NOT_SUPPORTED": "Special characters not supported",
   "PLEASE_VALIDATE_YOUR_MOBILE_NUMBER": "Please validate your mobile number",
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
-  "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time."
+  "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
+  "EMPTY_SEARCH_RESULT_GROUPS": "Sorry! there are no results to match your search"
 }
