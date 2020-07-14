@@ -424,7 +424,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if (this.source === PageId.GROUP_DETAIL) {
         correlationData.id = PageId.GROUP_DETAIL;
         correlationData.type = CorReleationDataType.FROM_PAGE;
-        params.corRelation.push(correlationData);
+        if (params && params.corRelation) {
+          params.corRelation.push(correlationData);
+        }
       }
 
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
