@@ -192,7 +192,7 @@ export class AddMemberToGroupPage {
   }
 
   async onAddToGroupClick() {
-    const userExist = this.memberList.find(m => m.userId === this.userDetails.userId);
+    const userExist = this.memberList.find(m => m.userId === this.userDetails.id);
     // Check if user already exist in group
     if (userExist) {
       this.commonUtilService.showToast('MEMBER_ALREADY_EXISTS_IN_GROUP');

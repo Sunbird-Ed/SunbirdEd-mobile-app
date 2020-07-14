@@ -106,7 +106,7 @@ describe('CreateEditGroupPage', () => {
     it('handleHeaderEvents', () => {
         createEditGroupPage.handleHeaderEvents({name: 'back'});
         expect(mockLocation.back).toHaveBeenCalled();
-    })
+    });
 
     describe('handleBackButtonEvents', () => {
         it('should return active portal', (done) => {
@@ -177,12 +177,16 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.backButtonFunc = {
                 unsubscribe: jest.fn()
             } as any;
+            createEditGroupPage.headerObservable = {
+                unsubscribe: jest.fn()
+            } as any;
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeTruthy();
         });
 
         it('should unsubscribe backButton for else part', () => {
             createEditGroupPage.backButtonFunc = undefined;
+            createEditGroupPage.headerObservable = undefined;
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeFalsy();
         });
@@ -200,7 +204,8 @@ describe('CreateEditGroupPage', () => {
     describe('onSubmit', () => {
         it('should return and new group invoked createGroup if createGroupForm is valid', (done) => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true'},
+                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: undefined},
+                controls: {groupTerms: {setErrors: jest.fn(() => true)}},
                 valid: true
             } as any;
             const dismissFn = jest.fn(() => Promise.resolve());

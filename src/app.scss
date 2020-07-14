@@ -1426,4 +1426,14 @@ ion-modal.sb-progress-loader {
     text-align: left !important;
     margin-left: 1.5rem;
   }
+  .content-share{
+    margin-bottom: 16px !important;
+  }
+  .sb-popover-footer .sb-popover-action-btn {
+    padding: 22px 155px 33px 155px !important;
+  }
 }
+.grecaptcha-badge {
+   opacity:0;
+   visibility: hidden;
+  }

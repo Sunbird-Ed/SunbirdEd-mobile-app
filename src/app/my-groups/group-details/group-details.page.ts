@@ -136,6 +136,22 @@ export class GroupDetailsPage implements OnInit {
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activities;
 
+      if (this.memberList) {
+        this.memberList.sort((a, b) => {
+          if (b.userId === this.userId) {
+            return 1;
+          } else if (a.userId === this.userId) {
+            return -1;
+          }
+          if (b.role === GroupMemberRole.ADMIN && a.role === GroupMemberRole.MEMBER) {
+            return 1;
+          } else if (b.role === GroupMemberRole.MEMBER && a.role === GroupMemberRole.ADMIN) {
+            return -1;
+          }
+          return a.name.localeCompare(b.name);
+        });
+      }
+
       this.loggedinUser = this.memberList.find(m => m.userId === this.userId);
       this.groupCreator = this.memberList.find(m => m.userId === this.groupDetails.createdBy);
 
@@ -700,8 +716,17 @@ export class GroupDetailsPage implements OnInit {
   onActivitySearch(query) {
     console.log('onActivitySearch', query);
     this.activitySearchQuery = query;
-    this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
+    // this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
+    this.filteredActivityList = this.activityList.filter(
+      (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
+    );
   }
+
+  // sortActivityList() {
+  //   this.filteredActivityList.sort((a, b) => {
+  //     return a.activityInfo.name.localeCompare(b.activityInfo.name);
+  //   });
+  // }
 
   extractInitial(name) {
     const splitter = new GraphemeSplitter();
