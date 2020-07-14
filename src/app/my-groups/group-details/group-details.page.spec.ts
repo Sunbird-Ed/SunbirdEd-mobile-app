@@ -1389,4 +1389,20 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.getMemberName(member);
         });
     });
+    describe('Search', () => {
+        it('member search', () => {
+
+        });
+        it('shoul search activity list', () => {
+            // assert
+            groupDetailsPage.activityList = [
+                {activityInfo: {name: 'name1'}},
+                {activityInfo: {name: 'name2'}}
+            ] as any;
+            // act
+            groupDetailsPage.onActivitySearch('name1');
+            // assert
+            expect(groupDetailsPage.filteredActivityList).toEqual([{activityInfo: {name: 'name1'}}]);
+        });
+    });
 });
