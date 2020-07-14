@@ -420,6 +420,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }
+      const correlationData: CorrelationData = new CorrelationData();
+      if (this.source === PageId.GROUP_DETAIL) {
+        correlationData.id = PageId.GROUP_DETAIL;
+        correlationData.type = CorReleationDataType.FROM_PAGE;
+        params.corRelation.push(correlationData);
+      }
+
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           source: this.source,
@@ -1436,10 +1443,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = id || '';
     corRelation.type = type;
-    if (this.source === PageId.GROUP_DETAIL) {
-      corRelation.id = PageId.GROUP_DETAIL;
-      corRelation.type = CorReleationDataType.FROM_PAGE;
-    }
     this.corRelationList.push(corRelation);
   }
 

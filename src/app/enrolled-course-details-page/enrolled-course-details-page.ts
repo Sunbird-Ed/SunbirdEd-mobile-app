@@ -2038,7 +2038,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         undefined,
         undefined,
         undefined,
-        undefined,
         this.corRelationList,
         ID.ADD_ACTIVITY_TO_GROUP);
     const addActivitiesRequest: AddActivitiesRequest = {
