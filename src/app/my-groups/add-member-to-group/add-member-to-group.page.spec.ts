@@ -199,10 +199,9 @@ describe('AddMemberToGroupPage', () => {
             };
             addMemberToGroupPage.isCaptchaEnabled = true;
             addMemberToGroupPage.captchaResponse = 'captch-response';
-            addMemberToGroupPage.userId = 'sample-user-id';
             addMemberToGroupPage.username = 'sample-user-id';
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
+            // const dismissFn = jest.fn(() => Promise.resolve());
+            // const presentFn = jest.fn(() => Promise.resolve());
             // mockCommonUtilService.getLoader = jest.fn(() => ({
             //     present: presentFn,
             //     dismiss: dismissFn,
@@ -369,7 +368,7 @@ describe('AddMemberToGroupPage', () => {
                     userId: 'sample-user-id'
                 }
             ];
-            addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
+            addMemberToGroupPage.userDetails = { id: 'sample-user-id' };
             mockCommonUtilService.showToast = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();

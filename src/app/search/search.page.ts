@@ -179,7 +179,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) {
       this.isFirstLaunch = false;
-      this.handleSearch();
+      this.handleSearch(true);
     }
   }
 
@@ -769,7 +769,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.isEmptyResult = false;
   }
 
-  handleSearch() {
+  handleSearch(shouldApplyProfileFilter = false) {
     this.scrollToTop();
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
       return;
@@ -792,6 +792,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       languageCode: this.selectedLanguageCode,
       ... (this.activityFilters ? this.activityFilters : {})
     };
+
+    if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
+      if (this.profile.board && this.profile.board.length) {
+        contentSearchRequest.board = applyProfileFilter(this.appGlobalService, this.profile.board,
+          contentSearchRequest.board, 'board');
+      }
+
+      if (this.profile.medium && this.profile.medium.length) {
+        contentSearchRequest.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
+          contentSearchRequest.medium, 'medium');
+      }
+
+      if (this.profile.grade && this.profile.grade.length) {
+        contentSearchRequest.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
+          contentSearchRequest.grade, 'gradeLevel');
+      }
+    }
 
     this.isDialCodeSearch = false;
 
