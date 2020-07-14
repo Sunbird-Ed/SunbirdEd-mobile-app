@@ -6,19 +6,24 @@
       'cr-input-error': ((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)}">
       <ion-label position="stacked" class="label-font align-text">{{'GROUP_NAME' | translate }}<sup>*</sup></ion-label>
       <ion-input formControlName="groupName" maxlength="50" placeholder="{{'ENTER_GROUP_NAME' | translate}}"></ion-input>
-      <span class="char-info" *ngIf="!((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)">{{50 - createGroupFormControls.groupName.value?.length}} {{'CHARACTERS_REMAINING' | translate}}</span>
+      <span class="char-info" 
+        [innerHTML]="'CHARACTERS_REMAINING' | translate: {'character_count':  50 - createGroupFormControls.groupName.value?.length} "
+        *ngIf="!((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)">
+      </span>
       <span *ngIf="(createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required" class="cr-error">{{ errorMessages.groupName.message | translate }}</span>
     </ion-item>
     <ion-item class="input-item cr-input-primary">
       <ion-label position="stacked" class="label-font align-text">{{'GROUP_DESCRIPTION' | translate }}</ion-label>
       <ion-textarea class="cr-desc" formControlName="groupDesc" maxlength="150" rows="4" placeholder="{{'GROUP_DESCRIPTION_PLACEHOLDER' | translate}}"></ion-textarea>
-      <span class="char-info">{{150 - createGroupFormControls.groupDesc.value?.length}} {{'CHARACTERS_REMAINING' | translate}}</span>
+      <span class="char-info"
+            [innerHTML]="'CHARACTERS_REMAINING' | translate: {'character_count':  150 - createGroupFormControls.groupDesc.value?.length} "
+      ></span>
     </ion-item>
     <div class="cr-terms-container" *ngIf="!groupDetails">
       <div class="input-item cr-input-primary" lines="none">
         <ion-checkbox class="cr-terms-checkbox" formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
         <p class="cr-terms-checkbox-label"> 
-          <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }}</span><span class="cr-terms" (click)="openTermsOfUse()">{{'TERMS_OF_SERVICES' | translate}}</span>
+          <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }} </span><span class="cr-terms" (click)="openTermsOfUse()">{{'TERMS_OF_SERVICES' | translate}}</span>
         </p>
         </div>
       <p

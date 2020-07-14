@@ -1,6 +1,9 @@
 @import "src/assets/styles/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 
+.font-16{
+    font-size: 16px;
+}
 .gd-page {
     padding: 8px;
 }
@@ -175,7 +178,6 @@
     padding: 16px;
 }
 
-.gd-empty-search-result{
+.gd-empty-result{
     margin-top: 25%;
-    font-size: 16px;
 }

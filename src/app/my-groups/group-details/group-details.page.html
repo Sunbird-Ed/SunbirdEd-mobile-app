@@ -38,13 +38,6 @@
               {{'ADD_MEMBER' | translate}}
             </span>
           </div>
-          <div *ngIf="!isGroupLoading && (!filteredMemberList || !filteredMemberList.length)"
-            class="gd-empty-search-result text-center">
-            <img *ngIf="!memberSearchQuery" src="assets/imgs/no_member.svg" alt="">
-            <div *ngIf="memberSearchQuery">
-              <img src="assets/imgs/empty_search_result.svg" alt="">
-              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
-            </div>
           </div>
           <div *ngIf="isGroupLoading">
             <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
@@ -61,6 +54,15 @@
               </sb-member-card>
             </div>
           </div>
+          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+            class="text-center">
+            <div *ngIf="!memberSearchQuery">
+              <img src="assets/imgs/no_member.svg" alt="">
+            </div>
+            <div class="font-16"*ngIf="memberSearchQuery && !filteredMemberList.length">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
         </div>
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='activities'">
@@ -69,10 +71,11 @@
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!isGroupLoading && (!filteredActivityList || !filteredActivityList.length)"
-          class="gd-empty-search-result text-center">
-          <img *ngIf="!activitySearchQuery" src="assets/imgs/no_activity.svg" alt="">
-          <div *ngIf="activitySearchQuery">
+        <div *ngIf="!isGroupLoading && (!filteredActivityList || !filteredActivityList.length)" class="text-center">
+          <div class="gd-empty-result" *ngIf="!activitySearchQuery">
+            <img src="assets/imgs/no_activity.svg" alt="">
+          </div>
+          <div class="font-16" *ngIf="activitySearchQuery">
             <img src="assets/imgs/empty_search_result.svg" alt="">
             <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
