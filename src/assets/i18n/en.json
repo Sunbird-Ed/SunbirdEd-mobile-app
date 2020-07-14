@@ -434,7 +434,7 @@
   "MY_GROUPS": "My groups",
   "NAME": "NAME",
   "NAME_HINT": "Enter name",
-  "NAME_IS_REQUIRED": "You have to enter the user name",
+  "NAME_IS_REQUIRED": "You have to enter the username",
   "NEED_INTERNET_FOR_DEEPLINK_CONTENT": "You are offline. Connect to the Internet to access the content",
   "NEED_INTERNET_TO_CHANGE": "Turn on WiFi or mobile data and try again",
   "NEW": "New",
