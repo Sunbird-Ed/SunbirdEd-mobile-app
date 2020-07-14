@@ -165,9 +165,9 @@ export class SubProfileEditPage {
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
       }
-      const createdUser = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
-      if (createdUser) {
-        this.commonUtilService.showToast('SUCCESSFULLY_ADDED_USER', null, null, null, null, createdUser.handle || '');
+      const response = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
+      if (response) {
+        this.commonUtilService.showToast('SUCCESSFULLY_ADDED_USER', null, null, null, null, this.formValue.name);
         this.location.back();
       }
       this.generateTelemetryInteract(InteractType.CREATE_SUCCESS, ID.MUA_USER_CREATION);
