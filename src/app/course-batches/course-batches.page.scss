@@ -12,11 +12,11 @@
         top: 0;
         @include ltr() {
         left: 0;
-        };
+        }
     
         @include rtl() {
         right: 0;
-        };
+        }
         margin-top: 56px;
       }
     .batch-filter-icon {

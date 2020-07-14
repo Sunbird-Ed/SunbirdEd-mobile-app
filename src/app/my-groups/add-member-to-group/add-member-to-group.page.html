@@ -6,7 +6,7 @@
                 <span class="pull-left">
                     {{'MEMBER_ID' | translate: {'app_name': appName} }}<sup>*</sup>
                 </span>
-                <span class="pull-right" (click)="openInfoPopup()">
+                <span (click)="openInfoPopup($event)" class="pull-right">
                     <span>
                         <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                     </span>
@@ -24,7 +24,7 @@
         <div class="au-ip">
             <div class="au-ip-info clearfix">
                 <span class="pull-left">{{'MEMBER_ID' | translate: {'app_name': appName} }}</span>
-                <span class="pull-right" (click)="openInfoPopup()">
+                <span (click)="openInfoPopup($event)" class="pull-right">
                     <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                 </span>
             </div>

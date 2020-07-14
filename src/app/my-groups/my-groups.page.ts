@@ -64,34 +64,34 @@ export class MyGroupsPage implements OnInit {
     if (!this.isGuestUser) {
       this.groupListLoader = true;
     }
-    this.appGlobalService.getActiveProfileUid()
-      .then(async (uid) => {
-        this.userId = uid;
-        const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
-        if (!groupInfoScreen) {
-          this.openinfopopup();
-          this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
-        }
-      });
   }
 
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.handleBackButton();
     this.headerService.showHeaderWithBackButton(['groupInfo']);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    try {
+      this.userId = await this.appGlobalService.getActiveProfileUid();
+      const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
+      if (!groupInfoScreen) {
+        this.openinfopopup();
+        this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+      }
+    } catch (err) {
+    }
+    if (!this.isGuestUser) {
+      this.fetchGroupList();
+    }
   }
 
   async ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
-    if (!this.isGuestUser) {
-      this.fetchGroupList();
-    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',

@@ -1272,7 +1272,8 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.extractInitial(name);
     });
 
-    it('should navigate To ActivityDetails page', () => {
+    it('should navigate To ActivityDetails page if loggeding user is admin', () => {
+        groupDetailsPage.loggedinUser = { role: GroupMemberRole.ADMIN } as any;
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         groupDetailsPage.navigateToActivityDetails('');
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
@@ -1289,6 +1290,15 @@ describe('GroupDetailsPage', () => {
                     }]
                 }
             });
+    });
+
+    it('should not navigate To ActivityDetails page if loggeding user is not a admin', () => {
+        // arrange
+        groupDetailsPage.loggedinUser = { role: GroupMemberRole.MEMBER } as any;
+        // act
+        groupDetailsPage.navigateToActivityDetails('');
+        // assert
+        expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
 
     describe('showAddActivityPopup', () => {
@@ -1413,16 +1423,23 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.getMemberName(member);
         });
     });
-
-    it('should return filter memberList', () => {
-        mockFilterPipe.transform = jest.fn(() => []);
-        groupDetailsPage.onMemberSearch('');
-        expect(mockFilterPipe.transform).toHaveBeenCalled();
+    describe('Search', () => {
+        it('should return filter memberList', () => {
+            mockFilterPipe.transform = jest.fn(() => []);
+            groupDetailsPage.onMemberSearch('');
+            expect(mockFilterPipe.transform).toHaveBeenCalled();
+        });
+        it('should return filtered activityList', () => {
+            // assert
+            groupDetailsPage.activityList = [
+                { activityInfo: { name: 'name1' } },
+                { activityInfo: { name: 'name2' } }
+            ] as any;
+            // act
+            groupDetailsPage.onActivitySearch('name1');
+            // assert
+            expect(groupDetailsPage.filteredActivityList).toEqual([{ activityInfo: { name: 'name1' } }]);
+        });
     });
 
-    it('should return filter activityList', () => {
-        mockFilterPipe.transform = jest.fn(() => []);
-        groupDetailsPage.onActivitySearch('');
-        expect(mockFilterPipe.transform).toHaveBeenCalled();
-    });
 });
