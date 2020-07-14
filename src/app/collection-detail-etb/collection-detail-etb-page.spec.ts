@@ -1796,3 +1796,4 @@ describe('collectionDetailEtbPage', () => {
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
     });
 });
+
