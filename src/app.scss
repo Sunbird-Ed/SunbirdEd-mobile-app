@@ -1430,7 +1430,9 @@ ion-modal.sb-progress-loader {
     margin-bottom: 16px !important;
   }
   .sb-popover-footer .sb-popover-action-btn {
-    padding: 22px 155px 33px 155px !important;
+    padding: 16px !important;
+    width: 100%;
+    height: unset !important;
   }
 }
 .grecaptcha-badge {
