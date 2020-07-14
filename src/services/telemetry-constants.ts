@@ -154,7 +154,8 @@ export enum PageId {
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
     MY_GROUP = 'my-group',
-    ADD_MEMBER = 'add-member'
+    ADD_MEMBER = 'add-member',
+    ACTIVITY_DETAIL = 'activity-detail'
 }
 
 export enum LogType {
@@ -201,7 +202,8 @@ export enum ImpressionSubtype {
     UPGRADE_POPUP = 'upgrade-popup',
     DEEPLINK = 'deeplink',
     CREATE_GROUP_FORM = 'create-group-form',
-    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial'
+    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
+    GROUP_TUTORIAL = 'my-group-tutorial-popup'
 }
 
 export enum InteractType {
@@ -499,7 +501,8 @@ export enum InteractSubtype {
     REMOVE_MEMBER_CLICKED = 'remove-member-clicked',
     REMOVE_ACTIVITY_CLICKED = 'remove-activity-clicked',
     VERIFY_CLICKED = 'verify-clicked',
-    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked'
+    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked',
+    ADD_TO_GROUP_CLICKED = 'add-to-group-clicked'
 }
 
 export enum ID {
@@ -541,7 +544,8 @@ export enum ID {
     REMOVE_MEMBER = 'remove-member',
     REMOVE_ACTIVITY = 'remove-activity',
     VERIFY_MEMBER = 'verify-member',
-    ADD_MEMBER_TO_GROUP = 'add-member-to-group'
+    ADD_MEMBER_TO_GROUP = 'add-member-to-group',
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group'
 }
 
 export enum ActionButtonType {
