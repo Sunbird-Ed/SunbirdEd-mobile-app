@@ -173,6 +173,16 @@ export class GroupDetailsPage implements OnInit {
     return memberName;
   }
 
+  showMemberMenu(member) {
+    let showMenu = false;
+    if (this.loggedinUser.role === GroupMemberRole.ADMIN
+      && member.userId !== this.groupCreator.userId
+      && member.userId !== this.loggedinUser.userId) {
+      showMenu = true;
+    }
+    return showMenu;
+  }
+
   switchTabs(tab) {
     this.activeTab = tab;
   }
@@ -735,6 +745,10 @@ export class GroupDetailsPage implements OnInit {
   }
 
   navigateToActivityDetails(activity) {
+    if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
+      return;
+    }
+
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId,
