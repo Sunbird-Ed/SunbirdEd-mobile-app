@@ -1,17 +1,25 @@
 <ion-content>
   <div class="gd-page">
     <div class="gd-header">
-      <div class="gd-title">
-        <div class="gd-name">
-          {{groupDetails?.name}}
-          <div class="gd-created-by" *ngIf="groupCreator">
-            {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
+      <div *ngIf="!isGroupLoading">
+        <div class="gd-title">
+          <div class="gd-name">
+            {{groupDetails?.name}}
+            <div class="gd-created-by" *ngIf="groupCreator">
+              {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
+            </div>
+          </div>
+          <div class="gd-opts">
+            <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
           </div>
         </div>
-        <div class="gd-opts">
-          <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
-        </div>
       </div>
+        <div class="m-n" *ngIf="isGroupLoading">
+          <div class="skeleton-header mb-8">
+            <app-skeleton-item height="18px" width="75%" style="height:18px; width:50%;"></app-skeleton-item>
+            <app-skeleton-item height="14px" width="75%" style="height:14px; width:90%; margin-top:8px;"></app-skeleton-item>
+          </div>
+        </div>
       <div class="gd-tab-header">
         <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}">
           <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
