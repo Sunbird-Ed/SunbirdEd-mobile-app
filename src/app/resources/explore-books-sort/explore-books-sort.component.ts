@@ -10,7 +10,7 @@ import {
   ContentSearchCriteria,
   ContentSearchResult,
   ContentService,
-  SearchType, TelemetryObject
+  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService
 } from 'sunbird-sdk';
 import {ContentType, ExploreConstants, RouterLinks, Search} from '@app/app/app.constant';
 import {Router} from '@angular/router';
@@ -21,10 +21,6 @@ import {ContentUtil} from '@app/util/content-util';
   styleUrls: ['./explore-books-sort.component.scss'],
 })
 export class ExploreBooksSortComponent implements OnInit, OnDestroy {
-  @Input() boardList: string[];
-  @Input() mediumList: string[];
-  @Input() gradeList: string[];
-  @Input() curLang: string;
   storyAndWorksheets: Array<any>;
   unregisterBackButton: Subscription;
   searchRequest: ContentSearchCriteria = {
@@ -33,7 +29,15 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
   appName = '';
   public imageSrcMap = new Map();
   defaultImg: string;
+  boardList: string[];
+  mediumList: string[];
+  gradeList: string[];
+  subjectList: string[];
+  curLang: string;
+  relevantTerms: any;
+
   constructor(
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private platform: Platform,
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -42,10 +46,17 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
     private location: Location,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private ngZone: NgZone,
-    private router: Router
+    private router: Router,
+    private params: NavParams
   ) {
-    this.initForm();
     this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
+    this.boardList = this.params.get('boardList');
+    this.mediumList = this.params.get('mediumList');
+    this.gradeList = this.params.get('gradeList');
+    this.subjectList = this.params.get('subjectList');
+    this.relevantTerms = this.params.get('relevantTerms');
+    this.curLang = this.params.get('curLang');
+    this.initForm();
   }
   async ngOnInit() {
     this.handleBackButton(false);
@@ -63,10 +74,11 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRelevantTextBooks() {
-    this.searchRequest.board = this.boardList ? this.boardList : null;
+  private async getRelevantTextBooks() {
+    this.searchRequest.board = this.relevantTerms ? this.relevantTerms : [];
     this.searchRequest.medium = this.mediumList ? this.mediumList : null;
     this.searchRequest.grade = this.gradeList ? this.gradeList : null;
+    this.searchRequest.subject = this.subjectList ? this.subjectList : null;
     this.searchRequest.facets = Search.FACETS_ETB;
     this.searchRequest.mode = 'hard';
     this.searchRequest.contentTypes = [ContentType.TEXTBOOK];
