@@ -295,7 +295,7 @@ export class GroupDetailsPage implements OnInit {
     await deleteConfirm.present();
 
     const { data } = await deleteConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -357,7 +357,7 @@ export class GroupDetailsPage implements OnInit {
     await leaveGroupConfirm.present();
 
     const { data } = await leaveGroupConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -431,7 +431,7 @@ export class GroupDetailsPage implements OnInit {
     await removeActivityConfirm.present();
 
     const { data } = await removeActivityConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -506,7 +506,7 @@ export class GroupDetailsPage implements OnInit {
     await removeMemberConfirm.present();
 
     const { data } = await removeMemberConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -583,7 +583,7 @@ export class GroupDetailsPage implements OnInit {
     await makeGroupAdminConfirm.present();
 
     const { data } = await makeGroupAdminConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -663,7 +663,7 @@ export class GroupDetailsPage implements OnInit {
     await dismissAsGroupAdminConfirm.present();
 
     const { data } = await dismissAsGroupAdminConfirm.onDidDismiss();
-    if (data) {
+    if (data && data.isLeftButtonClicked) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
