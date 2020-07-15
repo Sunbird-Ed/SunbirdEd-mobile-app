@@ -1,5 +1,5 @@
-import {Content, Rollup, TelemetryObject} from 'sunbird-sdk';
-import {Navigation} from '@angular/router';
+import { Content, Rollup, TelemetryObject } from 'sunbird-sdk';
+import { Navigation } from '@angular/router';
 
 export const mockcollectionData: Partial<Navigation> = {
     id: 7,
@@ -128,8 +128,8 @@ export const contentDetailsMcokResponse1: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatingsCount: 1,
-        contentFeedback: [{rating: 'SAMPLE_RATING'}],
+        me_averageRating: 1,
+        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -236,7 +236,7 @@ export const contentDetailsMcokResponse1: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: {description: '', name: '', url: ''},
+        licenseDetails: { description: '', name: '', url: '' },
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -305,8 +305,8 @@ export const contentDetailsMcokResponse2: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatingsCount: 1,
-        contentFeedback: [{rating: 'SAMPLE_RATING'}],
+        me_averageRating: 1,
+        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -413,7 +413,7 @@ export const contentDetailsMcokResponse2: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: {description: '', name: '', url: ''},
+        licenseDetails: { description: '', name: '', url: '' },
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -483,8 +483,8 @@ export const contentDetailsMcokResponse3: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatingsCount: 1,
-        contentFeedback: [{rating: 'SAMPLE_RATING'}],
+        me_averageRating: 1,
+        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -591,7 +591,7 @@ export const contentDetailsMcokResponse3: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: {description: '', name: '', url: ''},
+        licenseDetails: { description: '', name: '', url: '' },
     },
     contentFeedback: [{
         contentId: 'd0_123456',

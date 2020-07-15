@@ -162,6 +162,7 @@
     text-transform: initial;
   }
 .sb-btn-tile {
+    position: relative;
     flex-direction: column;
     background-color: $white;
     width:72px;
@@ -169,8 +170,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    .view-icon{
+      color: #024F9D;
+    }
     .sb-btn-footer-text {
       font-weight: 400;
+      color: #024F9D;
     }
   }
   button.sb-btn-tile:focus {
@@ -232,10 +237,13 @@
       @include padding(15px);
       background-color: #fff;
       @include margin(null, null, 2px, null);
+      border-bottom: 0.5px solid #979797;
     }
     .content {
-      @include padding(15px);
+      @include margin(8px);
       background-color: #fff;
+      border: 0.5px solid #979797;
+      border-radius: 4px;
     }
   }
 
@@ -251,6 +259,7 @@
 
   .custom-round {
     border-radius: 64px !important;
+    --background: #024F9D !important;
   }
 
   .bottom-block {
@@ -283,6 +292,8 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
+    border-bottom: 0.5px solid #979797;
+    @include padding(null, 16px, null, 16px);
   }
 
   .margin-pull-up {
@@ -297,5 +308,92 @@
       width:35px;
       height:25px;
       margin-bottom: 4px;
+  }
+  
+  .add-size{
+    font-size: 24px;
+    padding-right: 8px;
+  }
+
+  .enrolled-status-text {
+    font-family: "Noto Sans";
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .ongoing-status-text{
+    @extend .enrolled-status-text;
+    color: #024F9D;
+  }
+
+  .completed-status-text{
+    @extend .enrolled-status-text;
+    color: #008840;
+  }
+
+  .self-declare-teacher-btn{
+    margin: 8px 0 16px;
+    ion-button{
+      text-transform: none;
+      --background: #008840 !important;
+      --padding-start: 24px;
+      --padding-end: 24px;
+    }
+    
+    .question-badge{
+      background-color: white;
+      color: #008840;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      padding-top: 2px;
+      margin: 0 0 2px 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+
+  .self-declare-teacher-details{
+    padding: 16px;
+    background-color: #196dab;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 14px;
+    
+    .container{
+      @include margin(null, null, 8px, null);
+    }
+
+    ion-button{
+      text-transform: none;
+      --background: #FFFFFF !important;
+      --padding-start: 24px;
+      --padding-end: 24px;
+      --color: #024F9D;
+    }
+
+    .declare-info{
+      margin: 0;
+      font-size: 12px;
+    }
+  }
+
+  .app-name{
+    text-transform: lowercase;
+    display: inline-block;
+  }
+  .app-name::first-letter{
+    text-transform: capitalize
+  }
+  .refresh-icon {
+    color: #007aff;
+    float: right;
+    height: 40px;
+    width: 40px;
+    margin-top: -8px;
+  }
+  ion-icon.refresh-icon.md.hydrated:active {
+    background: #e8e7e7;
+    border-radius: 18px;
   }
 }

@@ -114,6 +114,16 @@
           text-align: center;
           @include padding(($base-block-space * 1), 0, 0, 0);
         }
+
+        .sb-popover-information {
+          color: $gray-800;
+          font-family: "Noto Sans";
+          font-weight: normal;
+          font-size: ($font-size-base + 6);
+          letter-spacing: 0;
+          line-height: 24px;
+          text-align: center;
+        }
       }
     }
   }
@@ -217,6 +227,29 @@
   }
 }
 
+.sb-popover.success {
+  .sb-popover-header {
+    background-color: #008840;
+    .sb-popover-toolbar .toolbar-background {
+      background-color: #008840;
+    }
+  }
+  .popover-content {
+    .sb-popover-items {
+      padding: 16px;
+      .icon-container {
+        ion-icon {
+          font-size: ($font-size-base * 2)+2;
+          color: #008840;
+        }
+      }
+    }
+  }
+  .sb-popover-footer .sb-popover-action-btn.popover-color {
+    background-color: #008840;
+  }
+}
+
 // For Permission Popup
 .sb-popover.sb-popover-permissions {
   .sb-popover-items {
@@ -282,6 +315,12 @@
       background-color: #024f9d;
       width: 150px;
     }
+
+    .popover-button-information {
+      padding: 4px 72px;
+      height: 36px;
+      border-radius: 2px !important;
+    }
   }
 }
 
@@ -300,6 +339,13 @@
   .sb-popover-header,
   .sb-popover-header .sb-popover-toolbar {
     --background: #{$tertiary-color};
+  }
+}
+
+.sb-popover.success {
+  .sb-popover-header,
+  .sb-popover-header .sb-popover-toolbar {
+    --background: #008840;
   }
 }
 

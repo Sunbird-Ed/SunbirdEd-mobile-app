@@ -111,6 +111,9 @@ describe('ExternalIdVerificationService', () => {
         isNetworkAvailable: false
       };
       externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
+      mockProfileService.getActiveProfileSession = jest.fn(() => of({
+        managedSession: {}
+      })) as any;
       // act
       externalIdVerificationService.showExternalIdVerificationPopup();
       // assert
@@ -190,6 +193,9 @@ describe('ExternalIdVerificationService', () => {
       }] as any));
       const mockCreate = jest.spyOn(mockPopOverController, 'create');
       mockFormnFrameworkUtilService.getTenantSpecificMessages = jest.fn(() => Promise.resolve([{ range: [{}] }]));
+      mockProfileService.getActiveProfileSession = jest.fn(() => of({
+        managedSession: undefined
+      })) as any;
       // act
       externalIdVerificationService.showExternalIdVerificationPopup();
       // assert
@@ -210,6 +216,7 @@ describe('ExternalIdVerificationService', () => {
           category: 'OrgMigrationAction'
         });
         expect(mockCreate.mock.calls[0][0]['componentProps']['tenantMessages']).toEqual({});
+        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -233,6 +240,9 @@ describe('ExternalIdVerificationService', () => {
       }] as any));
       const mockCreate = jest.spyOn(mockPopOverController, 'create');
       mockFormnFrameworkUtilService.getTenantSpecificMessages = jest.fn(() => Promise.resolve([{ range: [{}] }]));
+      mockProfileService.getActiveProfileSession = jest.fn(() => of({
+        managedSession: undefined
+      })) as any;
       // act
       externalIdVerificationService.showExternalIdVerificationPopup();
       // assert
@@ -250,6 +260,7 @@ describe('ExternalIdVerificationService', () => {
           category: 'OrgMigrationAction'
         });
         expect(mockCreate.mock.calls[0][0]['componentProps']['tenantMessages']).toEqual({});
+        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
         done();
       }, 0);
     });

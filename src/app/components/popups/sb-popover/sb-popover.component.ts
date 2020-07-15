@@ -14,6 +14,7 @@ export class SbPopoverComponent implements OnDestroy {
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
   sbPopoverHtmlContent?: string;
+  sbPopoverInfo: any;
   actionsButtons: any;
   icon: any;
   metaInfo: any;
@@ -27,6 +28,7 @@ export class SbPopoverComponent implements OnDestroy {
   pageName = '';
   showFlagMenu = true;
   img: any;
+  showCloseBtn = true;
   public objRollup: Rollup;
 
   public corRelationList: Array<CorrelationData>;
@@ -35,6 +37,7 @@ export class SbPopoverComponent implements OnDestroy {
   public sbPopoverDynamicContent$?: Observable<string>;
   public sbPopoverDynamicContentSubscription?: Subscription;
   public sbPopoverDynamicButtonDisabledSubscription?: Subscription;
+
   constructor(
     public navParams: NavParams,
     private platform: Platform,
@@ -50,6 +53,9 @@ export class SbPopoverComponent implements OnDestroy {
     this.sbPopoverHtmlContent = this.navParams.get('sbPopoverHtmlContent');
     this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
     this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
+    this.showCloseBtn = this.navParams.get('showCloseBtn');
+    this.sbPopoverInfo = this.navParams.get('sbPopoverInfo');
+
 
     this.content = this.navParams.get('content');
     this.data = this.navParams.get('data');

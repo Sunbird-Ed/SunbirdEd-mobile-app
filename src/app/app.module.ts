@@ -162,6 +162,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
+export function classRoomService() {
+  return SunbirdSdk.instance.classRoomService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -260,6 +263,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  }, {
+    provide: 'CLASS_ROOM_SERVICE',
+    useFactory: classRoomService
   }
   ];
 }
@@ -336,6 +342,7 @@ export const sunbirdSdkFactory =
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
           profileApiPath_V2: '/api/user/v2',
+          profileApiPath_V4: '/api/user/v4',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
           searchLocationApiPath: '/api/data/v1',

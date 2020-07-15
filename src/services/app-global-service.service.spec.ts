@@ -5,7 +5,7 @@ import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey, EventTopics } from '../app/app.constant';
-import { InteractSubtype, Environment, PageId, InteractType } from './telemetry-constants';
+import { InteractSubtype, Environment, PageId, InteractType, ImpressionType, ImpressionSubtype } from './telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { mockFrameworkData } from './app-global-service.service.spec.data';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
@@ -52,7 +52,8 @@ describe('AppGlobalService', () => {
             mockPopoverCtrl as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockUtilityService as UtilityService,
-            mockAppVersion as AppVersion
+            mockAppVersion as AppVersion,
+            mockPopoverCtrl as PopoverController
         );
     });
 
@@ -520,7 +521,7 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.setOnBoardingCompleted().then(() => {
                 // assert
-                expect(appGlobalService.isOnBoardingCompleted).toEqual(true);
+                expect(appGlobalService.isOnBoardingCompleted).toEqual(false);
             });
         });
 
@@ -535,47 +536,71 @@ describe('AppGlobalService', () => {
         });
     });
 
-    // describe('showCouchMarkScreen()', () => {
-    //     it('should skip showig coachmark screen if "skipCoachScreenForDeeplink" is true', () => {
-    //         // arrange
-    //         appGlobalService.skipCoachScreenForDeeplink = true;
-    //         // act
-    //         appGlobalService.showCouchMarkScreen().then(() => {
-    //             // assert
-    //             expect(appGlobalService.skipCoachScreenForDeeplink).toEqual(false);
-    //         });
-    //     });
-    //
-    //     it('should save the onboarding completed flag if user is not logged in and display coach screen', (done) => {
-    //         // arrange
-    //         appGlobalService.skipCoachScreenForDeeplink = false;
-    //         mockPreferences.getBoolean = jest.fn(() => of(false));
-    //         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
-    //         mockEvent.publish = jest.fn();
-    //         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-    //         mockPreferences.putBoolean = jest.fn(() => of(undefined));
-    //         // act
-    //         appGlobalService.showCouchMarkScreen().then(() => {
-    //             // assert
-    //             expect(mockEvent.publish).toHaveBeenCalledWith(EventTopics.COACH_MARK_SEEN,
-    //                 { showWalkthroughBackDrop: true, appName: 'appname' });
-    //             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
-    //             expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN, true);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('should not show the coach mark screen if it is already shown', (done) => {
-    //         // arrange
-    //         appGlobalService.skipCoachScreenForDeeplink = false;
-    //         mockPreferences.getBoolean = jest.fn(() => of(true));
-    //         // act
-    //         appGlobalService.showCouchMarkScreen().then(() => {
-    //             // assert
-    //             done();
-    //         });
-    //     });
-    // });
+    describe('showTutorialWalkthrough()', () => {
+        it('should skip showing tutorialScreen screen if "skipCoachScreenForDeeplink" is true', () => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = true;
+            // act
+            appGlobalService.showTutorialScreen().then(() => {
+                // assert
+                expect(appGlobalService.skipCoachScreenForDeeplink).toEqual(false);
+            });
+        });
+
+        it('should save the onboarding completed flag if user is not logged in and display coach screen', (done) => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false;
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
+            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
+            } as any)));
+            // act
+            appGlobalService.showTutorialScreen().then(() => {
+                // assert
+                setTimeout(() => {
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    done();
+
+                }, 0);
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN, true);
+            });
+        });
+
+        it('should generate close clicked after user sees the walkthrough screen', (done) => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false;
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
+            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
+            } as any)));
+            // act
+            appGlobalService.showTutorialScreen().then(() => {
+                // assert
+                setTimeout(() => {
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    done();
+                }, 0);
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN, true);
+            });
+        });
+
+        it('should not show the coach mark screen if it is already shown', (done) => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false;
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            // act
+            appGlobalService.showTutorialScreen().then(() => {
+                // assert
+                done();
+            });
+        });
+    });
 
     describe('getSelectedUser()', () => {
         it('should return the selectedUser', () => {

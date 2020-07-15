@@ -90,16 +90,6 @@ describe('ContentActionsComponent', () => {
         expect(contentActionsComponent).toBeTruthy();
     });
 
-    describe('constructor ', () => {
-        it('', () => {
-            // act
-            subscribeWithPriorityCallback();
-            // assert
-            expect(mockBackBtnFunc.unsubscribe).toBeCalled();
-            expect(mockPopoverCtrl.dismiss).toBeCalled();
-        });
-    });
-
     describe('getUserId ', () => {
         it('should cover else part if pageId or userId is undefined', (done) => {
             // arrange

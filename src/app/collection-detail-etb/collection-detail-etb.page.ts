@@ -38,6 +38,7 @@ import { tap, share } from 'rxjs/operators';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -272,6 +273,7 @@ export class CollectionDetailEtbPage implements OnInit {
     private textbookTocService: TextbookTocService,
     private contentPlayerHandler: ContentPlayerHandler,
     private contentDeleteHandler: ContentDeleteHandler,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.objRollup = new Rollup();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
@@ -343,6 +345,10 @@ export class CollectionDetailEtbPage implements OnInit {
         this.refreshContentDetails(data);
       }
     });
+  }
+
+  ionViewDidEnter() {
+    this.sbProgressLoader.hide({ id: this.identifier });
   }
 
   private assignCardData() {

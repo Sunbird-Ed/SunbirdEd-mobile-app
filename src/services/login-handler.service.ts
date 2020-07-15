@@ -18,7 +18,7 @@ import {
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey, RouterLinks, EventTopics } from '@app/app/app.constant';
+import {ProfileConstants, PreferenceKey, RouterLinks, EventTopics, IgnoreTelemetryPatters} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -31,6 +31,7 @@ import {
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
 import { AppGlobalService } from './app-global-service.service';
+import {Context as SbProgressLoaderContext, SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Injectable()
 export class LoginHandlerService {
@@ -56,7 +57,8 @@ export class LoginHandlerService {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private events: Events,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private sbProgressLoader: SbProgressLoader
   ) {
 
     this.appVersion.getAppName()
@@ -65,7 +67,7 @@ export class LoginHandlerService {
       });
   }
 
-  async signIn() {
+  async signIn(skipNavigation?) {
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
     //   this.valueChange.emit(true);
@@ -80,7 +82,6 @@ export class LoginHandlerService {
       this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
 
       const that = this;
-      const loader = await this.commonUtilService.getLoader();
       const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
 
       let webviewLoginSessionProviderConfig: WebviewSessionProviderConfig;
@@ -92,6 +93,7 @@ export class LoginHandlerService {
         webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
         await webviewSessionProviderConfigloader.dismiss();
       } catch (e) {
+        this.sbProgressLoader.hide({id: 'login'});
         await webviewSessionProviderConfigloader.dismiss();
         this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
         return;
@@ -105,10 +107,9 @@ export class LoginHandlerService {
       )
         .toPromise()
         .then(async () => {
-          await loader.present();
+          await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
           // set default guest user for Quiz deeplink
-          const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')
-            ? true : false;
+          const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
           if (!isOnboardingCompleted) {
             await this.setDefaultProfileDetails();
 
@@ -118,6 +119,7 @@ export class LoginHandlerService {
             }
           }
 
+          this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
@@ -125,28 +127,19 @@ export class LoginHandlerService {
           return that.refreshTenantData(value.slug, value.title);
         })
         .then(async () => {
-          await loader.dismiss();
-          if (!this.appGlobalService.signinOnboardingLoader) {
-            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
-            await this.appGlobalService.signinOnboardingLoader.present();
-          }
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-            // this.events.publish('UPDATE_TABS');
-            // this.router.navigate([RouterLinks.TABS]);
-            // window.location.reload();
-            this.events.publish(EventTopics.SIGN_IN_RELOAD);
+            this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
           });
         })
         .catch(async (err) => {
           console.error(err);
-
+          this.sbProgressLoader.hide({id: 'login'});
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
           }
-          return await loader.dismiss();
         });
     }
   }
@@ -263,5 +256,17 @@ export class LoginHandlerService {
       source: profile.source || ProfileSource.LOCAL
     };
     return profileRequest;
+  }
+
+  private generateIgnoreTelemetryContext(): SbProgressLoaderContext {
+    return {
+      id: 'login',
+      ignoreTelemetry: {
+        when: {
+          interact: IgnoreTelemetryPatters.IGNORE_SIGN_IN_PAGE_ID_EVENTS,
+          impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
+        }
+      }
+    };
   }
 }

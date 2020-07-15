@@ -413,29 +413,17 @@ export class CommonUtilService {
 
     isUserLocationAvalable(profile: any): boolean {
         const location = this.getUserLocation(profile);
-        if (location && location.state && location.state['name'] && location.district && location.district['name']) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
         const deviceLoc = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
-        if (deviceLoc) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!deviceLoc;
     }
 
     async isIpLocationAvailable(): Promise<boolean> {
         const deviceLoc = await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise();
-        if (deviceLoc) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!deviceLoc;
     }
 
     handleToTopicBasedNotification() {
@@ -471,17 +459,6 @@ export class CommonUtilService {
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
-    }
-
-    generateUTMInfoTelemetry(scannedData, cData, object) {
-        const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
-        const utmParams = {};
-        utmHashes.map(hash => {
-            const [key, val] = hash.split('=');
-            utmParams[key] = decodeURIComponent(val);
-        });
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
-            (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
 
     getFormattedDate(date: string | Date) {
