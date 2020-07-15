@@ -1275,12 +1275,15 @@ describe('GroupDetailsPage', () => {
     it('should navigate To ActivityDetails page if loggeding user is admin', () => {
         groupDetailsPage.loggedinUser = { role: GroupMemberRole.ADMIN } as any;
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-        groupDetailsPage.navigateToActivityDetails('');
+        groupDetailsPage.onActivityCardClick('');
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
             {
                 state: {
                     groupId: 'sample-group-id',
                     activity: '',
+                    loggedinUser: {
+                        role: 'admin'
+                    },
                     memberList: [{
                         groupId: '',
                         role: GroupMemberRole.MEMBER,
@@ -1296,7 +1299,7 @@ describe('GroupDetailsPage', () => {
         // arrange
         groupDetailsPage.loggedinUser = { role: GroupMemberRole.MEMBER } as any;
         // act
-        groupDetailsPage.navigateToActivityDetails('');
+        groupDetailsPage.onActivityCardClick('');
         // assert
         expect(mockRouter.navigate).not.toHaveBeenCalled();
     });

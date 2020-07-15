@@ -1,7 +1,10 @@
-import {ActivityDetailsPage} from './activity-details.page';
-import {Router} from '@angular/router';
-import {FilterPipe} from '@app/pipes/filter/filter.pipe';
-import {CommonUtilService, Environment, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
+import { ActivityDetailsPage } from './activity-details.page';
+import { Router } from '@angular/router';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import {
+    CommonUtilService, Environment, ImpressionType,
+    PageId, TelemetryGeneratorService
+} from '@app/services';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService } from '../../../services';
 import { Platform } from '@ionic/angular';
@@ -47,11 +50,10 @@ describe('ActivityDetailsPage', () => {
         expect(activityDetailsPage).toBeTruthy();
     });
 
-    it('should return searchin memberList', () => {
-        const request = ['member-1'];
-        mockFilterPipe.transform = jest.fn(() => request);
-        activityDetailsPage.onSearch('member-1');
-        expect(mockFilterPipe.transform).toHaveBeenCalledWith(request, 'title', request[0]);
+    it('should return filter memberList', () => {
+        mockFilterPipe.transform = jest.fn(() => []);
+        activityDetailsPage.onMemberSearch('');
+        expect(mockFilterPipe.transform).toHaveBeenCalled();
     });
 
     it('ngOnInit', () => {

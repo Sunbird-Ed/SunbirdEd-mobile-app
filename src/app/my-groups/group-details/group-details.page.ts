@@ -744,13 +744,14 @@ export class GroupDetailsPage implements OnInit {
     return split[0];
   }
 
-  navigateToActivityDetails(activity) {
+  onActivityCardClick(activity) {
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
       return;
     }
 
     const navigationExtras: NavigationExtras = {
       state: {
+        loggedinUser: this.loggedinUser,
         groupId: this.groupId,
         memberList: this.memberList,
         activity
