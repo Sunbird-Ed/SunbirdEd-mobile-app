@@ -55,6 +55,7 @@ import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
+import { Location } from '@angular/common';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -67,6 +68,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private progressLoaderId: string;
   private childContent;
   private isChildContentFound;
+  private enableRootNavigation = false;
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -100,7 +102,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
     private container: ContainerService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private location: Location
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -239,6 +242,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (!this.isOnboardingCompleted) {  // && !session
         // skip info popup
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
+        this.enableRootNavigation = true;
 
         // Set onboarding data if available in query params. e.g. channel, role, lang
         await this.setOnboradingData(payloadUrl);
@@ -499,6 +503,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
+      this.setTabsRoot();
       this.router.navigate([route],
         {
           state: {
@@ -515,6 +520,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.navigateContent(identifier, true, content, payloadUrl, route);
       }
     } else {
+      this.setTabsRoot();
       this.router.navigate([route]);
       this.closeProgressLoader();
     }
@@ -539,6 +545,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
+          this.setTabsRoot();
           await this.router.navigate([route],
             {
               state: {
@@ -575,6 +582,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.closeProgressLoader();
       return;
     }
+    this.setTabsRoot();
     await this.router.navigate([RouterLinks.CONTENT_DETAILS],
       {
         state: {
@@ -696,9 +704,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             }
           };
           this.closeProgressLoader();
+          this.setTabsRoot();
           this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
             chapterParams);
         } else {
+          this.setTabsRoot();
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
             {
               state: {
@@ -710,6 +720,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       } else {
         if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
           if (this.appGlobalServices.isGuestUser) {
+            this.setTabsRoot();
             this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
               {
                 state: {
@@ -720,6 +731,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               });
           }
         } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
+          this.setTabsRoot();
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
             {
               state: {
@@ -729,6 +741,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               }
             });
         } else {
+          this.setTabsRoot();
           this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.childContent,
@@ -746,6 +759,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     } else {
       if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+        this.setTabsRoot();
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
           {
             state: {
@@ -756,6 +770,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             }
           });
       } else {
+        this.setTabsRoot();
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
           {
             state: {
@@ -830,4 +845,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     return requestParams;
   }
+
+  // this only sets the Root for the Tabs.
+  private setTabsRoot() {
+    if (this.enableRootNavigation) {
+      try {
+        this.location.replaceState(this.router.serializeUrl(this.router.createUrlTree([RouterLinks.TABS])));
+      } catch (e) {
+        console.log(e);
+      }
+      this.enableRootNavigation = false;
+    }
+  }
+
 }
