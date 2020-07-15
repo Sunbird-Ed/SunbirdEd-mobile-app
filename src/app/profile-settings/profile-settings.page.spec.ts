@@ -103,28 +103,41 @@ describe('ProfileSettingsPage', () => {
         expect(profileSettingsPage).toBeTruthy();
     });
 
-    it('should fetch active profile by invoked ngOnInit()', (done) => {
-        // arrange
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
-            return;
-        });
-        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
-        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
-            return;
-        });
-        jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
-            return Promise.resolve();
-        });
-        // act
-        profileSettingsPage.ngOnInit().then(() => {
+    describe('handleActiveScanner', () => {
+        it('should stop active scanner', (done) => {
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        id: 'sample-id',
+                        stopScanner: true
+                    }
+                }
+            })) as any;
+            mockScanner.stopScanner = jest.fn();
+            // act
+            profileSettingsPage.handleActiveScanner();
             // assert
-           setTimeout(() => {
-               expect(mockAppVersion.getAppName).toHaveBeenCalled();
-               expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-               done();
-           }, 0);
+            setTimeout(() => {
+                expect(mockScanner.stopScanner).toHaveBeenCalled();
+                done();
+            }, 600);
+        });
+
+        it('should not stop active scanner for else part', (done) => {
+            mockRouter.getCurrentNavigation = jest.fn(() => ({
+                extras: {
+                    state: {
+                        id: 'sample-id',
+                        stopScanner: false
+                    }
+                }
+            })) as any;
+            // act
+            profileSettingsPage.handleActiveScanner();
+            // assert
+            setTimeout(() => {
+                done();
+            }, 0);
         });
     });
 
@@ -135,7 +148,7 @@ describe('ProfileSettingsPage', () => {
             return;
         });
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-        mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
             return;
         });
@@ -145,25 +158,21 @@ describe('ProfileSettingsPage', () => {
         // act
         profileSettingsPage.ngOnInit().then(() => {
             // assert
-            expect(mockAppVersion.getAppName).toHaveBeenCalled();
-            expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-            done();
+            setTimeout(() => {
+                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
-    xit('should subscribe formControl to call ngOnDestroy()', (done) => {
+    it('should subscribe formControl to call ngOnDestroy()', () => {
         // arrange
-        const data = jest.fn();
-        const mockFormControlSubscriptions = {
-            unsubscribe: data
-        } as Partial<Subscription>;
+        const formControlSubscriptions: Partial<Subscription> = { unsubscribe: jest.fn() };
         // act
         profileSettingsPage.ngOnDestroy();
         // assert
-        setTimeout(() => {
-            expect(data).toHaveBeenCalled();
-            done();
-        }, 0);
+        expect(formControlSubscriptions).not.toBeUndefined();
     });
 
     describe('onSubmitAttempt()', () => {
@@ -176,13 +185,13 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
-                            value = { value: { board: []}};
+                            value = { value: { board: [] } };
                             break;
                         case 'board':
-                            value = { value: { board: []}};
+                            value = { value: { board: [] } };
                             break;
                         case 'medium':
-                            value = { value: { medium: []}};
+                            value = { value: { medium: [] } };
                             break;
                         case 'grade':
                             value = [];
@@ -238,13 +247,13 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
-                            value = { value: { board: ['AP']}};
+                            value = { value: { board: ['AP'] } };
                             break;
                         case 'board':
-                            value = { value: { board: ['AP']}};
+                            value = { value: { board: ['AP'] } };
                             break;
                         case 'medium':
-                            value = { value: { medium: []}};
+                            value = { value: { medium: [] } };
                             break;
                         case 'grade':
                             value = [];
@@ -270,7 +279,7 @@ describe('ProfileSettingsPage', () => {
                     syllabus: [], board: ['AP'], medium: [], grade: []
                 }
             } as any;
-            profileSettingsPage.boardSelect = {open: jest.fn()};
+            profileSettingsPage.boardSelect = { open: jest.fn() };
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
@@ -299,16 +308,16 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
-                            value = { value: { board: ['AP']}};
+                            value = { value: { board: ['AP'] } };
                             break;
                         case 'board':
-                            value = { value: { board: ['AP']}};
+                            value = { value: { board: ['AP'] } };
                             break;
                         case 'medium':
-                            value = { value: { medium: ['English']}};
+                            value = { value: { medium: ['English'] } };
                             break;
                         case 'grade':
-                            value = { value: { medium: []}};
+                            value = { value: { medium: [] } };
                             break;
                     }
                     return value;
@@ -331,7 +340,7 @@ describe('ProfileSettingsPage', () => {
                     syllabus: [], board: ['AP'], medium: ['English'], grade: []
                 }
             } as any;
-            profileSettingsPage.boardSelect = {open: jest.fn()};
+            profileSettingsPage.boardSelect = { open: jest.fn() };
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
@@ -369,16 +378,16 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
-                            value = { board: ['AP', 'NCRT']};
+                            value = { board: ['AP', 'NCRT'] };
                             break;
                         case 'board':
-                            value = { value: { board: ['AP']}};
+                            value = { value: { board: ['AP'] } };
                             break;
                         case 'medium':
-                            value = { medium: ['English']};
+                            value = { medium: ['English'] };
                             break;
                         case 'grade':
-                            value = { grade: ['class1']};
+                            value = { grade: ['class1'] };
                             break;
                     }
                     return value;
@@ -401,90 +410,12 @@ describe('ProfileSettingsPage', () => {
                     syllabus: [], board: ['AP'], medium: ['English'], grade: []
                 }
             } as any;
-            profileSettingsPage.boardSelect = {open: jest.fn()};
+            profileSettingsPage.boardSelect = { open: jest.fn() };
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
 
         });
-      });
-
-    it('should control Scanner to called handleActiveScanner()', (done) => {
-    // arrange
-    mockRouter.getCurrentNavigation = jest.fn(() => ({
-        extras: null
-    }as any));
-    profileSettingsPage = new ProfileSettingsPage(
-        mockProfileService as ProfileService,
-        mockFrameworkService as FrameworkService,
-        mockFrameworkUtilService as FrameworkUtilService,
-        mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-        mockTranslate as TranslateService,
-        mockTelemetryGeneratorService as TelemetryGeneratorService,
-        mockAppGlobalService as AppGlobalService,
-        mockEvents as Events,
-        mockScanner as SunbirdQRScanner,
-        mockPlatform as Platform,
-        mockCommonUtilService as CommonUtilService,
-        mockContainer as ContainerService,
-        mockHeaderService as AppHeaderService,
-        mockRouter as Router,
-        mockAppVersion as AppVersion,
-        mockAlertCtrl as AlertController,
-        mockLocation as Location,
-        mockSplashScreenService as SplashScreenService,
-        mockActivatedRoute as ActivatedRoute
-    );
-    mockScanner.stopScanner = jest.fn();
-    // act
-    profileSettingsPage.handleActiveScanner();
-    // assert
-    setTimeout(() => {
-        expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
-        done();
-    }, 0);
-    });
-
-    it('should control Scanner to called handleActiveScanner()', (done) => {
-        // arrange
-        mockRouter.getCurrentNavigation = jest.fn(() => ({
-            extras: {
-                state: {
-                    stopScanner: true,
-                    forwardMigration: true
-                }
-            }
-        }as any));
-        profileSettingsPage = new ProfileSettingsPage(
-            mockProfileService as ProfileService,
-            mockFrameworkService as FrameworkService,
-            mockFrameworkUtilService as FrameworkUtilService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockTranslate as TranslateService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppGlobalService as AppGlobalService,
-            mockEvents as Events,
-            mockScanner as SunbirdQRScanner,
-            mockPlatform as Platform,
-            mockCommonUtilService as CommonUtilService,
-            mockContainer as ContainerService,
-            mockHeaderService as AppHeaderService,
-            mockRouter as Router,
-            mockAppVersion as AppVersion,
-            mockAlertCtrl as AlertController,
-            mockLocation as Location,
-            mockSplashScreenService as SplashScreenService,
-            mockActivatedRoute as ActivatedRoute
-        );
-        mockScanner.stopScanner = jest.fn();
-        // act
-        profileSettingsPage.handleActiveScanner();
-        // assert
-        setTimeout(() => {
-            expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
-            expect(mockScanner.stopScanner).toHaveBeenCalled();
-            done();
-        }, 500);
     });
 
     it('should handle all header events by invoked ionViewWillEnter()', (done) => {
@@ -602,7 +533,7 @@ describe('ProfileSettingsPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         const values = new Map();
         values['medium'] = 'na';
-        profileSettingsPage.boardSelect = {open: jest.fn()};
+        profileSettingsPage.boardSelect = { open: jest.fn() };
         profileSettingsPage.mediumSelect = ['hindi'];
         profileSettingsPage.gradeSelect = ['class1'];
 
@@ -611,17 +542,16 @@ describe('ProfileSettingsPage', () => {
         // assert
         expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
             expect.anything(),
-            'failed',
+            'passed',
             PageId.ONBOARDING_PROFILE_PREFERENCES,
             InteractSubtype.FINISH_CLICKED
         );
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            'submit-clicked',
-            Environment.HOME,
-            PageId.ONBOARDING_PROFILE_PREFERENCES,
-            undefined,
-            values
+            InteractType.SELECT_SUBMIT, '',
+            Environment.ONBOARDING,
+            PageId.MANUAL_PROFILE,
+            undefined, undefined, undefined,
+            []
         );
     });
 
@@ -662,7 +592,7 @@ describe('ProfileSettingsPage', () => {
             mockSplashScreenService as SplashScreenService,
             mockActivatedRoute as ActivatedRoute
         );
-        profileSettingsPage.boardSelect = {open: jest.fn()};
+        profileSettingsPage.boardSelect = { open: jest.fn() };
         profileSettingsPage.mediumSelect = ['hindi'];
         profileSettingsPage.gradeSelect = ['class1'];
 
@@ -972,13 +902,13 @@ describe('ProfileSettingsPage', () => {
                             value = { value: ['AP'] };
                             break;
                         case 'board':
-                            value = { value: ['AP']};
+                            value = { value: ['AP'] };
                             break;
                         case 'medium':
-                            value = { value: ['English']};
+                            value = { value: ['English'] };
                             break;
                         case 'grade':
-                            value = { value: ['Class 1']};
+                            value = { value: ['Class 1'] };
                             break;
                     }
                     return value;

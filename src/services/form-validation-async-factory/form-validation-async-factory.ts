@@ -110,11 +110,13 @@ export class FormValidationAsyncFactory {
         return false;
       }
     } catch (e) {
-      if (e.hasOwnProperty(e) === 'ERROR_RATE_LIMIT_EXCEEDED') {
-        this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time.');
-      } else if (e.message === 'CANCEL') {
-        throw e;
+      if (e && e.response && e.response.body && e.response.body.params && e.response.body.params.err &&
+        e.response.body.params.err === 'ERROR_RATE_LIMIT_EXCEEDED') {
+        this.commonUtilService.showToast('ERROR_OTP_LIMIT_EXCEEDED');
+      } else if (e.message !== 'CANCEL') {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       }
+      throw e;
       return false;
     } finally {
       if (loader) {

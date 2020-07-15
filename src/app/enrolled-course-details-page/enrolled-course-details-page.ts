@@ -49,7 +49,9 @@ import {
   AuthService,
   DownloadTracking,
   DownloadService,
-  AuditState
+  AuditState,
+  GroupService,
+  AddActivitiesRequest
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -235,6 +237,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -804,6 +807,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     contentContextMap['userId'] = userId;
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
+    contentContextMap['isCertified'] = this.isCertifiedCourse;
+    const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+    contentContextMap['leafNodeIds'] = leafNodeIds;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
@@ -2015,8 +2021,67 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
-  addToGroupActivity() {
-    this.location.back();
+  async addToGroupActivity() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.ADD_TO_GROUP_CLICKED,
+        Environment.GROUP,
+        PageId.COURSE_DETAIL);
+
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.COURSE_DETAIL,
+        undefined,
+        undefined,
+        undefined,
+        this.corRelationList,
+        ID.ADD_ACTIVITY_TO_GROUP);
+    const addActivitiesRequest: AddActivitiesRequest = {
+      groupId: this.groupId,
+      addActivitiesRequest: {
+        activities: [
+          {
+            id: this.identifier,
+            type: 'Course'
+          }
+        ]
+      }
+    };
+
+    try {
+      const addActivityResponse = await this.groupService.addActivities(addActivitiesRequest).toPromise();
+
+      await loader.dismiss();
+      if (addActivityResponse.error
+        && addActivityResponse.error.activities
+        && addActivityResponse.error.activities.length) {
+        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        this.location.back();
+      } else {
+        this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.COURSE_DETAIL,
+          undefined,
+          undefined,
+          undefined,
+          this.corRelationList,
+          ID.ADD_ACTIVITY_TO_GROUP
+        );
+        window.history.go(-2);
+      }
+    } catch (e) {
+      await loader.dismiss();
+      this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+      console.error(e);
+      this.location.back();
+    }
   }
 
 }

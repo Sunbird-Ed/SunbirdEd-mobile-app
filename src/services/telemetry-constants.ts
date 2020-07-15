@@ -6,7 +6,8 @@ export enum Environment {
     USER = 'user',
     SETTINGS = 'settings',
     ONBOARDING = 'onboarding',
-    NOTIFICATION = 'notification'
+    NOTIFICATION = 'notification',
+    GROUP = 'group'
 }
 
 export enum ErrorCode {
@@ -25,11 +26,13 @@ export enum ObjectType {
     QUESTION = 'Question',
     QR = 'Qr'
 }
+
 export enum Mode {
     PLAY = 'play',
     ONLINE = 'online',
     OFFLINE = 'offline'
 }
+
 export enum PageId {
     SPLASH_SCREEN = 'splash',
     LOGIN = 'login',
@@ -148,11 +151,17 @@ export enum PageId {
     QR_BOOK_RESULT = 'qr-book-result',
     QR_CONTENT_RESULT = 'qr-content-result',
     LOCATION = 'location',
-    MANUAL = 'manual'
+    MANUAL = 'manual',
+    COURSE_COMPLETION_POPUP = 'course-completion-popup',
+    MY_GROUP = 'my-group',
+    ADD_MEMBER = 'add-member',
+    ACTIVITY_DETAIL = 'activity-detail'
 }
+
 export enum LogType {
     NOTIFICATION = 'notification'
 }
+
 export enum LogLevel {
     TRACE = 'TRACE',
     DEBUG = 'DEBUG',
@@ -178,6 +187,7 @@ export enum ImpressionType {
     SET_LANGUAGE = 'set-language',
     QR_REQUEST = 'qr-request'
 }
+
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
     RATING_POPUP = 'rating-popup',
@@ -190,8 +200,12 @@ export enum ImpressionSubtype {
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
     DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
     UPGRADE_POPUP = 'upgrade-popup',
-    DEEPLINK = 'deeplink'
+    DEEPLINK = 'deeplink',
+    CREATE_GROUP_FORM = 'create-group-form',
+    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
+    GROUP_TUTORIAL = 'my-group-tutorial-popup'
 }
+
 export enum InteractType {
     TOUCH = 'TOUCH',
     OTHER = 'OTHER',
@@ -235,7 +249,9 @@ export enum InteractType {
     DOWNLOAD = 'download',
     SELECT_CLOSE = 'select-close',
     DOWNLOAD_COMPLETE = 'download-complete',
-    POPUP_LOADED = 'popup-loaded'
+    POPUP_LOADED = 'popup-loaded',
+    INITIATED = 'initiated',
+    SUCCESS = 'success'
 }
 
 
@@ -384,7 +400,7 @@ export enum InteractSubtype {
     SORT_OPTION_SELECTED = 'sort-options-selected',
     ACTION_BUTTON_CLICKED = 'action-button-clicked',
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',
-    POPUP_DISMISSED= 'popup-dismissed',
+    POPUP_DISMISSED = 'popup-dismissed',
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
     DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
@@ -476,6 +492,17 @@ export enum InteractSubtype {
     CLOSE_ICON = 'close-icon',
     OUTSIDE = 'outside',
     QR_NOT_LINKED = 'qr-not-linked',
+    ADD_MEMBER_CLICKED = 'add-member-clicked',
+    ADD_ACTIVITY_CLICKED = 'add-activity-clicked',
+    DELETE_GROUP_CLICKED = 'delete-group-clicked',
+    LEAVE_GROUP_CLICKED = 'leave-group-clicked',
+    MAKE_GROUP_ADMIN_CLICKED = 'make-group-admin-clicked',
+    DISMISS_GROUP_ADMIN_CLICKED = 'dismiss-group-admin-clicked',
+    REMOVE_MEMBER_CLICKED = 'remove-member-clicked',
+    REMOVE_ACTIVITY_CLICKED = 'remove-activity-clicked',
+    VERIFY_CLICKED = 'verify-clicked',
+    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked',
+    ADD_TO_GROUP_CLICKED = 'add-to-group-clicked'
 }
 
 export enum ID {
@@ -508,7 +535,17 @@ export enum ID {
     MUA_USER_CREATION = 'mua-user-creation',
     DATA_SHARING = 'data-sharing',
     VALIDATE_EMAIL = 'validate-email',
-    VALIDATE_MOBILE = 'validate-mobile'
+    VALIDATE_MOBILE = 'validate-mobile',
+    CREATE_GROUP = 'create-group',
+    DELETE_GROUP = 'delete-group',
+    LEAVE_GROUP = 'leave-group',
+    MAKE_GROUP_ADMIN = 'make-group-admin',
+    DISMISS_GROUP_ADMIN = 'dismiss-group-admin',
+    REMOVE_MEMBER = 'remove-member',
+    REMOVE_ACTIVITY = 'remove-activity',
+    VERIFY_MEMBER = 'verify-member',
+    ADD_MEMBER_TO_GROUP = 'add-member-to-group',
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group'
 }
 
 export enum ActionButtonType {

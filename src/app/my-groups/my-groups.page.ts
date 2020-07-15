@@ -7,11 +7,21 @@ import {
   GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
-import { CommonUtilService, AppGlobalService } from '@app/services';
-import { PopoverController } from '@ionic/angular';
+import {
+  CommonUtilService,
+  AppGlobalService,
+  TelemetryGeneratorService,
+  ImpressionType,
+  PageId,
+  Environment, InteractType, InteractSubtype
+} from '@app/services';
+import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 interface GroupData extends Group {
   initial: string;
@@ -21,12 +31,15 @@ interface GroupData extends Group {
   templateUrl: './my-groups.page.html',
   styleUrls: ['./my-groups.page.scss'],
 })
-export class MyGroupsPage implements OnInit, OnDestroy {
+export class MyGroupsPage implements OnInit {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
+  themeColors: string[] = ['#FFDFC7', '#C2ECE6', '#FFE59B', '#DAD4FF',  '#80CBC4', '#E6EE9C', '#FFE082'];
+  fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00'];
   groupListLoader = false;
   headerObservable: any;
   userId: string;
+  unregisterBackButton: Subscription;
 
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -37,56 +50,95 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     private router: Router,
     private loginHandlerService: LoginHandlerService,
     private commonUtilService: CommonUtilService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private sbProgressLoader: SbProgressLoader,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private platform: Platform,
+    private location: Location
   ) { }
 
   ngOnInit() {
     this.checkUserLoggedIn();
-    this.appGlobalService.getActiveProfileUid()
-      .then(async (uid) => {
-        this.userId = uid;
-        const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
-        if (!groupInfoScreen) {
-          this.openinfopopup();
-          this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
-        }
-      });
+    if (!this.isGuestUser) {
+      this.groupListLoader = true;
+    }
   }
 
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    this.handleBackButton();
     this.headerService.showHeaderWithBackButton(['groupInfo']);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    try {
+      this.userId = await this.appGlobalService.getActiveProfileUid();
+      const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
+      if (!groupInfoScreen) {
+        this.openinfopopup();
+        this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+      }
+    } catch (err) {
+    }
+    if (!this.isGuestUser) {
+      this.fetchGroupList();
+    }
   }
 
   async ionViewDidEnter() {
-    this.fetchGroupList();
+    this.sbProgressLoader.hide({ id: 'login' });
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.MY_GROUP,
+      Environment.GROUP
+    );
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
+    }
+
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
     }
   }
 
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
         this.openinfopopup();
+        break;
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
+        this.location.back();
         break;
     }
   }
 
   createClassroom() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.CREATE_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.MY_GROUP
+    );
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
   login() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LOGIN_CLICKED,
+      Environment.GROUP,
+      PageId.MY_GROUP
+    );
     this.loginHandlerService.signIn({ skipRootNavigation: true });
   }
 
@@ -103,15 +155,18 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         }
       };
       this.groupList = (await this.groupService.search(groupSearchCriteria).toPromise())
-        .map<GroupData>((group) => {
+        .map<GroupData>((group , index) => {
           return {
             ...group,
-            initial: this.commonUtilService.extractInitial(group.name)
+            initial: this.commonUtilService.extractInitial(group.name),
+            cardBgColor: this.themeColors[index % this.themeColors.length],
+            cardTitleColor: this.fontColor[index % this.fontColor.length]
           };
         });
       this.groupListLoader = false;
       console.log('this.groupList', this.groupList);
-    } catch {
+    } catch (e) {
+      console.error(e);
       this.groupListLoader = false;
     }
   }
@@ -145,6 +200,16 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } else if (data.closeDeletePopOver) { // Close clicked
     } else if (data.canDelete) {
     }
+  }
+
+  private handleBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.MY_GROUP,
+        Environment.GROUP,
+        false);
+      this.location.back();
+    });
   }
 
 }

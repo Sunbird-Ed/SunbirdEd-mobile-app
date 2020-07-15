@@ -29,7 +29,8 @@ import {
   TelemetryObject,
   Course,
   DownloadService,
-  ObjectType
+  ObjectType,
+  SharedPreferences
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -38,13 +39,16 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, ContentType
+  ShareItemType, ContentType, PreferenceKey
 } from '@app/app/app.constant';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { UtilityService } from '@app/services/utility-service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {
+  CourseUtilService,
+  LocalCourseService,
+  UtilityService,
+  TelemetryGeneratorService,
+  CommonUtilService,
+ } from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
   Environment,
@@ -71,6 +75,7 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 
 @Component({
   selector: 'app-content-details',
@@ -159,6 +164,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   shouldNavigateBack = false;
   isContentDownloading$: Observable<boolean>;
   onboarding = false;
+  showCourseCompletePopup = false;
+  courseContext: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -166,6 +173,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -190,7 +198,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private loginHandlerService: LoginHandlerService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private localCourseService: LocalCourseService
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -297,7 +306,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -313,6 +322,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.generateTelemetry();
     }
     this.isPlayedFromCourse();
+    if (this.shouldOpenPlayAsPopup) {
+      await this.getContentState();
+    }
     this.setContentDetails(
       this.identifier, true,
       this.contentPlayerHandler.getLastPlayedContentId() === this.identifier);
@@ -429,11 +441,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             await loader.dismiss();
           }
         }
-
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
-            this.shouldNavigateBack);
+          if (this.showCourseCompletePopup) {
+            this.ratingHandler.showRatingPopup(
+              this.isContentPlayed,
+              data,
+              'automatic',
+              this.corRelationList,
+              this.objRollup,
+              this.shouldNavigateBack,
+              () => { this.openCourseCompletionPopup(); });
+          } else {
+            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
+           this.shouldNavigateBack);
+          }
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -657,7 +679,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     //     this.location.back();
     //   }
     // }
-
+    this.appGlobalService.showCourseCompletePopup = false;
     // Tested in ionic 4 working as expected
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
@@ -1330,4 +1352,44 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       await loader.dismiss();
     }
   }
+
+  // pass coursecontext to ratinghandler if course is completed
+  async getContentState() {
+    return new Promise(async (resolve, reject) => {
+      this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
+      this.courseContext = JSON.parse(this.courseContext);
+      if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
+        const progress = await this.localCourseService.getCourseProgress(this.courseContext);
+        if (progress !== 100) {
+          this.appGlobalService.showCourseCompletePopup = true;
+        }
+        if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
+          this.appGlobalService.showCourseCompletePopup = false;
+          this.showCourseCompletePopup = true;
+        }
+      }
+      resolve();
+    });
+  }
+
+  async openCourseCompletionPopup() {
+    const popUp = await this.popoverCtrl.create({
+      component: CourseCompletionPopoverComponent,
+      componentProps: {
+        isCertified: this.courseContext['isCertified']
+      },
+      cssClass: 'sb-course-completion-popover',
+    });
+    await popUp.present();
+    const { data } = await popUp.onDidDismiss();
+    if (data === undefined) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CLOSE_CLICKED,
+            PageId.COURSE_COMPLETION_POPUP,
+            Environment.HOME
+        );
+    }
+  }
+
 }

@@ -22,6 +22,7 @@ export class RatingHandler {
     private userComment: string;
     public telemetryObject: TelemetryObject;
     public useNewComments = false;
+    private courseContext: any;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -38,7 +39,8 @@ export class RatingHandler {
         popupType: string,
         corRelationList: CorrelationData[],
         rollUp: Rollup,
-        shouldNavigateBack?: boolean
+        shouldNavigateBack?: boolean,
+        onDidDismiss?: () => void
     ) {
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
@@ -57,15 +59,15 @@ export class RatingHandler {
                             this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                            this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                         }
                     }).catch(err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                        this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                    this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
@@ -88,7 +90,7 @@ export class RatingHandler {
 
     }
 
-    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean) {
+    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean, onDidDismiss?: () => void) {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
             this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
@@ -112,6 +114,9 @@ export class RatingHandler {
             this.useNewComments = true;
             this.userRating = data.rating;
             this.userComment = data.comment;
+        }
+        if (onDidDismiss) {
+            onDidDismiss();
         }
     }
 
@@ -171,4 +176,5 @@ export class RatingHandler {
                 return false;
             });
     }
+
 }
