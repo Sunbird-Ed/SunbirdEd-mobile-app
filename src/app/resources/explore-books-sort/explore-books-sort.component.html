@@ -9,12 +9,15 @@
     <div style="margin-top: 2rem; margin-bottom: 4rem">
         <p>{{'THANKING_NOTE' | translate: {'%s': appName} }}</p>
     </div>
-    <p style="margin-top: 2rem; color: #333333">{{'EXPLORE_HEADING' | translate: {'%s': appName} }}</p>
-    <div class="sb-textbook-container">
-        <sb-library-cards-stack [contentList]="storyAndWorksheets"
-            [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [maxCardCount]="3"
-            [viewMoreButtonText]="'SEE_MORE_CONTENT' | translate"
-            (viewMoreClick)="navigateToTextbookPage(storyAndWorksheets)" (cardClick)="navigateToTextBookDetailPage($event)">
-        </sb-library-cards-stack>
+    <div *ngIf="storyAndWorksheets && storyAndWorksheets.length">
+        <p style="margin-top: 2rem; color: #333333">{{'EXPLORE_HEADING' | translate: {'%s': appName} }}</p>
+        <div class="sb-textbook-container">
+            <sb-library-cards-stack [contentList]="storyAndWorksheets"
+                [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [maxCardCount]="5"
+                [viewMoreButtonText]="'SEE_MORE_CONTENT' | translate"
+                (viewMoreClick)="navigateToTextbookPage(storyAndWorksheets)"
+                (cardClick)="navigateToTextBookDetailPage($event)">
+            </sb-library-cards-stack>
+        </div>
     </div>
 </ion-content>
