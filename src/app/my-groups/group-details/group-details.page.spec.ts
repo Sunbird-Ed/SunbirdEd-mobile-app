@@ -359,7 +359,7 @@ describe('GroupDetailsPage', () => {
         it('should invoked showLeaveGroupPopup', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
@@ -423,7 +423,7 @@ describe('GroupDetailsPage', () => {
         it('should invoked showLeaveGroupPopup and return error message', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
@@ -474,7 +474,7 @@ describe('GroupDetailsPage', () => {
         it('should invoked showLeaveGroupPopup and return error message for catch part', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_LEAVE_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
