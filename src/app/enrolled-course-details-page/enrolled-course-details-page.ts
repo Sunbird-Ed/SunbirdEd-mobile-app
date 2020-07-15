@@ -719,7 +719,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
 
       if (this.course.attributions && this.course.attributions.length) {
-        this.course.attributions = this.course.attributions.join(', ');
+        this.course.attributions = (this.course.attributions.sort()).join(', ');
       }
 
       // User Rating
