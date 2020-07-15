@@ -287,7 +287,7 @@ describe('GroupDetailsPage', () => {
             }));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
             groupDetailsPage.groupDetails = {
@@ -332,7 +332,7 @@ describe('GroupDetailsPage', () => {
             }));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
             groupDetailsPage.groupDetails = {
