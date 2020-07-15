@@ -18,6 +18,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 
 @Injectable()
@@ -35,7 +36,8 @@ export class LocalCourseService {
     private zone: NgZone,
     private appVersion: AppVersion,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private sbProgressLoader: SbProgressLoader
   ) {
   }
 
@@ -69,10 +71,10 @@ export class LocalCourseService {
       }),
       catchError(err => {
         const requestValue = this.prepareRequestValue(enrollCourseRequest);
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           requestValue.error = err.code;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-        } else if (err instanceof HttpClientError) {
+        } else if (HttpClientError.isInstance(err)) {
           if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
@@ -139,8 +141,6 @@ export class LocalCourseService {
 
   private async enrollBatchAfterlogin(batch: Batch, course: any) {
     const enrollCourseRequest = this.prepareEnrollCourseRequest(this.userId, batch);
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
     const corRelationList = await this.preferences.getString(PreferenceKey.CDATA_KEY).toPromise();
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -162,7 +162,6 @@ export class LocalCourseService {
     this.enrollIntoBatch(enrollCourse).toPromise()
       .then(() => {
         this.zone.run(async () => {
-          await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: batch.id,
@@ -173,15 +172,15 @@ export class LocalCourseService {
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           this.getEnrolledCourses();
           this.navigateTocourseDetails();
+          await this.sbProgressLoader.hide({id: 'login'});
         });
       }, (err) => {
         this.zone.run(async () => {
-          await loader.dismiss();
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
-          if (err instanceof NetworkError) {
+          if (NetworkError.isInstance(err)) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             this.getEnrolledCourses();
-          } else if (err instanceof HttpClientError) {
+          } else if (HttpClientError.isInstance(err)) {
             if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
               this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
                 batchId: batch.id,
@@ -192,6 +191,7 @@ export class LocalCourseService {
             }
           }
           this.navigateTocourseDetails();
+          await this.sbProgressLoader.hide({id: 'login'});
         });
       });
   }
@@ -204,15 +204,12 @@ export class LocalCourseService {
   }
 
   private async getEnrolledCourses(returnRefreshedCourses: boolean = false) {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const option: FetchEnrolledCourseRequest = {
       userId: this.userId,
       returnFreshCourses: returnRefreshedCourses
     };
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (enrolledCourses) => {
-        await loader.dismiss();
         if (enrolledCourses) {
           this.zone.run(() => {
             enrolledCourses = enrolledCourses || [];
@@ -227,7 +224,6 @@ export class LocalCourseService {
           });
         }
       }, async (err) => {
-        await loader.dismiss();
       });
   }
 

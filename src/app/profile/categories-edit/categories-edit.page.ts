@@ -33,6 +33,7 @@ import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 
 @Component({
@@ -134,6 +135,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private activePageService: ActivePageService,
     private externalIdVerificationService: ExternalIdVerificationService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private sbProgressLoader: SbProgressLoader
 
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -185,6 +187,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
       });
     }
+  }
+
+  ionViewDidEnter() {
+    this.sbProgressLoader.hide({id: 'login'});
   }
 
   /**

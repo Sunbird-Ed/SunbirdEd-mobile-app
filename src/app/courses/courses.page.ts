@@ -1,12 +1,12 @@
-import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, ToastController, PopoverController } from '@ionic/angular';
+import { Events, ToastController, PopoverController, IonRefresher } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType } from '../../app/app.constant';
+   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -28,6 +28,7 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-courses',
@@ -35,6 +36,9 @@ import { LocalCourseService } from '@app/services/local-course.service';
   styleUrls: ['./courses.page.scss'],
 })
 export class CoursesPage implements OnInit, OnDestroy {
+
+  @ViewChild('courseRefresher') refresher: IonRefresher;
+
   /**
    * Contains enrolled course
    */
@@ -118,7 +122,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -161,9 +166,26 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.showOverlay = false;
       this.downloadPercentage = 0;
     });
+    this.unsubscribeUtilityEvents();
+  }
+
+  unsubscribeUtilityEvents() {
+    this.events.unsubscribe(AppGlobalService.PROFILE_OBJ_CHANGED);
+    this.events.unsubscribe(EventTopics.COURSE_STATUS_UPDATED_SUCCESSFULLY);
+    this.events.unsubscribe('force_optional_upgrade');
+    this.events.unsubscribe('onboarding-card:completed');
+    this.events.unsubscribe('onboarding-card:increaseProgress');
+    this.events.unsubscribe('course:resume');
+    this.events.unsubscribe(EventTopics.ENROL_COURSE_SUCCESS);
+    this.events.unsubscribe('onAfterLanguageChange:update');
+    this.events.unsubscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+    this.events.unsubscribe(EventTopics.TAB_CHANGE);
+    this.events.unsubscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST);
+    this.events.unsubscribe(EventTopics.SIGN_IN_RELOAD);
   }
 
   ionViewWillEnter() {
+    this.refresher.disabled = false;
     this.isVisible = true;
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
@@ -175,6 +197,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
+    this.sbProgressLoader.hide({ id: ProgressPopupContext.DEEPLINK });
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {
@@ -182,9 +205,11 @@ export class CoursesPage implements OnInit, OnDestroy {
         this.qrScanner.startScanner(PageId.COURSES, false);
       }
     });
+    this.sbProgressLoader.hide({id: 'login'});
   }
 
   ionViewWillLeave() {
+    this.refresher.disabled = true;
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
@@ -649,7 +674,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         }
       })
       .catch((err) => {
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           this.commonUtilService.showToast('NO_INTERNET');
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');

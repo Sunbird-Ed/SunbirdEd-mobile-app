@@ -40,8 +40,7 @@ import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import * as qs from 'qs';
-import { ContentUtil } from '@app/util/content-util';
+import { EventParams } from './components/sign-in-card/event-params.interface';
 
 declare const cordova;
 
@@ -102,7 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -144,7 +143,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusBar.styleBlackTranslucent();
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
-      this.getUtmParameter();
+      this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
     });
@@ -370,7 +369,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Initializing the event for reloading the Tabs on Signing-In.
    */
   private triggerSignInEvent() {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (skipNavigation) => {
       const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
 
@@ -381,13 +380,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
-        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        /* Medatory for login flow
+         * eventParams are essential parameters for avoiding duplicate calls to API
+         * skipSession & skipProfile should be true here
+         * until further change
+         */
+        const eventParams: EventParams = {
+          skipSession: true,
+          skipProfile: true
+        };
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
-        } else {
+        } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
       }, 0);
@@ -505,13 +513,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     const corRelationList: Array<CorrelationData> = [];
-    if (pageId === 'resources') {
+    if (pageId === PageId.LIBRARY) {
       const currentProfile: Profile = this.appGlobalService.getCurrentUser();
       corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
       corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
       corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
       corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
-    } else if (pageId === 'courses') {
+    } else if (pageId === PageId.COURSES) {
       const channelId = await this.preferences.getString(PreferenceKey.PAGE_ASSEMBLE_ORGANISATION_ID).toPromise();
       if (channelId) {
         corRelationList.push({ id: channelId, type: CorReleationDataType.SOURCE });
@@ -548,7 +556,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
-      await this.translate.use(selectedLanguage).toPromise();
+      await this.translate.use(selectedLanguage);
     }
   }
 
@@ -647,6 +655,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       const routeUrl = this.router.url;
 
       if ((routeUrl.indexOf(RouterLinks.USER_TYPE_SELECTION) !== -1)
+        || (routeUrl.indexOf(RouterLinks.CHAPTER_DETAILS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.CURRICULUM_COURSES) !== -1)
         || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS) !== -1)
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1)
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1)
@@ -682,15 +692,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'USERS_AND_GROUPS':
+      case 'MY_CLASSROOMS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.USER_GROUP_CLICKED,
+          InteractSubtype.MY_CLASSROOMS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}`], navigationExtrasUG);
+        this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}`], navigationExtrasUG);
         break;
 
       case 'REPORTS':
@@ -767,14 +777,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private getUtmParameter() {
-    this.utilityService.getUtmInfo()
-      .then(response => {
-        if (response) {
-          let cData: CorrelationData[] = [];
+  private getCampaignParameter() {
+    this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then((data) => {
+        if (data) {
+          const response = JSON.parse(data);
           const utmValue = response['val'];
-          const params: {[param: string]: string} = qs.parse(utmValue);
-          cData = ContentUtil.genrateUTMCData(params);
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -788,8 +795,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             PageId.HOME,
             undefined,
             utmTelemetry,
-            undefined,
-            cData);
+            undefined);
           this.utilityService.clearUtmInfo();
       }
       })

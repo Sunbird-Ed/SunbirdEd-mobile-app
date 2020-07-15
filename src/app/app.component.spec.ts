@@ -22,7 +22,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY, Observable, Subscription } from 'rxjs';
-import { PreferenceKey, EventTopics } from './app.constant';
+import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
@@ -83,8 +83,6 @@ describe('AppComponent', () => {
         } as Partial<BackButtonEmitter> as BackButtonEmitter
     };
     const mockPreferences: Partial<SharedPreferences> = {
-        // getString: jest.fn(() => of(undefined)),
-        // putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {
         events: EMPTY,
@@ -129,14 +127,7 @@ describe('AppComponent', () => {
         sims: 0,
         cap: ['some_cap']
     };
-    const mockUtilityService: Partial<UtilityService> = {
-        getUtmInfo: jest.fn(() => Promise.resolve({
-            'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
-            'code': '0',
-            'clk': '0',
-            'install': '0'
-        }))
-    };
+    const mockUtilityService: Partial<UtilityService> = {};
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -224,6 +215,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -247,6 +240,7 @@ describe('AppComponent', () => {
             };
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
+            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -256,6 +250,7 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(appComponent.headerConfig).toBe(mockConfig);
+                expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -332,6 +327,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -346,20 +343,25 @@ describe('AppComponent', () => {
 
         it('should generate utm-info telemetry if utm source is available for first time', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({
-                'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
-                'code': '0',
-                'clk': '0',
-                'install': '0'
-            }));
-            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             const value = new Map();
             mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent = jest.fn();
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
+            mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
+            mockTranslate.use = jest.fn(() => of({}));
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
+                    'local',
+                    'sample-page',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
+                );
+                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
                     'networkStatus',
@@ -374,13 +376,19 @@ describe('AppComponent', () => {
 
         it('should not generate utm-info telemetry if utm source is not available', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
-            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
+                    InteractType.LOCAL,
+                    'sample-page',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
+                );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
                     InteractType.OTHER,
                     InteractSubtype.UTM_INFO,
@@ -389,19 +397,25 @@ describe('AppComponent', () => {
                     undefined,
                     { utm_data: { utm_source: 'sunbird' } }
                 );
-                expect(mockUtilityService.clearUtmInfo).not.toHaveBeenCalled();
                 done();
             }, 0);
         });
 
         it('should not generate utm-info telemetry for Error response', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject('some_error'));
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
+                    InteractType.LOCAL,
+                    'sample-page',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
+                );
                 done();
             }, 0);
         });
@@ -434,6 +448,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     default:
                         return of('');
                 }
@@ -743,17 +759,28 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
             FCMPlugin.getToken = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
 
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.getToken).toHaveBeenCalled();
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
+                    InteractType.LOCAL,
+                    'sample-page',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
+                );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
             });
@@ -776,16 +803,27 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
             FCMPlugin.onTokenRefresh = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
 
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
+                expect(mockActivePageService.computePageId).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
+                    InteractType.LOCAL,
+                    'sample-page',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
+                );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
@@ -812,6 +850,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
 
@@ -928,6 +968,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
 
@@ -1119,6 +1161,8 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
 
@@ -1272,7 +1316,7 @@ describe('AppComponent', () => {
                 done();
             });
         });
-        it('should subscribe tab change event with pageId resources '
+        it('should subscribe tab change event with pageId library '
             + 'and no board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1283,7 +1327,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1310,11 +1354,11 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                    'library');
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.VIEW,
                     '',
-                    'resources',
+                    'library',
                     Environment.HOME,
                     undefined, undefined, undefined, undefined,
                     corRelationList);
@@ -1324,7 +1368,8 @@ describe('AppComponent', () => {
                     done();
                 });
             });
-        it('should subscribe tab change event with pageId library '
+
+        it('should subscribe tab change event with pageId courses '
             + 'and board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1335,7 +1380,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('courses');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1347,32 +1392,22 @@ describe('AppComponent', () => {
                     grade: ['some_grade']
                 } as any;
                 mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
-
+                mockPreferences.getString = jest.fn(() => of('mock_channel_id'));
                 const corRelationList: Array<CorrelationData> = [];
-                corRelationList.push({ id: mockCurrentProfile.board.join(','), type: CorReleationDataType.BOARD });
-                corRelationList.push({ id: mockCurrentProfile.medium.join(','), type: CorReleationDataType.MEDIUM });
-                corRelationList.push({ id: mockCurrentProfile.grade.join(','), type: CorReleationDataType.CLASS });
-                corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
+                corRelationList.push({id: 'mock_channel_id', type: CorReleationDataType.SOURCE});
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-
+                mockTranslate.use = jest.fn();
                 // act
                 jest.useFakeTimers();
                 appComponent.ngOnInit();
                 // assert
                 jest.advanceTimersByTime(2100);
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
-                    ImpressionType.VIEW,
-                    '',
-                    'resources',
-                    Environment.HOME,
-                    undefined, undefined, undefined, undefined,
-                    corRelationList);
+                    'courses');
                 jest.useRealTimers();
                 jest.clearAllTimers();
                 setTimeout(() => {
@@ -1474,6 +1509,22 @@ describe('AppComponent', () => {
                 });
             }, 0);
 
+        });
+    });
+
+    describe('menuItemAction', () => {
+        it('should navigate to classroom page when classroom is clicked in menu', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'MY_CLASSROOMS'
+            };
+            const routeUrl = [`/${RouterLinks.MY_CLASSROOMS}`];
+
+            // act
+            appComponent.menuItemAction(menuName);
+
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
         });
     });
 

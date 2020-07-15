@@ -36,6 +36,10 @@ export class ExternalIdVerificationService {
         if (await this.checkQuizContent()) {
             return;
         }
+        const profileSession = await this.profileService.getActiveProfileSession().toPromise();
+        if (profileSession.managedSession) {
+            return;
+        }
         const session = await this.appGlobalService.authService.getSession().toPromise();
         if (!this.commonUtilService.networkInfo.isNetworkAvailable || !session) {
             return;

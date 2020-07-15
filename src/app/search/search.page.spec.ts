@@ -28,6 +28,7 @@ import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, Log
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService } from '../../services';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -117,6 +118,7 @@ describe('SearchPage', () => {
         checkNewAppVersion: jest.fn(() => Promise.resolve({}))
     };
     const mockPopoverController: Partial<PopoverController> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -144,6 +146,7 @@ describe('SearchPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockNavCtrl as NavController,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 
@@ -191,12 +194,14 @@ describe('SearchPage', () => {
             setFocus: jest.fn()
         };
         jest.spyOn(searchPage, 'checkUserSession').mockImplementation();
+        mockSbProgressLoader.hide = jest.fn();
         // act
         searchPage.ionViewDidEnter();
         // assert
         expect(searchPage.checkUserSession).toHaveBeenCalled();
         setTimeout(() => {
             expect(searchPage.isFirstLaunch).toBe(false);
+            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
             done();
         }, 200);
     });

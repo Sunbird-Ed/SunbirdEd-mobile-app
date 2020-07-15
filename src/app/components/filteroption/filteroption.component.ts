@@ -15,6 +15,7 @@ export class FilteroptionComponent {
 
   facets: any;
   backButtonFunc: Subscription;
+  source: string;
 
   constructor(
     private navParams: NavParams,
@@ -23,6 +24,7 @@ export class FilteroptionComponent {
     private telemetryGeneratorService: TelemetryGeneratorService
     ) {
     this.facets = this.navParams.get('facet');
+    this.source = this.navParams.get('source');
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
@@ -42,7 +44,7 @@ export class FilteroptionComponent {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
-      PageId.LIBRARY_SEARCH_FILTER,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     this.popCtrl.dismiss();

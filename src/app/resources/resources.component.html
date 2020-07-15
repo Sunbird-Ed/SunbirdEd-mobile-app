@@ -24,7 +24,19 @@
       </ion-item>
     </ion-list>
 
-    <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
+    <div class="sb-course-container" *ngIf="courseList.length">
+      <sb-course-cards-hlist [multiRow]="courseList.length > 3" [contentList]="courseList"
+        [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
+        (cardClick)="onCourseCardClick($event)" [maxCardCount]="20">
+      </sb-course-cards-hlist>
+    </div>
+    <div *ngIf="searchApiLoader" class="sb-course-container">
+      <sb-course-cards-hlist [type]="curiculum_course_card_grid" [isLoading]="searchApiLoader">
+      </sb-course-cards-hlist>
+    </div>
+
+    <!-- hide recently viewed as part of school@home -->
+    <!-- <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
       <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
 
         <div class="sb-recently-viewed-items">
@@ -35,7 +47,7 @@
           </div>
 
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
-            <!-- Card style -->
+            Card style
             <div class="sb-card-container sb-card-recently-container">
               <div class="recently-viewed-card-size" *ngFor="let content of recentlyViewedResources">
                 <sb-library-card
@@ -49,7 +61,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <ion-list class="m-n" *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
       <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
@@ -64,6 +76,9 @@
       </ion-item>
     </ion-list>
 
+    <div [ngClass]="{'sb-course-container': courseList.length === 0}" class="sb-course-heading"
+      *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
+    </div>
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
         <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
@@ -111,7 +126,8 @@
       </ion-list>
     </div>
 
-    <div class="ion-padding" text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <div class="ion-padding" text-center class="mt-32 mb-32"
+      *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
       <img src="assets/imgs/outline-cloud_off.svg" alt="" />
       <ion-text>
         <h6 class="offline-header">

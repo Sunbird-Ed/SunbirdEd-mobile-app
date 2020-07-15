@@ -14,10 +14,10 @@
 
 <div *ngIf="source == 'courses'">
   <div class="sign-in-card-success">
-    <p class="sign-in-card-title">{{ 'WANT_TO_CHECK_TRAININGS' | translate: {'%s': appName } }}</p>
+    <p class="sign-in-card-title">{{ 'WANT_TO_CHECK_FREE_TRAININGS' | translate }}</p>
     <div class="sign-in-block">
       <p>{{ 'LOGIN_TO_JOIN_TRAINING' | translate }}</p>
-      <ion-button expand="block" class="ion-text-capitalize" (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate | titlecase }}</ion-button>
+      <ion-button expand="block" class="ion-text-capitalize" (click)="signIn({skipRootNavigation: true})">{{ 'OVERLAY_SIGN_IN' | translate | titlecase }}</ion-button>
     </div>
   </div>
 </div>

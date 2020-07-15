@@ -333,8 +333,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.pageType = 'enrolledCourse';
     const option = {
       userId: this.userId,
-      refreshEnrolledCourses: false,
-      returnRefreshedEnrolledCourses: true
+      returnFreshCourses: true
     };
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((data: Course[]) => {

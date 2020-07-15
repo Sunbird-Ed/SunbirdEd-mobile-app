@@ -1,6 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
 import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { IonContent as ContentView, Events, ToastController, MenuController } from '@ionic/angular';
+import {IonContent as ContentView, Events, ToastController, MenuController, PopoverController} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,7 +29,9 @@ import {
   ContentRequest,
   FrameworkService,
   SortOrder,
-  CorrelationData
+  CorrelationData,
+  ContentsGroupedByPageSection,
+  SearchAndGroupContentRequest
 } from 'sunbird-sdk';
 
 import {
@@ -44,7 +46,8 @@ import {
   RouterLinks,
   ContentFilterConfig,
   MimeType,
-  EventTopics
+  EventTopics,
+  ExploreConstants
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -53,13 +56,16 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID
+  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType, ImpressionSubtype
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
 import { NotificationService } from '@app/services/notification.service';
 import { applyProfileFilter } from '@app/util/filter.util';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
 
 @Component({
   selector: 'app-resources',
@@ -168,6 +174,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   headerObservable: any;
   scrollEventRemover: any;
   subjects: any;
+  searchGroupingContents: any;
   /**
    * Flag to show latest and popular course loader
    */
@@ -176,6 +183,51 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
+  courseList = [];
+  subjectThemeAndIconsMap = {
+    Science: {
+      background: '#FFD6EB',
+      titleColor: '#FD59B3',
+      icon: 'assets/imgs/sub_science.svg'
+    },
+    Mathematics: {
+      background: '#FFDFD9',
+      titleColor: '#EA2E52',
+      icon: 'assets/imgs/sub_math.svg'
+    },
+    English: {
+      background: '#DAFFD8',
+      titleColor: '#218432',
+      icon: 'assets/imgs/sub_english.svg'
+    },
+    Social: {
+      background: '#DAD4FF',
+      titleColor: '#635CDC',
+      icon: 'assets/imgs/sub_social.svg'
+    },
+    Hindi: {
+      background: '#C2E2E9',
+      titleColor: '#07718A',
+      icon: 'assets/imgs/sub_hindi.svg'
+    },
+    Chemistry: {
+      background: '#FFE59B',
+      titleColor: '#8D6A00',
+      icon: 'assets/imgs/sub_chemistry.svg'
+    },
+    Geography: {
+      background: '#C2ECE6',
+      titleColor: '#149D88',
+      icon: 'assets/imgs/sub_geography.svg'
+    },
+    Sanskrit: {
+      background: '#FFDFC7',
+      titleColor: '#AD632D',
+      icon: 'assets/imgs/sub_science.svg'
+    },
+  };
+
+  private tutorialPopover;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -201,6 +253,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
+    private popoverCtrl: PopoverController
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -375,49 +428,50 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
 	 * Load/get recently viewed content
 	 */
+  // hide recently viewed as part of school@home
   async loadRecentlyViewedContent(hideLoaderFlag?: boolean) {
-    this.recentlyViewedResources = [];
-    if (!hideLoaderFlag) {
-      this.showLoader = true;
-    }
-    const requestParams: ContentRequest = {
-      uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
-      audience: this.audienceFilter,
-      recentlyViewed: true,
-      limit: 20
-    };
+    // this.recentlyViewedResources = [];
+    // if (!hideLoaderFlag) {
+    //   this.showLoader = true;
+    // }
+    // const requestParams: ContentRequest = {
+    //   uid: this.profile ? this.profile.uid : undefined,
+    //   contentTypes: [],
+    //   audience: this.audienceFilter,
+    //   recentlyViewed: true,
+    //   limit: 20
+    // };
 
-    this.contentService.getContents(requestParams).toPromise()
-      .then(data => {
-        data.forEach((value) => {
-          value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
-          if (value.contentData.appIcon) {
-            if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
-              if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                value.contentData.appIcon = value.contentData.appIcon;
-              } else {
-                value.contentData.appIcon = this.defaultImg;
-              }
-            } else if (value.basePath) {
-              value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
-            }
-          }
-        });
-        this.ngZone.run(() => {
-          this.recentlyViewedResources = data;
-          if (!hideLoaderFlag) {
-            this.showLoader = false;
-          }
-        });
-      })
-      .catch(() => {
-        this.ngZone.run(() => {
-          if (!hideLoaderFlag) {
-            this.showLoader = false;
-          }
-        });
-      });
+    // this.contentService.getContents(requestParams).toPromise()
+    //   .then(data => {
+    //     data.forEach((value) => {
+    //       value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
+    //       if (value.contentData.appIcon) {
+    //         if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
+    //           if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+    //             value.contentData.appIcon = value.contentData.appIcon;
+    //           } else {
+    //             value.contentData.appIcon = this.defaultImg;
+    //           }
+    //         } else if (value.basePath) {
+    //           value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
+    //         }
+    //       }
+    //     });
+    //     this.ngZone.run(() => {
+    //       this.recentlyViewedResources = data;
+    //       if (!hideLoaderFlag) {
+    //         this.showLoader = false;
+    //       }
+    //     });
+    //   })
+    //   .catch(() => {
+    //     this.ngZone.run(() => {
+    //       if (!hideLoaderFlag) {
+    //         this.showLoader = false;
+    //       }
+    //     });
+    //   });
   }
 
   /**
@@ -455,13 +509,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // swipe down to refresh should not over write current selected options
     if (contentSearchCriteria.grade) {
-      this.getGroupByPageReq.grade = [contentSearchCriteria.grade[0]];
+      this.getGroupByPageReq.grade = contentSearchCriteria.grade;
     }
     if (contentSearchCriteria.medium) {
-      this.getGroupByPageReq.medium = [contentSearchCriteria.medium[0]];
+      this.getGroupByPageReq.medium = contentSearchCriteria.medium;
     }
     if (contentSearchCriteria.board) {
-      this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
+      this.getGroupByPageReq.board = contentSearchCriteria.board;
     } else {
       this.getGroupByPageReq.channel = [this.channelId];
     }
@@ -469,16 +523,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
-  getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+  // Make this method as private
+  async getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
       (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
         && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
       (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
+
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
@@ -492,23 +550,36 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    this.contentService.searchContentGroupedByPageSection(this.getGroupByPageReq).toPromise()
-      .then((response: any) => {
+    const request: SearchAndGroupContentRequest = {
+      groupBy: 'subject',
+      combination: {
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade
+      },
+      searchCriteria: this.getGroupByPageReq
+    };
+
+    const requestBody = JSON.parse(JSON.stringify(request));
+    // Get the book data
+    this.contentService.searchAndGroupContent(requestBody).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
-          const sections = response.sections;
+          this.searchGroupingContents = response;
           const newSections = [];
-          sections.forEach(element => {
-            // element.display = JSON.parse(element.display);
-            if (element.display.name) {
-              if (has(element.display.name, this.selectedLanguage)) {
+          this.getCategoryData();
+          // Get the course data
+          this.getCurriculumCourses(requestBody, response);
+          this.searchGroupingContents.sections.forEach(section => {
+            if (section.name) {
+              if (has(section.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.display.name, (value, key) => {
+                forEach(section.name, (value, key) => {
                   langs[key] = value;
                 });
-                element.name = langs[this.selectedLanguage];
+                section.name = langs[this.selectedLanguage];
               }
             }
-            newSections.push(element);
+            newSections.push(section);
           });
           // END OF TEMPORARY CODE
           if (this.profile.subject && this.profile.subject.length) {
@@ -590,6 +661,60 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  private getCurriculumCourses(request: SearchAndGroupContentRequest, bookResponse) {
+    if (bookResponse && bookResponse.combination) {
+      if (bookResponse.combination.medium) {
+        request.searchCriteria.medium = [bookResponse.combination.medium];
+        request.combination.medium = [bookResponse.combination.medium];
+      }
+      if (bookResponse.combination.gradeLevel) {
+        request.searchCriteria.grade = [bookResponse.combination.gradeLevel];
+        request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
+      }
+    }
+    request.searchCriteria.contentTypes = [ContentType.COURSE];
+    request.searchCriteria.languageCode = this.selectedLanguage;
+    // request.searchCriteria.framework = ;
+    console.log('getCurriculumCourses:request = ', request);
+
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
+        console.log('getCurriculumCourses:response = ', response);
+        this.ngZone.run(() => {
+          this.courseList = [];
+          response.sections.forEach(section => {
+            let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
+            if (section.contents) {
+              if (section.contents.length === 1) {
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1');
+              } else {
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
+              }
+            }
+            const contentListObj = {
+              contents: section.contents,
+              title: section.name,
+              count: countLabel,
+              theme: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].background
+                : null,
+
+              titleColor: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].titleColor
+                : null,
+
+              cardImg: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].icon
+                : null
+            };
+            this.courseList.push(contentListObj);
+          });
+        });
+      })
+      .catch(error => {
+      });
+  }
+
   orderBySubject(searchResults: any[]) {
     let selectedSubject: string[];
     const filteredSubject: string[] = [];
@@ -621,6 +746,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
+
   generateExtraInfoTelemetry(sectionsCount) {
     const values = {};
     values['pageSectionCount'] = sectionsCount;
@@ -633,12 +759,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
 
     this.getCategoryData();
 
@@ -656,9 +782,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ionViewDidEnter() {
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.coachTimeout = setTimeout(() => {
-    //   this.appGlobalService.showCouchMarkScreen();
-    // }, 2000);
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showTutorialScreen();
+    }, 2000);
   }
 
   // Offline Toast
@@ -690,7 +816,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refresh = true;
     this.storyAndWorksheets = [];
 
-    this.getCategoryData();
     this.getCurrentUser();
     if (refresher) {
       refresher.target.complete();
@@ -724,6 +849,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+
 
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
@@ -778,10 +904,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-
-      for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-        if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
-          this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+      if (this.searchGroupingContents.combination.medium) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
+        this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
+      } else {
+        for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
+          if ((this.getGroupByPageReq.medium[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+            this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+          }
         }
       }
     }
@@ -798,9 +928,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
-          if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
-            this.classClickHandler(i);
+        if (this.searchGroupingContents.combination.gradeLevel) {
+          const indexOfselectedClass =
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
+          this.classClickHandler(indexOfselectedClass);
+        } else {
+          for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
+            if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
+              this.classClickHandler(i);
+            }
           }
         }
       })
@@ -887,6 +1023,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.mediumsSelected = [index];
+    setTimeout(() => {
+      const el = document.getElementById('medium' + index);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
+      }
+    }, 1000);
   }
 
   navigateToDetailPage(event, sectionName) {
@@ -947,11 +1089,32 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'download':
         this.redirectToActivedownloads();
         break;
-      case 'notification':
-        this.redirectToNotifications();
+      // case 'notification':
+      //   this.redirectToNotifications();
+      //   break;
+      case 'information':
+        this.appTutorialScreen();
         break;
       default: console.warn('Use Proper Event name');
     }
+  }
+
+  async appTutorialScreen() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.INFORMATION_ICON_CLICKED,
+        Environment.HOME,
+        PageId.LIBRARY
+    );
+    this.tutorialPopover = await this.popoverCtrl.create({
+      component: SbTutorialPopupComponent,
+      componentProps: {appLabel: this.appLabel},
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
+      backdropDismiss: false,
+      showBackdrop: true
+    });
+    this.tutorialPopover.present();
   }
 
   redirectToActivedownloads() {
@@ -982,16 +1145,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     }
   }
-  onScroll(event) {
-    // Added Telemetry on reaching Horizontal Scroll End
-    if (event && event.target.scrollWidth <= event.target.scrollLeft + event.target.offsetWidth) {
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
-        InteractSubtype.RECENTLY_VIEWED_END_REACHED,
-        Environment.HOME,
-        this.source,
-      );
-    }
-  }
 
   scrollToTop() {
     this.contentView.scrollToTop();
@@ -1010,18 +1163,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
 
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD});
-    corRelationList.push({id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS});
-    corRelationList.push({id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM});
+    corRelationList.push({ id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD });
+    corRelationList.push({ id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS });
+    corRelationList.push({ id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-        this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
+      this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
       '',
       Environment.LIBRARY,
       PageId.LIBRARY,
       undefined,
       undefined, undefined, corRelationList,
-    ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
+      ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
   async getLocalContent() {
     this.locallyDownloadResources = [];
@@ -1135,6 +1288,53 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.networkSubscription) {
       this.networkSubscription.unsubscribe();
+    }
+  }
+
+  onCourseCardClick(event) {
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({id: event.data.title, type: CorReleationDataType.SUBJECT});
+    corRelationList.push({id: (event.data.contents.length).toString() , type: CorReleationDataType.COURSE_COUNT});
+
+    if (event.data.contents && event.data.contents.length > 1) {
+      const curriculumCourseParams: NavigationExtras = {
+        state: {
+          theme: event.data.theme,
+          titleColor: event.data.titleColor,
+          subjectIcon: event.data.cardImg,
+          subjectName: event.data.title,
+          courseList: event.data.contents,
+          corRelationList
+        }
+      };
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SUBJECT_CARD_CLICKED,
+          Environment.HOME,
+          PageId.LIBRARY,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+      );
+      this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
+    } else {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SUBJECT_CARD_CLICKED,
+          Environment.HOME,
+          PageId.LIBRARY,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+      );
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content: event.data.contents[0],
+          corRelation: corRelationList
+        }
+      });
     }
   }
 }

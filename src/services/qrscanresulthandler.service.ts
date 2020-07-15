@@ -8,9 +8,10 @@ import {
   ContentService,
   CorrelationData,
   TelemetryObject,
-  TelemetryService
+  TelemetryService,
+  SharedPreferences
 } from 'sunbird-sdk';
-import { ContentType, EventTopics, MimeType, RouterLinks } from '../app/app.constant';
+import { ContentType, EventTopics, MimeType, RouterLinks, PreferenceKey } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
 import {
@@ -109,19 +110,25 @@ export class QRScannerResultHandler {
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
     const params: {[param: string]: string} = qs.parse(utmUrl);
-    const cData: CorrelationData[] = [{
+    const cData: Array<CorrelationData> = [];
+
+    if (utmUrl !== scannedData) {
+      ContentUtil.genrateUTMCData(params).forEach((element) => {
+        cData.push(element);
+      });
+    }
+    const corRelationData: CorrelationData[] = [{
       id: CorReleationDataType.SCAN,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-
-    ContentUtil.genrateUTMCData(params).forEach((element) => {
-      cData.push(element);
-    });
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+    if (cData && cData.length) {
+      this.telemetryService.updateCampaignParameters(cData);
+      this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject, corRelationData);
+    }
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData),
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
         source: this.source,
         shouldGenerateEndTelemetry: true
       }
@@ -137,24 +144,30 @@ export class QRScannerResultHandler {
     this.generateQRScanSuccessInteractEvent(scannedData, 'ContentDetail', contentId);
     const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
     const params: {[param: string]: string} = qs.parse(utmUrl);
-    const cData: CorrelationData[] = [{
-      id: CorReleationDataType.SCAN,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
+    const cData: CorrelationData[] = [];
 
-    ContentUtil.genrateUTMCData(params).forEach((element) => {
-      cData.push(element);
-    });
+    if (utmUrl !== scannedData) {
+      ContentUtil.genrateUTMCData(params).forEach((element) => {
+       cData.push(element);
+     });
+   }
     const request: ContentDetailRequest = {
       contentId
     };
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
         const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+        const corRelationData: CorrelationData[] = [{
+          id: CorReleationDataType.SCAN,
+          type: CorReleationDataType.ACCESS_TYPE
+        }];
+        if (cData && cData.length) {
+          this.telemetryService.updateCampaignParameters(cData);
+          this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject, corRelationData);
+        }
 
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -200,21 +213,13 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string, scannedData, cData): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
-    const corRelation: CorrelationData = new CorrelationData();
-    corRelation.id = identifier;
-    corRelation.type = type;
-    corRelationList.push(corRelation);
+    corRelationList.push({id: identifier, type});
     corRelationList.push({
       id: ContentUtil.extractBaseUrl(scannedData),
       type: CorReleationDataType.SOURCE
     });
-    if (cData) {
-     cData.forEach(element => {
-       corRelationList.push(element);
-     });
-    }
     return corRelationList;
   }
 

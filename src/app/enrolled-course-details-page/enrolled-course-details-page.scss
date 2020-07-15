@@ -96,6 +96,7 @@
     }
     .enrolled-course-card{
         background-color:#d2eadd;
+        margin-bottom: 0 !important;
     }
     ion-card{
         --ion-item-background: white;
@@ -107,7 +108,7 @@
        margin-right: 6.43px;
     }
     ion-content{
-        --ion-background-color: #F9F9F8;
+        --ion-background-color: white;
     }
     .hr-border-bottom {
         box-sizing: border-box;
@@ -346,6 +347,7 @@
     color:map-get($colors , danger);
   }
   .sb-course-complete-container {
+    white-space: nowrap;
     width: 100%;
     background-color: #BFE1CF;
     @include padding(8px);
@@ -364,6 +366,7 @@
       display: inline-block;
       padding-left: 10px;
       @include padding(0px 0px 0px 11px);
+      white-space: normal;
     }
   }
   .card-text{

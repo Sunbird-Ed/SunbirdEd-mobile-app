@@ -1,0 +1,21 @@
+ion-content {
+  --ion-background-color: #EDF4F9;
+}
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+  .progress {
+    width: 70vw;
+    margin-bottom: 10px;
+  }
+  .load-status {
+    margin-top: 5px;
+    font-size: 19px;
+    font-weight: bold;
+  }
+}

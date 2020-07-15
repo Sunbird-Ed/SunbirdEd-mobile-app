@@ -44,11 +44,11 @@ export class TncUpdateHandlerService {
 
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
-        if (!this.hasProfileTncUpdated(profile)) {
+        if (this.hasProfileTncUpdated(profile)) {
+          this.presentTncPage({ profile });
+        } else {
           this.checkBmc(profile);
-          return;
         }
-        this.presentTncPage({ profile });
       }).catch(e => {
         this.appGlobalService.closeSigninOnboardingLoader();
       });
@@ -73,7 +73,7 @@ export class TncUpdateHandlerService {
   }
 
   private async checkBmc(profile) {
-    const userDetails = await this.appGlobalService.getCurrentUser();
+    const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
       !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
       this.preRequirementToBmcNavigation(profile.userId);

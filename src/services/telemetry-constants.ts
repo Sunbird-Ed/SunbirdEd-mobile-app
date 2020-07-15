@@ -46,6 +46,7 @@ export enum PageId {
     LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
+    CURRICULUM_COURSE_DETAIL = 'curriculum-course-detail',
     CONTENT_DETAIL = 'content-detail',
     COURSE_BATCHES = 'course-batches',
     SHARE_CONTENT = 'share-content',
@@ -125,7 +126,24 @@ export enum PageId {
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
     PERMISSION_POPUP = 'permission-popup',
-    STORAGE_SETTINGS = 'storage-settings'
+    /* New Telemetry */
+    LANGUAGE = 'language',
+    USER_TYPE = 'usertype',
+    SCAN_OR_MANUAL = 'scan-or-manual',
+    PROFILE_SETTINGS = 'profile-settings',
+    POPUP_CATEGORY = 'popup-category',
+    APP_PERMISSION_POPUP = 'app-permission-popup',
+    STORAGE_SETTINGS = 'storage-settings',
+    CREATE_MANAGED_USER = 'create-managed-user',
+    MANAGE_USERS = 'manage-users',
+    CHAPTER_DETAILS = 'chapter-details',
+    TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
+    COURSE_LIST = 'course-list',
+    MANUAL_PROFILE = 'manual-profile',
+    SCAN = 'scan',
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup',
+    COURSE_SEARCH_FILTER = 'course-search-filter',
+    MANUAL = 'manual'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -148,7 +166,12 @@ export enum ImpressionType {
     WORKFLOW = 'workflow',
     DISTRICT_MAPPING = 'district-mapping',
     CAMERA = 'camera',
-    FILE_MANAGEMENT = 'file-management'
+    FILE_MANAGEMENT = 'file-management',
+    /* New Telemetry */
+    PAGE_LOADED = 'page-loaded',
+    PAGE_REQUEST = 'page-request',
+    SET_LANGUAGE = 'set-language',
+    QR_REQUEST = 'qr-request'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -156,7 +179,7 @@ export enum ImpressionSubtype {
     QR_CODE_VALID = 'qr-code-valid',
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
-    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
+    TUTORIAL_WALKTHROUGH = 'tutorial-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
@@ -182,7 +205,27 @@ export enum InteractType {
     LOCAL = 'local',
     FCM = 'fcm',
     WITHOUT_CONTENT = 'without-content',
-    WITH_CONTENT = 'with-content'
+    WITH_CONTENT = 'with-content',
+    /* New Telemetry */
+    SELECT_LANGUAGE = 'select-language',
+    SELECT_CONTINUE = 'select-continue',
+    SELECT_USERTYPE = 'select-usertype',
+    SELECT_BACK = 'select-back',
+    SELECT_QRSCANER = 'select-qrscanner',
+    SELECT_CATEGORY = 'select-category',
+    SELECT_ATTRIBUTE = 'select-attribute',
+    SELECT_SUBMIT = 'select-submit',
+    SELECT_CANCEL = 'select-cancel',
+    SELECT_ADD = 'select-add',
+    SELECT_MORE = 'select-more',
+    SUBMISSION_INITIATED = 'submission-initiated',
+    SUBMISSION_SUCCESS = 'submission-success',
+    SUBMISSION_FAILURE = 'submission-failure',
+    CREATE_SUCCESS = 'create-success',
+    CREATE_FAILURE = 'create-failure',
+    SWITCH_SUCCESS = 'switch-success',
+    SWITCH_FAILURE = 'switch-failure',
+    QR_CAPTURED = 'qr-captured'
 }
 
 
@@ -218,7 +261,6 @@ export enum InteractSubtype {
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
-    CONTENT_PLAY = 'content-play',
     QRCodeScanClicked = 'qr-code-scanner-clicked',
     QRCodeScanSuccess = 'qr-code-scan-success',
     QRCodeScanCancelled = 'qr-code-scan-cancelled',
@@ -261,7 +303,7 @@ export enum InteractSubtype {
     DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
-    USER_GROUP_CLICKED = 'users-groups-clicked',
+    MY_CLASSROOMS_CLICKED = 'my-classrooms-clicked',
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',
@@ -271,6 +313,7 @@ export enum InteractSubtype {
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
     MEDIUM_CLICKED = 'medium-clicked',
+    REFRESH_CLICKED = 'refresh-clicked',
     REPORTS_BY_USER_CLICKED = 'byuser-tab-clicked',
     REPORTS_BY_QUESTION_CLICKED = 'byquestion-tab-clicked',
     REPORTS_SORTBY_QUESTION_CLICKED = 'sortby-question-clicked',
@@ -403,7 +446,19 @@ export enum InteractSubtype {
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
     OPTIONAL_UPGRADE = 'optional-upgrade',
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
-    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
+    /* New Telemetry */
+    SUCCESS = 'success',
+    FAIL = 'fail',
+    UI = 'ui',
+    DEVICE = 'device',
+    DENY_CLICKED = 'deny-clicked',
+    NEW = 'new',
+    EXISTING = 'existing',
+    SUBJECT_CARD_CLICKED = 'subject-card-clicked',
+    INFORMATION_ICON_CLICKED = 'information-icon-clicked',
+    TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
+    SYNC_NOW_CLICKED = 'sync-now-clicked'
 }
 
 export enum ID {
@@ -425,7 +480,15 @@ export enum ID {
     BACKDROP_CLICKED = 'backdrop-clicked',
     CANCEL_CLICKED = 'cancel-clicked',
     NOTIFICATION_CLICKED = 'notification-clicked',
-    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked'
+    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked',
+    BTN_CANCEL = 'btn-cancel',
+    BTN_ADD = 'btn-add',
+    BTN_SWITCH = 'btn-switch',
+    BTN_MORE = 'btn-more',
+    BTN_UPDATE = 'btn-update',
+    BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
+    TEACHER_DECLARATION = 'teacher-declaration',
+    MUA_USER_CREATION = 'mua-user-creation'
 }
 
 export enum ActionButtonType {
@@ -450,7 +513,38 @@ export enum CorReleationDataType {
     ACCESS_TYPE = 'AccessType',
     SCAN = 'Scan',
     SOURCE = 'Source',
-    NOTIFICATION_ID = 'NotificationID'
+    NOTIFICATION_ID = 'NotificationID',
+    /* New Telemetry */
+    BOARD_COUNT = 'CountBoard',
+    MEDIUM_COUNT = 'CountMedium',
+    CLASS_COUNT = 'CountClass',
+    FIRST_TIME_USER = 'FirstTimeUser',
+    NAME = 'Name',
+    TNC_VERSION = 'TncVersion',
+    LIUA = 'Liua',
+    SWITCHED_USER = 'SwitchedUser',
+    NEW_VALUE = 'NewValue',
+    OLD_VALUE = 'OldValue',
+    COURSE_COUNT = 'CourseCount',
+    CHILD_UI = 'ChildUi',
+    QR = 'QR',
+    COUNT_BOOK = 'CountBook',
+    COUNT_CONTENT = 'CountContent',
+    FROM_PAGE = 'FromPage',
+    FILL_MODE = 'FillMode',
+    LANGUAGE = 'Language'
 }
 
+export enum AuditProps {
+    LANGUAGE = 'language',
+    PROFILE_TYPE = 'profile_type'
+}
+
+export enum AuditType {
+    SET_LANGUAGE = 'set-language',
+    SELECT_USERTYPE = 'set-usertype',
+    SET_PROFILE = 'set-profile',
+    UNIT_PROGRESS = 'unit-progress',
+    COURSE_PROGRESS = 'course-progress'
+}
 

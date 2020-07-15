@@ -13,6 +13,10 @@ import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '@app/app/animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '@app/app/animations/animation-shrink-out-top-right';
 
 @Injectable({
     providedIn: 'root'
@@ -74,6 +78,9 @@ export class AppGlobalService implements OnDestroy {
     private isJoinTraningOnboarding: any;
     private _signinOnboardingLoader: any;
     private _skipCoachScreenForDeeplink = false;
+    private _preSignInData: any;
+    private _generateCourseCompleteTelemetry = false;
+    private _generateCourseUnitCompleteTelemetry = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -359,55 +366,60 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
-    private initValues() {
+    private initValues(eventParams?: EventParams) {
         this.readConfig();
-
-        this.authService.getSession().toPromise().then((session) => {
-            if (!session) {
-                this.isGuestUser = true;
-                this.session = session;
-                this.getGuestUserInfo();
-            } else {
-                this.guestProfileType = undefined;
-                this.isGuestUser = false;
-                this.session = session;
-            }
-            this.getCurrentUserProfile();
-        });
-
+        /* to make sure there are no duplicate calls to getSession and profile setting
+         * from login flow only eventParams are received via events
+         */
+        if (!eventParams || (eventParams && !eventParams.skipSession)) {
+            this.authService.getSession().toPromise().then((session) => {
+                if (!session) {
+                    this.isGuestUser = true;
+                    this.session = session;
+                    this.getGuestUserInfo();
+                } else {
+                    this.guestProfileType = undefined;
+                    this.isGuestUser = false;
+                    this.session = session;
+                }
+                this.getCurrentUserProfile(eventParams);
+            });
+        }
         this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
             .then((result) => {
                 this.isOnBoardingCompleted = (result === 'true') ? true : false;
             });
     }
 
-    private getCurrentUserProfile() {
-        this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-            .then((response: Profile) => {
-                this.guestUserProfile = response;
-                if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
-                    this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
-                        .then((categories) => {
-                            categories.forEach(category => {
-                                this.frameworkData[category.code] = category;
+    private getCurrentUserProfile(eventParams?: EventParams) {
+        if (!eventParams || (eventParams && !eventParams.skipProfile)) {
+            this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+                .then((response: Profile) => {
+                    this.guestUserProfile = response;
+                    if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
+                        this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
+                            .then((categories) => {
+                                categories.forEach(category => {
+                                    this.frameworkData[category.code] = category;
+                                });
+    
+                                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
+                            }).catch(() => {
+                                this.frameworkData = [];
+                                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
                             });
-
-                            this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                        }).catch(() => {
-                            this.frameworkData = [];
-                            this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                        });
-                    this.getProfileSettingsStatus();
-                } else {
-                    this.frameworkData = [];
+                        this.getProfileSettingsStatus();
+                    } else {
+                        this.frameworkData = [];
+                        this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.guestUserProfile = undefined;
                     this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                this.guestUserProfile = undefined;
-                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-            });
+                });
+        }
     }
 
     // Remove this method after refactoring formandframeworkutil.service
@@ -713,6 +725,27 @@ export class AppGlobalService implements OnDestroy {
         this._skipCoachScreenForDeeplink = value;
     }
 
+    get preSignInData() {
+        return this._preSignInData;
+    }
+    set preSignInData(value) {
+        this._preSignInData = value;
+    }
+
+    get generateCourseCompleteTelemetry() {
+        return this._generateCourseCompleteTelemetry;
+    }
+    set generateCourseCompleteTelemetry(value) {
+        this._generateCourseCompleteTelemetry = value;
+    }
+
+    get generateCourseUnitCompleteTelemetry() {
+        return this._generateCourseUnitCompleteTelemetry;
+    }
+    set generateCourseUnitCompleteTelemetry(value) {
+        this._generateCourseUnitCompleteTelemetry = value;
+    }
+
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page
     resetSavedQuizContent() {
@@ -726,20 +759,22 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
-    async showCouchMarkScreen() {
+    async showTutorialScreen() {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const coachMarkSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
-            if (!coachMarkSeen) {
+            const tutorialScreen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+            if (!tutorialScreen) {
                 const appLabel = await this.appVersion.getAppName();
-                this.event.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: true, appName: appLabel });
-                this.telemetryGeneratorService.generateImpressionTelemetry(
-                    ImpressionType.VIEW,
-                    ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-                    PageId.LIBRARY,
-                    Environment.ONBOARDING
-                );
+                const tutorialPopover = await this.popoverCtrl.create({
+                    component: SbTutorialPopupComponent,
+                    componentProps: {appLabel},
+                    showBackdrop: true,
+                    backdropDismiss: false,
+                    enterAnimation: animationGrowInTopRight,
+                    leaveAnimation: animationShrinkOutTopRight
+                });
+                tutorialPopover.present();
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }

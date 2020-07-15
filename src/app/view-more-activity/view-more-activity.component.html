@@ -19,18 +19,21 @@
       <div class="view-more-course-bg" *ngIf="!localContentsCard">
         <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
         <p class="title" *ngIf="pageType === 'popularCourses'">{{title}}</p>
-        <p *ngIf="searchList && searchList.length" class="count-text">{{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
+        <p *ngIf="searchList && searchList.length" class="count-text">
+          {{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
         <ng-container *ngIf="!isLoading">
           <div *ngFor="let item of searchList; let i = index" class="mb-8">
             <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [course]="item" [section]="null"
-            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-my-course-card>
-            <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item"  [section]="null"
-            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-course-card>
+              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)" [hideProgress]="true">
+            </sb-my-course-card>
+            <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item" [section]="null"
+              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-course-card>
           </div>
         </ng-container>
         <ng-container *ngIf="isLoading">
           <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" class="mb-8 mt-8">
-            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [isLoading]="isLoading"></sb-my-course-card>
+            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [isLoading]="isLoading">
+            </sb-my-course-card>
             <sb-course-card *ngIf="pageType === 'popularCourses'" [isLoading]="isLoading"></sb-course-card>
           </div>
         </ng-container>
