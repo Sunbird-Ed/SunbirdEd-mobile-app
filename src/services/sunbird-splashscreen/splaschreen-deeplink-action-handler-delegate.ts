@@ -34,7 +34,9 @@ import {
   ContentImportRequest,
   StorageService,
   ContentImport,
-  Rollup
+  Rollup,
+  FetchEnrolledCourseRequest,
+  CourseService
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
@@ -89,6 +91,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private appGlobalServices: AppGlobalService,
@@ -729,6 +732,40 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   corRelation: this.getCorrelationList(payloadUrl)
                 }
               });
+          } else {
+            const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
+              userId: this.appGlobalServices.getUserId(),
+            };
+            const enrolledCourses = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise();
+            let isCourseEnrolled;
+            if (enrolledCourses && enrolledCourses.length > 0) {
+              isCourseEnrolled = enrolledCourses.find(course => {
+                return course.contentId === childContentId;
+              });
+            }
+            if (isCourseEnrolled) {
+              this.setTabsRoot();
+              this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+                state: {
+                  content: this.childContent,
+                  depth: 1,
+                  isChildContent: true,
+                  corRelation: undefined,
+                  isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
+                  isOnboardingSkipped
+                }
+              });
+            } else {
+              this.setTabsRoot();
+              this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+                {
+                  state: {
+                    content,
+                    isFromChannelDeeplink,
+                    corRelation: this.getCorrelationList(payloadUrl)
+                  }
+                });
+            }
           }
         } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
           this.setTabsRoot();
