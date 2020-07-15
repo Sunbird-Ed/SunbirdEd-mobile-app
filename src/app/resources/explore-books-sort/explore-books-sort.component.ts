@@ -87,21 +87,23 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
         .then((result: ContentSearchResult) => {
           this.ngZone.run(() => {
             this.storyAndWorksheets = result.contentDataList;
-            for (let i = 0; i < this.storyAndWorksheets.length; i++) {
-              // check if locally available
-                const content = this.storyAndWorksheets[i];
-                if (content.appIcon) {
-                  if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-                    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                      content.cardImg = content.appIcon;
-                    } else {
-                      this.imageSrcMap.set(content.identifier, content.appIcon);
-                      content.appIcon = this.defaultImg;
+            if (this.storyAndWorksheets.length) {
+              for (let i = 0; i < this.storyAndWorksheets.length; i++) {
+                // check if locally available
+                  const content = this.storyAndWorksheets[i];
+                  if (content.appIcon) {
+                    if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
+                      if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+                        content.cardImg = content.appIcon;
+                      } else {
+                        this.imageSrcMap.set(content.identifier, content.appIcon);
+                        content.appIcon = this.defaultImg;
+                      }
+                    } else if (content.basePath) {
+                      content.appIcon = content.basePath + '/' + content.appIcon;
                     }
-                  } else if (content.basePath) {
-                    content.appIcon = content.basePath + '/' + content.appIcon;
                   }
-                }
+              }
             }
           });
         });
@@ -132,7 +134,7 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
         Environment.HOME,
-        PageId.LIBRARY,
+        PageId.EXPLORE_MORE_CONTENT,
         telemetryObject,
         values,
         ContentUtil.generateRollUp(undefined, identifier),
@@ -151,7 +153,7 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.VIEW_MORE_CLICKED,
         Environment.HOME,
-        PageId.LIBRARY,
+        PageId.EXPLORE_MORE_CONTENT,
         telemetryObject);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
       this.modalCtrl.dismiss(null);
