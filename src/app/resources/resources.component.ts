@@ -361,7 +361,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    this.coachTimeout.clearTimeout();
   }
 
   ionViewDidLeave() {

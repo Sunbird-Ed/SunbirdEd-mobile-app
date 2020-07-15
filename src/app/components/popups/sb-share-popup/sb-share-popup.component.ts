@@ -1,6 +1,6 @@
 import { UtilityService } from '@app/services/utility-service';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Platform, PopoverController, NavParams, ToastController } from '@ionic/angular';
+import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AndroidPermissionsService, CommonUtilService, ContentShareHandlerService, TelemetryGeneratorService } from '@app/services';
 import {
@@ -11,7 +11,7 @@ import {
   InteractType,
   InteractSubtype
 } from '@app/services/telemetry-constants';
-import { TelemetryObject } from 'sunbird-sdk';
+import { TelemetryObject, ContentDetailRequest, ContentService } from 'sunbird-sdk';
 import { ShareUrl, ShareMode, ContentType, MimeType } from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
@@ -52,6 +52,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   appName = '';
 
   constructor(
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public popoverCtrl: PopoverController,
     private platform: Platform,
     private contentShareHandler: ContentShareHandlerService,
@@ -81,12 +82,30 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-    this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
+
+    let rootContentIdentifier = this.content.identifier;
+    if (this.objRollup && this.objRollup.l1 && this.objRollup.l1 !== this.content.identifier) {
+      rootContentIdentifier = this.objRollup.l1;
+    }
+    this.shareUrl = baseUrl + await this.getContentEndPoint(this.content, rootContentIdentifier) + rootContentIdentifier;
 
     this.appName = await this.appVersion.getAppName();
   }
 
-  getContentEndPoint(content) {
+  private async getContentEndPoint(content, rootContentIdentifier) {
+    if (content.identifier !== rootContentIdentifier) {
+      const contentDetailRequest: ContentDetailRequest = {
+        contentId: rootContentIdentifier,
+        attachFeedback: false,
+        attachContentAccess: false,
+        emitUpdateIfAny: false
+      };
+      await this.contentService.getContentDetails(contentDetailRequest).toPromise()
+        .then((contentDetail) => {
+          content = contentDetail;
+        });
+    }
+
     let endPoint = '';
     if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
       endPoint = ShareUrl.COURSE;
