@@ -65,15 +65,12 @@
         </div>
         <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
           class="text-center">
-          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
-            class="text-center">
-            <div class="gd-empty-result" *ngIf="!memberSearchQuery">
-              <img src="assets/imgs/no_member.svg" alt="">
-            </div>
-            <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
-              <img src="assets/imgs/empty_search_result.svg" alt="">
-              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
-            </div>
+          <div class="gd-empty-result" *ngIf="!memberSearchQuery">
+            <img src="assets/imgs/no_member.svg" alt="">
+          </div>
+          <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
           </div>
         </div>
       </div>
@@ -101,7 +98,7 @@
           <div *ngFor="let activity of filteredActivityList; let i = index" class="mb-8">
             <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
               [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo"
-              (click)="navigateToActivityDetails(activity)" [isMenu]="loggedinUser.role === 'admin'"
+              (click)="onActivityCardClick(activity)" [isMenu]="loggedinUser.role === 'admin'"
               (menuClick)="activityMenuClick($event, activity)">
             </sb-course-card>
           </div>

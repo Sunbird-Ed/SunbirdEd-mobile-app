@@ -243,7 +243,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.handleHeaderEvents(eventName);
     });
 
-    if (this.navParams) {
+    if (history.state && history.state.hideBackButton !== undefined) {
+      this.hideBackButton = history.state.hideBackButton;
+    } else if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
 
@@ -274,7 +276,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     if (activePortal) {
       activePortal.dismiss();
-    } else {
+    } else if (!this.hideBackButton) {
       this.location.back();
     }
   }
