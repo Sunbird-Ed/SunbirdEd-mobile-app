@@ -205,7 +205,7 @@
   "DEVICE_TAGS_SUB": "Add or remove device tags",
   "DISMISS": "CANCEL",
   "DISMISS_AS_GROUP_ADMIN": "Dismiss as group admin",
-  "DISMISS_AS_GROUP_ADMIN_ERROR_MSG": "Could not dismiss {{member name}}'s group admin status",
+  "DISMISS_AS_GROUP_ADMIN_ERROR_MSG": "Could not dismiss {{member_name}}'s group admin status",
   "DISMISS_AS_GROUP_ADMIN_POPUP_DESC": "Dismissing {{member_name}} as group admin removes admin permissions from the member",
   "DISMISS_AS_GROUP_ADMIN_POPUP_TITLE": "Dismiss as group admin?",
   "DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG": "{{member_name}} is no longer the group admin",
