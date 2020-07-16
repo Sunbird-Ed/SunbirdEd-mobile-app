@@ -11,7 +11,7 @@ import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 
-xdescribe('ActivityDetailsPage', () => {
+describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFilterPipe: Partial<FilterPipe> = {};
@@ -112,6 +112,7 @@ xdescribe('ActivityDetailsPage', () => {
 
     describe('ionViewWillEnter', () => {
         it('should handle device header and back-button for b.userId', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -150,6 +151,7 @@ xdescribe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for admin', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -188,6 +190,7 @@ xdescribe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for b.role is member', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -226,6 +229,7 @@ xdescribe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for a.role is member', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -264,6 +268,7 @@ xdescribe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for nothing match', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -302,6 +307,7 @@ xdescribe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for undefined memberList', (done) => {
+            activityDetailsPage.group = { id: 'group-id' } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
