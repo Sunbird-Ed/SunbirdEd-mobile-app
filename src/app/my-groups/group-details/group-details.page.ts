@@ -746,18 +746,23 @@ export class GroupDetailsPage implements OnInit {
 
   onActivityCardClick(activity) {
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      return;
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+        {
+          state: {
+            content: activity.activityInfo
+          }
+        });
+    } else {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          loggedinUser: this.loggedinUser,
+          group: this.groupDetails,
+          memberList: this.memberList,
+          activity
+        }
+      };
+      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
     }
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        loggedinUser: this.loggedinUser,
-        groupId: this.groupId,
-        memberList: this.memberList,
-        activity
-      }
-    };
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
   }
 
   async showAddActivityPopup() {

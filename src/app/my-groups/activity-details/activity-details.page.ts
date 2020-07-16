@@ -9,9 +9,9 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, GroupMemberRole
+  CachedItemRequestSourceFrom, GroupMemberRole, Group
 } from '@project-sunbird/sunbird-sdk';
-import { CsGroupActivityDataAggregation } from '@project-sunbird/client-services/services/group/activity';
+import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
@@ -31,7 +31,7 @@ export class ActivityDetailsPage implements OnInit {
   activityDetail: any;
   filteredMemberList: any;
   memberSearchQuery: string;
-  groupId: string;
+  group: Group;
   activity: GroupActivity;
 
   constructor(
@@ -46,7 +46,7 @@ export class ActivityDetailsPage implements OnInit {
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
-    this.groupId = extras.groupId;
+    this.group = extras.group;
     this.activity = extras.activity;
   }
 
@@ -76,11 +76,12 @@ export class ActivityDetailsPage implements OnInit {
   private async getActvityDetails() {
     const req: GroupActivityDataAggregationRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
-      groupId: this.groupId,
+      groupId: this.group.id,
       activity: {
         id: this.activity.id,
         type: this.activity.type
-      }
+      },
+      mergeGroup: this.group
     };
 
     try {
@@ -128,6 +129,29 @@ export class ActivityDetailsPage implements OnInit {
       memberName = this.commonUtilService.translateMessage('LOGGED_IN_MEMBER', { member_name: member.name });
     }
     return memberName;
+  }
+
+  calulateProgress(member) {
+    let progress = 0;
+    if (member.agg && member.agg.length) {
+      const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+      const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.LEAF_NODES_COUNT);
+      if (activityAgg && activityAgg.value > 0) {
+        progress = Math.floor((memberAgg.value / activityAgg.value) * 100);
+      }
+    }
+    return progress;
+  }
+
+  getActivityAggLastUpdatedOn() {
+    let lastUpdatedOn = 0;
+    if (this.activityDetail && this.activityDetail.agg) {
+      const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.ENROLMENT_COUNT);
+      if (activityAgg) {
+        lastUpdatedOn = activityAgg.value;
+      }
+    }
+    return lastUpdatedOn;
   }
 
   handleDeviceBackButton() {
