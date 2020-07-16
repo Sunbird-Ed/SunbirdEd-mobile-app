@@ -5,7 +5,7 @@
     </sb-course-card>
     <div class="gd-member-search">
       <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
-      <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)"
+      <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
         placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
     </div>
     <div *ngIf="activityDetail?.agg?.lastUpdatedOn" class="ad-timestamp"
