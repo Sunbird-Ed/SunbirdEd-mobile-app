@@ -38,39 +38,41 @@
           <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onMemberSearch(searchMember)">
         </div>
-        <div class="gd-add-member-container">
-          <div *ngIf="loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
-            <span class="gd-add-member-icon">
-              <img src="assets/imgs/ic_person_add_white.svg">
-            </span>
-            <span class="gd-large-text">
-              {{'ADD_MEMBER' | translate}}
-            </span>
+        <div class="gd-tab-member-container">
+          <div class="gd-add-member-container">
+            <div *ngIf="loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
+              <span class="gd-add-member-icon">
+                <img src="assets/imgs/ic_person_add_white.svg">
+              </span>
+              <span class="gd-large-text">
+                {{'ADD_MEMBER' | translate}}
+              </span>
+            </div>
           </div>
-        </div>
-        <div *ngIf="isGroupLoading">
-          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
-            <sb-member-card [isLoading]="true"
-              [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
+          <div *ngIf="isGroupLoading">
+            <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
+              <sb-member-card [isLoading]="true"
+                [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
+            </div>
           </div>
-        </div>
-        <div *ngIf="!isGroupLoading">
-          <div *ngFor="let member of filteredMemberList; let i = index">
-            <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-              [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
-              [title]="getMemberName(member)" [isMenu]="showMemberMenu(member)" [isAdmin]="member.role === 'admin'"
-              (menuClick)="memberMenuClick($event, member)">
-            </sb-member-card>
+          <div *ngIf="!isGroupLoading">
+            <div *ngFor="let member of filteredMemberList; let i = index">
+              <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+                [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
+                [title]="getMemberName(member)" [isMenu]="showMemberMenu(member)" [isAdmin]="member.role === 'admin'"
+                (menuClick)="memberMenuClick($event, member)">
+              </sb-member-card>
+            </div>
           </div>
-        </div>
-        <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
-          class="text-center">
-          <div class="gd-empty-result" *ngIf="!memberSearchQuery">
-            <img src="assets/imgs/no_member.svg" alt="">
-          </div>
-          <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
-            <img src="assets/imgs/empty_search_result.svg" alt="">
-            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+            class="text-center">
+            <div class="gd-empty-result" *ngIf="!memberSearchQuery">
+              <img src="assets/imgs/no_member.svg" alt="">
+            </div>
+            <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+            </div>
           </div>
         </div>
       </div>
