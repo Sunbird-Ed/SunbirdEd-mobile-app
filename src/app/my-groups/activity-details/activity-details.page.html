@@ -9,7 +9,7 @@
         placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
     </div>
     <div *ngIf="activityDetail?.agg?.lastUpdatedOn" class="ad-timestamp"
-      [innerHTML]="'LAST_UPDATED' | translate:  {'%s': activityDetail.agg.lastUpdatedOn || 'time' }">
+      [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (activityDetail.agg.lastUpdatedOn | dateAgo: 'day' : 'M/d/yy') }">
     </div>
 
     <div class="ad-mebers-container">
@@ -27,12 +27,12 @@
           </sb-member-card>
         </div>
       </div>
-      <div *ngIf="(!isActivityLoading && !filteredMemberList) || (!isActivityLoading && filteredMemberList.length <= 1)"
+      <div *ngIf="(!isActivityLoading && !filteredMemberList) || (!isActivityLoading && filteredMemberList?.length <= 1)"
         class="text-center">
-        <div class="gd-empty-result" *ngIf="!memberSearchQuery">
+        <div class="ad-empty-result" *ngIf="!memberSearchQuery">
           <img src="assets/imgs/no_member.svg" alt="">
         </div>
-        <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+        <div class="ad-empty-result" *ngIf="memberSearchQuery && !filteredMemberList?.length">
           <img src="assets/imgs/empty_search_result.svg" alt="">
           <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
         </div>
