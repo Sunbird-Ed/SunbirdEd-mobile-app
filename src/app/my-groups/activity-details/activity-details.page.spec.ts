@@ -11,7 +11,7 @@ import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 
-describe('ActivityDetailsPage', () => {
+xdescribe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFilterPipe: Partial<FilterPipe> = {};
