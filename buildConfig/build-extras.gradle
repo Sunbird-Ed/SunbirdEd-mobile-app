@@ -90,8 +90,6 @@ android {
         release {
             buildConfigField "boolean", "USE_CRASHLYTICS", "true"
             ext.enableCrashlytics = true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'src/main/assets/www/proguard-custom.txt'
         }
         debug{
             buildConfigField "boolean", "USE_CRASHLYTICS", "false"

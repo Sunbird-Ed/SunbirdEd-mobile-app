@@ -44,8 +44,6 @@ rm -rf platforms
 #need to inspect on webpack dependdencies at the earliest
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@8.1.0
 
-cp "proguard-custom.txt" "www"
-
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --buildConfig ./buildConfig/build.json
 
 npm run ionic-build
