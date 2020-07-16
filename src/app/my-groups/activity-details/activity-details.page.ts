@@ -140,7 +140,7 @@ export class ActivityDetailsPage implements OnInit {
         progress = Math.floor((memberAgg.value / activityAgg.value) * 100);
       }
     }
-    return progress;
+    return '' + progress;
   }
 
   getActivityAggLastUpdatedOn() {
