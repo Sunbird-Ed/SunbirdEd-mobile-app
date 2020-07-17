@@ -22,7 +22,15 @@ import {
   TelemetrySyncStat,
   CorrelationData
 } from 'sunbird-sdk';
-import { Environment, InteractType, PageId, ImpressionType, InteractSubtype, CorReleationDataType, ID } from '@app/services/telemetry-constants';
+import {
+  Environment,
+  InteractType,
+  PageId,
+  ImpressionType,
+  InteractSubtype,
+  CorReleationDataType,
+  ID
+} from '@app/services/telemetry-constants';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -47,8 +55,6 @@ const SUBJECT_NAME = 'support request';
 })
 export class FaqReportIssuePage implements OnInit, OnDestroy {
 
-
-
   data: any;
   private messageListener: (evt: Event) => void;
   deviceId: string;
@@ -64,14 +70,14 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   profile: any = {
     board: [],
     medium: [],
-    grade:[],
+    grade: [],
     subject: []
   };
   boardValue: string;
   mediumtValue: string;
   gradeValue: string;
   subjectValue: string;
-  
+
   public syllabusList: { name: string, code: string }[] = [];
   public mediumList: { name: string, code: string }[] = [];
   public gradeList: { name: string, code: string }[] = [];
@@ -128,7 +134,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
       this.formConfig = this.appGlobalService.formConfig;
       this.arrayListHandling(this.formConfig);
-      console.log('prepared config', this.formConfig);
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then((res: any) => {
@@ -179,7 +184,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
-        console.log('APpName', this.appName);
       });
     this.messageListener = (event) => {
       this.receiveMessage(event);
@@ -200,11 +204,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
     this.appGlobalService.formConfig = undefined;
   }
-  
+
   receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
-    console.log('Event.data', event.data);
     // send telemetry for all events except Initiate-Email
     if (event.data && event.data.action && event.data.action !== 'initiate-email-clicked') {
       this.generateInteractTelemetry(event.data.action, values);
@@ -228,11 +231,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(
       map((profile) => profile.length)
     )
-    .toPromise();
+      .toPromise();
     const getLocalContentCount = await this.contentService.getContents(contentRequest).pipe(
       map((contentCount) => contentCount.length)
     )
-    .toPromise();
+      .toPromise();
     (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -281,7 +284,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     let userDetails: string;
     if (this.bmgsString) {
       userDetails = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
-        this.bmgsString
+        this.bmgsString;
     } else {
       userDetails = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
         this.appGlobalService.getSelectedBoardMediumGrade() + ticketSummary;
@@ -307,11 +310,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.takeAction();
       }
     }
-    if (this.formValues && this.formValues.children && this.formValues.children.subcategory && 
-    this.formValues.subcategory === 'contentavailability') {
+    if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
+      this.formValues.subcategory === 'contentavailability') {
       const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
       if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
-      this.formValues.children.subcategory.notify) {
+        this.formValues.children.subcategory.notify) {
         corRelationList.push({ id: 'true', type: 'Notify' });
       }
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -329,7 +332,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   takeAction(action?: string) {
-    switch(action) {
+    switch (action) {
       case 'contactBoard':
         this.showContactBoard();
         break;
@@ -342,7 +345,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         } else {
           this.ackknowledgeResponse();
         }
-      }
+    }
   }
 
   async openExploreBooksComponent() {
@@ -352,13 +355,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       componentProps:
       {
         boardList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.board) ?
-        [this.formValues.children.subcategory.board.name] : undefined,
+          [this.formValues.children.subcategory.board.name] : undefined,
         mediumList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.medium) ?
-        [this.formValues.children.subcategory.medium.name] : undefined,
+          [this.formValues.children.subcategory.medium.name] : undefined,
         geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
-        [this.formValues.children.subcategory.grade.name] : undefined,
+          [this.formValues.children.subcategory.grade.name] : undefined,
         subjectList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.subject) ?
-        [this.formValues.children.subcategory.subject.name] : undefined,
+          [this.formValues.children.subcategory.subject.name] : undefined,
         relevantTerms: this.relevantTerms,
         curLang: this.translate.currentLang
       }
@@ -380,8 +383,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.supportEmail = undefined;
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory && this.formValues.children.subcategory.board &&
-      this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
-      element.contactinfo.email) {
+        this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
+        element.contactinfo.email) {
         this.supportEmail = element.contactinfo.email;
       }
     });
@@ -430,23 +433,23 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const correlationlist: Array<CorrelationData> = [];
     // Category
     this.formValues && this.formValues.category ?
-    correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY }) : undefined;
+      correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY }) : undefined;
     // SubCategory
     this.formValues && this.formValues.subcategory ?
-    correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
+      correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
       this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : undefined;
+        correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : undefined;
       // Medium
       this.formValues.children.subcategory.medium && this.formValues.children.subcategory.medium.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : undefined;
+        correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : undefined;
       // Grade
       this.formValues.children.subcategory.grade && this.formValues.children.subcategory.grade.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : undefined;
+        correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : undefined;
       // Subject
       this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
+        correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
     }
 
     return correlationlist ? correlationlist : undefined;
@@ -457,36 +460,34 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const correlationlist: Array<CorrelationData> = this.prepareTelemetryCorrelation();
-    
+
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, undefined);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
     }).subscribe((syncStat: TelemetrySyncStat) => {
-        that.zone.run(async () => {
-          if (syncStat.error) {
-            await loader.dismiss();
-            console.error('Telemetry Data Sync Error: ', syncStat);
-            return;
-          } else if (!syncStat.syncedEventCount) {
-            await loader.dismiss();
-            console.error('Telemetry Data Sync Error: ', syncStat);
-            return;
-          }
-
-          this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize, correlationlist);
+      that.zone.run(async () => {
+        if (syncStat.error) {
           await loader.dismiss();
-          console.log('Telemetry Data Sync Success: ', syncStat);
-        });
-      }, async (error) => {
+          console.error('Telemetry Data Sync Error: ', syncStat);
+          return;
+        } else if (!syncStat.syncedEventCount) {
+          await loader.dismiss();
+          console.error('Telemetry Data Sync Error: ', syncStat);
+          return;
+        }
+
+        this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize, correlationlist);
         await loader.dismiss();
-        console.error('Telemetry Data Sync Error: ', error);
       });
+    }, async (error) => {
+      await loader.dismiss();
+      console.error('Telemetry Data Sync Error: ', error);
+    });
   }
 
   generateInteractEvent(interactType: string, subtype: string, size: number, corRelationList?) {
-    /*istanbul ignore else */
-    if (size != undefined) {
+    if (size) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         interactType,
         subtype,
@@ -553,224 +554,228 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
   getClosure(type: string) {
     // Board Closure
-    const boardClosure: FieldConfigOptionsBuilder<{ name: string, code: string, deafult?: any }> = ((control: FormControl, _, notifyLoading, notifyLoaded) => {
-      return defer(async () => {
-        notifyLoading();
-        const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-          from: CachedItemRequestSourceFrom.SERVER,
-          language: this.translate.currentLang,
-          requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-        };
-
-        const list = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise();
-        const options: FieldConfigOption<{ name: string, code: string }>[] = [];
-        list.forEach(element => {
-          const value: FieldConfigOption<{ name: string, code: string}> = {
-            label: element.name,
-            value: {
-              name: element.name,
-              code: element.identifier
-            }
+    const boardClosure: FieldConfigOptionsBuilder<{ name: string, code: string, deafult?: any }> =
+      ((control: FormControl, _, notifyLoading, notifyLoaded) => {
+        return defer(async () => {
+          notifyLoading();
+          const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            language: this.translate.currentLang,
+            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
           };
-          options.push(value);
 
-          if (this.profile && this.profile.syllabus && this.profile.syllabus.length
-          && this.profile.syllabus[0] === element.identifier) {
-            control.patchValue(value.value);
-          }
-        });
-        notifyLoaded();
-        return options;
-      }).pipe(
-        catchError((e) => {
-          console.error(e);
+          const list = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise();
+          const options: FieldConfigOption<{ name: string, code: string }>[] = [];
+          list.forEach(element => {
+            const value: FieldConfigOption<{ name: string, code: string }> = {
+              label: element.name,
+              value: {
+                name: element.name,
+                code: element.identifier
+              }
+            };
+            options.push(value);
+
+            if (this.profile && this.profile.syllabus && this.profile.syllabus.length
+              && this.profile.syllabus[0] === element.identifier) {
+              control.patchValue(value.value);
+            }
+          });
           notifyLoaded();
-          return EMPTY;
-        })
-      );
-    });
+          return options;
+        }).pipe(
+          catchError((e) => {
+            console.error(e);
+            notifyLoaded();
+            return EMPTY;
+          })
+        );
+      });
 
     // Medium Closure
-    const mediumClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> = ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-      if (!context) {
-        return of([]);
-      }
-      return context.valueChanges.pipe(
-        distinctUntilChanged((v1, v2) => {
-          return this.valueComparator(v1 && v1.code, v2 && v2.code);
-        }),
-        tap(notifyLoading),
-        switchMap((value) => {
-          if (!value) {
-            return of([]);
-          }
-          const userInput: { name: string, code: string } = value;
-          return defer(async () => {
-            const framework = await this.frameworkService.getFrameworkDetails({
-              from: CachedItemRequestSourceFrom.SERVER,
-              frameworkId: userInput.code,
-              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-            }).toPromise();
+    const mediumClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
+      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
+        if (!context) {
+          return of([]);
+        }
+        return context.valueChanges.pipe(
+          distinctUntilChanged((v1, v2) => {
+            return this.valueComparator(v1 && v1.code, v2 && v2.code);
+          }),
+          tap(notifyLoading),
+          switchMap((value) => {
+            if (!value) {
+              return of([]);
+            }
+            const userInput: { name: string, code: string } = value;
+            return defer(async () => {
+              const framework = await this.frameworkService.getFrameworkDetails({
+                from: CachedItemRequestSourceFrom.SERVER,
+                frameworkId: userInput.code,
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+              }).toPromise();
 
-            const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: userInput.code,
-              requiredCategories: [FrameworkCategoryCode.BOARD],
-              currentCategoryCode: FrameworkCategoryCode.BOARD,
-              language: this.translate.currentLang
-            };
-
-            const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise()).
-              find(b => b.name === userInput.name);
-
-            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: framework.code,
-              requiredCategories: [FrameworkCategoryCode.MEDIUM],
-              prevCategoryCode: FrameworkCategoryCode.BOARD,
-              currentCategoryCode: FrameworkCategoryCode.MEDIUM,
-              language: this.translate.currentLang,
-              selectedTermsCodes: [boardTerm.code]
-            };
-
-            const list = await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise();
-            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-            list.forEach(element => {
-              const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                label: element.name,
-                value: {
-                  name: element.name,
-                  code: element.code,
-                  frameworkCode: framework.code
-                }
+              const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+                frameworkId: userInput.code,
+                requiredCategories: [FrameworkCategoryCode.BOARD],
+                currentCategoryCode: FrameworkCategoryCode.BOARD,
+                language: this.translate.currentLang
               };
-              options.push(value);
 
-              if (!context.dirty && this.profile && this.profile.medium && this.profile.medium.length
-              && this.profile.medium[0] === element.code) {
-                control.patchValue(value.value);
-              }
+              const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise()).
+                find(b => b.name === userInput.name);
+
+              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+                frameworkId: framework.code,
+                requiredCategories: [FrameworkCategoryCode.MEDIUM],
+                prevCategoryCode: FrameworkCategoryCode.BOARD,
+                currentCategoryCode: FrameworkCategoryCode.MEDIUM,
+                language: this.translate.currentLang,
+                selectedTermsCodes: [boardTerm.code]
+              };
+
+              const list = await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise();
+              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
+              list.forEach(element => {
+                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
+                  label: element.name,
+                  value: {
+                    name: element.name,
+                    code: element.code,
+                    frameworkCode: framework.code
+                  }
+                };
+                options.push(value);
+
+                if (!context.dirty && this.profile && this.profile.medium && this.profile.medium.length
+                  && this.profile.medium[0] === element.code) {
+                  control.patchValue(value.value);
+                }
+              });
+              return options;
             });
-            return options;
-          });
-        }),
-        tap(notifyLoaded),
-        catchError((e) => {
-          console.error(e);
-          notifyLoaded();
-          return EMPTY;
-        })
-      );
-    });
+          }),
+          tap(notifyLoaded),
+          catchError((e) => {
+            console.error(e);
+            notifyLoaded();
+            return EMPTY;
+          })
+        );
+      });
 
     // Grade Closure
-    const gradeClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> = ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-      if (!context) {
-        return of([]);
-      }
-      return context.valueChanges.pipe(
-        distinctUntilChanged((v1, v2) => {
-          return this.valueComparator(v1 && v1.code, v2 && v2.code);
-        }),
-        tap(notifyLoading),
-        switchMap((value) => {
-          if (!value) {
-            return of([]);
-          }
-          const userInput: { name: string, code: string, frameworkCode: string } = value;
-          return defer(async () => {
-            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: userInput.frameworkCode,
-              requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-              prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-              currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-              language: this.translate.currentLang,
-              selectedTermsCodes: [context.value.code]
-            };
-    
-            const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
-            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-            list.forEach(element => {
-              const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                label: element.name,
-                value: {
-                  name: element.name,
-                  code: element.code,
-                  frameworkCode: userInput.frameworkCode
-                }
+    const gradeClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
+      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
+        if (!context) {
+          return of([]);
+        }
+        return context.valueChanges.pipe(
+          distinctUntilChanged((v1, v2) => {
+            return this.valueComparator(v1 && v1.code, v2 && v2.code);
+          }),
+          tap(notifyLoading),
+          switchMap((value) => {
+            if (!value) {
+              return of([]);
+            }
+            const userInput: { name: string, code: string, frameworkCode: string } = value;
+            return defer(async () => {
+              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+                frameworkId: userInput.frameworkCode,
+                requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
+                prevCategoryCode: FrameworkCategoryCode.MEDIUM,
+                currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+                language: this.translate.currentLang,
+                selectedTermsCodes: [context.value.code]
               };
-              options.push(value);
 
-              if (!context.dirty && this.profile && this.profile.grade && this.profile.grade.length
-              && this.profile.grade[0] === element.code) {
-                control.patchValue(value.value);
-              }
+              const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
+              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
+              list.forEach(element => {
+                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
+                  label: element.name,
+                  value: {
+                    name: element.name,
+                    code: element.code,
+                    frameworkCode: userInput.frameworkCode
+                  }
+                };
+                options.push(value);
+
+                if (!context.dirty && this.profile && this.profile.grade && this.profile.grade.length
+                  && this.profile.grade[0] === element.code) {
+                  control.patchValue(value.value);
+                }
+              });
+              return options;
             });
-            return options;
-          });
-        }),
-        tap(notifyLoaded),
-        catchError((e) => {
-          console.error(e);
-          notifyLoaded();
-          return EMPTY;
-        })
-      );
-      
-    });
+          }),
+          tap(notifyLoaded),
+          catchError((e) => {
+            console.error(e);
+            notifyLoaded();
+            return EMPTY;
+          })
+        );
+
+      });
 
     // Subject Closure
-    const subjectClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> = ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-      if (!context) {
-        return of([]);
-      }
-      return context.valueChanges.pipe(
-        distinctUntilChanged((v1, v2) => {
-          return this.valueComparator(v1 && v1.code, v2 && v2.code);
-        }),
-        tap(notifyLoading),
-        switchMap((value) => {
-          if (!value) {
-            return of([]);
-          }
-          const userInput: { name: string, code: string, frameworkCode: string } = value;
-          return defer(async () => {
-            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: userInput.frameworkCode,
-              requiredCategories: [FrameworkCategoryCode.SUBJECT],
-              prevCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-              currentCategoryCode: FrameworkCategoryCode.SUBJECT,
-              language: this.translate.currentLang,
-              selectedTermsCodes: [context.value.code]
-            };
-
-            const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
-            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-            list.forEach(element => {
-              const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                label: element.name,
-                value: {
-                  name: element.name,
-                  code: element.code,
-                  frameworkCode: userInput.frameworkCode
-                }
+    const subjectClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
+      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
+        if (!context) {
+          return of([]);
+        }
+        return context.valueChanges.pipe(
+          distinctUntilChanged((v1, v2) => {
+            return this.valueComparator(v1 && v1.code, v2 && v2.code);
+          }),
+          tap(notifyLoading),
+          switchMap((value) => {
+            if (!value) {
+              return of([]);
+            }
+            const userInput: { name: string, code: string, frameworkCode: string } = value;
+            return defer(async () => {
+              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+                frameworkId: userInput.frameworkCode,
+                requiredCategories: [FrameworkCategoryCode.SUBJECT],
+                prevCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+                currentCategoryCode: FrameworkCategoryCode.SUBJECT,
+                language: this.translate.currentLang,
+                selectedTermsCodes: [context.value.code]
               };
-              options.push(value);
 
-              if (!context.dirty && this.profile && this.profile.subject && this.profile.subject.length
-              && this.profile.subject[0] === element.code) {
-                control.patchValue(value.value);
-              }
+              const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
+              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
+              list.forEach(element => {
+                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
+                  label: element.name,
+                  value: {
+                    name: element.name,
+                    code: element.code,
+                    frameworkCode: userInput.frameworkCode
+                  }
+                };
+                options.push(value);
+
+                if (!context.dirty && this.profile && this.profile.subject && this.profile.subject.length
+                  && this.profile.subject[0] === element.code) {
+                  control.patchValue(value.value);
+                }
+              });
+              return options;
             });
-            return options;
-          });
-        }),
-        tap(notifyLoaded),
-        catchError((e) => {
-          console.error(e);
-          notifyLoaded();
-          return EMPTY;
-        })
-      );
-    });
+          }),
+          tap(notifyLoaded),
+          catchError((e) => {
+            console.error(e);
+            notifyLoaded();
+            return EMPTY;
+          })
+        );
+      });
 
     switch (type) {
       case 'board':
@@ -785,13 +790,12 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   valueChanged($event) {
-      console.log('value changes', $event);
-      this.formValues = $event;
-      if (!this.formContext && $event.category === 'otherissues') {
-        this.formConfig[1].templateOptions.hidden = true;
-      } else if (!this.formContext) {
-        this.formConfig[1].templateOptions.hidden = false;
-      }
+    this.formValues = $event;
+    if (!this.formContext && $event.category === 'otherissues') {
+      this.formConfig[1].templateOptions.hidden = true;
+    } else if (!this.formContext) {
+      this.formConfig[1].templateOptions.hidden = false;
+    }
   }
 
   prepareEmailContent(formValue) {
@@ -810,23 +814,22 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         if (!this.bmgsString) {
           this.bmgsString = fields[element].name;
         } else {
-          this.bmgsString += ", " + (fields[element].name ? fields[element].name : fields[element]);
+          this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
         }
       }
     });
     categorykeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(formValue, element)) {
         if (!this.categories) {
-          formValue[element] ? this.categories = formValue[element]: undefined;
+          formValue[element] ? this.categories = formValue[element] : undefined;
         } else {
-          formValue[element] ? this.categories += " - " + formValue[element]: undefined;
+          formValue[element] ? this.categories += ' - ' + formValue[element] : undefined;
         }
       }
     });
   }
 
   statusChanged($event) {
-    console.log('statusChanged', $event);
     this.isFormValid = $event.isValid;
     this.btnColor = this.isFormValid ? '#006DE5' : '#8FC4FF';
   }
@@ -843,11 +846,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   async dataLoadStatus($event) {
-    console.log($event);
     if (!this.loader) {
       this.loader = await this.commonUtilService.getLoader();
     }
-    if ("LOADING" === $event){
+    if ('LOADING' === $event) {
       this.loader.present();
     } else {
       this.loader.dismiss();
