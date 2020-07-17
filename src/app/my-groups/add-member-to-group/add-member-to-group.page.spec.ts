@@ -1,5 +1,5 @@
 import { AddMemberToGroupPage } from './add-member-to-group.page';
-import { ProfileService, GroupService, SystemSettingsService } from '@project-sunbird/sunbird-sdk';
+import { ProfileService, GroupService, SystemSettingsService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
@@ -25,6 +25,7 @@ describe('AddMemberToGroupPage', () => {
             })
         })) as any
     };
+    const mockPreferences: Partial<SharedPreferences> = {};
     const captchaConfig = new Map();
     // captchaConfig.set('isEnabled', true);
     // captchaConfig.set('key', 'dasewqe33414');
@@ -62,6 +63,7 @@ describe('AddMemberToGroupPage', () => {
             mockProfileService as ProfileService,
             mockGroupService as GroupService,
             mockSystemSettingService as SystemSettingsService,
+            mockPreferences as SharedPreferences,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockLocation as Location,
