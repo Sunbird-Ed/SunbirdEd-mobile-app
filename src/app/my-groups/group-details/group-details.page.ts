@@ -296,6 +296,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await deleteConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -358,6 +363,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await leaveGroupConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -432,6 +442,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await removeActivityConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -507,6 +522,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await removeMemberConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -584,6 +604,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await makeGroupAdminConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -664,6 +689,11 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await dismissAsGroupAdminConfirm.onDidDismiss();
     if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.INITIATED,
         '',
@@ -766,6 +796,11 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async showAddActivityPopup() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      return;
+    }
+
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     try {

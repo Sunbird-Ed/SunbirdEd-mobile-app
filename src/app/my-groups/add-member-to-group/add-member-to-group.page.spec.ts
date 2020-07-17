@@ -32,7 +32,10 @@ describe('AddMemberToGroupPage', () => {
         getGoogleCaptchaSitekey: jest.fn(() => { }),
         setGoogleCaptchaSitekey: jest.fn(),
         getGoogleCaptchaConfig: jest.fn(() => captchaConfig),
-        setGoogleCaptchaConfig: jest.fn()
+        setGoogleCaptchaConfig: jest.fn(),
+        networkInfo: {
+            isNetworkAvailable: true
+        },
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
