@@ -200,6 +200,7 @@
   "DELETE_GROUP": "ಗುಂಪು ಡಿಲೀಟ್ ಮಾಡಿ",
   "DELETE_GROUP_DESC": "{{group_name}} ನ್ನು ತೆಗೆದುಹಾಕುವುದು ಅಪ್ಲಿಕೇಶನ್ನಿನಿಂದ ಗುಂಪನ್ನು ಶಾಶ್ವತವಾಗಿ ತೆಗೆದುಹಾಕುವುದು",
   "DELETE_GROUP_POPUP_TITLE": "ಗುಂಪು ಡಿಲೀಟ್ ಮಾಡುವುದೇ?",
+  "DELETE_GROUP_SUCCESS_MSG": "ಗುಂಪು ಯಶಸ್ವಿಯಾಗಿ ಡಿಲೀಟ್ ಆಯಿತು",
   "DELETE_PROGRESS": "ಆಯ್ದ ಕಂಟೆಂಟ್ ಗಳನ್ನು ಡಿಲೀಟ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
   "DESCRIPTION": "ವಿವರಣೆ",
   "DEVICE_ID": "ಡಿವೈಸ್  ಐಡಿ",

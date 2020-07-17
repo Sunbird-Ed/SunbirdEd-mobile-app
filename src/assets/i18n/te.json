@@ -200,6 +200,7 @@
   "DELETE_GROUP": "గుంపును తొలగించాలి",
   "DELETE_GROUP_DESC": "{{group_name}} తొలగించడం వలన సమూహం నుండి శాశ్వతంగా అప్లికేషన్ తొలగించబడుతుంది",
   "DELETE_GROUP_POPUP_TITLE": "గ్రూపు ను తొలగించాల?",
+  "DELETE_GROUP_SUCCESS_MSG": "సమూహం విజయవంతంగా తొలగించబడింది",
   "DELETE_PROGRESS": "ఎంచుకున్న కంటెంట్ తొలగిస్తోంది",
   "DESCRIPTION": "వివరణ",
   "DEVICE_ID": "పరికరం యొక్క ఐడి",
