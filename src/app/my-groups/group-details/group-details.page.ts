@@ -319,6 +319,8 @@ export class GroupDetailsPage implements OnInit {
       try {
         await this.groupService.deleteById(deleteByIdRequest).toPromise();
         await loader.dismiss();
+        this.commonUtilService.showToast('DELETE_GROUP_SUCCESS_MSG');
+        await loader.dismiss();
         this.location.back();
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.SUCCESS,
@@ -334,6 +336,7 @@ export class GroupDetailsPage implements OnInit {
       } catch (e) {
         await loader.dismiss();
         console.error(e);
+        this.commonUtilService.showToast('DELETE_GROUP_ERROR_MSG');
       }
     }
   }

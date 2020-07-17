@@ -289,6 +289,7 @@ describe('GroupDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockCommonUtilService.showToast = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_DELETE_GROUP', isLeftButtonClicked: true } }))
