@@ -6,7 +6,7 @@
                 <span class="pull-left">
                     {{'MEMBER_ID' | translate: {'app_name': appName} }}<sup>*</sup>
                 </span>
-                <span (click)="openInfoPopup($event)" class="pull-right">
+                <span (click)="openInfoPopup($event)" class="pull-right" #addMemberInfoPopupRef>
                     <span>
                         <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                     </span>
