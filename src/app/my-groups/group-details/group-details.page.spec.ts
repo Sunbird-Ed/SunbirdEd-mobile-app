@@ -6,7 +6,6 @@ import {
 import {
     AppHeaderService,
     FormAndFrameworkUtilService,
-    CommonUtilService,
     AppGlobalService,
     TelemetryGeneratorService, ImpressionType, PageId,
     Environment, InteractType, InteractSubtype, ID
@@ -17,11 +16,16 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        networkInfo: {
+            isNetworkAvailable: true
+        },
+    };
     const mockFilterPipe: Partial<FilterPipe> = {
         transform: jest.fn()
     };
@@ -379,6 +383,7 @@ describe('GroupDetailsPage', () => {
             // act
             groupDetailsPage.groupMenuClick({});
             // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
@@ -1295,13 +1300,39 @@ describe('GroupDetailsPage', () => {
             });
     });
 
-    xit('should not navigate To ActivityDetails page if loggeding user is not a admin', () => {
+    it('should not navigate To course page if loggeding user is not a admin', () => {
         // arrange
         groupDetailsPage.loggedinUser = { role: GroupMemberRole.MEMBER } as any;
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         // act
-        groupDetailsPage.onActivityCardClick('');
+        groupDetailsPage.onActivityCardClick({ activityInfo: {} });
         // assert
-        expect(mockRouter.navigate).not.toHaveBeenCalled();
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
+            {
+                state: {
+                    content: {}
+                }
+            });
+    });
+
+    it('should not navigate To ActivityDetails page if loggeding user is a admin', () => {
+        // arrange
+        groupDetailsPage.loggedinUser = { role: GroupMemberRole.ADMIN } as any;
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        // act
+        groupDetailsPage.onActivityCardClick({ activityInfo: {} });
+        // assert
+        expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
+            {
+                state: {
+                    loggedinUser: groupDetailsPage.loggedinUser,
+                    group: groupDetailsPage.groupDetails,
+                    memberList: groupDetailsPage.memberList,
+                    activity: {
+                        activityInfo: {}
+                    }
+                }
+            });
     });
 
     describe('showAddActivityPopup', () => {
@@ -1377,12 +1408,14 @@ describe('GroupDetailsPage', () => {
                     }
                 }))
             } as any)));
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,

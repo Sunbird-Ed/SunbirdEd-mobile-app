@@ -25,7 +25,7 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService, ImpressionSubtype, ImpressionType,
+    FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
     PageId,
@@ -90,8 +90,11 @@ describe('ResourcesComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn(),
-        networkInfo: jest.fn(),
-        isAccessibleForNonStudentRole: jest.fn()
+        networkInfo: {
+            isNetworkAvailable: true
+        },
+        isAccessibleForNonStudentRole: jest.fn(),
+        presentToastForOffline: jest.fn()
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
@@ -645,7 +648,7 @@ describe('ResourcesComponent', () => {
 
     it('should check for subscription and unsubscribe all those events when ionViewWillLeave()', (done) => {
         // arrange
-        resourcesComponent.refresher = {disabled: false};
+        resourcesComponent.refresher = { disabled: false };
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
@@ -817,7 +820,7 @@ describe('ResourcesComponent', () => {
 
     it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
-        resourcesComponent.refresher = {disabled: false};
+        resourcesComponent.refresher = { disabled: false };
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = NEVER;
@@ -838,27 +841,6 @@ describe('ResourcesComponent', () => {
             expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
             done();
         });
-    });
-
-    it('should call toastController when in offline', (done) => {
-        // arrange
-        mockToastCtrlService.create = jest.fn(() => {
-            return Promise.resolve({
-                present: jest.fn(),
-                onDidDismiss: jest.fn((fn) => {
-                    fn();
-                })
-            });
-        });
-        mockCommonUtilService.translateMessage = jest.fn();
-        // act
-        resourcesComponent.presentToastForOffline('offline');
-        // assert
-        setTimeout(() => {
-            expect(mockToastCtrlService.create).toHaveBeenCalled();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-            done();
-        }, 0);
     });
 
     it('should be invoked classClickEvent', () => {
@@ -1294,7 +1276,6 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.networkInfo.isNetworkAvailable = false;
             mockRouter.navigate = jest.fn();
-            jest.spyOn(resourcesComponent, 'presentToastForOffline').mockImplementation();
             // act
             resourcesComponent.navigateToDetailPage({
                 data: { subject: 'mathematics part 1', isAvailableLocally: false },
@@ -1307,7 +1288,6 @@ describe('ResourcesComponent', () => {
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
-            expect(resourcesComponent.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
         });
 
     it('should generate interact telemetry when textbook is clicked and also check for network available which is set to true ', () => {
@@ -1336,7 +1316,6 @@ describe('ResourcesComponent', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.networkInfo.isNetworkAvailable = false;
         mockRouter.navigate = jest.fn();
-        jest.spyOn(resourcesComponent, 'presentToastForOffline').mockImplementation();
         // act
         resourcesComponent.navigateToTextbookPage({ identifier: 'do_id1234', contentType: 'textbook' },
             'mathematics');
@@ -1348,7 +1327,6 @@ describe('ResourcesComponent', () => {
             PageId.LIBRARY,
             { id: 'do_id1234', type: 'textbook', version: undefined });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
-        expect(resourcesComponent.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
     });
 
     it('should navigate to content player when launch contentPlayer called upon', () => {
@@ -1423,7 +1401,7 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: true } }))
             } as any)));
             // act
             resourcesComponent.appTutorialScreen();
@@ -1445,7 +1423,7 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: false } }))
             } as any)));
             // act
             resourcesComponent.appTutorialScreen();
@@ -1553,7 +1531,7 @@ describe('ResourcesComponent', () => {
 
     it('should call setTimeout for ionViewDidEnter', (done) => {
         // arrange
-        resourcesComponent.refresher = {disabled: false};
+        resourcesComponent.refresher = { disabled: false };
         mockAppGlobalService.showTutorialScreen = jest.fn();
         // act
         resourcesComponent.ionViewDidEnter();
