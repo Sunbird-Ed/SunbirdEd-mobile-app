@@ -54,4 +54,11 @@
 -dontnote com.google.firebase.crash.FirebaseCrash
 -dontnote me.leolin.shortcutbadger.impl.XiaomiHomeBadger
 -dontnote okhttp3.internal.platform.AndroidPlatform$CloseGuard
--keep class com.google.android.gms.internal.zzak$zza
+-dontnote com.google.android.gms.internal.measurement.**
+
+-keepclassmembers class com.google.android.gms.** { *; }
+-dontnote android.os.**
+-dontnote com.google.android.gms.ads.AdView
+-dontnote com.google.android.gms.common.api.internal.BasePendingResult$ReleasableResultGuardian
+-dontnote com.google.android.gms.tagmanager.TagManagerService
+-dontnote com.google.android.gms.common.api.internal.BasePendingResult
