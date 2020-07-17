@@ -1,6 +1,6 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {DatePipe} from '@angular/common';
-import {CommonUtilService} from '@app/services';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { CommonUtilService } from '@app/services';
 
 enum Interval {
     YEAR = 'year',
@@ -31,16 +31,15 @@ export class DateAgoPipe implements PipeTransform {
         if (value) {
             const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
             const intervals = {
-                [Interval.YEAR]: {duration: 31536000},
-                [Interval.MONTH]: {duration: 2592000},
-                [Interval.WEEK]: {duration: 604800},
-                [Interval.DAY]: {duration: 86400},
-                [Interval.HOUR]: {duration: 3600},
-                [Interval.MINUTE]: {duration: 60},
-                [Interval.SECOND]: {duration: 1}
+                [Interval.YEAR]: { duration: 31536000 },
+                [Interval.MONTH]: { duration: 2592000 },
+                [Interval.WEEK]: { duration: 604800 },
+                [Interval.DAY]: { duration: 86400 },
+                [Interval.HOUR]: { duration: 3600 },
+                [Interval.MINUTE]: { duration: 60 },
+                [Interval.SECOND]: { duration: 1 }
             };
             let counter;
-
             // tslint:disable-next-line:forin
             for (const i in intervals) {
                 counter = Math.floor(seconds / intervals[i].duration);
@@ -61,6 +60,8 @@ export class DateAgoPipe implements PipeTransform {
                     } else {
                         return this.commonUtilService.translateMessage(`${i.toUpperCase()}S_AGO`, counter);
                     }
+                } else if (counter === 0) {
+                    return this.commonUtilService.translateMessage(`SECONDS_AGO`, counter);
                 }
             }
         }

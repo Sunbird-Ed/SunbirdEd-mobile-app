@@ -1,5 +1,5 @@
-import {Component, Inject, ViewChild} from '@angular/core';
-import {Subscription} from 'rxjs';
+import { Component, Inject, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
   AddMembersRequest,
   CheckUserExistsRequest,
@@ -9,9 +9,9 @@ import {
   ProfileService,
   SystemSettingsService
 } from 'sunbird-sdk';
-import {Location} from '@angular/common';
-import {Router} from '@angular/router';
-import {Platform, PopoverController} from '@ionic/angular';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+import { Platform, PopoverController } from '@ionic/angular';
 import {
   AppHeaderService,
   CommonUtilService,
@@ -22,9 +22,9 @@ import {
   PageId,
   TelemetryGeneratorService
 } from '@app/services';
-import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
-import {MyGroupsPopoverComponent} from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import {animationGrowInFromEvent} from '@app/app/animations/animation-grow-in-from-event';
+import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
+import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -70,7 +70,7 @@ export class AddMemberToGroupPage {
       this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
         .then((res) => {
           const captchaConfig = JSON.parse(res.value);
-          this.isCaptchaEnabled =  captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+          this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
           this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
           this.commonUtilService.setGoogleCaptchaConfig(this.sunbirdGoogleCaptchaKey, this.isCaptchaEnabled);
         });
@@ -121,7 +121,7 @@ export class AddMemberToGroupPage {
   }
 
   async captchaResolved(res) {
-      this.captchaResponse = res;
+    this.captchaResponse = res;
   }
 
   async onVerifyClick() {
@@ -192,6 +192,11 @@ export class AddMemberToGroupPage {
   }
 
   async onAddToGroupClick() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      return;
+    }
+
     const userExist = this.memberList.find(m => m.userId === this.userDetails.id);
     // Check if user already exist in group
     if (userExist) {

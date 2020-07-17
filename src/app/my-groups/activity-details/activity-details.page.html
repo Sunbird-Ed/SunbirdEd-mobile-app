@@ -9,7 +9,7 @@
         placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
     </div>
     <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
-      [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'day' : 'M/d/yy') }">
+      [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
     </div>
 
     <div class="ad-mebers-container">

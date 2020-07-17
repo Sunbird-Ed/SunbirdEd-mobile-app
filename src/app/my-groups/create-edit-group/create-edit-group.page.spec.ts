@@ -24,7 +24,8 @@ describe('CreateEditGroupPage', () => {
     const mockGroupService: Partial<GroupService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getAppName : jest.fn(() => Promise.resolve('Sunbird')),
-        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig')),
+        networkInfo: jest.fn(),
     };
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
@@ -208,6 +209,7 @@ describe('CreateEditGroupPage', () => {
                 controls: {groupTerms: {setErrors: jest.fn(() => true)}},
                 valid: true
             } as any;
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -220,6 +222,7 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.onSubmit();
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockGroupService.create).toHaveBeenCalled();
@@ -242,12 +245,14 @@ describe('CreateEditGroupPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockGroupService.create = jest.fn(() => throwError({error: 'error'})) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             createEditGroupPage.onSubmit();
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockGroupService.create).toHaveBeenCalled();
@@ -272,6 +277,7 @@ describe('CreateEditGroupPage', () => {
                 value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id'},
                 valid: true
             } as any;
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             createEditGroupPage.groupDetails = {name: 'name'};
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -285,6 +291,7 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.onSubmit();
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(mockGroupService.updateById).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
@@ -300,6 +307,7 @@ describe('CreateEditGroupPage', () => {
                 value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id'},
                 valid: true
             } as any;
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             createEditGroupPage.groupDetails = {name: 'name'};
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
@@ -311,6 +319,7 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.onSubmit();
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             setTimeout(() => {
                 expect(dismissFn).toHaveBeenCalled();
                 done();
