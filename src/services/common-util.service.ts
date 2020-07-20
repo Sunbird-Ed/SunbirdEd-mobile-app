@@ -25,6 +25,7 @@ import { AndroidPermissionsStatus } from './android-permissions/android-permissi
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 import GraphemeSplitter from 'grapheme-splitter';
+import { ComingSoonMessageService } from './coming-soon-message.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -59,7 +60,8 @@ export class CommonUtilService {
         private appVersion: AppVersion,
         private router: Router,
         private toastController: ToastController,
-        private permissionService: AndroidPermissionsService
+        private permissionService: AndroidPermissionsService,
+        private comingSoonMessageService: ComingSoonMessageService
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(

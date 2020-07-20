@@ -48,7 +48,9 @@ import {
   ContentFilterConfig,
   MimeType,
   EventTopics,
-  ExploreConstants
+  ExploreConstants,
+  FormConfigSubcategories,
+  FormConfigCategories
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -822,7 +824,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qrScanner.startScanner(PageId.LIBRARY);
   }
 
-
   async search() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SEARCH_BUTTON_CLICKED,
@@ -837,7 +838,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
 
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
@@ -1137,7 +1137,48 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   scrollToTop() {
     this.contentView.scrollToTop();
   }
-  exploreOtherContents() {
+
+  async requestMoreContent() {
+    const navigationExtras = {
+      state: {
+        subjects: [...this.subjects],
+        categoryGradeLevels: this.categoryGradeLevels,
+        storyAndWorksheets: this.storyAndWorksheets,
+        contentType: ContentType.FOR_LIBRARY_TAB,
+        selectedGrade: this.getGroupByPageReq.grade,
+        selectedMedium: this.getGroupByPageReq.medium
+      }
+    };
+    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
+    formConfig[0]['default'] = FormConfigCategories.CONTENT;
+    formConfig[0].templateOptions['hidden'] = true;
+    formConfig[1]['default'] = FormConfigSubcategories.CONTENT_AVAILABILITY;
+    formConfig[1].templateOptions['hidden'] = true;
+    this.profile && this.profile.syllabus ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][0]['default'] = { code: this.profile.syllabus[0] } : null;
+    this.profile && this.profile.medium ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][1]['default'] = { code: this.profile.medium[0] } : null;
+    this.profile && this.profile.grade ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][2]['default'] = { code: this.profile.grade[0] } : null;
+    this.profile && this.profile.subject ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][3]['default'] = { code: this.profile.subject[0] } : null;
+    this.appGlobalService.formConfig = formConfig;
+    this.router.navigate([`/${RouterLinks.FAQ_REPORT_ISSUE}`],
+    {
+      state: {
+        showHeader: true,
+        formCnotext: FormConfigSubcategories.CONTENT_AVAILABILITY,
+        data: {
+          constants: {
+            reportIssue: 'Content Request'
+          }
+        }
+      }
+    });
+
+  }
+
+  async exploreOtherContents() {
     const navigationExtras = {
       state: {
         subjects: [...this.subjects],

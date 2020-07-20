@@ -607,3 +607,11 @@ export class IgnoreTelemetryPatters {
     public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
 
 }
+
+export class FormConfigCategories {
+    public static readonly CONTENT = "content";
+}
+export class FormConfigSubcategories {
+    public static readonly CONTENT_QUALITY = "contentquality";
+    public static readonly CONTENT_AVAILABILITY = "contentavailability";
+}
