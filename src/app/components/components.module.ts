@@ -54,7 +54,6 @@ import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-
 import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
 import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
-import {InitialPipe} from '@app/pipes/initial/initial';
 
 @NgModule({
   declarations: [
@@ -102,8 +101,7 @@ import {InitialPipe} from '@app/pipes/initial/initial';
     CourseCompletionPopoverComponent,
     SupportAcknowledgement,
     AcknowledgeResponseComponent,
-    ExploreBooksSortComponent,
-    InitialPipe
+    ExploreBooksSortComponent
   ],
   imports: [
     CommonModule,
