@@ -240,9 +240,26 @@ describe('GroupDetailsPage', () => {
         expect(groupDetailsPage.headerObservable).not.toBeUndefined();
     });
 
-    it('should switch to tabs', () => {
+    it('should switch to activity tabs', () => {
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         groupDetailsPage.switchTabs('activities');
         expect(groupDetailsPage.activeTab).toStrictEqual('activities');
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.ACTIVITY_TAB_CLICKED,
+            Environment.GROUP,
+            PageId.GROUP_DETAIL);
+    });
+
+    it('should switch to member tabs', () => {
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        groupDetailsPage.switchTabs('members');
+        expect(groupDetailsPage.activeTab).toStrictEqual('members');
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.MEMBER_TAB_CLICKED,
+            Environment.GROUP,
+            PageId.GROUP_DETAIL);
     });
 
     describe('groupMenuClick', () => {
@@ -260,9 +277,16 @@ describe('GroupDetailsPage', () => {
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_EDIT_GROUP_DETAILS' } }))
             } as any)));
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             groupDetailsPage.groupMenuClick({});
             // assert
             setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.EDIT_GROUP_CLICKED,
+                    Environment.GROUP,
+                    PageId.GROUP_DETAIL
+                );
                 expect(mockRouter.navigate).toHaveBeenCalledWith(
                     [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
                     expect.anything()
