@@ -1,7 +1,6 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
-@import "src/assets/styles/_variables.scss";
 
 :host {
   .sort-heading {
@@ -10,7 +9,7 @@
     margin-top: $base-block-space * 3;
   }
   .item-label-stacked ion-select {
-    border: 1px solid map-get($colors, primary);
+    border: 1px solid #006de5;
     margin-top: 8px;
     padding-right: 15px !important;
     padding-left: 15px !important;
@@ -39,23 +38,25 @@
     // color: #006DE5;
     color: $gray-800;
   }
+
   .item-label-stacked.item-select-disabled {
     .label-md {
-      color: map-get($colors, medium_gray);
+      color: #cccccc;
     }
     ion-select {
-      border-color: map-get($colors, medium_gray);
+      border-color: #cccccc;
       .select-icon {
         .select-icon-inner {
-          border-color: map-get($colors, medium_gray);
+          border-color: #cccccc;
           animation: none;
         }
       }
       .select-placeholder {
-        color: map-get($colors, medium_gray);
+        color: #cccccc;
       }
     }
   }
+
   .item-label-stacked.input-has-value.item-input-has-value {
     .label-md {
       color: $gray-800;
@@ -78,11 +79,8 @@
   ion-footer {
     padding: $base-block-space;
   }
+
   ion-item.item-label-stacked {
     --border-width: 0;
-  }
-  #thanks-holder-image {
-    max-width: 75%;
-    margin-left: 3rem;
   }
 }
