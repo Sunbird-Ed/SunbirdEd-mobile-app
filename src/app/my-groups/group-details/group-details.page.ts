@@ -185,6 +185,12 @@ export class GroupDetailsPage implements OnInit {
 
   switchTabs(tab) {
     this.activeTab = tab;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
+            : InteractSubtype.MEMBER_TAB_CLICKED,
+        Environment.GROUP,
+        PageId.GROUP_DETAIL);
   }
 
   async groupMenuClick(event) {
@@ -209,6 +215,11 @@ export class GroupDetailsPage implements OnInit {
     if (data) {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.EDIT_GROUP_CLICKED,
+            Environment.GROUP,
+            PageId.GROUP_DETAIL);
         this.router.navigate(
           [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {

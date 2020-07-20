@@ -504,7 +504,10 @@ export enum InteractSubtype {
     REMOVE_ACTIVITY_CLICKED = 'remove-activity-clicked',
     VERIFY_CLICKED = 'verify-clicked',
     ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked',
-    ADD_TO_GROUP_CLICKED = 'add-to-group-clicked'
+    ADD_TO_GROUP_CLICKED = 'add-to-group-clicked',
+    ACTIVITY_TAB_CLICKED = 'activity-tab-clicked',
+    MEMBER_TAB_CLICKED = 'member-tab-clicked',
+    EDIT_GROUP_CLICKED = 'edit-group-clicked'
 }
 
 export enum ID {
