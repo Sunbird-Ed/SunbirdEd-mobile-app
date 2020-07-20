@@ -203,7 +203,8 @@ export enum ImpressionSubtype {
     DEEPLINK = 'deeplink',
     CREATE_GROUP_FORM = 'create-group-form',
     DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
-    GROUP_TUTORIAL = 'my-group-tutorial-popup'
+    GROUP_TUTORIAL = 'my-group-tutorial-popup',
+    OFFLINE_MODE = 'offline-mode'
 }
 
 export enum InteractType {
