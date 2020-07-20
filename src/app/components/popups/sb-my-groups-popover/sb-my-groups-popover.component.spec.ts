@@ -1,5 +1,5 @@
 import {MyGroupsPopoverComponent} from '@app/app/components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import {NavParams, PopoverController} from '@ionic/angular';
+import {NavParams, PopoverController, Platform} from '@ionic/angular';
 import {
     CommonUtilService,
     Environment, ImpressionSubtype,
@@ -36,13 +36,15 @@ describe('MyGroupsPopoverComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockPlatform: Partial<Platform> = {};
 
     beforeAll(() => {
         myGroupsPopoverComponent = new MyGroupsPopoverComponent(
             mockPopoverController as PopoverController,
             mockNavParams as NavParams,
             mockCommonUtilService as CommonUtilService,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockPlatform as Platform
         );
     });
 
@@ -53,6 +55,26 @@ describe('MyGroupsPopoverComponent', () => {
     it('should create instance of myGroupspopoverComponent', () => {
         // act
         expect(myGroupsPopoverComponent).toBeTruthy();
+    });
+
+    it('should subscribe to back button ', () => {
+        // arrange
+        mockPopoverController.dismiss = jest.fn();
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+        } as any;
+
+        const unsubscribeFn = jest.fn();
+        myGroupsPopoverComponent.backButtonFunc = {
+            unsubscribe: unsubscribeFn,
+        } as any;
+
+        // act
+        myGroupsPopoverComponent.ngOnInit();
+        // assert
+        expect(unsubscribeFn).toHaveBeenCalled();
+        expect(mockPopoverController.dismiss).toHaveBeenCalled();
     });
 
     describe('ionViewWillEnter scenarios', () => {

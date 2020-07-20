@@ -51,6 +51,9 @@ import { CommonFormsComponent } from './common-forms/common-forms.component';
 import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-popup/sb-course-completion-popup.component';
+import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
+import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
+import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 
 @NgModule({
   declarations: [
@@ -95,7 +98,10 @@ import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SbGenericFormPopoverComponent,
-    CourseCompletionPopoverComponent
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   imports: [
     CommonModule,
@@ -139,7 +145,10 @@ import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SbGenericFormPopoverComponent,
-    CourseCompletionPopoverComponent
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -182,7 +191,10 @@ import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SbGenericFormPopoverComponent,
-    CourseCompletionPopoverComponent
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

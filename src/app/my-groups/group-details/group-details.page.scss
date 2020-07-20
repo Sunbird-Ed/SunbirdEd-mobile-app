@@ -83,8 +83,9 @@
         }
     }
 }
-.gd-add-member-container{
+.gd-tab-member-container{
     box-shadow: 0 2px 7px 0 rgba(0,0,0,0.25);
+    min-height: calc(100vh - 225px);
 }
 
 .gd-member-search {
@@ -147,7 +148,8 @@
 .gd-add-member {
     border-bottom: 1px solid $gray-100;
     margin-bottom: 16px;
-    padding: 16px 8px;
+    margin: 0 8px;
+    padding: 16px 0;
 }
 
 .gd-add-member-icon {

@@ -69,7 +69,8 @@
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
+								<div class="wrapper sb-btn-tile-group"
+									*ngIf="!isFromGroupFlow && course?.progress !==100">
 									<div *ngIf="trackDownloads$ | async; let downloads">
 										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
@@ -96,9 +97,9 @@
 												src="assets/imgs/menu.svg" alt="menu-icon">
 										</div>
 									</div>
-
 								</div>
-								<div *ngIf="!isFromGroupFlow && courseCardData?.batchId">
+
+								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container"
 										*ngIf="!showSheenAnimation && course?.progress!==100 && !batchExp">
 										<p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>

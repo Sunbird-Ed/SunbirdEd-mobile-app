@@ -244,6 +244,7 @@ export class PreferenceKey {
     public static readonly PAGE_ASSEMBLE_ORGANISATION_ID = 'page_assemble_organisation_id';
     public static readonly CAMPAIGN_PARAMETERS = 'campaign_parameters';
     public static readonly CREATE_GROUP_INFO_POPUP = 'create_group_info_popup';
+    public static readonly ADD_MEMBER_TO_GROUP_INFO_POPUP = 'add_member_to_group_info_popup';
 }
 
 export class GenericAppConfig {
@@ -605,4 +606,12 @@ export class IgnoreTelemetryPatters {
     public static readonly IGNORE_CHANNEL_IMPRESSION_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/;
     public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
 
+}
+
+export class FormConfigCategories {
+    public static readonly CONTENT = "content";
+}
+export class FormConfigSubcategories {
+    public static readonly CONTENT_QUALITY = "contentquality";
+    public static readonly CONTENT_AVAILABILITY = "contentavailability";
 }
