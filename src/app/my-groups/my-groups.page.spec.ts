@@ -373,6 +373,28 @@ describe('MyGroupsPage', () => {
         });
     });
 
+    describe('ngOnDestroy', () => {
+        it('should unsubscribe headerService', () => {
+            myGroupsPage.headerObservable = {
+                unsubscribe: jest.fn()
+            };
+            myGroupsPage.ngOnDestroy();
+            expect(myGroupsPage.headerObservable).toBeTruthy();
+        });
+
+        it('should unsubscribe headerService', () => {
+            myGroupsPage.headerObservable = undefined;
+            myGroupsPage.ngOnDestroy();
+            expect(myGroupsPage.headerObservable).toBeUndefined();
+        });
+
+        it('should unsubscribe unregisterBackButton', () => {
+            myGroupsPage.unregisterBackButton = {unsubscribe: jest.fn()} as any;
+            myGroupsPage.ngOnDestroy();
+            expect(myGroupsPage.unregisterBackButton).toBeDefined();
+        });
+    });
+
     it('should navigate to CREATE_EDIT_GROUP', () => {
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();

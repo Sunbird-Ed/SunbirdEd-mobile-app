@@ -6,7 +6,7 @@
                 <span class="pull-left">
                     {{'MEMBER_ID' | translate: {'app_name': appName} }}<sup>*</sup>
                 </span>
-                <span (click)="openInfoPopup($event)" class="pull-right">
+                <span (click)="openInfoPopup($event)" class="pull-right" #addMemberInfoPopupRef>
                     <span>
                         <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                     </span>
@@ -41,7 +41,7 @@
     </div>
     <div>
         <div *ngIf="isCaptchaEnabled === true">
-            <re-captcha #cap (resolved)="captchaResolved($event)" size="invisible" siteKey={{sunbirdGoogleCaptchaKey}}>
+            <re-captcha #cap (resolved)="captchaResolved($event)" size="invisible" siteKey="6Ldk3O8UAAAAAC2tm0qkPGbJC7YJVpVzMeIuhumb">
             </re-captcha>
         </div>
     </div>

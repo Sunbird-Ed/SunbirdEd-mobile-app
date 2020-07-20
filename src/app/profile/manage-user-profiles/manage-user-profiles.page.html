@@ -16,7 +16,7 @@
         <sb-member-card 
           [title]="user.firstName"
           [identifier]="user.id"
-          [initial]="user.firstName && user.firstName[0]"
+          [initial]="user.firstName | initial"
           [cardImg]="selectedUserIndex === i ? 'assets/imgs/dark_blue_check.svg' : ''"
           [indexOfMember] = "i"
           [config]="sbCardConfig"

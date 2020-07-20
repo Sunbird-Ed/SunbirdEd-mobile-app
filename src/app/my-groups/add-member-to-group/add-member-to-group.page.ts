@@ -1,5 +1,5 @@
-import {Component, Inject, ViewChild} from '@angular/core';
-import {Subscription} from 'rxjs';
+import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
   AddMembersRequest,
   CheckUserExistsRequest,
@@ -7,11 +7,12 @@ import {
   GroupMemberRole,
   GroupService,
   ProfileService,
-  SystemSettingsService
+  SystemSettingsService,
+  SharedPreferences
 } from 'sunbird-sdk';
-import {Location} from '@angular/common';
-import {Router} from '@angular/router';
-import {Platform, PopoverController} from '@ionic/angular';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+import { Platform, PopoverController } from '@ionic/angular';
 import {
   AppHeaderService,
   CommonUtilService,
@@ -22,9 +23,10 @@ import {
   PageId,
   TelemetryGeneratorService
 } from '@app/services';
-import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
-import {MyGroupsPopoverComponent} from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import {animationGrowInFromEvent} from '@app/app/animations/animation-grow-in-from-event';
+import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
+import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
+import { PreferenceKey } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -46,11 +48,13 @@ export class AddMemberToGroupPage {
   private unregisterBackButton: Subscription;
   appName: string;
   @ViewChild('cap') cap;
+  @ViewChild('addMemberInfoPopupRef') addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
@@ -70,7 +74,7 @@ export class AddMemberToGroupPage {
       this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
         .then((res) => {
           const captchaConfig = JSON.parse(res.value);
-          this.isCaptchaEnabled =  captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+          this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
           this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
           this.commonUtilService.setGoogleCaptchaConfig(this.sunbirdGoogleCaptchaKey, this.isCaptchaEnabled);
         });
@@ -88,6 +92,18 @@ export class AddMemberToGroupPage {
     });
     this.handleDeviceBackButton();
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+  }
+
+  async ionViewDidEnter() {
+    try {
+      const addMemberInfoScreen = await this.preferences.getBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP).toPromise();
+      if (!addMemberInfoScreen) {
+        this.addMemberInfoPopupRef.nativeElement.click();
+        // this.openInfoPopup();
+        this.preferences.putBoolean(PreferenceKey.ADD_MEMBER_TO_GROUP_INFO_POPUP, true).toPromise().then();
+      }
+    } catch (err) {
+    }
   }
 
   ionViewWillLeave() {
@@ -121,7 +137,7 @@ export class AddMemberToGroupPage {
   }
 
   async captchaResolved(res) {
-      this.captchaResponse = res;
+    this.captchaResponse = res;
   }
 
   async onVerifyClick() {
@@ -192,6 +208,11 @@ export class AddMemberToGroupPage {
   }
 
   async onAddToGroupClick() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      return;
+    }
+
     const userExist = this.memberList.find(m => m.userId === this.userDetails.id);
     // Check if user already exist in group
     if (userExist) {

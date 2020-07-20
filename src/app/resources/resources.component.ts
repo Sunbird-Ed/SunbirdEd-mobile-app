@@ -1,6 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
 import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import {IonContent as ContentView, Events, ToastController, MenuController, PopoverController, IonRefresher} from '@ionic/angular';
+import { IonContent as ContentView, Events, ToastController, MenuController, PopoverController, IonRefresher } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,7 +48,9 @@ import {
   ContentFilterConfig,
   MimeType,
   EventTopics,
-  ExploreConstants
+  ExploreConstants,
+  FormConfigSubcategories,
+  FormConfigCategories
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -57,16 +59,16 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType, ImpressionSubtype
+  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
 import { NotificationService } from '@app/services/notification.service';
 import { applyProfileFilter } from '@app/util/filter.util';
-import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
-import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 
 @Component({
   selector: 'app-resources',
@@ -173,7 +175,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   refresh: boolean;
   private eventSubscription: Subscription;
 
-  toast: any;
   headerObservable: Subscription;
   scrollEventRemover: any;
   subjects: any;
@@ -361,7 +362,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    this.coachTimeout.clearTimeout();
   }
 
   ionViewDidLeave() {
@@ -429,9 +429,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
   }
 
-    /**
-	 * Load/get recently viewed content
-	 */
+  /**
+ * Load/get recently viewed content
+ */
   // hide recently viewed as part of school@home
   async loadRecentlyViewedContent(hideLoaderFlag?: boolean) {
     // this.recentlyViewedResources = [];
@@ -793,22 +793,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 2000);
   }
 
-  // Offline Toast
-  async presentToastForOffline(msg: string) {
-    this.toast = await this.toastController.create({
-      duration: 3000,
-      message: this.commonUtilService.translateMessage(msg),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    await this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
-
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
       if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
@@ -840,7 +824,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.qrScanner.startScanner(PageId.LIBRARY);
   }
 
-
   async search() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SEARCH_BUTTON_CLICKED,
@@ -855,7 +838,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
 
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
@@ -1057,7 +1039,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
-      this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
@@ -1079,7 +1061,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     } else {
-      this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
@@ -1107,14 +1089,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async appTutorialScreen() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.INFORMATION_ICON_CLICKED,
-        Environment.HOME,
-        PageId.LIBRARY
+      InteractType.TOUCH,
+      InteractSubtype.INFORMATION_ICON_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY
     );
     this.tutorialPopover = await this.popoverCtrl.create({
       component: SbTutorialPopupComponent,
-      componentProps: {appLabel: this.appLabel},
+      componentProps: { appLabel: this.appLabel },
       enterAnimation: animationGrowInTopRight,
       leaveAnimation: animationShrinkOutTopRight,
       backdropDismiss: false,
@@ -1155,7 +1137,48 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   scrollToTop() {
     this.contentView.scrollToTop();
   }
-  exploreOtherContents() {
+
+  async requestMoreContent() {
+    const navigationExtras = {
+      state: {
+        subjects: [...this.subjects],
+        categoryGradeLevels: this.categoryGradeLevels,
+        storyAndWorksheets: this.storyAndWorksheets,
+        contentType: ContentType.FOR_LIBRARY_TAB,
+        selectedGrade: this.getGroupByPageReq.grade,
+        selectedMedium: this.getGroupByPageReq.medium
+      }
+    };
+    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
+    formConfig[0]['default'] = FormConfigCategories.CONTENT;
+    formConfig[0].templateOptions['hidden'] = true;
+    formConfig[1]['default'] = FormConfigSubcategories.CONTENT_AVAILABILITY;
+    formConfig[1].templateOptions['hidden'] = true;
+    this.profile && this.profile.syllabus ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][0]['default'] = { code: this.profile.syllabus[0] } : null;
+    this.profile && this.profile.medium ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][1]['default'] = { code: this.profile.medium[0] } : null;
+    this.profile && this.profile.grade ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][2]['default'] = { code: this.profile.grade[0] } : null;
+    this.profile && this.profile.subject ?
+    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][3]['default'] = { code: this.profile.subject[0] } : null;
+    this.appGlobalService.formConfig = formConfig;
+    this.router.navigate([`/${RouterLinks.FAQ_REPORT_ISSUE}`],
+    {
+      state: {
+        showHeader: true,
+        formCnotext: FormConfigSubcategories.CONTENT_AVAILABILITY,
+        data: {
+          constants: {
+            reportIssue: 'Content Request'
+          }
+        }
+      }
+    });
+
+  }
+
+  async exploreOtherContents() {
     const navigationExtras = {
       state: {
         subjects: [...this.subjects],
@@ -1302,8 +1325,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onCourseCardClick(event) {
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({id: event.data.title, type: CorReleationDataType.SUBJECT});
-    corRelationList.push({id: (event.data.contents.length).toString() , type: CorReleationDataType.COURSE_COUNT});
+    corRelationList.push({ id: event.data.title, type: CorReleationDataType.SUBJECT });
+    corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
 
     if (event.data.contents && event.data.contents.length > 1) {
       const appliedFilter = {
@@ -1323,26 +1346,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       };
       this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.SUBJECT_CARD_CLICKED,
-          Environment.HOME,
-          PageId.LIBRARY,
-          undefined,
-          undefined,
-          undefined,
-          corRelationList
+        InteractType.TOUCH,
+        InteractSubtype.SUBJECT_CARD_CLICKED,
+        Environment.HOME,
+        PageId.LIBRARY,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
       );
       this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
     } else {
       this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.SUBJECT_CARD_CLICKED,
-          Environment.HOME,
-          PageId.LIBRARY,
-          undefined,
-          undefined,
-          undefined,
-          corRelationList
+        InteractType.TOUCH,
+        InteractSubtype.SUBJECT_CARD_CLICKED,
+        Environment.HOME,
+        PageId.LIBRARY,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
       );
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {

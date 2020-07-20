@@ -251,7 +251,8 @@ export enum InteractType {
     DOWNLOAD_COMPLETE = 'download-complete',
     POPUP_LOADED = 'popup-loaded',
     INITIATED = 'initiated',
-    SUCCESS = 'success'
+    SUCCESS = 'success',
+    SUPPORT = 'support'
 }
 
 
@@ -545,7 +546,8 @@ export enum ID {
     REMOVE_ACTIVITY = 'remove-activity',
     VERIFY_MEMBER = 'verify-member',
     ADD_MEMBER_TO_GROUP = 'add-member-to-group',
-    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group'
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
+    NOTIFICATION_REQUEST = 'notification-request'
 }
 
 export enum ActionButtonType {
@@ -593,7 +595,9 @@ export enum CorReleationDataType {
     TYPE = 'Type',
     STATE = 'State',
     DISTRICT = 'District',
-    FILL_MODE = 'FillMode'
+    FILL_MODE = 'FillMode',
+    CATEGORY = 'Category',
+    SUBCATEGORY = 'Subcategory'
 }
 
 export enum AuditProps {

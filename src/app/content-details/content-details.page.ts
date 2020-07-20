@@ -334,7 +334,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide({id: 'login'});
+    this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
   }
 
@@ -682,7 +682,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.appGlobalService.showCourseCompletePopup = false;
     // Tested in ionic 4 working as expected
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.isSingleContent) {
       window.history.go(-3);
     } else if (this.resultLength === 1) {
@@ -1102,7 +1102,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming,
+        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup);
       this.downloadAndPlay = false;
     }
   }
@@ -1127,7 +1128,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-showDeletePopup() {
+  showDeletePopup() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
       this.content.contentData.streamingUrl = this.streamingUrl;
       this.contentDownloadable[this.content.identifier] = false;
