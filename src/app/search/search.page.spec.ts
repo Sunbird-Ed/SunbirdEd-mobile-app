@@ -27,7 +27,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService } from '../../services';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype } from '../../services';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
@@ -1242,7 +1242,7 @@ describe('SearchPage', () => {
                 () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1251,11 +1251,12 @@ describe('SearchPage', () => {
                 expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    AuditType.TOAST_SEEN,
+                    ImpressionSubtype.OFFLINE_MODE,
+                    PageId.SCAN_OR_MANUAL,
                     Environment.HOME,
-                    'Updated',
                     undefined,
-                    'set-profile',
                     undefined,
                     undefined,
                     undefined,
