@@ -1396,16 +1396,26 @@ describe('SearchPage', () => {
                     identifier: 'id1'
                 }
             };
+            const collection = {
+                identifier: 'identifier',
+                mimeType: MimeType.COLLECTION
+            };
+            searchPage.isDialCodeSearch = true;
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve({}));
+            mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getCurrentUser = jest.fn(() => { });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
             // act
-            searchPage.checkParent('parent', 'child');
+            searchPage.checkParent('parent', collection);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    [RouterLinks.CONTENT_DETAILS],
-                    expect.anything()
-                );
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 0);
         });
