@@ -940,7 +940,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 done();
             });
@@ -982,7 +982,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 done();
             });
@@ -1906,7 +1906,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2085,7 +2085,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2154,7 +2154,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2223,7 +2223,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2370,7 +2370,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2453,7 +2453,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2532,7 +2532,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2611,7 +2611,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2689,7 +2689,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
