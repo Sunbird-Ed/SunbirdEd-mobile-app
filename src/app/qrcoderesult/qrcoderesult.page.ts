@@ -36,11 +36,11 @@ import {
   PlayerService,
   Profile,
   ProfileService,
-  TelemetryObject,
-  ObjectType
+  TelemetryObject
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId, CorReleationDataType, Mode } from '../../services/telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType,
+  PageId, CorReleationDataType, Mode, ObjectType } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -78,7 +78,7 @@ export class QrcoderesultPage implements OnDestroy {
   /**
    * Contains card data of previous state
    */
-  content: Content;
+  content: any;
 
   /**
    * Contains Parent Content Details
@@ -263,6 +263,7 @@ export class QrcoderesultPage implements OnDestroy {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
       this.unregisterBackButton.unsubscribe();
     });
+    this.generateNewImpressionEvent(this.content.dialcodes[0]);
     this.subscribeSdkEvent();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -645,6 +646,17 @@ export class QrcoderesultPage implements OnDestroy {
         // Get child content
         // if (res.data && res.data.status === 'IMPORT_COMPLETED' && res.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
+          const corRelationList: Array<CorrelationData> = [];
+          corRelationList.push({ id: this.content.dialcodes[0], type: CorReleationDataType.QR });
+          corRelationList.push({ id: this.content.leafNodesCount, type: CorReleationDataType.COUNT_NODE });
+          this.telemetryGeneratorService.generatePageLoadedTelemetry(
+            PageId.TEXTBOOK_IMPORT,
+            this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+            this.content.identifier,
+            ObjectType.TEXTBOOK,
+            undefined, undefined,
+            corRelationList
+          );
           this.showLoading = false;
           this.isDownloadStarted = false;
           this.results = [];
@@ -943,12 +955,20 @@ export class QrcoderesultPage implements OnDestroy {
     );
   }
 
-  generateNewImpressionEvent() {
+  generateNewImpressionEvent(dialcode?) {
+    const corRelationList: Array<CorrelationData> = [];
+    if (dialcode) {
+      corRelationList.push({ id: dialcode, type: CorReleationDataType.QR });
+    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
-      InteractType.PLAY,
-      InteractSubtype.DOWNLOAD,
-      PageId.QR_CONTENT_RESULT,
+      dialcode ? ImpressionType.PAGE_REQUEST : InteractType.PLAY,
+      dialcode ? '' : InteractSubtype.DOWNLOAD,
+      dialcode ? PageId.TEXTBOOK_IMPORT : PageId.QR_CONTENT_RESULT,
       this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      dialcode ? this.content.identifier : undefined,
+      dialcode ? ObjectType.TEXTBOOK : undefined,
+      undefined, undefined,
+      dialcode ? corRelationList : undefined
      );
   }
 }

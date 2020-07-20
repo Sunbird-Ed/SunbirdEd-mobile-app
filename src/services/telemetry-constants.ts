@@ -24,7 +24,8 @@ export enum ObjectType {
     GROUP = 'Group',
     CONTENT = 'Content',
     QUESTION = 'Question',
-    QR = 'Qr'
+    QR = 'Qr',
+    TEXTBOOK = ' TextBook'
 }
 
 export enum Mode {
@@ -155,7 +156,8 @@ export enum PageId {
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
-    ACTIVITY_DETAIL = 'activity-detail'
+    ACTIVITY_DETAIL = 'activity-detail',
+    TEXTBOOK_IMPORT = 'textbookimport'
 }
 
 export enum LogType {
@@ -253,7 +255,8 @@ export enum InteractType {
     POPUP_LOADED = 'popup-loaded',
     INITIATED = 'initiated',
     SUCCESS = 'success',
-    SUPPORT = 'support'
+    SUPPORT = 'support',
+    SELECT_BOOK = 'select-book'
 }
 
 
@@ -601,7 +604,8 @@ export enum CorReleationDataType {
     DISTRICT = 'District',
     FILL_MODE = 'FillMode',
     CATEGORY = 'Category',
-    SUBCATEGORY = 'Subcategory'
+    SUBCATEGORY = 'Subcategory',
+    COUNT_NODE = 'CountNode'
 }
 
 export enum AuditProps {

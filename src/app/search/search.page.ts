@@ -34,7 +34,9 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType, AuditType, ImpressionSubtype
+  Environment, ImpressionType, InteractSubtype,
+  InteractType, LogLevel, Mode, PageId, CorReleationDataType,
+  AuditType, ImpressionSubtype, ObjectType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -451,6 +453,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     } else if (content.mimeType === MimeType.COLLECTION) {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
+
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
+
+        const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SELECT_BOOK, '',
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          PageId.QR_BOOK_RESULT,
+          telemetryObject,
+          undefined, undefined,
+          corRelationList
+        );
 
         this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
           state: {
