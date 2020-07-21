@@ -256,7 +256,8 @@ export enum InteractType {
     INITIATED = 'initiated',
     SUCCESS = 'success',
     SUPPORT = 'support',
-    SELECT_BOOK = 'select-book'
+    SELECT_BOOK = 'select-book',
+    SELECT_CARD = 'select-card'
 }
 
 
