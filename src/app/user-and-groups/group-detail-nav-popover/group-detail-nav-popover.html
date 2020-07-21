@@ -1,6 +1,0 @@
-<ion-list>
-  <ion-item (click)="goToEditGroup()">{{'EDIT_GROUP' | translate}}</ion-item>
-  <ion-item *ngIf="!isActiveGroup" (click)="deleteGroup()">{{'DELETE_GROUP' | translate}}</ion-item>
-  <ion-item (click)="addUsers()">{{'ADD_USERS' | translate}}</ion-item>
-  <ion-item *ngIf="noUsers" (click)="removeUser()">{{'REMOVE_USERS' | translate}}</ion-item>
-</ion-list>

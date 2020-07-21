@@ -189,8 +189,6 @@ export class ShareUrl {
 }
 
 export class MenuOverflow {
-    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
     public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP'];
     public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_LEAVE_GROUP'];
@@ -198,11 +196,6 @@ export class MenuOverflow {
     public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_ACTIVITY_ADMIN = ['MENU_REMOVE_ACTIVITY'];
-}
-
-export class SideMenu {
-    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
 }
 
 export class FormConstant {
@@ -447,14 +440,6 @@ export class RouterLinks {
     public static readonly TABS = 'tabs';
     public static readonly TABS_COURSE = 'tabs/courses';
 
-    // Users and Groups Routs
-    public static readonly USER_AND_GROUPS = 'user-and-groups';
-    public static readonly ADD_OR_REMOVE_GROUP_USER = 'add-or-remove-group-user';
-    public static readonly GROUP_DETAILS = 'group-details';
-    public static readonly CREATE_GROUP = 'create-group';
-    public static readonly GROUP_MEMBERS = 'group-members';
-    public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
-
     // Profile Routs
     public static readonly PROFILE = 'profile';
     public static readonly GUEST_EDIT = 'guest-edit';
@@ -483,12 +468,6 @@ export class RouterLinks {
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
-
-    // Reports Routs
-    public static readonly REPORTS_LIST = 'reports-list';
-    public static readonly REPORTS = 'reports';
-    public static readonly GROUP_REPORT = 'group-report';
-    public static readonly USER_REPORT = 'user-report';
 
     // Player Routs
     public static readonly PLAYER = 'player';

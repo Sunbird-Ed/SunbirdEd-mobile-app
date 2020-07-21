@@ -4,7 +4,8 @@ import {
     FormAndFrameworkUtilService, AppGlobalService,
     CommonUtilService, TelemetryGeneratorService, UtilityService, AppHeaderService,
     LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService,
-    InteractType, InteractSubtype, Environment, PageId, LocalCourseService, ImpressionType, CorReleationDataType
+    InteractType, InteractSubtype, Environment, PageId,
+    LocalCourseService, ImpressionType, CorReleationDataType
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
@@ -18,10 +19,12 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { NgZone, EventEmitter } from '@angular/core';
 import { Network } from '@ionic-native/network/ngx';
 import { Router } from '@angular/router';
-import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
+import {
+    NetworkAvailabilityToastService
+} from '@app/services/network-availability-toast/network-availability-toast.service';
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { of, Subject, EMPTY, Observable, Subscription } from 'rxjs';
+import { of, Subject, EMPTY } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -356,7 +359,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -373,7 +376,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -397,7 +400,7 @@ describe('AppComponent', () => {
             // arrange
             mockActivePageService.computePageId = jest.fn(() => 'sample-page');
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of(undefined));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -415,7 +418,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
                     InteractType.OTHER,
@@ -442,7 +445,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 done();
             }, 0);
@@ -807,7 +810,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
@@ -850,7 +853,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
@@ -934,13 +937,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{id: 'some_id', type: 'NotificationID'}]
+                    [{ id: 'some_id', type: 'NotificationID' }]
                 );
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 done();
             });
@@ -976,13 +979,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{id: 'some_id', type: 'NotificationID'}]
+                    [{ id: 'some_id', type: 'NotificationID' }]
                 );
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 done();
             });
@@ -1473,7 +1476,7 @@ describe('AppComponent', () => {
                 mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
                 mockPreferences.getString = jest.fn(() => of('mock_channel_id'));
                 const corRelationList: Array<CorrelationData> = [];
-                corRelationList.push({id: 'mock_channel_id', type: CorReleationDataType.SOURCE});
+                corRelationList.push({ id: 'mock_channel_id', type: CorReleationDataType.SOURCE });
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
                 mockTranslate.use = jest.fn();
                 // act
@@ -1615,26 +1618,6 @@ describe('AppComponent', () => {
             );
         });
 
-        it('should navigate to REPORTS page when report is clicked in menu', () => {
-            // arrange
-            const menuName = {
-                menuItem: 'REPORTS'
-            };
-            const routeUrl = [`/${RouterLinks.REPORTS}`];
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            appComponent.menuItemAction(menuName);
-
-            // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.REPORTS_CLICKED,
-                Environment.USER,
-                PageId.PROFILE
-            );
-        });
-
         it('should navigate to SETTINGS page when settings is clicked in menu', () => {
             // arrange
             const menuName = {
@@ -1731,39 +1714,39 @@ describe('AppComponent', () => {
     describe('checkAndroidWebViewVersion', () => {
         it('should generate a impression event for webviewConfig', (done) => {
             mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.resolve(1));
-            document.getElementById = jest.fn(() => ({style: {display: 'auto'}})) as any;
+            document.getElementById = jest.fn(() => ({ style: { display: 'auto' } })) as any;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // act
             appComponent.checkAndroidWebViewVersion();
-           // assert
+            // assert
             setTimeout(() => {
-            expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
-            expect(document.getElementById).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-              ImpressionType.VIEW, '',
-              PageId.UPDATE_WEBVIEW_POPUP,
-              Environment.HOME
-            );
-            done();
-           }, 0);
+                expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
+                expect(document.getElementById).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW, '',
+                    PageId.UPDATE_WEBVIEW_POPUP,
+                    Environment.HOME
+                );
+                done();
+            }, 0);
         });
 
         it('should generate a impression event for webviewConfig', (done) => {
-            mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.reject({error: 'error'}));
-            document.getElementById = jest.fn(() => ({style: {display: 'auto'}})) as any;
+            mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.reject({ error: 'error' }));
+            document.getElementById = jest.fn(() => ({ style: { display: 'auto' } })) as any;
             // act
             appComponent.checkAndroidWebViewVersion();
-           // assert
+            // assert
             setTimeout(() => {
-            expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
-            expect(document.getElementById).toHaveBeenCalled();
-            done();
-           }, 0);
+                expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
+                expect(document.getElementById).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
     it('should return GooglePlayPage', () => {
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {});
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => { });
         appComponent.openPlaystore();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
@@ -1777,7 +1760,7 @@ describe('AppComponent', () => {
         it('should return downloadProgress for platform resume', (done) => {
             mockPlatform.resume = of({
                 subscribe: jest.fn()
-            }) as any ;
+            }) as any;
             const value = new Map();
             mockTelemetryGeneratorService.generateInterruptTelemetry = jest.fn();
             mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve()) as any;
@@ -1803,7 +1786,7 @@ describe('AppComponent', () => {
         it('should generate a event for for platform pause', (done) => {
             mockPlatform.pause = of({
                 subscribe: jest.fn()
-            }) as any ;
+            }) as any;
             const value = new Map();
             mockTelemetryGeneratorService.generateInterruptTelemetry = jest.fn();
             mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve()) as any;
@@ -1876,7 +1859,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -1906,7 +1889,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2053,7 +2036,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2074,7 +2057,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({type: 'AUTO_MIGRATE_SUCCESS'}));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_SUCCESS' }));
             mockCommonUtilService.showToast = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2085,7 +2068,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2122,7 +2105,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2143,7 +2126,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({type: 'AUTO_MIGRATE_FAIL'}));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTO_MIGRATE_FAIL' }));
             mockCommonUtilService.showToast = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2154,7 +2137,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2191,7 +2174,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2212,7 +2195,7 @@ describe('AppComponent', () => {
             mockPlatform.pause = of(1, 2) as any;
             mockPlatform.resume = of(1, 2) as any;
             mockTelemetryAutoSyncService.continue = jest.fn();
-            mockEventsBusService.events = jest.fn(() => of({type: 'AUTH_TOKEN_REFRESH_ERROR'}));
+            mockEventsBusService.events = jest.fn(() => of({ type: 'AUTH_TOKEN_REFRESH_ERROR' }));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.ngOnInit();
@@ -2223,7 +2206,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2330,7 +2313,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2370,7 +2353,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2412,7 +2395,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2438,9 +2421,9 @@ describe('AppComponent', () => {
             mockDeviceRegisterService.getDeviceProfile = jest.fn(() => of({
                 userDeclaredLocation: undefined,
                 ipLocation: {
-                        state: 'karnataka',
-                        district: 'bangalore'
-                    }
+                    state: 'karnataka',
+                    district: 'bangalore'
+                }
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
@@ -2453,7 +2436,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2492,7 +2475,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2518,8 +2501,8 @@ describe('AppComponent', () => {
             mockDeviceRegisterService.getDeviceProfile = jest.fn(() => of({
                 userDeclaredLocation: undefined,
                 ipLocation: {
-                        state: 'karnataka'
-                    }
+                    state: 'karnataka'
+                }
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
@@ -2532,7 +2515,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2571,7 +2554,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2597,8 +2580,8 @@ describe('AppComponent', () => {
             mockDeviceRegisterService.getDeviceProfile = jest.fn(() => of({
                 userDeclaredLocation: undefined,
                 ipLocation: {
-                        state: undefined
-                    }
+                    state: undefined
+                }
             }));
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
@@ -2611,7 +2594,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2651,7 +2634,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateNotificationClickedTelemetry = jest.fn();
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
-            mockEvents.subscribe = jest.fn((_, fn) => fn({skipRootNavigation: false}));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
             mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
@@ -2689,7 +2672,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: '', type: 'NotificationID'}]
+                    [{ id: '', type: 'NotificationID' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
