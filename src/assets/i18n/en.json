@@ -837,5 +837,6 @@
   "THANKING_NOTE": "We will notify you as soon as your state board uploads your requested books on {{%s}}",
   "EXPLORE_HEADING": "Explore following on {{%s}}",
   "SEE_MORE_CONTENT": "See more content",
-  "NO_BOOKS_TEXT": "Couldn't find your subject's textbook on {{%s}}?"
+  "NO_BOOKS_TEXT": "Couldn't find your subject's textbook on {{%s}}?",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "This course doesn't have a certificate"
 }
