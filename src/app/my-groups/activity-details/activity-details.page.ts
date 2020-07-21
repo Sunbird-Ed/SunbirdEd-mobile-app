@@ -147,8 +147,8 @@ export class ActivityDetailsPage implements OnInit {
     let lastUpdatedOn = 0;
     if (this.activityDetail && this.activityDetail.agg) {
       const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.ENROLMENT_COUNT);
-      if (activityAgg) {
-        lastUpdatedOn = activityAgg.lastUpdatedOn;
+      if (activityAgg && activityAgg.lastUpdatedOn) {
+        lastUpdatedOn = typeof activityAgg.lastUpdatedOn === 'string' ? parseInt(activityAgg.lastUpdatedOn, 10) : activityAgg.lastUpdatedOn;
       }
     }
     return lastUpdatedOn;
