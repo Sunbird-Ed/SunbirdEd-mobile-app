@@ -615,7 +615,7 @@ export class DistrictMappingPage {
     corRelationList.push({id: value,
       type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT});
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_ATTRIBUTE, '',
+      InteractType.SELECT_SUBMIT, '',
       this.getEnvironment(),
       PageId.LOCATION,
       undefined,
