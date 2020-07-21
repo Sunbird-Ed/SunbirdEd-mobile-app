@@ -206,7 +206,8 @@ export enum ImpressionSubtype {
     CREATE_GROUP_FORM = 'create-group-form',
     DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
     GROUP_TUTORIAL = 'my-group-tutorial-popup',
-    OFFLINE_MODE = 'offline-mode'
+    OFFLINE_MODE = 'offline-mode',
+    AUTO = 'auto'
 }
 
 export enum InteractType {
