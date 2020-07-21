@@ -100,7 +100,7 @@
 								</div>
 
 								<div *ngIf="isCourseModifiedAfterEnrolment()">
-									{{'COURSE_LAST_UPDATED_ON' | translate : {'last_updated_on_date': course?.lastUpdatedOn | date) }  }}
+									{{ 'COURSE_LAST_UPDATED_ON' | translate :{'last_updated_on_date': (course?.lastUpdatedOn | date) }  }}
 								</div>
 
 								<div *ngIf="courseCardData?.batchId">
