@@ -817,6 +817,19 @@ describe('QrcoderesultPage', () => {
         );
     });
 
-
-
+    describe('playOnline', () => {
+        it('should navigate to player', () => {
+            const content = {
+                identifier: 'do-123',
+                contentData: {
+                    streamingUrl: ''
+                }
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            qrcoderesultPage.playOnline(content);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        });
+    });
 });
