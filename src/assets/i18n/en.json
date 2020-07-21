@@ -379,6 +379,7 @@
   "LANGUAGE_SETTINGS": "Language Settings",
   "LAST_DATE_TO_JOIN": "Last date to join {{%s}}",
   "LAST_SYNC": "Last synced on ",
+  "COURSE_LAST_UPDATED_ON": "Course last updated on {{last_updated_on_date}}",
   "LAST_VIEWED": "Last viewed",
   "LATEST_COURSES": "Latest courses",
   "LEAVE_GROUP": "Leave group",

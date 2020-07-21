@@ -1418,6 +1418,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  isCourseModifiedAfterEnrolment() {
+    let isModified = false;
+    if (this.courseCardData && this.courseCardData.enrolledDate
+      && this.course && this.course.lastUpdatedOn
+      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime())) {
+      isModified = true;
+    }
+    return isModified;
+  }
+
   getCourseProgress() {
     if (this.courseCardData.batchId && this.updatedCourseCardData) {
       // console.log('getCourseProgress', this.updatedCourseCardData);
