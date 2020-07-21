@@ -50,6 +50,7 @@ import { Platform, Events, NavController } from '@ionic/angular';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { mapTo, map } from 'rxjs/operators';
+import { ContentUtil } from '@app/util/content-util';
 declare const cordova;
 
 @Component({
@@ -481,6 +482,17 @@ export class QrcoderesultPage implements OnDestroy {
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
     if (content.contentData.streamingUrl && !content.isAvailableLocally) {
+      const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
+      const telemetryObjectData = new TelemetryObject(identifier, ObjectType.CONTENT, undefined);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SELECT_CARD, '',
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.QR_CONTENT_RESULT,
+        telemetryObjectData,
+        undefined,
+        rollup,
+        this.corRelationList
+      );
       this.playContent(content);
     } else {
       this.navigateToDetailsPage(content);
@@ -943,6 +955,7 @@ export class QrcoderesultPage implements OnDestroy {
       this.corRelationList.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
       Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS});
     }
+    const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
     this.telemetryGeneratorService.generateInteractTelemetry(
       play ? InteractType.PLAY : InteractType.DOWNLOAD,
       undefined,
@@ -950,7 +963,7 @@ export class QrcoderesultPage implements OnDestroy {
       PageId.QR_CONTENT_RESULT,
       telemetryObject,
       undefined,
-      undefined,
+      rollup,
       this.corRelationList
     );
   }
