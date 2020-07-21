@@ -1056,10 +1056,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           {
             btntext: this.commonUtilService.translateMessage('YES'),
             btnClass: 'popover-color'
-          },
-          {
-            btntext: this.commonUtilService.translateMessage('CHANGE_USER'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
           }
         ],
         icon: null
@@ -1074,13 +1070,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
-    } else if (data && data.isLeftButtonClicked === false) {
-      const playConfig: any = {};
-      playConfig.playContent = true;
-      playConfig.streaming = isStreaming;
-      this.router.navigate([RouterLinks.USER_AND_GROUPS], {
-        state: { playConfig }
-      });
     }
   }
 

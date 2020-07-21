@@ -48,7 +48,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
@@ -101,9 +100,6 @@ export const deviceRegisterService = () => {
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
-export const groupServiceDeprecated = () => {
-  return SunbirdSdk.instance.groupServiceDeprecated;
-}
 export const frameworkService = () => {
   return SunbirdSdk.instance.frameworkService;
 };
@@ -191,9 +187,6 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'GROUP_SERVICE',
     useFactory: groupService
-  }, {
-    provide: 'GROUP_SERVICE_DEPRECATED',
-    useFactory: groupServiceDeprecated
   }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
@@ -432,7 +425,6 @@ declare const sbutility;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    UserAndGroupsPageModule,
     TermsAndConditionsPageModule
   ],
   providers: [

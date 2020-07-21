@@ -671,7 +671,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
-        || (routeUrl.indexOf(RouterLinks.SHARE_USER_AND_GROUPS) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
@@ -704,16 +703,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
         this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
-        break;
-
-      case 'REPORTS':
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.REPORTS_CLICKED,
-          Environment.USER,
-          PageId.PROFILE);
-        const navigationExtrasReports: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.REPORTS}`], navigationExtrasReports);
         break;
 
       case 'SETTINGS': {
