@@ -184,7 +184,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
-      });
+        console.log('AppName', this.appName);
+      }
+    );
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
@@ -399,12 +401,25 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
       window.parent.postMessage(this.value, '*');
     }
+    setTimeout(() => {
+      this.location.back();
+    }, 3000);
   }
 
   async showContactBoard() {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
+    let boardCode: string;
+    if (this.formValues.children &&
+    this.formValues.children.subcategory &&
+    this.formValues.children.subcategory.board &&
+    this.formValues.children.subcategory.board.code) {
+      boardCode = this.formValues.children.subcategory.board.code;
+    } else if (this.profile && this.profile.board && this.profile.board.length) {
+      boardCode = this.profile.board[0];
+    }
+
     stateContactList.forEach(element => {
-      if (this.formValues.children.subcategory.board.code === element.id) {
+      if (boardCode === element.id) {
         if (this.isFormValid && element.contactinfo && element.contactinfo.number) {
           this.boardContact = element;
           this.showSupportContact = true;
@@ -412,21 +427,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
     });
     this.initiateEmailAction();
-  }
-
-  countChar(val) {
-    const maxLength = 1000;
-    this.len = val.length;
-    if (this.len === 0) {
-      this.charEntered = false;
-    }
-    if (this.len > 0 && this.len <= 1000) {
-      this.charEntered = true;
-      this.charsLeft = maxLength - this.len;
-    }
-    if (val.length > 1000) {
-      this.emailContent = this.emailContent.slice(0, 1000);
-    }
   }
 
   prepareTelemetryCorrelation(): Array<CorrelationData> {
