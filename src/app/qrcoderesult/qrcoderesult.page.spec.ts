@@ -267,7 +267,7 @@ describe('QrcoderesultPage', () => {
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenLastCalledWith(
                 PageId.QR_CONTENT_RESULT,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 undefined,
                 'Content',
                 undefined,
@@ -295,7 +295,7 @@ describe('QrcoderesultPage', () => {
             expect(qrcoderesultPage.goBack).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                 false,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 'qr-content-result'
             );
         });
@@ -316,7 +316,7 @@ describe('QrcoderesultPage', () => {
                 PageId.DIAL_CODE_SCAN_RESULT);
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                     false,
-                    Environment.HOME,
+                    Environment.ONBOARDING,
                     'qr-content-result'
                 );
             setTimeout(() => {
@@ -341,7 +341,7 @@ describe('QrcoderesultPage', () => {
                 PageId.DIAL_CODE_SCAN_RESULT);
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                     false,
-                    Environment.HOME,
+                    Environment.ONBOARDING,
                     'qr-content-result'
                 );
             setTimeout(() => {
