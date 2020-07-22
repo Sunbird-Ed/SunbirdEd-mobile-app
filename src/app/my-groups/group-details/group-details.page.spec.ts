@@ -113,100 +113,341 @@ describe('GroupDetailsPage', () => {
         expect(data.name).toBe('back');
     });
 
-    it('should return header with back button', (done) => {
-        groupDetailsPage.userId = 'sample-uid';
-        // const dismissFn = jest.fn(() => Promise.resolve());
-        // const presentFn = jest.fn(() => Promise.resolve());
-        // mockCommonUtilService.getLoader = jest.fn(() => ({
-        //     present: presentFn,
-        //     dismiss: dismissFn,
-        // }));
-        mockHeaderService.showHeaderWithBackButton = jest.fn();
-        mockHeaderService.headerEventEmitted$ = of({
-            subscribe: jest.fn(() => ({
-                unsubscribe: jest.fn()
-            }))
+    describe('ionViewWillEnter', () => {
+        it('should return header with back button for b.userId', (done) => {
+            groupDetailsPage.userId = 'sample-uid-2';
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            groupDetailsPage.userId = 'sample-uid-2';
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
+            // act
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                expect(groupDetailsPage.memberList).toStrictEqual([{
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }]);
+                done();
+            }, 0);
         });
-        jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
-        });
-        jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
-            return;
-        });
-        mockGroupService.getById = jest.fn(() => of({
-            groupId: 'sample-group-id', members: [{
-                groupId: '',
-                role: GroupMemberRole.MEMBER,
-                status: GroupEntityStatus.ACTIVE,
-                userId: 'sample-uid',
-                name: 'SOME_NAME'
-            }]
-        })) as any;
-        // act
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        groupDetailsPage.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            '',
-            PageId.GROUP_DETAIL,
-            Environment.GROUP
-        );
-        setTimeout(() => {
-            // expect(presentFn).toHaveBeenCalled();
-            // expect(dismissFn).toHaveBeenCalled();
-            expect(mockGroupService.getById).toHaveBeenCalled();
-            expect(groupDetailsPage.memberList).toStrictEqual([{
-                groupId: '',
-                role: GroupMemberRole.MEMBER,
-                status: GroupEntityStatus.ACTIVE,
-                userId: 'sample-uid',
-                name: 'SOME_NAME'
-            }]);
-            done();
-        }, 0);
-    });
 
-    it('should return header with back button in error case', (done) => {
-        // const dismissFn = jest.fn(() => Promise.resolve());
-        // const presentFn = jest.fn(() => Promise.resolve());
-        // mockCommonUtilService.getLoader = jest.fn(() => ({
-        //     present: presentFn,
-        //     dismiss: dismissFn,
-        // }));
-        mockHeaderService.showHeaderWithBackButton = jest.fn();
-        mockHeaderService.headerEventEmitted$ = of({
-            subscribe: jest.fn(() => ({
-                unsubscribe: jest.fn()
-            }))
+        it('should return header with back button for a.userId', (done) => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            groupDetailsPage.userId = 'sample-uid-1';
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
+            // act
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                expect(groupDetailsPage.memberList).toStrictEqual([{
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }]);
+                done();
+            }, 0);
         });
-        jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+
+        it('should return header with back button for a.role is member', (done) => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            groupDetailsPage.userId = 'sample-uid';
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
+            // act
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                expect(groupDetailsPage.memberList).toStrictEqual([{
+                    groupId: '',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-1',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid-2',
+                    name: 'SOME_NAME'
+                }]);
+                done();
+            }, 0);
         });
-        jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
-            return;
+
+        it('should return header with back button for a.role is ADMIN', (done) => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            groupDetailsPage.userId = 'sample-uid-2';
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
+            // act
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                expect(groupDetailsPage.memberList).toStrictEqual([{
+                    groupId: '',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }]);
+                done();
+            }, 0);
         });
-        mockGroupService.getById = jest.fn(() => throwError({ error: 'error' })) as any;
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        // act
-        groupDetailsPage.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            '',
-            PageId.GROUP_DETAIL,
-            Environment.GROUP
-        );
-        setTimeout(() => {
-            // expect(presentFn).toHaveBeenCalled();
-            // expect(dismissFn).toHaveBeenCalled();
-            expect(mockGroupService.getById).toHaveBeenCalled();
-            done();
-        }, 0);
+
+        it('should return header with back button for last else part', (done) => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            groupDetailsPage.userId = 'sample-uid-2';
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
+            // act
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                expect(groupDetailsPage.memberList).toStrictEqual([{
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }]);
+                done();
+            }, 0);
+        });
+
+        it('should return header with back button in error case', (done) => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => ({
+                    unsubscribe: jest.fn()
+                }))
+            });
+            jest.spyOn(groupDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(groupDetailsPage, 'handleDeviceBackButton').mockImplementation(() => {
+                return;
+            });
+            mockGroupService.getById = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            groupDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.GROUP_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                // expect(presentFn).toHaveBeenCalled();
+                // expect(dismissFn).toHaveBeenCalled();
+                expect(mockGroupService.getById).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 
     it('should navigate To AddUserPage', () => {
@@ -218,10 +459,16 @@ describe('GroupDetailsPage', () => {
                 state: {
                     groupId: 'sample-group-id', memberList: [{
                         groupId: '',
-                        role: 'member',
-                        status: 'active',
+                        role: '',
+                        status: GroupEntityStatus.ACTIVE,
                         userId: 'sample-uid',
-                        name: 'SOME_NAME',
+                        name: 'SOME_NAME'
+                    }, {
+                        groupId: '',
+                        role: '',
+                        status: GroupEntityStatus.ACTIVE,
+                        userId: 'sample-uid',
+                        name: 'SOME_NAME'
                     }]
                 }
             });
@@ -324,6 +571,7 @@ describe('GroupDetailsPage', () => {
             } as any;
             mockGroupService.deleteById = jest.fn(() => of({})) as any;
             mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             groupDetailsPage.groupMenuClick({});
             // assert
@@ -353,6 +601,7 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.loggedinUser = {
                 role: 'creator'
             } as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -394,6 +643,10 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
             groupDetailsPage.groupDetails = {
                 name: 'sample-group'
+            } as any;
+            groupDetailsPage.userId = 'sample-user-id';
+            groupDetailsPage.groupCreator = {
+                userId: 'sample-user-id'
             } as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -596,19 +849,28 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
             mockGroupService.removeActivities = jest.fn(() => of({ error: { members: undefined } })) as any;
+            mockGroupService.getById = jest.fn(() => of({
+                groupId: 'sample-group-id', members: [{
+                    groupId: '',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: GroupMemberRole.MEMBER,
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }]
+            })) as any;
             // act
             groupDetailsPage.activityMenuClick(true, request).then(() => {
                 setTimeout(() => {
@@ -628,8 +890,6 @@ describe('GroupDetailsPage', () => {
                         ID.REMOVE_ACTIVITY
                     );
                     expect(mockGroupService.removeActivities).toHaveBeenCalled();
-                    expect(presentFn).toHaveBeenCalled();
-                    expect(dismissFn).toHaveBeenCalledWith();
                     expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                         InteractType.SUCCESS,
                         '',
@@ -652,18 +912,12 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
             mockGroupService.removeActivities = jest.fn(() => of({ error: { activities: ['activity-1'] } })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
@@ -685,8 +939,6 @@ describe('GroupDetailsPage', () => {
                         ID.REMOVE_ACTIVITY
                     );
                     expect(mockGroupService.removeActivities).toHaveBeenCalled();
-                    expect(presentFn).toHaveBeenCalled();
-                    expect(dismissFn).toHaveBeenCalledWith();
                     expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('REMOVE_ACTIVITY_ERROR_MSG');
                 }, 0);
                 done();
@@ -699,18 +951,12 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const dismissFn = jest.fn(() => Promise.resolve());
-            const presentFn = jest.fn(() => Promise.resolve());
-            mockCommonUtilService.getLoader = jest.fn(() => ({
-                present: presentFn,
-                dismiss: dismissFn,
-            }));
             mockGroupService.removeActivities = jest.fn(() => throwError({ error: {} })) as any;
             // act
             groupDetailsPage.activityMenuClick(true, request).then(() => {
@@ -719,7 +965,7 @@ describe('GroupDetailsPage', () => {
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_ACTIVITY');
                     expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_ACTIVITY_GROUP_DESC');
-                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                         InteractType.INITIATED,
                         '',
                         Environment.GROUP,
@@ -731,8 +977,41 @@ describe('GroupDetailsPage', () => {
                         ID.REMOVE_ACTIVITY
                     );
                     expect(mockGroupService.removeActivities).toHaveBeenCalled();
-                    expect(presentFn).toHaveBeenCalled();
-                    expect(dismissFn).toHaveBeenCalledWith();
+                }, 0);
+                done();
+            });
+        });
+
+        it('should not return showRemoveActivityPopup if data undefined', (done) => {
+            const request = {
+                id: 'sample-id'
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { id: 'group-id', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity?');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Remove activity');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Removing the activity takes it off from');
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
+            // act
+            groupDetailsPage.activityMenuClick(true, request).then(() => {
+                setTimeout(() => {
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'REMOVE_ACTIVITY_POPUP_TITLE');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE_ACTIVITY');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'REMOVE_ACTIVITY_GROUP_DESC');
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                        InteractType.TOUCH,
+                        InteractSubtype.REMOVE_ACTIVITY_CLICKED,
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL
+                    );
+                    expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalled();
                 }, 0);
                 done();
             });
@@ -753,9 +1032,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
@@ -820,9 +1103,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
@@ -879,9 +1166,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_MAKE_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Make admin');
@@ -934,9 +1225,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_REMOVE_FROM_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {
+                    selectedItem: 'MENU_REMOVE_FROM_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
@@ -1002,9 +1297,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_REMOVE_FROM_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {
+                    selectedItem: 'MENU_REMOVE_FROM_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
@@ -1060,9 +1359,13 @@ describe('GroupDetailsPage', () => {
                     userId: 'sample-uid'
                 }
             };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'MENU_REMOVE_FROM_GROUP' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {
+                    selectedItem: 'MENU_REMOVE_FROM_GROUP', isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Remove member');
@@ -1119,7 +1422,8 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
@@ -1187,7 +1491,8 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
@@ -1247,7 +1552,8 @@ describe('GroupDetailsPage', () => {
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN' } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'DISMISS_AS_GROUP_ADMIN',
+                isLeftButtonClicked: true} }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin?');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Dismiss as group admin');
@@ -1306,23 +1612,7 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.loggedinUser = { role: GroupMemberRole.ADMIN } as any;
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         groupDetailsPage.onActivityCardClick('');
-        expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-            {
-                state: {
-                    group: { name: 'sample-group' },
-                    activity: '',
-                    loggedinUser: {
-                        role: 'admin'
-                    },
-                    memberList: [{
-                        groupId: '',
-                        role: GroupMemberRole.MEMBER,
-                        status: GroupEntityStatus.ACTIVE,
-                        userId: 'sample-uid',
-                        name: 'SOME_NAME'
-                    }]
-                }
-            });
+        expect(mockRouter.navigate).toHaveBeenCalled();
     });
 
     it('should not navigate To course page if loggeding user is not a admin', () => {
@@ -1389,25 +1679,29 @@ describe('GroupDetailsPage', () => {
             // act
             groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.ADD_ACTIVITY_CLICKED,
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL);
-                expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
-                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
-                    {
-                        state: {
-                            activityFilters: {
-                                contentTypes: [
-                                    'Course'
-                                ]
-                            }, groupId: 'sample-group-id', source: 'group-detail'
-                        }
-                    });
+                setTimeout(() => {
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.TOUCH,
+                        InteractSubtype.ADD_ACTIVITY_CLICKED,
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL);
+                    expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
+                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
+                    expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
+                        {
+                            state: {
+                                activityFilters: {
+                                    contentTypes: [
+                                        'Course'
+                                    ]
+                                },
+                                activityList: [],
+                                groupId: 'sample-group-id', source: 'group-detail'
+                            }
+                        });
+                }, 0);
                 done();
             });
         });
