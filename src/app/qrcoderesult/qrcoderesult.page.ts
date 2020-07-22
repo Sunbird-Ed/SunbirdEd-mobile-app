@@ -198,7 +198,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
       PageId.QR_CONTENT_RESULT,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       '', '', '', undefined,
       this.corRelationList
     );
@@ -282,7 +282,7 @@ export class QrcoderesultPage implements OnDestroy {
     }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       this.content.identifier,
       ObjectType.CONTENT,
       undefined, undefined,
@@ -316,7 +316,7 @@ export class QrcoderesultPage implements OnDestroy {
  async handleBackButton(clickSource?) {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
      clickSource === InteractSubtype.DEVICE_BACK_CLICKED ? true : false,
-     this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+     !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
      PageId.QR_CONTENT_RESULT
     );
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -665,7 +665,7 @@ export class QrcoderesultPage implements OnDestroy {
           corRelationList.push({ id: this.content.leafNodesCount, type: CorReleationDataType.COUNT_NODE });
           this.telemetryGeneratorService.generatePageLoadedTelemetry(
             PageId.TEXTBOOK_IMPORT,
-            this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+            !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
             this.content.identifier,
             ObjectType.TEXTBOOK,
             undefined, undefined,
@@ -961,7 +961,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       play ? InteractType.PLAY : InteractType.DOWNLOAD,
       undefined,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       PageId.QR_CONTENT_RESULT,
       telemetryObject,
       undefined,
@@ -979,7 +979,7 @@ export class QrcoderesultPage implements OnDestroy {
       dialcode ? ImpressionType.PAGE_REQUEST : InteractType.PLAY,
       dialcode ? '' : InteractSubtype.DOWNLOAD,
       dialcode ? PageId.TEXTBOOK_IMPORT : PageId.QR_CONTENT_RESULT,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       dialcode ? this.content.identifier : undefined,
       dialcode ? ObjectType.TEXTBOOK : undefined,
       undefined, undefined,
