@@ -230,13 +230,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.breadCrumbData = extras.breadCrumb;
       this.launchPlayer = extras.launchplayer;
       this.resumedCourseCardData = extras.resumedCourseCardData;
-      this.isSingleContent = extras.isSingleContent;
+      this.isSingleContent = extras.isSingleContent || this.isSingleContent;
       this.resultLength = extras.resultsSize;
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
-      this.onboarding = extras.onboarding;
+      this.onboarding = extras.onboarding || this.onboarding;
     }
     this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
       map((requests) => !!requests.find((request) => request.identifier === this.identifier))
@@ -684,7 +684,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.isSingleContent) {
-      window.history.go(-3);
+      !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.resultLength === 1) {
       // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
       window.history.go(-2);

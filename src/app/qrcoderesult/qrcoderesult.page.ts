@@ -249,7 +249,8 @@ export class QrcoderesultPage implements OnDestroy {
                   content: this.results[0],
                   isSingleContent: this.isSingleContent,
                   resultsSize: this.results.length,
-                  corRelation: this.corRelationList
+                  corRelation: this.corRelationList,
+                  onboarding: this.onboarding
                 }
               });
             }
@@ -393,7 +394,8 @@ export class QrcoderesultPage implements OnDestroy {
               content: this.results[0],
               isSingleContent: this.isSingleContent,
               resultsSize: this.results.length,
-              corRelation: this.corRelationList
+              corRelation: this.corRelationList,
+              onboarding: this.onboarding
             }
            });
         }
