@@ -87,26 +87,9 @@ export class ActivityDetailsPage implements OnInit {
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
-      console.log('getDataAggregation', response);
       if (response) {
         this.memberList = response.members;
         this.activityDetail = response.activity;
-
-        if (this.memberList) {
-          this.memberList.sort((a, b) => {
-            if (b.userId === this.loggedinUser.userId) {
-              return 1;
-            } else if (a.userId === this.loggedinUser.userId) {
-              return -1;
-            }
-            if (b.role === GroupMemberRole.ADMIN && a.role === GroupMemberRole.MEMBER) {
-              return 1;
-            } else if (b.role === GroupMemberRole.MEMBER && a.role === GroupMemberRole.ADMIN) {
-              return -1;
-            }
-            return a.name.localeCompare(b.name);
-          });
-        }
 
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
@@ -118,7 +101,6 @@ export class ActivityDetailsPage implements OnInit {
   }
 
   onMemberSearch(query) {
-    console.log('onMemberSearch', query);
     this.memberSearchQuery = query;
     this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'name', query)];
   }
