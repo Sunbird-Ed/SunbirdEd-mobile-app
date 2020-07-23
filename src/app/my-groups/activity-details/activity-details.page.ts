@@ -90,7 +90,27 @@ export class ActivityDetailsPage implements OnInit {
       if (response) {
         this.memberList = response.members;
         this.activityDetail = response.activity;
-
+        const loggedInUserId = this.loggedinUser.userId;
+        if (this.memberList) {
+          this.memberList.sort((a, b) => {
+            if (a.userId === loggedInUserId) {
+              return -1;
+            } else if (b.userId === loggedInUserId) {
+              return 1;
+            }
+            const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+            const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+            if (!aCompletedCount && !bCompletedCount) {
+              return 0;
+            }
+            if (!aCompletedCount && bCompletedCount) {
+              return 1;
+            } else if (aCompletedCount && !bCompletedCount) {
+              return -1;
+            }
+            return bCompletedCount!.value - aCompletedCount!.value;
+          });
+        }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
       }
