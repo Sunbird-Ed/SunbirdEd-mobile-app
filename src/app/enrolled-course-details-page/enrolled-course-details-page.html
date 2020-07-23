@@ -99,7 +99,8 @@
 									</div>
 								</div>
 
-								<div *ngIf="isCourseModifiedAfterEnrolment()">
+								<div *ngIf="isCourseModifiedAfterEnrolment()" class="course-modified">
+									<img src="assets/imgs/alert.svg" alt="course-modified-icon" class="alert" />
 									{{ 'COURSE_LAST_UPDATED_ON' | translate :{'last_updated_on_date': (course?.lastUpdatedOn | date) }  }}
 								</div>
 
