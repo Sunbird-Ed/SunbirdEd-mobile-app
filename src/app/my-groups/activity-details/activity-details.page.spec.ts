@@ -54,6 +54,34 @@ describe('ActivityDetailsPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         jest.resetAllMocks();
+        mockGroupService.activityService = {
+            getDataAggregation: jest.fn(() => of({
+                members: [{
+                    role: GroupMemberRole.ADMIN,
+                    createdBy: 'sample-creator',
+                    name: 'member-name',
+                    userId: 'sample-user-id-1',
+                    agg: [{
+                        metric: 'completedCount',
+                        value: 2
+                    }]
+                }, {
+                    role: GroupMemberRole.MEMBER,
+                    createdBy: 'sample-creator',
+                    name: 'member-name',
+                    userId: 'sample-user-id-2',
+                    agg: [{
+                        metric: 'completedCount',
+                        value: 1
+                    }]
+                }],
+                activity: {
+                    id: 'activity-id',
+                    type: 'activity-type',
+                    agg: {}
+                }
+            })) as any
+        };
     });
 
     it('should be create a instance of activityDetailsPage', () => {
@@ -113,6 +141,9 @@ describe('ActivityDetailsPage', () => {
     describe('ionViewWillEnter', () => {
         it('should handle device header and back-button for b.userId', (done) => {
             activityDetailsPage.group = { id: 'group-id' } as any;
+            activityDetailsPage.loggedinUser = {
+                userId: 'userId'
+            } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -125,12 +156,20 @@ describe('ActivityDetailsPage', () => {
                         role: GroupMemberRole.MEMBER,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-2'
+                        userId: 'sample-user-id-2',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
                     }, {
                         role: GroupMemberRole.ADMIN,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-1'
+                        userId: 'sample-user-id-1',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 1
+                        }]
                     }],
                     activity: {
                         id: 'activity-id',
@@ -152,6 +191,9 @@ describe('ActivityDetailsPage', () => {
 
         it('should handle device header and back-button for admin', (done) => {
             activityDetailsPage.group = { id: 'group-id' } as any;
+            activityDetailsPage.loggedinUser = {
+                userId: 'userId'
+            } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -164,12 +206,20 @@ describe('ActivityDetailsPage', () => {
                         role: GroupMemberRole.ADMIN,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-1'
+                        userId: 'userId',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
                     }, {
                         role: GroupMemberRole.MEMBER,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-2'
+                        userId: 'sample-user-id-2',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 1
+                        }]
                     }],
                     activity: {
                         id: 'activity-id',
@@ -191,6 +241,9 @@ describe('ActivityDetailsPage', () => {
 
         it('should handle device header and back-button for b.role is member', (done) => {
             activityDetailsPage.group = { id: 'group-id' } as any;
+            activityDetailsPage.loggedinUser = {
+                userId: 'userId'
+            } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -203,12 +256,20 @@ describe('ActivityDetailsPage', () => {
                         role: GroupMemberRole.ADMIN,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-'
+                        userId: 'sample-user-id-',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
                     }, {
                         role: GroupMemberRole.MEMBER,
                         createdBy: 'sample-creator',
                         name: 'member-name',
-                        userId: 'sample-user-id-'
+                        userId: 'userId',
+                        agg: [{
+                            metric: 'completedCount',
+                            value: 2
+                        }]
                     }],
                     activity: {
                         id: 'activity-id',
@@ -236,26 +297,6 @@ describe('ActivityDetailsPage', () => {
             });
             jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockGroupService.activityService = {
-                getDataAggregation: jest.fn(() => of({
-                    members: [{
-                        role: GroupMemberRole.MEMBER,
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id-'
-                    }, {
-                        role: GroupMemberRole.ADMIN,
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id-'
-                    }],
-                    activity: {
-                        id: 'activity-id',
-                        type: 'activity-type',
-                        agg: {}
-                    }
-                })) as any
-            };
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -275,26 +316,6 @@ describe('ActivityDetailsPage', () => {
             });
             jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockGroupService.activityService = {
-                getDataAggregation: jest.fn(() => of({
-                    members: [{
-                        role: '',
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id'
-                    }, {
-                        role: '',
-                        createdBy: 'sample-creator',
-                        name: 'member-name',
-                        userId: 'sample-user-id'
-                    }],
-                    activity: {
-                        id: 'activity-id',
-                        type: 'activity-type',
-                        agg: {}
-                    }
-                })) as any
-            };
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
@@ -383,6 +404,9 @@ describe('ActivityDetailsPage', () => {
                 userId: 'sample-user-id-1',
                 name: 'sample-member-name'
             };
+            activityDetailsPage.loggedinUser = {
+                userId: 'sample-user-id-1'
+            } as any;
             mockCommonUtilService.translateMessage = jest.fn(() => '');
             // act
             activityDetailsPage.getMemberName(member);

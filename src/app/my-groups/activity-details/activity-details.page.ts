@@ -92,7 +92,7 @@ export class ActivityDetailsPage implements OnInit {
         this.activityDetail = response.activity;
         const loggedInUserId = this.loggedinUser.userId;
         if (this.memberList) {
-          this.memberList.sort((a, b) => {
+          this.memberList = this.memberList.sort((a, b) => {
             if (a.userId === loggedInUserId) {
               return -1;
             } else if (b.userId === loggedInUserId) {
