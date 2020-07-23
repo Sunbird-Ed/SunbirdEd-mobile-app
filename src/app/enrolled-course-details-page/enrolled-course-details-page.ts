@@ -1419,13 +1419,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   isCourseModifiedAfterEnrolment() {
-    let isModified = false;
-    if (this.courseCardData && this.courseCardData.enrolledDate
+    return (this.courseCardData && this.courseCardData.enrolledDate
       && this.course && this.course.lastUpdatedOn
-      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime())) {
-      isModified = true;
-    }
-    return isModified;
+      && (new Date(this.courseCardData.enrolledDate).getTime() < new Date(this.course.lastUpdatedOn).getTime()));
   }
 
   getCourseProgress() {
