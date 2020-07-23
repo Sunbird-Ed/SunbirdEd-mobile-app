@@ -1039,17 +1039,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }, []);
   }
 
-  private getLeafNodeIdsWithoutDuplicates(contents: Content[]) {
+  private getLeafNodeIdsWithoutDuplicates(contents: Content[]): Set<string> {
     return contents.reduce((acc, content) => {
       if (content.children) {
-        acc = acc.concat(this.getLeafNodeIdsWithoutDuplicates(content.children));
+        this.getLeafNodeIdsWithoutDuplicates(content.children).forEach((c) => acc.add(c));
       } else {
-        if (acc.indexOf(content.identifier) === -1) {
-          acc.push(content.identifier);
+        if (!acc.has(content.identifier)) {
+          acc.add(content.identifier);
         }
       }
       return acc;
-    }, []);
+    }, new Set<string>());
   }
 
   /**
@@ -1734,12 +1734,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   getLocalCourseAndUnitProgress() {
     const courseLevelViewedContents = [];
     this.courseHeirarchy.children.forEach(collection => {
-      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([collection]);
+      const leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([collection]));
       const UnitLevelViewedContents = [];
       for (const contentId of leafNodeIds) {
         if (this.contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
-          UnitLevelViewedContents.push(contentId);
-          courseLevelViewedContents.push(contentId);
+          if (UnitLevelViewedContents.indexOf(contentId) === -1) {
+            UnitLevelViewedContents.push(contentId);
+          }
+          if (courseLevelViewedContents.indexOf(contentId) === -1) {
+            courseLevelViewedContents.push(contentId);
+          }
         }
       }
       if (UnitLevelViewedContents.length) {
@@ -1747,7 +1751,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
     });
     if (courseLevelViewedContents.length) {
-      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+      const leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]));
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     }
     if (!this.course.progress || this.course.progress !== 100) {
