@@ -2,7 +2,7 @@ import {DateAgoPipe} from '@app/pipes/date-ago/date-ago.pipe';
 import {DatePipe} from '@angular/common';
 import {CommonUtilService} from '@app/services';
 
-xdescribe('DateAgoPipe', () => {
+describe('DateAgoPipe', () => {
     const mockCommonUtilsService: Partial<CommonUtilService> = {
         translateMessage: (translationKey, param) => `${translationKey}-${param}`
     };
@@ -60,6 +60,13 @@ xdescribe('DateAgoPipe', () => {
             const daysAgoDate = new Date();
             daysAgoDate.setDate(daysAgoDate.getDate() - 2);
             expect(dateAgoPipe.transform(daysAgoDate.toString(), 'minute', 'M/d/yy')).toEqual(expect.stringMatching(/^\d*\/\d*\/\d*$/));
+        });
+    });
+
+    describe('when current date is given', () => {
+        it('should resolve with 0 seconds ago', () => {
+            const secondsAgoDate = new Date();
+            expect(dateAgoPipe.transform(secondsAgoDate.getTime(), 'minute')).toEqual('SECONDS_AGO-0');
         });
     });
 });

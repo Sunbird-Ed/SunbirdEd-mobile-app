@@ -17,7 +17,8 @@ import {
     AuditState
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType,
+    Mode, PageId, CorReleationDataType, ID, ImpressionSubtype } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '../services/sb-progress-loader.service';
@@ -450,7 +451,8 @@ export class TelemetryGeneratorService {
 
     generatePageLoadedTelemetry(pageId, env, objId?, objType?, objversion?, rollup?, correlationList?) {
         this.generateImpressionTelemetry(
-            ImpressionType.PAGE_LOADED, '',
+            ImpressionType.PAGE_LOADED,
+            pageId === PageId.LOCATION ? ImpressionSubtype.AUTO : '',
             pageId,
             env,
             objId,

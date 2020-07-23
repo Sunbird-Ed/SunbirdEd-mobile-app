@@ -34,7 +34,9 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType, AuditType
+  Environment, ImpressionType, InteractSubtype,
+  InteractType, LogLevel, Mode, PageId, CorReleationDataType,
+  AuditType, ImpressionSubtype, ObjectType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -451,6 +453,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     } else if (content.mimeType === MimeType.COLLECTION) {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
+
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
+
+        const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SELECT_BOOK, '',
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          PageId.QR_BOOK_RESULT,
+          telemetryObject,
+          undefined, undefined,
+          corRelationList
+        );
 
         this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
           state: {
@@ -1034,18 +1049,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             const corRelationList: Array<CorrelationData> = [];
             corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
 
-            if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-              this.telemetryGeneratorService.generateAuditTelemetry(
-                !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-                AuditState.AUDIT_UPDATED,
-                undefined,
-                AuditType.SET_PROFILE,
-                undefined,
-                undefined,
-                undefined,
-                corRelationList
-              );
-            }
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+              AuditType.TOAST_SEEN,
+              ImpressionSubtype.OFFLINE_MODE,
+              PageId.SCAN_OR_MANUAL,
+              !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+              undefined, undefined, undefined, undefined,
+              corRelationList
+            );
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }

@@ -265,14 +265,17 @@
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
-						<div *ngIf="isCertifiedCourse" class="certificate-container">
+						<div *ngIf="!isCertifiedCourse" class="certificate-container">
 							<div class="certificate-icon">
 								<img class="certificate-icon" src="assets/imgs/Certificate icon.svg"
 									alt="certificate-icon">
 							</div>
 							<div class="certificate-text">
-								<ion-card-title class="font-10 certified-section-color font-weight-900">
+								<!-- <ion-card-title class="font-10 certified-section-color font-weight-900">
 									{{'CERTIFIED_TRAINING' | translate}}
+								</ion-card-title> -->
+								<ion-card-title class="font-10 certified-section-color font-weight-900">
+									{{'COURSE_NO_CERTIFICATE_MESSAGE' | translate}}
 								</ion-card-title>
 							</div>
 						</div>

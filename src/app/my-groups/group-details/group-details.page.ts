@@ -125,6 +125,7 @@ export class GroupDetailsPage implements OnInit {
     const getByIdRequest: GetByIdRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       id: this.groupId,
+      userId: this.userId,
       options: {
         includeMembers: true,
         includeActivities: true
@@ -132,7 +133,6 @@ export class GroupDetailsPage implements OnInit {
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
-      console.log('this.groupDetails', this.groupDetails);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activities;
 

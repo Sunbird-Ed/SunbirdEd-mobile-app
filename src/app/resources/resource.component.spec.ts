@@ -41,7 +41,8 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { NEVER, of, Subscription } from 'rxjs';
 import { NotificationService } from '@app/services';
-import { ContentFilterConfig, EventTopics, RouterLinks } from '../app.constant';
+import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
+import { ImpressionType } from '../../services/telemetry-constants';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -469,6 +470,8 @@ describe('ResourcesComponent', () => {
     it('should call relevant methods inside when ngOnInit() called at the beginning', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(false));
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -501,6 +504,12 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.PAGE_REQUEST, '',
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+            );
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -515,6 +524,7 @@ describe('ResourcesComponent', () => {
     it('should appIcon is not avilable', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -547,6 +557,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -561,6 +572,7 @@ describe('ResourcesComponent', () => {
     it('should appIcon is not avilable', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -594,6 +606,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -607,7 +620,7 @@ describe('ResourcesComponent', () => {
 
     it('should call qrScanner else if part when subscribeMethod returns emptyString', (done) => {
         // arrange
-
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
@@ -623,6 +636,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(mockEvents.subscribe).toHaveBeenCalled();
             expect(mockQRScanner.startScanner).toHaveBeenCalledWith(PageId.LIBRARY);
             expect(mockAppGlobalService.getPageIdForTelemetry).toHaveBeenCalled();
@@ -664,6 +678,8 @@ describe('ResourcesComponent', () => {
         };
         mockEvents.unsubscribe = jest.fn();
         resourcesComponent.coachTimeout = { clearTimeout: jest.fn() };
+        mockSharedPreference.getBoolean = jest.fn(() => of(false));
+        mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             resourcesComponent.ionViewWillLeave();
@@ -672,6 +688,11 @@ describe('ResourcesComponent', () => {
             expect(mockEventsBusSubscription.unsubscribe).toHaveBeenCalled();
             expect(mockHeaderEventsSubscription.unsubscribe).toHaveBeenCalled();
             expect(mockEvents.unsubscribe).toHaveBeenCalled();
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
+            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+            );
             done();
         });
     });
@@ -834,11 +855,13 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
         jest.spyOn(resourcesComponent, 'subscribeSdkEvent').mockImplementation();
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             // assert
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
             expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalled();
             done();
         });
     });
