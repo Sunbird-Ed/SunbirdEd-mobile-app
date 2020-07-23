@@ -99,6 +99,10 @@
 									</div>
 								</div>
 
+								<div *ngIf="isCourseModifiedAfterEnrolment()">
+									{{ 'COURSE_LAST_UPDATED_ON' | translate :{'last_updated_on_date': (course?.lastUpdatedOn | date) }  }}
+								</div>
+
 								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container"
 										*ngIf="!showSheenAnimation && course?.progress!==100 && !batchExp">
