@@ -534,3 +534,21 @@ ion-segment-button{
   pointer-events: none;
   cursor: default;
 }
+
+.course-modified {
+  padding: 16px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  border: 1px solid map-get($colors, dark_orange);
+  border-radius: 2px;
+  background-color: map-get($colors, ligth_yellow);
+  color: $gray-800;
+  font-size: 12px;
+
+  .alert {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
