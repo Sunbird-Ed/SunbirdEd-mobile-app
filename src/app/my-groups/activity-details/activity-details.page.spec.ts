@@ -10,6 +10,7 @@ import { AppHeaderService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
+import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 
 describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
@@ -421,6 +422,107 @@ describe('ActivityDetailsPage', () => {
             };
             // act
             activityDetailsPage.getMemberName(member);
+        });
+    });
+
+    describe('calulateProgress', () => {
+        it('should return progress for activityAgg', () => {
+            const member = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
+                    value: 1
+                }]
+            };
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.LEAF_NODES_COUNT,
+                    value: 1
+                }]
+            };
+            // act
+            const data = activityDetailsPage.calulateProgress(member);
+            // assert
+            expect(data).toBe('100');
+        });
+
+        it('should return progress for activityAgg value is lessthan 0', () => {
+            const member = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
+                    value: 1
+                }]
+            };
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.LEAF_NODES_COUNT,
+                    value: 0
+                }]
+            };
+            // act
+            const data = activityDetailsPage.calulateProgress(member);
+            // assert
+            expect(data).toBe('0');
+        });
+
+        it('should return progress 0 if member agg is empty', () => {
+            const member = {
+                agg: []
+            };
+            // act
+            const data = activityDetailsPage.calulateProgress(member);
+            // assert
+            expect(data).toBe('0');
+        });
+    });
+
+    describe('getActivityAggLastUpdatedOn', () => {
+        it('should return lastUpdatedOn for activityAgg lastUpdatedOn as a string', () => {
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.ENROLMENT_COUNT,
+                    lastUpdatedOn: '70'
+                }]
+            };
+            // act
+            const data = activityDetailsPage.getActivityAggLastUpdatedOn();
+            // assert
+            expect(data).toBe(70);
+        });
+
+        it('should return lastUpdatedOn for activityAgg lastUpdatedOn as a number', () => {
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.ENROLMENT_COUNT,
+                    lastUpdatedOn: 50
+                }]
+            };
+            // act
+            const data = activityDetailsPage.getActivityAggLastUpdatedOn();
+            // assert
+            expect(data).toBe(50);
+        });
+
+        it('should return lastUpdatedOn for activityAgg lastUpdatedOn is undefined', () => {
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.ENROLMENT_COUNT,
+                    lastUpdatedOn: undefined
+                }]
+            };
+            // act
+            const data = activityDetailsPage.getActivityAggLastUpdatedOn();
+            // assert
+            expect(data).toBe(0);
+        });
+
+        it('should return 0 for activityAgg is empty for else part', () => {
+            activityDetailsPage.activityDetail = {
+                agg: undefined
+            };
+            // act
+            const data = activityDetailsPage.getActivityAggLastUpdatedOn();
+            // assert
+            expect(data).toBe(0);
         });
     });
 });
