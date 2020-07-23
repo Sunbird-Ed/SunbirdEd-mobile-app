@@ -1045,7 +1045,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.getLeafNodeIdsWithoutDuplicates(content.children).forEach((c) => acc.add(c));
       } else {
         if (!acc.has(content.identifier)) {
-          acc.add(content.identifier);
+          if (content.mimeType !== MimeType.COLLECTION) {
+            acc.add(content.identifier);
+          }
         }
       }
       return acc;
@@ -1751,7 +1753,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
     });
     if (courseLevelViewedContents.length) {
-      const leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]));
+      const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     }
     if (!this.course.progress || this.course.progress !== 100) {
