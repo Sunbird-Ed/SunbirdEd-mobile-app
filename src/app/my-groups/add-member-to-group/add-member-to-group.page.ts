@@ -1,3 +1,4 @@
+import { take } from 'rxjs/operators';
 import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
@@ -27,6 +28,7 @@ import { animationShrinkOutTopRight } from '../../animations/animation-shrink-ou
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
 import { PreferenceKey } from '@app/app/app.constant';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -34,7 +36,6 @@ import { PreferenceKey } from '@app/app/app.constant';
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
-  captchaResponse: string;
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
@@ -47,7 +48,7 @@ export class AddMemberToGroupPage {
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
-  @ViewChild('cap') cap;
+  @ViewChild('cap') cap: RecaptchaComponent;
   @ViewChild('addMemberInfoPopupRef') addMemberInfoPopupRef: ElementRef<HTMLSpanElement>;
 
   constructor(
@@ -136,13 +137,15 @@ export class AddMemberToGroupPage {
     }
   }
 
-  async captchaResolved(res) {
-    this.captchaResponse = res;
-  }
-
   async onVerifyClick() {
+    let captchaResponse: string | undefined;
     if (this.isCaptchaEnabled) {
       this.cap.execute();
+      captchaResponse = await this.cap.resolved.pipe(take(1)).toPromise();
+      this.cap.reset();
+      if (!captchaResponse) {
+        return;
+      }
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -153,18 +156,13 @@ export class AddMemberToGroupPage {
       this.showErrorMsg = true;
       return;
     }
-    if (this.isCaptchaEnabled) {
-      if (!this.captchaResponse) {
-        return false;
-      }
-    }
     this.showErrorMsg = false;
     const checkUserExistsRequest: CheckUserExistsRequest = {
       matching: {
         key: 'userName',
         value: this.username
       },
-      captchaResponseToken: this.captchaResponse || undefined
+      captchaResponseToken: captchaResponse
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
