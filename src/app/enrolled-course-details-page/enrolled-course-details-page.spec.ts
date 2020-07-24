@@ -8,7 +8,7 @@ import {
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, ID, InteractType, GroupHandlerService
+    LocalCourseService, PageId, ID, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
@@ -32,7 +32,6 @@ import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
-import { doesNotReject } from 'assert';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -52,7 +51,6 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockDownloadService: Partial<DownloadService> = {};
-    const mockGroupHandlerService: Partial<GroupHandlerService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -122,7 +120,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
-            mockGroupHandlerService as GroupHandlerService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -516,7 +513,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockLocation.back = jest.fn();
             mockTelemetryGeneratorService.generateCancelDownloadTelemetry = jest.fn();
-            mockContentService.cancelDownload = jest.fn(() => throwError({error: 'error'}));
+            mockContentService.cancelDownload = jest.fn(() => throwError({ error: 'error' }));
             // act
             enrolledCourseDetailsPage.cancelDownload();
             // assert
@@ -1362,7 +1359,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
                     PreferenceKey.COURSE_DATA_KEY, JSON.stringify({ name: 'sample-course-name' }));
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(3,
-                    PreferenceKey.COURSE_DATA_KEY, JSON.stringify({ name: 'sample-course-name' }));
+                    PreferenceKey.CDATA_KEY, JSON.stringify(undefined));
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.LOGIN_CLICKED,
@@ -2112,7 +2109,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.subscribeSdkEvent();
             // assert
-            expect( mockZone.run).toHaveBeenCalled();
+            expect(mockZone.run).toHaveBeenCalled();
         });
 
         it('should be SERVER_CONTENT_DATA event', () => {
@@ -2270,22 +2267,4 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 
-    it('addActivityToGroup', (done) => {
-        // arrange
-        enrolledCourseDetailsPage.groupId = 'group_id';
-        enrolledCourseDetailsPage.identifier = 'some_identifier';
-        enrolledCourseDetailsPage.course = {
-            contentType: 'Course'
-        };
-        enrolledCourseDetailsPage.corRelationList = [];
-        mockGroupHandlerService.addActivityToGroup = jest.fn();
-        // act
-        enrolledCourseDetailsPage.addActivityToGroup();
-        // assert
-        setTimeout(() => {
-            expect(mockGroupHandlerService.addActivityToGroup).toHaveBeenCalledWith('group_id', 'some_identifier',
-                'Course', PageId.COURSE_DETAIL, []);
-            done();
-        }, 0);
-    });
 });

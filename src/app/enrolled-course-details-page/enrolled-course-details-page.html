@@ -13,8 +13,7 @@
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="isFromGroupFlow">
-					<button class="enrolled-course-card-button"
-						(click)="addActivityToGroup();">{{'ADD_TO_GROUP_ACTIVITY' | translate}}</button>
+					<add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
 					<div class="enrollment-info"
 						*ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
 						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
@@ -101,7 +100,7 @@
 
 								<div *ngIf="isCourseModifiedAfterEnrolment()" class="course-modified">
 									<img src="assets/imgs/alert.svg" alt="course-modified-icon" class="alert" />
-									{{ 'COURSE_LAST_UPDATED_ON' | translate :{'last_updated_on_date': (course?.lastUpdatedOn | date) }  }}
+									{{ 'COURSE_LAST_UPDATED_ON' | translate :{'last_updated_on_date': (course?.lastUpdatedOn | date: 'dd/MM/yyyy') }  }}
 								</div>
 
 								<div *ngIf="courseCardData?.batchId">
@@ -117,7 +116,7 @@
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
 										<p class="batch-end-main-heading">
-											{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date) : ''} }}
+											{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date: 'dd/MM/yyyy') : ''} }}
 										</p>
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>

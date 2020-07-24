@@ -81,11 +81,12 @@ import { ContentUtil } from '@app/util/content-util';
 import { SbPopoverComponent } from '../components/popups';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { LocalCourseService, GroupHandlerService } from '@app/services';
+import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 declare const cordova;
 
 @Component({
@@ -188,6 +189,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   shouldGenerateEndTelemetry = false;
   source = '';
   groupId: string;
+  addActivityToGroupData: AddActivityToGroup;
   isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
@@ -242,7 +244,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
-    private groupHandlerService: GroupHandlerService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -275,8 +276,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.source = extrasState.source;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
+        this.groupId = extrasState.groupId;
+        this.addActivityToGroupData = {
+          groupId: this.groupId,
+          activityId: this.identifier,
+          activityType: this.courseCardData.contentType ? this.courseCardData.contentType : this.courseCardData.content.contentType,
+          pageId: PageId.COURSE_DETAIL,
+          corRelationList: this.corRelationList
+        };
       }
-      this.groupId = extrasState.groupId;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
@@ -2030,11 +2038,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
-  }
-
-  async addActivityToGroup() {
-    this.groupHandlerService.addActivityToGroup(this.groupId, this.identifier, this.course.contentType,
-      PageId.COURSE_DETAIL, this.corRelationList);
   }
 
 }
