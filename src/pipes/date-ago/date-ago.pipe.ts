@@ -31,7 +31,7 @@ export class DateAgoPipe implements PipeTransform {
         if (value) {
             const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
 
-            if (seconds === 0) {
+            if (seconds <= 0) {
                 return this.commonUtilService.translateMessage(`SECONDS_AGO`, 0);
             }
 
