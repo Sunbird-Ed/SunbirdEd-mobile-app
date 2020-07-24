@@ -3,7 +3,6 @@ import { Events, Platform, PopoverController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { CourseUtilService } from '@app/services/course-util.service';
@@ -50,8 +49,6 @@ import {
   DownloadTracking,
   DownloadService,
   AuditState,
-  GroupService,
-  AddActivitiesRequest
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -66,20 +63,28 @@ import {
   ID,
   AuditType
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
+import {
+  ProfileConstants, ContentType, EventTopics, MimeType,
+  PreferenceKey, RouterLinks, ShareItemType
+} from '../app.constant';
 import { BatchConstants } from '../app.constant';
-import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertComponent } from '../components';
+import {
+  SbGenericPopoverComponent
+} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
+import {
+  ContentActionsComponent, ContentRatingAlertComponent,
+  ConfirmAlertComponent
+} from '../components';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { SbPopoverComponent } from '../components/popups';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { LocalCourseService } from '@app/services';
+import { LocalCourseService, GroupHandlerService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { share, startWith } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 declare const cordova;
 
@@ -237,7 +242,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
-    @Inject('GROUP_SERVICE') public groupService: GroupService,
+    private groupHandlerService: GroupHandlerService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -2027,72 +2032,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
-  async addToGroupActivity() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
-      return;
-    }
-
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.ADD_TO_GROUP_CLICKED,
-      Environment.GROUP,
-      PageId.COURSE_DETAIL);
-
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.INITIATED,
-      '',
-      Environment.GROUP,
-      PageId.COURSE_DETAIL,
-      undefined,
-      undefined,
-      undefined,
-      this.corRelationList,
-      ID.ADD_ACTIVITY_TO_GROUP);
-    const addActivitiesRequest: AddActivitiesRequest = {
-      groupId: this.groupId,
-      addActivitiesRequest: {
-        activities: [
-          {
-            id: this.identifier,
-            type: 'Course'
-          }
-        ]
-      }
-    };
-
-    try {
-      const addActivityResponse = await this.groupService.addActivities(addActivitiesRequest).toPromise();
-
-      await loader.dismiss();
-      if (addActivityResponse.error
-        && addActivityResponse.error.activities
-        && addActivityResponse.error.activities.length) {
-        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
-        this.location.back();
-      } else {
-        this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.SUCCESS,
-          '',
-          Environment.GROUP,
-          PageId.COURSE_DETAIL,
-          undefined,
-          undefined,
-          undefined,
-          this.corRelationList,
-          ID.ADD_ACTIVITY_TO_GROUP
-        );
-        window.history.go(-2);
-      }
-    } catch (e) {
-      await loader.dismiss();
-      this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
-      console.error(e);
-      this.location.back();
-    }
+  async addActivityToGroup() {
+    this.groupHandlerService.addActivityToGroup(this.groupId, this.identifier, this.course.contentType,
+      PageId.COURSE_DETAIL, this.corRelationList);
   }
 
 }

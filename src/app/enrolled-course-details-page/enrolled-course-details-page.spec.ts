@@ -8,7 +8,7 @@ import {
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, ID, InteractType
+    LocalCourseService, PageId, ID, InteractType, GroupHandlerService
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
@@ -32,7 +32,6 @@ import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype } from '../../services/telemetry-constants';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
-import { GroupService } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -52,7 +51,7 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockDownloadService: Partial<DownloadService> = {};
-    const mockGroupService: Partial<GroupService> = {};
+    const mockGroupHandlerService: Partial<GroupHandlerService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -122,7 +121,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
-            mockGroupService as GroupService,
+            mockGroupHandlerService as GroupHandlerService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -146,7 +145,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.restoreAllMocks();
+        jest.resetAllMocks();
 
         mockCommonUtilService.networkInfo.isNetworkAvailable = true;
     });
@@ -235,6 +234,9 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService.getEnrolledCourses = jest.fn(() => of([{ courseId: 'SAMPLE_IDETIFIER' }]));
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
             spyOn(enrolledCourseDetailsPage, 'joinTraining').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState').mockImplementation(() => {
+                return;
+            });
             // act
             enrolledCourseDetailsPage.subscribeUtilityEvents();
             // assert
@@ -376,45 +378,58 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('rateContent()', () => {
-        it('should show user rating for content if not guest user', () => {
-            // arrange
-            enrolledCourseDetailsPage.guestUser = false;
-            contentDetailsResponse.contentData['isAvailableLocally'] = true;
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            enrolledCourseDetailsPage.rateContent('');
-            // assert
-            expect(contentDetailsResponse.contentData['isAvailableLocally']).toBeTruthy();
-            expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
-        });
-
-        it('should show user rating for content if content is not available locally', () => {
-            // arrange
-            enrolledCourseDetailsPage.guestUser = false;
-            contentDetailsResponse.contentData['isAvailableLocally'] = false;
-            mockCommonUtilService.showToast = jest.fn(() => 'try before rating');
-            // act
-            enrolledCourseDetailsPage.rateContent('');
-            // assert
-            expect(contentDetailsResponse.contentData['isAvailableLocally']).toBeFalsy();
-            expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
-        });
-
-        it('should show user rating for content for guest user', (done) => {
+        it('should not show user rating for content if guest user', (done) => {
             // arrange
             enrolledCourseDetailsPage.guestUser = true;
-            enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
-            mockCommonUtilService.showToast = jest.fn(() => 'signin to use feature');
+            enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
+            mockCommonUtilService.showToast = jest.fn();
             // act
             enrolledCourseDetailsPage.rateContent('');
             // assert
             setTimeout(() => {
                 expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
-                expect(enrolledCourseDetailsPage.profileType).toBe(ProfileType.TEACHER);
+                expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalledWith(ProfileType.TEACHER);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
-                expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should not show user rating for content if content is not available locally and user in not a guest user', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.course = {
+                isAvailableLocally: false
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            enrolledCourseDetailsPage.rateContent('');
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
+                done();
+            }, 0);
+        });
+
+        it('should show user rating for content for loggedin user', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.course = {
+                isAvailableLocally: true
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { message: 'rating.success', rating: 2, comment: 'some_comment' } }))
+            } as any)));
+            // act
+            enrolledCourseDetailsPage.rateContent('');
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+                expect(mockPopoverCtrl.create).not.toBeUndefined();
+                expect(enrolledCourseDetailsPage.userRating).toBe(2);
+                expect(enrolledCourseDetailsPage.ratingComment).toBe('some_comment');
                 done();
             }, 0);
         });
@@ -451,17 +466,14 @@ describe('EnrolledCourseDetailsPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockAppGlobalService.getUserId = jest.fn(() => 'sample_user_id');
             enrolledCourseDetailsPage.batchDetails = {
-                id: '',
-                courseId: ''
+                id: 'some_id',
+                courseId: 'course_id'
             };
             mockZone.run = jest.fn((fn) => fn());
-            const unenrolCourseRequest: UnenrollCourseRequest = {
-                userId: 'SAMPLE_USER_ID',
-                courseId: enrolledCourseDetailsPage.batchDetails.courseId,
-                batchId: enrolledCourseDetailsPage.batchDetails.id
-            };
             mockCourseService.unenrollCourse = jest.fn(() => of(true));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'COURSE_UNENROLLED');
             mockCommonUtilService.showToast = jest.fn();
             mockEvents.publish = jest.fn(() => []);
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -470,10 +482,23 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(mockCourseService.unenrollCourse).toHaveBeenCalledWith(unenrolCourseRequest);
+                expect(mockCourseService.unenrollCourse).toHaveBeenCalledWith({
+                    userId: 'sample_user_id',
+                    courseId: 'course_id',
+                    batchId: 'some_id'
+                });
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.OTHER,
+                    InteractSubtype.UNENROL_SUCCESS,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    undefined,
+                    undefined,
+                    {},
+                    undefined
+                );
                 expect(mockEvents.publish).toHaveBeenCalled();
                 done();
             }, 0);
@@ -2027,5 +2052,24 @@ describe('EnrolledCourseDetailsPage', () => {
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
+    });
+
+    it('addActivityToGroup', (done) => {
+        // arrange
+        enrolledCourseDetailsPage.groupId = 'group_id';
+        enrolledCourseDetailsPage.identifier = 'some_identifier';
+        enrolledCourseDetailsPage.course = {
+            contentType: 'Course'
+        };
+        enrolledCourseDetailsPage.corRelationList = [];
+        mockGroupHandlerService.addActivityToGroup = jest.fn();
+        // act
+        enrolledCourseDetailsPage.addActivityToGroup();
+        // assert
+        setTimeout(() => {
+            expect(mockGroupHandlerService.addActivityToGroup).toHaveBeenCalledWith('group_id', 'some_identifier',
+                'Course', PageId.COURSE_DETAIL, []);
+            done();
+        }, 0);
     });
 });

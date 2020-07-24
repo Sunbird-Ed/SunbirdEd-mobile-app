@@ -42,7 +42,8 @@ import {
   ActivePageService,
   FormAndFrameworkUtilService,
   CanvasPlayerService,
-  SplashScreenService
+  SplashScreenService,
+  GroupHandlerService
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -465,6 +466,7 @@ declare const sbutility;
     SplashScreenService,
     ExternalIdVerificationService,
     TextbookTocService,
+    GroupHandlerService,
     NativePageTransitions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
