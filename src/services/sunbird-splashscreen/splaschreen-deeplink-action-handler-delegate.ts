@@ -544,7 +544,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
 
       // this.appGlobalServices.skipCoachScreenForDeeplink = true;
-      if (content) {
+      if (content && content.contentData &&
+        content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
+      } else if (content) {
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {

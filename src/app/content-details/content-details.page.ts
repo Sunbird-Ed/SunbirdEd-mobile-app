@@ -1287,7 +1287,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   checkLimitedContentSharingFlag(content) {
-    this.limitedShareContentFlag = (content.contentData &&
+    this.limitedShareContentFlag = (content && content.contentData &&
       content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
       this.content = content;

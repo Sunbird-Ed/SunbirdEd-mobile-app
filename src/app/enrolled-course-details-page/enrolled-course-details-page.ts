@@ -888,7 +888,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
         this.zone.run(() => {
-          if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
+          if (data && data.length && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
             this.headerService.showHeaderWithBackButton();
           }
