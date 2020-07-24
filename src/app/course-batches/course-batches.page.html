@@ -39,7 +39,7 @@
           <div class="card-text">
             <div class="batch-name">{{ batch.name }}</div>
             <span class="text-gray-color">
-              {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
+              {{batch.startDate | date: 'dd/MM/yyyy' }} - {{ batch.endDate | date: 'dd/MM/yyyy' }}
             </span>
             <p *ngIf="batch?.creatorDetails?.firstName">
               <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
@@ -52,7 +52,7 @@
                 class="enroll-msg-ended">{{ 'BATCH_ENROLLMENT_ENDED' | translate}}</span>
               <ng-template #lastDateForEnrollment>
                 <span class="enroll-msg-style">{{'ENROLLMENT_LAST_DATE' | translate}}
-                  {{batch.enrollmentEndDate | date: 'mediumDate'}}</span>
+                  {{batch.enrollmentEndDate | date: 'dd/MM/yyyy'}}</span>
               </ng-template>
             </p>
           </div>
@@ -79,7 +79,7 @@
           <div class="card-text">
             <div class="batch-name">{{ batch.name }}</div>
             <span class="text-gray-color">
-              {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
+              {{batch.startDate | date: 'dd/MM/yyyy' }} - {{ batch.endDate | date: 'dd/MM/yyyy' }}
             </span>
             <p *ngIf="batch?.creatorDetails?.firstName">
               <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
@@ -92,7 +92,7 @@
                 class="enroll-msg-ended">{{ 'BATCH_ENROLLMENT_ENDED' | translate}}</span>
               <ng-template #lastDateForEnrollment>
                 <span class="enroll-msg-style">{{'ENROLLMENT_LAST_DATE' | translate}}
-                  {{batch.enrollmentEndDate | date: 'mediumDate'}}</span>
+                  {{batch.enrollmentEndDate | date: 'dd/MM/yyyy' }}</span>
               </ng-template>
             </p>
           </div>

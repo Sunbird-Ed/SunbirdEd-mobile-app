@@ -19,8 +19,8 @@
                 <ion-item *ngFor="let batches of retiredBatched; let i=index">
                     <div item-start class="width-80">
                         <h5 class="subtitle title">{{ batches.batch.name }}</h5>
-                        <p>{{batches.batch.startDate | date: 'mediumDate' }} -
-                            {{ batches.batch.endDate | date: 'mediumDate' }}</p>
+                        <p>{{batches.batch.startDate | date: 'dd/MM/yyyy' }} -
+                            {{ batches.batch.endDate | date: 'dd/MM/yyyy' }}</p>
                         <p *ngIf="batch?.creatorDetails?.firstName">{{ 'BATCH_CREATED_BY' | translate }}
                             {{ batch.creatorDetails.firstName }}</p>
                     </div>
@@ -33,7 +33,7 @@
                 <ion-item *ngFor="let batch of ongoingBatches; let i=index">
                     <div item-start  class="width-80">
                         <h5 class="subtitle title">{{ batch.name }}</h5>
-                        <p>{{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}</p>
+                        <p>{{batch.startDate | date: 'dd/MM/yyyy' }} - {{ batch.endDate | date: 'dd/MM/yyyy' }}</p>
                         <p *ngIf="batch?.creatorDetails?.firstName">
                             <span>{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
                             <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
@@ -44,7 +44,7 @@
                                 class="enroll-msg-ended">{{ 'BATCH_ENROLLMENT_ENDED' | translate}}</span>
                             <ng-template #lastDateForEnrollment>
                                 <span class="enroll-msg-style">{{'ENROLLMENT_LAST_DATE' | translate}}
-                                    {{batch.enrollmentEndDate | date: 'mediumDate'}}</span>
+                                    {{batch.enrollmentEndDate | date: 'dd/MM/yyyy' }}</span>
                             </ng-template>
                         </p>
                     </div>
@@ -61,7 +61,7 @@
                 <ion-item *ngFor="let batch of upcommingBatches; let i=index">
                     <div item-start class="width-80">
                         <h5 class="subtitle title">{{ batch.name }}</h5>
-                        <p>{{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}</p>
+                        <p>{{batch.startDate | date: 'dd/MM/yyyy' }} - {{ batch.endDate | date: 'dd/MM/yyyy' }}</p>
                         <p *ngIf="batch?.creatorDetails?.firstName">
                             <span>{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
                             <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
@@ -73,7 +73,7 @@
                      
                                 <ng-template #lastDateForEnrollment>
                                 <span class="enroll-msg-style">{{'ENROLLMENT_LAST_DATE' | translate}}
-                                    {{batch.enrollmentEndDate | date: 'mediumDate'}}</span>
+                                    {{batch.enrollmentEndDate | date: 'dd/MM/yyyy' }}</span>
                             </ng-template>
                         </p>
                     </div>
