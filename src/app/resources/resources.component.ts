@@ -59,7 +59,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID
+  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -313,6 +313,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngOnInit() {
+    const isFirstTimeOnboarding = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+    if (!isFirstTimeOnboarding) {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.PAGE_REQUEST, '',
+        PageId.LIBRARY,
+        Environment.ONBOARDING
+      );
+    }
     this.getCurrentUser();
     this.initNetworkDetection();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
@@ -783,6 +791,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeSdkEvent();
 
     this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
+    const isFirstTimeOnboarding = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+    if (!isFirstTimeOnboarding) {
+      this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        PageId.LIBRARY,
+        Environment.ONBOARDING
+      );
+    }
   }
 
   ionViewDidEnter() {

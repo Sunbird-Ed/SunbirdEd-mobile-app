@@ -27,7 +27,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService } from '../../services';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype } from '../../services';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
@@ -1242,7 +1242,7 @@ describe('SearchPage', () => {
                 () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1251,11 +1251,12 @@ describe('SearchPage', () => {
                 expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    AuditType.TOAST_SEEN,
+                    ImpressionSubtype.OFFLINE_MODE,
+                    PageId.SCAN_OR_MANUAL,
                     Environment.HOME,
-                    'Updated',
                     undefined,
-                    'set-profile',
                     undefined,
                     undefined,
                     undefined,
@@ -1395,16 +1396,26 @@ describe('SearchPage', () => {
                     identifier: 'id1'
                 }
             };
+            const collection = {
+                identifier: 'identifier',
+                mimeType: MimeType.COLLECTION
+            };
+            searchPage.isDialCodeSearch = true;
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve({}));
+            mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getCurrentUser = jest.fn(() => { });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
             // act
-            searchPage.checkParent('parent', 'child');
+            searchPage.checkParent('parent', collection);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    [RouterLinks.CONTENT_DETAILS],
-                    expect.anything()
-                );
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 0);
         });

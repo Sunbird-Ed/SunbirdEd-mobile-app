@@ -74,14 +74,22 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(async () => {
-      const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+    this.setQrStyles();
+  }
 
-      (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-        'style',
-        `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-      );
+  setQrStyles() {
+    setTimeout(async () => {
+      if (document.getElementById('qrScannerIcon') && document.getElementById('backdrop')) {
+        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+
+        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+          'style',
+          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+        );
+      } else {
+        this.setQrStyles();
+      }
 
     }, 2000);
   }

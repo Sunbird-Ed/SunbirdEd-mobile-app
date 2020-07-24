@@ -87,27 +87,30 @@ export class ActivityDetailsPage implements OnInit {
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
-      console.log('getDataAggregation', response);
       if (response) {
         this.memberList = response.members;
         this.activityDetail = response.activity;
-
+        const loggedInUserId = this.loggedinUser.userId;
         if (this.memberList) {
-          this.memberList.sort((a, b) => {
-            if (b.userId === this.loggedinUser.userId) {
+          this.memberList = this.memberList.sort((a, b) => {
+            if (a.userId === loggedInUserId) {
+              return -1;
+            } else if (b.userId === loggedInUserId) {
               return 1;
-            } else if (a.userId === this.loggedinUser.userId) {
+            }
+            const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+            const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+            if (!aCompletedCount && !bCompletedCount) {
+              return 0;
+            }
+            if (!aCompletedCount && bCompletedCount) {
+              return 1;
+            } else if (aCompletedCount && !bCompletedCount) {
               return -1;
             }
-            if (b.role === GroupMemberRole.ADMIN && a.role === GroupMemberRole.MEMBER) {
-              return 1;
-            } else if (b.role === GroupMemberRole.MEMBER && a.role === GroupMemberRole.ADMIN) {
-              return -1;
-            }
-            return a.name.localeCompare(b.name);
+            return bCompletedCount!.value - aCompletedCount!.value;
           });
         }
-
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
       }
@@ -118,7 +121,6 @@ export class ActivityDetailsPage implements OnInit {
   }
 
   onMemberSearch(query) {
-    console.log('onMemberSearch', query);
     this.memberSearchQuery = query;
     this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'name', query)];
   }
@@ -147,8 +149,8 @@ export class ActivityDetailsPage implements OnInit {
     let lastUpdatedOn = 0;
     if (this.activityDetail && this.activityDetail.agg) {
       const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.ENROLMENT_COUNT);
-      if (activityAgg) {
-        lastUpdatedOn = activityAgg.lastUpdatedOn;
+      if (activityAgg && activityAgg.lastUpdatedOn) {
+        lastUpdatedOn = typeof activityAgg.lastUpdatedOn === 'string' ? parseInt(activityAgg.lastUpdatedOn, 10) : activityAgg.lastUpdatedOn;
       }
     }
     return lastUpdatedOn;
