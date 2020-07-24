@@ -2272,8 +2272,6 @@ describe('EnrolledCourseDetailsPage', () => {
 
     it('addActivityToGroup', (done) => {
         // arrange
-        jest.clearAllMocks();
-        jest.resetAllMocks();
         enrolledCourseDetailsPage.groupId = 'group_id';
         enrolledCourseDetailsPage.identifier = 'some_identifier';
         enrolledCourseDetailsPage.course = {
