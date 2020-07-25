@@ -177,4 +177,20 @@ describe('AndroidPermissionsService', () => {
             });
         });
     });
+
+    describe('getAlwaysDeniedStatus()', () => {
+        it('should reject the result', (done) => {
+            // arrange
+            cordova.plugins.diagnostic.getPermissionAuthorizationStatus = jest.fn((success, error, _) => {
+                error('DENIED_ALWAYS');
+            });
+            // act n assert
+            androidPermissionsService['getAlwaysDeniedStatus'](
+                AndroidPermission.CAMERA
+               ).catch((response) => {
+                   done();
+            });
+        });
+
+    });
 });
