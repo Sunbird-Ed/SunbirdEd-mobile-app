@@ -8,8 +8,73 @@ import {
     mockFacetsContetType,
     mockFacetsBoard,
     mockFacetsContentTypeWith,
-    mockFacetsMedium
+    mockFacetsBoardNew
 } from './page-filter-options.spec.data';
+
+describe('PageFilterOptionsPage', () => {
+    let pageFilterOptionsPage: PageFilterOptionsPage;
+
+    const mockPopOverController: Partial<PopoverController> = {
+        dismiss: jest.fn(),
+        create: jest.fn()
+    };
+
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn((arg) => {
+            let value;
+            switch (arg) {
+                case 'facets':
+                    value = mockFacetsBoard;
+                    break;
+            }
+            return value;
+        })
+    };
+
+    const mockPlatform: Partial<Platform> = {
+    };
+
+    mockPlatform.backButton = {
+        subscribeWithPriority: jest.fn((_, fn) => {
+            return { unsubscribe: jest.fn() };
+        }),
+    } as any;
+
+
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        isUserLoggedIn: jest.fn(() => false)
+    };
+
+    beforeAll(() => {
+        pageFilterOptionsPage = new PageFilterOptionsPage(
+            mockNavParams as NavParams,
+            mockPopOverController as PopoverController,
+            mockAppGlobalService as AppGlobalService,
+            mockPlatform as Platform
+        );
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should be create a instance of PageFilterOptionsPage', () => {
+        expect(pageFilterOptionsPage).toBeTruthy();
+    });
+
+    describe('changeValue()', () => {
+        it('should populate selectedValuesIndices', () => {
+            // arrange
+            pageFilterOptionsPage.facets = mockFacetsBoardNew;
+            // act
+            pageFilterOptionsPage.changeValue('AP', 1);
+            // assert
+            expect(pageFilterOptionsPage.facets.selectedValuesIndices).toEqual([0]);
+        });
+
+    });
+
+});
 
 describe('PageFilterOptionsPage', () => {
     let pageFilterOptionsPage: PageFilterOptionsPage;
@@ -75,6 +140,7 @@ describe('PageFilterOptionsPage', () => {
             pageFilterOptionsPage.facets = { selected: ['topic1'] };
             // act n assert
             expect(pageFilterOptionsPage.isSelected('topic1')).toBeTruthy();
+            pageFilterOptionsPage.facets =  { selected: undefined };
         });
     });
 
@@ -91,6 +157,7 @@ describe('PageFilterOptionsPage', () => {
             pageFilterOptionsPage.facets = { selected: ['topic1'] };
             // act n assert
             expect(pageFilterOptionsPage.isSelected('topic1')).toBeTruthy();
+            pageFilterOptionsPage.facets =  { selected: undefined };
         });
     });
 
@@ -119,12 +186,14 @@ describe('PageFilterOptionsPage', () => {
     describe('cancel()', () => {
         it('should populate selected facets', () => {
             // arrange
+            pageFilterOptionsPage.facets = { selected: ['topic1'] };
             pageFilterOptionsPage.prevSelectedTopic = ['topic1'];
             // act
             pageFilterOptionsPage.cancel();
             // assert
             expect(pageFilterOptionsPage.facets.selected).toEqual(['topic1']);
             expect(mockPopOverController.dismiss).toHaveBeenCalled();
+            pageFilterOptionsPage.facets =  { selected: undefined };
         });
 
     });
@@ -132,6 +201,7 @@ describe('PageFilterOptionsPage', () => {
     describe('apply()', () => {
         it('should populate selected facets', () => {
             // arrange
+            pageFilterOptionsPage.facets = { selected: ['topic1'] };
             pageFilterOptionsPage.prevSelectedTopic = ['topic1'];
             pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
             // act
@@ -139,10 +209,12 @@ describe('PageFilterOptionsPage', () => {
             // assert
             expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
             expect(mockPopOverController.dismiss).toHaveBeenCalled();
+            pageFilterOptionsPage.facets =  { selected: undefined };
         });
 
         it('should populate selected facets and should not unsubscribe', () => {
             // arrange
+            pageFilterOptionsPage.facets = { selected: ['topic1'] };
             pageFilterOptionsPage.prevSelectedTopic = ['topic1'];
             pageFilterOptionsPage.backButtonFunc = { unsubscribe: jest.fn() };
             pageFilterOptionsPage.backButtonFunc = undefined;
@@ -150,6 +222,7 @@ describe('PageFilterOptionsPage', () => {
             pageFilterOptionsPage.apply();
             // assert
             expect(pageFilterOptionsPage.prevSelectedTopic).toEqual(['topic1']);
+            pageFilterOptionsPage.facets = { selected: undefined };
         });
 
     });
@@ -260,3 +333,5 @@ describe('PageFilterOptionsPage', () => {
 
     });
 });
+
+

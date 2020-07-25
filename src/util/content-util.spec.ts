@@ -87,6 +87,13 @@ describe('ContentUtil', () => {
             expect(ContentUtil.getAppIcon('content/sample_aap_icon.png', 'sample_basepath', false)).toEqual(
                 'sample_basepath/content/sample_aap_icon.png');
         });
+
+        it('should return  app icon if none of the condition satisfies', () => {
+            // arrange
+            // act / assert
+            expect(ContentUtil.getAppIcon('/content/sample_aap_icon.png', '', false)).toEqual(
+                '/content/sample_aap_icon.png');
+        });
     });
 
     describe('genrateUTMCData', () => {
@@ -134,27 +141,35 @@ describe('ContentUtil', () => {
                 type: 'UtmMedium'
             }]);
         });
-        it('should return utm parameter for channel', () => {
+
+        it('should not add to the cdata if url has duplicate campaign parameters', () => {
             // arrange
             const value = {
-                utm_source: 'https://sunbirded.org/learn/course/do_12345',
-                utm_medium: 'playstore',
-                channel: 'igot'
+                utm_campaign: ['whatsapp', 'testprep'],
             };
 
             // act
             // assert
-            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
-                id: 'igot',
-                type: 'Source'
-            },
-            {
-                id: 'https://sunbirded.org/learn/course/do_12345',
-                type: 'UtmSource'
-            }, {
-                id: 'playstore',
-                type: 'UtmMedium'
-            }]);
+            expect(ContentUtil.genrateUTMCData(value).length).toEqual(0);
+        });
+
+        it('should not add to the cdata if url has duplicate campaign parameters', () => {
+            // arrange
+            const value = {
+                utm_medium: ['whatsapp', 'testprep']
+            };
+
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value).length).toEqual(0);
+        });
+    });
+
+    describe('mergeProperties()', () => {
+        it('should return undefined if contentData is empty', () => {
+            // arrange
+            // act / assert
+            expect(ContentUtil.mergeProperties({}, ['author', 'ceator'])).toBeUndefined();
         });
     });
 });

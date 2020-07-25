@@ -17,6 +17,7 @@ export const mockFacets = {
     }]
 };
 
+
 export const mockFacetsContetType = {
     name: 'ContnetType',
     translations: '{\"en\":\"Topic\"}',
@@ -43,6 +44,26 @@ export const mockFacetsBoard = {
     code: 'board',
     frameworkCategory: true,
     index: 1,
+    selectedValuesIndices: [0],
+    values: [{
+        identifier: 'tpd_medium_assamese',
+        code: 'assamese',
+        translations: null,
+        name: 'Assamese',
+        description: 'Assamese',
+        index: 0,
+        category: 'topic',
+        status: 'Live'
+    }]
+};
+
+export const mockFacetsBoardNew = {
+    name: 'Board',
+    translations: '{\"en\":\"Topic\"}',
+    code: 'board',
+    frameworkCategory: true,
+    index: 1,
+    selected: ['AP'],
     selectedValuesIndices: [0],
     values: [{
         identifier: 'tpd_medium_assamese',

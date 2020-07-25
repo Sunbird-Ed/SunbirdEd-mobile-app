@@ -212,7 +212,6 @@ export class LocalCourseService {
       .then(async (enrolledCourses) => {
         if (enrolledCourses) {
           this.zone.run(() => {
-            enrolledCourses = enrolledCourses || [];
             if (enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
               for (const course of enrolledCourses) {
@@ -246,8 +245,8 @@ export class LocalCourseService {
             }
           }
           progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
-          resolve(progress);
         }
+        resolve(progress);
       } catch (err) {
         resolve(progress);
       }

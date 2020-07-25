@@ -174,6 +174,19 @@ describe('TermsAndConditionsPage', () => {
                 done();
             });
         });
+
+        it('should logout and dismiss the tnc page if back button is clicked twice and should not unsubscribe', (done) => {
+            // arrange
+            termsAndConditionsPage['unregisterBackButtonAction'] = undefined;
+            // act
+            termsAndConditionsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
+                expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
+                done();
+            });
+        });
     });
 
     describe('ionViewDidEnter', () => {
@@ -187,6 +200,15 @@ describe('TermsAndConditionsPage', () => {
     });
 
     describe('ionViewWillLeave', () => {
+        it('should not unsubscribe the backbutton subscription if its undefined', () => {
+            // arrange
+            termsAndConditionsPage['unregisterBackButtonAction'] = undefined;
+            // act
+            termsAndConditionsPage.ionViewWillLeave();
+            // assert
+            expect(termsAndConditionsPage['unregisterBackButtonAction']).toBeUndefined();
+        });
+
         it('should unsubscribe the backbutton subscription', () => {
             // arrange
             termsAndConditionsPage['unregisterBackButtonAction'] = {
@@ -210,6 +232,17 @@ describe('TermsAndConditionsPage', () => {
                 PageId.TERMS_N_CONDITIONS_STATIC_PAGE,
                 Environment.HOME);
         });
+
+        it('should generate Impression telemetry', () => {
+            // arrange
+            termsAndConditionsPage['loading'] = undefined;
+            // act
+            termsAndConditionsPage.onIFrameLoad();
+            // assert
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, '',
+                PageId.TERMS_N_CONDITIONS_STATIC_PAGE,
+                Environment.HOME);
+        });
     });
 
     describe('onConfirmationChange', () => {
@@ -224,6 +257,15 @@ describe('TermsAndConditionsPage', () => {
                 PageId.TERMS_N_CONDITIONS,
                 undefined,
                 { isChecked: true });
+        });
+    });
+
+    describe('dismissLoader', () => {
+        it('should generate Interact telemetry when check box is toggled', () => {
+            // arrange
+            // act
+            termsAndConditionsPage['dismissLoader'](undefined);
+            // assert
         });
     });
 
