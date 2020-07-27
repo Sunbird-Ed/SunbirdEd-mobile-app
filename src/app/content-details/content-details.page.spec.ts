@@ -229,9 +229,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '4g'},
+                    { networkType: '4g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(contentDetailsPage.userCount).toBeGreaterThan(2);
                 expect(mockNetwork.type).toBe('4g');
@@ -270,9 +270,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -302,7 +302,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
@@ -318,9 +318,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -350,7 +350,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -363,9 +363,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -395,7 +395,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: false} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -408,9 +408,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -445,12 +445,52 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '4g'},
+                    { networkType: '4g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should invoked playContent() for downloaded content', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '4g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            contentDetailsPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    { networkType: '4g' },
+                    undefined,
+                    [{ id: 'do-123', type: 'Content' }]
+                );
+                expect(mockNetwork.type).toBe('4g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    InteractType.PLAY,
+                    InteractSubtype.DOWNLOAD,
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.ONBOARDING
+                );
                 done();
             }, 0);
         });
@@ -482,11 +522,11 @@ describe('ContentDetailsPage', () => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(2,
                 ImpressionType.PAGE_REQUEST, '',
                 PageId.CONTENT_DETAIL,
-                Environment.HOME
+                Environment.ONBOARDING
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
                 PageId.CONTENT_DETAIL,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 undefined,
                 undefined,
                 undefined,
