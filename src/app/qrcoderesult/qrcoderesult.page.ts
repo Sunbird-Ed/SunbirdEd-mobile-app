@@ -352,6 +352,7 @@ export class QrcoderesultPage implements OnDestroy {
   getChildContents() {
     this.showSheenAnimation = false;
     const request: ChildContentRequest = { contentId: this.identifier, hierarchyInfo: [] };
+    this.profile = this.appGlobalService.getCurrentUser();
     this.contentService.getChildContents(
       request).toPromise()
       .then(async (data: Content) => {
@@ -363,7 +364,6 @@ export class QrcoderesultPage implements OnDestroy {
         this.parents.splice(0, this.parents.length);
         this.parents.push(data);
         this.results = [];
-        this.profile = this.appGlobalService.getCurrentUser();
         const contentData = data.contentData;
         this.findContentNode(data);
 
@@ -993,9 +993,9 @@ export class QrcoderesultPage implements OnDestroy {
 
   generateAuditEventForAutoFill() {
     if (!this.onboarding && this.appGlobalService.isOnBoardingCompleted) {
-      let correlationlist: Array<CorrelationData> = [{id: this.content.board, type: CorReleationDataType.BOARD}];
-      correlationlist = correlationlist.concat(this.populateCData(this.content.medium, CorReleationDataType.MEDIUM));
-      correlationlist = correlationlist.concat(this.populateCData(this.content.gradeLevel, CorReleationDataType.CLASS));
+      let correlationlist: Array<CorrelationData> = this.populateCData(this.profile.board, CorReleationDataType.BOARD);
+      correlationlist = correlationlist.concat(this.populateCData(this.profile.medium, CorReleationDataType.MEDIUM));
+      correlationlist = correlationlist.concat(this.populateCData(this.profile.grade, CorReleationDataType.CLASS));
       correlationlist.push({id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE});
       const rollup = ContentUtil.generateRollUp(this.content.hierarchyInfo, this.content.identifier);
       this.telemetryGeneratorService.generateAuditTelemetry(
