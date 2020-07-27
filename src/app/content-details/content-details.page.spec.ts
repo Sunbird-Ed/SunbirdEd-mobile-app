@@ -229,9 +229,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    { networkType: '4g' },
+                    {networkType: '4g'},
                     undefined,
-                    [{ id: 'do-123', type: 'Content' }]
+                    [{id: 'do-123', type: 'Content'}]
                 );
                 expect(contentDetailsPage.userCount).toBeGreaterThan(2);
                 expect(mockNetwork.type).toBe('4g');
@@ -270,9 +270,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    { networkType: '2g' },
+                    {networkType: '2g'},
                     undefined,
-                    [{ id: 'do-123', type: 'Content' }]
+                    [{id: 'do-123', type: 'Content'}]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -302,7 +302,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
@@ -318,9 +318,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    { networkType: '2g' },
+                    {networkType: '2g'},
                     undefined,
-                    [{ id: 'do-123', type: 'Content' }]
+                    [{id: 'do-123', type: 'Content'}]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -350,7 +350,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -363,9 +363,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    { networkType: '2g' },
+                    {networkType: '2g'},
                     undefined,
-                    [{ id: 'do-123', type: 'Content' }]
+                    [{id: 'do-123', type: 'Content'}]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -395,7 +395,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: false }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -408,9 +408,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    { networkType: '2g' },
+                    {networkType: '2g'},
                     undefined,
-                    [{ id: 'do-123', type: 'Content' }]
+                    [{id: 'do-123', type: 'Content'}]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();

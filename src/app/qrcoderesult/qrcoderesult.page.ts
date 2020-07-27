@@ -36,11 +36,12 @@ import {
   PlayerService,
   Profile,
   ProfileService,
-  TelemetryObject
+  TelemetryObject,
+  AuditState
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType,
-  PageId, CorReleationDataType, Mode, ObjectType } from '../../services/telemetry-constants';
+  PageId, CorReleationDataType, Mode, ObjectType, AuditType, ImpressionSubtype } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -679,6 +680,7 @@ export class QrcoderesultPage implements OnDestroy {
           this.parents = [];
           this.paths = [];
           this.getChildContents();
+          this.generateAuditEventForAutoFill();
         }
         // For content update available
         // if (res.data && res.type === 'contentUpdateAvailable' && res.data.identifier === this.identifier) {
@@ -987,5 +989,39 @@ export class QrcoderesultPage implements OnDestroy {
       undefined, undefined,
       dialcode ? corRelationList : undefined
      );
+  }
+
+  generateAuditEventForAutoFill() {
+    if (!this.onboarding && this.appGlobalService.isOnBoardingCompleted) {
+      let correlationlist: Array<CorrelationData> = [{id: this.content.board, type: CorReleationDataType.BOARD}];
+      correlationlist = correlationlist.concat(this.populateCData(this.content.medium, CorReleationDataType.MEDIUM));
+      correlationlist = correlationlist.concat(this.populateCData(this.content.gradeLevel, CorReleationDataType.CLASS));
+      correlationlist.push({id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE});
+      const rollup = ContentUtil.generateRollUp(this.content.hierarchyInfo, this.content.identifier);
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.ONBOARDING,
+        AuditState.AUDIT_UPDATED,
+        undefined,
+        AuditType.SET_PROFILE,
+        undefined,
+        undefined,
+        undefined,
+        correlationlist,
+        rollup
+      );
+    }
+  }
+
+  private populateCData(formControllerValues, correlationType): Array<CorrelationData> {
+    const correlationList: Array<CorrelationData> = [];
+    if (formControllerValues) {
+      formControllerValues.forEach((value) => {
+        correlationList.push({
+          id: value,
+          type: correlationType
+        });
+      });
+    }
+    return correlationList;
   }
 }

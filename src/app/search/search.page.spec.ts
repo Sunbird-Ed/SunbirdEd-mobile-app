@@ -1608,10 +1608,10 @@ describe('SearchPage', () => {
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                     ImpressionType.SEARCH,
                     Environment.HOME, false, undefined,
-                    [{ id: '', type: 'API' },
-                    { id: '', type: 'API' },
-                    { id: 'SearchResult', type: 'Section' },
-                    { id: 'filter', type: 'DiscoveryType' }]
+                    [{id: '', type: 'API'},
+                    {id: '', type: 'API'},
+                    {id: 'SearchResult', type: 'Section'},
+                    {id: 'filter', type: 'DiscoveryType'}]
                 );
             });
         });
