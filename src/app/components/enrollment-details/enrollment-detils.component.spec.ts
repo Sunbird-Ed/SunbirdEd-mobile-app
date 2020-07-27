@@ -1,6 +1,9 @@
 import { NavParams, Events, PopoverController, NavController } from '@ionic/angular';
 import { NgZone } from '@angular/core';
-import { TelemetryGeneratorService, CommonUtilService, LocalCourseService, InteractSubtype, InteractType, PageId } from "../../../services";
+import {
+    TelemetryGeneratorService, CommonUtilService, LocalCourseService,
+    InteractSubtype, InteractType, PageId
+} from '../../../services';
 import { AuthService, SharedPreferences } from 'sunbird-sdk';
 import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
@@ -102,7 +105,7 @@ describe('enrollmentdetailcomponent', () => {
     });
 
     describe('resumeCourse()', () => {
-        it('should call saveContext publish close and putString', () => { 
+        it('should call saveContext publish close and putString', () => {
             // arrange
             const content = {
                 userId: 'userId',
@@ -273,7 +276,7 @@ describe('enrollmentdetailcomponent', () => {
     describe('getUserid()', () => {
         it('should set userToken and isGuestUser', (done) => {
             // arrange
-            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of({ userToken: 'userToken'}));
+            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of({ userToken: 'userToken' }));
             mockNgZone.run = jest.fn((callback) => callback());
             // act
             enrollmentDetails.getUserId();
