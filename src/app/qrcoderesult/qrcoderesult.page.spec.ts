@@ -25,7 +25,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
-import { CanvasPlayerService } from '../../services';
+import { CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType } from '../../services';
 import { File } from '@ionic-native/file/ngx';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 
@@ -631,11 +631,19 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.content = {
                 dialcodes: ['EQ2345'],
                 leafNodesCount: 4
-            }
+            };
             mockEventsBusService.events = jest.fn(() => of(event));
             mockZone.run = jest.fn((fn) => fn());
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
-            spyOn(qrcoderesultPage, 'getChildContents').and.stub();
+            jest.spyOn(qrcoderesultPage, 'getChildContents').mockImplementation();
+            qrcoderesultPage.onboarding = false;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            qrcoderesultPage.profile = {
+                board: ['sample-board'],
+                medium: ['sample-medium'],
+                grade: ['sample-class']
+            };
             // action
             qrcoderesultPage.subscribeSdkEvent();
             // assert
@@ -643,6 +651,20 @@ describe('QrcoderesultPage', () => {
             expect(qrcoderesultPage.isDownloadStarted).toEqual(false);
             expect(qrcoderesultPage.getChildContents).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                Environment.ONBOARDING,
+                'Updated',
+                undefined,
+                AuditType.SET_PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                [{id: 'sample-board', type: 'Board'},
+                 {id: 'sample-medium', type: 'Medium'},
+                 {id: 'sample-class', type: 'Class'},
+                 {id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE}],
+                {l1: undefined}
+            );
         });
         it('should call import contents', () => {
             // arrange
