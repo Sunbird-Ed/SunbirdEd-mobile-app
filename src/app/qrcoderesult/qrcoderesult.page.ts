@@ -490,7 +490,7 @@ export class QrcoderesultPage implements OnDestroy {
       const telemetryObjectData = new TelemetryObject(identifier, ObjectType.CONTENT, undefined);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_CARD, '',
-        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         PageId.QR_CONTENT_RESULT,
         telemetryObjectData,
         undefined,
@@ -991,7 +991,7 @@ export class QrcoderesultPage implements OnDestroy {
      );
   }
 
-  generateAuditEventForAutoFill() {
+ private generateAuditEventForAutoFill() {
     if (!this.onboarding && this.appGlobalService.isOnBoardingCompleted) {
       let correlationlist: Array<CorrelationData> = this.populateCData(this.profile.board, CorReleationDataType.BOARD);
       correlationlist = correlationlist.concat(this.populateCData(this.profile.medium, CorReleationDataType.MEDIUM));
