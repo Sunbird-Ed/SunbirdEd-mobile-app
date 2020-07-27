@@ -1243,6 +1243,7 @@ describe('SearchPage', () => {
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             searchPage.getContentForDialCode();
             // assert
