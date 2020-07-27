@@ -169,12 +169,6 @@ describe('QrcoderesultPage', () => {
                         children : [],
                         mimeType: 'mime',
                         contentData: {}
-                    },
-                    {
-                        identifier: 'id3',
-                        children : [],
-                        mimeType: 'mime',
-                        contentData: {}
                     }
                 ],
                 contentData: {
@@ -200,6 +194,8 @@ describe('QrcoderesultPage', () => {
             spyOn(qrcoderesultPage, 'subscribeSdkEvent').and.stub();
             // qrcoderesultPage.chapterFirstChildId = 'id';
             spyOn(document, 'getElementById').and.returnValue('element');
+            mockEvents.unsubscribe = jest.fn(() => true);
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
             // act
             qrcoderesultPage.ionViewWillEnter();
             // assert
@@ -216,7 +212,9 @@ describe('QrcoderesultPage', () => {
             setTimeout(() => {
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
                 expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
-                expect(qrcoderesultPage.results.length).toEqual(2);
+                expect(qrcoderesultPage.results.length).toEqual(1);
+                expect(mockEvents.unsubscribe).toHaveBeenCalled();
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 200);
         });
@@ -256,7 +254,6 @@ describe('QrcoderesultPage', () => {
             };
             spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
-            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             qrcoderesultPage.ionViewDidEnter();
             // assert
@@ -268,7 +265,7 @@ describe('QrcoderesultPage', () => {
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenLastCalledWith(
                 PageId.QR_CONTENT_RESULT,
-                Environment.ONBOARDING,
+                Environment.HOME,
                 undefined,
                 'Content',
                 undefined,
@@ -285,7 +282,6 @@ describe('QrcoderesultPage', () => {
             mockAppGlobalService.isProfileSettingsCompleted = false;
             // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             spyOn(qrcoderesultPage, 'goBack').and.stub();
-            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             qrcoderesultPage.handleBackButton(PageId.LIBRARY);
             // assert
@@ -297,7 +293,7 @@ describe('QrcoderesultPage', () => {
             expect(qrcoderesultPage.goBack).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                 false,
-                Environment.ONBOARDING,
+                Environment.HOME,
                 'qr-content-result'
             );
         });
@@ -308,7 +304,6 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.isSingleContent = true;
             spyOn(qrcoderesultPage, 'goBack').and.stub();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
-            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             qrcoderesultPage.handleBackButton();
             // assert
@@ -319,7 +314,7 @@ describe('QrcoderesultPage', () => {
                 PageId.DIAL_CODE_SCAN_RESULT);
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                     false,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     'qr-content-result'
                 );
             setTimeout(() => {
@@ -334,7 +329,6 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.isSingleContent = true;
             spyOn(qrcoderesultPage, 'goBack').and.stub();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
-            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             qrcoderesultPage.handleBackButton();
             // assert
@@ -345,7 +339,7 @@ describe('QrcoderesultPage', () => {
                 PageId.DIAL_CODE_SCAN_RESULT);
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                     false,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     'qr-content-result'
                 );
             setTimeout(() => {
