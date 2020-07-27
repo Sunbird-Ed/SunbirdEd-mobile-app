@@ -460,7 +460,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.SELECT_BOOK, '',
-          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
           PageId.QR_BOOK_RESULT,
           telemetryObject,
           undefined, undefined,
@@ -476,7 +476,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             parentContent: params.parentContent,
             isProfileUpdated: params.isProfileUpdated,
             isQrCodeLinkToContent: params.isQrCodeLinkToContent,
-            isAvailableLocally: params.isAvailableLocally
+            isAvailableLocally: params.isAvailableLocally,
+            source: params.source
           }
         });
         if (this.isSingleContent) {
@@ -1053,7 +1054,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               AuditType.TOAST_SEEN,
               ImpressionSubtype.OFFLINE_MODE,
               PageId.SCAN_OR_MANUAL,
-              !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+              this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
               undefined, undefined, undefined, undefined,
               corRelationList
             );
@@ -1483,7 +1484,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       corRelationList.push({ id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK });
       this.telemetryGeneratorService.generatePageLoadedTelemetry(
         PageId.QR_BOOK_RESULT,
-        this.source = PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         undefined,
         undefined,
         undefined,
@@ -1558,7 +1559,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult && this.displayDialCodeResult[0].dialCodeResult.length) {
       this.telemetryGeneratorService.generateBackClickedNewTelemetry(
         false,
-        this.source === PageId.ONBOARDING ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         PageId.QR_BOOK_RESULT
       );
     } else {
