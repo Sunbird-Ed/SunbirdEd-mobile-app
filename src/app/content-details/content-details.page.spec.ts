@@ -482,11 +482,11 @@ describe('ContentDetailsPage', () => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(2,
                 ImpressionType.PAGE_REQUEST, '',
                 PageId.CONTENT_DETAIL,
-                Environment.ONBOARDING
+                Environment.HOME
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
                 PageId.CONTENT_DETAIL,
-                Environment.ONBOARDING,
+                Environment.HOME,
                 undefined,
                 undefined,
                 undefined,
@@ -1287,7 +1287,7 @@ describe('ContentDetailsPage', () => {
             InteractType.DOWNLOAD_COMPLETE,
             InteractType.DOWNLOAD_COMPLETE,
             PageId.QR_CONTENT_RESULT,
-            Environment.ONBOARDING,
+            Environment.HOME,
             undefined,
             undefined, undefined, undefined,
             [{ id: 'do-123', type: 'Content' }, { id: 'content-detail', type: 'ChildUi' }, {
@@ -1308,7 +1308,7 @@ describe('ContentDetailsPage', () => {
         );
         expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
             PageId.CONTENT_DETAIL,
-            Environment.ONBOARDING,
+            Environment.HOME,
             undefined,
             undefined,
             undefined,
@@ -2030,7 +2030,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]
@@ -2064,7 +2064,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]
@@ -2096,7 +2096,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]

@@ -1255,7 +1255,7 @@ describe('SearchPage', () => {
                     AuditType.TOAST_SEEN,
                     ImpressionSubtype.OFFLINE_MODE,
                     PageId.SCAN_OR_MANUAL,
-                    Environment.HOME,
+                    Environment.ONBOARDING,
                     undefined,
                     undefined,
                     undefined,

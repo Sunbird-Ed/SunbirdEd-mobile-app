@@ -602,7 +602,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
         download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
         download ? PageId.QR_CONTENT_RESULT : PageId.CONTENT_DETAIL,
-        !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         undefined,
         undefined,
         undefined,
@@ -622,12 +622,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.PAGE_REQUEST, '',
         PageId.CONTENT_DETAIL,
-        !this.onboarding ? Environment.ONBOARDING : Environment.HOME
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
       );
 
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
         PageId.CONTENT_DETAIL,
-        !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         undefined,
         undefined,
         undefined,
@@ -904,7 +904,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CLOSE,
       InteractSubtype.CANCEL,
-      !this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
       PageId.CONTENT_DETAIL,
       ObjectTelemetry,
       undefined,
@@ -1017,6 +1017,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.downloadContent();
       }
     } else {
+      if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          InteractType.PLAY,
+          InteractSubtype.DOWNLOAD,
+          PageId.QR_CONTENT_RESULT,
+          Environment.ONBOARDING
+        );
+      }
       this.playContent(isStreaming);
     }
   }
