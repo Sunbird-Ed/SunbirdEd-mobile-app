@@ -579,10 +579,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
     }
-    if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
-      this.closeProgressLoader();
-      return;
-    }
     if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
       this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
       this.closeProgressLoader();
