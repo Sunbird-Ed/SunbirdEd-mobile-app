@@ -32,6 +32,7 @@ import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -110,6 +111,7 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockAppVersion: Partial<AppVersion> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -137,7 +139,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockRouter as Router,
             mockContentDeleteHandler as ContentDeleteHandler,
             mockLocalCourseService as LocalCourseService,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockContentPlayerHandler as ContentPlayerHandler
         );
     });
 
@@ -1990,6 +1993,7 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             enrolledCourseDetailsPage.isBatchNotStarted = false;
             enrolledCourseDetailsPage.nextContent = false;
+            mockContentPlayerHandler.playContent = jest.fn();
             // act
             enrolledCourseDetailsPage.startContent();
             // assert

@@ -236,9 +236,7 @@ export class CollectionDetailEtbPage implements OnInit {
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
   private previousHeaderBottomOffset?: number;
-  lastContentPlayed: string;
   isContentPlayed = false;
-  playingContent: Content;
   contentDeleteObservable: any;
 
   _licenseDetails: any;
@@ -1354,54 +1352,24 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   playContent(event) {
-    this.headerService.hideHeader();
-
-    this.playingContent = event.content;
-    const contentInfo: ContentInfo = {
-      telemetryObject: ContentUtil.getTelemetryObject(this.playingContent),
-      rollUp: ContentUtil.generateRollUp(this.playingContent.hierarchyInfo, this.playingContent.identifier),
-      correlationList: this.corRelationList,
-      hierachyInfo: this.playingContent.hierarchyInfo
+    const telemetryDetails = {
+      pageId: PageId.COURSE_DETAIL,
+      corRelationList: this.corRelationList
     };
-    let isStreaming: boolean;
-    let shouldDownloadAndPlay: boolean;
-    if (this.playingContent.contentData.streamingUrl &&
-      this.commonUtilService.networkInfo.isNetworkAvailable && !(this.playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) {
-      isStreaming = true;
-      shouldDownloadAndPlay = false;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
-      isStreaming = false;
-      shouldDownloadAndPlay = false;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
-      isStreaming = false;
-      shouldDownloadAndPlay = true;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
-      this.navigateToContentPage(this.playingContent, 1);
-    } else {
-      this.navigateToContentPage(this.playingContent, 1);
-    }
+
+    const navExtras = {
+      state: {
+        isChildContent: true,
+        content: event.content,
+        depth: 1,
+        contentState: this.stateData,
+        corRelation: this.corRelationList,
+        breadCrumb: this.breadCrumb
+      }
+    };
+
+    this.contentPlayerHandler.playContent(event.content, navExtras, telemetryDetails, false);
+
   }
 
-  private generateInteractTelemetry(isStreaming: boolean, telemetryObject, rollup, correlationData) {
-    const subType: string = isStreaming ? InteractSubtype.PLAY_ONLINE : InteractSubtype.PLAY_FROM_DEVICE;
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      subType,
-      Environment.HOME,
-      PageId.COLLECTION_DETAIL,
-      telemetryObject,
-      undefined,
-      rollup,
-      correlationData,
-    );
-  }
 }
