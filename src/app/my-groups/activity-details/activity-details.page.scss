@@ -20,6 +20,20 @@
         border-radius: 4px;
     }
 }
+.ad-courses-container {
+    margin-top: 8px;
+    padding: 8px;
+    .ad-courses{
+        color: $blue;
+        .ad-course-text{
+            font-weight: bold;
+        }
+    }
+    .ad-course-name{
+        padding: 0 4px;
+    }
+}
+
 .ad-timestamp{
     color: $gray-300;
     padding: 8px 0;

@@ -6,10 +6,10 @@ import {
     PageId, TelemetryGeneratorService
 } from '@app/services';
 import { GroupService, GroupMemberRole } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService } from '../../../services';
+import { AppHeaderService, CollectionService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 
 describe('ActivityDetailsPage', () => {
@@ -28,7 +28,9 @@ describe('ActivityDetailsPage', () => {
                     loggedinUser: {
                         userId: 'sample-user-id-1'
                     },
-                    groupId: 'sample-group-id',
+                    group: {
+                        id: 'sample-group-id'
+                    },
                     activity: {
                         id: 'sample-id',
                         type: 'sample-type'
@@ -38,6 +40,9 @@ describe('ActivityDetailsPage', () => {
         })) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockCollectionService: Partial<CollectionService> = {
+        fetchCollectionData: jest.fn(() => Promise.reject(''))
+    };
 
     beforeAll(() => {
         activityDetailsPage = new ActivityDetailsPage(
@@ -49,6 +54,7 @@ describe('ActivityDetailsPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
             mockPlatform as Platform,
+            mockCollectionService as CollectionService
         );
     });
 
@@ -95,15 +101,52 @@ describe('ActivityDetailsPage', () => {
         expect(mockFilterPipe.transform).toHaveBeenCalled();
     });
 
-    it('ngOnInit', () => {
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        activityDetailsPage.ngOnInit();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            '',
-            PageId.ACTIVITY_DETAIL,
-            Environment.GROUP
-        );
+    describe('ngOnInit', () => {
+        it('should generate impression telemetry', (done) => {
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            activityDetailsPage.ngOnInit();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.ACTIVITY_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toBe(0);
+                done();
+            });
+        });
+        it('should generate impression telemetry', (done) => {
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            const cData = { children: [{
+                contentType: 'collection',
+                children : [
+                    {
+                        contentType: 'Course'
+                    },
+                    {
+                        contentType: 'collection',
+                        children : [
+                            {
+                                contentType: 'Course'
+                            }
+                        ]
+                    }
+                ]
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            activityDetailsPage.ngOnInit();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.ACTIVITY_DETAIL,
+                Environment.GROUP
+            );
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toEqual(2);
+                done();
+            });
+        });
     });
 
     it('should generate telemetry for back clicked', () => {
@@ -140,11 +183,15 @@ describe('ActivityDetailsPage', () => {
     });
 
     describe('ionViewWillEnter', () => {
+        // beforeEach(() => {
+        //     mockCollectionService.fetchCollectionData = jest.fn(() => Promise.reject(''));
+        // });
         it('should handle device header and back-button for b.userId', (done) => {
             activityDetailsPage.group = { id: 'group-id' } as any;
             activityDetailsPage.loggedinUser = {
                 userId: 'userId'
             } as any;
+            // mockCollectionService.fetchCollectionData = jest.fn(() => Promise.reject(''));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -523,6 +570,73 @@ describe('ActivityDetailsPage', () => {
             const data = activityDetailsPage.getActivityAggLastUpdatedOn();
             // assert
             expect(data).toBe(0);
+        });
+    });
+    // it('Should fetch nested courses', () => {
+    //     // arrange
+    //     const cData = [{
+    //         contentType: 'collection',
+    //         children : [
+    //             {
+    //                 contentType: 'Course'
+    //             },
+    //             {
+    //                 contentType: 'collection',
+    //                 children : [
+    //                     {
+    //                         contentType: 'Course'
+    //                     }
+    //                 ]
+    //             }
+    //         ]
+    //     }];
+    //     // act
+    //     activityDetailsPage.getNestedCourses(cData);
+    //     // assert
+    //     expect(activityDetailsPage.courseList.length).toEqual(2);
+    // });
+    it('should toggle showCourseDropdown', () => {
+        // arrange
+        activityDetailsPage.showCourseDropdown = false;
+        // act
+        activityDetailsPage.toggleCoursesDropdown();
+        // assert
+        expect(activityDetailsPage.showCourseDropdown).toBe(true);
+    });
+    describe('onCourseChange', () => {
+        it('should set selected course', () => {
+            // arrange
+            const course = {
+                identifier: 'id'
+            };
+            // act
+            activityDetailsPage.onCourseChange(course);
+            // assert
+            expect(activityDetailsPage);
+            expect(mockGroupService.activityService.getDataAggregation).toBeCalled();
+        });
+        it('should not set selected course', () => {
+            // arrange
+            activityDetailsPage.selectedCourse = {
+                identifier: 'id1'
+            };
+            const course = {
+                identifier: 'id1'
+            };
+            // act
+            activityDetailsPage.onCourseChange(course);
+            // assert
+            expect(activityDetailsPage.selectedCourse).toEqual(course);
+        });
+        it('should set selected course to all courses', () => {
+            // arrange
+            activityDetailsPage.selectedCourse = {
+                identifier: 'id1'
+            };
+            // act
+            activityDetailsPage.onCourseChange();
+            // assert
+            expect(activityDetailsPage.selectedCourse).toBe('');
         });
     });
 });

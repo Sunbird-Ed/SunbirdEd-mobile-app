@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService
+  ImpressionType, TelemetryGeneratorService, CollectionService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
@@ -14,6 +14,7 @@ import {
 import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { ContentType } from './../../app.constant';
 
 @Component({
   selector: 'app-activity-details',
@@ -33,6 +34,10 @@ export class ActivityDetailsPage implements OnInit {
   memberSearchQuery: string;
   group: Group;
   activity: GroupActivity;
+  courseList = [];
+  showCourseDropdownSection = false;
+  showCourseDropdown = false;
+  selectedCourse;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -43,6 +48,7 @@ export class ActivityDetailsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
+    private collectionService: CollectionService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -50,11 +56,21 @@ export class ActivityDetailsPage implements OnInit {
     this.activity = extras.activity;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
+    try {
+      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.getNestedCourses(courseData.children);
+      if (this.courseList.length) {
+        this.showCourseDropdownSection = true;
+      }
+    } catch (err) {
+      console.log('fetchCollectionData err', err);
+    }
+    this.getActvityDetails(this.activity.id);
   }
 
   ionViewWillEnter() {
@@ -63,7 +79,6 @@ export class ActivityDetailsPage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
-    this.getActvityDetails();
   }
 
   ionViewWillLeave() {
@@ -73,17 +88,16 @@ export class ActivityDetailsPage implements OnInit {
     }
   }
 
-  private async getActvityDetails() {
+  private async getActvityDetails(id) {
     const req: GroupActivityDataAggregationRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       groupId: this.group.id,
       activity: {
-        id: this.activity.id,
+        id,
         type: this.activity.type
       },
       mergeGroup: this.group
     };
-
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -154,6 +168,32 @@ export class ActivityDetailsPage implements OnInit {
       }
     }
     return lastUpdatedOn;
+  }
+
+  private getNestedCourses(courseData) {
+    courseData.forEach(c => {
+      if (c.contentType === ContentType.COURSE) {
+        this.courseList.push(c);
+      }
+      if (c.children && c.children.length) {
+        this.getNestedCourses(c.children);
+      }
+    });
+  }
+
+  onCourseChange(course?) {
+    if (course && (!this.selectedCourse || (this.selectedCourse.identifier !== course.identifier))) {
+        this.selectedCourse = course;
+        this.getActvityDetails(course.identifier);
+    } else if (!course && this.selectedCourse) {
+        this.selectedCourse = '';
+        this.getActvityDetails(this.activity.id);
+    }
+    this.toggleCoursesDropdown();
+  }
+
+  toggleCoursesDropdown() {
+    this.showCourseDropdown = !this.showCourseDropdown;
   }
 
   handleDeviceBackButton() {

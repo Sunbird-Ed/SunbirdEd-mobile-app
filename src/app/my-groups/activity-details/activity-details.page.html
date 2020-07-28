@@ -3,6 +3,26 @@
     <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
       [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo">
     </sb-course-card>
+    <div class="font-14 ad-courses-container" *ngIf="showCourseDropdownSection">
+      <div class="font-14 ad-courses" (click)="toggleCoursesDropdown()">
+        <span class="ad-course-text" *ngIf="!selectedCourse">All Courses</span>
+        <span class="ad-course-text" *ngIf="selectedCourse">{{selectedCourse.name}}</span>
+        <span class="pull-right" *ngIf="showCourseDropdown" >
+          <ion-icon name="ios-arrow-up"></ion-icon>
+        </span>
+        <span class="pull-right" *ngIf="!showCourseDropdown">
+          <ion-icon name="ios-arrow-down"></ion-icon>
+        </span>
+      </div>
+      <div class="ad-course-dd" *ngIf="showCourseDropdown" >
+        <div class="ad-course-name" (click)="onCourseChange()">
+          All Courses
+        </div>
+        <div class="ad-course-name" *ngFor="let course of courseList" (click)="onCourseChange(course)">
+          {{course.name}}
+        </div>
+      </div>
+    </div>
     <div class="gd-member-search">
       <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
       <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
