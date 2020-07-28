@@ -992,7 +992,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
  private generateAuditEventForAutoFill() {
-    if (!this.onboarding && this.appGlobalService.isOnBoardingCompleted) {
+    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES && this.appGlobalService.isOnBoardingCompleted) {
       let correlationlist: Array<CorrelationData> = this.populateCData(this.profile.board, CorReleationDataType.BOARD);
       correlationlist = correlationlist.concat(this.populateCData(this.profile.medium, CorReleationDataType.MEDIUM));
       correlationlist = correlationlist.concat(this.populateCData(this.profile.grade, CorReleationDataType.CLASS));
