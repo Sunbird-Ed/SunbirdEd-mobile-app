@@ -25,7 +25,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
-import { CanvasPlayerService } from '../../services';
+import { CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType } from '../../services';
 import { File } from '@ionic-native/file/ngx';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 
@@ -169,12 +169,6 @@ describe('QrcoderesultPage', () => {
                         children : [],
                         mimeType: 'mime',
                         contentData: {}
-                    },
-                    {
-                        identifier: 'id3',
-                        children : [],
-                        mimeType: 'mime',
-                        contentData: {}
                     }
                 ],
                 contentData: {
@@ -200,6 +194,9 @@ describe('QrcoderesultPage', () => {
             spyOn(qrcoderesultPage, 'subscribeSdkEvent').and.stub();
             // qrcoderesultPage.chapterFirstChildId = 'id';
             spyOn(document, 'getElementById').and.returnValue('element');
+            mockEvents.unsubscribe = jest.fn(() => true);
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // act
             qrcoderesultPage.ionViewWillEnter();
             // assert
@@ -214,9 +211,18 @@ describe('QrcoderesultPage', () => {
                 [{id: 'do-123', type: 'Content'}]
             );
             setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.PAGE_REQUEST, '',
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.HOME,
+                    '', '', '', undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
                 expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
-                expect(qrcoderesultPage.results.length).toEqual(2);
+                expect(qrcoderesultPage.results.length).toEqual(1);
+                expect(mockEvents.unsubscribe).toHaveBeenCalled();
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 200);
         });
@@ -267,7 +273,7 @@ describe('QrcoderesultPage', () => {
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenLastCalledWith(
                 PageId.QR_CONTENT_RESULT,
-                Environment.ONBOARDING,
+                Environment.HOME,
                 undefined,
                 'Content',
                 undefined,
@@ -282,6 +288,7 @@ describe('QrcoderesultPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
             mockAppGlobalService.isProfileSettingsCompleted = false;
+            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             spyOn(qrcoderesultPage, 'goBack').and.stub();
             // act
@@ -331,6 +338,7 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.isSingleContent = true;
             spyOn(qrcoderesultPage, 'goBack').and.stub();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            qrcoderesultPage.source = '';
             // act
             qrcoderesultPage.handleBackButton();
             // assert
@@ -341,7 +349,7 @@ describe('QrcoderesultPage', () => {
                 PageId.DIAL_CODE_SCAN_RESULT);
             expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
                     false,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     'qr-content-result'
                 );
             setTimeout(() => {
@@ -623,11 +631,19 @@ describe('QrcoderesultPage', () => {
             qrcoderesultPage.content = {
                 dialcodes: ['EQ2345'],
                 leafNodesCount: 4
-            }
+            };
             mockEventsBusService.events = jest.fn(() => of(event));
             mockZone.run = jest.fn((fn) => fn());
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
-            spyOn(qrcoderesultPage, 'getChildContents').and.stub();
+            jest.spyOn(qrcoderesultPage, 'getChildContents').mockImplementation();
+            qrcoderesultPage.source = 'profile-settings';
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            qrcoderesultPage.profile = {
+                board: ['sample-board'],
+                medium: ['sample-medium'],
+                grade: ['sample-class']
+            };
             // action
             qrcoderesultPage.subscribeSdkEvent();
             // assert
@@ -635,6 +651,20 @@ describe('QrcoderesultPage', () => {
             expect(qrcoderesultPage.isDownloadStarted).toEqual(false);
             expect(qrcoderesultPage.getChildContents).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                Environment.ONBOARDING,
+                'Updated',
+                undefined,
+                AuditType.SET_PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                [{id: 'sample-board', type: 'Board'},
+                 {id: 'sample-medium', type: 'Medium'},
+                 {id: 'sample-class', type: 'Class'},
+                 {id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE}],
+                {l1: undefined}
+            );
         });
         it('should call import contents', () => {
             // arrange

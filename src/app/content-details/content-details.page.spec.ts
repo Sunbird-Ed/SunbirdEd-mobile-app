@@ -293,7 +293,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
@@ -341,7 +341,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -386,7 +386,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: false }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -442,6 +442,46 @@ describe('ContentDetailsPage', () => {
                 );
                 expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should invoked playContent() for downloaded content', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '4g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            contentDetailsPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    { networkType: '4g' },
+                    undefined,
+                    [{ id: 'do-123', type: 'Content' }]
+                );
+                expect(mockNetwork.type).toBe('4g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    InteractType.PLAY,
+                    InteractSubtype.DOWNLOAD,
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.ONBOARDING
+                );
                 done();
             }, 0);
         });
@@ -1278,7 +1318,7 @@ describe('ContentDetailsPage', () => {
             InteractType.DOWNLOAD_COMPLETE,
             InteractType.DOWNLOAD_COMPLETE,
             PageId.QR_CONTENT_RESULT,
-            Environment.ONBOARDING,
+            Environment.HOME,
             undefined,
             undefined, undefined, undefined,
             [{ id: 'do-123', type: 'Content' }, { id: 'content-detail', type: 'ChildUi' }, {
@@ -1299,7 +1339,7 @@ describe('ContentDetailsPage', () => {
         );
         expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
             PageId.CONTENT_DETAIL,
-            Environment.ONBOARDING,
+            Environment.HOME,
             undefined,
             undefined,
             undefined,
@@ -2021,7 +2061,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]
@@ -2055,7 +2095,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]
@@ -2087,7 +2127,7 @@ describe('ContentDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.SELECT_CLOSE,
                     InteractSubtype.CANCEL,
-                    Environment.ONBOARDING,
+                    Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     { id: 'sample_id1', type: 'Content', version: '' }, undefined, undefined,
                     [{ id: 'download-popup', type: 'ChildUi' }]
