@@ -636,7 +636,7 @@ describe('QrcoderesultPage', () => {
             mockZone.run = jest.fn((fn) => fn());
             mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             jest.spyOn(qrcoderesultPage, 'getChildContents').mockImplementation();
-            qrcoderesultPage.onboarding = false;
+            qrcoderesultPage.source = 'profile-settings';
             mockAppGlobalService.isOnBoardingCompleted = true;
             mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
             qrcoderesultPage.profile = {
