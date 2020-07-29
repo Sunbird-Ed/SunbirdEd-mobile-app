@@ -5,7 +5,7 @@
 
 :host {
   div.scrollable-container {
-    --background: green !important;
+    --background: $green !important;
   }
 }
 
@@ -123,7 +123,7 @@
 
 .animation-background {
   padding: 0px 8px 0px 8px;
-  background-color: #f2f2f2;
+  background-color: map-get($colors, white_f2);
 }
 
 .sb-view-more {
@@ -137,7 +137,7 @@
 .explore-more-content {
   border-radius: 4px;
   background-color: $white;
-  color: #004D9F;
+  color: map-get($colors , primary);
   padding-left: 16px;
   padding-right: 16px;
   margin-top: 12px;
@@ -215,7 +215,7 @@
   }
 
   .sb-course-heading {
-    background: #E5EDF5;
+    background: map-get($colors , pale_blue);
     padding: 16px;
     font-size: 18px;
     font-weight: bold;
