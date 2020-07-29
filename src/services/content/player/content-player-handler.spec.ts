@@ -1,5 +1,5 @@
 import { ContentPlayerHandler } from '../../../services/content/player/content-player-handler';
-import { TelemetryGeneratorService, CommonUtilService } from '../../../services';
+import { TelemetryGeneratorService, CommonUtilService, AppHeaderService } from '../../../services';
 import { PlayerService, CourseService } from 'sunbird-sdk';
 import { File } from '@ionic-native/file/ngx';
 import { CanvasPlayerService } from '../../canvas-player.service';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { of, identity } from 'rxjs';
 import { mockPlayerConfigData, mockContent } from './content.player-handler.spec.data';
 import { ContentInfo } from '../content-info';
+import { ContentUtil } from '@app/util/content-util';
 
 describe('ContentPlayerHandler', () => {
     let contentPlayerHandler: ContentPlayerHandler;
@@ -38,6 +39,7 @@ describe('ContentPlayerHandler', () => {
         batchId: 'sample_batch_id'
     } as any;
 
+    const mockAppHeaderService: Partial<AppHeaderService> = {};
 
     beforeAll(() => {
         contentPlayerHandler = new ContentPlayerHandler(
@@ -47,7 +49,8 @@ describe('ContentPlayerHandler', () => {
             mockFile as File,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockRouter as Router,
-            mockCommonUtilService as CommonUtilService
+            mockCommonUtilService as CommonUtilService,
+            mockAppHeaderService as AppHeaderService
         );
     });
 
@@ -172,4 +175,135 @@ describe('ContentPlayerHandler', () => {
         });
     });
 
+    describe('playContent', () => {
+        it('should play the content from the Streaming url if the url is present and user is online ', () => {
+            // arrange
+            const content = {
+                identifier: 'identifier',
+                hierarchyInfo: [{ identifier: 'identifier1' }, { identifier: 'identifier1' }],
+                contentType: 'contentType',
+                pkgVersion: 'pkgVersion',
+                contentData: {
+                    streamingUrl: 'streamingUrl'
+                },
+                mimeType: ''
+            };
+            const navExtras = {};
+            const telemetryDetails = {
+                pageId: 'id',
+                corRelationList: []
+            };
+            mockAppHeaderService.hideHeader = jest.fn();
+            jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnThis();
+            jest.spyOn(ContentUtil, 'generateRollUp').mockReturnThis();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            contentPlayerHandler.launchContentPlayer = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+
+            // act
+            contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
+
+            // assert
+            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+        });
+
+        it('should play the content from the local, if the user is offline and content locally available', () => {
+            // arrange
+            const content = {
+                identifier: 'identifier',
+                hierarchyInfo: [{ identifier: 'identifier1' }, { identifier: 'identifier1' }],
+                contentType: 'contentType',
+                pkgVersion: 'pkgVersion',
+                contentData: {
+                    streamingUrl: 'streamingUrl'
+                },
+                mimeType: '',
+                isAvailableLocally: true
+            };
+            const navExtras = {};
+            const telemetryDetails = {
+                pageId: 'id',
+                corRelationList: []
+            };
+            mockAppHeaderService.hideHeader = jest.fn();
+            jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnThis();
+            jest.spyOn(ContentUtil, 'generateRollUp').mockReturnThis();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            contentPlayerHandler.launchContentPlayer = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+
+            // act
+            contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
+
+            // assert
+            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+        });
+
+        it('should play the content from the local, if the user is online and content locally available', () => {
+            // arrange
+            const content = {
+                identifier: 'identifier',
+                hierarchyInfo: [{ identifier: 'identifier1' }, { identifier: 'identifier1' }],
+                contentType: 'contentType',
+                pkgVersion: 'pkgVersion',
+                contentData: {
+                },
+                mimeType: '',
+                isAvailableLocally: true
+            };
+            const navExtras = {};
+            const telemetryDetails = {
+                pageId: 'id',
+                corRelationList: []
+            };
+            mockAppHeaderService.hideHeader = jest.fn();
+            jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnThis();
+            jest.spyOn(ContentUtil, 'generateRollUp').mockReturnThis();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            contentPlayerHandler.launchContentPlayer = jest.fn();
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+
+            // act
+            contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true);
+
+            // assert
+            expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(contentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+        });
+
+        it('should navigate to content details page if the above conditions fail', () => {
+            // arrange
+            const content = {
+                identifier: 'identifier',
+                hierarchyInfo: [{ identifier: 'identifier1' }, { identifier: 'identifier1' }],
+                contentType: 'contentType',
+                pkgVersion: 'pkgVersion',
+                contentData: {
+                },
+                mimeType: '',
+                isAvailableLocally: false
+            };
+            const navExtras = {};
+            const telemetryDetails = {
+                pageId: 'id',
+                corRelationList: []
+            };
+            mockAppHeaderService.hideHeader = jest.fn();
+            jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnThis();
+            jest.spyOn(ContentUtil, 'generateRollUp').mockReturnThis();
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+
+            // act
+            contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true, false, false);
+
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled();
+        });
+    });
 });

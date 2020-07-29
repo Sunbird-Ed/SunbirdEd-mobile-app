@@ -16,6 +16,7 @@ import { of, throwError } from 'rxjs';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
@@ -69,6 +70,7 @@ describe('ChapterDetailsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {};
+    const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
 
     beforeAll(() => {
         chapterDetailsPage = new ChapterDetailsPage(
@@ -93,7 +95,8 @@ describe('ChapterDetailsPage', () => {
             mockSbProgressLoader as SbProgressLoader,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
-            mockPlatform as Platform
+            mockPlatform as Platform,
+            mockContentPlayerHandler as ContentPlayerHandler
         );
     });
 
@@ -429,7 +432,8 @@ describe('ChapterDetailsPage', () => {
                 mockSbProgressLoader as SbProgressLoader,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
-                mockPlatform as Platform
+                mockPlatform as Platform,
+                mockContentPlayerHandler as ContentPlayerHandler
             );
         });
         it('should return all batches', (done) => {
@@ -849,9 +853,10 @@ describe('ChapterDetailsPage', () => {
             jest.spyOn(chapterDetailsPage, 'loadFirstChildren').mockImplementation(() => {
                 return;
             });
-            jest.spyOn(chapterDetailsPage, 'navigateToChildrenDetailsPage').mockImplementation(() => {
-                return;
-            });
+            mockContentPlayerHandler.playContent = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-02');
             // act
             chapterDetailsPage.startLearning();
             // assert
@@ -864,13 +869,16 @@ describe('ChapterDetailsPage', () => {
                     undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+            expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
+            expect(mockDatePipe.transform).toHaveBeenCalled();
         });
 
         it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
-            chapterDetailsPage.isBatchNotStarted = true;
+            chapterDetailsPage.isBatchNotStarted = false;
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
             mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
             mockCommonUtilService.showToast = jest.fn();
@@ -885,13 +893,13 @@ describe('ChapterDetailsPage', () => {
                 new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
                     undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
             expect(mockDatePipe.transform).toHaveBeenCalled();
         });
 
-        it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
+        it('should skip the naviation flow, if there are no contents', () => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
@@ -909,7 +917,6 @@ describe('ChapterDetailsPage', () => {
                     undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBe(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
         });
     });
 
@@ -1263,6 +1270,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = true;
             chapterDetailsPage.isBatchNotStarted = false;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             // act
             chapterDetailsPage.openContentDetails(event);
             // assert
@@ -1451,7 +1459,8 @@ describe('ChapterDetailsPage', () => {
                 mockSbProgressLoader as SbProgressLoader,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
-                mockPlatform as Platform
+                mockPlatform as Platform,
+                mockContentPlayerHandler as ContentPlayerHandler
             );
         });
         beforeEach(() => {
@@ -1595,7 +1604,8 @@ describe('ChapterDetailsPage', () => {
                 mockSbProgressLoader as SbProgressLoader,
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
-                mockPlatform as Platform
+                mockPlatform as Platform,
+                mockContentPlayerHandler as ContentPlayerHandler
             );
         });
         beforeEach(() => {

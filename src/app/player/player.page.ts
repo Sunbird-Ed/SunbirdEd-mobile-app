@@ -22,7 +22,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   backButtonSubscription: Subscription;
   course: Course;
   pauseSubscription: any;
-  isFromToc: boolean;
+  private navigateBackToContentDetails: boolean;
   corRelationList;
 
   @ViewChild('preview') previewElement: ElementRef;
@@ -49,7 +49,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
       this.course = this.router.getCurrentNavigation().extras.state.course;
-      this.isFromToc = this.router.getCurrentNavigation().extras.state.isFromTOC;
+      this.navigateBackToContentDetails = this.router.getCurrentNavigation().extras.state.navigateBackToContentDetails;
       this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
     }
   }
@@ -176,7 +176,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       selectedUser: this.appGlobalService.getSelectedUser()
     });
 
-    if (this.isFromToc) {
+    if (this.navigateBackToContentDetails) {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: content ? content : this.config['metadata'],
