@@ -1,14 +1,17 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'support-acknowledgement',
-    templateUrl: './support-acknowledgement.compoentn.html',
-    styleUrls: ['./support-acknowledgement.compoentn.scss']
+    templateUrl: './support-acknowledgement.component.html',
+    styleUrls: ['./support-acknowledgement.component.scss']
 })
 export class SupportAcknowledgement {
     @Output() closeEvents = new EventEmitter();
     @Input() boardContact: any;
-    constructor() {}
+    constructor(
+        private translate: TranslateService
+    ) {}
 
     close() {
         this.closeEvents.emit(true);
@@ -16,7 +19,7 @@ export class SupportAcknowledgement {
 
     openDialpad() {
         window.open("tel:" + this.boardContact.contactinfo.number, "_system");
-        // window.open("tel:" + this.boardContact.contactinfo.number, "_blank"); 
+        // window.open("tel:" + this.boardContact.contactinfo.number, "_blank");
     }
 
 }

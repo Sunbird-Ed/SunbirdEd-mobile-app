@@ -3,7 +3,7 @@
 .container {
     width: -webkit-fill-available;
     height: -webkit-fill-available;
-    background: #020202a1;
+    background: map-get($colors, light_black);
     position: fixed;
     top: 0px;
     display: -webkit-flexbox;
