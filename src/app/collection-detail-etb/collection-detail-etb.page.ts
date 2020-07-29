@@ -1353,7 +1353,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   playContent(event) {
     const telemetryDetails = {
-      pageId: PageId.COURSE_DETAIL,
+      pageId: PageId.COLLECTION_DETAIL,
       corRelationList: this.corRelationList
     };
 

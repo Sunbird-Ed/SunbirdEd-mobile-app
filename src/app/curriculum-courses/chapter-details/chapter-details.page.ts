@@ -449,7 +449,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     if (this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
       const telemetryDetails = {
-        pageId: PageId.COURSE_DETAIL,
+        pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
       this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
@@ -480,7 +480,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       );
 
       const telemetryDetails = {
-        pageId: PageId.COURSE_DETAIL,
+        pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
       this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
