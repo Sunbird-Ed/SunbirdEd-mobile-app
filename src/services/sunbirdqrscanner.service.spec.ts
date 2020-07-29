@@ -1,5 +1,5 @@
 import { SunbirdQRScanner } from './sunbirdqrscanner.service';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -10,7 +10,6 @@ import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { of } from 'rxjs';
-import { EventEmitter } from 'events';
 import { InteractType, InteractSubtype, PageId, Environment } from './telemetry-constants';
 
 describe('SunbirdQRScanner', () => {
@@ -23,7 +22,7 @@ describe('SunbirdQRScanner', () => {
   mockTranslateService.onLangChange = {
     subscribe: jest.fn((fn) => {
       return fn({});
-  })
+    })
   } as any;
   const mockPlatform: Partial<Platform> = {};
   const mockQRScannerResultHandler: Partial<QRScannerResultHandler> = {};
@@ -58,6 +57,7 @@ describe('SunbirdQRScanner', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should create an instance of SunbirdQRScanner', () => {

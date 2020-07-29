@@ -28,7 +28,7 @@ import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, Log
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype } from '../../services';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -1243,6 +1243,7 @@ describe('SearchPage', () => {
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1255,12 +1256,12 @@ describe('SearchPage', () => {
                     AuditType.TOAST_SEEN,
                     ImpressionSubtype.OFFLINE_MODE,
                     PageId.SCAN_OR_MANUAL,
-                    Environment.HOME,
+                    Environment.ONBOARDING,
                     undefined,
                     undefined,
                     undefined,
                     undefined,
-                    [{id: 'abcdef', type: 'QR'}]
+                    [{ id: 'abcdef', type: 'QR' }]
                 );
                 done();
             }, 0);
@@ -1479,9 +1480,9 @@ describe('SearchPage', () => {
         it('should push not downloaded identifiers in to queue', (done) => {
             // arrange
             const importContentResp = [
-                {status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1'}];
+                { status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1' }];
             mockContentService.importContent = jest.fn(() => of(importContentResp));
-            const parent = {identifier: 'id'};
+            const parent = { identifier: 'id' };
             // act
             searchPage.downloadParentContent(parent);
             // assert
@@ -1576,7 +1577,7 @@ describe('SearchPage', () => {
                 jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
                     return Promise.resolve();
                 });
-                searchPage.displayDialCodeResult = [{dialCodeResult: ['result-1', 'result-2']}];
+                searchPage.displayDialCodeResult = [{ dialCodeResult: ['result-1', 'result-2'] }];
                 mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
                 // act
                 searchPage.handleDeviceBackButton();
@@ -1598,7 +1599,7 @@ describe('SearchPage', () => {
                 jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
                     return Promise.resolve();
                 });
-                searchPage.displayDialCodeResult = [{dialCodeResult: []}];
+                searchPage.displayDialCodeResult = [{ dialCodeResult: [] }];
                 mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
                 // act
                 searchPage.handleDeviceBackButton();
@@ -1613,6 +1614,24 @@ describe('SearchPage', () => {
                     {id: 'filter', type: 'DiscoveryType'}]
                 );
             });
+        });
+    });
+
+    describe('goBack', () => {
+        it('should generate beck telemetry for qrCode', () => {
+            searchPage.displayDialCodeResult = [{
+                dialCodeResult: ['result-1']
+            }];
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            // act
+            searchPage.goBack();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                false,
+                Environment.ONBOARDING,
+                PageId.QR_BOOK_RESULT
+            );
         });
     });
 

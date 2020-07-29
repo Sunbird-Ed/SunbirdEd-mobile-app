@@ -98,7 +98,7 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockEnrolledData),
+        // getCurrentNavigation: jest.fn(() => mockEnrolledData),
         navigate: jest.fn(),
         getCurrentNavigation: jest.fn(() => mockEnrolledData) as any
     };
@@ -2269,6 +2269,36 @@ describe('EnrolledCourseDetailsPage', () => {
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
+    });
+
+    describe('isCourseModifiedAfterEnrolment', () =>{
+        it('should return false if course lastUpdatedOn date is less than course enrolledDate', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                enrolledDate: '2018-11-12T10:57:02.000+0000'
+            };
+            enrolledCourseDetailsPage.course = {
+                lastUpdatedOn: '2018-11-11T10:57:02.000+0000'
+            };
+            // act
+            const isModified = enrolledCourseDetailsPage.isCourseModifiedAfterEnrolment();
+            // assert
+            expect(isModified).toBe(false);
+        });
+
+        it('should return true if course lastUpdatedOn date is greater than course enrolledDate', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                enrolledDate: '2018-11-12T10:57:02.000+0000'
+            };
+            enrolledCourseDetailsPage.course = {
+                lastUpdatedOn: '2018-11-13T10:57:02.000+0000'
+            };
+            // act
+            const isModified = enrolledCourseDetailsPage.isCourseModifiedAfterEnrolment();
+            // assert
+            expect(isModified).toBe(true);
+        });
     });
 
 });
