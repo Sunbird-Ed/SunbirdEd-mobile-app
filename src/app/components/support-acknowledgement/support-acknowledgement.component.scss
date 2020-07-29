@@ -1,7 +1,9 @@
+@import "src/assets/styles/_variables.scss";
+
 .container {
     width: -webkit-fill-available;
     height: -webkit-fill-available;
-    background: #020202a1;
+    background: map-get($color , light_black );
     position: fixed;
     top: 0px;
     display: -webkit-flexbox;
@@ -17,7 +19,7 @@
 }
 
 .header {
-    background-color: #fbfbf9;
+    background-color: $white;
     width: 331px;
     height: 279px;
     margin: 0 auto;
@@ -44,7 +46,7 @@
 }
 
 .message {
-    color: #008840;
+    color: $green;
     font-weight: bolder;    
 }
 
@@ -54,14 +56,14 @@
 
 .contact-no {
     font-weight: 900;
-    color: #024f9d;
+    color: map-get($color, deep_blue);
 }
 
 .btn-call {
     width: 95%;
     height: 16%;
     font-size: 16px;
-    color: #fff;
-    background: #008840;
+    color: $white;
+    background: $green;
     margin-top: 24px;
 }
