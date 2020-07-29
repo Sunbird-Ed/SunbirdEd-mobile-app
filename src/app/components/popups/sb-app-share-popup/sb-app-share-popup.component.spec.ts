@@ -83,6 +83,19 @@ describe('SbAppSharePopupComponent', () => {
         expect(sbAppSharePopupComponent).toBeTruthy();
     });
 
+    it('should create a instance of sbAppSharePopupComponent', () => {
+        // arrange
+        // act
+        sbAppSharePopupComponent.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CLOSE_CLICKED);
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.CLOSE_CLICKED,
+            PageId.SHARE_APP_POPUP,
+            Environment.SETTINGS
+        );
+    });
+
     describe('exportApk()', () => {
 
         it('should share the APK if shareParams.byFile=true', (done) => {
@@ -152,6 +165,34 @@ describe('SbAppSharePopupComponent', () => {
         sbAppSharePopupComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn
         } as any;
+        // act
+        sbAppSharePopupComponent.ngOnInit();
+        // assert
+        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        expect(unsubscribeFn).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW, '',
+                PageId.SHARE_APP_POPUP,
+                Environment.SETTINGS);
+            expect(sbAppSharePopupComponent.shareUrl).toEqual(
+                'https://play.google.com/store/apps/details?id=org.sunbird.' +
+                'app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
+            done();
+        }, 0);
+    });
+
+    it('should not brek if getAPKSize() gives error response', (done) => {
+        // arrange
+        const unsubscribeFn = jest.fn();
+        mockPlatform.backButton = {
+            subscribeWithPriority: jest.fn((_, fn) => fn()),
+        } as any;
+        sbAppSharePopupComponent.backButtonFunc = {
+            unsubscribe: unsubscribeFn
+        } as any;
+
+        mockUtilityService.getApkSize = jest.fn(() => Promise.reject({}));
         // act
         sbAppSharePopupComponent.ngOnInit();
         // assert
@@ -448,6 +489,32 @@ describe('SbAppSharePopupComponent', () => {
                 undefined,
                 true
             );
+            done();
+        }, 0);
+    });
+
+    it('should not show any toast if not of the button is clicked and popup is dismissed', (done) => {
+        // arrange
+        mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: false}));
+        mockPopoverCtrl.dismiss = jest.fn();
+
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+            await callback(mockCommonUtilService.translateMessage('ALLOW1'));
+            return {
+                present: jest.fn(() => Promise.resolve())
+            };
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            // assert
+            expect(mockCommonUtilService.showSettingsPageToast).not.toHaveBeenCalled();
             done();
         }, 0);
     });

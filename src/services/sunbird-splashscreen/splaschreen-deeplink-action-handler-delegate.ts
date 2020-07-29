@@ -544,7 +544,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
 
       // this.appGlobalServices.skipCoachScreenForDeeplink = true;
-      if (content) {
+      if (content && content.contentData &&
+        content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
+      } else if (content) {
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
@@ -575,10 +578,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     this.appGlobalServices.limitedShareQuizContent = identifier;
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
-    }
-    if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
-      this.closeProgressLoader();
-      return;
     }
     if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
       this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });

@@ -70,7 +70,22 @@ describe('AccountRecoveryInfoComponent', () => {
         // act
         accountRecoveryInfoComponent.ngOnInit();
         // assert
-        expect(accountRecoveryInfoComponent.profile).toEqual({ uid: '0123456789' });
+        expect(accountRecoveryInfoComponent['profile']).toEqual({ uid: '0123456789' });
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW, '',
+            PageId.RECOVERY_ACCOUNT_ID_POPUP,
+            Environment.USER
+        );
+        expect(mockMenuController.enable).toHaveBeenCalledWith(false);
+    });
+
+    it('should generate IMPRESSION telemtry on ngOnInit for recovery mail', () => {
+        // arrange
+        accountRecoveryInfoComponent.recoveryPhone = '';
+        // act
+        accountRecoveryInfoComponent.ngOnInit();
+        // assert
+        expect(accountRecoveryInfoComponent['profile']).toEqual({ uid: '0123456789' });
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
             ImpressionType.VIEW, '',
             PageId.RECOVERY_ACCOUNT_ID_POPUP,
@@ -87,7 +102,7 @@ describe('AccountRecoveryInfoComponent', () => {
 
         } as any;
 
-        accountRecoveryInfoComponent.unregisterBackButton = {
+        accountRecoveryInfoComponent['unregisterBackButton'] = {
             unsubscribe: jest.fn(),
         } as any;
 
@@ -99,7 +114,7 @@ describe('AccountRecoveryInfoComponent', () => {
 
     it('should enable MenuDrawer and unsubscribe back function', () => {
         // arrange
-        accountRecoveryInfoComponent.unregisterBackButton = {
+        accountRecoveryInfoComponent['unregisterBackButton'] = {
             unsubscribe: jest.fn(),
 
         } as any;
@@ -107,7 +122,16 @@ describe('AccountRecoveryInfoComponent', () => {
         accountRecoveryInfoComponent.ionViewWillLeave();
         // assert
         expect(mockMenuController.enable).toHaveBeenCalledWith(true);
-        expect(accountRecoveryInfoComponent.unregisterBackButton.unsubscribe).toHaveBeenCalled();
+        expect(accountRecoveryInfoComponent['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should enable MenuDrawer and should not unsubscribe back function', () => {
+        // arrange
+        accountRecoveryInfoComponent['unregisterBackButton'] = undefined;
+        // act
+        accountRecoveryInfoComponent.ionViewWillLeave();
+        // assert
+        expect(mockMenuController.enable).toHaveBeenCalledWith(true);
     });
 
     it('should update the server profile successfully', (done) => {
@@ -181,6 +205,23 @@ describe('AccountRecoveryInfoComponent', () => {
         accountRecoveryInfoComponent.submitRecoveryId(accountRecoveryInfoComponent.RecoveryType.PHONE);
         // assert
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
+    });
+
+    it('should update the server profile successfully and handle any response from updateServerProfile', (done) => {
+        // arrange
+        accountRecoveryInfoComponent.recoveryPhone = '';
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+        accountRecoveryInfoComponent.recoveryEmailForm = { value: { email: 'abc@email.com' } } as any;
+        mockProfileService.updateServerProfile = jest.fn(() => of(
+            { response: 'SUCCESS1' } as any));
+        // act
+        accountRecoveryInfoComponent.submitRecoveryId(accountRecoveryInfoComponent.RecoveryType.EMAIL);
+        // assert
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).not.toHaveBeenCalledWith({ isEdited: true });
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
+            done();
+        }, 1);
     });
 
     it('should dismiss the popup when cancel is clicked', () => {

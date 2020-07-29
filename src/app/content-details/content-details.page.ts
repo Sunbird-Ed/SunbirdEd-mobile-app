@@ -230,13 +230,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.breadCrumbData = extras.breadCrumb;
       this.launchPlayer = extras.launchplayer;
       this.resumedCourseCardData = extras.resumedCourseCardData;
-      this.isSingleContent = extras.isSingleContent;
+      this.isSingleContent = extras.isSingleContent || this.isSingleContent;
       this.resultLength = extras.resultsSize;
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
-      this.onboarding = extras.onboarding;
+      this.onboarding = extras.onboarding || this.onboarding;
     }
     this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
       map((requests) => !!requests.find((request) => request.identifier === this.identifier))
@@ -602,7 +602,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
         download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
         download ? PageId.QR_CONTENT_RESULT : PageId.CONTENT_DETAIL,
-        this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         undefined,
         undefined,
         undefined,
@@ -622,12 +622,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.PAGE_REQUEST, '',
         PageId.CONTENT_DETAIL,
-        this.onboarding ? Environment.ONBOARDING : Environment.HOME
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
       );
 
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
         PageId.CONTENT_DETAIL,
-        this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         undefined,
         undefined,
         undefined,
@@ -684,7 +684,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else if (this.isSingleContent) {
-      window.history.go(-3);
+      !this.onboarding ? this.router.navigate([`/${RouterLinks.TABS}`]) : window.history.go(-3);
     } else if (this.resultLength === 1) {
       // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
       window.history.go(-2);
@@ -904,7 +904,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CLOSE,
       InteractSubtype.CANCEL,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
       PageId.CONTENT_DETAIL,
       ObjectTelemetry,
       undefined,
@@ -1017,6 +1017,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.downloadContent();
       }
     } else {
+      if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          InteractType.PLAY,
+          InteractSubtype.DOWNLOAD,
+          PageId.QR_CONTENT_RESULT,
+          Environment.ONBOARDING
+        );
+      }
       this.playContent(isStreaming);
     }
   }
@@ -1287,7 +1295,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   checkLimitedContentSharingFlag(content) {
-    this.limitedShareContentFlag = (content.contentData &&
+    this.limitedShareContentFlag = (content && content.contentData &&
       content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
       this.content = content;

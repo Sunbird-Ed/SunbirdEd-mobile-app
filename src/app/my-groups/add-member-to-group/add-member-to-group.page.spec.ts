@@ -13,6 +13,7 @@ import {
 } from '@app/services';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
+import { RecaptchaComponent } from 'ng-recaptcha';
 
 describe('AddMemberToGroupPage', () => {
     let addMemberToGroupPage: AddMemberToGroupPage;
@@ -158,11 +159,15 @@ describe('AddMemberToGroupPage', () => {
     });
 
     describe('onVerifyClick', () => {
+        beforeEach(() => {
+            addMemberToGroupPage.cap = {
+                execute: jest.fn(),
+                reset: jest.fn(),
+                resolved: of('sample') as any
+            } as Partial<RecaptchaComponent> as RecaptchaComponent;
+        });
         it('should return errorMessage if userId is undefined', (done) => {
             addMemberToGroupPage.isCaptchaEnabled = true;
-            addMemberToGroupPage.cap = {
-                execute: jest.fn()
-            };
             addMemberToGroupPage.username = undefined;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             addMemberToGroupPage.onVerifyClick();
@@ -184,7 +189,7 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.username = 'sample-user-name';
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             addMemberToGroupPage.isCaptchaEnabled = true;
-            addMemberToGroupPage.captchaResponse = undefined;
+            mockProfileService.checkServerProfileExists = jest.fn(() => throwError(''));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -194,23 +199,15 @@ describe('AddMemberToGroupPage', () => {
                     PageId.ADD_MEMBER
                 );
                 expect(addMemberToGroupPage.username).toBe('sample-user-name');
+                expect(addMemberToGroupPage.showLoader).toBe(false);
                 done();
             }, 0);
         });
 
         it('should return userDetails for serverProfile', (done) => {
-            addMemberToGroupPage.cap = {
-                execute: jest.fn()
-            };
+            // arrange
             addMemberToGroupPage.isCaptchaEnabled = true;
-            addMemberToGroupPage.captchaResponse = 'captch-response';
             addMemberToGroupPage.username = 'sample-user-id';
-            // const dismissFn = jest.fn(() => Promise.resolve());
-            // const presentFn = jest.fn(() => Promise.resolve());
-            // mockCommonUtilService.getLoader = jest.fn(() => ({
-            //     present: presentFn,
-            //     dismiss: dismissFn,
-            // }));
             mockProfileService.checkServerProfileExists = jest.fn(() => of({
                 exists: true,
                 name: 'jhon'
@@ -232,8 +229,6 @@ describe('AddMemberToGroupPage', () => {
                     ID.VERIFY_MEMBER
                 );
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
-                // expect(presentFn).toHaveBeenCalled();
-                // expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 expect(addMemberToGroupPage.userDetails).toStrictEqual({
                     exists: true,
@@ -258,12 +253,6 @@ describe('AddMemberToGroupPage', () => {
         it('should not return userDetails if serverProfile is undefined', (done) => {
             addMemberToGroupPage.username = 'sample-user-id';
             addMemberToGroupPage.isCaptchaEnabled = false;
-            // const dismissFn = jest.fn(() => Promise.resolve());
-            // const presentFn = jest.fn(() => Promise.resolve());
-            // mockCommonUtilService.getLoader = jest.fn(() => ({
-            //     present: presentFn,
-            //     dismiss: dismissFn,
-            // }));
             mockProfileService.checkServerProfileExists = jest.fn(() => of(undefined)) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -271,8 +260,6 @@ describe('AddMemberToGroupPage', () => {
             // assert
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
-                // expect(presentFn).toHaveBeenCalled();
-                // expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 done();
             }, 0);
@@ -280,12 +267,6 @@ describe('AddMemberToGroupPage', () => {
 
         it('should not return userDetails for catch part', (done) => {
             addMemberToGroupPage.username = 'sample-user-id';
-            // const dismissFn = jest.fn(() => Promise.resolve());
-            // const presentFn = jest.fn(() => Promise.resolve());
-            // mockCommonUtilService.getLoader = jest.fn(() => ({
-            //     present: presentFn,
-            //     dismiss: dismissFn,
-            // }));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockProfileService.checkServerProfileExists = jest.fn(() => throwError({ error: 'error' })) as any;
             // act
@@ -293,8 +274,6 @@ describe('AddMemberToGroupPage', () => {
             // assert
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
-                // expect(presentFn).toHaveBeenCalled();
-                // expect(dismissFn).toHaveBeenCalled();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
                 done();
             }, 0);
@@ -479,11 +458,11 @@ describe('AddMemberToGroupPage', () => {
         });
     });
 
-    it('should return captchaResponse', (done) => {
-        addMemberToGroupPage.captchaResolved('');
-        setTimeout(() => {
-            expect(addMemberToGroupPage.captchaResponse).toBe('');
-            done();
-        }, 0);
-    });
+    // it('should return captchaResponse', (done) => {
+    //     addMemberToGroupPage.captchaResolved('');
+    //     setTimeout(() => {
+    //         expect(addMemberToGroupPage.captchaResponse).toBe('');
+    //         done();
+    //     }, 0);
+    // });
 });

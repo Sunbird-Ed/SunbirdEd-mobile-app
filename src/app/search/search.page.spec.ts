@@ -27,8 +27,8 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService } from '../../services';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype } from '../../services';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -1242,7 +1242,8 @@ describe('SearchPage', () => {
                 () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1251,15 +1252,16 @@ describe('SearchPage', () => {
                 expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
-                    Environment.HOME,
-                    'Updated',
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    AuditType.TOAST_SEEN,
+                    ImpressionSubtype.OFFLINE_MODE,
+                    PageId.SCAN_OR_MANUAL,
+                    Environment.ONBOARDING,
                     undefined,
-                    'set-profile',
                     undefined,
                     undefined,
                     undefined,
-                    [{id: 'abcdef', type: 'QR'}]
+                    [{ id: 'abcdef', type: 'QR' }]
                 );
                 done();
             }, 0);
@@ -1395,16 +1397,26 @@ describe('SearchPage', () => {
                     identifier: 'id1'
                 }
             };
+            const collection = {
+                identifier: 'identifier',
+                mimeType: MimeType.COLLECTION
+            };
+            searchPage.isDialCodeSearch = true;
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve({}));
+            mockAppGlobalService.setOnBoardingCompleted = jest.fn(() => Promise.resolve());
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
+            mockZone.run = jest.fn((fn) => fn());
             mockAppGlobalService.getCurrentUser = jest.fn(() => { });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
             // act
-            searchPage.checkParent('parent', 'child');
+            searchPage.checkParent('parent', collection);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    [RouterLinks.CONTENT_DETAILS],
-                    expect.anything()
-                );
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1468,9 +1480,9 @@ describe('SearchPage', () => {
         it('should push not downloaded identifiers in to queue', (done) => {
             // arrange
             const importContentResp = [
-                {status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1'}];
+                { status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1' }];
             mockContentService.importContent = jest.fn(() => of(importContentResp));
-            const parent = {identifier: 'id'};
+            const parent = { identifier: 'id' };
             // act
             searchPage.downloadParentContent(parent);
             // assert
@@ -1565,7 +1577,7 @@ describe('SearchPage', () => {
                 jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
                     return Promise.resolve();
                 });
-                searchPage.displayDialCodeResult = [{dialCodeResult: ['result-1', 'result-2']}];
+                searchPage.displayDialCodeResult = [{ dialCodeResult: ['result-1', 'result-2'] }];
                 mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
                 // act
                 searchPage.handleDeviceBackButton();
@@ -1587,7 +1599,7 @@ describe('SearchPage', () => {
                 jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
                     return Promise.resolve();
                 });
-                searchPage.displayDialCodeResult = [{dialCodeResult: []}];
+                searchPage.displayDialCodeResult = [{ dialCodeResult: [] }];
                 mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
                 // act
                 searchPage.handleDeviceBackButton();
@@ -1602,6 +1614,24 @@ describe('SearchPage', () => {
                     {id: 'filter', type: 'DiscoveryType'}]
                 );
             });
+        });
+    });
+
+    describe('goBack', () => {
+        it('should generate beck telemetry for qrCode', () => {
+            searchPage.displayDialCodeResult = [{
+                dialCodeResult: ['result-1']
+            }];
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            // act
+            searchPage.goBack();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                false,
+                Environment.ONBOARDING,
+                PageId.QR_BOOK_RESULT
+            );
         });
     });
 

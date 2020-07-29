@@ -52,6 +52,7 @@ import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-
 import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
 import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
+import { AddActivityToGroupComponent } from './add-activity-to-group/add-activity-to-group.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explo
     CourseCompletionPopoverComponent,
     SupportAcknowledgement,
     AcknowledgeResponseComponent,
-    ExploreBooksSortComponent
+    ExploreBooksSortComponent,
+    AddActivityToGroupComponent
   ],
   imports: [
     CommonModule,
@@ -187,7 +189,8 @@ import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explo
     CourseCompletionPopoverComponent,
     SupportAcknowledgement,
     AcknowledgeResponseComponent,
-    ExploreBooksSortComponent
+    ExploreBooksSortComponent,
+    AddActivityToGroupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

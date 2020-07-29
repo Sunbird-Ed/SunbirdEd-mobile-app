@@ -257,8 +257,8 @@ export class CommonUtilService {
             InteractType.POPUP_LOADED, '',
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : source,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-            undefined,
-            undefined,
+            dialCode,
+            (dialCode ? ObjectType.QR : undefined),
             undefined,
             undefined,
             corRelationList

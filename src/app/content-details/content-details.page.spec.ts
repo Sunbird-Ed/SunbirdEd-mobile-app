@@ -1,9 +1,7 @@
 import { ContentDetailsPage } from '../content-details/content-details.page';
-import { Container } from 'inversify';
 import {
     ContentService,
     EventsBusService,
-    PlayerService,
     DownloadService,
     ProfileService,
     ProfileServiceImpl,
@@ -12,12 +10,11 @@ import {
     TelemetryObject,
     Content,
     GetAllProfileRequest,
-    CourseService
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
 import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
-import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import { NgZone } from '@angular/core';
 import {
     AppGlobalService,
@@ -53,21 +50,16 @@ import { PreferenceKey, RouterLinks } from '../app.constant';
 import { EventTopics, ContentType, ShareItemType, ContentFilterConfig } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
-import { truncate } from 'fs';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
-import { isJsObject } from '@angular/core/src/change_detection/change_detection_util';
-import { doesNotReject } from 'assert';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
-    const container = new Container();
 
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
-    const mockPlayerService: Partial<PlayerService> = {};
     const mockStorageService: Partial<StorageService> = {};
     const mockDownloadService: Partial<DownloadService> = {
         getActiveDownloadRequests: jest.fn(() => EMPTY)
@@ -121,7 +113,6 @@ describe('ContentDetailsPage', () => {
     const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
-    const mockToastController: Partial<ToastController> = {};
     const mockFileOpener: Partial<FileOpener> = {};
     const mockFileTransfer: Partial<FileTransfer> = {};
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
@@ -229,9 +220,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '4g'},
+                    { networkType: '4g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(contentDetailsPage.userCount).toBeGreaterThan(2);
                 expect(mockNetwork.type).toBe('4g');
@@ -270,9 +261,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -302,7 +293,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
@@ -318,9 +309,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -350,7 +341,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: true }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -363,9 +354,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -395,7 +386,7 @@ describe('ContentDetailsPage', () => {
             } as any;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: false} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({data: { isLeftButtonClicked: false }}))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn();
             // act
@@ -408,9 +399,9 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '2g'},
+                    { networkType: '2g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('2g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
@@ -445,12 +436,52 @@ describe('ContentDetailsPage', () => {
                     Environment.HOME,
                     PageId.CONTENT_DETAIL,
                     undefined,
-                    {networkType: '4g'},
+                    { networkType: '4g' },
                     undefined,
-                    [{id: 'do-123', type: 'Content'}]
+                    [{ id: 'do-123', type: 'Content' }]
                 );
                 expect(mockNetwork.type).toBe('4g');
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should invoked playContent() for downloaded content', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            AppGlobalService.isPlayerLaunched = false;
+            contentDetailsPage.userCount = 1;
+            mockNetwork.type = '4g';
+            contentDetailsPage.shouldOpenPlayAsPopup = false;
+            contentDetailsPage.limitedShareContentFlag = false;
+            jest.spyOn(contentDetailsPage, 'openPlayAsPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            contentDetailsPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            contentDetailsPage.showSwitchUserAlert(true);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.PLAY_ONLINE,
+                    Environment.HOME,
+                    PageId.CONTENT_DETAIL,
+                    undefined,
+                    { networkType: '4g' },
+                    undefined,
+                    [{ id: 'do-123', type: 'Content' }]
+                );
+                expect(mockNetwork.type).toBe('4g');
+                expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    InteractType.PLAY,
+                    InteractSubtype.DOWNLOAD,
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.ONBOARDING
+                );
                 done();
             }, 0);
         });
@@ -482,11 +513,11 @@ describe('ContentDetailsPage', () => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(2,
                 ImpressionType.PAGE_REQUEST, '',
                 PageId.CONTENT_DETAIL,
-                Environment.HOME
+                Environment.ONBOARDING
             );
             expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
                 PageId.CONTENT_DETAIL,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 undefined,
                 undefined,
                 undefined,
