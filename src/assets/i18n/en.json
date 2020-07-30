@@ -169,7 +169,9 @@
   "COURSE_ENDED": "Course ended on {{%s}}",
   "COURSE_ENDED_ON": "Course ended on {{%s}}",
   "COURSE_ENROLLED": "You have joined the course",
+  "COURSE_LAST_UPDATED_ON": "Course last updated on {{last_updated_on_date}}",
   "COURSE_NOT_AVAILABLE": "This course is inactive",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "This course doesn't have a certificate",
   "COURSE_PROGRESS_COMPLETED": "Completed: {{%s}} %",
   "COURSE_UNENROLLED": "You have left the course",
   "COURSE_WILL_BE_AVAILABLE": "The batch is available from {{%s}}",
@@ -314,6 +316,7 @@
   "FIRST_NAME": "NAME",
   "FOLLOW": "Follow",
   "FORCE_UPDATE_MESSAGE": "You are using an older version of the {{%s}} app. To get the latest version from Google Playstore, tap Update Now ",
+  "FOR_SUPPORT": "For {{%s}} Support",
   "FREE_SPACE": "Free Space :",
   "FROM": "From",
   "FULL_NAME": "Name",
@@ -598,6 +601,7 @@
   "REQUEST_CONTENT": "Let us know here",
   "RESEND_OTP": "Resend OTP",
   "RESOURCE_TYPE": "Resource Type",
+  "RESPONSE_ACKNOWLEGED": "Thanks for your response!",
   "RESULT": "Result",
   "RESULTS": "Results",
   "RESUME": "RESUME",
@@ -837,6 +841,5 @@
   "PLEASE_VALIDATE_YOUR_MOBILE_NUMBER": "Please validate your mobile number",
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "This course doesn't have a certificate",
   "GROUP_GUIDELINES": "Group Guidelines"
 }
