@@ -363,88 +363,13 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
     });
 
-    it('should start playingContent after organising content metaData', (done) => {
+    it('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
         // arrange
-        jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnValue(
-            new TelemetryObject(mockContentData.content.identifier,
-                mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
-        mockContentPlayerHandler.launchContentPlayer = jest.fn();
+        mockContentPlayerHandler.playContent = jest.fn();
         // act
         collectionDetailEtbPage.playContent(mockContentData);
         // assert
-        expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        setTimeout(() => {
-            expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalledWith(
-                mockContentData.content,
-                true,
-                false,
-                mockContentInfo,
-                false,
-                true
-            );
-            done();
-        }, 0);
-    });
-
-
-    it('should generate Interact Telemetry when playContentClicked and streaming true', () => {
-        // arrange
-        // act
-        collectionDetailEtbPage.generateInteractTelemetry(true, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
-        // assert
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.PLAY_ONLINE,
-            Environment.HOME,
-            PageId.COLLECTION_DETAIL,
-            mockContentInfo.telemetryObject,
-            undefined,
-            mockContentInfo.rollUp,
-            undefined
-        );
-
-    });
-
-    it('should generate Interact Telemetry when playContentClicked and streaming false', () => {
-        // act
-        collectionDetailEtbPage.generateInteractTelemetry(false, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
-        // assert
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.PLAY_FROM_DEVICE,
-            Environment.HOME,
-            PageId.COLLECTION_DETAIL,
-            mockContentInfo.telemetryObject,
-            undefined,
-            mockContentInfo.rollUp,
-            undefined
-        );
-
-    });
-
-    it('should play the content and content is locally available', (done) => {
-        // arrange
-        jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnValue(
-            new TelemetryObject(mockContentData.content.identifier,
-                mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
-        mockContentPlayerHandler.launchContentPlayer = jest.fn();
-        mockContentData.content.isAvailableLocally = true;
-        mockContentData.content.mimeType = 'application/vnd.ekstep.h5p-archive';
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-        // act
-        collectionDetailEtbPage.playContent(mockContentData);
-        // assert
-        setTimeout(() => {
-            expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalledWith(
-                mockContentData.content,
-                false,
-                true,
-                mockContentInfo,
-                false,
-                true
-            );
-            done();
-        }, 0);
+        expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
     });
 
     describe('share()', () => {
@@ -1135,6 +1060,7 @@ describe('collectionDetailEtbPage', () => {
                     classList: clases
                 }
             };
+            window['scrollWindow'] = { getScrollElement: () => Promise.resolve({ scrollTo: jest.fn() }) };
             document.getElementById = jest.fn(() => ({ scrollIntoView: jest.fn() })) as any;
             mocktextbookTocService.resetTextbookIds = jest.fn();
             mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();

@@ -87,6 +87,7 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 declare const cordova;
 
 @Component({
@@ -261,7 +262,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private router: Router,
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private contentPlayerHandler: ContentPlayerHandler
   ) {
     this.objRollup = new Rollup();
     // this.getUserId();
@@ -1246,7 +1248,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       if (!this.nextContent) {
         this.initNextContent();
       }
-      this.navigateToContentDetails(this.nextContent, 1);
+      const telemetryDetails = {
+        pageId: PageId.COURSE_DETAIL,
+        corRelationList: this.corRelationList
+      };
+      this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
@@ -1260,7 +1266,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (!this.nextContent) {
       this.initNextContent();
     }
-    this.navigateToContentDetails(this.nextContent, 1);
+    const telemetryDetails = {
+      pageId: PageId.COURSE_DETAIL,
+      corRelationList: this.corRelationList
+    };
+    this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
@@ -1277,6 +1287,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Redirect to child content details page
    */
   private navigateToContentDetails(content: Content, depth): void {
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], this.generateContentNavExtras(content, depth));
+  }
+
+  private generateContentNavExtras(content: Content, depth) {
     const params: NavigationExtras = {
       state: {
         content,
@@ -1293,7 +1307,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         course: this.updatedCourseCardData
       }
     };
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    return params;
   }
 
   /**

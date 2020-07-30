@@ -4,8 +4,8 @@
             <ion-icon name="close" (click)="close()" class="close"></ion-icon>
         </div>
         <div class="h-90cent">
-            <h4 class="message">Thanks for your response!</h4>
-            <span>For {{boardContact.name}} Support</span>
+            <h4 class="message">{{'RESPONSE_ACKNOWLEGED' | translate}}</h4>
+            <span>{{'FOR_SUPPORT' | translate:{'%s': boardContact.name} }}</span>
             <div class="m-10">
                 <span>call</span>
                 <span class="contact-no"> {{boardContact.contactinfo.number}}</span>

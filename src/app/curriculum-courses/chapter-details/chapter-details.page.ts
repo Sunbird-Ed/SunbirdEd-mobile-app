@@ -6,7 +6,7 @@ import {
   TelemetryGeneratorService
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import {PopoverController, Events, Platform} from '@ionic/angular';
@@ -28,6 +28,7 @@ import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 
 @Component({
   selector: 'app-chapter-details',
@@ -86,6 +87,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   public objRollup: Rollup;
   private deeplinkContent;
+  private corRelationList: any;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -109,8 +111,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
-    private platform: Platform
-  ) {
+    private platform: Platform,
+    private contentPlayerHandler: ContentPlayerHandler
+    ) {
     // if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
     //   this.extrasData = this.appGlobalService.preSignInData;
     //   console.log('after login', this.extrasData);
@@ -445,8 +448,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     );
     if (this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
-      this.navigateToChildrenDetailsPage(firstChild, 1);
-    } else {
+      const telemetryDetails = {
+        pageId: PageId.CHAPTER_DETAILS,
+        corRelationList: this.corRelationList
+      };
+      this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
       if (!this.childContents.length) {
         this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
       } else {
@@ -472,7 +478,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         // this.corRelationList
       );
-      this.navigateToChildrenDetailsPage(this.nextContent, 1);
+
+      const telemetryDetails = {
+        pageId: PageId.CHAPTER_DETAILS,
+        corRelationList: this.corRelationList
+      };
+      this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
     } else {
       this.startLearning();
     }
@@ -718,24 +729,30 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       PageId.CHAPTER_DETAILS, this.telemetryObject,
       values,
       this.objRollup,
-      // this.corRelationList
+      this.corRelationList
     );
+
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], this.generateContentNavExtras(content, depth));
+  }
+
+  private generateContentNavExtras(content: Content, depth) {
     const contentState: ContentState = {
       batchId: this.courseContent.batchId ? this.courseContent.batchId : '',
       courseId: this.courseContentData.identifier
     };
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+
+    const params: NavigationExtras = {
       state: {
         content,
         depth,
         contentState,
         isChildContent: true,
-        // corRelation: this.corRelationList,
-        corRelation: undefined,
+        corRelation: this.corRelationList,
         isCourse: true,
         course: this.updatedCourseCardData
       }
-    });
+    }
+    return params;
   }
 
   getContentsSize(data?) {

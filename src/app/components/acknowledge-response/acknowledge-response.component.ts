@@ -1,4 +1,5 @@
 import { Component, Output, OnDestroy, EventEmitter } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'acknowledge-response',
@@ -7,7 +8,9 @@ import { Component, Output, OnDestroy, EventEmitter } from '@angular/core';
 })
 export class AcknowledgeResponseComponent implements OnDestroy{
     @Output() popupDismiss = new EventEmitter();
-    constructor() {}
+    constructor(
+        private translate: TranslateService,
+    ) {}
 
     ngOnDestroy(): void {
         this.popupDismiss.emit('closed');
