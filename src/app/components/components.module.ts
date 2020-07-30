@@ -7,7 +7,6 @@ import { ApplicationHeaderComponent } from './application-header/application-hea
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { TextBookCardComponent } from './text-book-card/text-book-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
-import { ViewAllCardComponent } from './view-all-card/view-all-card.component';
 import { PbHorizontalComponent } from './pb-horizontal/pb-horizontal.component';
 import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
 import { SbNoNetworkPopupComponent } from './popups/sb-no-network-popup/sb-no-network-popup.component';
@@ -59,7 +58,6 @@ import { AddActivityToGroupComponent } from './add-activity-to-group/add-activit
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    ViewAllCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
@@ -151,7 +149,6 @@ import { AddActivityToGroupComponent } from './add-activity-to-group/add-activit
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    ViewAllCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,

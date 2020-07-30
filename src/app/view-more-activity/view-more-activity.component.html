@@ -1,22 +1,12 @@
 <ion-content overflow-scroll="true">
   <div>
-    <div class="sb-view-all-container" *ngIf="localContentsCard">
-
-      <div class="sb-view-all-items">
-        <div class="sb-view-all-title">
-          <span class="page-heading">{{ 'RECENTLY_VIEWED' | translate }}</span>
-          <span class="page-info">{{'SHOW_RECENT' | translate:{'%s': searchList?.length} }}</span>
-        </div>
-      </div>
-
-    </div>
     <div class="empty-search-result ion-text-center" *ngIf="!showLoader && searchList && searchList.length === 0"
       padding-top>
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
     </div>
 
     <div>
-      <div class="view-more-course-bg" *ngIf="!localContentsCard">
+      <div class="view-more-course-bg">
         <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
         <p class="title" *ngIf="pageType === 'popularCourses'">{{title}}</p>
         <p *ngIf="searchList && searchList.length" class="count-text">
@@ -38,15 +28,6 @@
           </div>
         </ng-container>
       </div>
-
-      <ng-container *ngIf="localContentsCard && searchList && searchList.length">
-        <div class="sb-view-all-container">
-          <div class="sb-card-container sb-card-view-all-container">
-            <app-view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType"
-              [sectionName]="contentCard" (click)=navigateToDetailPage(item)></app-view-all-card>
-          </div>
-        </div>
-      </ng-container>
     </div>
     <div class="px-5">
       <ion-button expand="block" *ngIf="searchList && searchList.length && loadMoreBtn" (click)="loadMore();">
