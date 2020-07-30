@@ -500,7 +500,6 @@ describe('ResourcesComponent', () => {
             );
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
@@ -540,7 +539,6 @@ describe('ResourcesComponent', () => {
             expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
@@ -581,7 +579,6 @@ describe('ResourcesComponent', () => {
             expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
