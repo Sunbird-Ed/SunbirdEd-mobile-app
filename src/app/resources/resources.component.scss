@@ -194,19 +194,6 @@
   z-index: 1;
 }
 
-.sb-card-recently-container {
-  .recently-viewed-card-size {
-    margin: 0 8px;
-    min-width: 288px;
-    max-width: 288px;
-
-    &:only-child {
-      min-width: 100%;
-      max-width: calc(100vw - 32px);
-    }
-  }
-}
-
 .sb-course-container {
   margin-top: 130px;
 

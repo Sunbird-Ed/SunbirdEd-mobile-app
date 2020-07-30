@@ -68,17 +68,6 @@
         padding: 0 0 8px 0;
       }
     }
-    .sb-card-textbook-container,
-    .sb-card-view-all-container {
-      app-view-all-card {
-        border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-        &:last-child {
-          .sb-card {
-            border-bottom: none;
-          }
-        }
-      }
-    }
   }
 
   .view-more-course-bg {
