@@ -191,7 +191,7 @@
   "DATA_SYNC_SUCCESSFUL": "टेलीमेट्री डेटा सफलतापूर्वक समन्वयित हुआ",
   "DAYS_AGO": "{{%s}} दिन पहले ",
   "DAY_AGO": "{{%s}} दिन पहले ",
-  "DELETE": "हटायें",
+  "DELETE": "हटाएँ",
   "DELETE_ALL_CONTENT_WARNING": "हटायें जाने की क्रिया से चयनित कंटेंट आपके मोबाइल से हटाया जायेगा",
   "DELETE_CONTENT": "कंटेंट हटाना चाहते है?",
   "DELETE_CONTENT_SIZE": "1 वस्तु {{content_size}}",
