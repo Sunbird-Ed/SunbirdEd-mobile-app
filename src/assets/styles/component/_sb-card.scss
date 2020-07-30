@@ -139,16 +139,7 @@
           }
         }        
     }
-
 }
-
-.sb-card-recently-container{
-    flex-direction: row;
-    .sb-card.full .sb-card-details{
-      @include padding(null, null, null, 0);
-    }
-}
-
 
 .sb-card-textbook-container, .sb-card-view-all-container, .sb-card-download-container {
     flex-direction: column;
