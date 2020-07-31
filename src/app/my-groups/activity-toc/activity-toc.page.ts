@@ -14,6 +14,7 @@ import {
 import { Router } from '@angular/router';
 import { AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
+import { ContentUtil } from '@app/util/content-util';
 
 
 @Component({
@@ -86,12 +87,17 @@ export class ActivityTocPage {
     }
 
     onCourseChange(course?) {
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //     InteractType.TOUCH,
-        //     InteractSubtype.RATING_CLICKED,
-        //     Environment.GROUP,
-        //     PageId.ACTIVITY_TOC
-        // );
+        if (course) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.GROUP,
+                PageId.ACTIVITY_TOC,
+                ContentUtil.getTelemetryObject(course),
+                undefined,
+                ContentUtil.generateRollUp(undefined, course.identifier)
+            );
+        }
         this.appGlobalService.selectedActivityCourseId = course ? course.identifier : '';
         this.location.back();
     }

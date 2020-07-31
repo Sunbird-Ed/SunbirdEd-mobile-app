@@ -61,15 +61,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
-  }
-
-  async ionViewWillEnter() {
     this.courseList = [];
-    this.headerService.showHeaderWithBackButton();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
-    });
-    this.handleDeviceBackButton();
     try {
       const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
       this.getNestedCourses(courseData.children);
@@ -80,6 +72,14 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     } catch (err) {
       console.log('fetchCollectionData err', err);
     }
+  }
+
+  async ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+    this.handleDeviceBackButton();
     this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
 
@@ -178,7 +178,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if (c.contentType === ContentType.COURSE) {
+      if (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {

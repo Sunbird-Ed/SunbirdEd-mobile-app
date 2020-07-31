@@ -121,6 +121,72 @@ describe('ActivityDetailsPage', () => {
                 done();
             });
         });
+        it('should set selected course', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            const cData = { children: [{
+                contentType: 'collection',
+                children : [
+                    {
+                        contentType: 'Course',
+                        identifier: 'id1'
+                    },
+                    {
+                        contentType: 'collection',
+                        children : [
+                            {
+                                contentType: 'Course',
+                                identifier: 'id2',
+                                name: 'name2'
+                            }
+                        ]
+                    }
+                ]
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockAppGlobalService.selectedActivityCourseId = 'id2';
+            // act
+            activityDetailsPage.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toEqual(2);
+                expect(activityDetailsPage.selectedCourse.name).toEqual('name2');
+                done();
+            });
+        });
+
+        it('should not set selected course', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            const cData = { children: [{
+                contentType: 'collection',
+                children : [
+                    {
+                        contentType: 'Course',
+                        identifier: 'id1'
+                    },
+                    {
+                        contentType: 'collection',
+                        children : [
+                            {
+                                contentType: 'Course',
+                                identifier: 'id2'
+                            }
+                        ]
+                    }
+                ]
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockAppGlobalService.selectedActivityCourseId = '';
+            // act
+            activityDetailsPage.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toEqual(2);
+                expect(activityDetailsPage.selectedCourse).toBe('');
+                done();
+            });
+        });
     });
 
     it('should generate telemetry for back clicked', () => {
@@ -401,91 +467,6 @@ describe('ActivityDetailsPage', () => {
                 expect(mockGroupService.activityService).not.toBeUndefined();
                 done();
             }, 0);
-        });
-
-        it('should set selected course', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            mockHeaderService.showHeaderWithBackButton = jest.fn();
-            mockHeaderService.headerEventEmitted$ = of({
-                subscribe: jest.fn(() => { })
-            });
-            jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
-            jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockGroupService.activityService = {
-                getDataAggregation: jest.fn(() => of(undefined))
-            };
-            const cData = { children: [{
-                contentType: 'collection',
-                children : [
-                    {
-                        contentType: 'Course',
-                        identifier: 'id1'
-                    },
-                    {
-                        contentType: 'collection',
-                        children : [
-                            {
-                                contentType: 'Course',
-                                identifier: 'id2',
-                                name: 'name2'
-                            }
-                        ]
-                    }
-                ]
-            }]};
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
-            mockAppGlobalService.selectedActivityCourseId = 'id2';
-            // act
-            activityDetailsPage.ionViewWillEnter();
-            // assert
-            setTimeout(() => {
-                expect(activityDetailsPage.courseList.length).toEqual(2);
-                expect(activityDetailsPage.selectedCourse.name).toEqual('name2');
-                done();
-            });
-        });
-
-        it('should set selected course', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            mockHeaderService.showHeaderWithBackButton = jest.fn();
-            mockHeaderService.headerEventEmitted$ = of({
-                subscribe: jest.fn(() => { })
-            });
-            jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
-            jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
-            mockGroupService.activityService = {
-                getDataAggregation: jest.fn(() => of(undefined))
-            };
-            const cData = { children: [{
-                contentType: 'collection',
-                children : [
-                    {
-                        contentType: 'Course',
-                        identifier: 'id1'
-                    },
-                    {
-                        contentType: 'collection',
-                        children : [
-                            {
-                                contentType: 'Course',
-                                identifier: 'id2'
-                            }
-                        ]
-                    }
-                ]
-            }]};
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
-            mockAppGlobalService.selectedActivityCourseId = '';
-            // act
-            activityDetailsPage.ionViewWillEnter();
-            // assert
-            setTimeout(() => {
-                expect(activityDetailsPage.courseList.length).toEqual(2);
-                expect(activityDetailsPage.selectedCourse).toBe('');
-                done();
-            });
         });
     });
 

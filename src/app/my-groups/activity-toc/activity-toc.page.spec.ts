@@ -1,4 +1,4 @@
-import { PageId, Environment, ImpressionType } from './../../../services/telemetry-constants';
+import { PageId, Environment, ImpressionType, InteractSubtype } from '../../../services/telemetry-constants';
 import { ActivityTocPage } from './activity-toc.page';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services';
@@ -6,6 +6,7 @@ import { AppHeaderService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
+import { InteractType } from '@project-sunbird/sunbird-sdk';
 
 describe('ActivityTocPage', () => {
     let activityTocPage: ActivityTocPage;
@@ -153,6 +154,15 @@ describe('ActivityTocPage', () => {
             // assert
             expect(mockAppGlobalService.selectedActivityCourseId).toEqual('id1');
             expect(mockLocation.back).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.GROUP,
+                PageId.ACTIVITY_TOC,
+                expect.anything(),
+                undefined,
+                expect.anything()
+            );
         });
         it('should not set selectedActivityCourseId', () => {
             // act
