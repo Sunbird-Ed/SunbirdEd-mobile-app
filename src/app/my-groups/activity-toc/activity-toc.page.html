@@ -8,10 +8,11 @@
     </div>
     <div 
         class="activity-course"
-        *ngFor="let course of courseList" 
+        *ngFor="let course of courseList; let i=index" 
         [ngClass]="{'active': course.identifier === selectedId}"
         (click)="course.identifier !== selectedId && onCourseChange(course)"
     >
+        <span>{{i+1}}- </span>
         {{course.name}}
     </div>
   </ion-content>

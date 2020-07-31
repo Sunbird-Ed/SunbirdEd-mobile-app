@@ -1,4 +1,4 @@
-import { PageId } from './../../../services/telemetry-constants';
+import { PageId, Environment, ImpressionType } from './../../../services/telemetry-constants';
 import { ActivityTocPage } from './activity-toc.page';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services';
@@ -32,7 +32,10 @@ describe('ActivityTocPage', () => {
             }
         })) as any
     };
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateImpressionTelemetry: jest.fn(),
+        generateInteractTelemetry: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         selectedActivityCourseId: ''
     };
@@ -107,6 +110,12 @@ describe('ActivityTocPage', () => {
             setTimeout(() => {
                 expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
                 expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.ACTIVITY_TOC,
+                    Environment.GROUP
+                );
                 done();
             }, 0);
         });

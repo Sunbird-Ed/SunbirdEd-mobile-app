@@ -34,7 +34,7 @@ export class ActivityTocPage {
         private router: Router,
         public headerService: AppHeaderService,
         private platform: Platform,
-        private telemetryService: TelemetryGeneratorService,
+        private telemetryGeneratorService: TelemetryGeneratorService,
         private location: Location,
         private appGlobalService: AppGlobalService
     ) {
@@ -51,6 +51,12 @@ export class ActivityTocPage {
         this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.selectedId = this.appGlobalService.selectedActivityCourseId;
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW,
+            '',
+            PageId.ACTIVITY_TOC,
+            Environment.GROUP
+        );
     }
 
     ionViewWillLeave() {
@@ -61,7 +67,7 @@ export class ActivityTocPage {
     }
 
     handleBackButton(isNavBack: boolean) {
-        this.telemetryService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
         this.location.back();
     }
 
@@ -80,6 +86,12 @@ export class ActivityTocPage {
     }
 
     onCourseChange(course?) {
+        // this.telemetryGeneratorService.generateInteractTelemetry(
+        //     InteractType.TOUCH,
+        //     InteractSubtype.RATING_CLICKED,
+        //     Environment.GROUP,
+        //     PageId.ACTIVITY_TOC
+        // );
         this.appGlobalService.selectedActivityCourseId = course ? course.identifier : '';
         this.location.back();
     }
