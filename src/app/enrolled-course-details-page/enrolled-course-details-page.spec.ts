@@ -1097,6 +1097,27 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('saveContentContext()', () => {
+        it('should saved context of content by invoked saveContentContext()', () => {
+            // arrange
+            const userId = 'sample-user-id';
+            const courseId = 'course-card';
+            const batchId = 'sample-batch-id';
+            const batchStatus = 2;
+            mockPreferences.putString = jest.fn(() => of());
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                contentData: {
+                    leafNodes: ['node1']
+                }
+            };
+            // act
+            enrolledCourseDetailsPage.saveContentContext(userId, courseId, batchId, batchStatus);
+            // assert
+            expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.CONTENT_CONTEXT, expect.any(String));
+            expect(Boolean(batchStatus)).toBeTruthy();
+        });
+    });
+
     describe('getBatchCreatorName()', () => {
         it('should return batch creator name by invoked getBatchCreatorName()', () => {
             // arrange
@@ -2271,7 +2292,7 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 
-    describe('isCourseModifiedAfterEnrolment', () =>{
+    describe('isCourseModifiedAfterEnrolment', () => {
         it('should return false if course lastUpdatedOn date is less than course enrolledDate', () => {
             // arrange
             enrolledCourseDetailsPage.courseCardData = {
