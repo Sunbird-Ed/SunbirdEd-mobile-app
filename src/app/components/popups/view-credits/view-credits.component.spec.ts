@@ -3,7 +3,7 @@ import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import { PageId, InteractSubtype, Environment, InteractType } from '@app/services/telemetry-constants';
 
-describe('UpgradePopoverComponent', () => {
+describe('ViewCreditsComponent', () => {
     let viewCreditsComponent: ViewCreditsComponent;
 
     const mockNavParams: Partial<NavParams> = {
@@ -102,6 +102,15 @@ describe('UpgradePopoverComponent', () => {
         // assert
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
         expect(viewCreditsComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should dissmiss popup on cancel', () => {
+        // arrange
+        viewCreditsComponent.backButtonFunc = undefined;
+        // act
+        viewCreditsComponent.cancel();
+        // assert
+        expect(viewCreditsComponent.backButtonFunc).toBeFalsy();
     });
 
     it('should return merged properties ', () => {
