@@ -969,7 +969,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
-          content: items,
+          contentList: items,
           subjectName: subject
         }
       });

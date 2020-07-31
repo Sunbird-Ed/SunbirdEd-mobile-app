@@ -1,11 +1,5 @@
 :host {
   .sb-card-textbook-container {
     margin-bottom: 40px;
-    app-text-book-card {
-      border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-      &:last-child {
-        border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-      }
-    }
   }
 }
