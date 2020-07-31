@@ -541,10 +541,6 @@ export class RouterLinks {
     public static readonly CHAPTER_DETAILS = 'chapter-details';
 }
 
-export class LibraryCardTypes {
-    public static readonly QRCODE_RESULT = 'qrcode_result';
-}
-
 export class ShareItemType {
     public static readonly ROOT_CONTENT = 'root-content';
     public static readonly ROOT_COLECTION = 'root-collection';
