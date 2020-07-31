@@ -81,12 +81,7 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <!-- <ion-button shape="round" fill="outline" (click)="navigateToEditSubProfile()" class="short-btn custom-round ion-text-capitalize">
-                <span class="add-size">+</span> {{'ADD_USERS' | translate }}
-            </ion-button>
-            <ion-button shape="round" fill="outline" (click)="showSwitchUserPopup()" class="short-btn custom-round ion-text-capitalize">
-                {{'SWITCH_USER' | translate }}
-            </ion-button> -->
+
             <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
@@ -301,7 +296,7 @@
                                             [src]="commonUtilService.convertFileSrc(courseItem?.appIcon)" />
                                     </ion-col>
                                     <ion-col size="9"
-                                        style="margin-bottom: 5px; padding-left: 15px; padding: 0 0 0 15px;">
+                                        style="margin-bottom: 5px; padding: 0 0 0 15px;">
                                         <div style="margin-bottom: 5px;" *ngIf="courseItem.resourceType">
                                             <ion-button fill="outline" class="badge">
                                                 {{courseItem?.resourceType}}

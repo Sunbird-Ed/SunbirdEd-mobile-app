@@ -10,22 +10,6 @@
 </ion-header>
 <!-- Page body -->
 <ion-content class="ion-padding" overflow-scroll="true">
-
-  <!-- <div class="my-overlay" padding *ngIf="showSignInCard"> 
-    <div class="guest-user-info" text-center>
-          <p> {{ 'OVERLAY_LABEL_TAKE_COURSE' | translate }} </p>
-          <br/>
-          <span>{{ 'OVERLAY_INFO_TEXT_TAKE_COURSE' | translate }} </span>
-          <br/>
-          <br/>
-          <button ion-button block (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate }}</button>
-        </div>
-     <div class="guest-user-info" text-center>
-      <app-sign-in-card (valueChange)="buttonClick($event)" [source]="'course-batches'"
-        [title]="'OVERLAY_LABEL_TAKE_COURSE'" [description]="'OVERLAY_INFO_TEXT_TAKE_COURSE'"></app-sign-in-card>
-    </div>
-  </div> -->
-
   <div *ngIf="ongoingBatches && ongoingBatches.length">
     <div class="background-gray">
       <div class="width-100 batch-font" text-capitalize>
