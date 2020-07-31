@@ -1,0 +1,18 @@
+<ion-content class="activity-toc-container ion-no-padding">
+    <div 
+        class="activity-course"
+        [ngClass]="{'active': !selectedId}"
+        (click)="selectedId && onCourseChange()"
+    >
+        {{'ALL_COURSES' | translate}}
+    </div>
+    <div 
+        class="activity-course"
+        *ngFor="let course of courseList" 
+        [ngClass]="{'active': course.identifier === selectedId}"
+        (click)="course.identifier !== selectedId && onCourseChange(course)"
+    >
+        {{course.name}}
+    </div>
+  </ion-content>
+  

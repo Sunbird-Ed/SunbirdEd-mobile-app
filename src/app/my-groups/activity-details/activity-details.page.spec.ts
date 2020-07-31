@@ -6,11 +6,12 @@ import {
     PageId, TelemetryGeneratorService
 } from '@app/services';
 import { GroupService, GroupMemberRole } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService, CollectionService } from '../../../services';
+import { AppHeaderService, CollectionService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
+import { RouterLinks } from '../../app.constant';
 
 describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
@@ -40,6 +41,9 @@ describe('ActivityDetailsPage', () => {
         })) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        selectedActivityCourseId: ''
+    };
     const mockCollectionService: Partial<CollectionService> = {
         fetchCollectionData: jest.fn(() => Promise.reject(''))
     };
@@ -54,7 +58,8 @@ describe('ActivityDetailsPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
             mockPlatform as Platform,
-            mockCollectionService as CollectionService
+            mockCollectionService as CollectionService,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -116,37 +121,6 @@ describe('ActivityDetailsPage', () => {
                 done();
             });
         });
-        it('should generate impression telemetry', (done) => {
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            const cData = { children: [{
-                contentType: 'collection',
-                children : [
-                    {
-                        contentType: 'Course'
-                    },
-                    {
-                        contentType: 'collection',
-                        children : [
-                            {
-                                contentType: 'Course'
-                            }
-                        ]
-                    }
-                ]
-            }]};
-            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
-            activityDetailsPage.ngOnInit();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                '',
-                PageId.ACTIVITY_DETAIL,
-                Environment.GROUP
-            );
-            setTimeout(() => {
-                expect(activityDetailsPage.courseList.length).toEqual(2);
-                done();
-            });
-        });
     });
 
     it('should generate telemetry for back clicked', () => {
@@ -156,7 +130,7 @@ describe('ActivityDetailsPage', () => {
         activityDetailsPage.handleBackButton(true);
         // assert
         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-        .toHaveBeenCalledWith(PageId.GROUP_DETAIL, Environment.GROUP, true);
+        .toHaveBeenCalledWith(PageId.ACTIVITY_DETAIL, Environment.GROUP, true);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -183,9 +157,9 @@ describe('ActivityDetailsPage', () => {
     });
 
     describe('ionViewWillEnter', () => {
-        // beforeEach(() => {
-        //     mockCollectionService.fetchCollectionData = jest.fn(() => Promise.reject(''));
-        // });
+        beforeEach(() => {
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.reject('err'));
+        });
         it('should handle device header and back-button for b.userId', (done) => {
             activityDetailsPage.group = { id: 'group-id' } as any;
             activityDetailsPage.loggedinUser = {
@@ -405,6 +379,10 @@ describe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for undefined response', (done) => {
+            const cData = { children: [{
+                contentType: 'collection',
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn(() => { })
@@ -423,6 +401,91 @@ describe('ActivityDetailsPage', () => {
                 expect(mockGroupService.activityService).not.toBeUndefined();
                 done();
             }, 0);
+        });
+
+        it('should set selected course', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => { })
+            });
+            jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
+            mockGroupService.activityService = {
+                getDataAggregation: jest.fn(() => of(undefined))
+            };
+            const cData = { children: [{
+                contentType: 'collection',
+                children : [
+                    {
+                        contentType: 'Course',
+                        identifier: 'id1'
+                    },
+                    {
+                        contentType: 'collection',
+                        children : [
+                            {
+                                contentType: 'Course',
+                                identifier: 'id2',
+                                name: 'name2'
+                            }
+                        ]
+                    }
+                ]
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockAppGlobalService.selectedActivityCourseId = 'id2';
+            // act
+            activityDetailsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toEqual(2);
+                expect(activityDetailsPage.selectedCourse.name).toEqual('name2');
+                done();
+            });
+        });
+
+        it('should set selected course', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => { })
+            });
+            jest.spyOn(activityDetailsPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(activityDetailsPage, 'handleDeviceBackButton').mockImplementation();
+            mockGroupService.activityService = {
+                getDataAggregation: jest.fn(() => of(undefined))
+            };
+            const cData = { children: [{
+                contentType: 'collection',
+                children : [
+                    {
+                        contentType: 'Course',
+                        identifier: 'id1'
+                    },
+                    {
+                        contentType: 'collection',
+                        children : [
+                            {
+                                contentType: 'Course',
+                                identifier: 'id2'
+                            }
+                        ]
+                    }
+                ]
+            }]};
+            mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
+            mockAppGlobalService.selectedActivityCourseId = '';
+            // act
+            activityDetailsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(activityDetailsPage.courseList.length).toEqual(2);
+                expect(activityDetailsPage.selectedCourse).toBe('');
+                done();
+            });
         });
     });
 
@@ -572,71 +635,20 @@ describe('ActivityDetailsPage', () => {
             expect(data).toBe(0);
         });
     });
-    // it('Should fetch nested courses', () => {
-    //     // arrange
-    //     const cData = [{
-    //         contentType: 'collection',
-    //         children : [
-    //             {
-    //                 contentType: 'Course'
-    //             },
-    //             {
-    //                 contentType: 'collection',
-    //                 children : [
-    //                     {
-    //                         contentType: 'Course'
-    //                     }
-    //                 ]
-    //             }
-    //         ]
-    //     }];
-    //     // act
-    //     activityDetailsPage.getNestedCourses(cData);
-    //     // assert
-    //     expect(activityDetailsPage.courseList.length).toEqual(2);
-    // });
-    it('should toggle showCourseDropdown', () => {
+
+    it('should openActivityToc', () => {
         // arrange
-        activityDetailsPage.showCourseDropdown = false;
+        mockRouter.navigate = jest.fn();
         // act
-        activityDetailsPage.toggleCoursesDropdown();
+        activityDetailsPage.openActivityToc();
         // assert
-        expect(activityDetailsPage.showCourseDropdown).toBe(true);
+        expect(mockRouter.navigate).toHaveBeenCalledWith(
+            [`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
+            expect.anything()
+        );
     });
-    describe('onCourseChange', () => {
-        it('should set selected course', () => {
-            // arrange
-            const course = {
-                identifier: 'id'
-            };
-            // act
-            activityDetailsPage.onCourseChange(course);
-            // assert
-            expect(activityDetailsPage);
-            expect(mockGroupService.activityService.getDataAggregation).toBeCalled();
-        });
-        it('should not set selected course', () => {
-            // arrange
-            activityDetailsPage.selectedCourse = {
-                identifier: 'id1'
-            };
-            const course = {
-                identifier: 'id1'
-            };
-            // act
-            activityDetailsPage.onCourseChange(course);
-            // assert
-            expect(activityDetailsPage.selectedCourse).toEqual(course);
-        });
-        it('should set selected course to all courses', () => {
-            // arrange
-            activityDetailsPage.selectedCourse = {
-                identifier: 'id1'
-            };
-            // act
-            activityDetailsPage.onCourseChange();
-            // assert
-            expect(activityDetailsPage.selectedCourse).toBe('');
-        });
+    it('should reset selectedActivity Id', () => {
+        activityDetailsPage.ngOnDestroy();
+        expect(mockAppGlobalService.selectedActivityCourseId).toBe('');
     });
 });

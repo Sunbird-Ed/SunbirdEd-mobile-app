@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService, CollectionService
+  ImpressionType, TelemetryGeneratorService, CollectionService, AppGlobalService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
@@ -14,14 +14,14 @@ import {
 import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ContentType } from './../../app.constant';
+import { ContentType, RouterLinks } from './../../app.constant';
 
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
   styleUrls: ['./activity-details.page.scss'],
 })
-export class ActivityDetailsPage implements OnInit {
+export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   isActivityLoading = false;
   loggedinUser: GroupMember;
@@ -36,7 +36,6 @@ export class ActivityDetailsPage implements OnInit {
   activity: GroupActivity;
   courseList = [];
   showCourseDropdownSection = false;
-  showCourseDropdown = false;
   selectedCourse;
 
   constructor(
@@ -48,7 +47,8 @@ export class ActivityDetailsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
-    private collectionService: CollectionService
+    private collectionService: CollectionService,
+    private appGlobalService: AppGlobalService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -61,24 +61,26 @@ export class ActivityDetailsPage implements OnInit {
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
-    try {
-      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
-      this.getNestedCourses(courseData.children);
-      if (this.courseList.length) {
-        this.showCourseDropdownSection = true;
-      }
-    } catch (err) {
-      console.log('fetchCollectionData err', err);
-    }
-    this.getActvityDetails(this.activity.id);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    this.courseList = [];
     this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
+    try {
+      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.getNestedCourses(courseData.children);
+      if (this.courseList.length) {
+        this.showCourseDropdownSection = true;
+        this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
+      }
+    } catch (err) {
+      console.log('fetchCollectionData err', err);
+    }
+    this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
 
   ionViewWillLeave() {
@@ -86,6 +88,10 @@ export class ActivityDetailsPage implements OnInit {
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
+  }
+
+  ngOnDestroy() {
+    this.appGlobalService.selectedActivityCourseId = '';
   }
 
   private async getActvityDetails(id) {
@@ -181,19 +187,9 @@ export class ActivityDetailsPage implements OnInit {
     });
   }
 
-  onCourseChange(course?) {
-    if (course && (!this.selectedCourse || (this.selectedCourse.identifier !== course.identifier))) {
-        this.selectedCourse = course;
-        this.getActvityDetails(course.identifier);
-    } else if (!course && this.selectedCourse) {
-        this.selectedCourse = '';
-        this.getActvityDetails(this.activity.id);
-    }
-    this.toggleCoursesDropdown();
-  }
-
-  toggleCoursesDropdown() {
-    this.showCourseDropdown = !this.showCourseDropdown;
+  openActivityToc() {
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
+      { state: { courseList: this.courseList } });
   }
 
   handleDeviceBackButton() {
@@ -211,7 +207,7 @@ export class ActivityDetailsPage implements OnInit {
   }
 
   handleBackButton(isNavBack) {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.GROUP_DETAIL, Environment.GROUP, isNavBack);
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_DETAIL, Environment.GROUP, isNavBack);
     this.location.back();
   }
 

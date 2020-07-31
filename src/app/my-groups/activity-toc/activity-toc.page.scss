@@ -1,0 +1,15 @@
+@import "src/assets/styles/_variables.scss";
+
+.activity-toc-container{
+    padding: 16px 0;
+}
+.activity-course{
+    padding: 16px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    border-radius: 2px;
+    font-size: 14px;
+    color: $blue;
+    &.active{
+        background-color: map-get($colors , light_gray_8c);
+    }
+}

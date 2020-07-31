@@ -841,5 +841,6 @@
   "PLEASE_VALIDATE_YOUR_MOBILE_NUMBER": "Please validate your mobile number",
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "This course doesn't have a certificate"
+  "COURSE_NO_CERTIFICATE_MESSAGE": "This course doesn't have a certificate",
+  "ALL_COURSES": "All Courses"
 }

@@ -1,0 +1,87 @@
+import { Location } from '@angular/common';
+import { AppHeaderService } from './../../../services/app-header.service';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { Platform} from '@ionic/angular';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {
+    Environment,
+    ImpressionSubtype,
+    ImpressionType,
+    InteractSubtype,
+    InteractType,
+    PageId
+} from '@app/services/telemetry-constants';
+import { Router } from '@angular/router';
+import { AppGlobalService } from '@app/services';
+import { Subscription } from 'rxjs';
+
+
+@Component({
+    selector: 'activity-toc',
+    templateUrl: 'activity-toc.page.html',
+    styleUrls: ['./activity-toc.page.scss'],
+    encapsulation: ViewEncapsulation.None,
+})
+export class ActivityTocPage {
+
+    unregisterBackButton: Subscription;
+    headerObservable: any;
+    backButtonFunc = undefined;
+    courseList: Array<any>;
+    selectedId;
+
+    constructor(
+        private router: Router,
+        public headerService: AppHeaderService,
+        private platform: Platform,
+        private telemetryService: TelemetryGeneratorService,
+        private location: Location,
+        private appGlobalService: AppGlobalService
+    ) {
+        const extras = this.router.getCurrentNavigation().extras.state;
+        if (extras) {
+            this.courseList = extras.courseList;
+        }
+    }
+
+    ionViewWillEnter() {
+        this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+            this.handleHeaderEvents(eventName);
+        });
+        this.headerService.showHeaderWithBackButton();
+        this.handleDeviceBackButton();
+        this.selectedId = this.appGlobalService.selectedActivityCourseId;
+    }
+
+    ionViewWillLeave() {
+        this.headerObservable.unsubscribe();
+        if (this.unregisterBackButton) {
+            this.unregisterBackButton.unsubscribe();
+        }
+    }
+
+    handleBackButton(isNavBack: boolean) {
+        this.telemetryService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
+        this.location.back();
+    }
+
+    handleDeviceBackButton() {
+        this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+          this.handleBackButton(false);
+        });
+      }
+
+    handleHeaderEvents($event) {
+        switch ($event.name) {
+            case 'back':
+                this.handleBackButton(true);
+                break;
+        }
+    }
+
+    onCourseChange(course?) {
+        this.appGlobalService.selectedActivityCourseId = course ? course.identifier : '';
+        this.location.back();
+    }
+
+}
