@@ -770,6 +770,11 @@ describe('EnrolledCourseDetailsPage', () => {
             const batchId = 'sample-batch-id';
             const batchStatus = 2;
             mockPreferences.putString = jest.fn(() => of());
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                contentData: {
+                    leafNodes: ['node1']
+                }
+            };
             // act
             enrolledCourseDetailsPage.saveContentContext(userId, courseId, batchId, batchStatus);
             // assert
@@ -1102,7 +1107,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.getContentState(false);
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.courseCardData.progress).toEqual(1);
+                expect(enrolledCourseDetailsPage.courseCardData.progress).toBeUndefined();
                 done();
             }, 0);
         });
