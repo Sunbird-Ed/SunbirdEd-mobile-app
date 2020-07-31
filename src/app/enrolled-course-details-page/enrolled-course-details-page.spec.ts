@@ -296,8 +296,13 @@ describe('EnrolledCourseDetailsPage', () => {
             const courseId = 'course-card';
             const batchId = 'sample-batch-id';
             const batchStatus = 2;
+            // enrolledCourseDetailsPage.courseHeirarchy = {
+            //     children: [{ identifier: 'do-123' }]
+            // };
             enrolledCourseDetailsPage.courseHeirarchy = {
-                children: [{ identifier: 'do-123' }]
+                contentData: {
+                    leafNodes: ['node1']
+                }
             };
             mockPreferences.putString = jest.fn(() => of(undefined));
             // act
@@ -2271,7 +2276,7 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 
-    describe('isCourseModifiedAfterEnrolment', () =>{
+    describe('isCourseModifiedAfterEnrolment', () => {
         it('should return false if course lastUpdatedOn date is less than course enrolledDate', () => {
             // arrange
             enrolledCourseDetailsPage.courseCardData = {
