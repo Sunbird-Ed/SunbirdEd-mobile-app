@@ -9,7 +9,7 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, GroupMemberRole, Group
+  CachedItemRequestSourceFrom, Content, Group
 } from '@project-sunbird/sunbird-sdk';
 import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
@@ -37,6 +37,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   courseList = [];
   showCourseDropdownSection = false;
   selectedCourse;
+  // courseData: Content;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -80,6 +81,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
+    this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
     this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
 
