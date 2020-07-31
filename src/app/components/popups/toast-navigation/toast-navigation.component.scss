@@ -14,7 +14,7 @@
   background-color: map-get($colors, primary_black);
   padding: 12px;
   color: map-get($colors, vivid_orange);
-  font-family: "Noto Sans";
+  font-family: "Noto Sans", sans-serif;
   font-size: 14px;
   text-transform: uppercase;
 }

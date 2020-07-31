@@ -50,7 +50,7 @@ ion-icon {
 
     .use-app-label{
         color: map-get($colors, granite_gray);
-        font-family: "Noto Sans";
+        font-family: "Noto Sans", serif;
         font-size: 14px;
         letter-spacing: 0;
         line-height: 14px;
@@ -70,7 +70,7 @@ ion-icon {
 .another-user-title{
     background-color: map-get($colors, light_grayish_green);
     color: $green;
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", serif;
     font-size: 16px;
     letter-spacing: 0;
     line-height: 16px;

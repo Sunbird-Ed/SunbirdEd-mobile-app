@@ -348,16 +348,9 @@ export class ContentCard {
     public static readonly LAYOUT_SAVED_CONTENT = 'SavedContent';
 }
 
-export class CardSectionName {
-    public static readonly SECTION_SAVED_RESOURCES = 'Saved Resources';
-    public static readonly SECTION_RECENT_RESOURCES = 'Recently Viewed';
-}
-
 export class ViewMore {
     public static readonly PAGE_COURSE_ENROLLED = 'course.EnrolledCourses';
     public static readonly PAGE_COURSE_POPULAR = 'course.PopularContent';
-    public static readonly PAGE_RESOURCE_SAVED = 'resource.SavedResources';
-    public static readonly PAGE_RESOURCE_RECENTLY_VIEWED = 'resource.RecentlyViewed';
 }
 
 export class Location {

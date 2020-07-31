@@ -43,12 +43,11 @@ export class ContentActionsComponent {
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('AUTH_SERVICE') private authService: AuthService,
     private navParams: NavParams,
     private toastCtrl: ToastController,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     private events: Events,
     private translate: TranslateService,
-    private platform: Platform,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fileSizePipe: FileSizePipe,
@@ -71,10 +70,6 @@ export class ContentActionsComponent {
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    // this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-    //   this.popOverCtrl.dismiss();
-    //   this.backButtonFunc.unsubscribe();
-    // });
     this.getUserId();
   }
 

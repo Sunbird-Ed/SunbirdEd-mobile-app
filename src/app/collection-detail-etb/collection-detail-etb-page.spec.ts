@@ -1712,6 +1712,7 @@ describe('collectionDetailEtbPage', () => {
         });
     });
 
+
     it('should hide deeplink progress loader', () => {
         // arrange
         collectionDetailEtbPage.identifier = 'sample_doId';
