@@ -56,12 +56,6 @@ var formRequestArray = [{
         'component': 'app'
     },
     {
-        'type': 'user',
-        'subType': 'manageduser_v2',
-        'action': 'create',
-        'component': 'app'
-    },
-    {
         'type': 'group',
         'subType': 'activities',
         'action': 'list',
