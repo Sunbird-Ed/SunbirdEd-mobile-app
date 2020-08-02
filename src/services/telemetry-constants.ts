@@ -286,7 +286,6 @@ export enum InteractSubtype {
     FILTER_BUTTON_CLICKED = 'filter-button-clicked',
     VIEWALL_CLICKED = 'view-all-clicked',
     BOOK_LIST_END_REACHED = 'book-list-end-reached',
-    RECENTLY_VIEWED_END_REACHED = 'recently-viewed-end-reached',
     SHARE_COURSE_INITIATED = 'share-course-initiated',
     SHARE_CONTENT_INITIATED = 'share-content-initiated',
     SHARE_COURSE_SUCCESS = 'share-course-success',

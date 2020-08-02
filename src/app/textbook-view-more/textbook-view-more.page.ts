@@ -1,10 +1,9 @@
 import { RouterLinks } from '@app/app/app.constant';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TelemetryObject } from 'sunbird-sdk';
-
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -16,12 +15,12 @@ import { Location } from '@angular/common';
   templateUrl: './textbook-view-more.page.html',
   styleUrls: ['./textbook-view-more.page.scss'],
 })
-export class TextbookViewMorePage implements OnInit {
+export class TextbookViewMorePage {
 
-  content: any;
+  LibraryCardTypes = LibraryCardTypes;
+  contentList: any;
   subjectName: any;
   toast: any;
-  layoutName = 'textbook';
   // header
   private _appHeaderSubscription?: Subscription;
   private _headerConfig = {
@@ -34,20 +33,24 @@ export class TextbookViewMorePage implements OnInit {
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private toastController: ToastController,
     private router: Router,
     private location: Location
   ) {
-
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      this.content = extras.content;
+      this.contentList = extras.contentList;
       this.subjectName = extras.subjectName;
     }
   }
 
   ionViewWillEnter() {
     this.initAppHeader();
+  }
+
+  ionViewWillLeave() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
   }
 
   private initAppHeader() {
@@ -93,12 +96,4 @@ export class TextbookViewMorePage implements OnInit {
     }
   }
 
-  ngOnInit() {
-  }
-
-  ionViewWillLeave() {
-    if (this._appHeaderSubscription) {
-      this._appHeaderSubscription.unsubscribe();
-    }
-  }
 }

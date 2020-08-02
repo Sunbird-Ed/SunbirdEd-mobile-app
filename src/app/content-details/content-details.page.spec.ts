@@ -1156,7 +1156,6 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.popToPreviousPage();
             // assert
             expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
-            expect(mockEvents.publish).toHaveBeenCalledWith('event:update_recently_viewed');
             expect(mockLocation.back).toHaveBeenCalled();
         });
     });
