@@ -350,7 +350,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
   }
 
-  extractPrepareedFieldStr(field) {
+  extractPrepareFieldStr(field) {
     if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory[field]) {
       if (typeof this.formValues.children.subcategory[field] === 'object' && this.formValues.children.subcategory[field].length) {
         return this.getStringFromArray(this.formValues.children.subcategory[field]);
@@ -366,10 +366,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   async openExploreBooksComponent() {
     // generate telemetry and send class, medium and subject data to next page
     const props = {
-      boardList: this.extractPrepareedFieldStr('borad'),
-      mediumList: this.extractPrepareedFieldStr('medium'),
-      geadeList: this.extractPrepareedFieldStr('grade'),
-      subjectList: this.extractPrepareedFieldStr('subject'),
+      boardList: this.extractPrepareFieldStr('borad'),
+      mediumList: this.extractPrepareFieldStr('medium'),
+      geadeList: this.extractPrepareFieldStr('grade'),
+      subjectList: this.extractPrepareFieldStr('subject'),
       relevantTerms: this.relevantTerms,
       curLang: this.translate.currentLang
     }
