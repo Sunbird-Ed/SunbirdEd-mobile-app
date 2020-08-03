@@ -67,7 +67,6 @@ export class AddMemberToGroupPage {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
     this.memberList = extras.memberList;
-    // this.getGoogleCaptchaSiteKey();
   }
 
   async getGoogleCaptchaSiteKey(): Promise<{isCaptchaEnabled: boolean , captchaKey: string }> {
