@@ -236,6 +236,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   isNextContentFound = false;
   isFirstContent = false;
   nextContent: Content;
+  certificateDescription = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -784,7 +785,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.batchDetails = data;
           // console.log('this.batchDetails', this.batchDetails);
           this.handleUnenrollButton();
-          this.isCertifiedCourse = data.cert_templates ? true : false;
+          if (data.cert_templates && Object.keys(data.cert_templates).length &&
+            data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+            this.isCertifiedCourse = true;
+            this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
+          } else {
+            this.isCertifiedCourse = false;
+          }
           this.saveContentContext(this.appGlobalService.getUserId(),
             this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
           this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()

@@ -9,6 +9,7 @@ import { CommonUtilService } from '@app/services';
 export class CourseCompletionPopoverComponent {
   isCertified = false;
   isOnline = true;
+  certificateDescription = '';
   constructor(
     private popOverCtrl: PopoverController,
     private navParams: NavParams,
@@ -17,6 +18,7 @@ export class CourseCompletionPopoverComponent {
 
   ionViewWillEnter() {
     this.isCertified = this.navParams.get('isCertified');
+    this.certificateDescription = this.navParams.get('certificateDescription');
     this.isOnline = this.commonUtilService.networkInfo.isNetworkAvailable;
   }
 
