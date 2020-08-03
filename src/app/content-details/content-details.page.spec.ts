@@ -2321,19 +2321,17 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
             mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
             mockEventBusService.events = jest.fn(() => of({
-                type: 'PROGRESS',
                 payload: {
-                    payload: {
-                        eid: 'END',
-                        edata: {
-                            summary: ['sample_string']
-                        },
-                        object: {
-                            id: 'content_id'
-                        }
+                    eid: 'END',
+                    edata: {
+                        summary: ['sample_string']
+                    },
+                    object: {
+                        id: 'content_id'
                     }
                 }
             }));
+            contentDetailsPage.shouldOpenPlayAsPopup = true;
             // act
             contentDetailsPage.subscribeEvents();
             // assert
@@ -2515,5 +2513,35 @@ describe('ContentDetailsPage', () => {
         mockCommonUtilService.openUrlInBrowser = jest.fn();
         contentDetailsPage.openinBrowser('sample-url');
         expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalled();
+    });
+
+    describe('openCourseCompletionPopup', () => {
+        it('should not open the course completion popup if the course is not completed', (done) => {
+            // arrange
+            contentDetailsPage['playerEndEventTriggered'] = true;
+            contentDetailsPage.showCourseCompletePopup = false;
+            contentDetailsPage.getContentState = jest.fn();
+            // act
+            contentDetailsPage.openCourseCompletionPopup().then(res => {
+                expect(contentDetailsPage['playerEndEventTriggered']).toBeFalsy();
+                expect(contentDetailsPage.getContentState).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should open the course completion popup if the course is completed', (done) => {
+            // arrange
+            contentDetailsPage['playerEndEventTriggered'] = false;
+            contentDetailsPage.showCourseCompletePopup = true;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({})),
+            } as any)));
+            // act
+            contentDetailsPage.openCourseCompletionPopup().then(res => {
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                done();
+            });
+        });
     });
 });
