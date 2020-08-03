@@ -34,7 +34,7 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { of, throwError, EMPTY } from 'rxjs';
+import { of, throwError, EMPTY, Subscription } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -1256,6 +1256,10 @@ describe('ContentDetailsPage', () => {
         it('should unsubscribe events', () => {
             // arrange
             mockEvents.unsubscribe = jest.fn();
+            mockEventBusService.events = jest.fn(() => of({
+                unsubscribe: jest.fn()
+            }));
+            contentDetailsPage['contentProgressSubscription'] = { unsubscribe: jest.fn() } as Partial<Subscription>;
             // act
             contentDetailsPage.ngOnDestroy();
             // assert
@@ -2316,6 +2320,20 @@ describe('ContentDetailsPage', () => {
             });
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
             mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'PROGRESS',
+                payload: {
+                    payload: {
+                        eid: 'END',
+                        edata: {
+                            summary: ['sample_string']
+                        },
+                        object: {
+                            id: 'content_id'
+                        }
+                    }
+                }
+            }));
             // act
             contentDetailsPage.subscribeEvents();
             // assert
@@ -2357,6 +2375,20 @@ describe('ContentDetailsPage', () => {
                 console.log(topic);
                 called[topic] = false;
             });
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'PROGRESS',
+                payload: {
+                    payload: {
+                        eid: 'END',
+                        edata: {
+                            summary: ['sample_string']
+                        },
+                        object: {
+                            id: 'content_id'
+                        }
+                    }
+                }
+            }));
             // act
             contentDetailsPage.subscribeEvents();
             // assert
