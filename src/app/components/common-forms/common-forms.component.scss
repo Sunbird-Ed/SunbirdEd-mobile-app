@@ -120,7 +120,7 @@
 
 .cf-input-title{
   color: map-get($colors, primary_black);
-  font-family: "Noto Sans";
+  font-family: "Noto Sans", sans-serif;
   font-size: 14px;
   letter-spacing: 0;
   line-height: 19px;
@@ -223,7 +223,7 @@ ion-checkbox {
 }
 
 .prefix{
-  padding-left: 8px;;
+  padding-left: 8px;
 }
 
 .required-star{

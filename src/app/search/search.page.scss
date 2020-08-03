@@ -16,7 +16,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: map-get($colors, white_fa);;
+    background-color: map-get($colors, white_fa);
   }
 
   .sb-search-history-entry {
@@ -41,7 +41,6 @@
     padding-top: 1rem;
 
     color: $blue;
-    font-size: 1.2rem;
     font-size: 12px;
   }
 
@@ -51,7 +50,7 @@
   }
   
   .collection-list {
-    margin-bottom: 0px !important;
+    margin-bottom: 0 !important;
   }
   
   .item-inner {
@@ -103,7 +102,7 @@
         font-size: 18px;	
         font-weight: bold;
         text-transform: capitalize;
-        line-height: ($base-block-space * 3)
+        line-height: ($base-block-space * 3);
     }
 }
   
@@ -224,9 +223,6 @@
   max-width: 60%;
   vertical-align: top;
   }
-  // .list-md {
-  //   margin: 16px 0 16px !important;
-  // }
   
     .loading-backdrop {
       .backdrop-container {
@@ -265,37 +261,6 @@
     &:last-child{
         margin-bottom: ($base-block-space * 2);
     }
-  
-    // .sb-view-all-container {
-    //   width: 100%;
-    //   .sb-view-all-items{
-    //       background-color: $primary-color;
-    //       height: ($base-block-space * 10);
-    //       width: 100%;
-    //       position: relative;
-    //       display: flex;
-    //       align-items: center;
-    //       @include padding(0, ($base-block-space * 1));
-    //       .sb-view-all-title{
-    //           color: $white-color;
-    //           .page-heading{
-    //               font-size: $font-size-base + 2;
-    //               font-weight: bold;
-    //               line-height: 22px;
-    //           }
-          
-    //           .page-info{
-    //               display: block;
-    //               font-size: $font-size-base - 2;
-    //               line-height: 15px;
-    //           }
-    //       }
-    //       .sb-card-scroll-container{
-    //         overflow-x: auto;
-    //         padding: 0 0 8px 0;
-    //       }
-    //   }
-    // }
     
       .sb-view-all-container
     {

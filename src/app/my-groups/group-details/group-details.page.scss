@@ -20,7 +20,7 @@
         .gd-name {
             padding-right: 60px;
             color: $gray-800;
-            font-family: "Noto Sans";
+            font-family: "Noto Sans", sans-serif;
             font-size: 16px;
             font-weight: bold;
             letter-spacing: 0;
@@ -28,7 +28,7 @@
 
             .gd-created-by {
                 color: $gray-400;
-                font-family: "Noto Sans";
+                font-family: "Noto Sans", sans-serif;
                 font-size: 11px;
                 letter-spacing: 0;
                 line-height: 20px;
@@ -122,16 +122,12 @@
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 4px 0px;
         cursor: pointer;
         outline: none;
-        margin-bottom: 8px;
-        font-family: noto-sans;
-        font-family: "Noto Sans";
-        font-size: 16px;
+        margin: 4px 0 8px;
+        font-family: noto-sans, sans-serif;
         width: 100%;
-        padding: 16px 0px 16px 0px;
-        padding: 16px !important;
+        padding: 16px 0 16px 0;
         background-color: $blue;
         box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
     }
@@ -147,7 +143,6 @@
 
 .gd-add-member {
     border-bottom: 1px solid $gray-100;
-    margin-bottom: 16px;
     margin: 0 8px;
     padding: 16px 0;
 }
@@ -170,7 +165,7 @@
 
 .gd-large-text {
     color: $gray-800;
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     font-size: 16px;
     letter-spacing: 0;
     line-height: 20px;

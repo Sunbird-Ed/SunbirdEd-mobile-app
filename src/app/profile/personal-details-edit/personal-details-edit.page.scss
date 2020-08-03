@@ -47,6 +47,11 @@
         background-color: map-get($colors, white);
         box-shadow: unset;
         color: map-get($colors, black);
+        float: right;
+        ion-icon {
+          padding: 0;
+          margin-top: 10px;
+        }
     }
   
     .popover-alert .alert-header{
@@ -61,14 +66,6 @@
       margin-top: 26px;
       border-radius: 5px;
     }
-  
-    .popover-alert .close-button{
-      float: right;
-         ion-icon {
-        padding: 0;
-        margin-top: 10px;
-      }
-    } 
   
     .popover-alert .alert-header-content{
       padding: 0;
