@@ -22,7 +22,8 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-  TelemetryGeneratorService
+  TelemetryGeneratorService,
+  UtilityService
 } from '@app/services';
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
@@ -39,11 +40,9 @@ export class AddMemberToGroupPage {
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
-  isCaptchaEnabled: boolean;
   showLoader: boolean;
   username = '';
   groupId: string;
-  sunbirdGoogleCaptchaKey;
   memberList: GroupMember[] = [];
   userDetails;
   private unregisterBackButton: Subscription;
@@ -62,27 +61,29 @@ export class AddMemberToGroupPage {
     private platform: Platform,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private sbUtility: UtilityService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
     this.memberList = extras.memberList;
-    this.getGoogleCaptchaSiteKey();
   }
 
-  getGoogleCaptchaSiteKey() {
+  async getGoogleCaptchaSiteKey(): Promise<{isCaptchaEnabled: boolean , captchaKey: string }> {
     if (this.commonUtilService.getGoogleCaptchaConfig().size === 0) {
-      this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
+      return this.systemSettingsService.getSystemSettings({ id: 'appGoogleReCaptcha' }).toPromise()
         .then((res) => {
           const captchaConfig = JSON.parse(res.value);
-          this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
-          this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
-          this.commonUtilService.setGoogleCaptchaConfig(this.sunbirdGoogleCaptchaKey, this.isCaptchaEnabled);
+          const isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+          const captchaKey = captchaConfig['key'] || captchaConfig.get('key');
+          this.commonUtilService.setGoogleCaptchaConfig(captchaKey, isCaptchaEnabled);
+          return {isCaptchaEnabled, captchaKey};
         });
     } else if (Boolean(this.commonUtilService.getGoogleCaptchaConfig())) {
-      const captchaConfig = this.commonUtilService.getGoogleCaptchaConfig();
-      this.isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
-      this.sunbirdGoogleCaptchaKey = captchaConfig['key'] || captchaConfig.get('key');
+      const captchaConfig =  this.commonUtilService.getGoogleCaptchaConfig();
+      const isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
+      const captchaKey = captchaConfig['key'] || captchaConfig.get('key');
+      return {isCaptchaEnabled, captchaKey};
     }
   }
 
@@ -139,13 +140,13 @@ export class AddMemberToGroupPage {
 
   async onVerifyClick() {
     let captchaResponse: string | undefined;
-    if (this.isCaptchaEnabled) {
-      this.cap.execute();
-      captchaResponse = await this.cap.resolved.pipe(take(1)).toPromise();
-      this.cap.reset();
-      if (!captchaResponse) {
-        return;
-      }
+    const  {isCaptchaEnabled, captchaKey} = await this.getGoogleCaptchaSiteKey();
+    if (isCaptchaEnabled) {
+      await this.sbUtility.verifyCaptcha(captchaKey).then((res) => {
+        captchaResponse = res;
+      }).catch((error) => {
+        console.error(error);
+      });
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
