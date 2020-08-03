@@ -52,6 +52,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
+import { ContentEventType } from '@project-sunbird/sunbird-sdk';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -2320,16 +2321,14 @@ describe('ContentDetailsPage', () => {
             });
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
             mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
+            contentDetailsPage['course'] = {
+                contentId: 'content_id'
+            };
             mockEventBusService.events = jest.fn(() => of({
                 payload: {
-                    eid: 'END',
-                    edata: {
-                        summary: ['sample_string']
-                    },
-                    object: {
-                        id: 'content_id'
-                    }
-                }
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
             }));
             contentDetailsPage.shouldOpenPlayAsPopup = true;
             // act
@@ -2373,19 +2372,14 @@ describe('ContentDetailsPage', () => {
                 console.log(topic);
                 called[topic] = false;
             });
+            contentDetailsPage.course = {
+                contentId: 'content_id'
+            };
             mockEventBusService.events = jest.fn(() => of({
-                type: 'PROGRESS',
                 payload: {
-                    payload: {
-                        eid: 'END',
-                        edata: {
-                            summary: ['sample_string']
-                        },
-                        object: {
-                            id: 'content_id'
-                        }
-                    }
-                }
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
             }));
             // act
             contentDetailsPage.subscribeEvents();

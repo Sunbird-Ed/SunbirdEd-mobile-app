@@ -30,7 +30,10 @@ import {
   Course,
   DownloadService,
   ObjectType,
-  SharedPreferences
+  SharedPreferences,
+  EventNamespace,
+  ContentEvent,
+  ContentUpdate
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -297,11 +300,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.generateTelemetry(true);
       }, 1000);
     });
-    this.contentProgressSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
-      console.log('data.cert_templates', event);
-      if (event.payload && event.payload.eid === 'END' && event.payload.edata && event.payload.edata.summary
-        && event.payload.edata.summary.length && event.payload.object.id === this.identifier && this.shouldOpenPlayAsPopup) {
-        this.playerEndEventTriggered = true;
+    this.contentProgressSubscription = this.eventBusService.events(EventNamespace.CONTENT).subscribe((event: ContentEvent) => {
+      if (event.type === ContentEventType.COURSE_STATE_UPDATED && this.course &&
+        (event as ContentUpdate).payload.contentId === this.course.contentId && this.shouldOpenPlayAsPopup) {
+          this.playerEndEventTriggered = true;
       }
     });
   }
