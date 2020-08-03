@@ -2487,4 +2487,56 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.openinBrowser('sample-url');
         expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalled();
     });
+
+
+    describe('fetchCertificateDescription', () => {
+        it('should return empty string if batchId is null', (done) => {
+            // act
+            contentDetailsPage.fetchCertificateDescription(null).then(res => {
+                // assert
+                done();
+            });
+        });
+
+        it('should returncertificate message if batchId is present', (done) => {
+            mockCourseService.getBatchDetails = jest.fn(() => of({
+                cert_templates: { someKey: { description: 'some_description' } }
+            })) as any;
+            // act
+            contentDetailsPage.fetchCertificateDescription('batch_id').then(res => {
+                // assert
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return empty string if there is an error', (done) => {
+            mockCourseService.getBatchDetails = jest.fn(() => throwError({error: 'some_error'})) as any;
+            // act
+            contentDetailsPage.fetchCertificateDescription('batch_id').then(res => {
+                // assert
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('openCourseCompletionPopup', () => {
+        it('should open the course completion popup if the course is completed', (done) => {
+            // arrange
+            contentDetailsPage['playerEndEventTriggered'] = false;
+            contentDetailsPage.showCourseCompletePopup = true;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({})),
+            } as any)));
+            contentDetailsPage.fetchCertificateDescription = jest.fn(() => Promise.resolve(''));
+            // act
+            contentDetailsPage.openCourseCompletionPopup().then(res => {
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(contentDetailsPage.fetchCertificateDescription).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
 });
