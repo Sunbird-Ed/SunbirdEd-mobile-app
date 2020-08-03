@@ -350,23 +350,32 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
   }
 
+  extractPrepareedFieldStr(field) {
+    if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory[field]) {
+      if (typeof this.formValues.children.subcategory[field] === 'object' && this.formValues.children.subcategory[field].length) {
+        return this.getStringFromArray(this.formValues.children.subcategory[field]);
+      } else if(this.formValues.children.subcategory[field].name) {
+        return this.formValues.children.subcategory[field].name
+      }
+      return undefined;
+    } else if(this.profile) {
+      
+    }
+  }
+
   async openExploreBooksComponent() {
     // generate telemetry and send class, medium and subject data to next page
+    const props = {
+      boardList: this.extractPrepareedFieldStr('borad'),
+      mediumList: this.extractPrepareedFieldStr('medium'),
+      geadeList: this.extractPrepareedFieldStr('grade'),
+      subjectList: this.extractPrepareedFieldStr('subject'),
+      relevantTerms: this.relevantTerms,
+      curLang: this.translate.currentLang
+    }
     const sortOptionsModal = await this.modalCtrl.create({
       component: ExploreBooksSortComponent,
-      componentProps:
-      {
-        boardList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.board) ?
-          [this.formValues.children.subcategory.board.name] : undefined,
-        mediumList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.medium) ?
-          [this.formValues.children.subcategory.medium.name] : undefined,
-        geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
-          [this.formValues.children.subcategory.grade.name] : undefined,
-        subjectList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.subject) ?
-          [this.formValues.children.subcategory.subject.name] : undefined,
-        relevantTerms: this.relevantTerms,
-        curLang: this.translate.currentLang
-      }
+      componentProps: props
     });
     this.location.back();
     await sortOptionsModal.present();
@@ -439,17 +448,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
-      this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : undefined;
+      correlationlist.push({ id: this.extractPrepareedFieldStr('board'), type: CorReleationDataType.BOARD });
       // Medium
-      this.formValues.children.subcategory.medium && this.formValues.children.subcategory.medium.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : undefined;
+      correlationlist.push({ id: this.extractPrepareedFieldStr('medium'), type: CorReleationDataType.MEDIUM });
       // Grade
-      this.formValues.children.subcategory.grade && this.formValues.children.subcategory.grade.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : undefined;
+      correlationlist.push({ id: this.extractPrepareedFieldStr('grade'), type: CorReleationDataType.CLASS });
       // Subject
-      this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
+      correlationlist.push({ id: this.extractPrepareedFieldStr('subject'), type: CorReleationDataType.SUBJECT });
     }
 
     return correlationlist ? correlationlist : undefined;
@@ -798,6 +803,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
   }
 
+  getStringFromArray(arr) {
+    return arr.reduce((acc, ele) => {
+      if(!acc) {
+        acc = ele.name ? ele.name : ele;
+      } else {
+        acc += ', ' + (ele.name ? ele.name : ele);
+      }
+      return acc;
+    }, '');
+  }
+
   prepareEmailContent(formValue) {
     this.bmgsString = undefined;
     this.categories = undefined;
@@ -812,9 +828,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     bmgskeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(fields, element)) {
         if (!this.bmgsString) {
-          this.bmgsString = fields[element].name;
+          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+            this.bmgsString = this.getStringFromArray(fields[element]);
+          } else {
+            this.bmgsString = fields[element].name;
+          }
         } else {
-          this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
+          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+            this.bmgsString += ', ' + this.getStringFromArray(fields[element]);
+          } else {
+            this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
+          }
         }
       }
     });
