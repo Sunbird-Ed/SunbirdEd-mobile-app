@@ -52,6 +52,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
+import { CourseService } from '@project-sunbird/sunbird-sdk';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -118,6 +119,7 @@ describe('ContentDetailsPage', () => {
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockCourseService: Partial<CourseService> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -127,6 +129,7 @@ describe('ContentDetailsPage', () => {
             mockStorageService as StorageServiceImpl,
             mockDownloadService as DownloadService,
             mockPreferences as SharedPreferences,
+            mockCourseService as CourseService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
