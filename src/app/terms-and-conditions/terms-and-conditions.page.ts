@@ -18,8 +18,7 @@ import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-terms-and-conditions',
-  templateUrl: './terms-and-conditions.page.html',
-  styleUrls: ['./terms-and-conditions.page.scss'],
+  templateUrl: './terms-and-conditions.page.html'
 })
 export class TermsAndConditionsPage implements OnInit {
   public tncLatestVersionUrl: SafeUrl;

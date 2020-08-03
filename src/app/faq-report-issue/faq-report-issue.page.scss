@@ -76,9 +76,6 @@ P{
     box-shadow:none !important;
 
 }
-.panel-default{
-
-}
 
 .panel-heading {
     padding: 16px 16px;
@@ -372,17 +369,17 @@ ion-item.item-label-stacked {
         color: map-get($colors, primary_black);
     }
     ion-select {
-        border-color: map-get($colors, primary_black);;
+        border-color: map-get($colors, primary_black);
         // Inside Shadow DOM
         .select-icon {
           .select-icon-inner {
-            border-color: map-get($colors, primary_black);;
+            border-color: map-get($colors, primary_black);
             animation: none;
           }
         }
         // Inside Shadow DOM
         .select-placeholder {
-          color: map-get($colors, primary_black);;
+          color: map-get($colors, primary_black);
         }
       }
 }
