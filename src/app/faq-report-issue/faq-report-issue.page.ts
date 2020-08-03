@@ -448,13 +448,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
-      correlationlist.push({ id: this.extractPrepareedFieldStr('board'), type: CorReleationDataType.BOARD });
+      correlationlist.push({ id: this.extractPrepareFieldStr('board'), type: CorReleationDataType.BOARD });
       // Medium
-      correlationlist.push({ id: this.extractPrepareedFieldStr('medium'), type: CorReleationDataType.MEDIUM });
+      correlationlist.push({ id: this.extractPrepareFieldStr('medium'), type: CorReleationDataType.MEDIUM });
       // Grade
-      correlationlist.push({ id: this.extractPrepareedFieldStr('grade'), type: CorReleationDataType.CLASS });
+      correlationlist.push({ id: this.extractPrepareFieldStr('grade'), type: CorReleationDataType.CLASS });
       // Subject
-      correlationlist.push({ id: this.extractPrepareedFieldStr('subject'), type: CorReleationDataType.SUBJECT });
+      correlationlist.push({ id: this.extractPrepareFieldStr('subject'), type: CorReleationDataType.SUBJECT });
     }
 
     return correlationlist ? correlationlist : undefined;
