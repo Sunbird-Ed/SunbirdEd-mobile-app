@@ -34,7 +34,7 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { of, throwError, EMPTY } from 'rxjs';
+import { of, throwError, EMPTY, Subscription } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -52,6 +52,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
+import { ContentEventType } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
 
 describe('ContentDetailsPage', () => {
@@ -1259,6 +1260,10 @@ describe('ContentDetailsPage', () => {
         it('should unsubscribe events', () => {
             // arrange
             mockEvents.unsubscribe = jest.fn();
+            mockEventBusService.events = jest.fn(() => of({
+                unsubscribe: jest.fn()
+            }));
+            contentDetailsPage['contentProgressSubscription'] = { unsubscribe: jest.fn() } as Partial<Subscription>;
             // act
             contentDetailsPage.ngOnDestroy();
             // assert
@@ -2319,6 +2324,16 @@ describe('ContentDetailsPage', () => {
             });
             jest.spyOn(contentDetailsPage, 'generateTelemetry').mockImplementation();
             mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
+            contentDetailsPage['course'] = {
+                contentId: 'content_id'
+            };
+            mockEventBusService.events = jest.fn(() => of({
+                payload: {
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
+            }));
+            contentDetailsPage.shouldOpenPlayAsPopup = true;
             // act
             contentDetailsPage.subscribeEvents();
             // assert
@@ -2360,6 +2375,15 @@ describe('ContentDetailsPage', () => {
                 console.log(topic);
                 called[topic] = false;
             });
+            contentDetailsPage.course = {
+                contentId: 'content_id'
+            };
+            mockEventBusService.events = jest.fn(() => of({
+                payload: {
+                    contentId: 'content_id'
+                },
+                type: ContentEventType.COURSE_STATE_UPDATED
+            }));
             // act
             contentDetailsPage.subscribeEvents();
             // assert
@@ -2488,7 +2512,6 @@ describe('ContentDetailsPage', () => {
         expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalled();
     });
 
-
     describe('fetchCertificateDescription', () => {
         it('should return empty string if batchId is null', (done) => {
             // act
@@ -2522,6 +2545,19 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openCourseCompletionPopup', () => {
+        it('should not open the course completion popup if the course is not completed', (done) => {
+            // arrange
+            contentDetailsPage['playerEndEventTriggered'] = true;
+            contentDetailsPage.showCourseCompletePopup = false;
+            contentDetailsPage.getContentState = jest.fn();
+            // act
+            contentDetailsPage.openCourseCompletionPopup().then(res => {
+                expect(contentDetailsPage['playerEndEventTriggered']).toBeFalsy();
+                expect(contentDetailsPage.getContentState).toHaveBeenCalled();
+                done();
+            });
+        });
+
         it('should open the course completion popup if the course is completed', (done) => {
             // arrange
             contentDetailsPage['playerEndEventTriggered'] = false;

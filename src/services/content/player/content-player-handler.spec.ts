@@ -85,7 +85,7 @@ describe('ContentPlayerHandler', () => {
             contentPlayerHandler.launchContentPlayer(mockContent, true, true, { course: mockCourse } as any, true);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: true } });
         });
 
         it('should disbale the user switcher if content is being played from course', () => {
@@ -115,7 +115,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });
@@ -128,7 +128,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).not.toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });
@@ -141,7 +141,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });
@@ -155,7 +155,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).not.toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });
@@ -169,7 +169,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse } });
+                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });
