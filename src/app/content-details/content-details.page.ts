@@ -166,6 +166,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   onboarding = false;
   showCourseCompletePopup = false;
   courseContext: any;
+  private contentProgressSubscription: Subscription;
+  private playerEndEventTriggered: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -295,12 +297,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.generateTelemetry(true);
       }, 1000);
     });
+    this.contentProgressSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
+      console.log('data.cert_templates', event);
+      if (event.payload && event.payload.eid === 'END' && event.payload.edata && event.payload.edata.summary
+        && event.payload.edata.summary.length && event.payload.object.id === this.identifier && this.shouldOpenPlayAsPopup) {
+        this.playerEndEventTriggered = true;
+      }
+    });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
     this.events.unsubscribe(EventTopics.NEXT_CONTENT);
     this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
+    this.contentProgressSubscription.unsubscribe();
   }
 
   /**
@@ -443,19 +453,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          if (this.showCourseCompletePopup) {
-            this.ratingHandler.showRatingPopup(
-              this.isContentPlayed,
-              data,
-              'automatic',
-              this.corRelationList,
-              this.objRollup,
-              this.shouldNavigateBack,
-              () => { this.openCourseCompletionPopup(); });
-          } else {
-            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
-           this.shouldNavigateBack);
-          }
+          this.ratingHandler.showRatingPopup(
+            this.isContentPlayed,
+            data,
+            'automatic',
+            this.corRelationList,
+            this.objRollup,
+            this.shouldNavigateBack,
+            () => { this.openCourseCompletionPopup(); });
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -1369,6 +1374,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async openCourseCompletionPopup() {
+    if (this.playerEndEventTriggered) {
+      await this.getContentState();
+      this.playerEndEventTriggered = false;
+    }
+    if (!this.showCourseCompletePopup) {
+      return;
+    }
     const popUp = await this.popoverCtrl.create({
       component: CourseCompletionPopoverComponent,
       componentProps: {

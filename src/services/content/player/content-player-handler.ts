@@ -87,7 +87,7 @@ export class ContentPlayerHandler {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = JSON.stringify(json);
                             this.router.navigate([RouterLinks.PLAYER],
-                                { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails } });
+                                { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails, isCourse } });
 
                         }).catch((error) => {
                             console.error('error1', error);
@@ -98,7 +98,7 @@ export class ContentPlayerHandler {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER],
                                 { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
-                                        corRelation: contentInfo.correlationList } });
+                                        corRelation: contentInfo.correlationList, isCourse } });
 
                         }).catch((e) => {
                             console.error('readJSON error', e);
@@ -107,13 +107,13 @@ export class ContentPlayerHandler {
                 } else {
                     this.router.navigate([RouterLinks.PLAYER],
                         { state: { config: data, course : contentInfo.course, navigateBackToContentDetails,
-                                corRelation: contentInfo.correlationList } });
+                                corRelation: contentInfo.correlationList, isCourse } });
                 }
 
             } else {
                 this.router.navigate([RouterLinks.PLAYER],
                     { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
-                            corRelation: contentInfo.correlationList } });
+                            corRelation: contentInfo.correlationList, isCourse } });
             }
         });
     }
