@@ -53,6 +53,7 @@ import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType } from '@project-sunbird/sunbird-sdk';
+import { CourseService } from '@project-sunbird/sunbird-sdk';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -119,6 +120,7 @@ describe('ContentDetailsPage', () => {
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockCourseService: Partial<CourseService> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -128,6 +130,7 @@ describe('ContentDetailsPage', () => {
             mockStorageService as StorageServiceImpl,
             mockDownloadService as DownloadService,
             mockPreferences as SharedPreferences,
+            mockCourseService as CourseService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -2509,6 +2512,38 @@ describe('ContentDetailsPage', () => {
         expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalled();
     });
 
+    describe('fetchCertificateDescription', () => {
+        it('should return empty string if batchId is null', (done) => {
+            // act
+            contentDetailsPage.fetchCertificateDescription(null).then(res => {
+                // assert
+                done();
+            });
+        });
+
+        it('should returncertificate message if batchId is present', (done) => {
+            mockCourseService.getBatchDetails = jest.fn(() => of({
+                cert_templates: { someKey: { description: 'some_description' } }
+            })) as any;
+            // act
+            contentDetailsPage.fetchCertificateDescription('batch_id').then(res => {
+                // assert
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return empty string if there is an error', (done) => {
+            mockCourseService.getBatchDetails = jest.fn(() => throwError({error: 'some_error'})) as any;
+            // act
+            contentDetailsPage.fetchCertificateDescription('batch_id').then(res => {
+                // assert
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
     describe('openCourseCompletionPopup', () => {
         it('should not open the course completion popup if the course is not completed', (done) => {
             // arrange
@@ -2531,9 +2566,11 @@ describe('ContentDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({})),
             } as any)));
+            contentDetailsPage.fetchCertificateDescription = jest.fn(() => Promise.resolve(''));
             // act
             contentDetailsPage.openCourseCompletionPopup().then(res => {
                 expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(contentDetailsPage.fetchCertificateDescription).toHaveBeenCalled();
                 done();
             });
         });
