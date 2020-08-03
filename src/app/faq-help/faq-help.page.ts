@@ -220,6 +220,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   generateInteractTelemetry(interactSubtype, values) {
+    values.values.value.description = values.values.value.description.replace(/(<([^>]+)>)/ig, '');
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,

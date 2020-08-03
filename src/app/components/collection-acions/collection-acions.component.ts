@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'collection-acions',
   templateUrl: './collection-acions.component.html',
-  styleUrls: ['../detail-card/detail-card.component.scss', './collection-acions.component.scss'],
+  styleUrls: ['../detail-card/detail-card.component.scss'],
 })
 export class CollectionActionsComponent implements OnInit {
   @Input() contentDetail: Content;

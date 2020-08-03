@@ -1,10 +1,8 @@
-<!-- <ion-content> -->
 <div id="main-content">
   <img class="close-icon" src="assets/imgs/close_tutorial.svg" alt="close-icon" (click)="close(false)">
   <div class="tutorial-content">
     <div class="mg-popup-container" *ngIf="!isFromAddMember">
       <div class="mg-popup-content">
-        <!-- <ion-icon class="mg-popup-close close-icon" name="md-close-circle" (click)="close()"></ion-icon> -->
         <div class="mg-popup-title mg-popup-flex-item">{{'POWER_OF_GROUPS'| translate}}</div>
         <div class="mg-flex-item text-center">
           <img src="assets/imgs/my-groups-popup.svg" alt="">
@@ -20,7 +18,6 @@
     </div>
     <div class="mg-popup-container" *ngIf="isFromAddMember">
       <div class="mg-popup-content-member">
-        <!-- <ion-icon class="mg-popup-close" name="md-close-circle" (click)="close()"></ion-icon> -->
         <div class="mg-popup-title mg-popup-flex-item">
           <p class="am-title" [innerHTML]="'ADD_MEMBER_POPUP_TITLE' | translate:  {'%s': appName }"></p>
           <p class="am-desc" [innerHTML]="'ADD_MEMBER_POPUP_DESC' | translate:  {'%s': appName }"></p>
@@ -39,5 +36,3 @@
     </div>
   </div>
 </div>
-<!-- </ion-content> -->
-  

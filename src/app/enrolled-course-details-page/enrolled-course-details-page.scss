@@ -307,13 +307,11 @@
   .wrapper {
     grid-template-columns: 100px 100px 100px auto;
     margin-bottom: -8px;
-  }
-  .wrapper {
     border-radius: 5px;
-      & > div {
-        border-radius: 5px;
-        padding: 1em 0;
-      }
+    & > div {
+      border-radius: 5px;
+      padding: 1em 0;
+    }
   }
 
   .pull-right{
