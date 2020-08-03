@@ -3,8 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services';
 @Component({
   selector: 'app-my-groups-popover',
-  templateUrl: './sb-course-completion-popup.component.html',
-  styleUrls: ['./sb-course-completion-popup.component.scss'],
+  templateUrl: './sb-course-completion-popup.component.html'
 })
 export class CourseCompletionPopoverComponent {
   isCertified = false;
