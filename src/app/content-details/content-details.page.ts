@@ -30,7 +30,8 @@ import {
   Course,
   DownloadService,
   ObjectType,
-  SharedPreferences
+  SharedPreferences,
+  CourseService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -174,6 +175,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -1372,7 +1374,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const popUp = await this.popoverCtrl.create({
       component: CourseCompletionPopoverComponent,
       componentProps: {
-        isCertified: this.courseContext['isCertified']
+        isCertified: this.courseContext['isCertified'],
+        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId)
       },
       cssClass: 'sb-course-completion-popover',
     });
@@ -1386,6 +1389,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             Environment.HOME
         );
     }
+  }
+
+  async fetchCertificateDescription(batchId) {
+    if (!batchId) {
+      return '';
+    }
+    try {
+      const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
+      return (batchDetails && batchDetails.cert_templates && Object.keys(batchDetails.cert_templates).length &&
+        batchDetails.cert_templates[Object.keys(batchDetails.cert_templates)[0]].description) || '';
+    } catch (e) {
+      console.log(e);
+      return '';
+    }
+
   }
 
 }
