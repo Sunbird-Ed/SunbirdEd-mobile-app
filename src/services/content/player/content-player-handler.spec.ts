@@ -305,5 +305,35 @@ describe('ContentPlayerHandler', () => {
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
+
+        it('should navigate to content details page if the above conditions fail', () => {
+            // arrange
+            const content = {
+                identifier: 'identifier',
+                hierarchyInfo: [{ identifier: 'identifier1' }, { identifier: 'identifier1' }],
+                contentType: 'contentType',
+                pkgVersion: 'pkgVersion',
+                contentData: {
+                },
+                mimeType: '',
+                isAvailableLocally: false
+            };
+            const navExtras = { state: { course: {} } };
+            const telemetryDetails = {
+                pageId: 'id',
+                corRelationList: []
+            };
+            mockAppHeaderService.hideHeader = jest.fn();
+            jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnThis();
+            jest.spyOn(ContentUtil, 'generateRollUp').mockReturnThis();
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+
+            // act
+            contentPlayerHandler.playContent(content, navExtras, telemetryDetails, true, false, false);
+
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalled();
+        });
     });
 });

@@ -854,9 +854,6 @@ describe('ChapterDetailsPage', () => {
                 return;
             });
             mockContentPlayerHandler.playContent = jest.fn();
-            // mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
-            // mockCommonUtilService.showToast = jest.fn();
-            // mockDatePipe.transform = jest.fn(() => '2020-06-02');
             // act
             chapterDetailsPage.startLearning();
             // assert
@@ -870,8 +867,6 @@ describe('ChapterDetailsPage', () => {
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
             expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
-            // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
-            // expect(mockDatePipe.transform).toHaveBeenCalled();
         });
 
         it('should skip the naviation flow and show toast message like NO_CONTENT_AVAILABLE_IN_MODULE', () => {
@@ -879,8 +874,6 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
             chapterDetailsPage.isBatchNotStarted = false;
-            // mockDatePipe.transform = jest.fn(() => '2020-06-02');
-            // mockCommonUtilService.translateMessage = jest.fn(() => 'NO_CONTENT_AVAILABLE_IN_MODULE');
             mockCommonUtilService.showToast = jest.fn();
             // act
             chapterDetailsPage.startLearning();
@@ -894,9 +887,7 @@ describe('ChapterDetailsPage', () => {
                     undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toEqual(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
-            // expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
-            // expect(mockDatePipe.transform).toHaveBeenCalled();
         });
 
         it('should skip the naviation flow and show toast message like COURSE_WILL_BE_AVAILABLE', () => {
