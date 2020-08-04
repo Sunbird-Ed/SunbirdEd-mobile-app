@@ -24,6 +24,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   pauseSubscription: any;
   private navigateBackToContentDetails: boolean;
   corRelationList;
+  private isCourse = false;
 
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
@@ -51,6 +52,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.course = this.router.getCurrentNavigation().extras.state.course;
       this.navigateBackToContentDetails = this.router.getCurrentNavigation().extras.state.navigateBackToContentDetails;
       this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+      this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
     }
   }
 
@@ -181,7 +183,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         state: {
           content: content ? content : this.config['metadata'],
           corRelation: this.corRelationList,
-          shouldNavigateBack: true
+          shouldNavigateBack: true,
+          isCourse: this.isCourse
         },
         replaceUrl: true
       });

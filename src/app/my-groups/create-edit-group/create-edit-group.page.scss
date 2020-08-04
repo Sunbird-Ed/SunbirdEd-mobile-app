@@ -2,7 +2,7 @@
 :host {
   .label-font {
     color: $gray-800 !important;
-    font-family: "Noto Sans" !important;
+    font-family: "Noto Sans", sans-serif !important;
     font-size: 22px !important;
     font-weight: normal;
   }
@@ -93,13 +93,13 @@
   }
   ion-label {
     color: $gray-800;
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
     sup{
       font-size: 22px;
-      top: 0px;
+      top: 0;
       margin-left: 4px;
       color: $red;
     }
@@ -116,7 +116,7 @@
 
 .cr-input-title{
   color: $gray-800;
-  font-family: "Noto Sans";
+  font-family: "Noto Sans", sans-serif;
   font-size: 14px;
   letter-spacing: 0;
   line-height: 19px;

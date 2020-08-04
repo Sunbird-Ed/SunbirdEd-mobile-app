@@ -17,7 +17,7 @@
 }
 
 .scroll-content {
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
 .btn-progress-highlight {
   left: 0;
@@ -113,9 +113,7 @@
   margin-left: 8px;
   margin-right: 8px;
 }
-.sb-dt-card {
-  background-color: $primary-100;
-}
+
 .sb-dt-card .sb-dt-card-actions .sb-btn-tile-group .sb-btn-tile {
   background: transparent;
 }

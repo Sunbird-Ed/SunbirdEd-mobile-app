@@ -30,7 +30,11 @@ import {
   Course,
   DownloadService,
   ObjectType,
-  SharedPreferences
+  SharedPreferences,
+  EventNamespace,
+  ContentEvent,
+  ContentUpdate,
+  CourseService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -166,6 +170,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   onboarding = false;
   showCourseCompletePopup = false;
   courseContext: any;
+  private contentProgressSubscription: Subscription;
+  private playerEndEventTriggered: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -174,6 +180,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -295,12 +302,19 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.generateTelemetry(true);
       }, 1000);
     });
+    this.contentProgressSubscription = this.eventBusService.events(EventNamespace.CONTENT).subscribe((event: ContentEvent) => {
+      if (event.type === ContentEventType.COURSE_STATE_UPDATED && this.course &&
+        (event as ContentUpdate).payload.contentId === this.course.contentId && this.shouldOpenPlayAsPopup) {
+          this.playerEndEventTriggered = true;
+      }
+    });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
     this.events.unsubscribe(EventTopics.NEXT_CONTENT);
     this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
+    this.contentProgressSubscription.unsubscribe();
   }
 
   /**
@@ -443,19 +457,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          if (this.showCourseCompletePopup) {
-            this.ratingHandler.showRatingPopup(
-              this.isContentPlayed,
-              data,
-              'automatic',
-              this.corRelationList,
-              this.objRollup,
-              this.shouldNavigateBack,
-              () => { this.openCourseCompletionPopup(); });
-          } else {
-            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
-           this.shouldNavigateBack);
-          }
+          this.ratingHandler.showRatingPopup(
+            this.isContentPlayed,
+            data,
+            'automatic',
+            this.corRelationList,
+            this.objRollup,
+            this.shouldNavigateBack,
+            () => { this.openCourseCompletionPopup(); });
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -1369,10 +1378,18 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async openCourseCompletionPopup() {
+    if (this.playerEndEventTriggered) {
+      await this.getContentState();
+      this.playerEndEventTriggered = false;
+    }
+    if (!this.showCourseCompletePopup) {
+      return;
+    }
     const popUp = await this.popoverCtrl.create({
       component: CourseCompletionPopoverComponent,
       componentProps: {
-        isCertified: this.courseContext['isCertified']
+        isCertified: this.courseContext['isCertified'],
+        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId)
       },
       cssClass: 'sb-course-completion-popover',
     });
@@ -1386,6 +1403,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             Environment.HOME
         );
     }
+  }
+
+  async fetchCertificateDescription(batchId) {
+    if (!batchId) {
+      return '';
+    }
+    try {
+      const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
+      return (batchDetails && batchDetails.cert_templates && Object.keys(batchDetails.cert_templates).length &&
+        batchDetails.cert_templates[Object.keys(batchDetails.cert_templates)[0]].description) || '';
+    } catch (e) {
+      console.log(e);
+      return '';
+    }
+
   }
 
 }

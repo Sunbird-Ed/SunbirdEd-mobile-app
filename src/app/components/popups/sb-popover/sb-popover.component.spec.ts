@@ -21,7 +21,7 @@ describe('SbPopoverComponent', () => {
                     break;
                 case 'content':
                     value = {
-                        identifier: "identifier"
+                        identifier: 'identifier'
                     };
                     break;
                 case 'sbPopoverDynamicContent':
@@ -111,7 +111,7 @@ describe('SbPopoverComponent', () => {
                 done();
             }, 0);
         });
-        
+
         it('should close popover', async (done) => {
             // arrange
             const btn = {
@@ -208,6 +208,81 @@ describe('SbPopoverComponent', () => {
             // assert
             expect(unsubscribeFn).toHaveBeenCalledTimes(4);
         });
+    });
+
+});
+
+describe('SbPopoverComponent', () => {
+    let sbPopoverComponent: SbPopoverComponent;
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn((arg) => {
+            let value;
+            switch (arg) {
+                case 'actionsButtons':
+                    value = [
+                        {
+                            btntext: 'OKAY',
+                            btnClass: 'popover-color',
+                            btnDisabled$: undefined
+                        }
+                    ];
+                    break;
+                case 'content':
+                    value = undefined;
+                    break;
+                case 'sbPopoverDynamicContent':
+                    value = undefined;
+                    break;
+                case 'sbPopoverDynamicMainTitle':
+                    value = undefined;
+                    break;
+                case 'btnDisabled':
+                    value = of([]);
+                    break;
+                case 'isChild':
+                    value = false;
+                    break;
+                case 'handler':
+                    value = () => {
+                    };
+                    break;
+            }
+            return value;
+        })
+    };
+
+    const mockPlatform: Partial<Platform> = {
+    };
+
+    const mockNgZone: Partial<NgZone> = {
+        run: jest.fn((fn) => fn())
+    };
+
+    const mockPopOverController: Partial<PopoverController> = {
+        dismiss: jest.fn()
+    };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
+
+    beforeAll(() => {
+        sbPopoverComponent = new SbPopoverComponent(
+            mockNavParams as NavParams,
+            mockPlatform as Platform,
+            mockNgZone as NgZone,
+            mockPopOverController as PopoverController,
+            mockCommonUtilService as CommonUtilService
+        );
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should create a instance of SbInsufficientStoragePopupComponent', () => {
+        expect(sbPopoverComponent.isChild).toBeFalsy();
+        expect(sbPopoverComponent.sbPopoverDynamicMainTitle$).toBeFalsy();
+        expect(sbPopoverComponent.sbPopoverDynamicContent$).toBeFalsy();
     });
 
 });

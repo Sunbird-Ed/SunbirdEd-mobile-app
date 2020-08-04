@@ -131,8 +131,8 @@ ion-card .card .card-md {
 }
 
 .MLR0 {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .ML20 {
@@ -208,7 +208,7 @@ ion-card .card .card-md {
 }
 
 .content-padding {
-  padding: 8px 8px 0px 8px;
+  padding: 8px 8px 0 8px;
 }
 
 .subtitle-color {
@@ -507,10 +507,6 @@ ion-card .card .card-md {
 
 .sb-row {
   width: 100%;
-}
-
-.scroll-content {
-  padding-bottom: 20% !important;
 }
 
 .sb-topics-containe {
