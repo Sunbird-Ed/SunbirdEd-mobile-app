@@ -39,12 +39,6 @@
         </div>
         <div class="au-desc">{{'ADD_MEMBER_CONFIRMATION' | translate: {'app_name': appName} }}</div>
     </div>
-    <div>
-        <div *ngIf="isCaptchaEnabled === true">
-            <re-captcha #cap size="invisible" siteKey="6Ldk3O8UAAAAAC2tm0qkPGbJC7YJVpVzMeIuhumb">
-            </re-captcha>
-        </div>
-    </div>
     <div *ngIf="showLoader" class="ion-padding-start ion-padding-end">
         <div class="loader-container">
             <div class="loader"></div>
