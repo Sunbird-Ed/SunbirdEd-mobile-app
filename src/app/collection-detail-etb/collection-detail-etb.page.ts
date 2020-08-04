@@ -890,7 +890,9 @@ export class CollectionDetailEtbPage implements OnInit {
               this.showDownloadBtn = false;
               this.isDownloadCompleted = true;
               this.showDownload = false;
-              this.contentDetail.isAvailableLocally = true;
+              if (this.contentDetail) {
+                this.contentDetail.isAvailableLocally = true;
+              }
               this.downloadPercentage = 0;
               this.updateSavedResources();
               this.setChildContents();
