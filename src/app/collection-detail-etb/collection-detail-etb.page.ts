@@ -766,23 +766,23 @@ export class CollectionDetailEtbPage implements OnInit {
 
   getContentsSize(data) {
     data.forEach((value) => {
-      this.breadCrumb.set(value.identifier, value.contentData.name);
-      if (value.contentData.size) {
-        this.downloadSize += Number(value.contentData.size);
-      }
-      if (!value.children) {
-        if (value.isAvailableLocally) {
-          this.localResourseCount++;
+        this.breadCrumb.set(value.identifier, value.contentData.name);
+        if (value.contentData.size) {
+          this.downloadSize += Number(value.contentData.size);
         }
-      }
+        if (!value.children) {
+          if (value.isAvailableLocally) {
+            this.localResourseCount++;
+          }
+        }
 
-      if (value.children) {
-        this.getContentsSize(value.children);
-      }
-      if (value.isAvailableLocally === false) {
-        this.downloadIdentifiers.add(value.contentData.identifier);
-        this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
-      }
+        if (value.children) {
+          this.getContentsSize(value.children);
+        }
+        if (value.isAvailableLocally === false) {
+          this.downloadIdentifiers.add(value.contentData.identifier);
+          this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
+        }
 
     });
     if (this.downloadIdentifiers.size && !this.isDownloadCompleted) {
@@ -890,7 +890,9 @@ export class CollectionDetailEtbPage implements OnInit {
               this.showDownloadBtn = false;
               this.isDownloadCompleted = true;
               this.showDownload = false;
-              this.contentDetail.isAvailableLocally = true;
+              if (this.contentDetail) {
+                this.contentDetail.isAvailableLocally = true;
+              }
               this.downloadPercentage = 0;
               this.updateSavedResources();
               this.setChildContents();
