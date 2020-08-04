@@ -667,7 +667,7 @@ export class FormAndFrameworkUtilService {
     async getFormConfig() {
         const req: FormRequest = {
             type: "dynamicform",
-            subType: "support",
+            subType: "support_v2",
             action: "get",
             component: "app"
         };
