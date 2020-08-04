@@ -446,19 +446,18 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       this.objRollup,
       // this.corRelationList
     );
-    if (this.childContents.length && !this.isBatchNotStarted) {
+    if (this.childContents && this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
       const telemetryDetails = {
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
-      this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
-      if (!this.childContents.length) {
+      this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(firstChild, 1), telemetryDetails, true);
+    } else if (!this.childContents || !this.childContents.length) {
         this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
-      } else {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
-      }
+    } else {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+        this.datePipe.transform(this.courseStartDate, 'mediumDate')));
     }
   }
 

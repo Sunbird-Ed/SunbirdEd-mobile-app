@@ -146,6 +146,11 @@ export class ContentPlayerHandler {
             correlationList: telemetryDetails.corRelationList,
             hierachyInfo: playingContent.hierarchyInfo
         };
+        if (navExtras.state && navExtras.state.course && isCourse) {
+            contentInfo['course'] = navExtras.state.course;
+        } else {
+            isCourse = false;
+        }
         let isStreaming: boolean;
         let shouldDownloadAndPlay: boolean;
         if (playingContent.contentData.streamingUrl && this.commonUtilService.networkInfo.isNetworkAvailable &&
