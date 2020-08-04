@@ -854,9 +854,9 @@ describe('ChapterDetailsPage', () => {
                 return;
             });
             mockContentPlayerHandler.playContent = jest.fn();
-            mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
-            mockCommonUtilService.showToast = jest.fn();
-            mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            // mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
+            // mockCommonUtilService.showToast = jest.fn();
+            // mockDatePipe.transform = jest.fn(() => '2020-06-02');
             // act
             chapterDetailsPage.startLearning();
             // assert
@@ -870,40 +870,17 @@ describe('ChapterDetailsPage', () => {
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
             expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
-            expect(mockDatePipe.transform).toHaveBeenCalled();
+            // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
+            // expect(mockDatePipe.transform).toHaveBeenCalled();
         });
 
-        it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
-            // arrnge
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
-            chapterDetailsPage.isBatchNotStarted = false;
-            mockDatePipe.transform = jest.fn(() => '2020-06-02');
-            mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            chapterDetailsPage.startLearning();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.CHAPTER_DETAILS,
-                new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
-                    undefined, 'sample-pkg-ver'), undefined, undefined);
-            expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
-            expect(mockDatePipe.transform).toHaveBeenCalled();
-        });
-
-        it('should skip the naviation flow, if there are no contents', () => {
+        it('should skip the naviation flow and show toast message like NO_CONTENT_AVAILABLE_IN_MODULE', () => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
-            chapterDetailsPage.isBatchNotStarted = true;
+            chapterDetailsPage.isBatchNotStarted = false;
+            // mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            // mockCommonUtilService.translateMessage = jest.fn(() => 'NO_CONTENT_AVAILABLE_IN_MODULE');
             mockCommonUtilService.showToast = jest.fn();
             // act
             chapterDetailsPage.startLearning();
@@ -915,8 +892,36 @@ describe('ChapterDetailsPage', () => {
                 PageId.CHAPTER_DETAILS,
                 new TelemetryObject('do-123',
                     undefined, 'sample-pkg-ver'), undefined, undefined);
-            expect(chapterDetailsPage.childContents.length).toBe(0);
+            expect(chapterDetailsPage.childContents.length).toEqual(0);
+            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+            // expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
+            // expect(mockDatePipe.transform).toHaveBeenCalled();
+        });
+
+        it('should skip the naviation flow and show toast message like COURSE_WILL_BE_AVAILABLE', () => {
+            // arrnge
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
+            chapterDetailsPage.isBatchNotStarted = true;
+            mockCommonUtilService.translateMessage = jest.fn(() => 'COURSE_WILL_BE_AVAILABLE');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            // act
+            chapterDetailsPage.startLearning();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.CHAPTER_DETAILS,
+                new TelemetryObject('do-123',
+                    undefined, 'sample-pkg-ver'), undefined, undefined);
+            expect(chapterDetailsPage.childContents.length).toBe(1);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE');
+            expect(mockDatePipe.transform).toHaveBeenCalled();
         });
     });
 
