@@ -458,7 +458,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
     } else {
       this.location.back();
     }
