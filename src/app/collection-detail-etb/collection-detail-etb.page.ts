@@ -458,7 +458,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else {
       this.location.back();
     }
@@ -766,23 +766,23 @@ export class CollectionDetailEtbPage implements OnInit {
 
   getContentsSize(data) {
     data.forEach((value) => {
-        this.breadCrumb.set(value.identifier, value.contentData.name);
-        if (value.contentData.size) {
-          this.downloadSize += Number(value.contentData.size);
+      this.breadCrumb.set(value.identifier, value.contentData.name);
+      if (value.contentData.size) {
+        this.downloadSize += Number(value.contentData.size);
+      }
+      if (!value.children) {
+        if (value.isAvailableLocally) {
+          this.localResourseCount++;
         }
-        if (!value.children) {
-          if (value.isAvailableLocally) {
-            this.localResourseCount++;
-          }
-        }
+      }
 
-        if (value.children) {
-          this.getContentsSize(value.children);
-        }
-        if (value.isAvailableLocally === false) {
-          this.downloadIdentifiers.add(value.contentData.identifier);
-          this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
-        }
+      if (value.children) {
+        this.getContentsSize(value.children);
+      }
+      if (value.isAvailableLocally === false) {
+        this.downloadIdentifiers.add(value.contentData.identifier);
+        this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
+      }
 
     });
     if (this.downloadIdentifiers.size && !this.isDownloadCompleted) {
