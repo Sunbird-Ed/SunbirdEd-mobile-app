@@ -34,6 +34,7 @@ describe('AddMemberToGroupPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getGoogleCaptchaSitekey: jest.fn(() => { }),
         setGoogleCaptchaSitekey: jest.fn(),
+        showToast: jest.fn(),
         // getGoogleCaptchaConfig: jest.fn(() => captchaConfig),
         setGoogleCaptchaConfig: jest.fn(),
         networkInfo: {

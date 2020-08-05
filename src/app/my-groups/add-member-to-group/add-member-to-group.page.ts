@@ -198,6 +198,7 @@ export class AddMemberToGroupPage {
       }).catch(async (e) => {
         console.error(e);
         this.showLoader = false;
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       });
   }
 
