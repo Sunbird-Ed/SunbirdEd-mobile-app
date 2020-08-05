@@ -8,7 +8,7 @@
     <div class="ad-member-container">
       <div class="font-14" *ngIf="showCourseDropdownSection">
         <div class="activity-toc clearfix" (click)="openActivityToc()">
-          <span class="pull-left">{{selectedCourse?.name || ('ALL_COURSES' | translate)}}</span>
+          <span class="pull-left">{{selectedCourse?.name || activity?.activityInfo?.name}}</span>
           <span class="pull-right">
             <ion-icon class="ad-arrow-icon" name="ios-arrow-dropright-circle"></ion-icon>
           </span>

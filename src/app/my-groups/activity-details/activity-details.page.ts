@@ -191,7 +191,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   openActivityToc() {
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
-      { state: { courseList: this.courseList } });
+      { state: {
+        courseList: this.courseList,
+        mainCourseName: this.activity.activityInfo.name
+      }
+    });
   }
 
   handleDeviceBackButton() {

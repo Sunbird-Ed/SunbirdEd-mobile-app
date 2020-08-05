@@ -29,6 +29,7 @@ export class ActivityTocPage {
     headerObservable: any;
     backButtonFunc = undefined;
     courseList: Array<any>;
+    mainCourseName: string;
     selectedId;
 
     constructor(
@@ -42,6 +43,7 @@ export class ActivityTocPage {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
             this.courseList = extras.courseList;
+            this.mainCourseName = extras.mainCourseName;
         }
     }
 

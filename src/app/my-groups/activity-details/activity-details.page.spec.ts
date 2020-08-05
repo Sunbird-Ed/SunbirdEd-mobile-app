@@ -620,6 +620,11 @@ describe('ActivityDetailsPage', () => {
     it('should openActivityToc', () => {
         // arrange
         mockRouter.navigate = jest.fn();
+        activityDetailsPage.activity = {
+            activityInfo: {
+                name: 'course1'
+            }
+        } as any;
         // act
         activityDetailsPage.openActivityToc();
         // assert
