@@ -189,10 +189,10 @@ export class CommonUtilService {
      * Show popup with Try Again and Skip button.
      * @param source Page from alert got called
      */
-    async showContentComingSoonAlert(source, data?) {
+    async showContentComingSoonAlert(source, content?, dialCode?) {
         let message;
-        if (typeof data !== 'string') {
-             message = await this.comingSoonMessageService.getComingSoonMessage(data);
+        if (content) {
+             message = await this.comingSoonMessageService.getComingSoonMessage(content);
         }
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -201,8 +201,7 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
-            (typeof data === 'string') ? data : undefined);
+            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source, dialCode);
             return;
         }
         let popOver: any;
