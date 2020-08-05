@@ -1208,7 +1208,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         '',
         PageId.DIAL_NOT_LINKED,
         Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source, this.dialCode);
+      this.commonUtilService.showContentComingSoonAlert(this.source, undefined, this.dialCode);
     }
   }
 
