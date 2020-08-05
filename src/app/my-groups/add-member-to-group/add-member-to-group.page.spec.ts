@@ -9,7 +9,8 @@ import {
     InteractSubtype,
     InteractType,
     PageId,
-    TelemetryGeneratorService
+    TelemetryGeneratorService,
+    UtilityService
 } from '@app/services';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
@@ -33,7 +34,7 @@ describe('AddMemberToGroupPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         getGoogleCaptchaSitekey: jest.fn(() => { }),
         setGoogleCaptchaSitekey: jest.fn(),
-        getGoogleCaptchaConfig: jest.fn(() => captchaConfig),
+        // getGoogleCaptchaConfig: jest.fn(() => captchaConfig),
         setGoogleCaptchaConfig: jest.fn(),
         networkInfo: {
             isNetworkAvailable: true
@@ -58,6 +59,7 @@ describe('AddMemberToGroupPage', () => {
         })) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockSbUtility: Partial<UtilityService> = {};
 
     beforeAll(() => {
         addMemberToGroupPage = new AddMemberToGroupPage(
@@ -71,7 +73,8 @@ describe('AddMemberToGroupPage', () => {
             mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
             mockPopoverCtrl as PopoverController,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockSbUtility as UtilityService
         );
     });
 
@@ -170,6 +173,13 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.isCaptchaEnabled = true;
             addMemberToGroupPage.username = undefined;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
+                return Promise.resolve({
+                    isCaptchaEnabled: true,
+                    captchaKey: 'site key'
+                });
+            });
+            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -188,7 +198,13 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.isCaptchaEnabled = false;
             addMemberToGroupPage.username = 'sample-user-name';
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            addMemberToGroupPage.isCaptchaEnabled = true;
+            jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
+                return Promise.resolve({
+                    isCaptchaEnabled: false,
+                    captchaKey: 'site key'
+                });
+            });
+            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => throwError(''));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
@@ -212,6 +228,13 @@ describe('AddMemberToGroupPage', () => {
                 exists: true,
                 name: 'jhon'
             })) as any;
+            jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
+                return Promise.resolve({
+                    isCaptchaEnabled: false,
+                    captchaKey: 'site key'
+                });
+            });
+            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
@@ -253,6 +276,13 @@ describe('AddMemberToGroupPage', () => {
         it('should not return userDetails if serverProfile is undefined', (done) => {
             addMemberToGroupPage.username = 'sample-user-id';
             addMemberToGroupPage.isCaptchaEnabled = false;
+            jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
+                return Promise.resolve({
+                    isCaptchaEnabled: false,
+                    captchaKey: 'site key'
+                });
+            });
+            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.reject('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => of(undefined)) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -269,6 +299,12 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.username = 'sample-user-id';
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockProfileService.checkServerProfileExists = jest.fn(() => throwError({ error: 'error' })) as any;
+            jest.spyOn(addMemberToGroupPage, 'getGoogleCaptchaSiteKey').mockImplementation(() => {
+                return Promise.resolve({
+                    isCaptchaEnabled: false,
+                    captchaKey: 'site key'
+                });
+            });
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
