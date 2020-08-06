@@ -75,14 +75,14 @@
     padding: 8px;
     .title {
       color: map-get($colors, white);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 16px;
       font-weight: bold;
       margin: 12px 0 0;
     }
     .count-text {
       color: map-get($colors, white_fa);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       margin: 0 0 12px;
     }
