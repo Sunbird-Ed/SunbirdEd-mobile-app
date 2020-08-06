@@ -7,11 +7,17 @@ import { ActivityDetailsPage } from './activity-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
+import { RouterLinks } from '@app/app/app.constant';
+import { ActivityTocPage } from './../activity-toc/activity-toc.page';
 
 const routes: Routes = [
   {
     path: '',
     component: ActivityDetailsPage
+  },
+  {
+    path: RouterLinks.ACTIVITY_TOC,
+    component: ActivityTocPage
   }
 ];
 
@@ -25,6 +31,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     PipesModule
   ],
-  declarations: [ActivityDetailsPage]
+  declarations: [ActivityDetailsPage, ActivityTocPage]
 })
 export class ActivityDetailsPageModule {}

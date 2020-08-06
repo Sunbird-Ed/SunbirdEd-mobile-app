@@ -1,41 +1,53 @@
 <ion-content>
   <div class="ad-container">
-    <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
-      [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo">
-    </sb-course-card>
-    <div class="gd-member-search">
-      <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
-      <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
-        placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
+    <div class="ad-card-container">
+      <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
+        [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo">
+      </sb-course-card>
     </div>
-    <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
-      [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
-    </div>
+    <div class="ad-member-container">
+      <div class="font-14" *ngIf="showCourseDropdownSection">
+        <div class="activity-toc clearfix" (click)="openActivityToc()">
+          <span class="pull-left">{{selectedCourse?.name || activity?.activityInfo?.name}}</span>
+          <span class="pull-right">
+            <ion-icon class="ad-arrow-icon" name="ios-arrow-dropright-circle"></ion-icon>
+          </span>
+        </div>
+      </div>
+      <div class="gd-member-search">
+        <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+        <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
+          placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
+      </div>
+      <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
+        [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
+      </div>
 
-    <div class="ad-mebers-container">
-      <div *ngIf="isActivityLoading">
-        <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
-          <sb-member-card [isLoading]="true"
-            [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
+      <div class="ad-mebers-container">
+        <div *ngIf="isActivityLoading">
+          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
+            <sb-member-card [isLoading]="true"
+              [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
+          </div>
         </div>
-      </div>
-      <div *ngIf="!isActivityLoading">
-        <div *ngFor="let member of filteredMemberList; let i = index">
-          <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-            [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
-            [title]="getMemberName(member)" [progressDisplay]="calulateProgress(member)">
-          </sb-member-card>
+        <div *ngIf="!isActivityLoading">
+          <div *ngFor="let member of filteredMemberList; let i = index">
+            <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+              [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
+              [title]="getMemberName(member)" [progressDisplay]="calulateProgress(member)">
+            </sb-member-card>
+          </div>
         </div>
-      </div>
-      <div
-        *ngIf="(!isActivityLoading && !filteredMemberList) || (!isActivityLoading && filteredMemberList?.length <= 1)"
-        class="text-center">
-        <div class="ad-empty-result" *ngIf="!memberSearchQuery">
-          <img src="assets/imgs/no_member.svg" alt="">
-        </div>
-        <div class="ad-empty-result" *ngIf="memberSearchQuery && !filteredMemberList?.length">
-          <img src="assets/imgs/empty_search_result.svg" alt="">
-          <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+        <div
+          *ngIf="(!isActivityLoading && !filteredMemberList) || (!isActivityLoading && filteredMemberList?.length <= 1)"
+          class="text-center">
+          <div class="ad-empty-result" *ngIf="!memberSearchQuery">
+            <img src="assets/imgs/no_member.svg" alt="">
+          </div>
+          <div class="ad-empty-result" *ngIf="memberSearchQuery && !filteredMemberList?.length">
+            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
         </div>
       </div>
     </div>

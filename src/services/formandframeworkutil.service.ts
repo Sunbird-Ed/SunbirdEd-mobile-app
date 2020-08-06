@@ -355,7 +355,7 @@ export class FormAndFrameworkUtilService {
     public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'group',
-            subType: 'activities',
+            subType: 'activities_v2',
             action: 'list',
             component: 'app'
         };

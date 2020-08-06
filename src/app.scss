@@ -1422,6 +1422,10 @@ ion-modal.sb-progress-loader {
   }
 }
 .select-activity-popover {
+  .sb-popover-container {
+    max-height: 70vh;
+    overflow: auto;
+  }
   .sb-popover-title {
     text-align: left !important;
     margin-left: 1.5rem;
