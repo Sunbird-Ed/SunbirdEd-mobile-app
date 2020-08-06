@@ -5,7 +5,7 @@ import {
     CommonUtilService, Environment, ImpressionType,
     PageId, TelemetryGeneratorService
 } from '@app/services';
-import { GroupService, GroupMemberRole } from '@project-sunbird/sunbird-sdk';
+import { GroupService, GroupMemberRole, MimeType } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService, CollectionService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
@@ -129,7 +129,8 @@ describe('ActivityDetailsPage', () => {
                 children : [
                     {
                         contentType: 'Course',
-                        identifier: 'id1'
+                        identifier: 'id1',
+                        mimeType: MimeType.COLLECTION
                     },
                     {
                         contentType: 'collection',
@@ -137,7 +138,8 @@ describe('ActivityDetailsPage', () => {
                             {
                                 contentType: 'Course',
                                 identifier: 'id2',
-                                name: 'name2'
+                                name: 'name2',
+                                mimeType: MimeType.COLLECTION
                             }
                         ]
                     }
@@ -163,14 +165,16 @@ describe('ActivityDetailsPage', () => {
                 children : [
                     {
                         contentType: 'Course',
-                        identifier: 'id1'
+                        identifier: 'id1',
+                        mimeType: MimeType.COLLECTION
                     },
                     {
                         contentType: 'collection',
                         children : [
                             {
                                 contentType: 'Course',
-                                identifier: 'id2'
+                                identifier: 'id2',
+                                mimeType: MimeType.COLLECTION
                             }
                         ]
                     }
