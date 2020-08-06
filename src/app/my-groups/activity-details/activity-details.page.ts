@@ -9,7 +9,7 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, Content, Group
+  CachedItemRequestSourceFrom, Content, Group, MimeType
 } from '@project-sunbird/sunbird-sdk';
 import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
@@ -180,7 +180,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+      if ((c.mimeType === MimeType.COLLECTION) &&  (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {

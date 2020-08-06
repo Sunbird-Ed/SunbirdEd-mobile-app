@@ -33,7 +33,7 @@
         <div *ngIf="!isActivityLoading">
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-              [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
+              [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
               [title]="getMemberName(member)" [progressDisplay]="calulateProgress(member)">
             </sb-member-card>
           </div>
