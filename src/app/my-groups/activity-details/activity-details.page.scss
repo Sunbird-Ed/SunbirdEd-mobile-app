@@ -2,9 +2,16 @@
 .ad-container{
     padding: 16px;
 }
+.ad-card-container{
+    padding-bottom: 16px;
+    border-bottom: .5px solid map-get($colors, dark_gray);
+}
+.ad-member-container{
+    padding-top: 16px;
+}
 .gd-member-search {
     position: relative;
-    margin: 8px 0;
+    margin: 0 0 8px 0;
     .gd-member-search-icon {
         position: absolute;
         top: 8px;
@@ -20,6 +27,20 @@
         border-radius: 4px;
     }
 }
+.ad-courses-container {
+    margin-top: 8px;
+    padding: 8px;
+    .ad-courses{
+        color: $blue;
+        .ad-course-text{
+            font-weight: bold;
+        }
+    }
+    .ad-course-name{
+        padding: 0 4px;
+    }
+}
+
 .ad-timestamp{
     color: $gray-300;
     padding: 8px 0;
@@ -35,5 +56,22 @@
         margin-top: 20%;
         margin-bottom: 16px;
         font-size: 16px;
+    }
+}
+.activity-toc {
+    color: $blue;
+    padding: 0 8px 8px 8px;
+    background-color: map-get($colors, white);
+  
+    .pull-left {
+      line-height: 30px;
+    }
+  
+    .ad-arrow-icon {
+      height: 24px;
+      width: 24px;
+      border-radius: 12px;
+      font-size: 28px;
+      color: map-get($colors, light-blue);
     }
 }

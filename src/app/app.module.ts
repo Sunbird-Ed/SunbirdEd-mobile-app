@@ -43,7 +43,8 @@ import {
   FormAndFrameworkUtilService,
   CanvasPlayerService,
   SplashScreenService,
-  GroupHandlerService
+  GroupHandlerService,
+  CollectionService
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -453,6 +454,7 @@ declare const sbutility;
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
+    CollectionService,
     Device,
     Network,
     AndroidPermissionsService,

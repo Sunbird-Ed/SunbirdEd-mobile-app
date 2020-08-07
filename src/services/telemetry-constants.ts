@@ -157,7 +157,8 @@ export enum PageId {
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
-    TEXTBOOK_IMPORT = 'textbookimport'
+    TEXTBOOK_IMPORT = 'textbookimport',
+    ACTIVITY_TOC = 'activity-toc'
 }
 
 export enum LogType {

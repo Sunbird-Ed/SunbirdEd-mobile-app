@@ -1,26 +1,27 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService
+  ImpressionType, TelemetryGeneratorService, CollectionService, AppGlobalService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, GroupMemberRole, Group
+  CachedItemRequestSourceFrom, Content, Group, MimeType
 } from '@project-sunbird/sunbird-sdk';
 import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { ContentType, RouterLinks } from './../../app.constant';
 
 @Component({
   selector: 'app-activity-details',
   templateUrl: './activity-details.page.html',
   styleUrls: ['./activity-details.page.scss'],
 })
-export class ActivityDetailsPage implements OnInit {
+export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   isActivityLoading = false;
   loggedinUser: GroupMember;
@@ -33,6 +34,10 @@ export class ActivityDetailsPage implements OnInit {
   memberSearchQuery: string;
   group: Group;
   activity: GroupActivity;
+  courseList = [];
+  showCourseDropdownSection = false;
+  selectedCourse;
+  // courseData: Content;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -43,6 +48,8 @@ export class ActivityDetailsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private platform: Platform,
+    private collectionService: CollectionService,
+    private appGlobalService: AppGlobalService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -50,20 +57,32 @@ export class ActivityDetailsPage implements OnInit {
     this.activity = extras.activity;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
+    this.courseList = [];
+    try {
+      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.getNestedCourses(courseData.children);
+      if (this.courseList.length) {
+        this.showCourseDropdownSection = true;
+        this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
+      }
+    } catch (err) {
+      console.log('fetchCollectionData err', err);
+    }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
-    this.getActvityDetails();
+    this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
+    this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
 
   ionViewWillLeave() {
@@ -73,17 +92,20 @@ export class ActivityDetailsPage implements OnInit {
     }
   }
 
-  private async getActvityDetails() {
+  ngOnDestroy() {
+    this.appGlobalService.selectedActivityCourseId = '';
+  }
+
+  private async getActvityDetails(id) {
     const req: GroupActivityDataAggregationRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       groupId: this.group.id,
       activity: {
-        id: this.activity.id,
+        id,
         type: this.activity.type
       },
       mergeGroup: this.group
     };
-
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -156,6 +178,26 @@ export class ActivityDetailsPage implements OnInit {
     return lastUpdatedOn;
   }
 
+  private getNestedCourses(courseData) {
+    courseData.forEach(c => {
+      if ((c.mimeType === MimeType.COLLECTION) &&  (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
+        this.courseList.push(c);
+      }
+      if (c.children && c.children.length) {
+        this.getNestedCourses(c.children);
+      }
+    });
+  }
+
+  openActivityToc() {
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
+      { state: {
+        courseList: this.courseList,
+        mainCourseName: this.activity.activityInfo.name
+      }
+    });
+  }
+
   handleDeviceBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.handleBackButton(false);
@@ -171,7 +213,7 @@ export class ActivityDetailsPage implements OnInit {
   }
 
   handleBackButton(isNavBack) {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.GROUP_DETAIL, Environment.GROUP, isNavBack);
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_DETAIL, Environment.GROUP, isNavBack);
     this.location.back();
   }
 
