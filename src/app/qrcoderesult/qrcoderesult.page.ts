@@ -665,7 +665,7 @@ export class QrcoderesultPage implements OnDestroy {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           const corRelationList: Array<CorrelationData> = [];
           corRelationList.push({ id: this.content.dialcodes[0], type: CorReleationDataType.QR });
-          corRelationList.push({ id: this.content.leafNodesCount, type: CorReleationDataType.COUNT_NODE });
+          corRelationList.push({ id: this.content.leafNodesCount.toString(), type: CorReleationDataType.COUNT_NODE });
           this.telemetryGeneratorService.generatePageLoadedTelemetry(
             PageId.TEXTBOOK_IMPORT,
             this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
