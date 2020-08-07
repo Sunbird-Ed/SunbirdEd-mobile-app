@@ -383,9 +383,9 @@ export class QrcoderesultPage implements OnDestroy {
              } else {
               this.navCtrl.navigateBack([RouterLinks.TABS]);
              }
-             this.commonUtilService.showContentComingSoonAlert(this.source, data);
+             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.content.dialcodes[0]);
             } else {
-              this.commonUtilService.showContentComingSoonAlert(this.source, data);
+              this.commonUtilService.showContentComingSoonAlert(this.source, data, this.content.dialcodes[0]);
               window.history.go(-2);
             }
         } else if (this.results && this.results.length === 1) {

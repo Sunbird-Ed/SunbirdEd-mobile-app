@@ -202,8 +202,7 @@ export class CommonUtilService {
         );
         if (source !== 'permission') {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
-            (typeof dialCode === 'string' ? dialCode :
-            ((content && content.contentData && content.contentData.dialcodes) ? content.contentData.dialcodes[0] : '')));
+            (dialCode ? dialCode : ''));
             return;
         }
         let popOver: any;
