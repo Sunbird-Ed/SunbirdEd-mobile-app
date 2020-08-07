@@ -231,7 +231,7 @@ export class LocalCourseService {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
         courseId: courseContext.courseId,
-        contentIds: [courseContext.leafNodeIds],
+        contentIds: courseContext.leafNodeIds,
         returnRefreshedContentStates: true,
         batchId: courseContext.batchId
       };
