@@ -477,7 +477,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             isProfileUpdated: params.isProfileUpdated,
             isQrCodeLinkToContent: params.isQrCodeLinkToContent,
             isAvailableLocally: params.isAvailableLocally,
-            source: params.source
+            source: params.source,
+            dialCode: this.dialCode
           }
         });
         if (this.isSingleContent) {

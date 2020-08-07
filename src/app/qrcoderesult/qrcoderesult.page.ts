@@ -126,6 +126,7 @@ export class QrcoderesultPage implements OnDestroy {
   showSheenAnimation = true;
   @ViewChild(iContent) ionContent: iContent;
   onboarding = false;
+  dialCode: string;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -190,7 +191,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.source = this.navData.source;
     this.isSingleContent = this.navData.isSingleContent;
     this.onboarding = this.navData.onboarding;
-
+    this.dialCode = this.navData.dialCode;
     // check for parent content
     this.parentContent = this.navData.parentContent;
     this.isProfileUpdated = this.navData.isProfileUpdated;
@@ -267,7 +268,7 @@ export class QrcoderesultPage implements OnDestroy {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
       this.unregisterBackButton.unsubscribe();
     });
-    this.generateNewImpressionEvent(this.content.dialcodes[0]);
+    this.generateNewImpressionEvent(this.dialCode);
     this.subscribeSdkEvent();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -280,7 +281,8 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
 
     if (this.corRelationList && this.corRelationList.length) {
-      this.corRelationList.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
+      this.corRelationList.push({id: this.content.children ? this.content.children.length.toString() : '0',
+      type: CorReleationDataType.COUNT_CONTENT});
     }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
@@ -383,9 +385,9 @@ export class QrcoderesultPage implements OnDestroy {
              } else {
               this.navCtrl.navigateBack([RouterLinks.TABS]);
              }
-             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.content.dialcodes[0]);
+             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
             } else {
-              this.commonUtilService.showContentComingSoonAlert(this.source, data, this.content.dialcodes[0]);
+              this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
               window.history.go(-2);
             }
         } else if (this.results && this.results.length === 1) {
@@ -664,8 +666,9 @@ export class QrcoderesultPage implements OnDestroy {
         // if (res.data && res.data.status === 'IMPORT_COMPLETED' && res.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           const corRelationList: Array<CorrelationData> = [];
-          corRelationList.push({ id: this.content.dialcodes[0], type: CorReleationDataType.QR });
-          corRelationList.push({ id: this.content.leafNodesCount.toString(), type: CorReleationDataType.COUNT_NODE });
+          corRelationList.push({ id: this.dialCode ? this.dialCode : '', type: CorReleationDataType.QR });
+          corRelationList.push({ id: this.content.leafNodesCount ? this.content.leafNodesCount.toString() : '0',
+          type: CorReleationDataType.COUNT_NODE });
           this.telemetryGeneratorService.generatePageLoadedTelemetry(
             PageId.TEXTBOOK_IMPORT,
             this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
