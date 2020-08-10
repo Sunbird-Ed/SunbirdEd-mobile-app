@@ -180,7 +180,7 @@
 		</ion-card>
 
 		<ion-card class="card-box-shadow">
-			<ion-card-content *ngIf="!showSheenAnimation || (!guestUser && showSheenAnimation && isAlreadyEnrolled)"
+			<ion-card-content *ngIf="!showSheenAnimation || (!isGuestUser && showSheenAnimation && isAlreadyEnrolled)"
 				class="card-content-bottom-0 card-content-top-0">
 				<ion-segment class="d-flex" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info" class="flex-5">
@@ -212,7 +212,7 @@
 				</div>
 			</ion-card-content>
 		</ion-card>
-		<ion-card *ngIf="(guestUser && showSheenAnimation) || (!guestUser && showSheenAnimation && !isAlreadyEnrolled)"
+		<ion-card *ngIf="(isGuestUser && showSheenAnimation) || (!isGuestUser && showSheenAnimation && !isAlreadyEnrolled)"
 			class="card-box-shadow p-8">
 			<ion-card-content class="card-content-bottom-0 card-content-top-0 animation-bottom-card">
 				<div class="skeleton-animation-item-1">
@@ -260,7 +260,7 @@
 			</ion-card>
 
 		</div>
-		<div *ngIf="(guestUser &&!showSheenAnimation) || (!guestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
+		<div *ngIf="(isGuestUser &&!showSheenAnimation) || (!isGuestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
