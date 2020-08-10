@@ -177,7 +177,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   ratingComment = '';
   batchId = '';
   baseUrl = '';
-  guestUser = false;
+  isGuestUser = false;
   isAlreadyEnrolled = false;
   profileType = '';
   objId;
@@ -329,12 +329,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
-      this.updatedCourseCardData = await this.courseService
-        .getEnrolledCourses({ userId: this.appGlobalService.getUserId(), returnFreshCourses: true })
-        .toPromise()
-        .then((cData) => {
-          return cData.find((element) => element.courseId === this.identifier);
+      await this.appGlobalService.getActiveProfileUid()
+        .then((uid) => {
+          this.userId = uid;
         });
+      this.checkUserLoggedIn();
+      await this.updateEnrolledCourseData();
       this.courseCardData.batchId = res.batchId;
       await this.getBatchDetails();
       this.segmentType = 'modules';
@@ -343,8 +343,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
-          this.isAlreadyEnrolled = true;
-          this.subscribeTrackDownloads();
+          await this.isCourseEnrolled(this.identifier);
           this.zone.run(() => {
             this.getContentsSize(this.courseHeirarchy.children);
             if (this.loader) {
@@ -356,11 +355,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
     });
 
-
-    this.events.subscribe(EventTopics.UNENROL_COURSE_SUCCESS, () => {
+    this.events.subscribe(EventTopics.UNENROL_COURSE_SUCCESS, async () => {
       // to show 'Enroll in Course' button courseCardData.batchId should be undefined/null
       this.getAllBatches();
-      this.updateEnrolledCourseList(this.courseCardData); // enrolled course list updated
+      await this.updateEnrolledCourseData(); // enrolled course list updated
       if (this.courseCardData) {
         delete this.courseCardData.batchId;
       }
@@ -396,39 +394,33 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   }
 
-  updateEnrolledCourseList(unenrolledCourse) {
-    const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
-      userId: this.appGlobalService.getUserId(),
-    };
-    this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise()
-      .then((enrolledCourses: any) => {
-        if (enrolledCourses) {
-          this.zone.run(() => {
-            // this.enrolledCourses = enrolledCourses.result.courses ? enrolledCourses.result.courses : [];
-            // maintain the list of courses that are enrolled, and store them in appglobal
-            if (enrolledCourses.length > 0) {
-              const courseList: Array<any> = [];
-              for (const course of enrolledCourses) {
-                courseList.push(course);
-              }
-              this.appGlobalService.setEnrolledCourseList(courseList);
-            }
-          });
-        }
-      })
-      .catch(() => {
-      });
+  private checkUserLoggedIn() {
+    this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
 
-  /**
-   * Get the session to know if the user is logged-in or guest
-   *
-   */
-  async checkLoggedInOrGuestUser() {
-    const session = await this.authService.getSession().toPromise();
-    this.guestUser = !session;
-    if (session) {
-      this.userId = session.userToken;
+  async updateEnrolledCourseData() {
+    const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
+      userId: this.userId,
+      returnFreshCourses: true
+    };
+    console.log('updateEnrolledCourseData');
+    this.updatedCourseCardData = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise()
+      .then((enrolledCourses) => {
+
+        this.appGlobalService.setEnrolledCourseList(enrolledCourses || []);
+
+        return enrolledCourses.find((element) =>
+          (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
+          || (!this.courseCardData.batchId && element.courseId === this.identifier));
+      })
+      .catch(e => {
+        console.log(e);
+        return undefined;
+      });
+
+    if (this.updatedCourseCardData && !this.courseCardData.batch) {
+      this.courseCardData.batch = this.updatedCourseCardData.batch;
+      this.courseCardData.batchId = this.updatedCourseCardData.batchId;
     }
   }
 
@@ -438,7 +430,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   checkCurrentUserType() {
-    if (this.guestUser) {
+    if (this.isGuestUser) {
       this.appGlobalService.getGuestUserInfo()
         .then((userType) => {
           this.profileType = userType;
@@ -498,7 +490,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Function to rate content
    */
   async rateContent(event) {
-    if (!this.guestUser) {
+    if (!this.isGuestUser) {
       if (this.course.isAvailableLocally) {
         const popUp = await this.popoverCtrl.create({
           component: ContentRatingAlertComponent,
@@ -1322,7 +1314,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-    await this.checkLoggedInOrGuestUser();
+    this.checkUserLoggedIn();
+    await this.appGlobalService.getActiveProfileUid()
+        .then((uid) => {
+          this.userId = uid;
+        });
     this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
@@ -1330,29 +1326,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
     this.headerService.showHeaderWithBackButton();
 
-    if (!this.guestUser) {
-      this.updatedCourseCardData = await this.courseService.getEnrolledCourses({ userId: this.userId, returnFreshCourses: false })
-        .toPromise()
-        .then((data) => {
-          if (data.length > 0) {
-            const courseList: Array<Course> = [];
-            for (const course of data) {
-              courseList.push(course);
-            }
-            this.appGlobalService.setEnrolledCourseList(courseList);
-          }
-          return data.find((element) =>
-            (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
-            || (!this.courseCardData.batchId && element.courseId === this.identifier));
-        })
-        .catch(e => {
-          console.log(e);
-          return null;
-        });
-      if (this.updatedCourseCardData && !this.courseCardData.batch) {
-        this.courseCardData.batch = this.updatedCourseCardData.batch;
-        this.courseCardData.batchId = this.updatedCourseCardData.batchId;
-      }
+    if (!this.isGuestUser) {
+      await this.updateEnrolledCourseData();
     }
 
     // check if the course is already enrolled
@@ -1442,7 +1417,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (enrolledCourses && enrolledCourses.length > 0) {
       for (const course of enrolledCourses) {
         if (course.courseId === identifier) {
-          if (!this.guestUser && this.courseCardData.batch && course.batchId
+          if (!this.isGuestUser && this.courseCardData.batch && course.batchId
             === this.courseCardData.batch.identifier) {
             this.isAlreadyEnrolled = true;
             this.subscribeTrackDownloads();
@@ -1852,7 +1827,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async enrollIntoBatch(item: Batch) {
-    if (this.guestUser) {
+    if (this.isGuestUser) {
       this.promptToLogin(item);
     } else {
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
