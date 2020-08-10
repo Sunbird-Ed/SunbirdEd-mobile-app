@@ -994,27 +994,15 @@ export class ProfilePage implements OnInit {
 
   async getSelfDeclaredTeacherDetails() {
     this.selfDeclaredTeacherDetails = {
-      state: '',
-      district: '',
       schoolName: '',
       udiseId: '',
       teacherId: ''
     };
 
     if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
-      let stateCode = '';
-      let districtCode = '';
-      let stateDetails;
-      let districtDetails;
 
       this.profile.externalIds.forEach(ele => {
         switch (ele.idType) {
-          case 'declared-state':
-            stateCode = ele.id;
-            break;
-          case 'declared-district':
-            districtCode = ele.id;
-            break;
           case 'declared-phone':
             this.selfDeclaredTeacherDetails.mobile = ele.id;
             break;
@@ -1032,15 +1020,6 @@ export class ProfilePage implements OnInit {
             break;
         }
       });
-      if (stateCode && this.stateList && this.stateList.length) {
-        stateDetails = this.stateList.find(state => state.code === stateCode);
-        this.selfDeclaredTeacherDetails.state = (stateDetails && stateDetails.name) || '';
-      }
-      if (stateDetails && stateDetails.id) {
-        const districtList = await this.commonUtilService.getDistrictList(stateDetails.id);
-        districtDetails = districtList.find(district => district.code === districtCode);
-        this.selfDeclaredTeacherDetails.district = (districtDetails && districtDetails.name) || '';
-      }
     }
   }
 

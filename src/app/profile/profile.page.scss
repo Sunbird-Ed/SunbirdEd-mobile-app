@@ -327,25 +327,14 @@
     color: $green;
   }
 
-  .self-declare-teacher-btn{
+  .self-declare-btn{
     margin: 8px 0 16px;
     ion-button{
       text-transform: none;
-      --background: #008840 !important;
+      --background: #4FAF9F !important;
       --padding-start: 24px;
       --padding-end: 24px;
-    }
-    
-    .question-badge{
-      background-color: white;
-      color: $green;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      padding-top: 2px;
-      margin: 0 0 2px 8px;
-      font-size: 14px;
-      font-weight: bold;
+      text-transform: capitalize;
     }
   }
 
@@ -370,7 +359,8 @@
 
     .declare-info{
       margin: 0;
-      font-size: 12px;
+      font-size: 14px;
+      font-weight: bold;
     }
   }
 
