@@ -520,13 +520,18 @@ describe('ActivityDetailsPage', () => {
         });
     });
 
-    describe('calulateProgress', () => {
+    fdescribe('calculateProgress', () => {
         it('should return progress for activityAgg', () => {
-            const member = {
+            activityDetailsPage.filteredMemberList = [{
                 agg: [{
                     metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
                     value: 1
                 }]
+            }];
+            activityDetailsPage.selectedCourse = {
+                contentData: {
+                    leafNodes: ['node1']
+                }
             };
             activityDetailsPage.activityDetail = {
                 agg: [{
@@ -535,18 +540,23 @@ describe('ActivityDetailsPage', () => {
                 }]
             };
             // act
-            const data = activityDetailsPage.calulateProgress(member);
+            activityDetailsPage.calculateProgress();
             // assert
-            expect(data).toBe('100');
+            expect(activityDetailsPage.filteredMemberList[0].progress).toBe('100');
         });
 
         it('should return progress for activityAgg value is lessthan 0', () => {
-            const member = {
+            activityDetailsPage.filteredMemberList = [{
                 agg: [{
                     metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
-                    value: 1
+                    value: 0
                 }]
-            };
+            }];
+            activityDetailsPage.activity = {
+                activityInfo: {
+                    leafNodes: ['node1']
+                }
+            } as any;
             activityDetailsPage.activityDetail = {
                 agg: [{
                     metric: CsGroupActivityAggregationMetric.LEAF_NODES_COUNT,
@@ -554,19 +564,25 @@ describe('ActivityDetailsPage', () => {
                 }]
             };
             // act
-            const data = activityDetailsPage.calulateProgress(member);
+            activityDetailsPage.calculateProgress();
             // assert
-            expect(data).toBe('0');
+            expect(activityDetailsPage.filteredMemberList[0].progress).toBe('0');
         });
 
         it('should return progress 0 if member agg is empty', () => {
-            const member = {
+            activityDetailsPage.filteredMemberList = [{
                 agg: []
+            }];
+            activityDetailsPage.activityDetail = {
+                agg: [{
+                    metric: CsGroupActivityAggregationMetric.LEAF_NODES_COUNT,
+                    value: 0
+                }]
             };
             // act
-            const data = activityDetailsPage.calulateProgress(member);
+            activityDetailsPage.calculateProgress();
             // assert
-            expect(data).toBe('0');
+            expect(activityDetailsPage.filteredMemberList[0].progress).toBe('0');
         });
     });
 
