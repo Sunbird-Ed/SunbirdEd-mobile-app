@@ -281,7 +281,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
-        courseIds: [this.courseContentData.identifier],
+        courseId: this.courseContentData.identifier,
+        contentIds: this.courseContent && this.courseContent.contentData ?
+            this.courseContent.contentData.leafNodes : this.courseContentData.contentData.leafNodes,
         returnRefreshedContentStates: returnRefresh,
         batchId: this.courseContent.batchId
       };

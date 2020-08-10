@@ -1707,7 +1707,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (this.courseCardData.batchId) {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
-        courseIds: [this.identifier],
+        courseId: this.identifier,
+        contentIds: this.courseHeirarchy.contentData.leafNodes,
         returnRefreshedContentStates: returnRefresh,
         batchId: this.courseCardData.batchId
       };
