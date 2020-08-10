@@ -29,7 +29,15 @@ describe('MyGroupsPage', () => {
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
-    const mockRouter: Partial<Router> = {};
+    const mockRouter: Partial<Router> = {
+        getCurrentNavigation: jest.fn(() => ({
+            extras: {
+                state: {
+                    fromRegistrationFlow: false
+                }
+            }
+        })) as any
+    };
     const mockGroupService: Partial<GroupService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -137,28 +145,6 @@ describe('MyGroupsPage', () => {
         });
     });
 
-    describe('ngOnInit', () => {
-        it('should open openinfopopup by invoked ngOnInit', (done) => {
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            myGroupsPage.ngOnInit();
-            setTimeout(() => {
-                expect(myGroupsPage.isGuestUser).toBeFalsy();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should not open openinfopopup by invoked ngOnInit', (done) => {
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            myGroupsPage.ngOnInit();
-            setTimeout(() => {
-                expect(myGroupsPage.isGuestUser).toBeTruthy();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-    });
-
     describe('handleHeaderEvents', () => {
         it('should return popup for groupInfo', () => {
             const data = {
@@ -258,6 +244,7 @@ describe('MyGroupsPage', () => {
         });
         it('should open openinfopopup by invoked ionViewWillEnter', (done) => {
             // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
             mockPreferences.getBoolean = jest.fn(() => of(false));
             jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
@@ -267,6 +254,8 @@ describe('MyGroupsPage', () => {
             // act
             myGroupsPage.ionViewWillEnter();
             // assert
+            expect(myGroupsPage.isGuestUser).toBeFalsy();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             setTimeout(() => {
                 expect(subscribeWithPriorityData).toBeTruthy();
                 expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
@@ -284,11 +273,14 @@ describe('MyGroupsPage', () => {
         });
         it('should not open openinfopopup by invoked ionViewWillEnter', (done) => {
             // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
             mockPreferences.getBoolean = jest.fn(() => of(true));
             // act
             myGroupsPage.ionViewWillEnter();
             // assert
+            expect(myGroupsPage.isGuestUser).toBeTruthy();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             setTimeout(() => {
                 expect(subscribeWithPriorityData).toBeTruthy();
                 expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
@@ -308,6 +300,7 @@ describe('MyGroupsPage', () => {
 
     describe('ionViewDidEnter', () => {
         it('should invoked fetchGroupList', (done) => {
+
             mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
             myGroupsPage.isGuestUser = false;
             jest.spyOn(myGroupsPage, 'fetchGroupList').mockImplementation(() => {
@@ -418,7 +411,9 @@ describe('MyGroupsPage', () => {
             Environment.GROUP,
             PageId.MY_GROUP
         );
-        expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith({ skipRootNavigation: true });
+        expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith(
+            { skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS }
+        );
     });
 
     it('should navigate To GroupdetailsPage', () => {
@@ -432,5 +427,25 @@ describe('MyGroupsPage', () => {
         myGroupsPage.navigateToGroupdetailsPage(data);
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`],
             { state: { groupId: data.data.id } });
+    });
+    describe('goback', () => {
+        it('should go to tabs page', () => {
+            // arrange
+            myGroupsPage.fromRegistrationFlow = true;
+            // act
+            myGroupsPage.goback();
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith(
+                [RouterLinks.TABS]
+            );
+        });
+        it('should go to previous page', () => {
+            // arrange
+            myGroupsPage.fromRegistrationFlow = false;
+            // act
+            myGroupsPage.goback();
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
+        });
     });
 });
