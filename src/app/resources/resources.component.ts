@@ -1154,16 +1154,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async requestMoreContent() {
-    const navigationExtras = {
-      state: {
-        subjects: [...this.subjects],
-        categoryGradeLevels: this.categoryGradeLevels,
-        storyAndWorksheets: this.storyAndWorksheets,
-        contentType: ContentType.FOR_LIBRARY_TAB,
-        selectedGrade: this.getGroupByPageReq.grade,
-        selectedMedium: this.getGroupByPageReq.medium
-      }
-    };
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LET_US_KNOW_CLICKED,
+      Environment.LIBRARY,
+      PageId.LIBRARY);
+
     const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     formConfig[0]['default'] = FormConfigCategories.CONTENT;
     formConfig[0].templateOptions['hidden'] = true;
@@ -1182,6 +1179,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       state: {
         showHeader: true,
+        corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
         formCnotext: FormConfigSubcategories.CONTENT_AVAILABILITY,
         data: {
           constants: {
