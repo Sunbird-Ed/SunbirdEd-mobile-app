@@ -1795,6 +1795,4 @@ describe('collectionDetailEtbPage', () => {
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
     });
-
 });
-
