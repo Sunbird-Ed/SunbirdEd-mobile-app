@@ -512,7 +512,8 @@ export enum InteractSubtype {
     ADD_TO_GROUP_CLICKED = 'add-to-group-clicked',
     ACTIVITY_TAB_CLICKED = 'activity-tab-clicked',
     MEMBER_TAB_CLICKED = 'member-tab-clicked',
-    EDIT_GROUP_CLICKED = 'edit-group-clicked'
+    EDIT_GROUP_CLICKED = 'edit-group-clicked',
+    LET_US_KNOW_CLICKED = 'let-us-know-clicked'
 }
 
 export enum ID {
@@ -607,7 +608,8 @@ export enum CorReleationDataType {
     FILL_MODE = 'FillMode',
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
-    COUNT_NODE = 'CountNode'
+    COUNT_NODE = 'CountNode',
+    CONTENT_NAME = 'ContentName',
 }
 
 export enum AuditProps {
