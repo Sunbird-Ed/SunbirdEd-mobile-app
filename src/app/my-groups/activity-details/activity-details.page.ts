@@ -135,6 +135,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
+        this.calculateProgress();
       }
     } catch (e) {
       console.log(' CsGroupActivityDataAggregation err', e);
@@ -155,16 +156,16 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     return memberName;
   }
 
-  calulateProgress(member) {
-    let progress = 0;
-    if (member.agg && member.agg.length) {
+  calculateProgress() {
+    this.filteredMemberList.forEach( (member) => {
+      let progress = 0;
       const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-      const activityAgg = this.activityDetail.agg.find(a => a.metric === CsGroupActivityAggregationMetric.LEAF_NODES_COUNT);
-      if (activityAgg && activityAgg.value > 0) {
-        progress = Math.floor((memberAgg.value / activityAgg.value) * 100);
+      const activityCount = this.selectedCourse ? this.selectedCourse.contentData.leafNodes.length : this.activity.activityInfo.leafNodes.length ;
+      if (activityCount && memberAgg) {
+        progress = Math.round((memberAgg.value / activityCount) * 100);
       }
-    }
-    return '' + progress;
+      member.progress = '' + progress;
+    });
   }
 
   getActivityAggLastUpdatedOn() {

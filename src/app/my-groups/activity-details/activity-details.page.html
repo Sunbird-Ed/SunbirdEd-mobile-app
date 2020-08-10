@@ -34,7 +34,7 @@
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
               [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
-              [title]="getMemberName(member)" [progressDisplay]="calulateProgress(member)">
+              [title]="getMemberName(member)" [progressDisplay]="member.progress">
             </sb-member-card>
           </div>
         </div>
