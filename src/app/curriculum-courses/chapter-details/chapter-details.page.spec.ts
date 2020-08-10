@@ -487,7 +487,12 @@ describe('ChapterDetailsPage', () => {
         it('should return contentState', (done) => {
             // arrange
             chapterDetailsPage.courseContent = {
-                batchId: 'sample-batch-id'
+                batchId: 'sample-batch-id',
+                contentData: {
+                    leafNodes: [
+                        'do_1', 'do_12', 'do_123'
+                    ]
+                }
             };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => of({})) as any;
@@ -507,7 +512,12 @@ describe('ChapterDetailsPage', () => {
         it('should not return contentState for catch part', (done) => {
             // arrange
             chapterDetailsPage.courseContent = {
-                batchId: 'sample-batch-id'
+                batchId: 'sample-batch-id',
+                contentData: {
+                    leafNodes: [
+                        'do_1', 'do_12', 'do_123'
+                    ]
+                }
             };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => throwError({ error: 'error' }));

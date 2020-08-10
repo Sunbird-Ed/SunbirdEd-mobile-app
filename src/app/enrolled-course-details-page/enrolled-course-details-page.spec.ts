@@ -217,7 +217,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService.getContentState = jest.fn(() => of(contentState));
             jest.spyOn(enrolledCourseDetailsPage, 'getLocalCourseAndUnitProgress').mockImplementation();
             enrolledCourseDetailsPage.courseHeirarchy = {
-                children: [{ identifier: 'do-123' }]
+                children: [{ identifier: 'do-123' }],
+                contentData: {leafNodes: ['do_1', 'do_12', 'do_123']}
             };
             enrolledCourseDetailsPage.resumeCourseFlag = true;
             jest.spyOn(enrolledCourseDetailsPage, 'resumeContent').mockImplementation();
@@ -536,12 +537,34 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('updateEnrolledCourseData', () => {
+        it('should update enroll details list by invoked updateEnrolledCourseData()', (done) => {
+            // arrange
+            mockCourseService.getEnrolledCourses = jest.fn(() => of([{
+                batchId: 'sample-batch-id',
+                courseId: 'sample-course-id'
+            }]));
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockAppGlobalService.setEnrolledCourseList = jest.fn();
+            // act
+            enrolledCourseDetailsPage.updateEnrolledCourseData();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
+                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
     describe('subscribeUtilityEvents()', () => {
         it('#subscribeUtilityEvents should handle error condition', (done) => {
             // arrange
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
             mockEvents.subscribe = jest.fn(() => ({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
-            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseList').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
             // assert
             enrolledCourseDetailsPage.subscribeUtilityEvents();
@@ -556,9 +579,13 @@ describe('EnrolledCourseDetailsPage', () => {
 
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
             // arrange
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('SAMPLE_BASE_URL'));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
-            spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseList').and.stub();
+            jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
+                return Promise.resolve();
+            });
             enrolledCourseDetailsPage.course = { createdBy: 'SAMPLE_CREATOR' };
             enrolledCourseDetailsPage.stickyPillsRef = {
                 nativeElement: {
@@ -578,34 +605,19 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.subscribeUtilityEvents();
             // assert
             setTimeout(() => {
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.baseUrl).toBe('SAMPLE_BASE_URL');
                 expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.course.createdBy).not.toEqual('SAMPLE_USER');
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
-                expect(enrolledCourseDetailsPage.updateEnrolledCourseList).toBeCalled();
+                // expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
+                expect(enrolledCourseDetailsPage.updateEnrolledCourseData).toBeCalled();
                 expect(enrolledCourseDetailsPage.getAllBatches).toBeCalled();
                 expect(enrolledCourseDetailsPage.getBatchDetails).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.joinTraining).toBeCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);
-        });
-    });
-
-    describe('updateEnrolledCourseList', () => {
-        it('should update enroll details list by invoked updateEnrolledCourseList()', () => {
-            // arrange
-            const userDetails = mockAppGlobalService.getUserId = jest.fn(() => 'SAMPLE_USER_ID');
-            const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
-                userId: 'SAMPLE_USER_ID'
-            };
-            mockCourseService.getEnrolledCourses = jest.fn(() => of([{}]));
-            mockZone.run = jest.fn((fn) => fn());
-            // act
-            enrolledCourseDetailsPage.updateEnrolledCourseList(mockEnrolledData.extras.state.content);
-            // assert
-            expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
-            expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
         });
     });
 
@@ -656,7 +668,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('checkCurrentUserType', () => {
         it('should checked current user type for cath part by invoked checkCurrentUserType()', () => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isGuestUser = true;
             mockAppGlobalService.getGuestUserInfo = jest.fn(() => Promise.reject('SAMPLE_USER'));
             // act
             enrolledCourseDetailsPage.checkCurrentUserType();
@@ -717,7 +729,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('rateContent()', () => {
         it('should not show user rating for content if guest user', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isGuestUser = true;
             mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
             enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
             mockCommonUtilService.showToast = jest.fn();
@@ -725,7 +737,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.rateContent('');
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
+                expect(enrolledCourseDetailsPage.isGuestUser).toBeTruthy();
                 expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalledWith(ProfileType.TEACHER);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
                 done();
@@ -734,7 +746,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
         it('should not show user rating for content if content is not available locally and user in not a guest user', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.isGuestUser = false;
             enrolledCourseDetailsPage.course = {
                 isAvailableLocally: false
             };
@@ -743,7 +755,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.rateContent('');
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+                expect(enrolledCourseDetailsPage.isGuestUser).toBeFalsy();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
                 done();
             }, 0);
@@ -751,7 +763,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
         it('should show user rating for content for loggedin user', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.isGuestUser = false;
             enrolledCourseDetailsPage.course = {
                 isAvailableLocally: true
             };
@@ -763,7 +775,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.rateContent('');
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+                expect(enrolledCourseDetailsPage.isGuestUser).toBeFalsy();
                 expect(mockPopoverCtrl.create).not.toBeUndefined();
                 expect(enrolledCourseDetailsPage.userRating).toBe(2);
                 expect(enrolledCourseDetailsPage.ratingComment).toBe('some_comment');
@@ -1457,7 +1469,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('enrollIntoBatch()', () => {
         it('should call promptToLogin()', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isGuestUser = true;
             const batch = {
                 id: '121232312'
             };
@@ -1475,7 +1487,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
         it('should should successfuly enroll', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.isGuestUser = false;
             mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => ({ id: 'sample-id' }));
             const presentFn = jest.fn(() => Promise.resolve());
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -1512,7 +1524,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
         it('should should fail', (done) => {
             // arrange
-            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.isGuestUser = false;
             mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => ({ id: 'sample-id' }));
             const presentFn = jest.fn(() => Promise.resolve());
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -2175,24 +2187,21 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.subscribeSdkEvent();
             // assert
-            expect(mockHeaderService.hideHeader).toBeCalled();
-            expect(enrolledCourseDetailsPage.importContent).toBeCalled();
+            expect(mockEventsBusService.events).toBeCalled();
+            expect(mockZone.run).toBeCalled();
         });
     });
 
     describe('ionViewWillEnter()', () => {
-        it('should be aguest user, ', (done) => {
-            mockAppGlobalService.getUserId = jest.fn(() => {
-                return 'sample_user_id';
-            });
+        it('should be a guest user, ', (done) => {
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
             // act
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn(() => { })
             };
-            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isGuestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
-            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
@@ -2205,9 +2214,11 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
                 return Promise.resolve();
             });
+            // assert
             enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.checkCurrentUserType).toHaveBeenCalled();
-                expect(enrolledCourseDetailsPage.guestUser).toEqual(true);
+                expect(enrolledCourseDetailsPage.isGuestUser).toEqual(true);
                 expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
                 expect(enrolledCourseDetailsPage.isCourseEnrolled).toBeCalled();
                 expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
@@ -2215,25 +2226,18 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
                 done();
             });
-            // assert
-            expect(enrolledCourseDetailsPage.checkLoggedInOrGuestUser).toHaveBeenCalled();
         });
 
-        it('should be a guest user, ', (done) => {
+        it('should not be a guest user, ', (done) => {
             // act
-            const data = {
-
-            };
-            mockAppGlobalService.setEnrolledCourseList = jest.fn();
-            enrolledCourseDetailsPage.guestUser = false;
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            enrolledCourseDetailsPage.isGuestUser = false;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
             enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn(() => { })
             };
-            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation(() => {
-                return Promise.resolve();
-            });
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({}))
             });
@@ -2247,13 +2251,17 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'getAllBatches').mockImplementation(() => {
                 return Promise.resolve();
             });
+            jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
+                return Promise.resolve();
+            });
             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             // act
             enrolledCourseDetailsPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
-                expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
