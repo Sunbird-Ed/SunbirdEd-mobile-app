@@ -520,7 +520,7 @@ describe('ActivityDetailsPage', () => {
         });
     });
 
-    fdescribe('calculateProgress', () => {
+    describe('calculateProgress', () => {
         it('should return progress for activityAgg', () => {
             activityDetailsPage.filteredMemberList = [{
                 agg: [{
