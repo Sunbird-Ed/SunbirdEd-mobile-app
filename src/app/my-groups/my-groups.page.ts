@@ -133,7 +133,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         break;
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
-        // this.location.back();
         this.goback();
         break;
     }
@@ -145,7 +144,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         PageId.MY_GROUP,
         Environment.GROUP,
         false);
-      // this.location.back();
       this.goback();
     });
   }
