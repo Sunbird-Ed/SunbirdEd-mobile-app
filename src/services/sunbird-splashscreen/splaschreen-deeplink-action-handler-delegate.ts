@@ -702,7 +702,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               chapterData: this.childContent,
               isOnboardingSkipped,
               isFromDeeplink: true,
-              deeplinkContent: this.childContent
             }
           };
           this.closeProgressLoader();

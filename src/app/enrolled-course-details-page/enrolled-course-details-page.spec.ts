@@ -217,7 +217,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService.getContentState = jest.fn(() => of(contentState));
             jest.spyOn(enrolledCourseDetailsPage, 'getLocalCourseAndUnitProgress').mockImplementation();
             enrolledCourseDetailsPage.courseHeirarchy = {
-                children: [{ identifier: 'do-123' }]
+                children: [{ identifier: 'do-123' }],
+                contentData: {leafNodes: ['do_1', 'do_12', 'do_123']}
             };
             enrolledCourseDetailsPage.resumeCourseFlag = true;
             jest.spyOn(enrolledCourseDetailsPage, 'resumeContent').mockImplementation();

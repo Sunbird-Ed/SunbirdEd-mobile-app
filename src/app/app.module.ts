@@ -120,9 +120,6 @@ export const contentService = () => {
 export const contentFeedbackService = () => {
   return SunbirdSdk.instance.contentFeedbackService;
 };
-export const summarizerService = () => {
-  return SunbirdSdk.instance.summarizerService;
-};
 export const eventsBusService = () => {
   return SunbirdSdk.instance.eventsBusService;
 };
@@ -222,9 +219,6 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'CONTENT_FEEDBACK_SERVICE',
     useFactory: contentFeedbackService
-  }, {
-    provide: 'SUMMARIZER_SERVICE',
-    useFactory: summarizerService
   }, {
     provide: 'EVENTS_BUS_SERVICE',
     useFactory: eventsBusService

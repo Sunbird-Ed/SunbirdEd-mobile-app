@@ -134,7 +134,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
-    this.deeplinkContent = this.extrasData.deeplinkContent;
   }
 
   ngOnInit() {
@@ -227,14 +226,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   ionViewDidEnter(): void {
     this.sbProgressLoader.hide({id: 'login'});
     this.sbProgressLoader.hide({ id: this.courseContent.identifier });
-    if (this.deeplinkContent) {
-      const event = {
-        data: this.deeplinkContent,
-        isFromDeeplink: true
-      };
-      this.openContentDetails(event);
-      this.deeplinkContent = null;
-    }
   }
 
   ngOnDestroy() {
@@ -281,7 +272,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
-        courseIds: [this.courseContentData.identifier],
+        courseId: this.courseContentData.identifier,
+        contentIds: this.courseContent && this.courseContent.contentData ?
+            this.courseContent.contentData.leafNodes : this.courseContentData.contentData.leafNodes,
         returnRefreshedContentStates: returnRefresh,
         batchId: this.courseContent.batchId
       };

@@ -230,7 +230,8 @@ export class LocalCourseService {
     return new Promise(async (resolve, reject) => {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
-        courseIds: [courseContext.courseId],
+        courseId: courseContext.courseId,
+        contentIds: courseContext.leafNodeIds,
         returnRefreshedContentStates: true,
         batchId: courseContext.batchId
       };
