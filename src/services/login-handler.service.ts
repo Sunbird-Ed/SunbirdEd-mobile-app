@@ -118,7 +118,9 @@ export class LoginHandlerService {
               this.appGlobalService.skipCoachScreenForDeeplink = true;
             }
           }
-
+          if (skipNavigation && skipNavigation.redirectUrlAfterLogin) {
+            this.appGlobalService.redirectUrlAfterLogin = skipNavigation.redirectUrlAfterLogin;
+          }
           this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
