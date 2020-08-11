@@ -189,7 +189,11 @@ export class CommonUtilService {
      * Show popup with Try Again and Skip button.
      * @param source Page from alert got called
      */
-    async showContentComingSoonAlert(source, dialCode?) {
+    async showContentComingSoonAlert(source, content?, dialCode?) {
+        let message;
+        if (content) {
+             message = await this.comingSoonMessageService.getComingSoonMessage(content);
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.QR_CODE_COMINGSOON,
@@ -197,7 +201,8 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED', source, dialCode);
+            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
+            (dialCode ? dialCode : ''));
             return;
         }
         let popOver: any;
@@ -251,13 +256,13 @@ export class CommonUtilService {
                 InteractSubtype.QR_CODE_INVALID : InteractSubtype.QR_NOT_LINKED,
             type: CorReleationDataType.CHILD_UI
         }];
-        corRelationList.push({ id: dialCode, type: ObjectType.QR });
+        corRelationList.push({ id: (dialCode ? dialCode : ''), type: ObjectType.QR });
         // generate impression telemetry
         this.telemetryGeneratorService.generateImpressionTelemetry(
             InteractType.POPUP_LOADED, '',
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : source,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-            dialCode,
+            (dialCode ? dialCode : ''),
             (dialCode ? ObjectType.QR : undefined),
             undefined,
             undefined,

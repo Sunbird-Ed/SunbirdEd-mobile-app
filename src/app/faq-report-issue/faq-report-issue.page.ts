@@ -101,6 +101,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   formContext: any;
   supportEmail: any;
   relevantTerms: any;
+  private corRelationList: Array<CorrelationData>;
 
   constructor(
     private router: Router,
@@ -126,6 +127,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
       this.formContext = this.router.getCurrentNavigation().extras.state.formCnotext;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
       if (this.router.getCurrentNavigation().extras.state.showHeader) {
         this.headerService.showHeaderWithBackButton();
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -195,7 +197,12 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       ImpressionType.VIEW,
       '',
       PageId.FAQ_REPORT_ISSUE,
-      Environment.USER
+      Environment.USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelationList
     );
   }
 
@@ -312,6 +319,21 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.takeAction();
       }
     }
+
+    if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
+      const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SUPPORT,
+        '', Environment.HOME,
+        PageId.FAQ_REPORT_ISSUE,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList,
+        ID.SUBMIT_CLICKED
+      );
+    }
+
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
       this.formValues.subcategory === 'contentavailability') {
       const corRelationList: Array<CorrelationData> = this.prepareTelemetryCorrelation();
@@ -439,7 +461,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   prepareTelemetryCorrelation(): Array<CorrelationData> {
-    const correlationlist: Array<CorrelationData> = [];
+    let correlationlist: Array<CorrelationData> =  [];
+    correlationlist =  [...correlationlist, ...(this.corRelationList || [])];
     // Category
     this.formValues && this.formValues.category ?
       correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY }) : undefined;
@@ -455,6 +478,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.extractPrepareFieldStr('grade'), type: CorReleationDataType.CLASS });
       // Subject
       correlationlist.push({ id: this.extractPrepareFieldStr('subject'), type: CorReleationDataType.SUBJECT });
+      this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
+        correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
+      // Content name
+      this.formValues.children.subcategory.contentname ?
+        correlationlist.push({ id: this.formValues.children.subcategory.contentname, type: CorReleationDataType.CONTENT_NAME }) : undefined;
     }
 
     return correlationlist ? correlationlist : undefined;
