@@ -2030,25 +2030,6 @@ describe('GroupDetailsPage', () => {
 
         it('should not return activity popup if type is not content', (done) => {
             mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve({}));
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        selectedVal: {
-                            index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
-                            desc: 'ACTIVITY_COURSE_DESC',
-                            activityType: 'Content',
-                            isEnabled: true,
-                            filters: {
-                                contentTypes: [
-                                    'Course'
-                                ]
-                            }
-                        }
-                    }
-                }))
-            } as any)));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
@@ -2063,21 +2044,15 @@ describe('GroupDetailsPage', () => {
                     Environment.GROUP,
                     PageId.GROUP_DETAIL);
                 expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
                 done();
             });
         });
 
         it('should not return activity popup if type is not content and dismissData is undefined', (done) => {
-            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve({}));
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: undefined
-                }))
-            } as any)));
+            const supportedActivity = [
+                {title: 'SOME_TITILE'}
+            ];
+            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve(supportedActivity));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
@@ -2092,9 +2067,10 @@ describe('GroupDetailsPage', () => {
                     Environment.GROUP,
                     PageId.GROUP_DETAIL);
                 expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    [`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+                    expect.anything()
+                );
                 done();
             });
         });

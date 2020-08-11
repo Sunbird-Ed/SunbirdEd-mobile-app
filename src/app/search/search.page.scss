@@ -359,3 +359,37 @@
   margin: 0;
   @include padding(8px, null, null, 8px !important);
 }
+
+.add-to-group-btn-container {
+  text-align: center;
+  .add-to-group-btn{
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 0px;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 8px;
+    width: 45%;
+    padding: 16px 0px 16px 0px;
+    margin-bottom: 32px;
+  }
+  .open-btn {
+    border: 1px solid $blue;
+    background-color: white;
+    color: $blue;
+    margin-right: 16px;
+  }
+  .add-btn {
+    background-color: $blue;
+    border: none;
+  }
+}
+.sc-container{
+  padding: 8px;
+  .sc-content{
+    margin: 8px 0;
+  }
+}

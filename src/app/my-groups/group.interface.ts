@@ -1,4 +1,4 @@
-import { CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, GroupActivity } from '@project-sunbird/sunbird-sdk';
 
 
 export interface AddActivityToGroup {
@@ -7,4 +7,7 @@ export interface AddActivityToGroup {
     activityType: string;
     pageId: string;
     corRelationList: Array<CorrelationData>;
+    activityList?: GroupActivity[];
+    source?: string;
+    noOfPagesToRevertOnSuccess?: number;
 }

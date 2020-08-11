@@ -535,6 +535,7 @@ export class RouterLinks {
     public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
     public static readonly ACTIVITY_DETAILS = 'activity-details';
     public static readonly ACTIVITY_TOC = 'activity-toc';
+    public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';

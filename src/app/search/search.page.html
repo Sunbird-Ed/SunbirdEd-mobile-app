@@ -203,16 +203,28 @@
         {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
       </div>
     </div>
-    <div class="sb-card-container sb-card-textbook-container">
+    <div class="sb-card-container sb-card-textbook-container" *ngIf="!isFromGroupFlow">
       <app-text-book-card class="tb-border-btm"
         *ngFor="let content of searchContentResult; let i = index; let last = last"
-        (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
+        (click)="openContent(undefined, content,i, undefined)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
+    </div>
+    <div class="sc-container" *ngIf="isFromGroupFlow">
+      <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
+        <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
+        (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
+      </sb-library-card>
+      </div>
     </div>
   </div>
   <div class="empty-search-result ion-text-center" *ngIf="!showLoader && showEmptyMessage" padding-top>
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
 </ion-content>
+
+<div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">
+  <button class="open-btn add-to-group-btn" (click)="openSelectedContent()">Open</button>
+  <button class="add-btn add-to-group-btn" (click)="addActivityToGroup()">Add textbook</button>
+</div>
 
 <div class="loading-backdrop ion-text-center" *ngIf="showLoading">
   <div class="backdrop-container">
