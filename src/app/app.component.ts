@@ -4,8 +4,8 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
+import {Observable, combineLatest, Subscription} from 'rxjs';
+import {mergeMap, filter, tap, mapTo, take} from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
@@ -68,6 +68,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   appVersion: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
   isForeground: boolean;
+  isPlannedMaintenanceStarted = false;
+  isUnplannedMaintenanceStarted = false;
+  timeLeft: string;
+  eventSubscription: Subscription;
+  isTimeAvailable: boolean;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -472,18 +477,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeEvents() {
-    this.events.subscribe(EventTopics.COACH_MARK_SEEN, (data) => {
-      this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
-      setTimeout(() => {
-        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
-        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-          'style',
-          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-        );
-      }, 2000);
-      this.appName = data.appName;
-    });
     this.events.subscribe(EventTopics.TAB_CHANGE, (pageId) => {
       this.zone.run(() => {
         this.generateInteractEvent(pageId);
@@ -501,6 +494,53 @@ export class AppComponent implements OnInit, AfterViewInit {
         document.documentElement.dir = 'ltr';
       }
     });
+    // planned maintenance
+    this.eventSubscription = this.eventsBusService.events(EventNamespace.ERROR).pipe(
+        filter((event) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
+        take(1)
+    ).subscribe(() => {
+      this.isPlannedMaintenanceStarted = true;
+      this.isTimeAvailable = false;
+      if (this.isPlannedMaintenanceStarted) {
+        let  intervalRef;
+        const backButtonSubscription = this.platform.backButton.subscribeWithPriority(13, () => {
+          backButtonSubscription.unsubscribe();
+          this.isPlannedMaintenanceStarted = false;
+          if (intervalRef) {
+            clearInterval(intervalRef);
+            intervalRef = undefined;
+          }
+        });
+        // for timer optional
+        // const second = 1000,
+        //     minute = second * 60,
+        //     hour = minute * 60,
+        //     day = hour * 24;
+        //
+        // const countDown = new Date('Aug 12, 2020 00:00:00').getTime();
+        // intervalRef = setInterval(() => {
+        //
+        //       const now = new Date().getTime(),
+        //           distance = countDown - now;
+        //
+        //       document.getElementById('timer').innerText = `${Math.floor((distance % (day)) / (hour))} : ${Math.floor((distance % (hour)) / (minute))} : ${Math.floor((distance % (minute)) / second)}`;
+        //
+        //     }, second);
+      }
+    });
+    // unplanned maintenance
+    this.events.subscribe('EventTopics:maintenance:unplanned', (data) => {
+      this.isUnplannedMaintenanceStarted = data.isUnplannedMaintenanceStarted;
+      if (this.isUnplannedMaintenanceStarted) {
+        this.timeLeft = '3';
+        window.document.body.classList.add('show-maintenance');
+      }
+    });
+  }
+
+  closeUnPlannedMaintenanceBanner() {
+    window.document.body.classList.remove('show-maintenance');
+    this.isUnplannedMaintenanceStarted = false;
   }
 
   private generateInteractEvent(pageId: string) {
@@ -836,4 +876,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+   navigateToDownloads() {
+     this.isPlannedMaintenanceStarted = false;
+     this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
+  }
 }
