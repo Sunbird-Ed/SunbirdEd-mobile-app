@@ -1276,7 +1276,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppGlobalService.showCourseCompletePopup = false;
             mockAppGlobalService.getUserId = jest.fn(() => 'userid');
-            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}'
+            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}';
             mockPreferences.getString = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.CONTENT_CONTEXT:
@@ -2549,11 +2549,18 @@ describe('ContentDetailsPage', () => {
             // arrange
             contentDetailsPage['playerEndEventTriggered'] = true;
             contentDetailsPage.showCourseCompletePopup = false;
-            contentDetailsPage.getContentState = jest.fn();
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'COURSE_STATE_UPDATE',
+                payload: {
+                    identifier: 'do-123',
+                    progress: 100
+                }
+            }));
+            jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation();
             // act
             contentDetailsPage.openCourseCompletionPopup().then(res => {
-                expect(contentDetailsPage['playerEndEventTriggered']).toBeFalsy();
                 expect(contentDetailsPage.getContentState).toHaveBeenCalled();
+                expect(mockEventBusService.events).toHaveBeenCalled();
                 done();
             });
         });
@@ -2561,12 +2568,24 @@ describe('ContentDetailsPage', () => {
         it('should open the course completion popup if the course is completed', (done) => {
             // arrange
             contentDetailsPage['playerEndEventTriggered'] = false;
+            jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation();
+            contentDetailsPage.courseContext = '{"userId":"userid","courseId":' +
+                '"courseid","batchId":"batchid","isCertified":true,"leafNodeIds":["id1","id2"],"batchStatus":1}';
             contentDetailsPage.showCourseCompletePopup = true;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({})),
             } as any)));
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'COURSE_STATE_UPDATE',
+                payload: {
+                    identifier: 'do-123',
+                    progress: 100
+                }
+            }));
+
             contentDetailsPage.fetchCertificateDescription = jest.fn(() => Promise.resolve(''));
+
             // act
             contentDetailsPage.openCourseCompletionPopup().then(res => {
                 expect(mockPopoverController.create).toHaveBeenCalled();
