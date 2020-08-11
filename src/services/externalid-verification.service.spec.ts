@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { ExternalIdVerificationService } from './externalid-verification.service';
 import { ProfileService, AuthService } from '@project-sunbird/sunbird-sdk';
 import {
@@ -43,6 +44,9 @@ describe('ExternalIdVerificationService', () => {
   const mockLocalCourseService: Partial<LocalCourseService> = {
     checkCourseRedirect: jest.fn()
   };
+  const mockRouter: Partial<Router> = {
+    navigate: jest.fn()
+  };
   beforeAll(() => {
     externalIdVerificationService = new ExternalIdVerificationService(
       mockProfileService as ProfileService,
@@ -51,7 +55,8 @@ describe('ExternalIdVerificationService', () => {
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
       mockCommonUtilService as CommonUtilService,
-      mockLocalCourseService as LocalCourseService
+      mockLocalCourseService as LocalCourseService,
+      mockRouter as Router
     );
   });
 
@@ -107,6 +112,7 @@ describe('ExternalIdVerificationService', () => {
 
     it('shouldn\'t show Ext Verification popup if its Quiz content redirection flow', () => {
       // arrange
+      mockAppGlobalService.redirectUrlAfterLogin = 'url';
       mockCommonUtilService.networkInfo = {
         isNetworkAvailable: false
       };
@@ -118,6 +124,10 @@ describe('ExternalIdVerificationService', () => {
       externalIdVerificationService.showExternalIdVerificationPopup();
       // assert
       expect(mockPopOverController.create).not.toHaveBeenCalled();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['url'],
+        expect.anything()
+      );
     });
 
     it('shouldn\'t show Ext Verification popup if network is not available', () => {
