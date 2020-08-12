@@ -54,11 +54,6 @@
   .sb-textbook-container {
     margin: 0 !important;
     padding: 0 !important;
-    app-text-book-card {
-      .sb-card.reverse {
-        border-bottom: 0.5px solid map-get($colors, dark_gray) !important;
-      }
-    }
 
     &:last-child {
       margin-bottom: 0 !important;
