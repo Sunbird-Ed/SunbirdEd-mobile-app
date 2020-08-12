@@ -63,7 +63,7 @@ var formRequestArray = [{
     },
     {
         'type': 'dynamicform',
-        'subType': 'support',
+        'subType': 'support_v2',
         'action': 'get',
         'component': 'app'
     },
