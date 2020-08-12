@@ -59,7 +59,6 @@ var formRequestArray = [{
         'type': 'group',
         'subType': 'activities_v2',
         'action': 'list',
-        'component': 'app'
     },
     {
         'type': 'dynamicform',
