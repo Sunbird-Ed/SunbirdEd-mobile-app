@@ -84,6 +84,7 @@ export class AppGlobalService implements OnDestroy {
     private _showCourseCompletePopup = false;
     private _formConfig: any;
     private _selectedActivityCourseId: string;
+    private _redirectUrlAfterLogin: string;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -771,6 +772,14 @@ export class AppGlobalService implements OnDestroy {
 
     set selectedActivityCourseId(value) {
         this._selectedActivityCourseId = value;
+    }
+
+    get redirectUrlAfterLogin() {
+        return this._redirectUrlAfterLogin;
+    }
+
+    set redirectUrlAfterLogin(value) {
+        this._redirectUrlAfterLogin = value;
     }
 
 

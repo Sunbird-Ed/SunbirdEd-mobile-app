@@ -19,7 +19,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { AndroidPermissionsService } from '.';
+import { AndroidPermissionsService, ComingSoonMessageService } from '.';
 
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
@@ -74,6 +74,7 @@ describe('CommonUtilService', () => {
   };
   const mockRouter: Partial<Router> = {};
   const mockPermissionService: Partial<AndroidPermissionsService> = {};
+  const mockComingSoonMessageService: Partial<ComingSoonMessageService> = {};
 
 
   beforeAll(() => {
@@ -92,7 +93,8 @@ describe('CommonUtilService', () => {
       mockAppversion as AppVersion,
       mockRouter as Router,
       mockToastController as ToastController,
-      mockPermissionService as AndroidPermissionsService
+      mockPermissionService as AndroidPermissionsService,
+      mockComingSoonMessageService as ComingSoonMessageService
     );
   });
 
@@ -251,57 +253,64 @@ describe('CommonUtilService', () => {
   });
 
   describe('showContentComingSoonAlert()', () => {
-    it('should show Coming soon alert popover', () => {
+    it('should show Coming soon alert popover', (done) => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
-            dismiss: jest.fn(() => Promise.resolve({}))
-          } as any);
-      // const createMock = jest.spyOn(mockPopoverController, 'create');
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+        dismiss: jest.fn(() => Promise.resolve({}))
+      } as any);
+      mockComingSoonMessageService.getComingSoonMessage = jest.fn(() => Promise.resolve('comming soon msg'));
       // act
-      commonUtilService.showContentComingSoonAlert('permission');
+      commonUtilService.showContentComingSoonAlert('permission', {});
       // assert
-      expect(mockPopoverController.create).toHaveBeenCalled();
-      expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
+      setTimeout(() => {
+        expect(mockComingSoonMessageService.getComingSoonMessage).toHaveBeenCalled();
+        expect(mockPopoverController.create).toHaveBeenCalled();
+        expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
+        done();
+      }, 0);
     });
 
-    it('should generate INTERACT telemetry with given source', () => {
+    it('should generate INTERACT telemetry with given source', (done) => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
-            dismiss: jest.fn(() => Promise.resolve({}))
-          } as any);
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+        dismiss: jest.fn(() => Promise.resolve({}))
+      } as any);
       // const createMock = jest.spyOn(mockPopoverController, 'create');
       // act
-      commonUtilService.showContentComingSoonAlert('permission');
-      // assert
-      expect(mockPopoverController.create).toHaveBeenCalled();
-      expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
-      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
-        InteractSubtype.QR_CODE_COMINGSOON,
-        Environment.HOME,
-       'permission');
+      commonUtilService.showContentComingSoonAlert('permission', 'dial_code').then(() => {
+        // assert
+        expect(mockPopoverController.create).toHaveBeenCalled();
+        expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+          InteractSubtype.QR_CODE_COMINGSOON,
+          Environment.HOME,
+          'permission');
+        done();
+      });
     });
 
-    it('should generate INTERACT telemetry if source is not provided', () => {
+    it('should generate INTERACT telemetry if source is not provided', (done) => {
       // arrange
       const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-            present: jest.fn(() => Promise.resolve({})),
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
-            dismiss: jest.fn(() => Promise.resolve({}))
-          } as any);
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+        dismiss: jest.fn(() => Promise.resolve({}))
+      } as any);
       // const createMock = jest.spyOn(mockPopoverController, 'create');
       // act
-      commonUtilService.showContentComingSoonAlert(undefined);
-      // assert
-      expect(mockPopoverController.create).toHaveBeenCalled();
-      expect(createMock.mock.calls[0][0]['component']).toEqual(SbGenericPopoverComponent);
-      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
-        InteractSubtype.QR_CODE_COMINGSOON,
-        Environment.HOME,
-        PageId.HOME);
+      commonUtilService.showContentComingSoonAlert(undefined).then(() => {
+        expect(mockPopoverController.create).toHaveBeenCalled();
+        expect(createMock.mock.calls[0][0]['component']).toEqual(SbGenericPopoverComponent);
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+          InteractSubtype.QR_CODE_COMINGSOON,
+          Environment.HOME,
+          PageId.HOME);
+        done();
+      });
     });
   });
 
@@ -493,16 +502,16 @@ describe('CommonUtilService', () => {
   describe('handleToTopicBasedNotification()', () => {
     it('should return true if IP location is available', (done) => {
       // arrange
-      const profile = {board: ['AP'], medium: ['English', 'Hindi', 'Bengali'], grade: ['class 8', 'class9', 'class10']} as any;
+      const profile = { board: ['AP'], medium: ['English', 'Hindi', 'Bengali'], grade: ['class 8', 'class9', 'class10'] } as any;
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile));
       mockSharedPreferences.getString = jest.fn((arg) => {
         let value;
         switch (arg) {
-            case PreferenceKey.DEVICE_LOCATION:
-                value = '{\"state\": \"Odisha\", \"district\": \"Cuttack\"}';
-                break;
-            case PreferenceKey.SUBSCRIBE_TOPICS:
-                value =  '[\"AP\", \"English\", \"Odisha\", \"Cuttack\"]';
+          case PreferenceKey.DEVICE_LOCATION:
+            value = '{\"state\": \"Odisha\", \"district\": \"Cuttack\"}';
+            break;
+          case PreferenceKey.SUBSCRIBE_TOPICS:
+            value = '[\"AP\", \"English\", \"Odisha\", \"Cuttack\"]';
         }
         return of(value);
       });
@@ -547,10 +556,10 @@ describe('CommonUtilService', () => {
       const message = 'Connect to the internet to view the content';
       mockToastController.create = jest.fn(() => {
         return Promise.resolve({
-            present: jest.fn(),
-            onDidDismiss: jest.fn((fn) => {
-                fn();
-            })
+          present: jest.fn(),
+          onDidDismiss: jest.fn((fn) => {
+            fn();
+          })
         });
       });
       jest.spyOn(commonUtilService, 'translateMessage').mockImplementation(() => {
