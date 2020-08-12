@@ -364,7 +364,6 @@
   "IMPORT_ECAR": "Incompatible file format. You can only import .ecar , .epar and .gsa files",
   "IMPORT_ERROR": "Import Failed",
   "IMPORT_PROGRESS": "Importing.. Please wait",
-  "IM_A_TEACHER": "I’m a Teacher",
   "INACTIVE": "Inactive",
   "INCORRECT_TEACHER_ID_ERROR": "You have entered an incorrect ID. Enter the ID again",
   "INSTALL_CROSSWALK": "Install Crosswalk",
@@ -643,7 +642,6 @@
   "SELECT_ALL": "Select All",
   "SELECT_CHAPTER": "Select module",
   "SELECT_YOUR_STATE": "Select your State",
-  "SELF_DECLARED_INFO": "Self declared info",
   "SEND_FILE": "Send file",
   "SERVER_CONNECTION_ERROR": "Unable to connect to server",
   "SETTINGS": "Settings",
@@ -850,5 +848,7 @@
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
   "GROUP_GUIDELINES": "Group Guidelines",
+  "SUBMIT_MY_DETAILS": "Submit my details",
+  "MY_DETAILS": "My details",
   "SELECT_TYPE": "Select Type"
 }
