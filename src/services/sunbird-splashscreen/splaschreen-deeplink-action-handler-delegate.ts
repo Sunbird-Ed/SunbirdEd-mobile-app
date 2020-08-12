@@ -147,20 +147,20 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         name: 'content deatil',
         code: 'contentDetail',
-        values: '(?:\\/(?:resources\\/play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
+        values: '(?:\\/(?:resources\\/play\\/content|play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
         route: 'content-details'
       },
       {
         name: 'Textbook detail',
         code: 'textbookDetail',
-        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+))',
+        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+))',
         route: 'collection-detail-etb',
         priority: 2
       },
       {
         name: 'Textbook content detail',
         code: 'textbookContentDetail',
-        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
+        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
         route: 'collection-detail-etb',
         priority: 1
       },
