@@ -507,6 +507,10 @@ export class QrcoderesultPage implements OnDestroy {
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
     this.interactEventForPlayAndDownload(content, false);
+    if (!(content.contentData.downloadUrl)) {
+      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+      return;
+    }
     if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
       // this.navCtrl.push(EnrolledCourseDetailsPage, {
       //   content: content,
