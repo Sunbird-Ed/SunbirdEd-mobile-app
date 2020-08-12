@@ -323,7 +323,6 @@
   "FOLLOW": "Follow",
   "FOR_SUPPORT": "For {{%s}} Support",
   "FORCE_UPDATE_MESSAGE": "You are using an older version of the {{%s}} app. To get the latest version from Google Playstore, tap Update Now ",
-  "FOR_SUPPORT": "For {{%s}} Support",
   "FREE_SPACE": "Free Space :",
   "FROM": "From",
   "FULL_NAME": "Name",
@@ -387,7 +386,6 @@
   "LANGUAGE_SETTINGS": "Language Settings",
   "LAST_DATE_TO_JOIN": "Last date to join {{%s}}",
   "LAST_SYNC": "Last synced on ",
-  "COURSE_LAST_UPDATED_ON": "Course last updated on {{last_updated_on_date}}",
   "LAST_VIEWED": "Last viewed",
   "LATEST_COURSES": "Latest courses",
   "LEAVE_GROUP": "Leave group",
@@ -850,5 +848,10 @@
   "GROUP_GUIDELINES": "Group Guidelines",
   "SUBMIT_MY_DETAILS": "Submit my details",
   "MY_DETAILS": "My details",
-  "SELECT_TYPE": "Select Type"
+  "SELECT_TYPE": "Select Type",
+  "MAINTENANCE_MESSAGE": "We're currently down for maintenance, but don't worry we'll be up in {{%timeLeft}} hours. Come back soon!",
+  "PLANNED_MAINTENANCE_TEXT": "We're currently down for maintenance, but don't worry we'll be up soon",
+  "PLANNED_MAINTENANCE_TEXT_WITH_TIME": "We're currently down for maintenance, but don't worry we'll be up in",
+  "MAINTENANCE_SUB_TEXT": "You can still access your downloaded content during this time",
+  "GO_TO_DOWNLOADS": "Go to Downloads"
 }

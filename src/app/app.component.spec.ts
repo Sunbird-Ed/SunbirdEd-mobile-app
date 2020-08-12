@@ -1266,54 +1266,6 @@ describe('AppComponent', () => {
             jest.resetAllMocks();
             jest.restoreAllMocks();
         });
-
-        it('should subscribe coach_mark_seen event', (done) => {
-            // arrange
-            mockPlatform.ready = jest.fn(() => {
-                return {
-                    then: jest.fn((cb) => cb('ready'))
-                } as any;
-            });
-            const mockData = {
-                showWalkthroughBackDrop: true,
-                appName: 'some_app_name'
-            };
-            mockEvents.subscribe = jest.fn((topic, fn) => {
-                switch (topic) {
-                    case EventTopics.COACH_MARK_SEEN:
-                        return fn(mockData);
-                }
-            });
-            const getBoundingClientRect = {
-                getBoundingClientRect: jest.fn(() => {
-                    const left = 0;
-                    return left;
-                }),
-                getElementsByClassName: jest.fn(() => {
-                    return [{
-                        className: 'bg',
-                        setAttribute: jest.fn()
-                    }];
-                })
-            } as any;
-            jest.spyOn(document, 'getElementById').mockReturnValue(getBoundingClientRect);
-
-            // act
-            jest.useFakeTimers();
-            appComponent.ngOnInit();
-            // assert
-            jest.advanceTimersByTime(2100);
-            expect(mockEvents.subscribe).toHaveBeenCalled();
-            expect(document.getElementById).toHaveBeenCalled();
-            expect(document.getElementById('qrScannerIcon').getBoundingClientRect).toHaveBeenCalled();
-            expect(document.getElementById('qrScannerIcon').getElementsByClassName).toHaveBeenCalled();
-            // expect(document.getElementById('backdrop').getElementsByClassName('bg')[0].setAttribute).toHaveBeenCalled();
-            jest.useRealTimers();
-            jest.clearAllTimers();
-            setTimeout(() => {
-                done();
-            });
-        });
         it('should subscribe tab change event', (done) => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
@@ -1549,6 +1501,40 @@ describe('AppComponent', () => {
                 expect(document.documentElement.dir).toEqual('ltr');
                 done();
             });
+        });
+
+        it('should get errorEvent for planned maintenance and display it ', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockEventsBusService.events = jest.fn(() => of({
+                type: 'PLANNED_MAINTENANCE_PERIOD',
+                payload: {}
+            }));
+            mockEvents.subscribe = jest.fn();
+            const mockButtonSubscription = {
+                unsubscribe: jest.fn()
+            };
+            const subscribeWithPriorityData = jest.fn((_, fn) => {
+                setTimeout(() => {
+                    fn();
+                });
+                return mockButtonSubscription;
+            });
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                expect(subscribeWithPriorityData).toBeTruthy();
+                done();
+            }, 0);
         });
     });
 
