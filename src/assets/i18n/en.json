@@ -848,6 +848,7 @@
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
   "GROUP_GUIDELINES": "Group Guidelines",
+  "SELECT_TYPE": "Select Type",
   "MAINTENANCE_MESSAGE": "We're currently down for maintenance, but don't worry we'll be up in {{%timeLeft}} hours. Come back soon!",
   "PLANNED_MAINTENANCE_TEXT": "We're currently down for maintenance, but don't worry we'll be up soon",
   "PLANNED_MAINTENANCE_TEXT_WITH_TIME": "We're currently down for maintenance, but don't worry we'll be up in",

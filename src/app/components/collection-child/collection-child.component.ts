@@ -16,6 +16,7 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
+import { AddActivityToGroup } from '../../my-groups/group.interface';
 
 @Component({
   selector: 'app-collection-child',
@@ -49,6 +50,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() batch: any;
   @Input() renderLevel: number;
   @Input() contentStatusData: ContentStateResponse;
+  @Input() addActivityToGroupData: AddActivityToGroup;
 
   public telemetryObject: TelemetryObject;
   public objRollup: Rollup;
@@ -195,7 +197,8 @@ export class CollectionChildComponent implements OnInit {
                 depth,
                 course: this.updatedCourseCardData || undefined,
                 corRelation: this.corRelationList,
-                breadCrumb: this.breadCrumb
+                breadCrumb: this.breadCrumb,
+                ...this.addActivityToGroupData
               }
             };
             this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
