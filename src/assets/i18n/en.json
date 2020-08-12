@@ -41,7 +41,7 @@
   "ADD_RECOVERY_ID": "Add Recovery Account",
   "ADD_STATE": "Add State",
   "ADD_TO_GROUP": "Add to group",
-  "ADD_TO_GROUP_ACTIVITY": "Add to group",
+  "ADD_TO_GROUP_ACTIVITY": "Add for group",
   "ADD_USER": "Add user",
   "ADD_USERS": "Add Users",
   "ADD_USERS_TO_GROUP": "Add {{%s}} Users to Group",
@@ -853,5 +853,6 @@
   "PLANNED_MAINTENANCE_TEXT": "We're currently down for maintenance, but don't worry we'll be up soon",
   "PLANNED_MAINTENANCE_TEXT_WITH_TIME": "We're currently down for maintenance, but don't worry we'll be up in",
   "MAINTENANCE_SUB_TEXT": "You can still access your downloaded content during this time",
-  "GO_TO_DOWNLOADS": "Go to Downloads"
+  "GO_TO_DOWNLOADS": "Go to Downloads",
+  "VIEW_ACTIVITY": "View activity"
 }
