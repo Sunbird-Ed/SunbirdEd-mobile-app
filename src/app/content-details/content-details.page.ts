@@ -72,7 +72,7 @@ import { ChildContentHandler } from '@app/services/content/child-content-handler
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { map } from 'rxjs/operators';
+import { map, filter, take, tap } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -176,6 +176,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   courseContext: any;
   private contentProgressSubscription: Subscription;
   private playerEndEventTriggered: boolean;
+  isCourseCertificateShown: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -320,19 +321,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.generateTelemetry(true);
       }, 1000);
     });
-    this.contentProgressSubscription = this.eventBusService.events(EventNamespace.CONTENT).subscribe((event: ContentEvent) => {
-      if (event.type === ContentEventType.COURSE_STATE_UPDATED && this.course &&
-        (event as ContentUpdate).payload.contentId === this.course.contentId && this.shouldOpenPlayAsPopup) {
-          this.playerEndEventTriggered = true;
-      }
-    });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
     this.events.unsubscribe(EventTopics.NEXT_CONTENT);
     this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
-    this.contentProgressSubscription.unsubscribe();
+
+    if (this.contentProgressSubscription) {
+      this.contentProgressSubscription.unsubscribe();
+    }
   }
 
   /**
@@ -851,6 +849,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
+    if (!(this.content.contentData.downloadUrl)) {
+      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+      return;
+    }
     if (this.limitedShareContentFlag) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
@@ -1396,11 +1398,27 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async openCourseCompletionPopup() {
-    if (this.playerEndEventTriggered) {
-      await this.getContentState();
-      this.playerEndEventTriggered = false;
+    if (this.isCourseCertificateShown) {
+      return;
     }
+    await this.getContentState();
+
     if (!this.showCourseCompletePopup) {
+      if (this.contentProgressSubscription) {
+        this.contentProgressSubscription.unsubscribe();
+      }
+
+      this.contentProgressSubscription = this.eventBusService.events(EventNamespace.CONTENT)
+          .pipe(
+              filter((event) =>
+                  event.type === ContentEventType.COURSE_STATE_UPDATED && this.course &&
+                  (event as ContentUpdate).payload.contentId === this.course.contentId && this.shouldOpenPlayAsPopup
+              ),
+              take(1),
+              tap(() => this.openCourseCompletionPopup())
+          )
+          .subscribe();
+
       return;
     }
     const popUp = await this.popoverCtrl.create({
@@ -1411,6 +1429,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       },
       cssClass: 'sb-course-completion-popover',
     });
+    this.isCourseCertificateShown = true;
     await popUp.present();
     const { data } = await popUp.onDidDismiss();
     if (data === undefined) {

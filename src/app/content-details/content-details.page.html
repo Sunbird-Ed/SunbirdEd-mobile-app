@@ -192,8 +192,9 @@
 
         <div class="sb-btn-tile-group">
           <div *ngIf="content && !this.limitedShareContentFlag">
-            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
-              [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only class="sb-btn-tile">
+            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()" 
+            [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
+            [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only class="sb-btn-tile">
               <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
               <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
               <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">

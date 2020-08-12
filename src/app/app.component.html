@@ -1,43 +1,47 @@
 <ion-app>
 
-  <app-application-header [headerConfig]="headerConfig" (headerEvents)="handleHeaderEvents($event);"
-    (sideMenuItemEvent)="menuItemAction($event)"></app-application-header>
+  <div style="z-index: 1;" >
+    <app-application-header *ngIf="!isPlannedMaintenanceStarted" [headerConfig]="headerConfig" (headerEvents)="handleHeaderEvents($event);"
+                            (sideMenuItemEvent)="menuItemAction($event)"></app-application-header>
+
+    <div class="unplanned-maintenance-banner">
+      <ion-grid>
+        <ion-row class="ion-justify-content-between ion-align-items-center">
+          <ion-col size="1">
+            <img style="width: 18px; height: 18px;" src="assets/imgs/ic_info_white.svg" alt="">
+          </ion-col>
+          <ion-col style="color: white;" size="10">
+            {{'MAINTENANCE_MESSAGE' | translate:{'%timeLeft': '3'} }}
+          </ion-col>
+          <ion-col size="1">
+            <img (click)="closeUnPlannedMaintenanceBanner()" style="width: 18px; height: 18px;" src="assets/imgs/ic_action_close_white.svg" alt="">
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+  </div>
 
   <ion-split-pane contentId="mainContent">
     <ion-router-outlet *ngIf="toggleRouterOutlet" id="mainContent" main
       [ngClass]="{'need-header-space':headerConfig?.showHeader, '':!headerConfig?.showHeader}"></ion-router-outlet>
   </ion-split-pane>
-  <div id="backdrop"
-    (click)="$event.preventDefault(); $event.stopPropagation(); qrWalkthroughBackdropClicked(); showWalkthroughBackDrop = false"
-    [hidden]="!showWalkthroughBackDrop">
-    <div class="bg"></div>
-    <ion-grid style="height: 100%" class="gridClass ion-text-center">
-      <ion-row style="height: 100%" class="ion-align-items-end">
-        <ion-col style="padding-bottom: 7em; text-align: center">
-          <ion-row>
-            <ion-col>
-              <ion-row>
-                <div class="ion-text-center W100" style="font-size: 19px">{{'TAP_SCAN' | translate: {'%s': appName} }}
-                </div>
-              </ion-row>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col style="padding-left: 50px; padding-right: 70px">
-              <ion-row>
-                <div class="ion-text-center W100">{{'COACH_SCREEN' | translate}}</div>
-              </ion-row>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <button class="sb-btn sb-btn-md sb-btn-outline-white text-uppercase" id="buttonColors"
-                (click)="onConfirmationClicked($event)">{{'GOT_IT' | translate}}</button>
-            </ion-col>
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+
+  <div id="planned-maintenance-banner" [hidden]="!isPlannedMaintenanceStarted">
+    <!--Image-->
+    <img src="../assets/imgs/ic_maintenance.svg" alt="maintenance" style="margin-top: 50%;">
+    <!-- some text -->
+    <div id="planned-maintenance-text">
+      <p *ngIf="!isTimeAvailable">{{'PLANNED_MAINTENANCE_TEXT' | translate}}</p>
+      <p *ngIf="isTimeAvailable">{{'PLANNED_MAINTENANCE_TEXT_WITH_TIME' | translate}}</p>
+    </div>
+    <!--Timer-->
+    <div id="timer"></div>
+    <!-- another text -->
+    <p id="maintenance-sub-text">{{'MAINTENANCE_SUB_TEXT' | translate}}</p>
+    <div class="text-center">
+      <ion-button id="navigate-downloads" (click)="navigateToDownloads()">{{'GO_TO_DOWNLOADS' | translate}}</ion-button>
+    </div>
   </div>
 
   <div id="update-webview-container"
