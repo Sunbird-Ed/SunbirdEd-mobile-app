@@ -849,5 +849,6 @@
   "PLEASE_VALIDATE_YOUR_MOBILE_NUMBER": "Please validate your mobile number",
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
-  "GROUP_GUIDELINES": "Group Guidelines"
+  "GROUP_GUIDELINES": "Group Guidelines",
+  "SELECT_TYPE": "Select Type"
 }

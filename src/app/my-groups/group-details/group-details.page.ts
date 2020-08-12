@@ -20,7 +20,6 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
-import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
@@ -776,12 +775,6 @@ export class GroupDetailsPage implements OnInit {
     );
   }
 
-  // sortActivityList() {
-  //   this.filteredActivityList.sort((a, b) => {
-  //     return a.activityInfo.name.localeCompare(b.activityInfo.name);
-  //   });
-  // }
-
   extractInitial(name) {
     const splitter = new GraphemeSplitter();
     const split: string[] = splitter.splitGraphemes(name.trim());
@@ -819,41 +812,19 @@ export class GroupDetailsPage implements OnInit {
       InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     try {
       const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
-
-      const selectActivityPopup = await this.popoverCtrl.create({
-        component: SbGenericFormPopoverComponent,
-        componentProps: {
-          sbPopoverHeading: this.commonUtilService.translateMessage('SELECT_ACTIVITY'),
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('NEXT'),
-              btnClass: 'popover-color'
-            }
-          ],
-          icon: null,
-          formItems: supportedActivityList
-        },
-        cssClass: 'sb-popover info select-activity-popover',
+      supportedActivityList.forEach(activity => {
+        activity.title = this.commonUtilService.translateMessage(activity.title);
       });
-      await selectActivityPopup.present();
-      const { data } = await selectActivityPopup.onDidDismiss();
-      if (data && data.selectedVal && data.selectedVal.activityType === 'Content') {
-        this.search(data);
-      }
+      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+      { state: {
+        supportedActivityList,
+        groupId: this.groupId,
+        activityList: this.activityList
+       }
+      });
     } catch (e) {
       console.log(e);
     }
-  }
-
-  private async search(data) {
-    this.router.navigate([RouterLinks.SEARCH], {
-      state: {
-        activityFilters: data.selectedVal.filters,
-        source: PageId.GROUP_DETAIL,
-        groupId: this.groupId,
-        activityList: this.activityList
-      }
-    });
   }
 
 }

@@ -51,7 +51,7 @@ import {
   UtilityService,
   TelemetryGeneratorService,
   CommonUtilService,
- } from '@app/services';
+} from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -80,6 +80,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 
 @Component({
   selector: 'app-content-details',
@@ -134,6 +135,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
+  groupId: string;
+  isFromGroupFlow = false;
+  addActivityToGroupData: AddActivityToGroup;
   userCount = 0;
   shouldGenerateTelemetry = true;
   playOnlineSpinner: boolean;
@@ -230,6 +234,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
       this.source = extras.source || this.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+        this.groupId = extras.groupId;
+        this.addActivityToGroupData = {
+          groupId: this.groupId,
+          activityId: this.identifier,
+          activityList: extras.activityList || [],
+          activityType: this.cardData.contentType,
+          pageId: PageId.CONTENT_DETAIL,
+          corRelationList: this.corRelationList,
+          noOfPagesToRevertOnSuccess: -4
+        };
+      }
+
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;
@@ -1396,12 +1414,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     await popUp.present();
     const { data } = await popUp.onDidDismiss();
     if (data === undefined) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.CLOSE_CLICKED,
-            PageId.COURSE_COMPLETION_POPUP,
-            Environment.HOME
-        );
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CLOSE_CLICKED,
+        PageId.COURSE_COMPLETION_POPUP,
+        Environment.HOME
+      );
     }
   }
 

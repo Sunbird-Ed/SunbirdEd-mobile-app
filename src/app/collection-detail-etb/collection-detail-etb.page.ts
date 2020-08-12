@@ -39,6 +39,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -205,6 +206,9 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
+  groupId: string;
+  isFromGroupFlow = false;
+  addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   shownGroup = null;
   content: any;
@@ -251,6 +255,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
   deeplinkContent: any;
+  activityList;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -308,6 +313,21 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
     this.deeplinkContent = extras.deeplinkContent;
+    if (this.source === PageId.GROUP_DETAIL) {
+      this.isFromGroupFlow = true;
+      this.groupId = extras.groupId;
+      this.activityList = extras.activityList || [];
+      this.addActivityToGroupData = {
+        groupId: this.groupId,
+        activityId: this.identifier,
+        activityList: this.activityList,
+        activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
+        pageId: PageId.COLLECTION_DETAIL,
+        corRelationList: this.corRelationList,
+        source: this.source,
+        noOfPagesToRevertOnSuccess: -3
+      };
+    }
   }
 
   ngOnInit() {
@@ -826,7 +846,10 @@ export class CollectionDetailEtbPage implements OnInit {
         depth,
         contentState: this.stateData,
         corRelation: this.corRelationList,
-        breadCrumb: this.breadCrumb
+        breadCrumb: this.breadCrumb,
+        source: this.source,
+        groupId: this.groupId,
+        activityList: this.activityList
       }
     });
   }

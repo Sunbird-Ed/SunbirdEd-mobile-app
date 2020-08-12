@@ -21,7 +21,14 @@ export class GroupHandlerService {
   ) {
   }
 
-  public async addActivityToGroup(groupId: string, activityId: string, activityType, pageId, corRelationList) {
+  public async addActivityToGroup(
+    groupId: string,
+    activityId: string,
+    activityType,
+    pageId,
+    corRelationList,
+    noOfPagesToRevertOnSuccess?: number
+  ) {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
@@ -79,7 +86,7 @@ export class GroupHandlerService {
           corRelationList,
           ID.ADD_ACTIVITY_TO_GROUP
         );
-        window.history.go(-2);
+        window.history.go(noOfPagesToRevertOnSuccess || -2);
       }
     } catch (e) {
       console.error(e);
