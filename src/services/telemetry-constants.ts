@@ -583,7 +583,10 @@ export enum CorReleationDataType {
     SCAN = 'Scan',
     SOURCE = 'Source',
     NOTIFICATION_ID = 'NotificationID',
-    /* New Telemetry */
+    CONTENT_TYPE = 'ContentType',
+    /* New Telemetry for Telemetry Structure change
+    * for old telemetry structure please add in above
+    */
     BOARD_COUNT = 'CountBoard',
     MEDIUM_COUNT = 'CountMedium',
     CLASS_COUNT = 'CountClass',
