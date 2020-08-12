@@ -447,6 +447,13 @@ describe('ContentRatingAlertComponent', () => {
             expect(contentRatingAlertComponent.ratingMetaInfo.ratingText).toEqual('Very Bad');
             expect(contentRatingAlertComponent.ratingMetaInfo.ratingQuestion).toEqual('Would you like to tell us more?');
         });
+
+        it('should return if contentRating is 0', () => {
+            // arrange
+            // act
+            contentRatingAlertComponent.createRatingForm(0);
+            // assert
+        });
     });
 
     describe('extractComments', () => {
