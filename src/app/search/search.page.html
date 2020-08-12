@@ -206,7 +206,7 @@
     <div class="sb-card-container sb-card-textbook-container" *ngIf="!isFromGroupFlow">
       <app-text-book-card class="tb-border-btm"
         *ngFor="let content of searchContentResult; let i = index; let last = last"
-        (click)="openContent(undefined, content,i, undefined)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
+        (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
     </div>
     <div class="sc-container" *ngIf="isFromGroupFlow">
       <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
