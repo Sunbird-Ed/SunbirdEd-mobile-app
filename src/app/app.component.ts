@@ -529,13 +529,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     // unplanned maintenance
-    this.events.subscribe('EventTopics:maintenance:unplanned', (data) => {
-      this.isUnplannedMaintenanceStarted = data.isUnplannedMaintenanceStarted;
-      if (this.isUnplannedMaintenanceStarted) {
-        this.timeLeft = '3';
-        window.document.body.classList.add('show-maintenance');
-      }
-    });
+    // this.events.subscribe('EventTopics:maintenance:unplanned', (data) => {
+    //   this.isUnplannedMaintenanceStarted = data.isUnplannedMaintenanceStarted;
+    //   if (this.isUnplannedMaintenanceStarted) {
+    //     this.timeLeft = '3';
+    //     window.document.body.classList.add('show-maintenance');
+    //   }
+    // });
   }
 
   closeUnPlannedMaintenanceBanner() {

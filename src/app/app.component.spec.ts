@@ -1502,6 +1502,40 @@ describe('AppComponent', () => {
                 done();
             });
         });
+
+        it('should get errorEvent for planned maintenance and display it ', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockEventsBusService.events = jest.fn(() => of({
+                type: 'PLANNED_MAINTENANCE_PERIOD',
+                payload: {}
+            }));
+            mockEvents.subscribe = jest.fn();
+            const mockButtonSubscription = {
+                unsubscribe: jest.fn()
+            };
+            const subscribeWithPriorityData = jest.fn((_, fn) => {
+                setTimeout(() => {
+                    fn();
+                });
+                return mockButtonSubscription;
+            });
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                expect(mockEventsBusService.events).toHaveBeenCalled();
+                expect(subscribeWithPriorityData).toBeTruthy();
+                done();
+            }, 0);
+        });
     });
 
     describe('checkDeviceLocation()', () => {
