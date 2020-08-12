@@ -174,6 +174,9 @@ export class ContentRatingAlertComponent {
   }
 
   createRatingForm(rating) {
+    if (rating === 0) {
+      return;
+    }
     this.ratingMetaInfo = {
       ratingText: this.contentRatingOptions[rating].ratingText,
       ratingQuestion: this.contentRatingOptions[rating].question
