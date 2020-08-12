@@ -217,8 +217,8 @@
 </ion-content>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">
-  <button class="open-btn add-to-group-btn" (click)="openSelectedContent()">Open</button>
-  <button class="add-btn add-to-group-btn" (click)="addActivityToGroup()">Add textbook</button>
+  <button class="open-btn add-to-group-btn" (click)="openSelectedContent()">{{'VIEW_ACTIVITY' | translate}}</button>
+  <button class="add-btn add-to-group-btn" (click)="addActivityToGroup()">{{'ADD_FOR_GROUP' | translate}}</button>
 </div>
 
 <div class="loading-backdrop ion-text-center" *ngIf="showLoading">

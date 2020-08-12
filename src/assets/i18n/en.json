@@ -40,8 +40,7 @@
   "ADD_RECOVERY_ACCOUNT": "Add Recovery Account",
   "ADD_RECOVERY_ID": "Add Recovery Account",
   "ADD_STATE": "Add State",
-  "ADD_TO_GROUP": "Add to group",
-  "ADD_TO_GROUP_ACTIVITY": "Add to group",
+  "ADD_FOR_GROUP": "Add for group",
   "ADD_USER": "Add user",
   "ADD_USERS": "Add Users",
   "ADD_USERS_TO_GROUP": "Add {{%s}} Users to Group",
@@ -850,5 +849,5 @@
   "PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS": "Please validate your email address",
   "ERROR_OTP_LIMIT_EXCEEDED": "You have exceeded the maximum limit for OTP, Please try after some time.",
   "GROUP_GUIDELINES": "Group Guidelines",
-  "SELECT_TYPE": "Select Type"
+  "VIEW_ACTIVITY": "View activity"
 }
