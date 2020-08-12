@@ -25,6 +25,7 @@ import {
   ProfileType,
   SearchType
 } from 'sunbird-sdk';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,6 +85,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   @ViewChild('searchInput') public searchInputRef: ElementRef;
   @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
+  LibraryCardTypes = LibraryCardTypes;
   categoryGradeLevels: Array<any>;
   subjects: any;
   mimeTypes = [
@@ -126,7 +128,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     query: new FormControl('', { updateOn: 'submit' }),
     mimeType: new FormControl([])
   });
-  layoutName = 'explore';
   boardList: Array<FilterValue>;
   mediumList: Array<FilterValue>;
   corRelationList: Array<CorrelationData>;
@@ -177,11 +178,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       undefined,
       this.corRelationList);
-
   }
 
   ionViewWillEnter() {
-
     this.searchFormSubscription = this.onSearchFormChange()
       .subscribe(() => { });
 
@@ -258,7 +257,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       ...arrA, ...arrB.filter((bItem) => !arrA.find((aItem) => bItem.name === aItem.name))
     ];
   }
-
 
   private onSearchFormChange(): Observable<undefined> {
     const value = new Map();
@@ -338,7 +336,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }),
       mapTo(undefined)
     );
-
   }
 
   openContent(content, index) {
@@ -436,7 +433,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   onMimeTypeClicked(mimeType, index) {
-
     this.mimeTypes.forEach((value) => {
       value.selected = false;
     });
@@ -452,7 +448,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     } else {
       this.selectedContentType = 'all';
     }
-
   }
 
   fetchingBoardMediumList(facetFilters) {
