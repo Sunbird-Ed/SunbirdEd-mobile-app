@@ -206,7 +206,8 @@ export class CollectionDetailEtbPage implements OnInit {
   public shouldGenerateEndTelemetry = false;
   public source = '';
   isChildClickable = false;
-  shownGroup = null;
+  hiddenGroups = new Set();
+  shownGroups = undefined;
   content: any;
   data: any;
   isChild = false;
@@ -328,7 +329,8 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.shownGroup = null;
+      this.hiddenGroups.clear();
+      this.shownGroups = undefined;
       this.assignCardData();
       this.resetVariables();
       this.setContentDetails(this.identifier, true);
@@ -370,7 +372,8 @@ export class CollectionDetailEtbPage implements OnInit {
 
   refreshContentDetails(data) {
     this.resetVariables();
-    this.shownGroup = null;
+    this.shownGroups = undefined;
+    this.hiddenGroups.clear();
     this.setExtrasData(data);
     this.didViewLoad = false;
     this.assignCardData();
@@ -401,16 +404,17 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
-
   // toggle the card
   toggleGroup(group, content, openCarousel?) {
     let isCollapsed = true;
     if (!openCarousel && this.isGroupShown(group)) {
       isCollapsed = false;
-      this.shownGroup = null;
+      this.shownGroups = undefined;
+      this.hiddenGroups.add(group);
     } else {
       isCollapsed = false;
-      this.shownGroup = group;
+      this.shownGroups = group;
+      this.hiddenGroups.delete(group);
       setTimeout(() => {
         if (document.getElementById(content.identifier)) {
           window['scrollWindow'].getScrollElement()
@@ -439,7 +443,11 @@ export class CollectionDetailEtbPage implements OnInit {
 
   // to check whether the card is toggled or not
   isGroupShown(group) {
-    return this.shownGroup === group;
+    if (this.activeMimeTypeFilter.indexOf('all') === 0) {
+      return this.shownGroups === group;
+    } else {
+      return !this.hiddenGroups.has(group);
+    }
   }
 
   changeValue(text) {
@@ -1228,7 +1236,8 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   openTextbookToc() {
-    this.shownGroup = null;
+    this.hiddenGroups.clear();
+    this.shownGroups = undefined;
     this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
       { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();
