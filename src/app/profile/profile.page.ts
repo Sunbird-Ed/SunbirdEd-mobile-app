@@ -1062,7 +1062,7 @@ export class ProfilePage implements OnInit {
       formReq.rootOrgId = '*';
       formData = await this.fetchFormApi(formReq);
     }
-    return (formData && formData.form && formData.form.data) || [];
+    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
   }
 
 }
