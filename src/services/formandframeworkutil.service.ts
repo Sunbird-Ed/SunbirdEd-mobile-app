@@ -352,6 +352,25 @@ export class FormAndFrameworkUtilService {
             });
     }
 
+    public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
+        const req: FormRequest = {
+            type: 'group',
+            subType: 'activities',
+            action: 'list',
+            component: 'app'
+        };
+
+        // form api call
+        return this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                // this.setContentFilterConfig(res.form.data.fields);
+                return res.form.data.fields;
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                return error;
+            });
+    }
+
     async getSupportedContentFilterConfig(name): Promise<Array<string>> {
         // get cached library config
         let contentFilterConfig: any = this.getCachedContentFilterConfig();
@@ -647,21 +666,21 @@ export class FormAndFrameworkUtilService {
 
     async getFormConfig() {
         const req: FormRequest = {
-            type: "dynamicform",
-            subType: "support_v2",
-            action: "get",
-            component: "app"
+            type: 'dynamicform',
+            subType: 'support_v2',
+            action: 'get',
+            component: 'app'
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
 
     async getStateContactList() {
         const req: FormRequest = {
-            type: "form",
-            subType: "boardContactInfo",
-            action: "get",
-            component: "app"
-          };
-          return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+            type: 'form',
+            subType: 'boardContactInfo',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
 }
