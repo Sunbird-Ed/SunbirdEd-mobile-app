@@ -244,9 +244,9 @@ export class SelfDeclaredTeacherEditPage {
       }
 
       if (config.code === 'tnc') {
-        // if (this.editType === 'edit') {
-        //   return undefined;
-        // }
+        if (this.editType === 'edit') {
+          return undefined;
+        }
         if (config.templateOptions && config.templateOptions.labelHtml &&
           config.templateOptions.labelHtml.contents) {
           for (let key in config.templateOptions.labelHtml.values) {
