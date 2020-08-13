@@ -78,7 +78,8 @@ export class Search {
         'gradeLevel',
         'subject',
         'medium',
-        'resourceType'
+        'resourceType',
+        'publisher'
     ];
 
     public static readonly FACETS_COURSE = [

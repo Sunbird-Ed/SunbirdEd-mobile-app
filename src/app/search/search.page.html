@@ -10,7 +10,8 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons class="search-buttons-group" slot="primary" *ngIf="!dialCode">
-      <ion-button icon-only (click)="handleSearch()" *ngIf="(searchKeywords && !filterIcon) || (!searchKeywords && isFromGroupFlow)">
+      <ion-button icon-only (click)="handleSearch()"
+        *ngIf="(searchKeywords && !filterIcon) || (!searchKeywords && isFromGroupFlow)">
         <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_search.svg" alt="search">
       </ion-button>
       <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
@@ -141,7 +142,7 @@
 
       <div *ngIf="resultlist && !resultlist.isCourse">
         <div class="px-8">
-          
+
           <div class="pt-8">
             <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
               {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
@@ -206,8 +207,8 @@
     <div class="sc-container">
       <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
         <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
-        (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
-      </sb-library-card>
+          (click)="openContent(undefined, content, i)" [cardImg]="content?.appIcon || defaultAppIcon">
+        </sb-library-card>
       </div>
     </div>
   </div>
@@ -215,11 +216,6 @@
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
 </ion-content>
-
-<div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">
-  <button class="open-btn add-to-group-btn" (click)="openSelectedContent()">{{'VIEW_ACTIVITY' | translate}}</button>
-  <button class="add-btn add-to-group-btn" (click)="addActivityToGroup()">{{'ADD_TO_GROUP_ACTIVITY' | translate}}</button>
-</div>
 
 <div class="loading-backdrop ion-text-center" *ngIf="showLoading">
   <div class="backdrop-container">

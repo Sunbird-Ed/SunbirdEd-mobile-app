@@ -4,6 +4,7 @@
       font-size: 1.3em;
       font-weight: 700 !important;
       color: map-get($colors, facebook);
+      margin-left: 1.3rem;
     }
     .checkbox {
       margin: 8px !important;
@@ -43,3 +44,8 @@
     background-color: map-get($colors, black) !important;
     opacity: 0.4 !important;
   }
+
+  .footer{
+    background: #FFF;
+    bottom: 0;
+ }

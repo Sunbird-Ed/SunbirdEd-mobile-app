@@ -352,6 +352,25 @@ export class FormAndFrameworkUtilService {
             });
     }
 
+    public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
+        const req: FormRequest = {
+            type: 'group',
+            subType: 'activities',
+            action: 'list',
+            component: 'app'
+        };
+
+        // form api call
+        return this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                // this.setContentFilterConfig(res.form.data.fields);
+                return res.form.data.fields;
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                return error;
+            });
+    }
+
     async getSupportedContentFilterConfig(name): Promise<Array<string>> {
         // get cached library config
         let contentFilterConfig: any = this.getCachedContentFilterConfig();
@@ -369,10 +388,10 @@ export class FormAndFrameworkUtilService {
         if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
             switch (name) {
                 case ContentFilterConfig.NAME_LIBRARY:
-                    libraryTabContentTypes = ContentType.FOR_LIBRARY_TAB;
+                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
                     break;
                 case ContentFilterConfig.NAME_COURSE:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB;
+                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
                     break;
                 case ContentFilterConfig.NAME_DOWNLOADS:
                     libraryTabContentTypes = ContentType.FOR_DOWNLOADED_TAB;
@@ -384,7 +403,11 @@ export class FormAndFrameworkUtilService {
         } else {
             for (const field of contentFilterConfig) {
                 if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
-                    libraryTabContentTypes = field.values;
+                    if (field.name === ContentFilterConfig.NAME_LIBRARY || field.name === ContentFilterConfig.NAME_COURSE) {
+                        libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    } else {
+                        libraryTabContentTypes = field.values;
+                    }
                     break;
                 }
             }
@@ -647,21 +670,21 @@ export class FormAndFrameworkUtilService {
 
     async getFormConfig() {
         const req: FormRequest = {
-            type: "dynamicform",
-            subType: "support_v2",
-            action: "get",
-            component: "app"
+            type: 'dynamicform',
+            subType: 'support_v2',
+            action: 'get',
+            component: 'app'
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
 
     async getStateContactList() {
         const req: FormRequest = {
-            type: "form",
-            subType: "boardContactInfo",
-            action: "get",
-            component: "app"
-          };
-          return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+            type: 'form',
+            subType: 'boardContactInfo',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
 }

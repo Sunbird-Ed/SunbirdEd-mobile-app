@@ -257,7 +257,8 @@ export const mockGetChildDataResponse = [
       name: 'Unit 1',
       lastUpdatedOn: '2019-04-29T05:59:21.903+0000',
       contentType: 'CourseUnit',
-      status: 'Live'
+      status: 'Live',
+      downloadUrl: 'sample-download-url'
     },
     isUpdateAvailable: false,
     mimeType: 'application/vnd.ekstep.content-collection',
@@ -280,7 +281,8 @@ export const mockGetChildDataResponse = [
         identifier: 'do_21274246255366963214046',
         contentData: {
           size: 2466640,
-          name: 'Sachin Mp4_1101'
+          name: 'Sachin Mp4_1101',
+          downloadUrl: 'sample-download-url'
         },
         isUpdateAvailable: false,
         mimeType: 'video/mp4',
@@ -310,6 +312,7 @@ export const mockGetChildDataResponse = [
       contentType: 'CourseUnit',
       status: 'Live',
       size: 27717357,
+      downloadUrl: 'sample-download-url'
     },
     isUpdateAvailable: false,
     mimeType: 'application/vnd.ekstep.content-collection',
@@ -334,7 +337,8 @@ export const mockGetChildDataResponse = [
         contentData: {
           size: 27717357,
           name: 'sachin webm_1011',
-          status: 'Live'
+          status: 'Live',
+          downloadUrl: 'sample-download-url'
         },
         isUpdateAvailable: false,
         mimeType: 'video/webm',

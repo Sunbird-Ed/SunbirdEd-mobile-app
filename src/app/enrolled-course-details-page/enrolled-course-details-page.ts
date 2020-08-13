@@ -940,7 +940,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 PageId.COURSE_DETAIL,
                 JSON.stringify(stackTrace),
               );
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           }
         });
@@ -1225,7 +1224,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         if (value.children) {
           this.getContentsSize(value.children);
         }
-        if (value.isAvailableLocally === false) {
+        if (!value.isAvailableLocally && value.contentData.downloadUrl) {
           this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
