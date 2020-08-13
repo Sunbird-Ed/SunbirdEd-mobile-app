@@ -378,6 +378,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         return this.getStringFromArray(this.formValues.children.subcategory[field]);
       } else if(this.formValues.children.subcategory[field].name) {
         return this.formValues.children.subcategory[field].name
+      } else if (typeof this.formValues.children.subcategory[field] === 'string') {
+        return this.formValues.children.subcategory[field];
       }
       return undefined;
     } else if(this.profile) {
@@ -478,11 +480,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.extractPrepareFieldStr('grade'), type: CorReleationDataType.CLASS });
       // Subject
       correlationlist.push({ id: this.extractPrepareFieldStr('subject'), type: CorReleationDataType.SUBJECT });
-      this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
+      // Content Type
+      correlationlist.push({ id: this.extractPrepareFieldStr('contenttype'), type: CorReleationDataType.CONTENT_TYPE });
       // Content name
-      this.formValues.children.subcategory.contentname ?
-        correlationlist.push({ id: this.formValues.children.subcategory.contentname, type: CorReleationDataType.CONTENT_NAME }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('contentname'), type: CorReleationDataType.CONTENT_NAME });
     }
 
     return correlationlist ? correlationlist : undefined;
@@ -845,7 +846,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   prepareEmailContent(formValue) {
     this.bmgsString = undefined;
     this.categories = undefined;
-    const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname'];
+    const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname', 'contenttype'];
     const categorykeys = ['category', 'subcategory'];
     let fields = [];
     if (formValue.children.subcategory) {
@@ -859,7 +860,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
           if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
             this.bmgsString = this.getStringFromArray(fields[element]);
           } else {
-            this.bmgsString = fields[element].name;
+            this.bmgsString = fields[element].name ? fields[element].name : fields[element];
           }
         } else {
           if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
