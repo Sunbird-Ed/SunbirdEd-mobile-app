@@ -352,24 +352,6 @@ export class FormAndFrameworkUtilService {
             });
     }
 
-    public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
-        const req: FormRequest = {
-            type: 'group',
-            subType: 'activities_v2',
-            action: 'list',
-        };
-
-        // form api call
-        return this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                // this.setContentFilterConfig(res.form.data.fields);
-                return res.form.data.fields;
-            }).catch((error: any) => {
-                console.log('Error - ' + error);
-                return error;
-            });
-    }
-
     async getSupportedContentFilterConfig(name): Promise<Array<string>> {
         // get cached library config
         let contentFilterConfig: any = this.getCachedContentFilterConfig();

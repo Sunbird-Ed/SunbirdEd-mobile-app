@@ -33,13 +33,13 @@ import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
 import { Subscription, of, defer } from 'rxjs';
 import { Platform } from '@ionic/angular';
-import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
+// import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { FieldConfig, FieldConfigOptionsBuilder, FieldConfigOption } from '@app/app/components/common-forms/field-config';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormControl } from '@angular/forms';
 import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { FieldConfig, FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements/lib/common-form-config';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -48,22 +48,26 @@ import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 })
 export class SelfDeclaredTeacherEditPage {
 
-  private profile: ServerProfile;
-  private initialExternalIds: any = {};
+  private profile: ServerProfile | any;
   private backButtonFunc: Subscription;
   private availableLocationDistrict: string;
   private availableLocationState: string;
-  private latestFormValue: any;
+  private declaredLatestFormValue: any;
+  private tenantPersonaLatestFormValue: any;
   private selectedStateCode: any;
 
   editType = 'add';
-  isFormValid = false;
+  isDeclarationFormValid = false;
+  isTenantPersonaFormValid = false;
   stateList: LocationSearchResult[] = [];
   districtList: LocationSearchResult[] = [];
   teacherDetailsForm: FieldConfig<any>[] = [];
+  tenantPersonaForm: FieldConfig<any>[] = [];
   appName = '';
+  selectedTenant: string = '';
+  
 
-  @ViewChild('commonForms') commonForms: CommonFormsComponent;
+  // @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -106,33 +110,64 @@ export class SelfDeclaredTeacherEditPage {
 
   async ionViewDidEnter() {
     this.appName = await this.appVersion.getAppName();
-    this.getTeacherDetailsFormApi(undefined, false);
+    this.getTenantPersonaForm();
+  }
+
+  async getTenantPersonaForm() {
+    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+    if (this.profile && this.profile.declarations && this.profile.declarations.length) {
+      this.selectedTenant = this.profile.declarations[0].orgId;
+
+      personaTenantFormData.forEach(config => {
+        if (config.code === 'persona') {
+          config.default = this.profile.declarations[0].persona;
+        } else if (config.code === 'tenant') {
+          config.default = this.profile.declarations[0].orgId;
+        } else if (config.code === 'name') {
+          config.templateOptions.labelHtml.values['$1'] = this.profile.firstName;
+        } else if (config.code === 'state') {
+          config.templateOptions.labelHtml.values['$1'] = this.availableLocationState || 'Enter location from Profile page'
+        } else if (config.code === 'district') {
+          config.templateOptions.labelHtml.values['$1'] = this.availableLocationDistrict || 'Enter location from Profile page'
+        }
+      });
+    }
+
+    this.tenantPersonaForm = personaTenantFormData;
+
+    console.log(this.tenantPersonaForm);
+    this.getTeacherDetailsFormApi(this.selectedTenant, false);
   }
 
   async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
-
-    const req: FormRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      type: 'user',
-      subType: 'teacherDetails_v2',
-      action: 'submit',
-      rootOrgId: rootOrgId || '*',
-      component: 'app'
-    };
-
-    let formData: any = await this.fetchFormApi(req);
-    if (!formData) {
-      req.rootOrgId = '*';
-      formData = await this.fetchFormApi(req);
+    const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', rootOrgId);
+    this.translateLabels(formConfig as any);
+    if (formConfig.length) {
+      this.initializeFormData(formConfig, isFormLoaded);
     }
+  }
 
-    if (formData && formData.form && formData.form.data) {
-      const formConfig = formData.form.data.fields;
-      if (formConfig.length) {
-        this.initializeFormData(formConfig, isFormLoaded);
+  private translateLabels(fieldConfig: FieldConfig<any>[]) {
+    fieldConfig.forEach((config) => {
+      if (config.templateOptions) {
+        config.templateOptions.label = config.templateOptions.label ? this.commonUtilService.translateMessage(config.templateOptions.label) : '';
+        config.templateOptions.placeHolder = config.templateOptions.placeHolder ? this.commonUtilService.translateMessage(config.templateOptions.placeHolder) : '';
       }
-    }
 
+      if (config.validations && config.validations.length) {
+        config.validations.forEach(validation => {
+          validation.message = validation.message ? this.commonUtilService.translateMessage(validation.message) : '';
+        });
+      }
+
+      if (config.asyncValidation && config.asyncValidation.message) {
+        config.asyncValidation.message = this.commonUtilService.translateMessage(config.asyncValidation.message)
+      }
+
+      if (config.children && config.children.length) {
+        this.translateLabels(config.children as FieldConfig<any>[]);
+      }
+    });
   }
 
   private async fetchFormApi(req) {
@@ -147,7 +182,7 @@ export class SelfDeclaredTeacherEditPage {
 
     this.teacherDetailsForm = formConfig.map((config: FieldConfig<any>) => {
       if (config.code === 'externalIds' && config.children) {
-        config.children = config.children.map((childConfig: FieldConfig<any>) => {
+        config.children = (config.children as FieldConfig<any>[]).map((childConfig: FieldConfig<any>) => {
 
           if (childConfig.templateOptions['dataSrc'] && childConfig.templateOptions['dataSrc'].marker === 'LOCATION_LIST') {
             if (childConfig.templateOptions['dataSrc'].params.id === 'state') {
@@ -156,29 +191,18 @@ export class SelfDeclaredTeacherEditPage {
                 stateCode = this.selectedStateCode;
               } else {
                 let stateDetails;
-                if (this.profile.externalIds && this.profile.externalIds.length) {
-                  stateDetails = this.profile.externalIds.find(eId => eId.idType === childConfig.code);
+                if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+                  this.profile.declarations[0].info[childConfig.code]) {
+                  stateDetails = this.profile.declarations[0].info[childConfig.code]
                 }
                 stateCode = stateDetails && stateDetails.id;
-              }
-              if (!isFormLoaded) {
-                this.initialExternalIds[childConfig.code] = {
-                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
-                  value: stateCode
-                };
               }
               childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
             } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
               let districtDetails;
-              if (this.profile.externalIds && this.profile.externalIds.length) {
-                districtDetails = this.profile.externalIds.find(eId => eId.idType === childConfig.code);
-              }
-
-              if (!isFormLoaded) {
-                this.initialExternalIds[childConfig.code] = {
-                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
-                  value: districtDetails && districtDetails.id
-                } ;
+              if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+                this.profile.declarations[0].info[childConfig.code]) {
+                  districtDetails = this.profile.declarations[0].info[childConfig.code]
               }
               childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
             }
@@ -186,7 +210,7 @@ export class SelfDeclaredTeacherEditPage {
           }
 
           if (childConfig.asyncValidation) {
-            childConfig = this.assignDefaultValue(childConfig, isFormLoaded);
+            childConfig = this.assignDefaultValue(childConfig, false);
 
             const telemetryData = {
               type: InteractType.TOUCH,
@@ -195,20 +219,18 @@ export class SelfDeclaredTeacherEditPage {
               pageId: PageId.TEACHER_SELF_DECLARATION,
               id: ''
             };
-            const initialValue = this.initialExternalIds[childConfig.code] && this.initialExternalIds[childConfig.code].value;
 
             if (childConfig.asyncValidation.marker === 'MOBILE_OTP_VALIDATION') {
               telemetryData['id'] = ID.VALIDATE_MOBILE;
-
               childConfig.asyncValidation.asyncValidatorFactory =
                 this.formValidationAsyncFactory.mobileVerificationAsyncFactory(
-                  childConfig, this.profile, initialValue, telemetryData
+                  childConfig, this.profile, 'initialValue', telemetryData
                 );
             } else if (childConfig.asyncValidation.marker === 'EMAIL_OTP_VALIDATION') {
               telemetryData['id'] = ID.VALIDATE_EMAIL;
               childConfig.asyncValidation.asyncValidatorFactory =
                 this.formValidationAsyncFactory.emailVerificationAsyncFactory(
-                  childConfig, this.profile, initialValue, telemetryData
+                  childConfig, this.profile, 'initialValue', telemetryData
                 );
             }
             return childConfig;
@@ -227,9 +249,13 @@ export class SelfDeclaredTeacherEditPage {
         }
         if (config.templateOptions && config.templateOptions.labelHtml &&
           config.templateOptions.labelHtml.contents) {
-            config.templateOptions.labelHtml.values['$url'] = this.profile.tncLatestVersionUrl;
-            config.templateOptions.labelHtml.values['$appName'] = ' ' + this.appName + ' ';
-            return config;
+          for (let key in config.templateOptions.labelHtml.values) {
+            config.templateOptions.labelHtml.values[key] =
+              this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
+          }
+          config.templateOptions.labelHtml.values['$url'] = this.profile.tncLatestVersionUrl;
+          config.templateOptions.labelHtml.values['$appName'] = ' ' + this.appName + ' ';
+          return config;
         }
         return config;
       }
@@ -240,17 +266,14 @@ export class SelfDeclaredTeacherEditPage {
 
   private assignDefaultValue(childConfig: FieldConfig<any>, isFormLoaded) {
     if (isFormLoaded) {
-      if (this.latestFormValue && this.latestFormValue.children.externalIds) {
-        childConfig.default = this.latestFormValue.children.externalIds[childConfig.code];
+      if (this.declaredLatestFormValue && this.declaredLatestFormValue.children.externalIds) {
+        childConfig.default = '';
       }
       return childConfig;
     }
-    if (this.profile.externalIds && this.profile.externalIds.length) {
-      this.profile.externalIds.forEach(eId => {
-        if (childConfig.code === eId.idType) {
-          childConfig.default = eId.id;
-        }
-      });
+    if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+      this.profile.declarations[0].info[childConfig.code]) {
+      childConfig.default = this.profile.declarations[0].info[childConfig.code]
     }
 
     if (this.editType === 'add') {
@@ -263,12 +286,6 @@ export class SelfDeclaredTeacherEditPage {
       }
     }
 
-    if (!isFormLoaded) {
-      this.initialExternalIds[childConfig.code] = {
-        name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
-        value: childConfig.default || undefined
-      };
-    }
     return childConfig;
   }
 
@@ -320,83 +337,36 @@ export class SelfDeclaredTeacherEditPage {
     let telemetryValue;
     try {
 
-      if (!this.latestFormValue) {
+      if (!this.declaredLatestFormValue || !this.tenantPersonaLatestFormValue) {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
 
-      const formValue = this.latestFormValue.children.externalIds;
-      const selectdState = this.getStateIdFromCode(formValue['declared-state']);
-      const orgDetails: any = await this.frameworkService.searchOrganization({
-        filters: {
-          locationIds: [selectdState && selectdState.id],
-          isRootOrg: true
-        }
-      }).toPromise();
-      if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
-        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-        return;
-      }
-
-      const rootOrgId = orgDetails.content[0].channel;
+      const formValue = this.declaredLatestFormValue.children.externalIds;
 
       await loader.present();
 
-      const externalIds = this.removeExternalIdsOnStateChange(rootOrgId);
-      this.teacherDetailsForm.forEach(config => {
-        if (config.code === 'externalIds' && config.children) {
-          config.children.forEach(formData => {
+      const declarations = [];
+      const declaredDetails = this.declaredLatestFormValue.children && this.declaredLatestFormValue.children.externalIds;
+      let operation = '';
+      if (!this.profile.declarations || !this.profile.declarations.length) {
+        operation = 'add'
+      } else if (this.tenantPersonaLatestFormValue.tenant === this.profile.declarations[0].orgId) {
+        operation = 'edit'
+      } else if (this.tenantPersonaLatestFormValue.tenant !== this.profile.declarations[0].orgId) {
+        const tenantPersonaData = { persona: this.profile.declarations[0].persona, tenant: this.profile.declarations[0].orgId }
+        declarations.push(this.getDeclarationReqObject('remove', this.profile.declarations[0].info, tenantPersonaData));
+        operation = 'add'
+      }
+      declarations.push(this.getDeclarationReqObject(operation, declaredDetails, this.tenantPersonaLatestFormValue));
 
-            // no externalIds declared
-            if (!this.profile.externalIds || !this.profile.externalIds.length || !this.profile.externalIds.find(eid => {
-              return eid.idType === formData.code;
-            })) {
-              if (formValue[formData.code]) {
-                externalIds.push({
-                  id: formValue[formData.code],
-                  operation: 'add',
-                  idType: formData.code,
-                  provider: rootOrgId
-                });
-                return;
-              }
-            }
+      const req = { declarations };
 
-            // externalIds declared but removed
-            if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
-              return eid.idType === formData.code;
-            })) {
-              externalIds.push({
-                id: 'remove',
-                operation: 'remove',
-                idType: formData.code,
-                provider: rootOrgId
-              });
-              return;
-            }
-
-            // external id declared and modified
-            if (formValue[formData.code]) {
-              externalIds.push({
-                id: formValue[formData.code],
-                operation: 'edit',
-                idType: formData.code,
-                provider: rootOrgId
-              });
-            }
-          });
-        }
-      });
-      const req = {
-        userId: this.profile.userId,
-        externalIds
-      };
-
-      if (this.profile.externalIds && this.profile.externalIds.length) {
-        telemetryValue = this.getUpdatedValues(formValue);
+      if (operation === 'edit' || declarations.length === 2) {
+        telemetryValue = this.getUpdatedValues(declaredDetails);
       }
 
-      await this.profileService.updateServerProfile(req).toPromise();
+      await this.profileService.updateServerProfileDeclarations(req).toPromise();
       this.events.publish('loggedInProfile:update');
 
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
@@ -413,6 +383,16 @@ export class SelfDeclaredTeacherEditPage {
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
     } finally {
       await loader.dismiss();
+    }
+  }
+
+  private getDeclarationReqObject(operation, declaredDetails, tenantPersonaDetails) {
+    return {
+      operation,
+      userId: this.profile.userId,
+      orgId: tenantPersonaDetails.tenant,
+      persona: tenantPersonaDetails.persona,
+      info: declaredDetails
     }
   }
 
@@ -454,30 +434,16 @@ export class SelfDeclaredTeacherEditPage {
   getUpdatedValues(formVal) {
     const telemetryValue = [];
 
-    for (const data in this.initialExternalIds) {
-      if (this.initialExternalIds[data] && this.initialExternalIds[data].value !== null &&
-        this.initialExternalIds[data].value !== undefined && this.initialExternalIds[data].value !== formVal[data]) {
-        telemetryValue.push(this.initialExternalIds[data].name);
+    for (const key in formVal) {
+      if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+        this.profile.declarations[0].info[key] !== formVal[key]) {
+        telemetryValue.push(key);
       }
     }
 
     const fieldsChanged = { fieldsChanged: telemetryValue };
 
     return fieldsChanged;
-  }
-
-  private removeExternalIdsOnStateChange(rootOrgId) {
-    const externalIds = [];
-
-    if (this.profile && this.profile.externalIds && this.profile.externalIds.length &&
-      this.profile.externalIds[0].provider && this.profile.externalIds[0].provider !== rootOrgId) {
-      this.profile.externalIds.forEach(externalId => {
-        externalIds.push({ ...externalId, operation: 'remove' });
-      });
-      this.profile.externalIds = [];
-    }
-
-    return externalIds;
   }
 
   private generateTncAudit() {
@@ -495,7 +461,7 @@ export class SelfDeclaredTeacherEditPage {
     );
   }
 
-  private buildStateListClosure(stateCode?): FieldConfigOptionsBuilder<string> {
+  private buildStateListClosure(stateCode?): any {
     return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
       return defer(async () => {
 
@@ -538,14 +504,12 @@ export class SelfDeclaredTeacherEditPage {
         } finally {
           loader.dismiss();
         }
-
-
         return formStateList;
       });
     };
   }
 
-  private buildDistrictListClosure(districtCode?, isFormLoaded?): FieldConfigOptionsBuilder<string> {
+  private buildDistrictListClosure(districtCode?, isFormLoaded?): any {
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
         return of([]);
@@ -616,8 +580,25 @@ export class SelfDeclaredTeacherEditPage {
     };
   }
 
-  formValueChanges(event) {
-    this.latestFormValue = event;
+  private getStateIdFromCode(code) {
+    if (this.stateList && this.stateList.length) {
+      const selectedState = this.stateList.find(state => state.code === code);
+      return selectedState;
+    }
+    return null;
+  }
+
+  tenantPersonaFormValueChanges(event) {
+    this.tenantPersonaLatestFormValue = event;
+    console.log(event);
+    if (event.tenant && event.tenant !== this.selectedTenant) {
+      this.selectedTenant = event.tenant;
+      this.getTeacherDetailsFormApi(this.selectedTenant, true);
+    }
+  }
+
+  declarationFormValueChanges(event) {
+    this.declaredLatestFormValue = event;
     if (event && event.children && event.children.externalIds) {
       if (!this.selectedStateCode && event.children.externalIds['declared-state']) {
         this.selectedStateCode = event.children.externalIds['declared-state'];
@@ -630,16 +611,37 @@ export class SelfDeclaredTeacherEditPage {
     }
   }
 
-  formStatusChanges(event) {
-    this.isFormValid = event.isValid;
+  tenantPersonaFormStatusChanges(event) {
+    this.isTenantPersonaFormValid = event.isValid;
+    console.log('TENANT_FORM', event && event.isValid);
   }
 
-  private getStateIdFromCode(code) {
-    if (this.stateList && this.stateList.length) {
-      const selectedState = this.stateList.find(state => state.code === code);
-      return selectedState;
+  declarationFormStatusChanges(event) {
+    this.isDeclarationFormValid = event.isValid;
+    console.log('DECLARE_FORM', event && event.isValid);
+  }
+
+  linkClicked(event) {
+    console.log(event);
+    this.commonUtilService.openLink(event);
+  }
+
+  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
+    const formReq: FormRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
+      type,
+      subType,
+      action,
+      rootOrgId: rootOrgId || '*',
+      component: 'app'
+    };
+
+    let formData: any = await this.fetchFormApi(formReq);
+    if (!formData) {
+      formReq.rootOrgId = '*';
+      formData = await this.fetchFormApi(formReq);
     }
-    return null;
+    return (formData && formData.form && formData.form.data) || [];
   }
 
 }

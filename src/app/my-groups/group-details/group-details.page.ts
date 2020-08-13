@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
-  FormAndFrameworkUtilService,
   CommonUtilService, AppGlobalService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, ImpressionType, ID
 } from '../../../services';
@@ -16,7 +15,9 @@ import {
   RemoveMembersRequest,
   UpdateMembersRequest, RemoveActivitiesRequest,
   CachedItemRequestSourceFrom, GroupUpdateMembersResponse,
-  GroupActivity
+  GroupActivity,
+  Form,
+  GroupSupportedActivitiesFormField
 } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
@@ -54,7 +55,6 @@ export class GroupDetailsPage implements OnInit {
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService
@@ -185,11 +185,11 @@ export class GroupDetailsPage implements OnInit {
   switchTabs(tab) {
     this.activeTab = tab;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
-            : InteractSubtype.MEMBER_TAB_CLICKED,
-        Environment.GROUP,
-        PageId.GROUP_DETAIL);
+      InteractType.TOUCH,
+      tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
+        : InteractSubtype.MEMBER_TAB_CLICKED,
+      Environment.GROUP,
+      PageId.GROUP_DETAIL);
   }
 
   async groupMenuClick(event) {
@@ -215,10 +215,10 @@ export class GroupDetailsPage implements OnInit {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.EDIT_GROUP_CLICKED,
-            Environment.GROUP,
-            PageId.GROUP_DETAIL);
+          InteractType.TOUCH,
+          InteractSubtype.EDIT_GROUP_CLICKED,
+          Environment.GROUP,
+          PageId.GROUP_DETAIL);
         this.router.navigate(
           [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
@@ -811,17 +811,22 @@ export class GroupDetailsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     try {
-      const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
-      supportedActivityList.forEach(activity => {
-        activity.title = this.commonUtilService.translateMessage(activity.title);
-      });
-      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
-      { state: {
-        supportedActivityList,
-        groupId: this.groupId,
-        activityList: this.activityList
-       }
-      });
+      const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
+        = await this.groupService.getSupportedActivities().toPromise();
+      if (supportedActivityResponse && supportedActivityResponse.data && supportedActivityResponse.data.fields) {
+        const supportedActivityList = supportedActivityResponse.data.fields;
+        supportedActivityList.forEach(activity => {
+          activity.title = this.commonUtilService.translateMessage(activity.title);
+        });
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+          {
+            state: {
+              supportedActivityList,
+              groupId: this.groupId,
+              activityList: this.activityList
+            }
+          });
+      }
     } catch (e) {
       console.log(e);
     }

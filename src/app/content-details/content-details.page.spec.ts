@@ -1852,13 +1852,24 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openConfirmPopUp', () => {
+        it('should return content not downloaded for undefined downloadUrl', (done) => {
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+                done();
+            }, 0);
+        });
+
         it('should open a content download popup for dismiss data', (done) => {
             // arrange
             contentDetailsPage.limitedShareContentFlag = false;
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: 'sample-url'} };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
@@ -1884,7 +1895,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: 'sample-url' } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ undefined }));
