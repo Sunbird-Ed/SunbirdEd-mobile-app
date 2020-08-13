@@ -39,7 +39,7 @@ import { FormValidationAsyncFactory } from '@app/services/form-validation-async-
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormControl } from '@angular/forms';
 import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { FieldConfig, FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements/lib/common-form-config';
+import { FieldConfig, FieldConfigOption } from 'common-form-elements';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
