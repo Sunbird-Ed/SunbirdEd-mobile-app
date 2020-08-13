@@ -388,10 +388,10 @@ export class FormAndFrameworkUtilService {
         if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
             switch (name) {
                 case ContentFilterConfig.NAME_LIBRARY:
-                    libraryTabContentTypes = ContentType.FOR_LIBRARY_TAB;
+                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
                     break;
                 case ContentFilterConfig.NAME_COURSE:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB;
+                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
                     break;
                 case ContentFilterConfig.NAME_DOWNLOADS:
                     libraryTabContentTypes = ContentType.FOR_DOWNLOADED_TAB;
@@ -403,7 +403,11 @@ export class FormAndFrameworkUtilService {
         } else {
             for (const field of contentFilterConfig) {
                 if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
-                    libraryTabContentTypes = field.values;
+                    if (field.name === ContentFilterConfig.NAME_LIBRARY || field.name === ContentFilterConfig.NAME_COURSE) {
+                        libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    } else {
+                        libraryTabContentTypes = field.values;
+                    }
                     break;
                 }
             }

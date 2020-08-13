@@ -10,6 +10,8 @@
           <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
           <ion-label *ngIf="facet?.name === 'resourceType'" text-capitalize>{{ 'RESOURCE_TYPE' | translate }}
           </ion-label>
+          <ion-label *ngIf="facet?.name === 'publisher'" text-capitalize>{{ 'PUBLISHER' | translate }}
+          </ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">
@@ -19,8 +21,10 @@
     </div>
   </div>
 </ion-content>
-<ion-footer>
-  <ion-toolbar padding-left padding-right>
-    <ion-button expand="full" color="primary" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
-  </ion-toolbar>
+<ion-footer class="footer">
+  <ion-row>
+    <ion-col>
+    <ion-button expand="block" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
+    </ion-col>
+  </ion-row>
 </ion-footer>

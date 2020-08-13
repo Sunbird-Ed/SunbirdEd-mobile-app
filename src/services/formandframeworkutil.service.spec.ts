@@ -670,7 +670,9 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Resource', 'Collection', 'TextBook', 'LessonPlan', 'Course']);
+        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
         done();
       });
     });
@@ -683,7 +685,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
           'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
           'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
         done();
@@ -698,7 +700,9 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('course').then((response) => {
-        expect(response).toEqual(['Course']);
+        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
         done();
       });
     });
