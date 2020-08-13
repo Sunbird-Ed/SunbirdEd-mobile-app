@@ -212,6 +212,7 @@
   "DELETE_GROUP_SUCCESS_MSG": "Group deleted successfully",
   "DELETE_PROGRESS": "Deleting Selected Content",
   "DESCRIPTION": "Description",
+  "DETAIL_TUTORIAL": "{{%appName}}'s library has a host of {{%explainVideos}}, {{%quesBanks}} and other {{%interactiveMaterial}}. Click on a textbook to start exploring the library!",
   "DEVICE_ID": "Device ID",
   "DEVICE_LOCATION": "Device Location",
   "DEVICE_TAGS": "Device Tags",
@@ -854,6 +855,5 @@
   "YOU_CAN_EDIT_TEACHER_INFO": "You can edit this information from your profile if you need to",
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
-  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
-  "DETAIL_TUTORIAL": "{{%appName}}'s library has a host of {{%explainVideos}}, {{%quesBanks}} and other {{%interactiveMaterial}}. Click on a textbook to start exploring the library!",
+  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded"
 }
