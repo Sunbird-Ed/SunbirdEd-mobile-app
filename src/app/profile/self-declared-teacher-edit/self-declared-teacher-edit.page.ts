@@ -115,23 +115,22 @@ export class SelfDeclaredTeacherEditPage {
 
   async getTenantPersonaForm() {
     const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
-    if (this.profile && this.profile.declarations && this.profile.declarations.length) {
-      this.selectedTenant = this.profile.declarations[0].orgId;
 
-      personaTenantFormData.forEach(config => {
-        if (config.code === 'persona') {
-          config.default = this.profile.declarations[0].persona;
-        } else if (config.code === 'tenant') {
-          config.default = this.profile.declarations[0].orgId;
-        } else if (config.code === 'name') {
-          config.templateOptions.labelHtml.values['$1'] = this.profile.firstName;
-        } else if (config.code === 'state') {
-          config.templateOptions.labelHtml.values['$1'] = this.availableLocationState || 'Enter location from Profile page'
-        } else if (config.code === 'district') {
-          config.templateOptions.labelHtml.values['$1'] = this.availableLocationDistrict || 'Enter location from Profile page'
-        }
-      });
-    }
+    this.selectedTenant = (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].orgId) || '';
+
+    personaTenantFormData.forEach(config => {
+      if (config.code === 'persona') {
+        config.default = this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].persona;
+      } else if (config.code === 'tenant') {
+        config.default = this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].orgId;
+      } else if (config.code === 'name') {
+        config.templateOptions.labelHtml.values['$1'] = this.profile.firstName;
+      } else if (config.code === 'state') {
+        config.templateOptions.labelHtml.values['$1'] = this.availableLocationState || 'Enter location from Profile page';
+      } else if (config.code === 'district') {
+        config.templateOptions.labelHtml.values['$1'] = this.availableLocationDistrict || 'Enter location from Profile page';
+      }
+    });
 
     this.tenantPersonaForm = personaTenantFormData;
 
@@ -641,7 +640,7 @@ export class SelfDeclaredTeacherEditPage {
       formReq.rootOrgId = '*';
       formData = await this.fetchFormApi(formReq);
     }
-    return (formData && formData.form && formData.form.data) || [];
+    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
   }
 
 }
