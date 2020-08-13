@@ -382,4 +382,24 @@
     background: map-get($colors, white_e8);
     border-radius: 18px;
   }
+
+  .declared-error-container{
+    margin: auto;
+    @include margin(null, null, 8px, null);
+    width: 50%;
+    border: 1px solid map-get($colors, danger);
+    border-left: 5px solid map-get($colors, danger);
+    border-radius: 10px;
+    background: map-get($colors, white);
+    @include padding(8px, 0, 8px, 0);
+
+    .declared-status{
+      color: map-get($colors, danger);
+    }
+
+    .declared-message{
+      color: map-get($colors, black);
+    }
+  }
+
 }

@@ -3,15 +3,24 @@
   <p *ngIf="editType === 'add'" class="title">{{'PLEASE_PROVIDE_FOLLOWING_DETAILS' | translate}}</p>
   <p *ngIf="editType === 'edit'" class="title">{{'UPDATE_DETAILS' | translate}}</p>
 
-  <app-common-forms *ngIf="teacherDetailsForm && teacherDetailsForm.length" 
-    [config] = "teacherDetailsForm"
-    (valueChanges)="formValueChanges($event)"
-    (statusChanges)="formStatusChanges($event)">
-  </app-common-forms>
+  <div class="declaration-container">
+    <sb-form *ngIf="tenantPersonaForm && tenantPersonaForm.length"
+      [config]="tenantPersonaForm" 
+      (valueChanges)="tenantPersonaFormValueChanges($event)"
+      (statusChanges)="tenantPersonaFormStatusChanges($event)">
+    </sb-form>
+    
+    <sb-form *ngIf="teacherDetailsForm && teacherDetailsForm.length"
+      [config]="teacherDetailsForm" 
+      (valueChanges)="declarationFormValueChanges($event)"
+      (statusChanges)="declarationFormStatusChanges($event)"
+      (linkClicked)="linkClicked($event)">
+    </sb-form>
+  </div>
 
 </ion-content>
 <ion-footer>
-  <ion-button expand="block" [disabled]="!isFormValid" class="M16 MB30" (click)="submit()">
+  <ion-button expand="block" [disabled]="!isTenantPersonaFormValid || !isDeclarationFormValid" class="M16 MB30" (click)="submit()">
     <span *ngIf="editType === 'add'">{{'BTN_SUBMIT' | translate}}</span> 
     <span *ngIf="editType === 'edit'">{{'UPDATE' | translate}}</span> 
   </ion-button>
