@@ -807,7 +807,7 @@ export class CollectionDetailEtbPage implements OnInit {
       if (value.children) {
         this.getContentsSize(value.children);
       }
-      if (value.isAvailableLocally === false) {
+      if (!value.isAvailableLocally && value.contentData.downloadUrl) {
         this.downloadIdentifiers.add(value.contentData.identifier);
         this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
       }
@@ -1359,7 +1359,6 @@ export class CollectionDetailEtbPage implements OnInit {
                 PageId.COLLECTION_DETAIL,
                 JSON.stringify(stackTrace),
               );
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
