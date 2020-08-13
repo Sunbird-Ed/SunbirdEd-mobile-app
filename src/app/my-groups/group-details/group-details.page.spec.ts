@@ -71,11 +71,6 @@ describe('GroupDetailsPage', () => {
         expect(groupDetailsPage).toBeTruthy();
     });
 
-    it('should return active profile uid', () => {
-        mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
-        groupDetailsPage.ngOnInit();
-        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-    });
 
     it('should navigate to previous page', () => {
         mockLocation.back = jest.fn();
