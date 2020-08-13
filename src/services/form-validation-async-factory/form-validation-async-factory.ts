@@ -1,12 +1,13 @@
-import { Injectable, QueryList, Inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { IonButton, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, ProfileService, ServerProfile } from '@project-sunbird/sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '../common-util.service';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
-import { FieldConfig } from '@app/app/components/common-forms/field-config';
+
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
+import { FieldConfig, AsyncValidatorFactory } from 'common-form-elements';
 
 @Injectable({ providedIn: 'root' })
 export class FormValidationAsyncFactory {
@@ -18,18 +19,17 @@ export class FormValidationAsyncFactory {
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) { }
 
-  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialMobileVal, telemetryData?) {
-    return (marker: string, triggers: QueryList<any>) => {
+  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialMobileVal, telemetryData?): any {
+    return (marker: string, trigger: HTMLElement) => {
       if (marker === 'MOBILE_OTP_VALIDATION') {
         return async (control: FormControl) => {
           if ((control && !control.value) || (initialMobileVal && initialMobileVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
-            const trigger: IonButton = triggers.find(e => e['el'].getAttribute('data-marker') === 'MOBILE_OTP_VALIDATION');
             if (trigger) {
               const that = this;
-              trigger['el'].onclick = (async () => {
+              trigger.onclick = (async () => {
                 if (telemetryData) {
                   this.generateTelemetryInteract(telemetryData);
                 }
@@ -54,18 +54,17 @@ export class FormValidationAsyncFactory {
     };
   }
 
-  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialEmailVal, telemetryData?) {
-    return (marker: string, triggers: QueryList<any>) => {
+  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialEmailVal, telemetryData?): any {
+    return (marker: string, trigger: HTMLElement) => {
       if (marker === 'EMAIL_OTP_VALIDATION') {
         return async (control: FormControl) => {
           if ((control && !control.value) || (initialEmailVal && initialEmailVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
-            const trigger: IonButton = triggers.find(e => e['el'].getAttribute('data-marker') === 'EMAIL_OTP_VALIDATION');
             if (trigger) {
               const that = this;
-              trigger['el'].onclick = (async () => {
+              trigger.onclick = (async () => {
                 if (telemetryData) {
                   this.generateTelemetryInteract(telemetryData);
                 }

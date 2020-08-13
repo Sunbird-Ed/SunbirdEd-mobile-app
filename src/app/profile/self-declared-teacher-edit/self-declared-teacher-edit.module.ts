@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelfDeclaredTeacherEditPage } from './self-declared-teacher-edit.page';
 import { ComponentsModule } from '@app/app/components/components.module';
+import { CommonFormElementsModule } from 'common-form-elements';
 
 const routes: Routes = [
   {
@@ -24,7 +25,8 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     TranslateModule,
-    ComponentsModule
+    ComponentsModule,
+    CommonFormElementsModule
   ],
   declarations: [SelfDeclaredTeacherEditPage]
 })

@@ -854,5 +854,6 @@
   "PLANNED_MAINTENANCE_TEXT": "We're currently down for maintenance, but don't worry we'll be up soon",
   "PLANNED_MAINTENANCE_TEXT_WITH_TIME": "We're currently down for maintenance, but don't worry we'll be up in",
   "MAINTENANCE_SUB_TEXT": "You can still access your downloaded content during this time",
-  "GO_TO_DOWNLOADS": "Go to Downloads"
+  "GO_TO_DOWNLOADS": "Go to Downloads",
+  "I_AM_A_PERSONA_WITH_TENANT": "I am a {{%persona}} with {{%tenant}}"
 }

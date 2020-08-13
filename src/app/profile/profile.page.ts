@@ -40,7 +40,9 @@ import {
   SharedPreferences,
   CertificateAlreadyDownloaded,
   NetworkError,
-  LocationSearchCriteria
+  LocationSearchCriteria,
+  FormRequest,
+  FormService
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -58,6 +60,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { FieldConfig } from 'common-form-elements';
 
 @Component({
   selector: 'app-profile',
@@ -112,6 +115,9 @@ export class ProfilePage implements OnInit {
   isDefaultChannelProfile$: Observable<boolean>;
   selfDeclaredTeacherDetails: any;
   private stateList: any;
+  personaTenantDeclaration: string;
+  selfDeclaredDetails: any[] = [];
+  selfDeclarationInfo: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -119,6 +125,7 @@ export class ProfilePage implements OnInit {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private zone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
@@ -999,30 +1006,63 @@ export class ProfilePage implements OnInit {
       teacherId: ''
     };
 
-    if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
+    if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
+      this.selfDeclarationInfo = this.profile.declarations[0];
+      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+      const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
+      const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
+      tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
-      this.profile.externalIds.forEach(ele => {
-        switch (ele.idType) {
-          case 'declared-phone':
-            this.selfDeclaredTeacherDetails.mobile = ele.id;
-            break;
-          case 'declared-email':
-            this.selfDeclaredTeacherDetails.email = ele.id;
-            break;
-          case 'declared-school-name':
-            this.selfDeclaredTeacherDetails.schoolName = ele.id;
-            break;
-          case 'declared-school-udise-code':
-            this.selfDeclaredTeacherDetails.udiseId = ele.id;
-            break;
-          case 'declared-ext-id':
-            this.selfDeclaredTeacherDetails.teacherId = ele.id;
-            break;
-        }
+      this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
+        '%persona': this.selfDeclarationInfo.persona || '',
+        '%tenant': (tenantDetails && tenantDetails.label) || ''
       });
+
+      if (this.selfDeclarationInfo.orgId) {
+        const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', this.selfDeclarationInfo.orgId);
+        const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
+        this.selfDeclaredDetails = [];
+        (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {
+          if (this.profile.declarations[0].info[config.code]) {
+            this.selfDeclaredDetails.push({ name: config.fieldName, value: this.profile.declarations[0].info[config.code] });
+          }
+        });
+
+      }
+
+      this.selfDeclaredDetails.push({ name: 'Status', value: this.profile.declarations[0].status || 'PENDING' });
+
+      if (this.selfDeclarationInfo.errorType) {
+        this.selfDeclarationInfo.errorType = this.selfDeclarationInfo.errorType.split(',');
+      }
     }
+
   }
 
+  private async fetchFormApi(req) {
+    return await this.formService.getForm(req).toPromise().then(res => {
+      return res;
+    }).catch(err => {
+      return null;
+    });
+  }
 
+  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
+    const formReq: FormRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
+      type,
+      subType,
+      action,
+      rootOrgId: rootOrgId || '*',
+      component: 'app'
+    };
+
+    let formData: any = await this.fetchFormApi(formReq);
+    if (!formData) {
+      formReq.rootOrgId = '*';
+      formData = await this.fetchFormApi(formReq);
+    }
+    return (formData && formData.form && formData.form.data) || [];
+  }
 
 }
