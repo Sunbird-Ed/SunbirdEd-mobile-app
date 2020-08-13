@@ -7,16 +7,20 @@
   <ion-grid class="scroll-list">
     <ion-row *ngIf="facets?.values && facets?.values.length">
       <ion-col size="6" *ngFor="let facetValue of facets.values">
-        <input type="checkbox" class="checkbox" [(ngModel)]="facetValue.apply">
+        <ion-item lines="none">
+        <ion-checkbox type="checkbox" class="checkbox" [(ngModel)]="facetValue.apply"></ion-checkbox>
         <ion-label class="filter-option-text" text-capitalize>
           {{ facetValue.translations ? facetValue.translations: facetValue.name  }}
         </ion-label>
+      </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
-<ion-footer>
-  <ion-toolbar class="ion-padding-left ion-padding-right">
-    <ion-button expand="full" color="primary" (click)="confirm()">{{ 'CONFIRM' | translate }}</ion-button>
-  </ion-toolbar>
+<ion-footer class="footer">
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" (click)="confirm()">{{ 'CONFIRM' | translate }}</ion-button>
+    </ion-col>
+  </ion-row>
 </ion-footer>
