@@ -114,7 +114,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTenantPersonaForm() {
-    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'personaTenant', 'list');
+    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
     if (this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selectedTenant = this.profile.declarations[0].orgId;
 
@@ -140,7 +140,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
-    const formConfig = await this.getFormApiData('user', 'teacherDetails_v3', 'submit', rootOrgId);
+    const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', rootOrgId);
     this.translateLabels(formConfig as any);
     if (formConfig.length) {
       this.initializeFormData(formConfig, isFormLoaded);
