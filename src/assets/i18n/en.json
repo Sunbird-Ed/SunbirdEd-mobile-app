@@ -706,7 +706,7 @@
   "SUBJECT": "Subject",
   "SUBJECTS": "Subjects",
   "SUBJECT_OPTION_TEXT": "Select Subject",
-  "SUBMIT_MY_DETAILS": "Submit details",
+  "SUBMIT_MY_DETAILS": "Submit my details",
   "SUCCESSFULLY_ADDED_USER": "Successfully added \"{{%s}}\"",
   "SUCCESSFULLY_SWITCHED_USER": "Now using {{%app}} as \"{{%user}}\"",
   "SUCCESSFUL_CONTENT_TRANSFER_TO_PHONE": "All content will be moved to phone storage",
