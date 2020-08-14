@@ -1228,7 +1228,6 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             mockTelemetryGeneratorService.generateDownloadAllClickTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateErrorTelemetry = jest.fn();
-            mockCommonUtilService.showToast = jest.fn();
             // act
             enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, true);
             // assert
@@ -1244,7 +1243,6 @@ describe('EnrolledCourseDetailsPage', () => {
                     PageId.COURSE_DETAIL,
                     expect.any(String)
                 );
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('UNABLE_TO_FETCH_CONTENT');
                 done();
             }, 0);
         });

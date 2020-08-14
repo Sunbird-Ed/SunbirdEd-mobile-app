@@ -579,6 +579,7 @@
   "PUBLIC": "Public",
   "PUBLISHED_BY": "Published on {{%s}} by",
   "PUBLISHED_DATE": "Published date",
+  "PUBLISHER": "Publisher",
   "QR_CODE_DETAILS": "Get instant access to digital content by scanning a QR code from your textbook.",
   "QR_SHOWING_MULTIPLE_BOOK_RESULT": "Showing {{%s}} results for",
   "QUESTION": "Question",

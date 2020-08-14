@@ -1160,12 +1160,14 @@ describe('collectionDetailEtbPage', () => {
                 identifier: 'do-123',
                 contentData: {
                     name: 'test',
-                    identifier: 'do-234'
+                    identifier: 'do-234',
+                    downloadUrl: 'sample-dowload-url'
                 },
                 children: [{
                     contentData: {
                         name: 'test',
-                        identifier: 'do-234'
+                        identifier: 'do-234',
+                        downloadUrl: 'sample-dowload-url'
                     }
                 }],
                 isAvailableLocally: false,
