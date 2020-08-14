@@ -30,4 +30,4 @@ sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
-sunbird-cordova-plugin=https://github.com/swayangjit/sb-cordova-plugin-sync.git#release-3.1.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0

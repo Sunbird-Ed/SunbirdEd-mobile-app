@@ -53,6 +53,6 @@ export class FilteroptionComponent implements OnDestroy {
       this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
-    this.popCtrl.dismiss();
+    this.popCtrl.dismiss({ isFilterApplied: true });
   }
 }
