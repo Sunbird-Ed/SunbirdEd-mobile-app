@@ -513,7 +513,7 @@ describe('QrcoderesultPage', () => {
             };
             mockTelemetryGeneratorService.isCollection = jest.fn();
             // act
-            qrcoderesultPage.navigateToDetailsPage(content);
+            qrcoderesultPage.navigateToDetailsPage(content, [{identifier: 'do-123'}]);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(
                 [RouterLinks.ENROLLED_COURSE_DETAILS],
