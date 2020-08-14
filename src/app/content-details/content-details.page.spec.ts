@@ -2303,7 +2303,6 @@ describe('ContentDetailsPage', () => {
         it('should invoke appVersion() and other subscription() when invoked', (done) => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockRatingHandler.showRatingPopup = jest.fn();
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
             const called: { [topic: EventTopics]: boolean } = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
@@ -2356,7 +2355,6 @@ describe('ContentDetailsPage', () => {
                 expect(mockRatingHandler.resetRating).toHaveBeenCalled();
                 expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
                 expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
-                expect(mockRatingHandler.showRatingPopup).toHaveBeenCalled();
                 expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
                 done();
             }, 1000);
@@ -2365,7 +2363,6 @@ describe('ContentDetailsPage', () => {
         it('should invoke appVersion() and other subscription() if data is false when invoked', (done) => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockRatingHandler.showRatingPopup = jest.fn();
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
             const called: { [topic: EventTopics]: boolean } = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {

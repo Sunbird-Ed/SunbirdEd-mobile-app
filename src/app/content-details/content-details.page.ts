@@ -308,15 +308,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.generateEndEvent();
       // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
       // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
-      const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
       this.getNavParams();
       // this.subscribeEvents();
-
-      // show popup for previous content
       setTimeout(() => {
-        this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
         this.contentPlayerHandler.setLastPlayedContentId('');
         this.generateTelemetry(true);
       }, 1000);
