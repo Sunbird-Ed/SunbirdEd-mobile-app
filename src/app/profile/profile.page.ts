@@ -113,7 +113,6 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
-  selfDeclaredTeacherDetails: any;
   private stateList: any;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
@@ -229,7 +228,7 @@ export class ProfilePage implements OnInit {
 
           this.getEnrolledCourses(refresher);
           this.searchContent();
-          this.getSelfDeclaredTeacherDetails();
+          this.getSelfDeclaredDetails();
         });
       })
       .catch(async error => {
@@ -999,12 +998,7 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async getSelfDeclaredTeacherDetails() {
-    this.selfDeclaredTeacherDetails = {
-      schoolName: '',
-      udiseId: '',
-      teacherId: ''
-    };
+  async getSelfDeclaredDetails() {
 
     if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selfDeclarationInfo = this.profile.declarations[0];
