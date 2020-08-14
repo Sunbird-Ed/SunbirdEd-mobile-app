@@ -186,6 +186,7 @@ describe('collectionDetailEtbPage', () => {
         expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
         expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
         expect(mockevents.publish).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('gd_1, gd_2');
     });
 
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {

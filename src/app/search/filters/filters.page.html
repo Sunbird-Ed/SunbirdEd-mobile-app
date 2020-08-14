@@ -1,5 +1,10 @@
 <ion-content>
-  <h6 class="subtitle ion-padding ion-no-margin">{{ 'FILTER_BY' | translate }} </h6>
+  <div class="subtitle ion-padding ion-no-margin">
+    <h6 style="display:inline-block;" >{{ 'FILTER_BY' | translate }}</h6>
+    <ion-button color="dark" class="reset_button" fill="outline" (click)="reset()">{{ 'RESET' | translate}}
+      <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+    </ion-button>
+  </div>
   <div *ngIf="facetsFilter && facetsFilter.length">
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">

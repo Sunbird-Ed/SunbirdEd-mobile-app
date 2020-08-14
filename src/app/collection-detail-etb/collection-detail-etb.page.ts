@@ -60,7 +60,7 @@ export class CollectionDetailEtbPage implements OnInit {
     actionButtons: []
   };
 
-  contentDetail?: Content;
+  contentDetail?: Content | any;
   childrenData?: Array<any>;
   mimeTypes = [
     { name: 'ALL', selected: true, value: ['all'], iconNormal: '', iconActive: '' },
@@ -580,7 +580,9 @@ export class CollectionDetailEtbPage implements OnInit {
       this.userRating = contentFeedback[0].rating;
       this.ratingComment = contentFeedback[0].comments;
     }
-
+    if (this.contentDetail.contentData.attributions && this.contentDetail.contentData.attributions.length) {
+      this.contentDetail.contentData.attributions = (this.contentDetail.contentData.attributions.sort()).join(', ');
+    }
 
     if (Boolean(data.isAvailableLocally)) {
       this.showLoading = false;
