@@ -154,7 +154,16 @@ export class SelfDeclaredTeacherEditPage {
       }
 
       if (config.asyncValidation && config.asyncValidation.message) {
-        config.asyncValidation.message = this.commonUtilService.translateMessage(config.asyncValidation.message)
+        config.asyncValidation.message = this.commonUtilService.translateMessage(config.asyncValidation.message);
+      }
+
+      if (config.templateOptions && config.templateOptions.labelHtml && config.templateOptions.labelHtml.values) {
+        for (const key in config.templateOptions.labelHtml.values) {
+          if (config.templateOptions.labelHtml.values[key]) {
+            config.templateOptions.labelHtml.values[key] =
+              this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
+          }
+        }
       }
 
       if (config.children && config.children.length) {
@@ -242,10 +251,6 @@ export class SelfDeclaredTeacherEditPage {
         }
         if (config.templateOptions && config.templateOptions.labelHtml &&
           config.templateOptions.labelHtml.contents) {
-          for (let key in config.templateOptions.labelHtml.values) {
-            config.templateOptions.labelHtml.values[key] =
-              this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
-          }
           config.templateOptions.labelHtml.values['$url'] = this.profile.tncLatestVersionUrl;
           config.templateOptions.labelHtml.values['$appName'] = ' ' + this.appName + ' ';
           return config;
@@ -620,7 +625,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   tenantPersonaFormStatusChanges(event) {
-    this.isTenantPersonaFormValid = event.isValid;
+    this.isTenantPersonaFormValid = event.isValid || event.valid;
   }
 
   declarationFormStatusChanges(event) {
