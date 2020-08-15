@@ -6,6 +6,7 @@
   <div class="declaration-container">
     <sb-form *ngIf="tenantPersonaForm && tenantPersonaForm.length"
       [config]="tenantPersonaForm" 
+      (initialize)="tenantPersonaFormValueChanges($event && $event.value); tenantPersonaFormStatusChanges($event);" 
       (valueChanges)="tenantPersonaFormValueChanges($event)"
       (statusChanges)="tenantPersonaFormStatusChanges($event)">
     </sb-form>
