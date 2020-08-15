@@ -60,7 +60,7 @@ export class CollectionDetailEtbPage implements OnInit {
     actionButtons: []
   };
 
-  contentDetail?: Content | any;
+  contentDetail?: Content;
   childrenData?: Array<any>;
   mimeTypes = [
     { name: 'ALL', selected: true, value: ['all'], iconNormal: '', iconActive: '' },
@@ -512,9 +512,12 @@ export class CollectionDetailEtbPage implements OnInit {
       emitUpdateIfAny: refreshContentDetails
     };
     this.contentService.getContentDetails(option).toPromise()
-      .then((data: Content) => {
+      .then((data: Content | any) => {
         if (data) {
           this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          if (data.contentData.attributions && data.contentData.attributions.length) {
+            data.contentData.attributions = (data.contentData.attributions.sort()).join(', ');
+          }
           if (!data.isAvailableLocally) {
             this.contentDetail = data;
             this.telemetryGeneratorService.generatefastLoadingTelemetry(
@@ -579,9 +582,6 @@ export class CollectionDetailEtbPage implements OnInit {
     if (contentFeedback !== undefined && contentFeedback.length !== 0) {
       this.userRating = contentFeedback[0].rating;
       this.ratingComment = contentFeedback[0].comments;
-    }
-    if (this.contentDetail.contentData.attributions && this.contentDetail.contentData.attributions.length) {
-      this.contentDetail.contentData.attributions = (this.contentDetail.contentData.attributions.sort()).join(', ');
     }
 
     if (Boolean(data.isAvailableLocally)) {

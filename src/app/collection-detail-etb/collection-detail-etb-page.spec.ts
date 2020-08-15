@@ -186,7 +186,6 @@ describe('collectionDetailEtbPage', () => {
         expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
         expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
         expect(mockevents.publish).toHaveBeenCalled();
-        expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('gd_1, gd_2');
     });
 
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {
@@ -710,7 +709,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             const content = {
                 identifier: 'do_212911645382959104165',
-                contentData: { licenseDetails: undefined },
+                contentData: { licenseDetails: undefined, attributions: ['sample-3', 'sample-1'] },
                 isAvailableLocally: false,
                 children: { identifier: 'do_212911645382959104166' }
             };
@@ -722,6 +721,7 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
+                expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('sample-1, sample-3');
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
                     InteractSubtype.FAST_LOADING_INITIATED,
