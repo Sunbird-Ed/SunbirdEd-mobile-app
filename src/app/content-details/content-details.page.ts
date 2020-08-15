@@ -93,7 +93,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   shouldOpenPlayAsPopup = false;
   apiLevel: number;
   appAvailability: string;
-  content: Content;
+  content: Content | any;
   playingContent: Content;
   isChildContent = false;
   contentDetails: any;
@@ -532,6 +532,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.content.contentData.streamingUrl &&
       !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
+    }
+    if (this.content.contentData.attributions && this.content.contentData.attributions.length) {
+      this.content.contentData.attributions = (this.content.contentData.attributions.sort()).join(', ');
     }
 
     if (!this.isChildContent && this.content.contentMarker.length

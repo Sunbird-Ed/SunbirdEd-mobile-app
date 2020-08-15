@@ -611,7 +611,8 @@ describe('ContentDetailsPage', () => {
                     },
                     appIcon: 'sample-app-icon',
                     streamingUrl: 'streamingUrl',
-                    me_totalDownloads: true
+                    me_totalDownloads: true,
+                    attributions: ['sample-2', 'sample-1']
                 },
                 mimeType: 'application/vnd.ekstep.h5p',
                 contentMarker: [{
@@ -652,6 +653,7 @@ describe('ContentDetailsPage', () => {
             expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
             expect(contentDetailsPage.isChildContent).toBeTruthy();
             expect(contentDetailsPage.streamingUrl).toBe(request.contentData.streamingUrl);
+            expect(contentDetailsPage.content.contentData.attributions).toBe('sample-1, sample-2');
         });
 
         it('should not return api respone', () => {
