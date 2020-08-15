@@ -114,6 +114,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
   LibraryCardTypes = LibraryCardTypes;
+  initialFilterCriteria: any;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -749,6 +750,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['/filters'], {
         state: {
           filterCriteria: this.responseData.filterCriteria,
+          initialfilterCriteria: this.initialFilterCriteria,
           source: this.source
         }
       });
@@ -849,7 +851,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.zone.run(() => {
           this.responseData = response;
           if (response) {
-
+            if (!this.initialFilterCriteria) {
+              this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
+            }
             this.addCorRelation(response.responseMessageId, 'API');
             this.searchContentResult = response.contentDataList;
             this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;

@@ -29,7 +29,7 @@
 <ion-footer class="footer">
   <ion-row>
     <ion-col>
-    <ion-button expand="block" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
+    <ion-button expand="block" [disabled]="!shouldEnableFilter" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>
