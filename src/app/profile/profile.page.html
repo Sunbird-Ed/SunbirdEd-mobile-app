@@ -188,7 +188,7 @@
 
         <div *ngIf="selfDeclarationInfo && selfDeclarationInfo.errorType && selfDeclarationInfo.errorType.length">
             <div class="declared-error-container">
-                <b class="declared-status">{{selfDeclarationInfo.status}}</b>
+                <strong class="declared-status">{{selfDeclarationInfo.status}}</strong>
                 <div class="declared-message" *ngFor="let error of selfDeclarationInfo.errorType">
                     {{error}}
                 </div>
@@ -241,8 +241,14 @@
                         </div>
                     </div>
                     <div class="training-2" *ngIf="certificate?.certificate">
-                        <button class="sb-btn-tile ion-activatable ripple-parent"
+                        <button *ngIf="certificate?.certificate.url" class="sb-btn-tile ion-activatable ripple-parent"
                             (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
+                            <ion-icon class="view-icon" name="md-eye"></ion-icon>
+                            <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
+                            <ion-ripple-effect type="unbounded"></ion-ripple-effect>
+                        </button>
+                        <button *ngIf="!certificate?.certificate.url && certificate?.certificate.identifier" class="sb-btn-tile ion-activatable ripple-parent"
+                                (click)="downloadTrainingCertificateV2(certificate, certificate?.certificate)">
                             <ion-icon class="view-icon" name="md-eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
