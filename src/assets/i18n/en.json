@@ -66,7 +66,6 @@
   "ARE_YOU_STATE_TEACHER": "Are you a government school teacher in {{%s}}",
   "AS_FILE": "As File",
   "AS_LINK": "As Link",
-  "AS_PER_THE": "as per the",
   "ATTACHMENT_DOWNLOADED": "Attachment downloaded",
   "ATTRIBUTIONS": "Attribution(s)",
   "AUDIOS": "Audio",
@@ -609,7 +608,7 @@
   "SELECT_CHAPTER": "Select module",
   "SELECT_YOUR_STATE": "Select your State",
   "SELF_DECLARED_INFO": "Self declared info",
-  "SELF_DECLARE_TEACHER_TNC": "I agree to share these details with the Administrators of",
+  "SELF_DECLARE_TEACHER_TNC": "I agree to share these details with the Administrators of {{%appName}} as per the",
   "SEND_FILE": "Send file",
   "SERVER_CONNECTION_ERROR": "Unable to connect to server",
   "SETTINGS": "Settings",
@@ -792,5 +791,6 @@
   "YOU_CAN_EDIT_TEACHER_INFO": "You can edit this information from your profile if you need to",
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
-  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded"
+  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
+  "ENTER_LOCATION_FROM_PROFILE_PAGE": "Enter location from Profile page"
 }

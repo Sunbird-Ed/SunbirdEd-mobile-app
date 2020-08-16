@@ -998,7 +998,8 @@ describe('SearchPage', () => {
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'
-                }
+                },
+                filterCriteria: {}
             };
             mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));

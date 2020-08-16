@@ -27,6 +27,7 @@ export class FiltersPage {
 
   unregisterBackButton: Subscription;
   source: string;
+  shouldEnableFilter = true;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -40,7 +41,7 @@ export class FiltersPage {
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
     this.filterCriteria =  this.router.getCurrentNavigation().extras.state.filterCriteria;
-    this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+    this.initialFilterCriteria = this.router.getCurrentNavigation().extras.state.initialfilterCriteria;
     this.source = this.router.getCurrentNavigation().extras.state.source;
     this.init();
     this.handleBackButton();
@@ -181,8 +182,10 @@ export class FiltersPage {
     this.filterCriteria.mode = 'hard';
     this.filterCriteria.searchType = SearchType.FILTER;
     this.filterCriteria.fields = [];
+    this.shouldEnableFilter = false;
     this.contentService.searchContent(this.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
+        this.shouldEnableFilter = true;
         if (responseData) {
           this.facetsFilter = [];
           this.filterCriteria = undefined;
@@ -190,7 +193,7 @@ export class FiltersPage {
           this.init();
         }
       }).catch(() => {
-
+        this.shouldEnableFilter = true;
       });
   }
 
