@@ -61,11 +61,13 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
+import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
+  providers: [CertificateDownloadAsPdfService]
 })
 export class ProfilePage implements OnInit {
 
@@ -141,7 +143,8 @@ export class ProfilePage implements OnInit {
     private sbProgressLoader: SbProgressLoader,
     private fileOpener: FileOpener,
     private toastController: ToastController,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -514,6 +517,60 @@ export class ProfilePage implements OnInit {
               this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
             }
           });
+      } else {
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+      }
+    });
+  }
+
+  async downloadTrainingCertificateV2(course: Course, certificate: CourseCertificate) {
+    const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+    const toastOptions = {
+      message: downloadMessage || 'Certificate getting downloaded'
+    };
+
+    await this.checkForPermissions().then(async (result) => {
+      if (result) {
+        const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+
+        const values = new Map();
+        values['courseId'] = course.courseId;
+
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+            Environment.USER, // env
+            PageId.PROFILE, // page name
+            telemetryObject,
+            values);
+        let toast;
+        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+          toast = await this.toastController.create(toastOptions);
+          await toast.present();
+        }
+        this.courseService.downloadCurrentProfileCourseCertificateV2(
+            { courseId: course.courseId },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                  svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+          if (toast) {
+            await toast.dismiss();
+          }
+          if (err instanceof CertificateAlreadyDownloaded) {
+            const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
+            const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
+            this.openpdf(filePath);
+          } else if (NetworkError.isInstance(err)) {
+            this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+          }
+        });
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
