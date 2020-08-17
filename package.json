@@ -105,7 +105,7 @@
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0",
-    "sb-svg2pdf": "0.0.3",
+    "sb-svg2pdf": "0.0.4",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"
