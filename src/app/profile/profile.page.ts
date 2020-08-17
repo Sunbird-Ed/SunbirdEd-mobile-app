@@ -13,7 +13,6 @@ import {
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
-  Location as loc
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -40,7 +39,6 @@ import {
   SharedPreferences,
   CertificateAlreadyDownloaded,
   NetworkError,
-  LocationSearchCriteria,
   FormRequest,
   FormService
 } from 'sunbird-sdk';
@@ -206,7 +204,7 @@ export class ProfilePage implements OnInit {
   ionViewDidEnter() {
     this.refresher.disabled = false;
   }
-  
+
   async doRefresh(refresher?) {
     const loader = await this.commonUtilService.getLoader();
     this.isRefreshProfile = true;
@@ -426,7 +424,7 @@ export class ProfilePage implements OnInit {
     }
     const option = {
       userId: this.profile.userId || this.profile.id,
-      returnFreshCourses: refresher ? true : false
+      returnFreshCourses: !!refresher
     };
     this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
@@ -465,12 +463,6 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
-  // getCertificateCourse(certificate: CourseCertificate): Course {
-  //   return this.trainingsCompleted.find((course: Course) => {
-  //     return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
-  //   });
-  // }
-
   async downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
     const toastOptions = {
@@ -490,91 +482,59 @@ export class ProfilePage implements OnInit {
           PageId.PROFILE, // page name
           telemetryObject,
           values);
-        const downloadRequest = {
-          courseId: course.courseId,
-          certificateToken: certificate.token
-        };
         let toast;
         if (this.commonUtilService.networkInfo.isNetworkAvailable) {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-          .then(async (res) => {
-            if (toast) {
-              await toast.dismiss();
-            }
-            this.openpdf(res.path);
-          }).catch(async (err) => {
-            if (toast) {
-              await toast.dismiss();
-            }
-            if (err instanceof CertificateAlreadyDownloaded) {
-              const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
-              const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
-              this.openpdf(filePath);
-            } else if (NetworkError.isInstance(err)) {
-              this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
-            }
+        if (certificate. url) {
+          const downloadRequest = {
+            courseId: course.courseId,
+            certificateToken: certificate.token
+          };
+          this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
+              .then(async (res) => {
+                if (toast) {
+                  await toast.dismiss();
+                }
+                this.openpdf(res.path);
+              }).catch(async (err) => {
+                await this.handleCertificateDownloadIssue(toast, err, certificate);
           });
+        } else {
+          this.courseService.downloadCurrentProfileCourseCertificateV2(
+              { courseId: course.courseId },
+              (svgData, callback) => {
+                this.certificateDownloadAsPdfService.download(
+                    svgData, (fileName, pdfData) => callback(pdfData as any)
+                );
+              }).toPromise()
+              .then(async (res) => {
+                if (toast) {
+                  await toast.dismiss();
+                }
+                this.openpdf(res.path);
+              }).catch(async (err) => {
+                await this.handleCertificateDownloadIssue(toast, err, certificate);
+          });
+        }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
   }
 
-  async downloadTrainingCertificateV2(course: Course, certificate: CourseCertificate) {
-    const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-    const toastOptions = {
-      message: downloadMessage || 'Certificate getting downloaded'
-    };
-
-    await this.checkForPermissions().then(async (result) => {
-      if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
-
-        const values = new Map();
-        values['courseId'] = course.courseId;
-
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-            InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-            Environment.USER, // env
-            PageId.PROFILE, // page name
-            telemetryObject,
-            values);
-        let toast;
-        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-          toast = await this.toastController.create(toastOptions);
-          await toast.present();
-        }
-        this.courseService.downloadCurrentProfileCourseCertificateV2(
-            { courseId: course.courseId },
-            (svgData, callback) => {
-              this.certificateDownloadAsPdfService.download(
-                  svgData, (fileName, pdfData) => callback(pdfData as any)
-              );
-            }).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-          if (toast) {
-            await toast.dismiss();
-          }
-          if (err instanceof CertificateAlreadyDownloaded) {
-            const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
-            const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
-            this.openpdf(filePath);
-          } else if (NetworkError.isInstance(err)) {
-            this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
-          }
-        });
-      } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-      }
-    });
+  private async handleCertificateDownloadIssue(toast: any, err: any, certificate) {
+    if (toast) {
+      await toast.dismiss();
+    }
+    if (err instanceof CertificateAlreadyDownloaded) {
+      const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
+      const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
+      this.openpdf(filePath);
+    } else if (NetworkError.isInstance(err)) {
+      this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+    }
   }
 
   openpdf(path) {
@@ -631,7 +591,7 @@ export class ProfilePage implements OnInit {
           content
         }
       };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras)
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
     } else if (content.mimeType === MimeType.COLLECTION) {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -727,7 +687,7 @@ export class ProfilePage implements OnInit {
 
 
 
-  async editMobileNumber(event) {
+  async editMobileNumber() {
     const componentProps = {
       phone: this.profile.phone,
       title: this.profile.phone ?
@@ -741,7 +701,7 @@ export class ProfilePage implements OnInit {
     await this.showEditContactPopup(componentProps);
   }
 
-  async editEmail(event) {
+  async editEmail() {
     const componentProps = {
       email: this.profile.email,
       title: this.profile.email ?
@@ -834,7 +794,7 @@ export class ProfilePage implements OnInit {
         await loader.dismiss();
         this.doRefresh();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage(successMessage));
-      }).catch(async (e) => {
+      }).catch(async () => {
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
       });
@@ -961,7 +921,7 @@ export class ProfilePage implements OnInit {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
-    return new Promise<boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -982,7 +942,7 @@ export class ProfilePage implements OnInit {
 
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
     // await this.popoverCtrl.dismiss();
-    return new Promise<boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
@@ -1025,7 +985,8 @@ export class ProfilePage implements OnInit {
                 resolve(undefined);
               });
           }
-        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        }, this.appName, this.commonUtilService.translateMessage
+          ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
