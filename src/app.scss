@@ -1488,3 +1488,7 @@ body {
 #maintenance-sub-text {
   text-align: center; color: grey; padding-left: 4em; padding-right: 4em;
 }
+
+.required-asterisk{
+  color: map-get($colors, red);
+}
