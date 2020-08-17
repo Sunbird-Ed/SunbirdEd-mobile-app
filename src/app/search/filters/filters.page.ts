@@ -178,13 +178,16 @@ export class FiltersPage {
     });
   }
 
-  public applyInterimFilter() {
+  public async applyInterimFilter() {
     this.filterCriteria.mode = 'hard';
     this.filterCriteria.searchType = SearchType.FILTER;
     this.filterCriteria.fields = [];
     this.shouldEnableFilter = false;
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.contentService.searchContent(this.filterCriteria).toPromise()
-      .then((responseData: ContentSearchResult) => {
+      .then(async (responseData: ContentSearchResult) => {
+        await loader.dismiss();
         this.shouldEnableFilter = true;
         if (responseData) {
           this.facetsFilter = [];
@@ -192,7 +195,8 @@ export class FiltersPage {
           this.filterCriteria = responseData.filterCriteria;
           this.init();
         }
-      }).catch(() => {
+      }).catch(async () => {
+        await loader.dismiss();
         this.shouldEnableFilter = true;
       });
   }
