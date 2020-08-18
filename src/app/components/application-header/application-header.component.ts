@@ -347,7 +347,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       component: ToastNavigationComponent,
       componentProps: {
         message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER', { '%app': this.appName, '%user': name }),
-        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE'),
+        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE', { app_name: this.appName }),
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('GO_TO_PROFILE'),
