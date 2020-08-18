@@ -113,27 +113,12 @@
                 {{'COURSES' | translate}}
               </span>
             </div>
-            <!-- Card style -->
             <div class="sb-card-container sb-card-textbook-container">
-              <div class="sb-card"
-                *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
-                (click)="openContent(undefined, content, i)">
-                <div class="img-container" style="display: flex;
-                  justify-content: center;
-                  flex-direction: column;
-                  text-align: center;
-                  overflow: hidden;">
-                  <img src="{{ content?.courseLogoUrl || content?.appIcon || defaultAppIcon }}" alt="content-logo">
-                </div>
-                <div class="sb-card-details">
-                  <div class="title">
-                    {{ (content.name && content.name.length > 30) ? (content.name | slice:0:30) + '...' : (content.name) }}
-                  </div>
-                  <div class="grade_ellipsis">
-                    <span *ngIf="content.orgDetails" class="info subject">{{ content.orgDetails.orgName}}</span>
-                    <span *ngIf="!content.orgDetails" class="info subject">{{ content.organisation | csa}}</span>
-                  </div>
-                </div>
+              <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index">
+                <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
+                  (click)="openContent(undefined, content, i);" [cardImg]="content?.appIcon || content?.courseLogoUrl || defaultAppIcon"
+                  [moreInfoLabel]="'Section'" [section]="content.name">
+                </sb-library-card>
               </div>
             </div>
           </div>
@@ -184,16 +169,6 @@
       </div>
     </div>
   </ion-list>
-
-  <!-- Testing here -->
-
-  <div *ngIf="dialCodeContentResult && dialCodeContentResult.length">
-    <div class="sb-card-container sb-card-textbook-container">
-      <app-text-book-card class="tb-border-btm"
-        *ngFor="let content of dialCodeContentResult; let i = index; let last = last"
-        (click)="openContent(content, content,i)" [content]="content" [layoutName]="layoutName"></app-text-book-card>
-    </div>
-  </div>
 
   <div *ngIf="searchContentResult && searchContentResult.length">
     <div class="sb-search-history-entry sb-search-header-meta row">
