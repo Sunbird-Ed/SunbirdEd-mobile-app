@@ -65,7 +65,7 @@ export class ManageUserProfilesPage implements OnInit {
         return EMPTY;
       })
     );
-   }
+  }
 
   ngOnInit() {
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
@@ -183,8 +183,8 @@ export class ManageUserProfilesPage implements OnInit {
     const confirm = await this.popoverCtrl.create({
       component: ToastNavigationComponent,
       componentProps: {
-        message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER',  { '%app': this.appName, '%user': name }),
-        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE'),
+        message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER', { '%app': this.appName, '%user': name }),
+        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE', { app_name: this.appName }),
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('GO_TO_PROFILE'),
