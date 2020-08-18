@@ -294,7 +294,7 @@
     
   
   .sb-separator-line{
-      margin: 0px;
+      margin: 0;
    }
    .sb-card{
     @include margin(0); 
@@ -368,13 +368,11 @@
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 4px 0px;
     cursor: pointer;
     outline: none;
-    margin-bottom: 8px;
+    margin: 4px 0 8px;
     width: 45%;
-    padding: 16px 0px 16px 0px;
-    margin-bottom: 32px;
+    padding: 16px 0 16px 0;
   }
   .open-btn {
     border: 1px solid $blue;
