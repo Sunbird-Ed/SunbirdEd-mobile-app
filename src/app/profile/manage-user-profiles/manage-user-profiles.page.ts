@@ -1,10 +1,15 @@
 import { Component, OnInit, Inject } from '@angular/core';
-
 import { AppHeaderService } from '@app/services/app-header.service';
 import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { ProfileService, CachedItemRequestSourceFrom, SharedPreferences, ServerProfile, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import {
+  ProfileService,
+  CachedItemRequestSourceFrom,
+  SharedPreferences,
+  ServerProfile,
+  CorrelationData
+} from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { Observable, EMPTY, combineLatest, Subscription } from 'rxjs';
@@ -96,7 +101,7 @@ export class ManageUserProfilesPage implements OnInit {
     }
   }
 
-  handleBackButtonEvents() {
+  private handleBackButtonEvents() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.MANAGE_USERS,
@@ -107,13 +112,9 @@ export class ManageUserProfilesPage implements OnInit {
     });
   }
 
-  selecteUser(user, index) {
+  selectUser(user, index) {
     this.selectedUserIndex = index;
     this.selectedUser = user;
-  }
-
-  onMenuCliced(event) {
-    console.log(event);
   }
 
   switchUser() {
@@ -167,7 +168,7 @@ export class ManageUserProfilesPage implements OnInit {
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
   }
 
-  handleHeaderEvents($event) {
+  private handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(
@@ -179,7 +180,7 @@ export class ManageUserProfilesPage implements OnInit {
     }
   }
 
-  async showSwitchSuccessPopup(name) {
+  private async showSwitchSuccessPopup(name) {
     const confirm = await this.popoverCtrl.create({
       component: ToastNavigationComponent,
       componentProps: {
