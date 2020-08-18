@@ -98,6 +98,27 @@ describe('AddMemberToGroupPage', () => {
         expect(mockCommonUtilService.getGoogleCaptchaConfig).toHaveBeenCalled();
     });
 
+    it('should call systemSettingsService if captchaConfigSize is zero', (done) => {
+        const captchaConfigs = new Map();
+        mockCommonUtilService.setGoogleCaptchaConfig = jest.fn();
+        mockCommonUtilService.getGoogleCaptchaConfig = jest.fn(() => captchaConfigs);
+        mockSystemSettingService.getSystemSettings = jest.fn(() => of(
+            {
+                value: JSON.stringify({
+                    isEnabled: true,
+                    key: 'e344ijewjee43'
+                })
+            }
+        ));
+        addMemberToGroupPage.getGoogleCaptchaSiteKey();
+        // assert
+        expect(mockCommonUtilService.getGoogleCaptchaConfig).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockCommonUtilService.setGoogleCaptchaConfig).toHaveBeenCalledWith('e344ijewjee43', true);
+            done();
+        }, 0);
+    });
+
     describe('handleBackButton', () => {
         it('should return userIdVerified', () => {
             addMemberToGroupPage.isUserIdVerified = true;
@@ -162,6 +183,35 @@ describe('AddMemberToGroupPage', () => {
         expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
     });
 
+    describe('onIonViewDidEnter', () => {
+
+        it('should fetch from preferences and store it const variable if ' +
+            'false then trigger native element click and put true in preferences again', (done) => {
+            // arrange
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockPreferences.putBoolean = jest.fn();
+            addMemberToGroupPage.addMemberInfoPopupRef = {nativeElement: {click: jest.fn()}};
+            // act
+            addMemberToGroupPage.ionViewDidEnter();
+            // assert
+            expect(mockPreferences.getBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup');
+            setTimeout(() => {
+                expect(addMemberToGroupPage.addMemberInfoPopupRef.nativeElement.click).toHaveBeenCalled();
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup', true);
+                done();
+            }, 0);
+        });
+
+        it('should not call preferences put boolean if return value is true ', () => {
+            // arrange
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockPreferences.putBoolean = jest.fn();
+            // act
+            addMemberToGroupPage.ionViewDidEnter();
+            // assert
+            expect(mockPreferences.putBoolean).not.toHaveBeenCalled();
+        });
+    });
     describe('onVerifyClick', () => {
         beforeEach(() => {
             addMemberToGroupPage.cap = {
@@ -180,7 +230,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -205,7 +255,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => throwError(''));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
@@ -235,7 +285,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
@@ -283,7 +333,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(()=>  Promise.reject('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.reject('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => of(undefined)) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -432,6 +482,16 @@ describe('AddMemberToGroupPage', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 done();
             }, 0);
+        });
+
+        it('should return if network is not available', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.presentToastForOffline = jest.fn();
+            // act
+            addMemberToGroupPage.onAddToGroupClick();
+            // assert
+            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         });
     });
 
