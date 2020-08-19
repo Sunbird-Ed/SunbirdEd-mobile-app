@@ -1673,7 +1673,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType,
+    this.telemetryGeneratorService.generateEndTelemetry(objectType || ContentType.COURSE,
       Mode.PLAY,
       PageId.COURSE_DETAIL,
       Environment.HOME,
