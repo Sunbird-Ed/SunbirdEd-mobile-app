@@ -115,10 +115,9 @@
             </div>
             <div class="sb-card-container sb-card-textbook-container">
               <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index">
-                <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
-                  (click)="openContent(undefined, content, i);" [cardImg]="content?.appIcon || content?.courseLogoUrl || defaultAppIcon"
-                  [moreInfoLabel]="'Section'" [section]="content.name">
-                </sb-library-card>
+                <sb-course-card appContentDirection class="sb-card-grid__item" [course]="content"
+                  (click)="openContent(undefined, content, i);" [cardImg]="content?.appIcon || content?.courseLogoUrl || defaultAppIcon" [section]="null">
+                </sb-course-card>
               </div>
             </div>
           </div>
