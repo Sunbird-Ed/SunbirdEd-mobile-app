@@ -209,7 +209,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     if (profileAtributes) {
       profileAtributes.forEach((value) => {
         correlationList.push({
-          id: value,
+          id: value || '',
           type: correlationType
         });
       });
