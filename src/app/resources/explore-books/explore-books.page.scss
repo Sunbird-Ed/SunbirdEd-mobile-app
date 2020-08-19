@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 :host {
   .scroll-content {
     padding-bottom: 30% !important;
@@ -32,9 +33,9 @@
     padding: 8px 8px;
     margin: 1rem 1rem;
 
-    border: 1px solid #80a7ce;
+    border: 1px solid map-get($colors, light_blue_80);
     border-radius: 4px;
-    background-color: #ffffff;
+    background-color: map-get($colors, white);
 
     input {
       border: none;
@@ -45,7 +46,7 @@
       flex-shrink: 0;
 
       ion-icon {
-        color: #999999;
+        color: $gray-300;
       }
     }
   }
@@ -55,7 +56,7 @@
     padding: 0 !important;
     app-text-book-card {
       .sb-card.reverse {
-        border-bottom: 0.5px solid #979797 !important;
+        border-bottom: 0.5px solid map-get($colors, dark_gray) !important;
       }
     }
 
@@ -78,7 +79,7 @@
   }
   .sort-by {
     border-radius: 4px;
-    --background: #024f9d;
+    --background: #{$blue};
     padding: 0 2rem 5px 2rem !important;
     margin-bottom: 0.2rem;
     height: 45px;

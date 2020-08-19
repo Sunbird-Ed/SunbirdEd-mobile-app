@@ -1,5 +1,6 @@
+@import "src/assets/styles/_variables.scss";
 ion-content {
-  --ion-background-color: #EDF4F9;
+  --ion-background-color: #{$light-blue};
 }
 .content {
   display: flex;

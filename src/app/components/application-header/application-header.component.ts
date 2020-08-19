@@ -240,6 +240,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   async fetchManagedProfileDetails() {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      if (!this.profile || !this.profile.serverProfile) {
+        this.managedProfileList$ = EMPTY;
+        return;
+      }
       this.managedProfileList$ = this.profileService.managedProfileManager.getManagedServerProfiles({
         from: CachedItemRequestSourceFrom.CACHE,
         requiredFields: ProfileConstants.REQUIRED_FIELDS

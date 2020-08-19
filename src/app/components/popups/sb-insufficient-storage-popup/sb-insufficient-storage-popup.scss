@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 sb-insufficient-storage-popup {
 
     .no-net-heading{
@@ -12,7 +13,7 @@ sb-insufficient-storage-popup {
     }
 
     .no-net-popup{
-        background-color: #E55A28 !important;
+        background-color: $orange !important;
         color: $white-color !important;
     }
 

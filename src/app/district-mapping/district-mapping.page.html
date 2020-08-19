@@ -14,7 +14,7 @@
     <span class="error font-size-13" *ngIf="validateName()">{{'ERROR_NAME_INVALID' | translate}}</span>
   </div>
   <form>
-    <ion-item>
+    <ion-item (click)="onCategoryCliked('state')">
       <ion-label position="stacked" class="label-font">{{'STATE' | translate}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -27,7 +27,7 @@
                   [placeholder]="'STATE_OPTION_TEXT' | translate"
                   [okText]="'BTN_SUBMIT' | translate"
                   [cancelText]="'CANCEL' | translate"
-                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);">
+                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);" (ionCancel)="cancelEvent('state')">
         <ion-select-option
                 *ngFor="let state of stateList"
                 [value]="state">
@@ -36,7 +36,7 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
+    <ion-item (click)="onCategoryCliked('district')">
       <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -49,7 +49,7 @@
                   [placeholder]="'DISTRICT_OPTION_TEXT' | translate"
                   [okText]="'BTN_SUBMIT' | translate"
                   [cancelText]="'CANCEL' | translate"
-                  (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);">
+                  (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);" (ionCancel)="cancelEvent('district')">
         <ion-select-option
                 *ngFor="let district of districtList"
                 [value]="district">

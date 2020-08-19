@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 .sb-popover.sb-popover-download{
     .backdrop{
         background-color: rgba(0, 0, 0, 0.59);
@@ -62,7 +63,7 @@
         right: 0;
         bottom: 0;
         height: 72px;
-        background-color: #FFFFFF;
+        background-color: map-get($colors, white);
         box-shadow: 0 -4px 4px 1px rgba(0,0,0,0.22);
 
         .sb-popover-toolbar {
@@ -71,21 +72,21 @@
             padding: 16px;
             
             .toolbar-background {
-                background-color: #fff;
+                background-color: map-get($colors, white);
             }
             .toolbar-title{
-               color: #024F9D;
+               color: $blue;
                text-align: left;
                .meta-info{
                     display: block;
-                    color: #979797;
+                    color: map-get($colors, dark_gray);
                     font-size: 12px;
                     font-weight:normal;
                }
 
             }
             .sb-modal-close{
-                color: #eeeeee;
+                color: map-get($colors, empty_color);
                 font-weight: normal;
                 top: -24px;
               //  right: -16px;

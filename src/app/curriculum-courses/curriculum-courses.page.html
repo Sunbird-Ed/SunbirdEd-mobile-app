@@ -15,7 +15,7 @@
   <div class="cc-container">
     <ng-container *ngIf="!isLoading">
       <div *ngIf="mergedCourseList && mergedCourseList.length">
-        <div *ngFor="let course of mergedCourseList" class="mb-8">
+        <div *ngFor="let course of mergedCourseList | sortBy: 'isEnrolledCourse' : 'desc';" class="mb-8">
           <sb-my-course-card *ngIf="course.isEnrolledCourse" [course]="course" [section]="null"
             [cardImg]="course.cardImg" (click)="openCourseDetails(course)" [hideProgress]="true"></sb-my-course-card>
           <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"

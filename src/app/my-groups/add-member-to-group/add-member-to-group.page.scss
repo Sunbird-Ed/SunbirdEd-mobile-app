@@ -1,0 +1,127 @@
+@import "src/assets/styles/_variables.scss";
+.au-container{
+    padding: 16px;
+    .au-title{
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+    .au-ip{
+        margin-bottom: 30px;
+        position: relative;
+        .au-ip-info{
+            margin-bottom: 8px;
+            font-size: 16px;
+            .pull-left{
+                sup{
+                    color: $red;
+                }
+            }
+            .pull-right{
+                color: $gray-300;
+                font-size: 14px;
+            }
+            .au-info-icon{
+                color: $blue;
+                font-size: 20px;
+                vertical-align: bottom;
+            }
+        }
+        input{
+            &.error{
+                border: 1px solid $red;
+            }
+            &:disabled{
+                background-color: #fff;
+            }
+            width: 100%;
+            height: 40px;
+            border: 1px solid $gray-800;
+            padding: 0 16px;
+            color: $gray-800;
+            border-radius: 2px;
+        }
+        .au-clear-icon{
+            position: absolute;
+            bottom: 10px;
+            right: 8px;
+            font-size: 20px;
+        }
+        .au-ip-error-msg{
+            color: $red;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+    }
+    .au-avatar{
+        padding: 16px;
+        background-color: map-get($colors, pale_blue);
+        text-align: center;
+    }
+    .au-desc{
+        font-size: 16px;
+        padding: 16px 0;
+        span{
+            font-weight: bold;
+        }
+    }
+}
+.au-btn{
+    padding: 0px 16px 24px 16px;
+    .sb-btn-large{
+        &.inactive{
+            background-color: $gray-200;
+        }
+        img{
+            margin-right: 8px;
+            position: relative;
+            bottom: 2px;
+        }
+    }
+}
+
+.loader {
+    border: 4px solid $gray-300;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border-top: 4px solid transparent;
+    width: 48px;
+    float: center;
+    height: 48px;
+    margin-left: 45%;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-container {
+    text-align: center;
+    padding: 30px;
+    border-radius: 2px;
+    background-color: map-get($colors, pale_blue);
+}
+
+.loader-text {
+    font-size: 12px;
+    color: $gray-300;
+}

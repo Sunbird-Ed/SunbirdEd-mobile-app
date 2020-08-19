@@ -7,8 +7,7 @@ import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { ShareUrl, ContentType } from '../../app/app.constant';
-import { UtilityService } from '../utility-service';
+import { ContentType } from '../../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
@@ -39,18 +38,18 @@ export class ContentShareHandlerService {
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_CONTENT_INITIATED,
       content.contentData.contentType, corRelationList, rollup);
-    if (content.hierarchyInfo && content.hierarchyInfo.length > 0) {
-      const contentDetailRequest: ContentDetailRequest = {
-        contentId: content.hierarchyInfo[0].identifier,
-        attachFeedback: false,
-        attachContentAccess: false,
-        emitUpdateIfAny: false
-      };
-      await this.contentService.getContentDetails(contentDetailRequest).toPromise()
-        .then((contentDetail: Content) => {
-          content = contentDetail;
-        });
+
+    let rootContentIdentifier = content.identifier;
+    let contentId;
+    if (rollup && rollup.l1 && rollup.l1 !== content.identifier) {
+      rootContentIdentifier = rollup.l1;
+      contentId = content.identifier;
+      if (!(subContentIds && subContentIds.length > 0)) {
+        subContentIds = [];
+        subContentIds.push(contentId);
+      }
     }
+
     let exportContentRequest: ContentExportRequest;
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {
@@ -63,9 +62,13 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      let contentLink = this.getContentUtm(shareParams.link, content);
+
+      let contentLink = this.getContentUtm(shareParams.link, rootContentIdentifier);
       if (moduleId) {
         contentLink = contentLink + `&moduleId=${moduleId}`;
+      }
+      if (contentId && !moduleId) {
+        contentLink = contentLink + `&contentId=${contentId}`;
       }
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
         app_name: this.appName,
@@ -120,9 +123,10 @@ export class ContentShareHandlerService {
     }
   }
 
-  getContentUtm(contentLink: string, content: Content): string {
+  getContentUtm(contentLink: string, rootContentIdentifier: string): string {
     const contentUTM =
-      `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
+      `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26` +
+      `utm_content%3D${rootContentIdentifier}%26utm_campaign%3Dshare_content`;
     return contentLink + '?' + contentUTM;
   }
 

@@ -5,7 +5,7 @@
     padding: 0% !important;
 }
   body{
-    background-color: #edf4f9;
+    background-color: $light-blue;
     font-family: 'Noto Sans';
 }
 
@@ -24,8 +24,8 @@ P{
     font-size: 13px;
 }
 .help-header, .help-header-send-email{
-    background: #024f9d;
-    color: #fff;
+    background: $blue;
+    color: map-get($colors, white);
     padding: 16px;
 }
 .help-header>h4,.help-header-send-email>h4{
@@ -47,7 +47,7 @@ P{
     justify-content: space-between;
 }
  .info-msg{
-        background-color: #F3F7FA
+        background-color: map-get($colors, white_fa)
     }
 @media only screen and (max-width : 1024px) {
 
@@ -69,7 +69,7 @@ P{
     }
 }
 .icon{
-    color:#024f9d;
+    color: $blue;
     float:right;
 } 
 .panel{
@@ -97,11 +97,11 @@ P{
 
 }
 .panel-default>.panel-heading{
-    background-color: #fff;
+    background-color: map-get($colors, white);
     border-radius: 0px !important;
 }
 .panel-body{
-    background-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);
 }
 .panel-interact{
     text-align: center; 
@@ -110,10 +110,10 @@ P{
 }
 .panel-interact>button{
     margin: 10px 5px 0px 5px;
-    background-color: #F3F7FA;
-    border-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);
+    border-color: map-get($colors, white_fa);
     width: 80px;
-    color: #024f9d;
+    color: $blue;
     font-size: 13px;
     font-weight: 700;
     outline: none;
@@ -127,10 +127,10 @@ P{
     padding:10px !important;
     margin: auto !important;
     margin-top:10px !important;
-    background: #F3F7FA;
+    background: map-get($colors, white_fa);
     width: 200px;
     border-radius: 4px;
-    color:#008840;
+    color: $green;
     text-align: center;
 }
 
@@ -154,8 +154,8 @@ P{
 }
 .submit-button{
     width: 100%;
-    color: #fff;
-    background: #71b3f5;
+    color: map-get($colors, white);
+    background: map-get($colors, light_blue_f5);
     height: 40px;
     border-radius: 4px;
     margin: 10px 0px 16px 0px;
@@ -166,12 +166,12 @@ P{
    
     .report-button{
         min-width: 90vw;
-        color: #fff;
-        background: #024f9d;
+        color: map-get($colors, white);
+        background: $blue;
         height: 40px;
         border-radius: 4px;
         border-style:solid;
-        border-color:  #024f9d;
+        border-color:  $blue;
         margin-bottom: 50px;
         outline: none;
     }
@@ -191,23 +191,24 @@ P{
         font-size: 12px;
         padding-right: 16px;
     }
-    .initiate-email-info-button{
+    .initiate-email-info-button {
+        background: #FFF;
         left: 0px;
-    right: 0px;
-    position: fixed;
-    top: 88vh;
-    padding: 0px 16px 70px 16px;
+        right: 0px;
+        position: fixed;
+        top: 90vh;
+        padding: 0px 16px 70px 16px;
     }
 }
 @media only screen and (min-width : 1025px) {
     .report-button{
         min-width: 1024px;
-        color: #fff;
-        background: #024f9d;
+        color: map-get($colors, white);
+        background: $blue;
         height: 40px;
         border-radius: 4px;
         border-style:solid;
-        border-color:  #024f9d;
+        border-color: $blue;
         margin-bottom: 50px;
         outline: none;
     }
@@ -220,8 +221,7 @@ img>.report-button{
     text-align: center;
     padding: 15px;
 }
-.send-email-form{
-    text-align: center;
+.send-email-form {
     margin: 0 16px;
 }
 #send-email-form{
@@ -253,11 +253,11 @@ img>.report-button{
     .submit-button{
         width: 150px;
         float: right;
-        color: #fff;
-        background: #024f9d;
+        color: map-get($colors, white);
+        background: $blue;
         border-radius: 0px;
         border-style:solid;
-        border-color:  #024f9d;
+        border-color:  $blue;
         margin: 10px 0px 16px 0px;
         height: 32px;
         outline: none;
@@ -286,7 +286,7 @@ img>.report-button{
     resize: none;
 }
 ::placeholder {
-  color: #999999;
+  color: $gray-300;
   font-size: 14px;
   font-weight: normal;
 }
@@ -302,7 +302,7 @@ img>.report-button{
         box-shadow: none;
         border-width: 1px;
         border-style:solid;
-        border-color: #c3c3c3;
+        border-color: map-get($colors, light_gray-c3);
         @include padding(8px 0px 0px 8px);
         margin: 0px;
         resize: none;
@@ -318,7 +318,7 @@ img>.report-button{
     
 }
 a{
-    color: #333;
+    color: map-get($colors, primary_black);
 }
 
 a:active, a:hover{
@@ -331,7 +331,7 @@ a:active, a:hover{
     padding: 20px 16px 0px 16px;
 }
 .item-label-stacked ion-select {
-    border: 1px solid #006de5;
+    border: 1px solid map-get($colors, thick_blue);
     border-radius: 5px;
     margin-top: 16px;
     padding-left: 8px;
@@ -348,13 +348,13 @@ a:active, a:hover{
       }
     }
     .select-placeholder {
-        color: #006de5;
+        color: map-get($colors, thick_blue);
         padding-left: 10px;
     }
 }
     // Not getting used because of shadow DOM
 .select-placeholder {
-  color: #006de5;
+  color: map-get($colors, thick_blue);
   padding-left: 10px;
 }
 
@@ -368,25 +368,25 @@ ion-item.item-label-stacked {
 }
 
 .item-select ion-label {
-    color: #006de5;
+    color: map-get($colors, thick_blue);
 }
 
 .item-label-stacked.item-select-disabled {
     ion-label {
-        color: #333;
+        color: map-get($colors, primary_black);
     }
     ion-select {
-        border-color: #333;
+        border-color: map-get($colors, primary_black);;
         // Inside Shadow DOM
         .select-icon {
           .select-icon-inner {
-            border-color: #333;
+            border-color: map-get($colors, primary_black);;
             animation: none;
           }
         }
         // Inside Shadow DOM
         .select-placeholder {
-          color: #333;
+          color: map-get($colors, primary_black);;
         }
       }
 }

@@ -71,7 +71,7 @@
     flex-wrap: nowrap;
     align-items:center;
     justify-content:center;
-    background-color:#f1f1f1;
+    background-color: map-get($colors, white_f1);
     padding: 12px;
     margin-bottom: 12px;
     .card-text {
@@ -82,7 +82,7 @@
     }
   }
   ion-title.color {
-    color:#024f9d;
+    color: $blue;
     font-weight:bold;
   }
   ion-segment-button {

@@ -5,7 +5,7 @@ import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
     { path: '', component: UserAndGroupsPage },
-    { path: RouterLinks.GROUP_DETAILS, loadChildren: './group-details/group-details.module#GroupDetailsPageModule' },
+    { path: RouterLinks.GROUP_DETAILS, loadChildren: './group-details/group-details-old.module#GroupDetailsPageModule' },
     { path: RouterLinks.ADD_OR_REMOVE_GROUP_USER, loadChildren: './add-or-remove-group-user/add-or-remove-group-user.module#AddOrRemoveGroupUserPageModule' },
     { path: RouterLinks.CREATE_GROUP, loadChildren: './create-group/create-group.module#CreateGroupPageModule' },
     { path: RouterLinks.GROUP_MEMBERS, loadChildren: './group-members/group-members.module#GroupMembersPageModule' },

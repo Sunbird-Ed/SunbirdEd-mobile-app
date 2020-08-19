@@ -22,8 +22,8 @@ import {
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
   GetSuggestedFrameworksRequest,
-  Group,
-  GroupService
+  GroupDeprecated,
+  GroupServiceDeprecated
 } from 'sunbird-sdk';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
@@ -38,7 +38,7 @@ import { RouterLinks } from '@app/app/app.constant';
 })
 export class CreateGroupPage implements OnInit {
   groupEditForm: FormGroup;
-  group: Group;
+  group: GroupDeprecated;
   isEditGroup = false;
   categories: Array<any> = [];
   loader: any;
@@ -81,7 +81,7 @@ export class CreateGroupPage implements OnInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     public commonUtilService: CommonUtilService,
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     private telemetryGeneratorService: TelemetryGeneratorService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,

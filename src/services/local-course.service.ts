@@ -2,7 +2,7 @@ import { Injectable, Inject, NgZone } from '@angular/core';
 import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, AuthService, SharedPreferences, OAuthSession,
-  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError, NetworkError
+  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError, NetworkError, GetContentStateRequest, ContentStateResponse
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -225,6 +225,33 @@ export class LocalCourseService {
         }
       }, async (err) => {
       });
+  }
+
+  async getCourseProgress(courseContext) {
+    return new Promise(async (resolve, reject) => {
+      const request: GetContentStateRequest = {
+        userId: this.appGlobalService.getUserId(),
+        courseIds: [courseContext.courseId],
+        returnRefreshedContentStates: true,
+        batchId: courseContext.batchId
+      };
+      let progress = 0;
+      try {
+        const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
+        if (contentStatusData && contentStatusData.contentList) {
+          const viewedContents = [];
+          for (const contentId of courseContext.leafNodeIds) {
+            if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
+              viewedContents.push(contentId);
+            }
+          }
+          progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
+          resolve(progress);
+        }
+      } catch (err) {
+        resolve(progress);
+      }
+    });
   }
 
 }

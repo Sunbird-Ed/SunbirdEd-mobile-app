@@ -12,11 +12,11 @@
         top: 0;
         @include ltr() {
         left: 0;
-        };
+        }
     
         @include rtl() {
         right: 0;
-        };
+        }
         margin-top: 56px;
       }
     .batch-filter-icon {
@@ -27,7 +27,7 @@
         margin-top: -10px;
     }
     .batches-header-text{
-        color: #3b5998;
+        color: map-get($colors, facebook);
     }
     .padding-left-6{
         padding-left: 6px;
@@ -39,7 +39,7 @@
         font-size: 18px !important;
     }
     .background-gray{
-        background: #efeff4;
+        background: map-get($colors, gray_white);
         @include margin(-16px, -26px, 0, -26px);
         @include padding(null, null, null, 25px !important);
     }
@@ -132,7 +132,7 @@
         }
       }
       .sb-btn-outline-info {
-        background-color: #006DE5 !important;
+        background-color: map-get($colors, thick_blue) !important;
         border-radius: 5px !important;
         font-weight: bold;
         font-size: 12px;
@@ -140,7 +140,7 @@
         border-color: white !important;
     }
     .enroll-msg-ended {
-        color: #e55a28;
+        color: $orange;
         font-size: 0.9em;
     }
 }

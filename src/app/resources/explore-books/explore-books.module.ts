@@ -8,7 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { ExploreBooksPage } from './explore-books.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
-import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
+import { DirectivesModule } from '@app/directives/directives.module';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 const routes: Routes = [
   {
@@ -25,8 +26,9 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
     ComponentsModule,
+    DirectivesModule,
+    CommonConsumptionModule
   ],
-  declarations: [ExploreBooksPage, ExploreBooksSortComponent],
-  entryComponents: [ExploreBooksSortComponent],
+  declarations: [ExploreBooksPage]
 })
 export class ExploreBooksPageModule {}

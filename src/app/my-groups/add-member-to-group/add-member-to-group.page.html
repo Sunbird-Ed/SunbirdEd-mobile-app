@@ -1,0 +1,61 @@
+<ion-content overflow-scroll="true">
+    <div class="au-container" *ngIf="!isUserIdVerified">
+        <h3 class="au-title">{{'ADD_MEMBER' | translate}}</h3>
+        <div class="au-ip">
+            <div class="au-ip-info clearfix">
+                <span class="pull-left">
+                    {{'MEMBER_ID' | translate: {'app_name': appName} }}<sup>*</sup>
+                </span>
+                <span (click)="openInfoPopup($event)" class="pull-right" #addMemberInfoPopupRef>
+                    <span>
+                        <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                    </span>
+                </span>
+            </div>
+            <input [ngClass]="{'error' : showErrorMsg}" type="text"
+                placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}" [(ngModel)]="username">
+            <p *ngIf="showErrorMsg" class="au-ip-error-msg">
+                {{'INVALID_MEMBER_ID' | translate:  {'app_name': appName} }}
+            </p>
+        </div>
+    </div>
+    <div class="au-container" *ngIf="isUserIdVerified">
+        <h3 class="au-title">{{'ADD_MEMBER' | translate}}</h3>
+        <div class="au-ip">
+            <div class="au-ip-info clearfix">
+                <span class="pull-left">{{'MEMBER_ID' | translate: {'app_name': appName} }}</span>
+                <span (click)="openInfoPopup($event)" class="pull-right">
+                    <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
+                </span>
+            </div>
+            <input type="text" placeholder="{{'ENTER_MEMBER_ID' | translate: {'app_name': appName} }}"
+                [(ngModel)]="username" disabled>
+            <ion-icon class="au-clear-icon" ios="ios-close" md="md-close" (click)="onClearUser()">
+            </ion-icon>
+        </div>
+        <div class="au-avatar">
+            <app-profile-avatar [username]="userDetails.name"></app-profile-avatar>
+            <h3>{{userDetails.name}}</h3>
+        </div>
+        <div class="au-desc">{{'ADD_MEMBER_CONFIRMATION' | translate: {'app_name': appName} }}</div>
+    </div>
+    <div *ngIf="showLoader" class="ion-padding-start ion-padding-end">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <h6 class="loader-text">{{'VERYFYING_PLEASE_WAIT' | translate}}</h6>
+        </div>
+    </div>
+</ion-content>
+<ion-footer>
+    <div class="au-btn" *ngIf="!isUserIdVerified">
+        <button class="sb-btn-large" [class.inactive]="!username" [disabled]="!username" (click)="onVerifyClick()">
+            {{'VERIFY' | translate}}
+        </button>
+    </div>
+    <div class="au-btn" *ngIf="isUserIdVerified">
+        <button class="sb-btn-large" (click)="onAddToGroupClick()">
+            <img src="assets/imgs/ic_person_add_white.svg">
+            {{'ADD_TO_GROUP' | translate}}
+        </button>
+    </div>
+</ion-footer>

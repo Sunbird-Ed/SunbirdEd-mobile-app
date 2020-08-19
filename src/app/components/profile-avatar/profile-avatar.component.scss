@@ -1,8 +1,9 @@
+@import "src/assets/styles/_variables.scss";
     .profile-avatar{
         font-size: 50px;
         font-weight: bold !important;
         line-height: 50px;
-        color: #9017FF;
+        color: map-get($colors, vivid_purple);
         border-radius: 50%;
         -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
         box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
@@ -19,6 +20,6 @@
         }
     }
     .profile-avatar.profileAvatar{
-        border: 1px solid #008840 !important;
+        border: 1px solid $green !important;
         box-shadow: none;
     }

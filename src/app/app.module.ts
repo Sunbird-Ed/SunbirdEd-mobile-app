@@ -67,7 +67,7 @@ import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentType } from './app.constant';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
-import {NativePageTransitions} from '@ionic-native/native-page-transitions/ngx';
+import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -101,6 +101,9 @@ export const deviceRegisterService = () => {
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
+export const groupServiceDeprecated = () => {
+  return SunbirdSdk.instance.groupServiceDeprecated;
+}
 export const frameworkService = () => {
   return SunbirdSdk.instance.frameworkService;
 };
@@ -162,9 +165,6 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
-export function classRoomService() {
-  return SunbirdSdk.instance.classRoomService;
-}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -191,6 +191,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'GROUP_SERVICE',
     useFactory: groupService
+  }, {
+    provide: 'GROUP_SERVICE_DEPRECATED',
+    useFactory: groupServiceDeprecated
   }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
@@ -263,9 +266,6 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
-  }, {
-    provide: 'CLASS_ROOM_SERVICE',
-    useFactory: classRoomService
   }
   ];
 }
@@ -473,7 +473,7 @@ declare const sbutility;
     SplashScreenService,
     ExternalIdVerificationService,
     TextbookTocService,
-      NativePageTransitions,
+    NativePageTransitions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

@@ -1,12 +1,14 @@
-import {Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { Events, ToastController, PopoverController, IonRefresher } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext } from '../../app/app.constant';
+import {
+  ContentCard, EventTopics, PreferenceKey, ProfileConstants,
+  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext
+} from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -149,7 +151,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.getCourseTabData();
 
     this.events.subscribe('event:update_course_data', () => {
-        this.getEnrolledCourses();
+      this.getEnrolledCourses();
     });
   }
 
@@ -205,7 +207,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         this.qrScanner.startScanner(PageId.COURSES, false);
       }
     });
-    this.sbProgressLoader.hide({id: 'login'});
+    this.sbProgressLoader.hide({ id: 'login' });
   }
 
   ionViewWillLeave() {
@@ -324,7 +326,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
             if (this.enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
-              for (let count = 0; count < this.enrolledCourses.length; count++){
+              for (let count = 0; count < this.enrolledCourses.length; count++) {
                 courseList.push(this.enrolledCourses[count]);
                 this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
                 this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
@@ -371,40 +373,40 @@ export class CoursesPage implements OnInit, OnDestroy {
     // pageAssembleCriteria.hardRefresh = hardRefresh;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
-    .then((res: PageAssemble) => {
-      this.ssoSectionId = res.ssoSectionId;
+      .then((res: PageAssemble) => {
+        this.ssoSectionId = res.ssoSectionId;
 
-      this.ngZone.run(() => {
-        const sections = res.sections;
-        const newSections = [];
-        sections.forEach(element => {
-          const display = JSON.parse(element.display);
-          if (display.name) {
-            if (has(display.name, this.selectedLanguage)) {
-              const langs = [];
-              forEach(display.name, (value, key) => {
-                langs[key] = value;
-              });
-              element.name = langs[this.selectedLanguage];
+        this.ngZone.run(() => {
+          const sections = res.sections;
+          const newSections = [];
+          sections.forEach(element => {
+            const display = JSON.parse(element.display);
+            if (display.name) {
+              if (has(display.name, this.selectedLanguage)) {
+                const langs = [];
+                forEach(display.name, (value, key) => {
+                  langs[key] = value;
+                });
+                element.name = langs[this.selectedLanguage];
+              }
             }
-          }
-          newSections.push(element);
-        });
+            newSections.push(element);
+          });
 
-        if (newSections.length) {
-          for (let i = 0; i < newSections.length; i++){
-            if (newSections[i].contents) {
-              for (let j = 0; j < newSections[i].contents.length; j++) {
-                newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+          if (newSections.length) {
+            for (let i = 0; i < newSections.length; i++) {
+              if (newSections[i].contents) {
+                for (let j = 0; j < newSections[i].contents.length; j++) {
+                  newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+                }
               }
             }
           }
-        }
 
-        this.popularAndLatestCourses = newSections;
-        this.pageApiLoader = !this.pageApiLoader;
-        this.generateExtraInfoTelemetry(newSections.length);
-        this.checkEmptySearchResult();
+          this.popularAndLatestCourses = newSections;
+          this.pageApiLoader = !this.pageApiLoader;
+          this.generateExtraInfoTelemetry(newSections.length);
+          this.checkEmptySearchResult();
         });
       }).catch((error: string) => {
         this.ngZone.run(() => {
@@ -908,7 +910,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
-      sort_by: { createdDate: SortOrder.DESC},
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
@@ -922,11 +924,11 @@ export class CoursesPage implements OnInit, OnDestroy {
               const batches = data;
               if (batches.length) {
                 batches.forEach((batch, key) => {
-                    if (batch.status === 1) {
-                      ongoingBatches.push(batch);
-                    } else {
-                      upcommingBatches.push(batch);
-                    }
+                  if (batch.status === 1) {
+                    ongoingBatches.push(batch);
+                  } else {
+                    upcommingBatches.push(batch);
+                  }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'showing-enrolled-ongoing-batch-popup',
@@ -981,11 +983,11 @@ export class CoursesPage implements OnInit, OnDestroy {
       type: CorReleationDataType.ROOT_ID
     }];
     if (courseDetails.isFilterApplied) {
-     corRelationList.push({
-       id: 'filter',
-       type: CorReleationDataType.DISCOVERY_TYPE
-     });
-   }
+      corRelationList.push({
+        id: 'filter',
+        type: CorReleationDataType.DISCOVERY_TYPE
+      });
+    }
     const values = new Map();
     values['sectionName'] = courseDetails.sectionName;
     values['positionClicked'] = courseDetails.index;
@@ -998,7 +1000,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
-      if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
+    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content,

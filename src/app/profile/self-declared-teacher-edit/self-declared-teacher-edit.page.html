@@ -2,9 +2,12 @@
 
   <p *ngIf="editType === 'add'" class="title">{{'PLEASE_PROVIDE_FOLLOWING_DETAILS' | translate}}</p>
   <p *ngIf="editType === 'edit'" class="title">{{'UPDATE_DETAILS' | translate}}</p>
-  <p class="sub-title">{{'ADD_EDIT_SELF_DECLARED_TEACHER_INFO' | translate}}</p>
 
-  <app-common-forms  *ngIf="formInitilized" (onCommonFormInitialized)="onCommonFormInitialized($event)" #commonForms [formList]="teacherDetailsForm" (onFormDataChange)="onFormDataChange($event)"></app-common-forms>
+  <app-common-forms *ngIf="teacherDetailsForm && teacherDetailsForm.length" 
+    [config] = "teacherDetailsForm"
+    (valueChanges)="formValueChanges($event)"
+    (statusChanges)="formStatusChanges($event)">
+  </app-common-forms>
 
 </ion-content>
 <ion-footer>

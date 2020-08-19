@@ -246,7 +246,7 @@ getProfileSettingConfig() {
               this.qrScannerResultHandler.handleCertsQR(source, scannedData);
             } else {
               this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
-              this.showInvalidCodeAlert();
+              this.showInvalidCodeAlert(scannedData);
             }
             this.stopScanner();
           }
@@ -302,7 +302,7 @@ generateEndEvent(pageId: string, qrData: string) {
     }
   }
 
-  async showInvalidCodeAlert() {
+  async showInvalidCodeAlert(scannedData) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QR_CODE_INVALID,
@@ -310,7 +310,21 @@ generateEndEvent(pageId: string, qrData: string) {
       this.source
     );
     if (this.source !== 'permission') {
-      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
+      const corRelationList: CorrelationData[] = [{
+        id: PageId.SCAN,
+        type: CorReleationDataType.CHILD_UI
+      }];
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        InteractSubtype.QR_CODE_INVALID, '',
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : this.source,
+        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
+        );
+      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR', this.source, scannedData);
       return;
     }
     let popUp;

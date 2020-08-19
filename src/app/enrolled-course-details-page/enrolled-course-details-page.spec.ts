@@ -22,7 +22,7 @@ import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
     mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses,
-    mockCourseCardData_2, mockChildrenData, mockContentStatusData, mockcontentHirerachyResponse
+    mockCourseCardData_2, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
@@ -30,8 +30,9 @@ import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype } from '../../services/telemetry-constants';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {MimeType} from '../app.constant';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { MimeType } from '../app.constant';
+import { GroupService } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -51,6 +52,7 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockDownloadService: Partial<DownloadService> = {};
+    const mockGroupService: Partial<GroupService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -120,6 +122,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
+            mockGroupService as GroupService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -767,6 +770,11 @@ describe('EnrolledCourseDetailsPage', () => {
             const batchId = 'sample-batch-id';
             const batchStatus = 2;
             mockPreferences.putString = jest.fn(() => of());
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                contentData: {
+                    leafNodes: ['node1']
+                }
+            };
             // act
             enrolledCourseDetailsPage.saveContentContext(userId, courseId, batchId, batchStatus);
             // assert
@@ -1099,7 +1107,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.getContentState(false);
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.courseCardData.progress).toEqual(1);
+                expect(enrolledCourseDetailsPage.courseCardData.progress).toBeUndefined();
                 done();
             }, 0);
         });
@@ -1169,7 +1177,7 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             enrolledCourseDetailsPage.guestUser = false;
             spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest').and.stub();
-            jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of({value: 'asdasds'}));
+            jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of({ value: 'asdasds' }));
             // act
             enrolledCourseDetailsPage.enrollIntoBatch(batch);
             // assert
@@ -1303,7 +1311,7 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             mockContentService.getChildContents = jest.fn(() => of({
                 id: 'do-123',
-                children: [{id: 'do-1-123'}]
+                children: [{ id: 'do-1-123' }]
             }));
             mockZone.run = jest.fn((fn) => fn());
             enrolledCourseDetailsPage.courseCardData = {
@@ -1321,10 +1329,10 @@ describe('EnrolledCourseDetailsPage', () => {
             setTimeout(() => {
                 expect(mockContentService.getChildContents).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.getContentState).toBeCalledWith(true);
-                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith([{id: 'do-1-123'}]);
+                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith([{ id: 'do-1-123' }]);
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toStrictEqual({
                     id: 'do-123',
-                    children: [{id: 'do-1-123'}]
+                    children: [{ id: 'do-1-123' }]
                 });
                 done();
             }, 0);
@@ -1337,7 +1345,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 children: [],
                 identifier: 'do_1212123123'
             };
-            mockContentService.getChildContents = jest.fn(() => throwError({error: 'error'}));
+            mockContentService.getChildContents = jest.fn(() => throwError({ error: 'error' }));
             mockZone.run = jest.fn((fn) => fn());
             // act
             enrolledCourseDetailsPage.setChildContents();
@@ -1411,7 +1419,7 @@ describe('EnrolledCourseDetailsPage', () => {
         });
         it('should not display offline mode', (done) => {
             // arrange
-            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(Promise.reject()));
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(Promise.reject({ error: 'SOME_ERROR' })));
             // act
             enrolledCourseDetailsPage.getAllBatches();
             // assert
@@ -1497,7 +1505,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch'}]
+                [{ id: '', type: 'CourseBatch' }]
             );
         });
     });
@@ -1516,7 +1524,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 PageId.COURSE_DETAIL,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch'}]
+                [{ id: '', type: 'CourseBatch' }]
             );
         });
     });
@@ -1539,7 +1547,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 objectType,
                 objectVersion,
                 {},
-                [{ id: '', type: 'CourseBatch'}]
+                [{ id: '', type: 'CourseBatch' }]
             );
         });
     });
@@ -1560,7 +1568,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 {},
-                [{ id: '', type: 'CourseBatch'}]
+                [{ id: '', type: 'CourseBatch' }]
             );
         });
 
@@ -1621,7 +1629,7 @@ describe('EnrolledCourseDetailsPage', () => {
             });
             // act
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => {})
+                subscribe: jest.fn(() => { })
             };
             enrolledCourseDetailsPage.guestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
@@ -1655,7 +1663,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
             enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => {})
+                subscribe: jest.fn(() => { })
             };
             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
             // act
@@ -1813,7 +1821,7 @@ describe('EnrolledCourseDetailsPage', () => {
             };
             enrolledCourseDetailsPage.contentStatusData = {
                 contentList: [
-                        {
+                    {
                         contentId: 'do-123',
                         status: 2
                     },
@@ -1837,10 +1845,10 @@ describe('EnrolledCourseDetailsPage', () => {
                 InteractSubtype.START_CLICKED,
                 Environment.HOME,
                 PageId.COURSE_DETAIL,
-                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                 undefined,
-                {l1: 'do_091231312312'},
-                [{id: '', type: 'CourseBatch'}],
+                { l1: 'do_091231312312' },
+                [{ id: '', type: 'CourseBatch' }],
             );
             expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
             expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
@@ -1865,10 +1873,10 @@ describe('EnrolledCourseDetailsPage', () => {
                 InteractSubtype.START_CLICKED,
                 Environment.HOME,
                 PageId.COURSE_DETAIL,
-                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                 undefined,
-                {l1: 'do_091231312312'},
-                [{id: '', type: 'CourseBatch'}],
+                { l1: 'do_091231312312' },
+                [{ id: '', type: 'CourseBatch' }],
             );
             expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
@@ -2022,7 +2030,7 @@ describe('EnrolledCourseDetailsPage', () => {
         // act
         enrolledCourseDetailsPage.ionViewDidEnter();
         // assert
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
         expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 });

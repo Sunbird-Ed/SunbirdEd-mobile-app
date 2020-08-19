@@ -2,7 +2,7 @@
 :host {
   .label-font {
     font-weight: 600 !important;
-    color: #979797 !important;
+    color: map-get($colors, dark_gray) !important;
     font-size: 1.4rem !important;
   }
   .select-text {

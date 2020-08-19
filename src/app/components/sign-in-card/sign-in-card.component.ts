@@ -11,7 +11,7 @@ import {
   SignInError,
   ServerProfileDetailsRequest,
   SharedPreferences,
-  GroupService,
+  GroupServiceDeprecated,
   TenantInfoRequest,
   WebviewLoginSessionProvider,
   WebviewSessionProviderConfig
@@ -50,7 +50,7 @@ export class SignInCardComponent implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,

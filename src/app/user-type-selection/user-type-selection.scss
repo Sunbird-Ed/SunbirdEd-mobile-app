@@ -1,8 +1,9 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/_variables.scss";
 
 ion-content {
-  --ion-background-color: #EDF4F9;
+  --ion-background-color: #{$light-blue};
 }
 :host {
   .card-related-style {
@@ -13,8 +14,8 @@ ion-content {
     //margin-inline-end: unset !important;
     text-align: center;
     position: relative;
-    box-shadow: 0 20px 40px -10px #D8D8D8;
-    background-color: #FFFFFF;
+    box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
+    background-color: map-get($colors, white);
     border-radius: 4px;
   }
 
@@ -59,7 +60,7 @@ ion-content {
     height: calc(100% - 20px);
     width: 100% !important;
     &.selected {
-      border:3px solid #0076FE;
+      border:3px solid map-get($colors, vived_blue_fe);
     }
     > ion-grid {
       height: 100%;
@@ -98,7 +99,7 @@ ion-content {
   .title-class {
     font-size: 24px;
     font-weight: bold;
-    color: #024F9D;
+    color: $blue;
     margin-top: 4vh;
   }
 

@@ -17,6 +17,7 @@
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
 @import "./assets/styles/variables";
+@import "./assets/styles/variables";
 
 :root {
   --ion-default-font: "NotoSans";
@@ -57,7 +58,7 @@ h6 {
   @extend .NotoSans;
 }
 .sb-legal-url {
-  color: #0a55a0;
+  color: map-get($colors, bright_blue_a0);
   font-size: 14px;
   text-decoration: underline;
 }
@@ -84,6 +85,9 @@ h6 {
 // Re-usable css
 .padding-bottom-5 {
   padding-bottom: 5px;
+}
+.padding-16{
+  padding: 16px;
 }
 
 .text-align-end {
@@ -189,10 +193,10 @@ ul.rating .ion-md-star-outline:before {
   padding-right: 10px;
 }
 .popover-ratings ion-icon.filled {
-  color: #024f9d !important;
+  color: $blue !important;
 }
 .small-rating ion-icon.filled {
-  color: #024f9d !important;
+  color: $blue !important;
 }
 
 .select-box {
@@ -430,7 +434,7 @@ ul.rating .ion-md-star-outline:before {
 .separator-dot {
   width: 4px;
   height: 4px;
-  background-color: #d8d8d8;
+  background-color: map-get($colors, light_silver);
   border-radius: 50%;
   display: inline-block;
   vertical-align: middle;
@@ -535,7 +539,7 @@ ion-toolbar {
   margin-top: 10px;
 }
 .error {
-  color: #e76026;
+  color: map-get($colors, bright_red_e7);
 }
 
 .flex-container {
@@ -613,7 +617,7 @@ ion-toolbar {
 }
 
 .lighter {
-  color: #9b9b9b;
+  color: map-get($colors, gray_9b);
 }
 
 .MR10 {
@@ -682,7 +686,7 @@ ion-toolbar {
   vertical-align: sub;
   margin-right: 13px;
   font-size: 1.8em !important;
-  color: #a4a4a4;
+  color:map-get($colors, gray_solid);
 }
 .info-icon-text {
   font-size: 10px;
@@ -711,7 +715,7 @@ ion-toolbar {
   max-height: 100% !important;
 }
 .qr-alert-invalid ion-backdrop {
-  background-color: #000 !important;
+  background-color: map-get($colors, black) !important;
   opacity: 0.4 !important;
 }
 
@@ -771,7 +775,7 @@ ion-toast {
   --ion-safe-area-bottom: -8px;
 }
 ion-toast.redErrorToast {
-  --background: #ff0000;
+  --background: #{map-get($colors, vivid_red)};
 }
 
 ion-toast.sb-toast.available-later {
@@ -786,7 +790,7 @@ ion-toast.sb-toast.available-later {
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
 ion-toast.green-toast{
-  --background: #008000;
+  --background: #{map-get($colors, office_green)};
 }
 
 .btn-block {
@@ -807,7 +811,7 @@ ion-toast.green-toast{
   background: transparent;
   opacity: 1;
   z-index: 11;
-  color: #fff;
+  color: map-get($colors, white);
 
   .bg {
     position: absolute;
@@ -898,8 +902,8 @@ ion-toast.green-toast{
 }
 
 .no-net-popup {
-  --background: #e55a28 !important;
-  --color: #fff !important;
+  --background: #{$orange} !important;
+  --color: #{$white} !important;
 }
 
 .no-net-close-btn {
@@ -914,7 +918,7 @@ ion-split-pane {
   .popover-content {
     top: 168.273px !important;
     left: 220px !important;
-    --box-shadow: 0px 3px 6px 5px #eee;
+    --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
     width: 36% !important;
@@ -949,7 +953,7 @@ ion-split-pane {
     padding: 0 !important;
     height: 3.11%;
     width: 93.33%;
-    color: #999999;
+    color: $gray-300;
     font-size: 12px;
     line-height: 18px;
     font-weight: bold;
@@ -973,10 +977,10 @@ ion-split-pane {
   .sb-ftue-design {
     width: 100%;
     font-size: 1.4rem;
-    background: #fff;
+    background: map-get($colors, white);
     @include margin(10px 0px 0px 0px);
     border: 0.5px solid rgba(35, 97, 255, 0.5);
-    background-color: #ffffff;
+    background-color: map-get($colors, white);
     box-shadow: 0 3px 4px 0 rgba(2, 79, 157, 0.1);
     .sb-play-unselected {
       color: $blue;
@@ -1119,7 +1123,7 @@ ion-split-pane {
 }
 
 sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
-    color: #024F9D;
+    color: $blue;
 }
 
 sb-course-cards-hlist > .layout-course > .header{
@@ -1140,12 +1144,12 @@ app-courses{
 }
 
 .card-section-secondary{
-  color: #666666;
+  color: map-get($colors, granite_gray);
   font-family: "Noto Sans";
 }
 
 .card-section-danger{
-  color: #E55A28;
+  color: $orange;
   font-family: "Noto Sans";
 }
 
@@ -1206,7 +1210,7 @@ app-resources{
 }
 
 .sb-btn-large {
-  background-color: #024F9D;
+  background-color: $blue;
   border: none;
   color: white;
   text-align: center;
@@ -1222,22 +1226,20 @@ app-resources{
 }
 
 .popover-my-groups {
-  .popover-content.sc-ion-popover-md {
-    width: 90%;
-    top: 5% !important;
-    bottom: 5% !important;;
-    left: 5% !important;
-  }
-  .mg-popup-flex-item{
-    // flex: 1;
+  .mg-popup-container{
+    height: 100%;
   }
   .mg-popup-content {
     display: flex;
     flex-direction: column;
-    height: 90vh;
-    padding: 16px;
-    position: relative;
+    height: 100%;
     justify-content: space-between;
+  }
+  .mg-popup-content-member{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
   }
   .mg-popup-close{
     position: absolute;
@@ -1251,6 +1253,19 @@ app-resources{
     font-weight: bold;
     text-align: center;
     padding-top: 16px;
+    .am-title{
+      font-size: 18px;
+    }
+    .am-desc{
+      font-size: 16px;
+      font-weight: normal;
+    }
+  }
+  .am-step{
+    font-weight: bold;
+    span{
+      color: $orange;
+    }
   }
   .mg-popup-content-body{
     text-align: center;
@@ -1277,11 +1292,11 @@ app-application-header{
   .add-manage-user{
     sb-member-card{
       .sb-member__img{
-        background-color: #BFE1CF !important;
-        color: #008840 !important;
+        background-color: map-get($colors, light_grayish_green) !important;
+        color: $green !important;
       }
       .sb-member__name{
-        color: #008840 !important;
+        color: $green !important;
       }
     }
   }
@@ -1290,10 +1305,10 @@ app-application-header{
     sb-member-card{
       .sb-member__img{
         padding-bottom: 1rem !important;
-        color: #333333 !important;
+        color: map-get($colors, primary_black) !important;
       }
       .sb-member__name{
-        color: #333333 !important;
+        color: map-get($colors, primary_black) !important;
       }
     }
   }
@@ -1312,7 +1327,7 @@ app-manage-user-profiles{
     sb-member-card{
       .sb-member__name{
         font-weight: bold !important;
-        color: #024F9D !important;
+        color: $blue !important;
       }
     }
   }
@@ -1334,6 +1349,93 @@ ion-modal.sb-progress-loader {
   }
 }
 .bold {
-  color: #0ec254;
+  color: map-get($colors, strong_green);
   font-weight: bold;
 }
+
+.group-option-popover {
+  padding: 16px;
+  ion-item {
+    font-size: 14px;
+    font-family: "Noto Sans";
+  }
+
+  ion-item:nth-child(1) {
+    color: map-get($colors, primary_black);
+  }
+  ion-item:nth-child(2) {
+    color: $red;
+  }
+}
+.group-option-popover-admin {
+  ion-item:nth-child(1) {
+    color: $red;
+  }
+}
+
+.group-option-popover .popover-content {
+  padding: 16px 8px;
+  width: auto;
+  margin-top: -30px;
+  ion-item {
+    --min-height: 16px !important;
+    padding-top: 16px;
+    &:first-child{
+      padding-top: 0;
+    }
+    label{
+      margin: 0;
+    }
+    .item-inner{
+      padding: 0;
+    }
+  }
+}
+.my-group-menu {
+  .popover-content{
+    margin-top: -30px;
+  }
+}
+.sb-course-completion-popover{
+  .popover-content{
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto;
+    width: 250px !important;
+    padding: 16px;
+  }
+  .cc-popup-close{
+    font-size: 18px;
+  }
+  .course-completion-title{
+    color: $green;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .course-completion-info{
+    color: $green;
+    font-size: 14px;
+    padding-top: 8px;
+  }
+  .course-completion-cert{
+    padding-top: 16px;
+  }
+}
+.select-activity-popover {
+  .sb-popover-title {
+    text-align: left !important;
+    margin-left: 1.5rem;
+  }
+  .content-share{
+    margin-bottom: 16px !important;
+  }
+  .sb-popover-footer .sb-popover-action-btn {
+    padding: 16px !important;
+    width: 100%;
+    height: unset !important;
+  }
+}
+.grecaptcha-badge {
+   position: absolute;
+   top: 70vh;
+  }

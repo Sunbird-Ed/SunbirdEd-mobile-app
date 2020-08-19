@@ -107,7 +107,7 @@
             <sb-member-card 
               [title]="profile?.handle"
               [config]="userAvatarConfig"
-              [initial]="profile?.handle && profile?.handle[0]">
+              [initial]="profile?.handle | initial">
             </sb-member-card>
           </div>
           
@@ -122,7 +122,7 @@
                 [title]="user?.firstName"
                 [identifier]="user?.id"
                 [indexOfMember] = "i"
-                [initial]="user?.firstName && user?.firstName[0]">
+                [initial]="user?.firstName | initial">
               </sb-member-card>
             </div>
 
@@ -149,16 +149,16 @@
     </section>
     <ion-list class="sb-menu-list" lines="none">
 
-      <!-- <ion-item (click)="emitSideMenuItemEvent($event, 'MY_CLASSROOMS')">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/my_classroom.svg" class="tool-icon" alt="user and group">
+          <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
         </span>
-        <span class="sb-menu-item ion-text-capitalize" menuClose>{{'MY_GROUPS' | translate}}</span>
+        <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>
         </div>
-      </ion-item> -->
+      </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
@@ -218,7 +218,7 @@
             <sb-member-card 
               [title]="profile?.handle"
               [config]="userAvatarConfig"
-              [initial]="profile?.handle && profile?.handle[0]">
+              [initial]="profile?.handle | initial">
             </sb-member-card>
           </div>
           
@@ -233,7 +233,7 @@
                 [title]="user?.firstName"
                 [identifier]="user?.id"
                 [indexOfMember] = "i"
-                [initial]="user?.firstName && user?.firstName[0]">
+                [initial]="user?.firstName | initial">
               </sb-member-card>
             </div>
 
@@ -261,16 +261,16 @@
 
     <ion-list class="sb-menu-list" lines="none">
 
-      <!-- <ion-item (click)="emitSideMenuItemEvent($event, 'MY_CLASSROOMS')">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'MY_GROUPS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/my_classroom.svg" class="tool-icon" alt="my classroom">
+          <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
         </span>
-        <span class="sb-menu-item ion-text-capitalize" menuClose>{{'MY_GROUPS' | translate}}</span>
+        <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>
         </div>
-      </ion-item> -->
+      </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">

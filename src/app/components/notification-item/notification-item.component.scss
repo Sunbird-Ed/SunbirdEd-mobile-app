@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   width: 100%;
@@ -40,7 +41,7 @@
     .update-container {
       white-space: normal;
       border-radius: 2px;
-      background-color: #f1f1f1;
+      background-color: map-get($colors, white_f1);
       font-family: "Noto Sans";
       font-size: 12px;
       line-height: 20px;

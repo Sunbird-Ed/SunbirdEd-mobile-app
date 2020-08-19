@@ -189,15 +189,20 @@ export class ShareUrl {
 }
 
 export class MenuOverflow {
-    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
-    public static readonly GROUP_OPTIONS = ['EDIT_NAME'];
+    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
+    public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
+    public static readonly MENU_GROUP_ACTIVITY_ADMIN = ['MENU_REMOVE_ACTIVITY'];
 }
 
 export class SideMenu {
-    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
 }
 
 export class FormConstant {
@@ -238,6 +243,8 @@ export class PreferenceKey {
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly PAGE_ASSEMBLE_ORGANISATION_ID = 'page_assemble_organisation_id';
     public static readonly CAMPAIGN_PARAMETERS = 'campaign_parameters';
+    public static readonly CREATE_GROUP_INFO_POPUP = 'create_group_info_popup';
+    public static readonly ADD_MEMBER_TO_GROUP_INFO_POPUP = 'add_member_to_group_info_popup';
 }
 
 export class GenericAppConfig {
@@ -549,12 +556,12 @@ export class RouterLinks {
     // routing to Term of use Web Page
     public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
 
-    // Class Rooms
-    public static readonly MY_CLASSROOMS = 'my-classrooms';
-    public static readonly CREATE_EDIT_CLASSROOM = 'create-edit-classroom';
-    public static readonly CLASS_DETAILS = 'class-details';
-
-    public static readonly ADD_USER_TO_CLASS = 'add-user-to-class';
+    // My Groups
+    public static readonly MY_GROUPS = 'my-groups';
+    public static readonly CREATE_EDIT_GROUP = 'create-edit-group';
+    public static readonly MY_GROUP_DETAILS = 'group-details';
+    public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
+    public static readonly ACTIVITY_DETAILS = 'activity-details';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
@@ -590,7 +597,7 @@ export class ProgressPopupContext {
 
 export class RegexPatterns {
     public static readonly SPECIALCHARECTERSANDEMOJIS =
-    /([-!$%^&*()_+÷|~=`{}[:;<>?,.×/£¥"'@#\]]|[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+        /([-!$%^&*()_+÷|~=`{}[:;<>?,.×/£¥"'@#\]]|[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
 }
 
 export class IgnoreTelemetryPatters {
@@ -599,4 +606,12 @@ export class IgnoreTelemetryPatters {
     public static readonly IGNORE_CHANNEL_IMPRESSION_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/;
     public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
 
+}
+
+export class FormConfigCategories {
+    public static readonly CONTENT = "content";
+}
+export class FormConfigSubcategories {
+    public static readonly CONTENT_QUALITY = "contentquality";
+    public static readonly CONTENT_AVAILABILITY = "contentavailability";
 }

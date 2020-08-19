@@ -64,8 +64,8 @@
   .item-native {
     width: auto;
     margin: 16px !important;
-    background-color: #F0F0F0;
-    color: #979797;
+    background-color: map-get($colors, white_f0);
+    color: map-get($colors, dark_gray);
     font-size: 1em;
     height: 2em;
     padding-top: 0.5em;
@@ -76,10 +76,10 @@
 
   .flex-card-container {
     display: flex !important;
-    flex-wrap: nowrap !important;;
-    align-items:center !important;;
-    justify-content:center !important;;
-    background-color:#f1f1f1;
+    flex-wrap: nowrap !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background-color: map-get($colors, white_f1);
     padding: 23px;
     margin-bottom: 12px;
     .card-text {

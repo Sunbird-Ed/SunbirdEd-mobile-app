@@ -1,5 +1,6 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/_variables.scss";
 :host {
   .scroll-content,
   .fixed-content {
@@ -130,7 +131,7 @@
           border-radius: 15px;
           background-color: #999999;
           text-align: center;
-          color: #fff;
+          color: map-get($colors, white);
           font-size: 16px;
           line-height: 30px;
           margin: 0 auto;
@@ -194,10 +195,10 @@
       margin-top: 16px;
       .qr-btn {
         display: inline-block;
-        background-color: #006de5;
+        background-color: map-get($colors, primary);
         padding: 10px 20px;
         text-align: center;
-        color: #fff;
+        color: map-get($colors, white);
         border-radius: 5px;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
         img {
@@ -214,7 +215,7 @@
   }
 
   .item-label-stacked ion-select {
-    border: 1px solid #006de5;
+    border: 1px solid map-get($colors, primary);
     border-radius: 5px;
     margin-top: 16px;
     padding-left: 8px;
@@ -232,7 +233,7 @@
     }
     // Not getting used because of shadow DOM
     .select-placeholder {
-      color: #006de5;
+      color: map-get($colors, primary);
       padding-left: 10px;
     }
   }
@@ -241,26 +242,26 @@
     --highlight-background: transparent;
   }
   .item-select ion-label {
-    color: #006de5;
+    color: map-get($colors, primary);
   }
 
   .item-label-stacked.item-select-disabled {
     ion-label {
-      color: #333;
+      color: map-get($colors, primary_black);
     }
 
     ion-select {
-      border-color: #333;
+      border-color: map-get($colors, primary_black);
       // Inside Shadow DOM
       .select-icon {
         .select-icon-inner {
-          border-color: #333;
+          border-color: map-get($colors, primary_black);
           animation: none;
         }
       }
       // Inside Shadow DOM
       .select-placeholder {
-        color: #333;
+        color: map-get($colors, primary_black);
       }
     }
   }
@@ -297,13 +298,13 @@
 
   ion-label {
     opacity: 1;
-    color: #979797;
-  }; 
+    color: map-get($colors, dark_gray);
+  }
 }
 
 
 .item-label-stacked ion-select {
-  border: 1px solid #006de5;
+  border: 1px solid map-get($colors, primary);
   margin-top: 16px;
   padding-right: 10px !important;
   .select-icon {
@@ -319,7 +320,7 @@
   }
   // Not getting used because of shadow DOM
   .select-placeholder {
-    color: #006de5;
+    color: map-get($colors, primary);
     padding-left: 10px;
   }
 }

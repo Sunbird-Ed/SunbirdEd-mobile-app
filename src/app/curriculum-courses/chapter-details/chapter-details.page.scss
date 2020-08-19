@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 .cd-header-container {
     padding: 16px;
     margin: 8px;
@@ -8,7 +9,7 @@
         margin-bottom: 8px;
     }
     .cd-header-title {
-        color: #3A3A3A;
+        color: map-get($colors, gray_3A);
         font-size: 16px;
         font-weight: bold;
     }
@@ -25,27 +26,27 @@
     }
 
     .cd-progress-container {
-        background-color: #E5EDF5;
+        background-color: map-get($colors, pale_blue);
         padding: 8px;
         margin-top: 8px;
         width: auto;
 
         .progress-label {
             font-size: 10px !important;
-            color: #333333;
+            color: map-get($colors, primary_black);
             font-weight: bold;
         }
     }
 
     .cd-unblock-text {
-        color: #3A3A3A;
+        color: map-get($colors, gray_3A);
         font-size: 10px;
         padding: 8px 0px;
     }
 
     .cd-chapter-card-button {
-        background-color: #008840;
-        border: 1px solid #008840;
+        background-color: $green;
+        border: 1px solid $green;
         color: white;
         display: inline-block;
         font-size: 16px;
@@ -65,18 +66,18 @@
     padding: 0px 16px 16px 16px;
 
     .cd-container-title {
-        color: #3A3A3A;
+        color: map-get($colors, gray_3A);
         font-size: 18px;
         font-weight: bold;
     }
 
     .cd-container-progress {
-        color: #666666;
+        color: map-get($colors, granite_gray);
         font-size: 12px;
     }
 
     .cd-container-sub-title {
-        color: #3A3A3A;
+        color: map-get($colors, gray_3A);
         font-size: 14px;
     }
 }
@@ -93,6 +94,6 @@
 }
 
 .cd-label {
-    color: #666666;
+    color: map-get($colors, granite_gray);
     font-size: 10px;
 }

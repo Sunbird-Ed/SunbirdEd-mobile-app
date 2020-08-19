@@ -5,7 +5,7 @@ import { GenericAppConfig, PreferenceKey, EventTopics } from '../app/app.constan
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
-    OAuthSession, Profile, ProfileService, ProfileType, SharedPreferences
+    OAuthSession, Profile, ProfileService, ProfileType, SharedPreferences, ProfileSession
 } from 'sunbird-sdk';
 import { UtilityService } from './utility-service';
 import { ProfileConstants } from '../app/app.constant';
@@ -14,9 +14,9 @@ import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
-import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import {animationGrowInTopRight} from '@app/app/animations/animation-grow-in-top-right';
-import {animationShrinkOutTopRight} from '@app/app/animations/animation-shrink-out-top-right';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { animationGrowInTopRight } from '@app/app/animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink-out-top-right';
 
 @Injectable({
     providedIn: 'root'
@@ -81,6 +81,8 @@ export class AppGlobalService implements OnDestroy {
     private _preSignInData: any;
     private _generateCourseCompleteTelemetry = false;
     private _generateCourseUnitCompleteTelemetry = false;
+    private _showCourseCompletePopup = false;
+    private _formConfig: any;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -402,7 +404,7 @@ export class AppGlobalService implements OnDestroy {
                                 categories.forEach(category => {
                                     this.frameworkData[category.code] = category;
                                 });
-    
+
                                 this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
                             }).catch(() => {
                                 this.frameworkData = [];
@@ -746,6 +748,22 @@ export class AppGlobalService implements OnDestroy {
         this._generateCourseUnitCompleteTelemetry = value;
     }
 
+    get showCourseCompletePopup() {
+        return this._showCourseCompletePopup;
+    }
+
+    set showCourseCompletePopup(value) {
+        this._showCourseCompletePopup = value;
+    }
+
+    get formConfig() {
+        return this._formConfig;
+    }
+
+    set formConfig(value) {
+        this._formConfig = value;
+    }
+
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page
     resetSavedQuizContent() {
@@ -768,7 +786,7 @@ export class AppGlobalService implements OnDestroy {
                 const appLabel = await this.appVersion.getAppName();
                 const tutorialPopover = await this.popoverCtrl.create({
                     component: SbTutorialPopupComponent,
-                    componentProps: {appLabel},
+                    componentProps: { appLabel },
                     showBackdrop: true,
                     backdropDismiss: false,
                     enterAnimation: animationGrowInTopRight,
@@ -778,6 +796,22 @@ export class AppGlobalService implements OnDestroy {
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }
+    }
+
+    async getActiveProfileUid() {
+        let userId = '';
+        try {
+            const activeProfileSession: ProfileSession = await this.profile.getActiveProfileSession().toPromise();
+
+            userId = activeProfileSession.uid;
+            if (activeProfileSession.managedSession) {
+                userId = activeProfileSession.managedSession.uid;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return userId;
     }
 
 }

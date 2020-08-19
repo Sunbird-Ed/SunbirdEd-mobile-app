@@ -1,0 +1,51 @@
+<ion-content>
+  <form [formGroup]="createGroupForm">
+    <p class="cr-title">{{'CREATE_GROUP' | translate}}</p>
+    <ion-item class="input-item" 
+    [ngClass]="{'cr-input-primary': !((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required) ,
+      'cr-input-error': ((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)}">
+      <ion-label position="stacked" class="label-font align-text">{{'GROUP_NAME' | translate }}<sup>*</sup></ion-label>
+      <ion-input formControlName="groupName" maxlength="50" placeholder="{{'ENTER_GROUP_NAME' | translate}}"></ion-input>
+      <span class="char-info" 
+        [innerHTML]="'CHARACTERS_REMAINING' | translate: {'character_count':  50 - createGroupFormControls.groupName.value?.length} "
+        *ngIf="!((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)">
+      </span>
+      <span *ngIf="(createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required" class="cr-error">{{ errorMessages.groupName.message | translate }}</span>
+    </ion-item>
+    <ion-item class="input-item cr-input-primary">
+      <ion-label position="stacked" class="label-font align-text">{{'GROUP_DESCRIPTION' | translate }}</ion-label>
+      <ion-textarea class="cr-desc" formControlName="groupDesc" maxlength="150" rows="4" placeholder="{{'GROUP_DESCRIPTION_PLACEHOLDER' | translate}}"></ion-textarea>
+      <span class="char-info"
+            [innerHTML]="'CHARACTERS_REMAINING' | translate: {'character_count':  150 - createGroupFormControls.groupDesc.value?.length} "
+      ></span>
+    </ion-item>
+    <div class="cr-terms-container" *ngIf="!groupDetails">
+      <div class="input-item cr-input-primary" lines="none">
+        <ion-checkbox class="cr-terms-checkbox" formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
+        <p class="cr-terms-checkbox-label"> 
+          <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }} </span><span class="cr-terms" (click)="openTermsOfUse()">{{'GROUP_GUIDELINES' | translate}}</span>
+        </p>
+        </div>
+      <p
+        *ngIf="(createGroupFormControls.groupTerms.touched || createGroupFormSubmitted) && createGroupFormControls.groupTerms.invalid"
+        class="cr-error cr-error-checkbox"
+        [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'app_name':  appName}" ></p>
+    </div>
+    
+  </form>
+</ion-content>
+
+<ion-footer>
+    <div class="padding-16" *ngIf="!groupDetails">
+      <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
+        <img src="assets/imgs/ic_group_add_white.svg">
+        {{'CREATE_GROUP' | translate}}
+      </button>
+    </div>
+    <div class="padding-16" *ngIf="groupDetails">
+      <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
+        <img src="assets/imgs/ic_group_add_white.svg">
+        {{'EDIT_GROUP' | translate}}
+      </button>
+    </div>
+</ion-footer>

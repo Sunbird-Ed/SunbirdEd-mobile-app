@@ -8,6 +8,7 @@ import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-sort.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
   ],
   exports: [
     ResourcesComponent
-  ]
+  ],
+  entryComponents: []
 })
 export class ResourcesModule { }

@@ -8,19 +8,15 @@ import { AppHeaderService, } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractType, PageId, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
 import {
-  ProfileService,
-  ContentService,
-  DeviceInfo,
   SharedPreferences,
   TelemetryObject,
   GetSystemSettingsRequest,
   SystemSettingsService,
   SystemSettings,
   FaqService,
-  GetFaqRequest
+  GetFaqRequest,
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -63,14 +59,10 @@ export class FaqHelpPage implements OnInit {
   value: any;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('FAQ_SERVICE') private faqService: FaqService,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
@@ -143,7 +135,7 @@ export class FaqHelpPage implements OnInit {
     }
 
     this.faqService.getFaqDetails(faqRequest).subscribe(data => {
-      this.zone.run( () => {
+      this.zone.run(() => {
         this.data = data;
         this.constants = this.data.constants;
         this.faqs = this.data.faqs;
@@ -312,13 +304,16 @@ export class FaqHelpPage implements OnInit {
     this.textValue = '';
   }
 
-  navigateToReportIssue() {
+  async navigateToReportIssue() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
       PageId.FAQ,
       undefined,
       undefined);
+
+    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
+    this.appGlobalService.formConfig = formConfig;
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
         data: this.data

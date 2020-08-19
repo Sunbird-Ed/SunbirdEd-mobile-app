@@ -1,13 +1,17 @@
 <ion-content>
 
   <div>
-    <p class="sp-title">{{'CREATE_USER' | translate}}</p>
+    <p class="sp-title">{{'ADD_USER' | translate}}</p>
     <div class="text-center MT16">
       <img src="assets/imgs/round_blue_profile.svg" alt="managed-user-profile">
     </div>
   </div>
 
-  <app-common-forms *ngIf="formInitilized" #commonForms [formList]="managedUserFormList" (onFormDataChange)="onFormDataChange($event)"></app-common-forms>
+  <app-common-forms *ngIf="formInitilized" 
+    [config]="managedUserFormList" 
+    (valueChanges)="formValueChanges($event)"
+    (statusChanges)="formStatusChanges($event)">
+  </app-common-forms>
 </ion-content>
 
 <ion-footer>

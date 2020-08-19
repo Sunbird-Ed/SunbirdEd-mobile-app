@@ -1,17 +1,19 @@
+@import "src/assets/styles/_variables.scss";
+
 .toast-container{
   --padding-top: 16px;
   --padding-bottom: 16px;
   --padding-start: 16px;
   --padding-end: 16px;
-  --background: #333333;
-  --color: #FFFFFF;
+  --background: #{$gray-800};
+  --color: #{$white};
 }
 
 .btn-right{
   float: right;
-  background-color: #333333;
+  background-color: map-get($colors, primary_black);
   padding: 12px;
-  color: #F7B500;
+  color: map-get($colors, vivid_orange);
   font-family: "Noto Sans";
   font-size: 14px;
   text-transform: uppercase;

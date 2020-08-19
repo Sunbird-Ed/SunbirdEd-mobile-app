@@ -123,3 +123,10 @@
 .bg-transparent {
   background: transparent;
 }
+.clearfix {
+  &::after {
+    clear: both;
+    content: "";
+    display: block;
+  }
+}

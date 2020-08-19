@@ -1,0 +1,47 @@
+<ion-header class="sb-popover-header" *ngIf="showHeader">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title class="sb-popover-title">{{sbPopoverHeading}}
+      <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="sb-popover-container ion-no-padding">
+  <!-- <div class="sb-popover-items">
+      <div class="icon-container" *ngIf="icon">
+        <ion-icon ios="{{icon?.ios}}" md="{{icon?.md}}"></ion-icon>
+      </div>
+  
+      <div class="sb-popover-content-details">
+        <div class="main-title">
+          {{selectedContents?.count}} {{sbPopoverMainTitle}} <span
+            *ngIf="selectedContents">({{selectedContents?.totalSize | fileSize}})</span>
+          <div class="meta-info" *ngIf="metaInfo">
+            {{metaInfo}}
+          </div>
+        </div>
+        <div class="sb-popover-content" *ngIf="sbPopoverContent">
+          {{sbPopoverContent}}
+        </div>
+      </div>
+    </div> -->
+  <ion-list lines="none" class="content-share">
+    <ion-radio-group [(ngModel)]="selectedVal">
+
+      <ion-item *ngFor="let item of formItems;">
+        <ion-label>{{item.title | translate }}</ion-label>
+        <ion-radio slot="start" value="{{item.index}}" [disabled]="!item.isEnabled">
+        </ion-radio>
+      </ion-item>
+
+    </ion-radio-group>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <div class="sb-popover-footer">
+    <button class="sb-popover-action-btn " [ngClass]="btn.btnClass"
+      *ngFor="let btn of actionsButtons,let btn_index=index" (click)="submit(btn_index)">
+      {{btn.btntext }}</button>
+  </div>
+</ion-footer>

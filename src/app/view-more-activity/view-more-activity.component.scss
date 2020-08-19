@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   button {
@@ -26,14 +27,14 @@
       padding-bottom: 16px;
     }
 
-    background-color: #ffffff;
+    background-color: map-get($colors, white);
     height: 100%;
     z-index: 1000;
     opacity: 1 !important;
   }
 
   .downloads-only {
-    background: #f8f8f8;
+    background: map-get($colors, white_f8);
     @include margin(-16px, -16px, 16px, -16px);
     @include padding(0, 16px);
   }
@@ -84,14 +85,14 @@
     background: linear-gradient(#008840, #008840 100px, white 100px, white 100%);
     padding: 8px;
     .title {
-      color: #FFFFFF;
+      color: map-get($colors, white);
       font-family: "Noto Sans";
       font-size: 16px;
       font-weight: bold;
       margin: 12px 0 0;
     }
     .count-text {
-      color: #FAFAFA;
+      color: map-get($colors, white_fa);
       font-family: "Noto Sans";
       font-size: 12px;
       margin: 0 0 12px;

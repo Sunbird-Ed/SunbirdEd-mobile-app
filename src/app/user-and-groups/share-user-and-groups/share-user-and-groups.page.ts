@@ -2,8 +2,8 @@ import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import { LoadingController, Platform } from '@ionic/angular';
 import {
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupServiceDeprecated,
+  GroupDeprecated,
   Profile,
   ProfileExportRequest,
   ProfileExportResponse,
@@ -32,9 +32,9 @@ declare const cordova;
 })
 export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
   ProfileType = ProfileType;
-  groupName: Group;
+  groupName: GroupDeprecated;
   userList: Array<Profile> = [];
-  groupList: Array<Group> = [];
+  groupList: Array<GroupDeprecated> = [];
 
   selectedUserList: Array<string> = [];
   selectedGroupList: Array<string> = [];
@@ -46,7 +46,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
   headerObservable: any;
 
   constructor(
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private zone: NgZone,
     private socialShare: SocialSharing,
@@ -92,7 +92,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     this.profileService.getAllProfiles(profileRequest).pipe(
       map((profiles) => profiles.filter((profile) => !!profile.handle))
     )
-    .toPromise()
+      .toPromise()
       .then((profiles) => {
         this.zone.run(() => {
           if (profiles && profiles.length) {
@@ -108,7 +108,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
 
   getAllGroup() {
     this.zone.run(() => {
-      this.groupService.getAllGroups().subscribe((groups: Group[]) => {
+      this.groupService.getAllGroups().subscribe((groups: GroupDeprecated[]) => {
         if (groups && groups.length) {
           this.groupList = groups;
         }
@@ -121,13 +121,13 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
           this.profileService.getAllProfiles(gruopUserRequest).pipe(
             map((profiles) => profiles.filter((profile) => !!profile.handle))
           ).toPromise().then((profiles) => {
-              this.zone.run(() => {
-                if (profiles && profiles.length) {
-                  this.userGroupMap.set(group.gid, profiles);
-                }
-              });
-            }).catch(() => {
+            this.zone.run(() => {
+              if (profiles && profiles.length) {
+                this.userGroupMap.set(group.gid, profiles);
+              }
             });
+          }).catch(() => {
+          });
         });
       }, (error) => {
         console.log('Something went wrong while fetching data', error);
