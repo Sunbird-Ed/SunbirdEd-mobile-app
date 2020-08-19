@@ -1,9 +1,11 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 
 ion-tabs {
   ion-tab-button {
-  }
+    --color-selected: #{$blue};
+   }
   .rm-before{
     &::before {
       position: relative !important;

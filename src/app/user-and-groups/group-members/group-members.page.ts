@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import {
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupServiceDeprecated,
+  GroupDeprecated,
+  ProfilesToGroupRequestDeprecated,
   Profile,
   ProfileService,
-  ProfilesToGroupRequest,
   ProfileType
 } from 'sunbird-sdk';
 import {
@@ -33,7 +33,7 @@ import { map } from 'rxjs/operators';
 })
 export class GroupMembersPage implements OnInit {
   ProfileType = ProfileType;
-  group: Group;
+  group: GroupDeprecated;
   userList: Array<Profile> = [];
   userSelectionMap: Map<string, boolean> = new Map();
   lastCreatedProfileData: any;
@@ -41,7 +41,7 @@ export class GroupMembersPage implements OnInit {
   backButtonFunc: Subscription;
 
   constructor(
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
@@ -90,11 +90,11 @@ export class GroupMembersPage implements OnInit {
       this.profileService.getAllProfiles(req).pipe(
         map((profiles) => profiles.filter((profile) => !!profile.handle))
       ).toPromise().then((lastCreatedProfile: any) => {
-          this.lastCreatedProfileData = lastCreatedProfile;
-          resolve(lastCreatedProfile);
-        }).catch(() => {
-          reject(null);
-        });
+        this.lastCreatedProfileData = lastCreatedProfile;
+        resolve(lastCreatedProfile);
+      }).catch(() => {
+        reject(null);
+      });
     });
   }
 
@@ -106,17 +106,17 @@ export class GroupMembersPage implements OnInit {
     this.zone.run(() => {
       this.profileService.getAllProfiles(profileRequest).pipe(
         map((profiles) => profiles.filter((profile) => !!profile.handle))
-        ).toPromise().then(async (profiles) => {
-          const loader = await this.commonUtilService.getLoader();
-          await loader.present();
-          this.zone.run(async () => {
-            if (profiles && profiles.length) {
-              this.userList = profiles;
-              await loader.dismiss();
-              this.loading = false;
-            }
-          });
+      ).toPromise().then(async (profiles) => {
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        this.zone.run(async () => {
+          if (profiles && profiles.length) {
+            this.userList = profiles;
+            await loader.dismiss();
+            this.loading = false;
+          }
         });
+      });
     });
   }
 
@@ -144,11 +144,11 @@ export class GroupMembersPage implements OnInit {
       console.log(this.userSelectionMap);
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.SELECT_ALL_CLICKED,
-        Environment.USER,
-        PageId.CREATE_GROUP,
-        undefined
+      InteractType.TOUCH,
+      InteractSubtype.SELECT_ALL_CLICKED,
+      Environment.USER,
+      PageId.CREATE_GROUP,
+      undefined
     );
     // });
   }
@@ -164,7 +164,7 @@ export class GroupMembersPage implements OnInit {
       };
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     }).catch((error) => {
-      const navigationExtras: NavigationExtras = { state: { isNewUser: true} };
+      const navigationExtras: NavigationExtras = { state: { isNewUser: true } };
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     });
   }
@@ -190,7 +190,7 @@ export class GroupMembersPage implements OnInit {
           Environment.USER,
           PageId.CREATE_GROUP
         );
-        const req: ProfilesToGroupRequest = {
+        const req: ProfilesToGroupRequestDeprecated = {
           groupId: res.gid,
           uidList: selectedUids
         };
@@ -209,7 +209,7 @@ export class GroupMembersPage implements OnInit {
   }
 
 
-  getGradeNameFromCode(data: Profile | Group): string {
+  getGradeNameFromCode(data: Profile | GroupDeprecated): string {
     if (data.grade && data.grade.length > 0) {
       const gradeName = [];
       data.grade.forEach(code => {

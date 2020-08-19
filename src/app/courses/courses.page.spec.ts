@@ -239,6 +239,7 @@ describe('CoursesPage', () => {
     describe('ionViewWillLeave', () => {
         it('should unsubscribe eventservice and headerObservable by invoked ionViewWillLeave', () => {
             // arrange
+            coursesPage.refresher = {disabled: true};
             coursesPage.headerObservable = true;
             coursesPage.headerObservable = {
                 unsubscribe: jest.fn(() => true)

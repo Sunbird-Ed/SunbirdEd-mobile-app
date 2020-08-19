@@ -1,8 +1,9 @@
+@import "src/assets/styles/_variables.scss";
 :host {
 
     .close-button.button-outline-md {
         border-color: transparent;
-        color: #2e3f51;
+        color: map-get($colors, grayish_blue);
         background-color: transparent;
         box-shadow: none;
         opacity: 1;

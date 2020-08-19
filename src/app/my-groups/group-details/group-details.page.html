@@ -1,0 +1,126 @@
+<ion-content>
+  <div class="gd-page">
+    <div class="gd-header">
+      <div *ngIf="!isGroupLoading">
+        <div class="gd-title">
+          <div class="gd-name">
+            {{groupDetails?.name}}
+            <div class="gd-created-by" *ngIf="groupCreator">
+              {{'GROUP_CREATED_BY' | translate: {'group_creator_name': groupCreator?.name} }}
+            </div>
+          </div>
+          <div class="gd-opts">
+            <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <div class="m-n" *ngIf="isGroupLoading">
+        <div class="skeleton-header mb-8">
+          <app-skeleton-item height="18px" width="75%" style="height:18px; width:50%;"></app-skeleton-item>
+          <app-skeleton-item height="14px" width="75%" style="height:14px; width:90%; margin-top:8px;">
+          </app-skeleton-item>
+        </div>
+      </div>
+      <div class="gd-tab-header">
+        <div class="gd-tab" (click)="switchTabs('activities')" [ngClass]="{'active': activeTab=='activities'}">
+          <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
+        </div>
+        <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}">
+          <div class="gd-tab-name">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gd-tab-container">
+      <div class="gd-tab-content" *ngIf="activeTab=='members'">
+        <div class="gd-member-search">
+          <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+          <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}"
+            (ngModelChange)="onMemberSearch(searchMember)">
+        </div>
+        <div class="gd-tab-member-container">
+          <div class="gd-add-member-container">
+            <div *ngIf="loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
+              <span class="gd-add-member-icon">
+                <img src="assets/imgs/ic_person_add_white.svg">
+              </span>
+              <span class="gd-large-text">
+                {{'ADD_MEMBER' | translate}}
+              </span>
+            </div>
+          </div>
+          <div *ngIf="isGroupLoading">
+            <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
+              <sb-member-card [isLoading]="true"
+                [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"></sb-member-card>
+            </div>
+          </div>
+          <div *ngIf="!isGroupLoading">
+            <div *ngFor="let member of filteredMemberList; let i = index">
+              <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+                [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
+                [title]="getMemberName(member)" [isMenu]="showMemberMenu(member)" [isAdmin]="member.role === 'admin'"
+                (menuClick)="memberMenuClick($event, member)">
+              </sb-member-card>
+            </div>
+          </div>
+          <div *ngIf="(!isGroupLoading && !filteredMemberList) || (!isGroupLoading && filteredMemberList.length <= 1)"
+            class="text-center">
+            <div class="gd-empty-result" *ngIf="!memberSearchQuery">
+              <img src="assets/imgs/no_member.svg" alt="">
+            </div>
+            <div class="gd-empty-result" *ngIf="memberSearchQuery && !filteredMemberList.length">
+              <img src="assets/imgs/empty_search_result.svg" alt="">
+              <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="gd-tab-content" *ngIf="activeTab=='activities'">
+        <div class="gd-member-search">
+          <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+          <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
+            (ngModelChange)="onActivitySearch(searchActivity)">
+        </div>
+        <div *ngIf="!isGroupLoading && (!filteredActivityList || !filteredActivityList.length)" class="text-center">
+          <div class="gd-empty-result" *ngIf="!activitySearchQuery">
+            <img src="assets/imgs/no_activity.svg" alt="">
+          </div>
+          <div class="gd-empty-result" *ngIf="activitySearchQuery">
+            <img src="assets/imgs/empty_search_result.svg" alt="">
+            <p>{{'EMPTY_SEARCH_RESULT_GROUPS' | translate}}</p>
+          </div>
+        </div>
+        <div *ngIf="isGroupLoading">
+          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9]">
+            <sb-course-card [isLoading]="true"></sb-course-card>
+          </div>
+        </div>
+        <div *ngIf="!isGroupLoading">
+          <div *ngFor="let activity of filteredActivityList; let i = index" class="mb-8">
+            <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
+              [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo"
+              (click)="onActivityCardClick(activity)" [isMenu]="loggedinUser.role === 'admin'"
+              (menuClick)="activityMenuClick($event, activity)">
+            </sb-course-card>
+          </div>
+        </div>
+
+        <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
+          (click)="openCourseDetails(course)"></sb-course-card> -->
+        <!-- <div *ngFor="let item of [0,1,2,3,4]" class="mb-8 mt-8">
+        <sb-course-card [isLoading]="true"></sb-course-card>
+      </div> -->
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer *ngIf="activeTab=='activities' && loggedinUser?.role === 'admin'">
+  <div class="cd-btn">
+    <button class="sb-btn-large" (click)="showAddActivityPopup()">
+      + {{'ADD_ACTIVITY' | translate}}
+    </button>
+  </div>
+</ion-footer>

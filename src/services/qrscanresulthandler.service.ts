@@ -133,7 +133,7 @@ export class QRScannerResultHandler {
         shouldGenerateEndTelemetry: true
       }
     };
-
+    this.generateImpressionEvent(this.source, dialCode);
     this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
@@ -290,5 +290,16 @@ export class QRScannerResultHandler {
         telemetryObject
       );
     }
+  }
+
+  private generateImpressionEvent(source, dialCode) {
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({id: dialCode, type: CorReleationDataType.QR});
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.PAGE_REQUEST, '',
+      PageId.QR_BOOK_RESULT,
+      source ? Environment.ONBOARDING : Environment.HOME, '', '', '',
+      undefined,
+      corRelationList);
   }
 }

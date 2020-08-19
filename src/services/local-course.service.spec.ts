@@ -542,4 +542,37 @@ describe('LocalCourseService', () => {
     });
   });
 
+  describe('getCourseProgress', () => {
+    it('should calculate and return course progress', (done) => {
+      // arrange
+      mockAppGlobalService.getUserId = jest.fn(() => 'user');
+      const context = {
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2 
+      };
+      const contentStatus = {
+                contentList: [{contentId: 'id1', status: 2}]
+            };
+      mockCourseService.getContentState = jest.fn(() => of(contentStatus));
+      // act
+      localCourseService.getCourseProgress(context).then((res) => {
+        expect(res).toBe(100);
+        done();
+      });
+    });
+
+    it('should return 0 progress in case of failure ', (done) => {
+      // arrange
+      mockAppGlobalService.getUserId = jest.fn(() => 'user');
+      const context = {
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2 
+      };
+      mockCourseService.getContentState = jest.fn(() => throwError(''));
+      // act
+      localCourseService.getCourseProgress(context).then((res) => {
+        expect(res).toBe(0);
+        done();
+      });
+    });
+  });
+
 });

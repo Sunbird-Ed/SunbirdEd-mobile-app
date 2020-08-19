@@ -49,7 +49,9 @@ import {
   AuthService,
   DownloadTracking,
   DownloadService,
-  AuditState
+  AuditState,
+  GroupService,
+  AddActivitiesRequest
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -180,6 +182,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
+  groupId: string;
+  isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
@@ -233,6 +237,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -263,6 +268,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+      }
+      this.groupId = extrasState.groupId;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
@@ -798,6 +807,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     contentContextMap['userId'] = userId;
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
+    contentContextMap['isCertified'] = this.isCertifiedCourse;
+    // const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+    const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+    contentContextMap['leafNodeIds'] = leafNodeIds;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
@@ -876,7 +889,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.contentService.importContent(option).toPromise()
       .then((data: ContentImportResponse[]) => {
         this.zone.run(() => {
-          if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
+          if (data && data.length && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
             this.headerService.showHeaderWithBackButton();
           }
@@ -1027,17 +1040,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }, []);
   }
 
-  private getLeafNodeIdsWithoutDuplicates(contents: Content[]) {
+  private getLeafNodeIdsWithoutDuplicates(contents: Content[]): Set<string> {
     return contents.reduce((acc, content) => {
       if (content.children) {
-        acc = acc.concat(this.getLeafNodeIdsWithoutDuplicates(content.children));
+        this.getLeafNodeIdsWithoutDuplicates(content.children).forEach((c) => acc.add(c));
       } else {
-        if (acc.indexOf(content.identifier) === -1) {
-          acc.push(content.identifier);
+        if (!acc.has(content.identifier)) {
+          if (content.mimeType !== MimeType.COLLECTION) {
+            acc.add(content.identifier);
+          }
         }
       }
       return acc;
-    }, []);
+    }, new Set<string>());
   }
 
   /**
@@ -1722,12 +1737,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   getLocalCourseAndUnitProgress() {
     const courseLevelViewedContents = [];
     this.courseHeirarchy.children.forEach(collection => {
-      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([collection]);
+      const leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([collection]));
       const UnitLevelViewedContents = [];
       for (const contentId of leafNodeIds) {
         if (this.contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
-          UnitLevelViewedContents.push(contentId);
-          courseLevelViewedContents.push(contentId);
+          if (UnitLevelViewedContents.indexOf(contentId) === -1) {
+            UnitLevelViewedContents.push(contentId);
+          }
+          if (courseLevelViewedContents.indexOf(contentId) === -1) {
+            courseLevelViewedContents.push(contentId);
+          }
         }
       }
       if (UnitLevelViewedContents.length) {
@@ -1735,7 +1754,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
     });
     if (courseLevelViewedContents.length) {
-      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+      const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     }
     if (!this.course.progress || this.course.progress !== 100) {
@@ -1745,16 +1764,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.appGlobalService.generateCourseCompleteTelemetry = false;
       const cdata = [
         {
-            type: 'CourseId',
-            id: this.identifier
+          type: 'CourseId',
+          id: this.identifier
         },
         {
-            type: 'BatchId',
-            id: this.batchDetails.id || ''
+          type: 'BatchId',
+          id: this.batchDetails.id || ''
         },
         {
-            type: 'UserId',
-            id: this.userId
+          type: 'UserId',
+          id: this.userId
         },
       ];
       this.telemetryGeneratorService.generateAuditTelemetry(
@@ -1946,6 +1965,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   onTocCardClick(event) {
+    // If from group flow then should not go to next page.
+    if (this.isFromGroupFlow) {
+      return;
+    }
+
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -2002,6 +2026,74 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
+  }
+
+  async addToGroupActivity() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      return;
+    }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.ADD_TO_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.COURSE_DETAIL);
+
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.INITIATED,
+      '',
+      Environment.GROUP,
+      PageId.COURSE_DETAIL,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelationList,
+      ID.ADD_ACTIVITY_TO_GROUP);
+    const addActivitiesRequest: AddActivitiesRequest = {
+      groupId: this.groupId,
+      addActivitiesRequest: {
+        activities: [
+          {
+            id: this.identifier,
+            type: 'Course'
+          }
+        ]
+      }
+    };
+
+    try {
+      const addActivityResponse = await this.groupService.addActivities(addActivitiesRequest).toPromise();
+
+      await loader.dismiss();
+      if (addActivityResponse.error
+        && addActivityResponse.error.activities
+        && addActivityResponse.error.activities.length) {
+        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        this.location.back();
+      } else {
+        this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.COURSE_DETAIL,
+          undefined,
+          undefined,
+          undefined,
+          this.corRelationList,
+          ID.ADD_ACTIVITY_TO_GROUP
+        );
+        window.history.go(-2);
+      }
+    } catch (e) {
+      await loader.dismiss();
+      this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+      console.error(e);
+      this.location.back();
+    }
   }
 
 }

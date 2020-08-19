@@ -30,12 +30,12 @@ export class ExploreBooksSortComponent implements OnInit {
   };
 
   constructor(
-    private navParams: NavParams,
-    private platform: Platform,
-    private commonUtilService: CommonUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private fb: FormBuilder,
-    private modalCtrl: ModalController
+      private navParams: NavParams,
+      private platform: Platform,
+      private commonUtilService: CommonUtilService,
+      private telemetryGeneratorService: TelemetryGeneratorService,
+      private fb: FormBuilder,
+      private modalCtrl: ModalController
   ) {
     this.initForm();
   }

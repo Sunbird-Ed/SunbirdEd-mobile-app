@@ -1,4 +1,5 @@
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
 
 .flex-grow-1{
     flex-grow: 1;
@@ -14,7 +15,7 @@
         margin-right: 10px !important;
     }
     .share-link{
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid map-get($colors, empty_color);
     }
     .share-url{
         margin-left: 50px;
@@ -22,29 +23,29 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         margin-right: 15px;
-        border: 1px solid #EDF4F9;
+        border: 1px solid $light-blue;
         padding: 5px;
-        color: #a4a4a4;
+        color: map-get($colors, gray_solid);
         position: relative;
         top: -10px;
     }
     .share-desc{
         text-align: left;
         margin-left: 50px;
-        color: #a4a4a4;
+        color: map-get($colors, gray_solid);
         position: relative;
         top: -10px;
     }
     .share-info{
-        background: #EDF4F9;
+        background: $light-blue;
         margin-left: 20px;
         padding: 5px;
         margin-right: 15px;
         text-align: left;
         margin-bottom: 20px;
-        color: #333333a1;
+        color: map-get($colors, light_black);
         ion-icon{
-            color: #a4a4a4;
+            color: map-get($colors, gray_solid);
             position: relative;
             top: 3px;
         }

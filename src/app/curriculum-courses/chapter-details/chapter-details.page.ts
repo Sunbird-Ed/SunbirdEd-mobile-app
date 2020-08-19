@@ -85,6 +85,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   headerObservable: Subscription;
   backButtonFunc: Subscription;
   public objRollup: Rollup;
+
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -504,6 +505,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         moduleId: this.chapter.identifier,
         subContentIds: this.subContentIds,
         // corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
         pageId: PageId.CHAPTER_DETAILS,
         shareItemType: ShareItemType.ROOT_COLECTION
       },
@@ -513,7 +515,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   openContentDetails(event) {
-    if (Object.keys(event.event).length !== 0) {
+    if ((event.event && Object.keys(event.event).length !== 0) || event.isFromDeeplink) {
       if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
@@ -648,7 +650,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async joinTraining() {
-    if (!this.batches.length) {
+    if (!this.batches || !this.batches.length) {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
     } else if (

@@ -1,0 +1,17 @@
+<ion-content>
+    <div class="course-completion-popup-container">
+        <div class="cc-popup-close clearfix">
+            <ion-icon class="pull-right" name="md-close" (click)="close()"></ion-icon>
+        </div>
+        <div class="ion-text-center">
+            <div>
+                <img src="assets/imgs/Badge green.svg" alt="">
+            </div>
+            <div class="course-completion-title">{{'CONGRATULATIONS' | translate}}</div>
+            <div class="course-completion-info">{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</div>
+            <!-- <div class="course-completion-cert" *ngIf="isCertified">{{'COURSE_COMPLETION_POPUP_DESC' | translate}}</div> -->
+            <div class="course-completion-cert" *ngIf="isOnline && !isCertified">{{'COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | translate}}</div>
+        </div>
+       </div>
+  </ion-content>
+    

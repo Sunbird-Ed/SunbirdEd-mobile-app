@@ -226,4 +226,14 @@ export class UtilityService {
                 });
         });
     }
+
+    verifyCaptcha(apiKey: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            sbutility.verifyCaptcha(apiKey, (data) => {
+                resolve(data);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
 }

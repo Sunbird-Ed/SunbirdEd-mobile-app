@@ -1,4 +1,5 @@
 @import "src/assets/styles/variables.scss";
+@import "src/assets/styles/_variables.scss";
 
 .merged-input-container {
     border: 1px solid $info-color;
@@ -22,7 +23,7 @@
 }
 .sb-input-black {
     @extend .sb-input;
-    border: 1px solid #333333;
+    border: 1px solid map-get($colors, primary_black);
 }
 
 .sb-input-info {
@@ -39,19 +40,19 @@ input:focus {
     outline: $info-color auto 1px;
 }
 .input-container {
-    border: 0.5px solid #333333;
+    border: 0.5px solid map-get($colors, primary_black);
     padding: 8px;
     border-radius: 3px;
 
     .input {
-        border: #ffffff;
+        border: map-get($colors, white);
         outline: none;
     }
 
     .input-icon {
         float: right;
         font-size: 20px;
-        color: #333333;
+        color: map-get($colors, primary_black);
     }
 }
 .showList {

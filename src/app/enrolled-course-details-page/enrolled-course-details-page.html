@@ -12,7 +12,27 @@
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
 			<ion-card-content>
-				<div *ngIf="!isAlreadyEnrolled">
+				<div *ngIf="isFromGroupFlow">
+					<button class="enrolled-course-card-button"
+						(click)="addToGroupActivity();">{{'ADD_TO_GROUP_ACTIVITY' | translate}}</button>
+					<div class="enrollment-info"
+						*ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
+						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
+							<div *ngIf="batchCount">
+								<ion-icon class="information-icon" name="information-circle"></ion-icon> {{batchCount}}
+								{{'BATCHES_AVAILABLE' | translate}}
+							</div>
+							<div *ngIf="enrollmentEndDate">
+								<ion-icon class="information-icon" name="information-circle"></ion-icon>
+								{{'LAST_DATE_TO_JOIN' | translate:{'%s': enrollmentEndDate | date} }}
+							</div>
+							<div *ngIf="!enrollmentEndDate && batchEndDate">
+								{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
+							</div>
+						</ion-card-subtitle>
+					</div>
+				</div>
+				<div *ngIf="!isFromGroupFlow && !isAlreadyEnrolled">
 					<div class="enrollment-info"
 						*ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
 						<button class="enrolled-course-card-button"
@@ -49,10 +69,10 @@
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
+								<div class="wrapper sb-btn-tile-group"
+									*ngIf="!isFromGroupFlow && course?.progress !==100">
 									<div *ngIf="trackDownloads$ | async; let downloads">
-										<button *ngIf="downloadIdentifiers.size"
-											[disabled]="downloads.queued.length"
+										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
@@ -77,8 +97,8 @@
 												src="assets/imgs/menu.svg" alt="menu-icon">
 										</div>
 									</div>
-
 								</div>
+
 								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container"
 										*ngIf="!showSheenAnimation && course?.progress!==100 && !batchExp">
@@ -113,7 +133,7 @@
 				</div>
 			</ion-card-content>
 			<div #stickyPillsRef
-				*ngIf="!showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
+				*ngIf="!isFromGroupFlow && !showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
 				class="enrolled-course-container">
 				<ion-card class="enrolled-course-card">
 					<ion-card-content class="ion-padding-top">
@@ -124,13 +144,13 @@
 							class="enrolled-course-card-button" (click)="startContent()">
 							<span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
-								{{ 'START_COURSE_NOW' | translate }} </span>
+								{{ 'START_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="showResumeBtn && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="resumeContent()">
 							<span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
-								{{ 'CONTINUE_NOW' | translate }} </span>
+								{{ 'CONTINUE_LEARNING' | translate }} </span>
 						</button>
 						<button *ngIf="nextContent?.contentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent()">
@@ -240,14 +260,17 @@
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
-						<div *ngIf="isCertifiedCourse" class="certificate-container">
+						<div *ngIf="!isCertifiedCourse" class="certificate-container">
 							<div class="certificate-icon">
 								<img class="certificate-icon" src="assets/imgs/Certificate icon.svg"
 									alt="certificate-icon">
 							</div>
 							<div class="certificate-text">
-								<ion-card-title class="font-10 certified-section-color font-weight-900">
+								<!-- <ion-card-title class="font-10 certified-section-color font-weight-900">
 									{{'CERTIFIED_TRAINING' | translate}}
+								</ion-card-title> -->
+								<ion-card-title class="font-10 certified-section-color font-weight-900">
+									{{'COURSE_NO_CERTIFICATE_MESSAGE' | translate}}
 								</ion-card-title>
 							</div>
 						</div>

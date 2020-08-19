@@ -1,14 +1,16 @@
+@import "src/assets/styles/_variables.scss";
+
 .mu-title{
   font-size: 16px;
   font-weight: bold;
-  color: #666666;
+  color: map-get($colors, granite_gray);
   margin: 16px;
 }
 
 .mu-selected-user{
-  border: 0.5px solid #007AFF;
+  border: 0.5px solid map-get($colors, primary_blue);
   border-radius: 2px;
-  background-color: #E0EFFF;
+  background-color: map-get($colors, pale_blue_e0);
   position: relative;
 }
 
@@ -28,14 +30,14 @@ ion-button{
 .add-user{
   padding: 0 8px;
   ion-button{
-    --background: #BFE1CF !important;
-    color: #008840;
+    --background: #{map-get($colors, light_grayish_green)} !important;
+    color: $green;
   }
 }
 
 ion-footer{
   ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
   }
 }
 
@@ -45,13 +47,13 @@ ion-footer{
 }
 
 .button-outline{
-  --background: #E5EDF5 !important;
-  --border-color: #E5EDF5 !important;
+  --background: #{map-get($colors, pale_blue)} !important;
+  --border-color: #{map-get($colors, pale_blue)} !important;
 }
 
 .sb-new-btn {
-  background-color: #024F9D;
-  color: #FFFFFF;
+  background-color: $blue;
+  color: map-get($colors, white);
   width: 100%;
   height: 40px;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
@@ -60,8 +62,8 @@ ion-footer{
 }
 
 .sb-new-btn-success {
-  background-color: #BFE1CF;
-  color: #008840;
+  background-color: map-get($colors, light_grayish_green);
+  color: $green;
   width: 100%;
   height: 40px;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);

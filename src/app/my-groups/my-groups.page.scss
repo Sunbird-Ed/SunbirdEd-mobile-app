@@ -1,0 +1,70 @@
+@import "src/assets/styles/_variables.scss";
+.my-cr-bg {
+  height: 100%;
+  background: linear-gradient(#E5EDF5, #E5EDF5 88px, white 88px, white 100%);
+  padding: 0 8px;
+}
+
+.my-cr-title{
+  color: $blue;
+  font-family: "Noto Sans";
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 16px;
+  padding: 24px 16px 16px;
+  margin: 0;
+  position: relative;
+  img{
+    position: absolute;
+    right: 16px;
+    top: 20px;
+  }
+}
+
+.my-cr-card{
+  border-radius: 2px;
+  background-color: #FFFFFF;
+  box-shadow: 0 3px 5px 4px rgba(0,0,0,0.05);
+  margin: 0 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  justify-content: space-between;
+}
+
+.my-cr-card-img{
+  padding-top: 48px;
+  padding-bottom: 16px;
+}
+
+.my-cr-subtitle{
+  color: $gray-800;
+  font-family: "Noto Sans";
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: 22px;
+  text-align: center;
+  padding: 20px 10%;
+}
+
+.mg-list-card-container{
+  margin-bottom: 8px;
+}
+
+.my-cr-btn{
+    padding: 0px 8px 24px;
+    ion-button{
+      --background: $blue !important;
+      
+    }
+    .sb-btn-large{
+      padding: 16px 0px 16px 0px;
+      img{
+        margin-right: 8px;
+        position: relative;
+        bottom: 2px;
+      }
+    }
+}

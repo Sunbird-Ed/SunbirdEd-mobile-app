@@ -9,7 +9,7 @@
     margin-top: $base-block-space * 3;
   }
   .item-label-stacked ion-select {
-    border: 1px solid #006de5;
+    border: 1px solid map-get($colors, primary);
     margin-top: 8px;
     padding-right: 15px !important;
     padding-left: 15px !important;
@@ -41,18 +41,18 @@
 
   .item-label-stacked.item-select-disabled {
     .label-md {
-      color: #cccccc;
+      color: map-get($colors, medium_gray);
     }
     ion-select {
-      border-color: #cccccc;
+      border-color: map-get($colors, medium_gray);
       .select-icon {
         .select-icon-inner {
-          border-color: #cccccc;
+          border-color: map-get($colors, medium_gray);
           animation: none;
         }
       }
       .select-placeholder {
-        color: #cccccc;
+        color: map-get($colors, medium_gray);
       }
     }
   }

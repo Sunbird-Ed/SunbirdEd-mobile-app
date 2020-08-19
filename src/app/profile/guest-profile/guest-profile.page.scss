@@ -62,7 +62,7 @@
 
   .vertical-align {
     vertical-align: sub;
-    color: #979797;
+    color: map-get($colors, dark_gray);
     font-size: 1rem;
     @extend .font-weight-700;
   }
@@ -80,7 +80,7 @@
   }
 
   .details-container {
-    border-top: solid #ccc;
+    border-top: solid map-get($colors, medium_gray);
     h2 {
       margin-top: 10px !important;
       margin-bottom: 10px;

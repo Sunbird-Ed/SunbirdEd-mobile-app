@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult, CachedItemRequestSourceFrom
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult, CachedItemRequestSourceFrom, CorrelationData, AuditState
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig, RegexPatterns } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -17,7 +17,9 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-  ID
+  ID,
+  CorReleationDataType,
+  AuditType
 } from '@app/services/telemetry-constants';
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
@@ -160,6 +162,7 @@ export class DistrictMappingPage {
       this.showStates = false;
       this.stateName = name;
       this.stateCode = code;
+      this.generateTelemetryForCategorySelect(name, true);
       await this.getDistrict(id);
     });
   }
@@ -173,6 +176,7 @@ export class DistrictMappingPage {
       this.districtName = name;
       this.districtCode = code;
       this.showDistrict = false;
+      this.generateTelemetryForCategorySelect(name, false);
     });
   }
 
@@ -186,6 +190,11 @@ export class DistrictMappingPage {
   }
 
   goBack(isNavClicked: boolean) {
+    this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+      !isNavClicked,
+      this.getEnvironment(),
+      PageId.LOCATION
+    );
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, this.getEnvironment(),
       isNavClicked);
     this.location.back();
@@ -194,6 +203,11 @@ export class DistrictMappingPage {
   async ionViewWillEnter() {
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.PAGE_REQUEST, '',
+      PageId.LOCATION,
+      this.getEnvironment()
+    );
     this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW,
         '',
@@ -204,6 +218,20 @@ export class DistrictMappingPage {
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
+    const correlationList: Array<CorrelationData> = [];
+    if (this.stateName) {
+      correlationList.push({ id: this.stateName, type: CorReleationDataType.STATE });
+      correlationList.push({ id: this.districtName, type: CorReleationDataType.DISTRICT });
+    }
+    this.telemetryGeneratorService.generatePageLoadedTelemetry(
+      PageId.LOCATION,
+      this.getEnvironment(),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
+    );
   }
 
   async checkLocationAvailability() {
@@ -355,6 +383,18 @@ export class DistrictMappingPage {
       this.districtName !== this.availableLocationDistrict) {
       isLocationUpdated = true;
     }
+    const corReletionList: CorrelationData[] = [];
+    corReletionList.push({id: this.stateName, type: CorReleationDataType.STATE}),
+    corReletionList.push({id: this.districtName, type: CorReleationDataType.DISTRICT});
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_SUBMIT, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      corReletionList
+    );
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
@@ -429,6 +469,16 @@ export class DistrictMappingPage {
           loginMode: 'guest'
         }
       };
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        this.getEnvironment(),
+        AuditState.AUDIT_UPDATED,
+        undefined,
+        AuditType.SET_PROFILE,
+        undefined,
+        undefined,
+        undefined,
+        corReletionList
+      );
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
   }
@@ -518,5 +568,60 @@ export class DistrictMappingPage {
 
   resetDistrictCode() {
     this.districtCode = '';
+  }
+
+  cancelEvent(category?: string) {
+    const correlationList: Array<CorrelationData> = [];
+    /* New Telemetry */
+    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CANCEL, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
+    );
+  }
+
+  onCategoryCliked(category: string) {
+    const correlationList: Array<CorrelationData> = [];
+    const correlationData: CorrelationData = new CorrelationData();
+    switch (category) {
+      case 'state':
+        correlationData.id = this.stateList.length.toString();
+        correlationData.type = CorReleationDataType.STATE;
+        break;
+      case 'district':
+        correlationData.id = this.districtList.length.toString();
+        correlationData.type = CorReleationDataType.DISTRICT;
+        break;
+    }
+    correlationList.push(correlationData);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CATEGORY, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
+    );
+  }
+
+  generateTelemetryForCategorySelect(value, isState) {
+    const corRelationList: CorrelationData[] = [{id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI}];
+    corRelationList.push({id: value,
+      type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT});
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_SUBMIT, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList
+    );
   }
 }

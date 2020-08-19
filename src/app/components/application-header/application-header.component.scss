@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 
 ion-icon {
     width: 30px;
@@ -12,7 +13,7 @@ ion-icon {
   }
 :host {
     ion-title.color {
-        color:#024f9d;
+        color:$blue;
         font-weight:bold;
     }
 }
@@ -22,22 +23,22 @@ ion-icon {
 }
 
 .new-feature-badge{
-    color: #FFFFFF;
+    color: map-get($colors, white);
     margin-left: 8px;
-    background-color: #FF6979;
+    background-color: map-get($colors, bright_red);
     font-size: 8px;
     font-weight: bold;
     height: 12px;
     .square-badge{
-        padding: 0 6px;
+        padding: 1px 6px;
         float: left;
         line-height: 1.5;
     }
     .circle-badge{
         float: right;
-        border: 1px solid white;
+        border: 1px solid map-get($colors, white);
         border-radius: 16px 0 0 16px;
-        background-color: white;
+        background-color: map-get($colors, white);
         height: 12px;
         width: 16px;
     }
@@ -45,10 +46,10 @@ ion-icon {
 
 .user-container{
     padding: 8px;
-    background-color: #EDF4F9;
+    background-color: $light-blue;
 
     .use-app-label{
-        color: #666666;
+        color: map-get($colors, granite_gray);
         font-family: "Noto Sans";
         font-size: 14px;
         letter-spacing: 0;
@@ -67,8 +68,8 @@ ion-icon {
 }
 
 .another-user-title{
-    background-color: #BFE1CF;
-    color: #008840;
+    background-color: map-get($colors, light_grayish_green);
+    color: $green;
     font-family: "Noto Sans";
     font-size: 16px;
     letter-spacing: 0;

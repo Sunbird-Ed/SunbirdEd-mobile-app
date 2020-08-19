@@ -7,7 +7,6 @@ import {
   SystemSettingsService
 } from 'sunbird-sdk';
 import { PreferenceKey, SystemSettingsIds, ContentConstants } from '../app/app.constant';
-import { CommonUtilService } from './common-util.service';
 
 @Injectable()
 export class ComingSoonMessageService {
@@ -15,8 +14,7 @@ export class ComingSoonMessageService {
   constructor(
     @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private commonUtilService: CommonUtilService
+    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
   }
 
@@ -59,7 +57,7 @@ export class ComingSoonMessageService {
           return tenantMessageTranslations[selectedLanguage] || tenantMessage.value;
         }
       }
-      return this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED', {content_name : content.contentData.name });
+      return undefined;
     }
   }
 }

@@ -10,10 +10,10 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons class="search-buttons-group" slot="primary" *ngIf="!dialCode">
-      <ion-button icon-only (click)="handleSearch()" *ngIf="searchKeywords && !filterIcon">
+      <ion-button icon-only (click)="handleSearch()" *ngIf="(searchKeywords && !filterIcon) || (!searchKeywords && isFromGroupFlow)">
         <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_search.svg" alt="search">
       </ion-button>
-      <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon">
+      <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
         <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_close.svg" alt="close">
       </ion-button>
       <ion-button icon-only (click)="showFilter()" *ngIf="filterIcon">
@@ -108,11 +108,11 @@
         <div class="sb-textbook-container">
           <div class="sb-textbook-items">
             <div class="sb-textbook-title-container">
-              <span class="textbook-icon">
+              <!-- <span class="textbook-icon">
                 <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
-              </span>
+              </span> -->
               <span class="textbook-title">
-                Courses
+                {{'COURSES' | translate}}
               </span>
             </div>
             <!-- Card style -->
@@ -132,7 +132,8 @@
                     {{ (content.name && content.name.length > 30) ? (content.name | slice:0:30) + '...' : (content.name) }}
                   </div>
                   <div class="grade_ellipsis">
-                    <span class="info subject">{{ content.size | fileSize: 0}}</span>
+                    <span *ngIf="content.orgDetails" class="info subject">{{ content.orgDetails.orgName}}</span>
+                    <span *ngIf="!content.orgDetails" class="info subject">{{ content.organisation | csa}}</span>
                   </div>
                 </div>
               </div>
@@ -143,13 +144,24 @@
 
       <div *ngIf="resultlist && !resultlist.isCourse">
         <div class="px-8">
+          
           <div class="pt-8">
-            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+            <!-- <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
               {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(resultlist)} }}
+              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+            </p> -->
+            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
               <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
             </p>
           </div>
           <!-- Collection List -->
+          <div class="sb-textbook-title-container">
+            <!-- <span class="textbook-icon">
+              <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
+            </span> -->
+            <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
+          </div>
           <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
 
             <div *ngIf="result && result.content && result.content.length">
@@ -194,8 +206,11 @@
 
   <div *ngIf="searchContentResult && searchContentResult.length">
     <div class="sb-search-history-entry sb-search-header-meta row">
-      <div class="col">
+      <div class="col" *ngIf="searchKeywords">
         {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
+      </div>
+      <div class="col" *ngIf="!searchKeywords">
+        {{'RECOMMENDATION_BASED_ON_PROFILE' | translate }}
       </div>
     </div>
     <div class="sb-card-container sb-card-textbook-container">

@@ -5,7 +5,7 @@ import { AppGlobalService, AppHeaderService, CommonUtilService,
          TelemetryGeneratorService, PageId, Environment, ImpressionType,
          InteractSubtype, InteractType } from '@app/services';
 import { CourseService, Course, CourseBatchStatus, TelemetryObject } from '@project-sunbird/sunbird-sdk';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 
@@ -55,42 +55,128 @@ describe('CurriculumCoursesPage', () => {
         expect(curriculumCoursesPage).toBeTruthy();
     });
 
-    it('should handle header back button', () => {
-        mockAppHeaderService.showHeaderWithBackButton = jest.fn();
-        const mockConfig = {
-            subscribe: jest.fn(() => { })
-        };
-        mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
-        jest.spyOn(curriculumCoursesPage, 'handleHeaderEvents').mockImplementation(() => {
-            return;
+    describe('ionViewWillEnter', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            mockAppHeaderService.showHeaderWithBackButton = jest.fn();
+            const mockConfig = {
+                subscribe: jest.fn(() => { })
+            };
+            mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
+            jest.spyOn(curriculumCoursesPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+            mockPlatform.backButton = {
+                    subscribeWithPriority: subscribeWithPriorityData,
+                } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
+            curriculumCoursesPage.courseList = [
+                {
+                    identifier: 'do_some_identifier'
+                }
+            ] as any;
         });
-        const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
-        mockPlatform.backButton = {
-                subscribeWithPriority: subscribeWithPriorityData,
-            } as any;
-        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
-        mockLocation.back = jest.fn();
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-        // act
-        curriculumCoursesPage.ionViewWillEnter();
-        // assert
-        expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
-        expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
-        expect(mockPlatform.backButton).not.toBeUndefined();
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-            PageId.COURSE_LIST,
-            Environment.HOME, false
-        );
-        expect(mockLocation.back).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            '',
-            PageId.COURSE_LIST,
-            Environment.HOME
-        );
+
+        it('should handle header back button', () => {
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            // act
+            curriculumCoursesPage.ionViewWillEnter();
+            // assert
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+            expect(mockPlatform.backButton).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.COURSE_LIST,
+                Environment.HOME, false
+            );
+            expect(mockLocation.back).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.COURSE_LIST,
+                Environment.HOME
+            );
+        });
+
+        it('should handle getEnrolledCourses() failure', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+            curriculumCoursesPage.appliedFilter = {};
+            mockCourseService.getUserEnrolledCourses = jest.fn(() => throwError(''));
+            // act
+            curriculumCoursesPage.ionViewWillEnter();
+            // assert
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+            expect(mockPlatform.backButton).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.COURSE_LIST,
+                Environment.HOME, false
+            );
+            expect(mockLocation.back).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.COURSE_LIST,
+                Environment.HOME
+            );
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalled();
+                expect(curriculumCoursesPage.enrolledCourses).toEqual([]);
+                done();
+            });
+        });
+
+        it('should call getEnrolledCourses() if user is logged in', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+            curriculumCoursesPage.appliedFilter = {};
+            const enrolledCourses: Course[] = [
+                {
+                    courseId: 'do_0123'
+                },
+                {
+                    courseId: 'do_some_identifier'
+                }
+            ];
+            mockCourseService.getUserEnrolledCourses = jest.fn(() => of(enrolledCourses));
+            // act
+            curriculumCoursesPage.ionViewWillEnter();
+            // assert
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+            expect(mockPlatform.backButton).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.COURSE_LIST,
+                Environment.HOME, false
+            );
+            expect(mockLocation.back).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '',
+                PageId.COURSE_LIST,
+                Environment.HOME
+            );
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalled();
+                expect(curriculumCoursesPage.enrolledCourses).toEqual(enrolledCourses);
+                done();
+            });
+        });
     });
 
     it('should navigate to curriculumCourse', () => {
+        // arrange
         const course = { name: 'sample-course' };
         curriculumCoursesPage.corRelationList = [{
             id: 'do_123',
@@ -100,6 +186,7 @@ describe('CurriculumCoursesPage', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         const telemetryObject = new TelemetryObject(undefined, undefined, undefined);
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         // act
         curriculumCoursesPage.openCourseDetails(course);
         // assert
@@ -117,71 +204,19 @@ describe('CurriculumCoursesPage', () => {
         );
     });
 
-    describe('ngOnInit', () => {
-        beforeEach(() => {
-            jest.clearAllMocks();
-            jest.resetAllMocks();
-        });
-
-        it('should call getEnrolledCourses() if user is logged in', (done) => {
-            // arrange
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            mockAppGlobalService.getSessionData = jest.fn(() => ({
-                userToken: 'user_token'
-            }));
-            mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
-            curriculumCoursesPage.courseList = [
-                {
-                    identifier: 'do_some_identifier'
-                }
-            ] as any;
-            const enrolledCourses: Course[] = [
-                {
-                    courseId: 'do_0123'
-                },
-                {
-                    courseId: 'do_some_identifier'
-                }
-            ];
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(enrolledCourses));
-            console.log('enrolledCourses:true ', curriculumCoursesPage.enrolledCourses);
-
-            // act
-            curriculumCoursesPage.ngOnInit();
-
-            // assert
-            setTimeout(() => {
-                expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
-                expect(mockAppGlobalService.getSessionData).toHaveBeenCalled();
-                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({
-                    returnFreshCourses: true, userId: 'user_token'
-                });
-                done();
-            });
-        });
-
-        it('should call not call getEnrolledCourses() if user is guest user', (done) => {
-            // arrange
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-            mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
-            curriculumCoursesPage.courseList = [
-                {
-                    identifier: 'do_some_identifier'
-                }
-            ] as any;
-
-            console.log('enrolledCourses:false ', curriculumCoursesPage.enrolledCourses);
-
-            // act
-            curriculumCoursesPage.ngOnInit();
-
-            // assert
-            setTimeout(() => {
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                done();
-            }, 0);
+    describe('ionViewWillLeave', () => {
+        it('should unsubscribe the subscriptions', () => {
+            curriculumCoursesPage.backButtonFunc = {
+                unsubscribe: jest.fn()
+            } as any;
+            curriculumCoursesPage.headerObservable = {
+                unsubscribe: jest.fn()
+            } as any;
+            // mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+            curriculumCoursesPage.ionViewWillLeave();
+            expect(curriculumCoursesPage.backButtonFunc).toBeTruthy();
+            expect(curriculumCoursesPage.backButtonFunc.unsubscribe).toBeTruthy();
+            expect(curriculumCoursesPage.headerObservable.unsubscribe).toHaveBeenCalled();
         });
     });
 });

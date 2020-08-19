@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import {
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupDeprecated,
+  GroupServiceDeprecated,
   ObjectType,
   Profile,
   ProfileService,
-  ProfilesToGroupRequest,
+  ProfilesToGroupRequestDeprecated,
   ProfileType,
   TelemetryObject,
 } from 'sunbird-sdk';
@@ -34,7 +34,7 @@ export class AddOrRemoveGroupUserPage {
   userSelectionMap: Map<string, boolean> = new Map();
   memberSelectionMap: Map<string, boolean> = new Map();
   uniqueUserList: Array<Profile>;
-  groupInfo: Group;
+  groupInfo: GroupDeprecated;
   groupMembers: Array<Profile>;
   uid: any;
   allUsers: Array<Profile> = [];
@@ -43,7 +43,7 @@ export class AddOrRemoveGroupUserPage {
   selectedGroupMemberLength = '';
 
   constructor(
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
@@ -191,7 +191,7 @@ export class AddOrRemoveGroupUserPage {
     });
 
 
-    const req: ProfilesToGroupRequest = {
+    const req: ProfilesToGroupRequestDeprecated = {
       groupId: this.groupInfo.gid,
       uidList: groupMembersUids.concat(this.getSelectedUids())
     };
@@ -258,7 +258,7 @@ export class AddOrRemoveGroupUserPage {
       valuesMap
     );
     const loader = await this.commonUtilService.getLoader();
-    const req: ProfilesToGroupRequest = {
+    const req: ProfilesToGroupRequestDeprecated = {
       groupId: this.groupInfo.gid,
       uidList: this.selectedUids
     };
@@ -275,7 +275,7 @@ export class AddOrRemoveGroupUserPage {
       });
   }
 
-  getGradeNameFromCode(data: Profile | Group): string {
+  getGradeNameFromCode(data: Profile | GroupDeprecated): string {
     if (data.grade && data.grade.length > 0) {
       const gradeName = [];
       data.grade.forEach(code => {

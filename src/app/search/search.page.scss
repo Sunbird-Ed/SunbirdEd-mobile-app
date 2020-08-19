@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 :host{
   .search-buttons-group {
     margin-right: 1rem;
@@ -10,12 +11,12 @@
     display: flex;
     height: 100%;
 
-    color: #666666;
+    color: map-get($colors, granite_gray);
 
     justify-content: center;
     align-items: center;
 
-    background-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);;
   }
 
   .sb-search-history-entry {
@@ -39,7 +40,7 @@
   .sb-search-header-meta {
     padding-top: 1rem;
 
-    color: #024F9D;
+    color: $blue;
     font-size: 1.2rem;
     font-size: 12px;
   }
@@ -75,16 +76,36 @@
     .divider {
       width: 100%;
       height: 6px;
-      background-color: #f3f3f3;
+      background-color: map-get($colors, $gray-0);
       margin: 20px 0 0 0;
     }
   
     .inner-divider{
       width: 90%;
       height: 3px;
-      background-color: #f3f3f3;
+      background-color: map-get($colors, $gray-0);
       margin:  0 5%;
     }
+
+  .sb-textbook-title-container{
+    height: ($base-block-space * 3);
+    @include margin(null, null, $base-block-space, null);
+    margin-top: 16px;
+    .textbook-icon {
+        height: 17px;	
+        transform: scaleX(-1);
+          @include margin(0, ($base-block-space * 1), 0, 0);
+        color: $tertiary-color;
+    }
+    .textbook-title {
+        height: ($base-block-space * 3);	
+        color: $blue;	
+        font-size: 18px;	
+        font-weight: bold;
+        text-transform: capitalize;
+        line-height: ($base-block-space * 3)
+    }
+}
   
   
     ion-item {
@@ -101,9 +122,7 @@
   
     .content-list {
       margin-bottom: 0 !important;
-      padding-top: 16px;
-  
-  
+      margin-top: 16px;
       .label {
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -115,7 +134,7 @@
       font-size: 1.350em;
       padding: 11px;
       margin: 0;
-      background-color: #f3f3f3;
+      background-color: map-get($colors, $gray-0);
     }
   
     .view-collection {
@@ -127,7 +146,7 @@
       font-size: 14px;
       line-height: 14px;
       span.button-inner{
-        color:#2E92FF;
+        color: map-get($colors, vivid_blue);
       }
       
     }
@@ -226,7 +245,7 @@
           padding-bottom: 16px;
       }
   
-      background-color: #ffffff;
+      background-color: map-get($colors, white);
       height: 100%;
       z-index: 1000;
       opacity: 1 !important;
@@ -237,37 +256,14 @@
     }
   
     ion-header .button-native {
-      --color : $primary-color;
+      --color : #{$primary-color};
     }
   
   .sb-textbook-container {
-    margin-top: ($base-block-space * 2);
     @include padding(($base-block-space * 1));
     width: 100%;
     &:last-child{
         margin-bottom: ($base-block-space * 2);
-    }
-  
-    .sb-textbook-items {
-        .sb-textbook-title-container{
-            height: ($base-block-space * 3);
-            @include margin(null, null, $base-block-space, null);
-  
-            .textbook-icon {
-                height: 17px;	
-                transform: scaleX(-1);
-                 @include margin(0, ($base-block-space * 1), 0, 0);
-                color: $tertiary-color;
-            }
-            .textbook-title {
-                height: ($base-block-space * 3);	
-                color: #024F9D;	
-                font-size: 18px;	
-                font-weight: bold;
-                text-transform: capitalize;
-                line-height: ($base-block-space * 3)
-            }
-        }
     }
   
     // .sb-view-all-container {
@@ -318,12 +314,12 @@
       {
       @include padding($base-block-space * 2);
         .sb-card-res-count{
-              color: #979797;
+              color: map-get($colors, dark_gray);
               font-size: ($font-size-base  - 2);
               line-height: 15px;
         }
       .sb-card-result-content{
-              color: #979797;
+              color: map-get($colors, dark_gray);
               font-size: ($font-size-base  + 2);
               font-weight: 500;
               line-height: 22px;
@@ -371,7 +367,7 @@
   }
 
   .skeleton-header{
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid map-get($colors, empty_color);
     @include padding(8px);
   }
 
@@ -379,7 +375,7 @@
     @include padding(8px);
     display: flex;
     flex-direction: row-reverse;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid map-get($colors, empty_color);
     box-shadow: 0 -1px 5px 0px rgba(0,0,0,0.1);
   }
 

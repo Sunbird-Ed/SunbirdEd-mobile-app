@@ -3,18 +3,18 @@
 
 :host {
     .input-container {
-        border: 0.5px solid #333333;
+        border: 0.5px solid map-get($colors, primary_black);
         padding: 11px;
 
         .input {
-            border: #ffffff;
+            border: map-get($colors, white);
             outline: none;
         }
 
         .input-icon {
             float: right;
             font-size: 20px;
-            color: #333333;
+            color: map-get($colors, primary_black);
         }
     }
 
@@ -23,13 +23,13 @@
     }
     
     .error-input{
-      border-bottom: 1.5px solid #e76026 !important;
+      border-bottom: 1.5px solid map-get($colors, bright_red_e7) !important;
     }
 
     .label {
         font-size: 13px;
         padding-left: 16px;
-        color: #333333;
+        color: map-get($colors, primary_black);
     }
 
     .name {
@@ -50,7 +50,7 @@
         border-right: white;
         border-top: white;
         border-left: white;
-        border-bottom: 0.5px solid #333333;
+        border-bottom: 0.5px solid map-get($colors, primary_black);
         padding-bottom: 6px;
         padding-left: 11px;
         font-size: 13px;
@@ -65,14 +65,14 @@
         border-left: white;
         border-right: white;
         border-top: white;
-        border-bottom: 0.5px solid #333333;
+        border-bottom: 0.5px solid map-get($colors, primary_black);
         width:100%;
         outline: none;
     }
 
     .disableInput {
-        background-color: #EBEBE4;
-    };
+        background-color: map-get($colors, white_eb);
+    }
     .danger {
         color: red;
     }
@@ -84,7 +84,7 @@
     .input-label {
         font-weight: 200;
         font-size: 14px;
-        color: #797979;
+        color: map-get($colors, gray_79);
     }
 
     .margin-top {
@@ -116,14 +116,14 @@
     }
 
     .heading {
-        color: #024f9d;
+        color: $blue;
         text-align: center;
         font-size: 14px;
         margin: 16px 0px 16px 0px;
     }
 
     .sub-heading {
-        color: #333333;
+        color: map-get($colors, primary_black);
         font-size: 12px;
         margin: 16px 0px 25px 0px;
     }
@@ -145,12 +145,12 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: #818181;
+        background: map-get($colors, gray_81);
         border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #bababa;
+        background: map-get($colors, gray_ba);
     }
 
     .block-button {
@@ -159,7 +159,7 @@
         width: 92%;
         margin: 0 4% 32px 4%;
         color: white;
-        background-color: #0076fe;
+        background-color: map-get($colors, vived_blue_fe);
         text-transform: uppercase;
     }
     .arrow-icon {

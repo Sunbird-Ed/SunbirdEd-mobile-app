@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { TextBookCardComponent } from './text-book-card/text-book-card.component';
@@ -50,6 +49,11 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { SbGenericFormPopoverComponent } from './popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { CourseCompletionPopoverComponent } from './popups/sb-course-completion-popup/sb-course-completion-popup.component';
+import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
+import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
+import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +96,12 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   imports: [
     CommonModule,
@@ -134,7 +143,12 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -175,7 +189,12 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SbGenericFormPopoverComponent,
+    CourseCompletionPopoverComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

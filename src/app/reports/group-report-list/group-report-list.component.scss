@@ -1,15 +1,16 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .G:nth-child(even) {
     background: lightgrey;
   }
   .G:nth-child(odd) {
-    background: #fff;
+    background: map-get($colors, white);
   }
   .card {
-    background-color: white;
+    background-color: map-get($colors, white);
     position: absolute;
     z-index: 100;
     height: 25%;
@@ -133,12 +134,12 @@
   }
 
   ion-title.color,ion-button.color {
-    --color:#024f9d !important;
+    --color: #{$blue} !important;
     font-weight:bold !important;
   }
 }
 .segment-md .segment-button {
   font-weight: 700 !important;
   color: black !important;
-  background-color: #ffffff;
+  background-color: map-get($colors, white);
 }

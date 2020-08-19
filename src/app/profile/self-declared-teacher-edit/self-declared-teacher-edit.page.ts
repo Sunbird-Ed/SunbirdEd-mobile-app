@@ -1,17 +1,45 @@
-import {Component, Inject, NgZone, ViewChild} from '@angular/core';
+import {Component, Inject, ViewChild} from '@angular/core';
 import {
-  LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, LocationSearchResult, CachedItemRequestSourceFrom, FormRequest, FormService, FrameworkService
+  LocationSearchCriteria,
+  ProfileService,
+  SharedPreferences,
+  LocationSearchResult,
+  CachedItemRequestSourceFrom,
+  FormRequest,
+  FormService,
+  FrameworkService,
+  AuditState,
+  CorrelationData,
+  TelemetryObject,
+  ServerProfile
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey } from '../../../app/app.constant';
-import { AppHeaderService, CommonUtilService, AppGlobalService, ID, TelemetryGeneratorService, InteractType, Environment, InteractSubtype, PageId, ImpressionType } from '@app/services';
+import {
+  AppHeaderService,
+  CommonUtilService,
+  AppGlobalService,
+  ID,
+  TelemetryGeneratorService,
+  InteractType,
+  Environment,
+  InteractSubtype,
+  PageId,
+  ImpressionType,
+  AuditType,
+  CorReleationDataType
+} from '@app/services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, of, defer } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
+import { FieldConfig, FieldConfigOptionsBuilder, FieldConfigOption } from '@app/app/components/common-forms/field-config';
+import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { FormControl } from '@angular/forms';
+import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -20,19 +48,20 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 })
 export class SelfDeclaredTeacherEditPage {
 
-  private formValue: any;
-  private profile: any;
-  private initialExternalIds: any;
+  private profile: ServerProfile;
+  private initialExternalIds: any = {};
   private backButtonFunc: Subscription;
   private availableLocationDistrict: string;
   private availableLocationState: string;
+  private latestFormValue: any;
+  private selectedStateCode: any;
 
   editType = 'add';
   isFormValid = false;
   stateList: LocationSearchResult[] = [];
   districtList: LocationSearchResult[] = [];
-  teacherDetailsForm = [];
-  formInitilized = false;
+  teacherDetailsForm: FieldConfig<any>[] = [];
+  appName = '';
 
   @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
@@ -45,13 +74,13 @@ export class SelfDeclaredTeacherEditPage {
     private commonUtilService: CommonUtilService,
     private router: Router,
     private location: Location,
-    private appGlobalService: AppGlobalService,
     private events: Events,
     private platform: Platform,
-    private ngZone: NgZone,
     private activatedRoute: ActivatedRoute,
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private formValidationAsyncFactory: FormValidationAsyncFactory,
+    private appVersion: AppVersion
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
@@ -75,16 +104,17 @@ export class SelfDeclaredTeacherEditPage {
     );
   }
 
-  ionViewDidEnter() {
-    this.getTeacherDetailsFormApi();
+  async ionViewDidEnter() {
+    this.appName = await this.appVersion.getAppName();
+    this.getTeacherDetailsFormApi(undefined, false);
   }
 
-  async getTeacherDetailsFormApi(rootOrgId?) {
+  async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
 
     const req: FormRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       type: 'user',
-      subType: 'teacherDetails',
+      subType: 'teacherDetails_v2',
       action: 'submit',
       rootOrgId: rootOrgId || '*',
       component: 'app'
@@ -97,13 +127,9 @@ export class SelfDeclaredTeacherEditPage {
     }
 
     if (formData && formData.form && formData.form.data) {
-      const data = formData.form.data.fields;
-      if (data.length) {
-        this.formInitilized = false;
-        setTimeout(() => {
-          this.teacherDetailsForm = data;
-          this.formInitilized = true;
-        }, 100);
+      const formConfig = formData.form.data.fields;
+      if (formConfig.length) {
+        this.initializeFormData(formConfig, isFormLoaded);
       }
     }
 
@@ -117,49 +143,136 @@ export class SelfDeclaredTeacherEditPage {
     });
   }
 
-  async onCommonFormInitialized(event) {
-    this.initializeFormData();
-    if (!this.stateList || !this.stateList.length) {
-      await this.getStates();
-    }
-  }
+  async initializeFormData(formConfig, isFormLoaded) {
 
-  initializeFormData() {
-    if (this.profile && this.profile.externalIds && this.profile.externalIds.length) {
-      this.initialExternalIds = {};
-      this.profile.externalIds.forEach((externalData) => {
-        this.teacherDetailsForm.forEach((formData) => {
-          this.initialExternalIds[formData.code] = {
-            name: this.commonUtilService.translateMessage(formData.templateOptions.label) || '',
-            value: (this.initialExternalIds[formData.code] && this.initialExternalIds[formData.code].value) ?
-            this.initialExternalIds[formData.code].value : '',
-          };
-          if (formData.code === externalData.idType) {
-            this.commonForms.commonFormGroup.patchValue({
-              [formData.code]: externalData.id
-            });
-            this.initialExternalIds[formData.code] = {
-              name: formData.templateOptions.label || '',
-              value: externalData.id
-            };
+    this.teacherDetailsForm = formConfig.map((config: FieldConfig<any>) => {
+      if (config.code === 'externalIds' && config.children) {
+        config.children = config.children.map((childConfig: FieldConfig<any>) => {
+
+          if (childConfig.templateOptions['dataSrc'] && childConfig.templateOptions['dataSrc'].marker === 'LOCATION_LIST') {
+            if (childConfig.templateOptions['dataSrc'].params.id === 'state') {
+              let stateCode;
+              if (this.selectedStateCode) {
+                stateCode = this.selectedStateCode;
+              } else {
+                let stateDetails;
+                if (this.profile.externalIds && this.profile.externalIds.length) {
+                  stateDetails = this.profile.externalIds.find(eId => eId.idType === childConfig.code);
+                }
+                stateCode = stateDetails && stateDetails.id;
+              }
+              if (!isFormLoaded) {
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: stateCode
+                };
+              }
+              childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
+            } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
+              let districtDetails;
+              if (this.profile.externalIds && this.profile.externalIds.length) {
+                districtDetails = this.profile.externalIds.find(eId => eId.idType === childConfig.code);
+              }
+
+              if (!isFormLoaded) {
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: districtDetails && districtDetails.id
+                } ;
+              }
+              childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
+            }
+            return childConfig;
           }
+
+          if (childConfig.asyncValidation) {
+            childConfig = this.assignDefaultValue(childConfig, isFormLoaded);
+
+            const telemetryData = {
+              type: InteractType.TOUCH,
+              subType: '',
+              env: Environment.USER,
+              pageId: PageId.TEACHER_SELF_DECLARATION,
+              id: ''
+            };
+            const initialValue = this.initialExternalIds[childConfig.code] && this.initialExternalIds[childConfig.code].value;
+
+            if (childConfig.asyncValidation.marker === 'MOBILE_OTP_VALIDATION') {
+              telemetryData['id'] = ID.VALIDATE_MOBILE;
+
+              childConfig.asyncValidation.asyncValidatorFactory =
+                this.formValidationAsyncFactory.mobileVerificationAsyncFactory(
+                  childConfig, this.profile, initialValue, telemetryData
+                );
+            } else if (childConfig.asyncValidation.marker === 'EMAIL_OTP_VALIDATION') {
+              telemetryData['id'] = ID.VALIDATE_EMAIL;
+              childConfig.asyncValidation.asyncValidatorFactory =
+                this.formValidationAsyncFactory.emailVerificationAsyncFactory(
+                  childConfig, this.profile, initialValue, telemetryData
+                );
+            }
+            return childConfig;
+          }
+
+          this.assignDefaultValue(childConfig, isFormLoaded);
+
+          return childConfig;
         });
-      });
-    }
-    if (this.stateList && this.stateList.length && this.formValue.state) {
-      const formStateList = [];
-      this.stateList.forEach(stateData => {
-        formStateList.push({ label: stateData.name, value: stateData.id });
-      });
-      this.commonForms.initilizeFormData({ code: 'state', path: ['templateOptions', 'options'], value: formStateList });
-      this.commonForms.commonFormGroup.patchValue({
-        state: this.formValue.state
-      });
-      this.getDistrict(this.formValue.state);
-    }
+        return config;
+      }
+
+      if (config.code === 'tnc') {
+        if (this.editType === 'edit') {
+          return undefined;
+        }
+        if (config.templateOptions && config.templateOptions.labelHtml &&
+          config.templateOptions.labelHtml.contents) {
+            config.templateOptions.labelHtml.values['$url'] = this.profile.tncLatestVersionUrl;
+            config.templateOptions.labelHtml.values['$appName'] = ' ' + this.appName + ' ';
+            return config;
+        }
+        return config;
+      }
+      return config;
+    }).filter((formData) => formData);
+
   }
 
-  async checkLocationAvailability() {
+  private assignDefaultValue(childConfig: FieldConfig<any>, isFormLoaded) {
+    if (isFormLoaded) {
+      if (this.latestFormValue && this.latestFormValue.children.externalIds) {
+        childConfig.default = this.latestFormValue.children.externalIds[childConfig.code];
+      }
+      return childConfig;
+    }
+    if (this.profile.externalIds && this.profile.externalIds.length) {
+      this.profile.externalIds.forEach(eId => {
+        if (childConfig.code === eId.idType) {
+          childConfig.default = eId.id;
+        }
+      });
+    }
+
+    if (this.editType === 'add') {
+      if (childConfig.code === 'declared-phone') {
+        childConfig.default = this.profile['maskedPhone'];
+      }
+
+      if (childConfig.code === 'declared-email') {
+        childConfig.default = this.profile['maskedEmail'];
+      }
+    }
+
+    if (!isFormLoaded) {
+      this.initialExternalIds[childConfig.code] = {
+        name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+        value: childConfig.default || undefined
+      };
+    }
+    return childConfig;
+  }
+
+  private async checkLocationAvailability() {
     let stateId;
     let availableLocationData;
     if (this.profile && this.profile['userLocations'] && this.profile['userLocations'].length) {
@@ -195,88 +308,6 @@ export class SelfDeclaredTeacherEditPage {
     }
   }
 
-  async getStates() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    const req: LocationSearchCriteria = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      filters: {
-        type: loc.TYPE_STATE
-      }
-    };
-    this.profileService.searchLocation(req).subscribe(async (success) => {
-      const locations = success;
-      this.ngZone.run(async () => {
-        if (locations && Object.keys(locations).length) {
-          this.stateList = locations;
-
-          const formStateList = [];
-          this.stateList.forEach(stateData => {
-            formStateList.push({ label: stateData.name, value: stateData.id });
-          });
-
-          this.commonForms.initilizeFormData({ code: 'state', path: ['templateOptions', 'options'], value: formStateList });
-
-          if ((this.formValue && this.formValue.state) || this.availableLocationState) {
-            const state = this.stateList.find(s => (s.id === (this.formValue && this.formValue.state) || s.name === this.availableLocationState));
-            this.commonForms.initilizeInputData({ code: 'state', value: state.id });
-            if (state) {
-              await this.getDistrict(state.id);
-            }
-          }
-        } else {
-          this.districtList = [];
-          this.commonUtilService.showToast('NO_DATA_FOUND');
-        }
-        await loader.dismiss();
-      });
-    }, async (error) => {
-      await loader.dismiss();
-    });
-  }
-
-  async getDistrict(pid: string) {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    const req: LocationSearchCriteria = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      filters: {
-        type: loc.TYPE_DISTRICT,
-        parentId: pid
-      }
-    };
-    this.profileService.searchLocation(req).subscribe(async (success) => {
-      this.ngZone.run(async () => {
-        if (success && Object.keys(success).length) {
-          this.districtList = success;
-
-          const formDistrictList = [];
-          this.districtList.forEach(districtData => {
-            formDistrictList.push({ label: districtData.name, value: districtData.id });
-          });
-          this.commonForms.initilizeFormData({ code: 'district', path: ['templateOptions', 'options'], value: formDistrictList });
-
-          if (this.availableLocationDistrict) {
-            const district = this.districtList.find(d => d.name === this.availableLocationDistrict);
-            if (district) {
-              this.commonForms.initilizeInputData({ code: 'district', value: district.id });
-            } else {
-              this.commonForms.initilizeInputData({ code: 'district', value: '' });
-            }
-          }
-          await loader.dismiss();
-        } else {
-          this.availableLocationDistrict = '';
-          await loader.dismiss();
-          this.districtList = [];
-          this.commonUtilService.showToast('NO_DATA_FOUND');
-        }
-      });
-    }, async (error) => {
-      await loader.dismiss();
-    });
-  }
-
   async submit() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
@@ -289,68 +320,75 @@ export class SelfDeclaredTeacherEditPage {
     let telemetryValue;
     try {
 
-      if (!this.commonForms && !this.commonForms.commonFormGroup && !this.commonForms.commonFormGroup.value) {
+      if (!this.latestFormValue) {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
 
-      const formValue = this.commonForms.commonFormGroup.value;
-      const orgDetails: any = await this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
+      const formValue = this.latestFormValue.children.externalIds;
+      const selectdState = this.getStateIdFromCode(formValue['declared-state']);
+      const orgDetails: any = await this.frameworkService.searchOrganization({
+        filters: {
+          locationIds: [selectdState && selectdState.id],
+          isRootOrg: true
+        }
+      }).toPromise();
       if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
+
       const rootOrgId = orgDetails.content[0].channel;
 
       await loader.present();
-      const stateCode = this.stateList.find(state => state.id === formValue.state).code;
-      const districtCode = this.districtList.find(district => district.id === formValue.district).code;
 
       const externalIds = this.removeExternalIdsOnStateChange(rootOrgId);
-      this.teacherDetailsForm.forEach(formData => {
-        if (formData.code !== 'state' && formData.code !== 'district') {
-          // no externalIds declared
-          if (!this.profile.externalIds || !this.profile.externalIds.length || !this.profile.externalIds.find(eid => {
-            return eid.idType === formData.code;
-          })) {
-            if (formValue[formData.code]) {
+      this.teacherDetailsForm.forEach(config => {
+        if (config.code === 'externalIds' && config.children) {
+          config.children.forEach(formData => {
+
+            // no externalIds declared
+            if (!this.profile.externalIds || !this.profile.externalIds.length || !this.profile.externalIds.find(eid => {
+              return eid.idType === formData.code;
+            })) {
+              if (formValue[formData.code]) {
+                externalIds.push({
+                  id: formValue[formData.code],
+                  operation: 'add',
+                  idType: formData.code,
+                  provider: rootOrgId
+                });
+                return;
+              }
+            }
+
+            // externalIds declared but removed
+            if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
+              return eid.idType === formData.code;
+            })) {
               externalIds.push({
-                id: formValue[formData.code],
-                operation: 'add',
+                id: 'remove',
+                operation: 'remove',
                 idType: formData.code,
                 provider: rootOrgId
               });
               return;
             }
-          }
 
-          // externalIds declared but removed
-          if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
-            return eid.idType === formData.code;
-          })) {
-            externalIds.push({
-              id: 'remove',
-              operation: 'remove',
-              idType: formData.code,
-              provider: rootOrgId
-            });
-            return;
-          }
-
-          // external id declared and modified
-          if (formValue[formData.code]) {
-            externalIds.push({
-              id: formValue[formData.code],
-              operation: 'edit',
-              idType: formData.code,
-              provider: rootOrgId
-            });
-          }
+            // external id declared and modified
+            if (formValue[formData.code]) {
+              externalIds.push({
+                id: formValue[formData.code],
+                operation: 'edit',
+                idType: formData.code,
+                provider: rootOrgId
+              });
+            }
+          });
         }
       });
       const req = {
         userId: this.profile.userId,
-        locationCodes: [stateCode, districtCode],
         externalIds
       };
 
@@ -364,6 +402,7 @@ export class SelfDeclaredTeacherEditPage {
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
       if (this.editType === 'add') {
+        this.generateTncAudit();
         this.showAddedSuccessfullPopup();
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('UPDATED_SUCCESSFULLY'));
@@ -374,19 +413,6 @@ export class SelfDeclaredTeacherEditPage {
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
     } finally {
       await loader.dismiss();
-    }
-  }
-
-  onFormDataChange(event) {
-    if (event) {
-      if (event.value && this.formValue && event.value.state !== this.formValue.state) {
-        this.getTeacherDetailsFormApi(event.value.state);
-      }
-
-      if (event.value) {
-        this.formValue = event.value;
-      }
-      this.isFormValid = event.valid;
     }
   }
 
@@ -409,9 +435,6 @@ export class SelfDeclaredTeacherEditPage {
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
 
-    if (data && data.canDelete) {
-      console.log(data);
-    }
   }
 
   generateTelemetryInteract(type, id, value?) {
@@ -431,18 +454,9 @@ export class SelfDeclaredTeacherEditPage {
   getUpdatedValues(formVal) {
     const telemetryValue = [];
 
-    this.profile.userLocations.forEach(ele => {
-      if (ele.type === 'state' && ele.id !== formVal.state) {
-        telemetryValue.push('State');
-      }
-      if (ele.type === 'district' && ele.id !== formVal.district) {
-        telemetryValue.push('District');
-      }
-    });
-
-    console.log(this.initialExternalIds);
     for (const data in this.initialExternalIds) {
-      if (data !== 'state' && data !== 'district' && this.initialExternalIds[data].value !== formVal[data]) {
+      if (this.initialExternalIds[data] && this.initialExternalIds[data].value !== null &&
+        this.initialExternalIds[data].value !== undefined && this.initialExternalIds[data].value !== formVal[data]) {
         telemetryValue.push(this.initialExternalIds[data].name);
       }
     }
@@ -464,6 +478,168 @@ export class SelfDeclaredTeacherEditPage {
     }
 
     return externalIds;
+  }
+
+  private generateTncAudit() {
+    const corRelationList: Array<CorrelationData> = [{ id: PageId.TEACHER_SELF_DECLARATION, type: CorReleationDataType.FROM_PAGE }];
+    const telemetryObject = new TelemetryObject(ID.DATA_SHARING, 'TnC', this.profile.tncLatestVersion);
+    this.telemetryGeneratorService.generateAuditTelemetry(
+      Environment.USER,
+      AuditState.AUDIT_UPDATED,
+      [],
+      AuditType.TNC_DATA_SHARING,
+      telemetryObject.id,
+      telemetryObject.type,
+      telemetryObject.version,
+      corRelationList
+    );
+  }
+
+  private buildStateListClosure(stateCode?): FieldConfigOptionsBuilder<string> {
+    return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
+      return defer(async () => {
+
+        const formStateList: FieldConfigOption<string>[] = [];
+        let selectedState;
+
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        const req: LocationSearchCriteria = {
+          from: CachedItemRequestSourceFrom.SERVER,
+          filters: {
+            type: loc.TYPE_STATE
+          }
+        };
+        try {
+          const locations = await this.profileService.searchLocation(req).toPromise();
+
+          if (locations && Object.keys(locations).length) {
+            this.stateList = locations;
+
+            this.stateList.forEach(stateData => {
+              formStateList.push({ label: stateData.name, value: stateData.code });
+            });
+
+            if (this.editType === 'add' && this.availableLocationState) {
+              selectedState = this.stateList.find(s =>
+                (s.name === this.availableLocationState)
+              );
+            }
+
+            setTimeout(() => {
+              formControl.patchValue(stateCode || (selectedState && selectedState.code) || null);
+            }, 0);
+
+          } else {
+            this.commonUtilService.showToast('NO_DATA_FOUND');
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          loader.dismiss();
+        }
+
+
+        return formStateList;
+      });
+    };
+  }
+
+  private buildDistrictListClosure(districtCode?, isFormLoaded?): FieldConfigOptionsBuilder<string> {
+    return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
+      if (!contextFormControl) {
+        return of([]);
+      }
+
+      return contextFormControl.valueChanges.pipe(
+        distinctUntilChanged(),
+        tap(() => {
+          formControl.patchValue(null);
+        }),
+        switchMap((value) => {
+          return defer(async () => {
+            const formDistrictList: FieldConfigOption<string>[] = [];
+            let selectedDistrict;
+
+            const loader = await this.commonUtilService.getLoader();
+            await loader.present();
+
+            const selectdState = this.getStateIdFromCode(contextFormControl.value);
+
+            const req: LocationSearchCriteria = {
+              from: CachedItemRequestSourceFrom.SERVER,
+              filters: {
+                type: loc.TYPE_DISTRICT,
+                parentId: selectdState && selectdState.id
+              }
+            };
+            try {
+              const districtList = await this.profileService.searchLocation(req).toPromise();
+
+              if (districtList && Object.keys(districtList).length) {
+                this.districtList = districtList;
+
+                this.districtList.forEach(districtData => {
+                  formDistrictList.push({ label: districtData.name, value: districtData.code });
+                });
+
+                if (!isFormLoaded) {
+                  if (this.editType === 'add' && this.availableLocationDistrict) {
+                    selectedDistrict = this.districtList.find(s =>
+                      (s.name === this.availableLocationDistrict)
+                    );
+                  }
+
+                  setTimeout(() => {
+                    formControl.patchValue(districtCode || (selectedDistrict && selectedDistrict.code) || null);
+                  }, 0);
+                } else {
+                  setTimeout(() => {
+                    formControl.patchValue(null);
+                  }, 0);
+                }
+
+              } else {
+                this.availableLocationDistrict = '';
+                this.districtList = [];
+                this.commonUtilService.showToast('NO_DATA_FOUND');
+              }
+            } catch (e) {
+              console.log(e);
+            } finally {
+              loader.dismiss();
+            }
+            return formDistrictList;
+          });
+        })
+      );
+    };
+  }
+
+  formValueChanges(event) {
+    this.latestFormValue = event;
+    if (event && event.children && event.children.externalIds) {
+      if (!this.selectedStateCode && event.children.externalIds['declared-state']) {
+        this.selectedStateCode = event.children.externalIds['declared-state'];
+      }
+      if (event.children.externalIds['declared-state'] && this.selectedStateCode && this.selectedStateCode !== event.children.externalIds['declared-state']) {
+        this.selectedStateCode = event.children.externalIds['declared-state'];
+        const selectedState = this.getStateIdFromCode(this.selectedStateCode);
+        this.getTeacherDetailsFormApi(selectedState && selectedState.id, true);
+      }
+    }
+  }
+
+  formStatusChanges(event) {
+    this.isFormValid = event.isValid;
+  }
+
+  private getStateIdFromCode(code) {
+    if (this.stateList && this.stateList.length) {
+      const selectedState = this.stateList.find(state => state.code === code);
+      return selectedState;
+    }
+    return null;
   }
 
 }

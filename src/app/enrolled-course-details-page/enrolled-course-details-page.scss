@@ -1,5 +1,6 @@
 @import 'src/assets/styles/_custom-mixins';
 @import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
 
 
 :host {
@@ -17,7 +18,7 @@
       border-radius: 0 !important;
     }
     .sb-url {
-      color: #0a55a0;
+      color: map-get($colors, bright_blue_a0);
       font-size: 14px;
       text-decoration: underline;
     }
@@ -28,7 +29,7 @@
         color: darkgrey;
     }
     .ion-ios-checkmark-circle:before {
-        color: #008000;
+        color: map-get($colors, office_green);
         margin-right: 4px;
         margin-left: 0px;
     }
@@ -36,10 +37,10 @@
         padding: 7px 0px 0px 4px;
     }
     .certified-section-color{
-      color: #08539f;
+      color: map-get($colors, bright_blue_9f);
     }
     .certified-training-section{
-        background-color: #e5edf5;
+        background-color: map-get($colors, pale_blue);
         padding: 8px;
     }
     .font-10{
@@ -76,7 +77,7 @@
       padding-top: 0px !important;
   }
     .subtitle-color{
-        color: map-get($colors, textGrey);
+        color: map-get($colors, granite_gray);
     }
     .enrolled-course-container {
       &.sticky {
@@ -87,7 +88,7 @@
       }
     }
     .traning-derived-label-background {
-      background-color: #f2f2f2;
+      background-color: map-get($colors, white_f2);
       padding: 8px 0px 8px 15px;
     }
 
@@ -95,7 +96,7 @@
         font-size: 14px;
     }
     .enrolled-course-card{
-        background-color:#d2eadd;
+        background-color: map-get($colors, pale_green);
         margin-bottom: 0 !important;
     }
     ion-card{
@@ -114,12 +115,12 @@
         box-sizing: border-box;
         height: 1px;	
         width: 100%;	
-        border: 0.5px solid #CCCCCC;
+        border: 0.5px solid map-get($colors, medium_gray);
         margin-top: 9px;
         margin-bottom: 10px;
     }
     hr {
-        border:0.5px solid #999999;
+        border:0.5px solid $gray-300;
     }
     .blurbackground {
         // background-color: gray !important;
@@ -131,7 +132,7 @@
         }
     }
     .loading-backdrop {
-        background-color: #ffffff;
+        background-color: map-get($colors, white);
         height: 100%;
         z-index: 1000;
         opacity: 1 !important;
@@ -189,7 +190,7 @@
         bottom: 3px;
       }
       .sb-checkmark-icon{
-        color: #008000;
+        color: map-get($colors, office_green);
       }
     }
     .custom-card-header{
@@ -207,7 +208,7 @@
       }
     }
     .enrolled-course-card-button{
-        background-color: #008840;
+        background-color: $green;
         border: none;
         color: white;
         text-align: center;
@@ -227,7 +228,7 @@
       }
     }
     .border-right{
-      border-right: 1.5px solid #e6e6e6;
+      border-right: 1.5px solid map-get($colors, white_e6);
       margin: 0px 0px 10px 11px;
     }
     .hr-div {
@@ -248,7 +249,7 @@
     padding-right: 5%;
   }
   .sb-hidden-content{
-    background-color: #E5EDF5 !important;
+    background-color: map-get($colors, pale_blue) !important;
     // height: 34.15% !important;
     width: 100% !important;
     border-radius: 0 0 2px 2px !important;
@@ -259,8 +260,8 @@
     // height: 6.1% !important;
     width: 100% !important;
     border-radius: 2px !important;
-    background-color: #FFFFFF !important;
-    box-shadow: 0px 5px 5px 3px #ddd;
+    background-color: map-get($colors, white) !important;
+    box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
   }
   .sb-topic-text {
       // padding-top: 5px;
@@ -277,7 +278,7 @@
   .view-credits{
     margin-bottom: 8px;
     span{
-    color: #024F9D;
+    color: $blue;
     ion-icon{
       padding: 0 0 4px 8px;
       vertical-align: middle;
@@ -298,7 +299,7 @@
     display: inline-flex;
     flex-wrap: nowrap;
     align-items:center;
-    background-color: #E5EDF6;
+    background-color: map-get($colors, pale_blue_f6);
     padding: 4px;
     margin-bottom: 12px;
     .certificate-icon {
@@ -306,9 +307,9 @@
     }
   }
   .sc-ion-segment-md-h{
-    --color-checked : #024f9d;
+    --color-checked : #{$blue};
     font-weight: bold;
-    --color: #467fb8;
+    --color: #{map-get($colors, cornflower_blue)};
   }
   .wrapper {
     grid-template-columns: 100px 100px 100px auto;
@@ -336,7 +337,7 @@
   }
   .card-icons {
     font-size: 30px;
-    color: #024F9D;
+    color: $blue;
   }
   .card-icons-downloadStarted {
     font-size: 30px;
@@ -349,7 +350,7 @@
   .sb-course-complete-container {
     white-space: nowrap;
     width: 100%;
-    background-color: #BFE1CF;
+    background-color: map-get($colors, light_grayish_green);
     @include padding(8px);
     .img-container{
       width: 20%;
@@ -372,7 +373,7 @@
   .card-text{
     height: 18px;
     width: 63px;
-    color: map-get($colors, textGrey);
+    color: map-get($colors, granite_gray);
     font-family: "Noto Sans";
     font-size: 13px !important;
     line-height: 20px;
@@ -396,7 +397,7 @@
   }
   
   .sb-course-progress-container{
-      background-color: #E5EDF5;
+      background-color: map-get($colors, pale_blue);
       padding: 8px;
       height: 70px;	
       width: auto;
@@ -414,24 +415,24 @@
   }
 
   .sb-batch-end-container{
-    background-color: #FBE7E0;
+    background-color: map-get($colors, pale_red);
     padding: 8px 16px;
     height: auto;	
     width: auto;
     .batch-end-main-heading{
       font-size: 12px !important;
-      color: #E55A28;
+      color: $orange;
       font-weight: bold;
     }
     .batch-end-sub-heading{
-      color: #333333;
+      color: map-get($colors, primary_black);
       font-family: "Noto Sans";
       font-size: 12px !important;
     }
   }
   .enrollment-end-date{
     font-size: 12px;
-    color: #333333;
+    color: map-get($colors, primary_black);
     font-family: "Noto Sans";
     ion-icon{
       position: relative;
@@ -442,16 +443,16 @@
     padding-left: 5em !important;
   }
   .sb-course-end-container{
-    background-color: #FBE7E0;
+    background-color: map-get($colors, pale_red);
     padding: 10px;
     height: 70px;	
     width: auto;
     .main-heading{
       font-size: 14px !important;
-      color: #E55A28;
+      color: $orange;
     }
     .sub-heading{
-      color: #333333;
+      color: map-get($colors, primary_black);
       font-family: "Noto Sans";
       font-size: 12px !important;
     }
@@ -464,7 +465,7 @@
 
 .progress-label {
   font-size: 10px !important;
-  color: #333;
+  color: map-get($colors, primary_black);
 }
 
 ion-segment-button{
@@ -482,7 +483,7 @@ ion-segment-button{
 }
 
 .card-box-shadow {
-  box-shadow: 0px 5px 5px 3px #ddd;
+  box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
 }
 
 .animation-card{
@@ -525,7 +526,7 @@ ion-segment-button{
 }
 
 .bg-grey {
-  background: #f0f0f0 !important;
+  background: map-get($colors, white_f0) !important;
 }
 
 .card-button[disabled]{

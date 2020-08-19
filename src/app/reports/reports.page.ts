@@ -3,8 +3,8 @@ import { Component, Inject, OnInit, NgZone } from '@angular/core';
 import { LoadingController, Platform } from '@ionic/angular';
 import {
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupDeprecated,
+  GroupServiceDeprecated,
   ObjectType,
   Profile,
   ProfileService,
@@ -43,7 +43,7 @@ export class ReportsPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     private ngZone: NgZone,
     private loading: LoadingController,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -127,7 +127,7 @@ export class ReportsPage implements OnInit {
     return new Promise<any>((resolve) => {
 
       that.groupService.getAllGroups()
-        .subscribe((groups: Group[]) => {
+        .subscribe((groups: GroupDeprecated[]) => {
           if (groups) {
             resolve(groups);
           } else {

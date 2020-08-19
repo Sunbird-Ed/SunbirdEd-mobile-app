@@ -25,7 +25,7 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService, ImpressionSubtype, ImpressionType,
+    FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
     PageId,
@@ -41,7 +41,8 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { NEVER, of, Subscription } from 'rxjs';
 import { NotificationService } from '@app/services';
-import { ContentFilterConfig, EventTopics, RouterLinks } from '../app.constant';
+import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
+import { ImpressionType } from '../../services/telemetry-constants';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -90,8 +91,11 @@ describe('ResourcesComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn(),
-        networkInfo: jest.fn(),
-        isAccessibleForNonStudentRole: jest.fn()
+        networkInfo: {
+            isNetworkAvailable: true
+        },
+        isAccessibleForNonStudentRole: jest.fn(),
+        presentToastForOffline: jest.fn()
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
@@ -466,6 +470,8 @@ describe('ResourcesComponent', () => {
     it('should call relevant methods inside when ngOnInit() called at the beginning', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(false));
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -498,6 +504,12 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.PAGE_REQUEST, '',
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+            );
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -512,6 +524,7 @@ describe('ResourcesComponent', () => {
     it('should appIcon is not avilable', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -544,6 +557,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -558,6 +572,7 @@ describe('ResourcesComponent', () => {
     it('should appIcon is not avilable', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
@@ -591,6 +606,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
@@ -604,7 +620,7 @@ describe('ResourcesComponent', () => {
 
     it('should call qrScanner else if part when subscribeMethod returns emptyString', (done) => {
         // arrange
-
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
@@ -620,6 +636,7 @@ describe('ResourcesComponent', () => {
         resourcesComponent.ngOnInit();
         // assert
         setTimeout(() => {
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(mockEvents.subscribe).toHaveBeenCalled();
             expect(mockQRScanner.startScanner).toHaveBeenCalledWith(PageId.LIBRARY);
             expect(mockAppGlobalService.getPageIdForTelemetry).toHaveBeenCalled();
@@ -645,6 +662,7 @@ describe('ResourcesComponent', () => {
 
     it('should check for subscription and unsubscribe all those events when ionViewWillLeave()', (done) => {
         // arrange
+        resourcesComponent.refresher = { disabled: false };
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
@@ -660,6 +678,8 @@ describe('ResourcesComponent', () => {
         };
         mockEvents.unsubscribe = jest.fn();
         resourcesComponent.coachTimeout = { clearTimeout: jest.fn() };
+        mockSharedPreference.getBoolean = jest.fn(() => of(false));
+        mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             resourcesComponent.ionViewWillLeave();
@@ -668,6 +688,11 @@ describe('ResourcesComponent', () => {
             expect(mockEventsBusSubscription.unsubscribe).toHaveBeenCalled();
             expect(mockHeaderEventsSubscription.unsubscribe).toHaveBeenCalled();
             expect(mockEvents.unsubscribe).toHaveBeenCalled();
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
+            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+            );
             done();
         });
     });
@@ -764,97 +789,6 @@ describe('ResourcesComponent', () => {
         });
     });
 
-    xdescribe('loadRecentlyViewed test suites', () => {
-        it('should call getContents from contentService, then loop eachData and setContentData appIcon', (done) => {
-            // arrange
-            mockContentService.getContents = jest.fn(() => {
-                return of([{
-                    identifier: 'sampleIdentifier',
-                    contentData: {
-                        identifier: 'sample_identifier',
-                        appIcon: 'https:'
-                    },
-                    basePath: 'sample_base_path'
-                }]);
-            });
-            resourcesComponent.showLoader = true;
-            mockNgZone.run = jest.fn((fn) => fn());
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            constructComponent();
-            // act
-            resourcesComponent.loadRecentlyViewedContent(false);
-            // assert
-            setTimeout(() => {
-                expect(mockContentService.getContents).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should catch throw error and call sheenEnd telemetry function', (done) => {
-            // arrange
-            mockContentService.getContents = jest.fn(() => {
-                return of(Promise.reject('new Error'));
-            });
-            mockNgZone.run = jest.fn((fn) => fn());
-            resourcesComponent.showLoader = true;
-            // act
-            resourcesComponent.loadRecentlyViewedContent(false);
-            // assert
-            setTimeout(() => {
-                expect(mockContentService.getContents).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should set contentData appIcon to default image when network is not available', (done) => {
-            // arrange
-            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
-            mockContentService.getContents = jest.fn(() => {
-                return of([{
-                    identifier: 'sampleIdentifier',
-                    contentData: {
-                        identifier: 'sample_identifier',
-                        appIcon: 'https:'
-                    },
-                    basePath: 'sample_base_path'
-                }]);
-            });
-            mockNgZone.run = jest.fn((fn) => fn());
-            // act
-            resourcesComponent.loadRecentlyViewedContent(false);
-            // assert
-            setTimeout(() => {
-                expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
-                done();
-            }, 0);
-        });
-
-        it('should set for basePath if contentData.appIcon is not available', (done) => {
-            // arrange
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            mockContentService.getContents = jest.fn(() => {
-                return of([{
-                    identifier: 'sampleIdentifier',
-                    contentData: {
-                        identifier: 'sample_identifier',
-                        appIcon: 'other'
-                    },
-                    basePath: 'sample_base_path'
-                }]);
-            });
-            mockNgZone.run = jest.fn((fn) => fn());
-            // act
-            resourcesComponent.loadRecentlyViewedContent(false);
-            // assert
-            setTimeout(() => {
-                expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-                done();
-            }, 0);
-        });
-    });
-
     it('should check for Textbook which is locally Available', () => {
         // arrange
         resourcesComponent.locallyDownloadResources = [
@@ -907,6 +841,7 @@ describe('ResourcesComponent', () => {
 
     it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
+        resourcesComponent.refresher = { disabled: false };
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = NEVER;
@@ -920,34 +855,15 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
         jest.spyOn(resourcesComponent, 'subscribeSdkEvent').mockImplementation();
+        mockSharedPreference.getBoolean = jest.fn(() => of(true));
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             // assert
             expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
             expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
+            expect(mockSharedPreference.getBoolean).toHaveBeenCalled();
             done();
         });
-    });
-
-    it('should call toastController when in offline', (done) => {
-        // arrange
-        mockToastCtrlService.create = jest.fn(() => {
-            return Promise.resolve({
-                present: jest.fn(),
-                onDidDismiss: jest.fn((fn) => {
-                    fn();
-                })
-            });
-        });
-        mockCommonUtilService.translateMessage = jest.fn();
-        // act
-        resourcesComponent.presentToastForOffline('offline');
-        // assert
-        setTimeout(() => {
-            expect(mockToastCtrlService.create).toHaveBeenCalled();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-            done();
-        }, 0);
     });
 
     it('should be invoked classClickEvent', () => {
@@ -1383,7 +1299,6 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.networkInfo.isNetworkAvailable = false;
             mockRouter.navigate = jest.fn();
-            jest.spyOn(resourcesComponent, 'presentToastForOffline').mockImplementation();
             // act
             resourcesComponent.navigateToDetailPage({
                 data: { subject: 'mathematics part 1', isAvailableLocally: false },
@@ -1396,7 +1311,6 @@ describe('ResourcesComponent', () => {
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
-            expect(resourcesComponent.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
         });
 
     it('should generate interact telemetry when textbook is clicked and also check for network available which is set to true ', () => {
@@ -1425,7 +1339,6 @@ describe('ResourcesComponent', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockCommonUtilService.networkInfo.isNetworkAvailable = false;
         mockRouter.navigate = jest.fn();
-        jest.spyOn(resourcesComponent, 'presentToastForOffline').mockImplementation();
         // act
         resourcesComponent.navigateToTextbookPage({ identifier: 'do_id1234', contentType: 'textbook' },
             'mathematics');
@@ -1437,7 +1350,6 @@ describe('ResourcesComponent', () => {
             PageId.LIBRARY,
             { id: 'do_id1234', type: 'textbook', version: undefined });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
-        expect(resourcesComponent.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
     });
 
     it('should navigate to content player when launch contentPlayer called upon', () => {
@@ -1512,7 +1424,7 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: true } }))
             } as any)));
             // act
             resourcesComponent.appTutorialScreen();
@@ -1534,7 +1446,7 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: false } }))
             } as any)));
             // act
             resourcesComponent.appTutorialScreen();
@@ -1642,6 +1554,7 @@ describe('ResourcesComponent', () => {
 
     it('should call setTimeout for ionViewDidEnter', (done) => {
         // arrange
+        resourcesComponent.refresher = { disabled: false };
         mockAppGlobalService.showTutorialScreen = jest.fn();
         // act
         resourcesComponent.ionViewDidEnter();

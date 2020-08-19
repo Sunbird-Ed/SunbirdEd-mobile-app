@@ -2,9 +2,10 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 :host {
   .refreshspinner {
-    stroke: #024f9d !important;
+    stroke: $blue !important;
     width: 30px;
     left: 0;
     top: 0;
@@ -13,12 +14,12 @@
   }
   .spinner-div {
     padding: 40px;
-    background-color: #eceff0;
+    background-color: map-get($colors, light_gray);
     text-align: center;
     border: none !important;
   }
   .profile-last-login-text {
-    color: #bdbdbd;
+    color: map-get($colors, light_gray_bd);
     text-align: center;
     @include margin(0);
     font-size: 1.2rem;
@@ -66,13 +67,13 @@
   ion-card {
     border-radius: 4px;
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.16);
-    background-color: #ffffff;
-    border: solid 0.5px #cccccc;
+    background-color: map-get($colors, white);
+    border: solid 0.5px map-get($colors, medium_gray);
     width: 80vw;
     display: inline-block;
 
     .badge {
-      color: #006de5;
+      color: map-get($colors, primary);
       font-size: 11px;
       height: 20px;
       box-shadow: none;
@@ -84,9 +85,9 @@
     .top {
       min-height: 85px;
       .img-container {
-        border: 1px solid #c6dbd8;
+        border: 1px solid map-get($colors, pale_cyan);
         @include padding(0 !important);
-        background: #e9e9e9;
+        background: map-get($colors, white_e9);
         min-height: 85px;
         max-height: 85px;
         border-radius: 4px;
@@ -101,7 +102,7 @@
         }
       }
       .info {
-        color: #616161;
+        color: map-get($colors, dark_gray_61);
       }
     }
     h6.name {
@@ -109,9 +110,8 @@
       white-space: normal;
       min-height: 32px;
       font-size: 14px !important;
-      color: #333333;
+      color: map-get($colors, primary_black);
       font-size: 14px !important;
-      color: #333333;
       width: 100%;
       white-space: normal;
       min-height: 32px;
@@ -133,17 +133,17 @@
       font-stretch: normal;
       line-height: normal;
       letter-spacing: normal;
-      color: #666666;
+      color: map-get($colors, granite_gray);
       min-height: 20px;
     }
   }
 
   .roles-container {
-    color: #007aff;
+    color: map-get($colors, primary_blue);
     @include margin(5px, 0);
   }
   .roles {
-    border: 0.5px solid #007aff;
+    border: 0.5px solid map-get($colors, primary_blue);
     @include padding(4px, 15px);
     border-radius: 4px;
     display: inline-block;
@@ -171,11 +171,11 @@
     align-items: center;
     justify-content: center;
     .view-icon{
-      color: #024F9D;
+      color: $blue;
     }
     .sb-btn-footer-text {
       font-weight: 400;
-      color: #024F9D;
+      color: $blue;
     }
   }
   button.sb-btn-tile:focus {
@@ -190,7 +190,7 @@
 
   .contacts {
     padding: 15px;
-    background-color: #196dab;
+    background-color: map-get($colors, bright_blue_19);
     text-align: center;
 
     .phone {
@@ -198,11 +198,11 @@
       border-radius: 25px;
       @include padding($base-block-space, $base-block-space * 2);
       @include margin(null, null, 10px, null);
-      background-color: #fff;
-      color: #007aff;
+      background-color: map-get($colors, white);
+      color: map-get($colors, primary_blue);
 
       &.light {
-        color: #9b9b9b;
+        color: $signup-btn-bg-not-active-color;
       }
     }
 
@@ -210,22 +210,22 @@
       display: inline-block;
       border-radius: 25px;
       @include padding($base-block-space, $base-block-space * 2);
-      background-color: #fff;
-      color: #007aff;
-      border-bottom: 0.3px solid #196dab;
-      border-top: 0.3px solid #196dab;
+      background-color: map-get($colors, white);
+      color: map-get($colors, primary_blue);
+      border-bottom: 0.3px solid map-get($colors, bright_blue_19);
+      border-top: 0.3px solid map-get($colors, bright_blue_19);
       &.light {
-        color: #9b9b9b;
+        color: map-get($colors, gray_9b);
       }
     }
   }
 
   .school-details {
     padding: 15px;
-    background-color: #e0efff;
+    background-color: map-get($colors, pale_blue_e0);
     text-align: center;
-    border-bottom: 0.3px solid #196dab;
-    border-top: 0.3px solid #196dab;
+    border-bottom: 0.3px solid map-get($colors, bright_blue_19);
+    border-top: 0.3px solid map-get($colors, bright_blue_19);
     .container {
       text-align: center;
       @include margin(null, null, 10px, null);
@@ -235,14 +235,14 @@
   .trainings {
     .heading {
       @include padding(15px);
-      background-color: #fff;
+      background-color: map-get($colors, white);
       @include margin(null, null, 2px, null);
-      border-bottom: 0.5px solid #979797;
+      border-bottom: 0.5px solid map-get($colors, dark_gray);
     }
     .content {
       @include margin(8px);
-      background-color: #fff;
-      border: 0.5px solid #979797;
+      background-color: map-get($colors, white);
+      border: 0.5px solid map-get($colors, dark_gray);
       border-radius: 4px;
     }
   }
@@ -250,7 +250,7 @@
   .contributions {
     min-height: 230px;
     @include margin(0, 0, 16px, 0);
-    background: #fff;
+    background: map-get($colors, white);
   }
 
   .short-btn {
@@ -263,7 +263,7 @@
   }
 
   .bottom-block {
-    background: #fafafa;
+    background: map-get($colors, white_fa);
   }
 
   .align-middle {
@@ -292,7 +292,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
-    border-bottom: 0.5px solid #979797;
+    border-bottom: 0.5px solid map-get($colors, dark_gray);
     @include padding(null, 16px, null, 16px);
   }
 
@@ -323,12 +323,12 @@
 
   .ongoing-status-text{
     @extend .enrolled-status-text;
-    color: #024F9D;
+    color: $blue;
   }
 
   .completed-status-text{
     @extend .enrolled-status-text;
-    color: #008840;
+    color: $green;
   }
 
   .self-declare-teacher-btn{
@@ -342,7 +342,7 @@
     
     .question-badge{
       background-color: white;
-      color: #008840;
+      color: $green;
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -355,9 +355,9 @@
 
   .self-declare-teacher-details{
     padding: 16px;
-    background-color: #196dab;
+    background-color: map-get($colors, bright_blue_19);
     text-align: center;
-    color: #FFFFFF;
+    color: map-get($colors, white);
     font-size: 14px;
     
     .container{
@@ -386,14 +386,14 @@
     text-transform: capitalize
   }
   .refresh-icon {
-    color: #007aff;
+    color: map-get($colors, primary_blue);
     float: right;
     height: 40px;
     width: 40px;
     margin-top: -8px;
   }
   ion-icon.refresh-icon.md.hydrated:active {
-    background: #e8e7e7;
+    background: map-get($colors, white_e8);
     border-radius: 18px;
   }
 }

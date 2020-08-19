@@ -1,52 +1,120 @@
-<form [formGroup]="commonFormGroup">
+<div [formGroup]="formGroup" *ngIf="formGroup">
+  <ng-container *ngFor="let field of config; let index = i">
 
-  <ng-container *ngFor = "let formElement of formList; let i=index">    
-    
-    <ng-container *ngIf="commonFormGroup.get(formElement.code); let formControl">
-      <ion-item class="input-item cf-input-primary" *ngIf="formElement.type === formInputTypes.INPUT"
-        [ngClass]="{'': (formControl.dirty || formControl.touched) && !formControl.errors ,'cf-input-error': (formControl.dirty || formControl.touched) && formControl.errors }"> 
-        <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{ formElement.templateOptions?.label | translate }}</ion-label>
-        <ion-input formControlName="{{formElement.code}}" (input)="onInputChange()" placeholder="{{ formElement.templateOptions?.placeHolder | translate}}"></ion-input>
-        <ng-container *ngFor="let validation of formElement.validations">
-          <div class="cf-error" *ngIf="(validation.type && (validation.type).toLowerCase && validation.message && formControl.errors && formControl.errors[(validation.type).toLowerCase()] && (formControl.dirty || formControl.touched))">
-            {{ validation.message | translate }}
+    <div *ngIf="field.type === FieldConfigInputType.SELECT || field.type === FieldConfigInputType.NESTED_SELECT"
+      [hidden]="field.templateOptions?.hidden || null">
+      <div class="sb-dropdown">
+          <ion-item class="input-item">
+            <ion-label position="stacked" class="label-font align-text">
+              {{ field.templateOptions?.label | translate }} 
+              <ion-text *ngIf="field.templateOptions?.label && requiredFieldsMap[field.code]">
+                <span class="required-star">&nbsp;*</span>
+              </ion-text>
+            </ion-label>
+            <ion-select [formControl]="formGroup.get(field.code)" [multiple]="false"
+              [interfaceOptions]="{
+                header: field.templateOptions?.label,
+                cssClass: 'select-box',
+                animated: false
+              }"
+              [disabled]="field.disabled || (field.context && formGroup.get(field.context).invalid)"
+              [compareWith]="ValueComparator.valueComparator"
+              placeholder="{{ field.templateOptions?.placeHolder | translate }}"
+              okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
+
+              <ng-container *ngIf="isOptionsArray(field.templateOptions?.options)">
+                <ion-select-option *ngFor="let option of field.templateOptions?.options" [value]="option?.value">
+                  {{option?.label}}
+                </ion-select-option>
+              </ng-container>
+
+              <ng-container *ngIf="isOptionsClosure(field.templateOptions?.options) && optionsMap$[field.code]">
+                <ion-select-option *ngFor="let option of (optionsMap$[field.code]) | async" [value]="option?.value">
+                  {{option?.label}}
+                </ion-select-option>
+              </ng-container>
+
+            </ion-select>
+
+          </ion-item>
+      </div>
+    </div>
+
+    <div *ngIf="field.type === FieldConfigInputType.INPUT" [hidden]="field.templateOptions?.hidden || null">
+      <ng-container *ngIf="formGroup.get(field.code); let formControl">
+        <ion-item class="input-item cf-input-primary">
+          <ion-label position="stacked" class="label-font align-text ion-text-capitalize">
+            {{ field.templateOptions?.label | translate }}
+            <ion-text *ngIf="field.templateOptions?.label && requiredFieldsMap[field.code]">
+              <span class="required-star">&nbsp;*</span>
+            </ion-text>
+          </ion-label>
+
+          <div class="W100 merged-input-container MT16" style="text-align:start"
+            [ngClass]="{'': (!formControl.dirty || !formControl.touched) && !formControl.errors ,'cf-input-error': (formControl.dirty || formControl.touched) && formControl.errors }">
+
+            <span class="prefix" *ngIf="field.templateOptions?.prefix">{{field.templateOptions?.prefix}}</span>
+
+            <ion-input formControlName="{{field.code}}"
+              placeholder="{{ field.templateOptions?.placeHolder | translate}}" class="form-control custom">
+            </ion-input>
+            
+            <span class="otp-validator" *ngIf="field.asyncValidation"> 
+              <img *ngIf="formControl.value && formControl.status === 'VALID'" src="assets/imgs/green_tick.svg" alt="verification success">
+              <img *ngIf="formControl.value && formControl.status !== 'VALID'" src="assets/imgs/red_exclamation.svg" alt="verification failure">
+              <img *ngIf="!formControl.value" src="assets/imgs/empty_circle.svg" alt="empty field">
+            </span>
+
+          </div>
+
+          <ng-container *ngFor="let validation of field.validations">
+            <div class="cf-error"
+              *ngIf="(validation.type && (validation.type).toLowerCase && validation.message && formControl.errors && formControl.errors[(validation.type).toLowerCase()] && (formControl.dirty || formControl.touched))">
+              {{ validation.message | translate }}
+            </div>
+          </ng-container>
+        </ion-item>
+
+        <ng-container *ngIf="field.asyncValidation?.trigger">
+          <div class="async-validator" [hidden]="formControl.status === 'VALID' || formControl.status !== 'PENDING' || !formControl.value">
+            <div class="cf-error" *ngIf="field.asyncValidation?.message">
+              {{ field.asyncValidation.message | translate }}
+            </div>
+            <div class="verification-btn">
+              <ion-button class="ion-text-capitalize"
+                shape="round"
+                #validationTrigger
+                [attr.data-marker]="field.asyncValidation.marker">
+                {{field.asyncValidation.trigger}}
+              </ion-button>
+            </div>
           </div>
         </ng-container>
-      </ion-item>
-    </ng-container>
+      </ng-container>
 
-    <ion-item class="input-item" appCustomIonSelect *ngIf="formElement.type === formInputTypes.SELECT">
-      <ion-label position="stacked" class="label-font align-text">{{ formElement.templateOptions?.label | translate }}</ion-label>
-      <ion-select
-        formControlName="{{formElement.code}}"
-        [multiple]="formElement.templateOptions?.multiple"
-        [interfaceOptions]="fetchInterfaceOption(formElement.templateOptions?.label)"
-        [disabled]="!formElement.templateOptions?.options?.length || checkDisableCondition(formElement)"
-        placeholder="{{ formElement.templateOptions?.placeHolder | translate }}"
-        okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}"
-        (ionChange)="onInputChange($event)">
-        <ion-select-option *ngFor="let selectElement of formElement.templateOptions?.options" value="{{selectElement?.value}}">
-          {{selectElement?.label}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
+    </div>
 
-    <div class="flex-container M16" *ngIf="formElement.type === formInputTypes.CHECKBOX">
+    <div class="flex-container M16" *ngIf="field.type === FieldConfigInputType.CHECKBOX"
+      [hidden]="field.templateOptions?.hidden || null">
       <div>
-        <ion-checkbox formControlName="{{formElement.code}}" (ionChange)="onInputChange()"></ion-checkbox>
+        <ion-checkbox formControlName="{{field.code}}"></ion-checkbox>
       </div>
-      <ng-container *ngIf="formElement.templateOptions?.label">
-        <span>{{ formElement.templateOptions?.label | translate}}</span>
+      <ng-container *ngIf="field.templateOptions?.label">
+        <span>{{ field.templateOptions?.label | translate}}</span>
       </ng-container>
-      <ng-container *ngIf="formElement.templateOptions?.labelHtml">
-        <div [innerHTML]="formElement.templateOptions?.labelHtml | translateHtml" (click)="handleClick($event)"></div>
+      <ng-container *ngIf="field.templateOptions?.labelHtml">
+        <div [innerHTML]="field.templateOptions?.labelHtml | translateHtml" (click)="handleLinkClick($event)"></div>
       </ng-container>
     </div>
 
-    <div class="M16" *ngIf="formElement.type === formInputTypes.LABEL">
-      {{formElement.templateOptions?.label | translate}}
+    <div class="M16" *ngIf="field.type === FieldConfigInputType.LABEL">
+      {{field.templateOptions?.label | translate}}
     </div>
+
+    <app-common-forms *ngIf="field.type === FieldConfigInputType.NESTED_GROUP"
+      (initialize)="onNestedFormInitialize($event, field)" (finalize)="onNestedFormFinalize($event, field)"
+      [dataLoadStatusDelegate]="dataLoadStatusDelegate" [config]="field.children">
+    </app-common-forms>
+
   </ng-container>
-
-</form>
+</div>

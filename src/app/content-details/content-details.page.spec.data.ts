@@ -74,7 +74,12 @@ export const mockContentData: Partial<Navigation> = {
                     'do_212911626908123136157'
                 ],
                 batchId: 'SAMPLE_BATCH'
-            }
+            },
+            corRelation: [{id: 'do-123', type: 'Content'}],
+            resumedCourseCardData: {
+                contentId: 'do-123'
+            },
+            autoPlayQuizContent: true
         }
     }
 };

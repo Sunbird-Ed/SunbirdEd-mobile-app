@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
     .msg {
       color: white;
       font-size: medium;
@@ -27,7 +28,7 @@
       font-size: 16px;
     }
     .popover-header-color {
-      color: #fff;
+      color: map-get($colors, white);
     }
     ion-list.md.list-md.hydrated.report-alert-popover-list {
       padding-top: 0px !important;

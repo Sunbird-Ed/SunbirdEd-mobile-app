@@ -30,7 +30,7 @@ import { Location } from '@angular/common';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
-  ConfirmAlertComponent
+  ConfirmAlertComponent, CollectionChildComponent
 } from '../components';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
@@ -221,6 +221,7 @@ export class CollectionDetailEtbPage implements OnInit {
   appName: any;
   @ViewChild(iContent) ionContent: iContent;
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  @ViewChild('collectionChildComp') collectionChildComp: CollectionChildComponent;
   private eventSubscription: Subscription;
 
   showDownload: boolean;
@@ -251,6 +252,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
+  deeplinkContent: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -307,6 +309,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
+    this.deeplinkContent = extras.deeplinkContent;
   }
 
   ngOnInit() {
@@ -349,6 +352,10 @@ export class CollectionDetailEtbPage implements OnInit {
 
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: this.identifier });
+    if (this.deeplinkContent && this.collectionChildComp) {
+      this.collectionChildComp.navigateToDetailsPage(this.deeplinkContent, '');
+      this.deeplinkContent = null;
+    }
   }
 
   private assignCardData() {
@@ -808,14 +815,7 @@ export class CollectionDetailEtbPage implements OnInit {
           }
         });
       } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState: this.stateData,
-            corRelation: this.corRelationList
-          }
-        });
+        this.navigateToContentPage(content, depth);
       }
     });
   }
@@ -1385,23 +1385,9 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
-      const params: NavigationExtras = {
-        state: {
-          isChildContent: true,
-          content: this.playingContent,
-          corRelation: this.corRelationList,
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+      this.navigateToContentPage(this.playingContent, 1);
     } else {
-      const params: NavigationExtras = {
-        state: {
-          isChildContent: true,
-          content: this.playingContent,
-          corRelation: this.corRelationList,
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+      this.navigateToContentPage(this.playingContent, 1);
     }
   }
 

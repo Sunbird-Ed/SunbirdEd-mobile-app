@@ -1,19 +1,43 @@
-<ion-content>
-  <div class="mg-popup-container">
-    <div class="mg-popup-content">
-      <ion-icon class="mg-popup-close" name="md-close-circle" (click)="close()"></ion-icon>
-      <div class="mg-popup-title mg-popup-flex-item">{{'POWER_OF_GROUPS'| translate}}</div>
-      <div class="mg-flex-item">
-        <img src="assets/imgs/my-groups-popup.png" alt="">
+<!-- <ion-content> -->
+<div id="main-content">
+  <img class="close-icon" src="assets/imgs/close_tutorial.svg" alt="close-icon" (click)="close(false)">
+  <div class="tutorial-content">
+    <div class="mg-popup-container" *ngIf="!isFromAddMember">
+      <div class="mg-popup-content">
+        <!-- <ion-icon class="mg-popup-close close-icon" name="md-close-circle" (click)="close()"></ion-icon> -->
+        <div class="mg-popup-title mg-popup-flex-item">{{'POWER_OF_GROUPS'| translate}}</div>
+        <div class="mg-flex-item text-center">
+          <img src="assets/imgs/my-groups-popup.svg" alt="">
+        </div>
+        <div class="mg-popup-content-body mg-popup-flex-item">{{'CREATE_GROUP_DESCRIPTION_POPUP' | translate}}</div>
+        <div class="mg-popup-btn-container mg-popup-flex-item">
+          <button class="mg-popup-btn sb-btn-large" (click)="getStarted()">
+            {{'GET_STARTED' | translate}}
+            <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
+          </button>
+        </div>
       </div>
-      <div class="mg-popup-content-body mg-popup-flex-item">{{'CREATE_GROUP_DESCRIPTION' | translate}}</div>
-      <div class="mg-popup-flex-item">
-        <button class="mg-popup-btn sb-btn-large" (click)="getStarted()">
-          {{'GET_STARTED' | translate}}
-          <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
-        </button>
+    </div>
+    <div class="mg-popup-container" *ngIf="isFromAddMember">
+      <div class="mg-popup-content-member">
+        <!-- <ion-icon class="mg-popup-close" name="md-close-circle" (click)="close()"></ion-icon> -->
+        <div class="mg-popup-title mg-popup-flex-item">
+          <p class="am-title" [innerHTML]="'ADD_MEMBER_POPUP_TITLE' | translate:  {'%s': appName }"></p>
+          <p class="am-desc" [innerHTML]="'ADD_MEMBER_POPUP_DESC' | translate:  {'%s': appName }"></p>
+        </div>
+        <div>
+          <div class="mg-flex-item text-center mb-32">
+            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_1' | translate"></p>
+            <img src="assets/imgs/add_member_step_1.png" alt="">
+          </div>
+          <div class="mg-popup-flex-item text-center">
+            <p class="am-step text-left" [innerHTML]="'ADD_MEMBER_POPUP_STEP_2' | translate:  {'%s': appName }"></p>
+            <img src="assets/imgs/add_member_step_2.png" alt="">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</ion-content>
+</div>
+<!-- </ion-content> -->
   

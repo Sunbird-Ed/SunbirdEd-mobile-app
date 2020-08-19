@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
 :host{
     .toolbar-md{
         min-height: auto;
@@ -22,17 +23,17 @@
     }
     .badge {
         @include padding(5px, 15px);
-        color: #333;
+        color: map-get($colors, primary_black);
         border-radius: 100px;
-        border: solid 0.5px #c6dbd8;
+        border: solid 0.5px map-get($colors, pale_cyan);
         font-size: 11px;
         @include margin(null, 10px, null, null);
     }
     .sc-ion-card-md-h.sc-ion-card-md-s  {
         border-radius: 4px;
         box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.16);
-        background-color: #ffffff;
-        border: solid 0.5px #cccccc;
+        background-color: map-get($colors, white);
+        border: solid 0.5px map-get($colors, medium_gray);
         position: relative;
         .card-content-md {
             padding: 7px !important;
@@ -49,12 +50,12 @@
             font-stretch: normal;
             line-height: normal;
             letter-spacing: normal;
-            color: #666666;
+            color: map-get($colors, granite_gray);
         }
     
         .size{
             font-size: 11px;
-            color: #666666;
+            color: map-get($colors, granite_gray);
         }
     
         .name, .author{
@@ -70,7 +71,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             font-size: 14px !important;
-            color: #333333;
+            color: map-get($colors, primary_black);
             min-height: 32px;
         }
     
@@ -85,9 +86,9 @@
             min-height:15vh; 
             // background: #E9E9E9;
             .img-container {
-                border: 1px solid #c6dbd8;
+                border: 1px solid map-get($colors, pale_cyan);
                 padding: 0 !important;
-                background: #E9E9E9;
+                background: map-get($colors, white_e9);
                 min-height: 18vh;
                 max-height: 18vh;
                 border-radius: 4px;
@@ -111,7 +112,7 @@
         margin: 0;
         li{
             display: inline-block;
-            color: #007aff;
+            color: map-get($colors, primary_blue);
             font-weight: bold !important;
             font-size: 10px;
         }
@@ -119,7 +120,7 @@
     
         li:after{
             content: '\003e';
-            color: #979797;
+            color: map-get($colors, dark_gray);
             height: 0;
             width: 0;
             margin: 0 5px;
@@ -131,12 +132,12 @@
     }
     
     .custom-btn, .default{
-        background-color: #0076FE;
-        color: #fff;
+        background-color: map-get($colors, vived_blue_fe);
+        color: map-get($colors, white);
     }
 
     .default {
-        color: #fff;
+        color: map-get($colors, white);
     }
     
     .custom-btn.play .arrow-right{
@@ -144,7 +145,7 @@
         height: 0; 
         border-top: 8px solid transparent;
         border-bottom: 8px solid transparent;
-        border-left: 14px solid #fff;
+        border-left: 14px solid map-get($colors, white);
         margin-right: 8px;
     }
     
@@ -165,7 +166,7 @@
             padding-bottom: 16px;
         }
     
-        background-color: #ffffff;
+        background-color: map-get($colors, white);
         height: 100%;
         z-index: 1000;
         opacity: 1 !important;
@@ -196,7 +197,7 @@
         color: $blue;
         font-weight: bolder;
         box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
-        background-color: #fff;
+        background-color: map-get($colors, white);
         position: relative;
         z-index: 10;
         padding: 8px 8px 0px 16px;

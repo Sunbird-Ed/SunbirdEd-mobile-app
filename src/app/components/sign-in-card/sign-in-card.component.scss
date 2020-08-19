@@ -20,26 +20,26 @@
       margin: 0 8px 8px;
       padding-top: 16px;
       font-family: "Noto Sans";
-      color: #FFF;
+      color: map-get($colors, white);;
       font-weight: bold;
     }
     .sign-in-block{
       padding: 16px 12px 12px;
       text-align: center;
       margin: 8px;
-      background-color: #FFF;
+      background-color: map-get($colors, white);;
       border-radius: 2px;
-      box-shadow: 0 20px 40px -10px #D8D8D8;
+      box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
       p{
         margin-bottom: 8px;
         font-family: "Noto Sans";
         font-size: 12px;
-        color: #333333;
+        color: map-get($colors, primary_black);
       }
       ion-button{
-        --background: #008840 !important;
-        --background-hover: #008840 !important;
-        --background-activated: #008840 !important;
+        --background: #{$green} !important;
+        --background-hover: #{$green} !important;
+        --background-activated: #{$green} !important;
       }
     }
   }

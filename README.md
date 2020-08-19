@@ -1,5 +1,3 @@
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=Sunbird-Ed_SunbirdEd-mobile-app&metric=alert_status)](https://sonarcloud.io/dashboard?id=Sunbird-Ed_SunbirdEd-mobile-app)
-
 **Dependencies:**    
 NPM Version - above 6    
 Node JS Version - above 8    

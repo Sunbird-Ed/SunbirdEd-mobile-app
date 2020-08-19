@@ -4,9 +4,10 @@ import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants, EventTopics } from '@app/app/app.constant';
+import { ProfileConstants, EventTopics, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId } from '@app/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tabs',
@@ -37,6 +38,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
+    private router: Router
   ) {
 
   }
@@ -72,14 +74,22 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(async () => {
-      const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+    this.setQrStyles();
+  }
 
-      (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-        'style',
-        `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-      );
+  setQrStyles() {
+    setTimeout(async () => {
+      if (document.getElementById('qrScannerIcon') && document.getElementById('backdrop')) {
+        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+
+        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+          'style',
+          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+        );
+      } else {
+        this.setQrStyles();
+      }
 
     }, 2000);
   }
@@ -118,6 +128,7 @@ export class TabsPage implements OnInit, AfterViewInit {
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
     }
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
+    this.checkOnboardingProfileDetails();
   }
 
   public async onTabClick(tab) {
@@ -127,6 +138,16 @@ export class TabsPage implements OnInit, AfterViewInit {
       } else {
         this.commonUtilService.showToast('AVAILABLE_FOR_TEACHERS', false, 'sb-toast available-later');
       }
+    }
+  }
+
+  async checkOnboardingProfileDetails() {
+    if (!this.appGlobalService.isUserLoggedIn() && !this.appGlobalService.isOnBoardingCompleted) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], {
+        state: {
+          hideBackButton: true
+        }
+      });
     }
   }
 

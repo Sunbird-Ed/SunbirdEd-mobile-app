@@ -19,5 +19,9 @@ declare var sbutility: {
     onSuccess: () => void, onError: (error: any) => void) => void;
 
   getMetaData: (fileMapList: any[], success:
-    (callbackUrl: any) => void, error: (error: string) => void) => void;  
+    (callbackUrl: any) => void, error: (error: string) => void) => void;
+
+  verifyCaptcha: (apiKey: string, success:
+    (callbackUrl: any) => void, error: (error: string) => void) => void;
+
 };

@@ -1,0 +1,191 @@
+@import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+
+.font-16{
+    font-size: 16px;
+}
+.gd-page {
+    padding: 8px;
+}
+
+.gd-header {
+    box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
+
+    .gd-title {
+        font-size: 18px;
+        font-weight: bold;
+        padding: 8px 16px;
+        position: relative;
+
+        .gd-name {
+            padding-right: 60px;
+            color: $gray-800;
+            font-family: "Noto Sans";
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0;
+            line-height: 20px;
+
+            .gd-created-by {
+                color: $gray-400;
+                font-family: "Noto Sans";
+                font-size: 11px;
+                letter-spacing: 0;
+                line-height: 20px;
+                font-weight: normal;
+            }
+        }
+
+        .gd-opts {
+            position: absolute;
+            right: 8px;
+            top: 16px;
+            .add-member-icon {
+                position: relative;
+                bottom: 6px;
+                margin-right: 8px;
+            }
+            ion-icon {
+                color: $blue;
+            }
+        }
+    }
+
+}
+
+.gd-tab-header {
+    background-color: #E5EDF5;
+    @include clearfix;
+
+    .gd-tab {
+        float: left;
+        width: 50%;
+
+        &.active {
+            border-bottom: 2px solid $blue;
+            .gd-tab-name {
+                font-weight: bold;
+                color: $blue;
+            }
+        }
+    }
+
+    .gd-tab-name {
+        padding: 4px;
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 8px;
+        color: $gray-400;
+        font-size: 16px;
+
+        &.gd-tab-border {
+            border-right: 1px solid $gray-300;
+        }
+    }
+}
+.gd-tab-member-container{
+    box-shadow: 0 2px 7px 0 rgba(0,0,0,0.25);
+    min-height: calc(100vh - 225px);
+}
+
+.gd-member-search {
+    position: relative;
+    margin: 8px 0;
+
+    .gd-member-search-icon {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        font-size: 20px;
+        color: map-get($colors, gray_96);
+    }
+
+    input {
+        width: 100%;
+        height: 35px;
+        padding: 0 8px 0 30px;
+        border: 1px solid $blue;
+        border-radius: 4px;
+        &::placeholder{
+            color: map-get($colors, gray_96);
+        }
+    }
+}
+
+.cd-btn {
+    padding: 16px;
+
+    .sb-btn-large {
+        border: none;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 0px;
+        cursor: pointer;
+        outline: none;
+        margin-bottom: 8px;
+        font-family: noto-sans;
+        font-family: "Noto Sans";
+        font-size: 16px;
+        width: 100%;
+        padding: 16px 0px 16px 0px;
+        padding: 16px !important;
+        background-color: $blue;
+        box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+    }
+
+
+
+    img {
+        margin-right: 8px;
+        position: relative;
+        bottom: 2px;
+    }
+}
+
+.gd-add-member {
+    border-bottom: 1px solid $gray-100;
+    margin-bottom: 16px;
+    margin: 0 8px;
+    padding: 16px 0;
+}
+
+.gd-add-member-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    background-color:$green;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    img {
+        position: relative;
+        top: 12px;
+        left: 10px;
+    }
+}
+
+
+.gd-large-text {
+    color: $gray-800;
+    font-family: "Noto Sans";
+    font-size: 16px;
+    letter-spacing: 0;
+    line-height: 20px;
+}
+
+.showGroupOptions{
+    padding: 16px;
+}
+
+.gd-empty-result{
+    img{
+        max-width: 65%;
+        margin-top: 20%;
+        margin-bottom: 16px;
+        font-size: 16px;
+    }
+    
+}

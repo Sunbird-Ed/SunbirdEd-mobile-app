@@ -48,9 +48,9 @@
     }
 }
 // button sizes
-.sb-btn-xs, .sb-btn-normal, .sb-btn-md {
-    @include padding(($base-block-space * 2));
-}
+// .sb-btn-xs, .sb-btn-normal, .sb-btn-md {
+//     @include padding(($base-block-space * 2));
+// }
 .sb-btn-xs {
     height:($base-block-space * 3);
     @include padding(($base-block-space * 1));
@@ -69,6 +69,7 @@
 .sb-btn-md {
     height:($base-block-space * 6);
     font-size:$font-size-md;
+    @include padding(($base-block-space * 2));
 }
 .sb-btn-lg {
   height:($base-block-space * 7);

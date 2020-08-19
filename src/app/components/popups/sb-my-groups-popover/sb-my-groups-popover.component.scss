@@ -1,0 +1,39 @@
+img.arrow-icon{
+    display: inline-block;
+    width: 22px;
+    margin-top: -3px;
+    &.animate {
+      position: relative;
+      animation: dropDown 5s linear infinite;
+      animation-duration: 0.9s;
+    }
+  }
+  @keyframes dropDown {
+    0% {right: 0;}
+    50% {right: 10px;}
+    100% {right: 0;}
+  }
+  
+  .tutorial-content {
+    height: 100%;
+    
+  }
+  .mg-popup-btn-container{
+    padding-bottom: 16px;
+    button {
+      margin: 0;
+    }
+  }
+  
+  .close-icon {
+    display: inline-block;
+    float: right;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+  }
+  #main-content {
+    height: calc(100vh - 52px);
+    padding: 16px;
+    overflow-y: scroll;
+  }

@@ -164,7 +164,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (cordova.plugins.notification && cordova.plugins.notification.local &&
       cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
-      corRelationList.push({ id: cordova.plugins.notification.local.launchDetails.id, type: CorReleationDataType.NOTIFICATION_ID });
+      const localNotificationId = cordova.plugins.notification.local.launchDetails.id;
+      corRelationList.push({ id: localNotificationId  ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
@@ -337,8 +338,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       const value = {
         notification_id: data.id
       };
-      let corRelationList: Array<CorrelationData> = [];
-      corRelationList.push({ id: data.id, type: CorReleationDataType.NOTIFICATION_ID });
+      const corRelationList: Array<CorrelationData> = [];
+      const fcmId = data.id;
+      corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.FCM,
         this.activePageService.computePageId(this.router.url),
@@ -670,6 +672,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.SHARE_USER_AND_GROUPS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
         return;
@@ -692,15 +695,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'MY_CLASSROOMS':
+      case 'MY_GROUPS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.MY_CLASSROOMS_CLICKED,
+          InteractSubtype.MY_GROUPS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}`], navigationExtrasUG);
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
       case 'REPORTS':

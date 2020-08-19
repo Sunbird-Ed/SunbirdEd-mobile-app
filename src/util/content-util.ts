@@ -119,7 +119,7 @@ export class ContentUtil {
   }
 
 
-  public static genrateUTMCData(params: { [param: string]: string }): CorrelationData[] {
+  public static genrateUTMCData(params: { [param: string]: any }): CorrelationData[] {
     const utmParams = {};
     const cData: CorrelationData[] = [];
     Object.entries(params).forEach(([key, value]) => {
@@ -135,23 +135,27 @@ export class ContentUtil {
       } catch (e) {
       }
       if ((key === 'utm_campaign') || (key === 'channel')) {
-        cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
+        if (params[key] && !Array.isArray(params[key])) {
+          cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
+        } else {
+          // should generate error telemetry for duplicate campaign parameter
+        }
       } else {
         const chengeKeyUpperCase = key.split('_').map((elem) => {
           return (elem.charAt(0).toUpperCase() + elem.slice(1));
         });
-
-        utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+        utmParams[chengeKeyUpperCase.join('')] = value;
       }
     });
     if (Object.keys(utmParams)) {
       Object.keys(utmParams).map((key) => {
-        if (utmParams[key] !== undefined) {
+        if (utmParams[key] && !Array.isArray(utmParams[key])) {
           cData.push({ id: utmParams[key], type: key });
+        } else {
+           // should generate error telemetry for duplicate campaign parameter
         }
-      });
-    }
-
+    });
+   }
     return cData;
   }
 }

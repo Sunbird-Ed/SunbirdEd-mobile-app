@@ -1,5 +1,5 @@
 /* card styles starts here */
-
+@import "src/assets/styles/_variables.scss";
 .sb-card-container {
     display: inline-flex;
     
@@ -264,7 +264,7 @@
           }
           .textbook-title {
               height: ($base-block-space * 3);	
-              color: #024F9D;	
+              color: $blue;	
               font-size: 18px;	
               font-weight: bold;
               text-transform: capitalize;
@@ -311,14 +311,14 @@
 .sb-recently-viewed-container {
   min-height: 135px;
   .sb-recently-viewed-items{
-    background-color: #024f9d;
+    background-color: $blue;
     height: ($base-block-space * 11);
     width: 100%;
     position: relative;
     @include padding(($base-block-space * 1), 0);
     .sb-recenlty-viewed-title {
       font-size: $font-size-md;
-      color: #ffffff;
+      color: map-get($colors, white);
       font-family: "Noto Sans";	
       overflow: auto;
       margin-bottom: ($base-block-space * 2);
