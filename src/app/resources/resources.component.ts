@@ -1338,7 +1338,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onCourseCardClick(event) {
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: event.data.title, type: CorReleationDataType.SUBJECT });
+    corRelationList.push({ id: event.data.title || '', type: CorReleationDataType.SUBJECT });
     corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
 
     if (event.data.contents && event.data.contents.length > 1) {
