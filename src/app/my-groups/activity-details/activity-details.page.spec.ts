@@ -124,27 +124,29 @@ describe('ActivityDetailsPage', () => {
         it('should set selected course', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            const cData = { children: [{
-                contentType: 'collection',
-                children : [
-                    {
-                        contentType: 'Course',
-                        identifier: 'id1',
-                        mimeType: MimeType.COLLECTION
-                    },
-                    {
-                        contentType: 'collection',
-                        children : [
-                            {
-                                contentType: 'Course',
-                                identifier: 'id2',
-                                name: 'name2',
-                                mimeType: MimeType.COLLECTION
-                            }
-                        ]
-                    }
-                ]
-            }]};
+            const cData = {
+                children: [{
+                    contentType: 'collection',
+                    children: [
+                        {
+                            contentType: 'Course',
+                            identifier: 'id1',
+                            mimeType: MimeType.COLLECTION
+                        },
+                        {
+                            contentType: 'collection',
+                            children: [
+                                {
+                                    contentType: 'Course',
+                                    identifier: 'id2',
+                                    name: 'name2',
+                                    mimeType: MimeType.COLLECTION
+                                }
+                            ]
+                        }
+                    ]
+                }]
+            };
             mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
             mockAppGlobalService.selectedActivityCourseId = 'id2';
             // act
@@ -160,26 +162,28 @@ describe('ActivityDetailsPage', () => {
         it('should not set selected course', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            const cData = { children: [{
-                contentType: 'collection',
-                children : [
-                    {
-                        contentType: 'Course',
-                        identifier: 'id1',
-                        mimeType: MimeType.COLLECTION
-                    },
-                    {
-                        contentType: 'collection',
-                        children : [
-                            {
-                                contentType: 'Course',
-                                identifier: 'id2',
-                                mimeType: MimeType.COLLECTION
-                            }
-                        ]
-                    }
-                ]
-            }]};
+            const cData = {
+                children: [{
+                    contentType: 'collection',
+                    children: [
+                        {
+                            contentType: 'Course',
+                            identifier: 'id1',
+                            mimeType: MimeType.COLLECTION
+                        },
+                        {
+                            contentType: 'collection',
+                            children: [
+                                {
+                                    contentType: 'Course',
+                                    identifier: 'id2',
+                                    mimeType: MimeType.COLLECTION
+                                }
+                            ]
+                        }
+                    ]
+                }]
+            };
             mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
             mockAppGlobalService.selectedActivityCourseId = '';
             // act
@@ -200,7 +204,7 @@ describe('ActivityDetailsPage', () => {
         activityDetailsPage.handleBackButton(true);
         // assert
         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-        .toHaveBeenCalledWith(PageId.ACTIVITY_DETAIL, Environment.GROUP, true);
+            .toHaveBeenCalledWith(PageId.ACTIVITY_DETAIL, Environment.GROUP, true);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -217,7 +221,7 @@ describe('ActivityDetailsPage', () => {
 
     it('should invoked handleDeviceBackButton', () => {
         mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({event: {}}))) as any
+            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({ event: {} }))) as any
         } as any;
         jest.spyOn(activityDetailsPage, 'handleBackButton').mockImplementation();
         // act
@@ -449,9 +453,11 @@ describe('ActivityDetailsPage', () => {
         });
 
         it('should handle device header and back-button for undefined response', (done) => {
-            const cData = { children: [{
-                contentType: 'collection',
-            }]};
+            const cData = {
+                children: [{
+                    contentType: 'collection',
+                }]
+            };
             mockCollectionService.fetchCollectionData = jest.fn(() => Promise.resolve(cData));
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             mockHeaderService.headerEventEmitted$ = of({
@@ -540,7 +546,8 @@ describe('ActivityDetailsPage', () => {
                 }]
             };
             // act
-            activityDetailsPage.calculateProgress();
+            activityDetailsPage.calculateProgress(activityDetailsPage.filteredMemberList,
+                activityDetailsPage.selectedCourse, activityDetailsPage.activityDetail);
             // assert
             expect(activityDetailsPage.filteredMemberList[0].progress).toBe('100');
         });
@@ -564,7 +571,8 @@ describe('ActivityDetailsPage', () => {
                 }]
             };
             // act
-            activityDetailsPage.calculateProgress();
+            activityDetailsPage.calculateProgress(activityDetailsPage.filteredMemberList,
+                activityDetailsPage.selectedCourse, activityDetailsPage.activityDetail);
             // assert
             expect(activityDetailsPage.filteredMemberList[0].progress).toBe('0');
         });
@@ -580,7 +588,8 @@ describe('ActivityDetailsPage', () => {
                 }]
             };
             // act
-            activityDetailsPage.calculateProgress();
+            activityDetailsPage.calculateProgress(activityDetailsPage.filteredMemberList,
+                activityDetailsPage.selectedCourse, activityDetailsPage.activityDetail);
             // assert
             expect(activityDetailsPage.filteredMemberList[0].progress).toBe('0');
         });

@@ -72,7 +72,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   isUnplannedMaintenanceStarted = false;
   timeLeft: string;
   eventSubscription: Subscription;
-  isTimeAvailable: boolean;
+  isTimeAvailable = false;
+  isOnBoardingCompleted: boolean;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -500,7 +501,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         take(1)
     ).subscribe(() => {
       this.isPlannedMaintenanceStarted = true;
-      this.isTimeAvailable = false;
+      this.isOnBoardingCompleted = this.appGlobalService.isOnBoardingCompleted;
       if (this.isPlannedMaintenanceStarted) {
         let  intervalRef;
         const backButtonSubscription = this.platform.backButton.subscribeWithPriority(13, () => {
@@ -517,10 +518,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         //     hour = minute * 60,
         //     day = hour * 24;
         //
-        // const countDown = new Date('Aug 12, 2020 00:00:00').getTime();
+        // const countDown = new Date('Aug 14, 2020 00:00:00').getTime();
         // intervalRef = setInterval(() => {
-        //
-        //       const now = new Date().getTime(),
+        //   this.isTimeAvailable = true;
+        //   const now = new Date().getTime(),
         //           distance = countDown - now;
         //
         //       document.getElementById('timer').innerText = `${Math.floor((distance % (day)) / (hour))} : ${Math.floor((distance % (hour)) / (minute))} : ${Math.floor((distance % (minute)) / second)}`;

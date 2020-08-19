@@ -27,6 +27,7 @@ export class FiltersPage {
 
   unregisterBackButton: Subscription;
   source: string;
+  shouldEnableFilter = true;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -40,7 +41,7 @@ export class FiltersPage {
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
     this.filterCriteria =  this.router.getCurrentNavigation().extras.state.filterCriteria;
-    this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+    this.initialFilterCriteria = this.router.getCurrentNavigation().extras.state.initialfilterCriteria;
     this.source = this.router.getCurrentNavigation().extras.state.source;
     this.init();
     this.handleBackButton();
@@ -177,20 +178,26 @@ export class FiltersPage {
     });
   }
 
-  public applyInterimFilter() {
+  public async applyInterimFilter() {
     this.filterCriteria.mode = 'hard';
     this.filterCriteria.searchType = SearchType.FILTER;
     this.filterCriteria.fields = [];
+    this.shouldEnableFilter = false;
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.contentService.searchContent(this.filterCriteria).toPromise()
-      .then((responseData: ContentSearchResult) => {
+      .then(async (responseData: ContentSearchResult) => {
+        await loader.dismiss();
+        this.shouldEnableFilter = true;
         if (responseData) {
           this.facetsFilter = [];
           this.filterCriteria = undefined;
           this.filterCriteria = responseData.filterCriteria;
           this.init();
         }
-      }).catch(() => {
-
+      }).catch(async () => {
+        await loader.dismiss();
+        this.shouldEnableFilter = true;
       });
   }
 

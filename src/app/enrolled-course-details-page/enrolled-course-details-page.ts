@@ -777,10 +777,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.batchDetails = data;
           // console.log('this.batchDetails', this.batchDetails);
           this.handleUnenrollButton();
-          if (data.cert_templates && Object.keys(data.cert_templates).length &&
-            data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+          if (data.cert_templates) {
             this.isCertifiedCourse = true;
-            this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
+            if (Object.keys(data.cert_templates).length && data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+              this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
+            }
           } else {
             this.isCertifiedCourse = false;
           }

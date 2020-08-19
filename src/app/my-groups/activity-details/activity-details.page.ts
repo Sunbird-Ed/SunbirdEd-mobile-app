@@ -135,7 +135,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
-        this.calculateProgress();
+        this.filteredMemberList = this.calculateProgress(this.filteredMemberList, this.selectedCourse, this.activity);
       }
     } catch (e) {
       console.log(' CsGroupActivityDataAggregation err', e);
@@ -156,16 +156,19 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     return memberName;
   }
 
-  calculateProgress() {
-    this.filteredMemberList.forEach( (member) => {
+  calculateProgress(memberList, selectedCourse, activity) {
+    memberList.forEach((member) => {
       let progress = 0;
       const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-      const activityCount = this.selectedCourse ? this.selectedCourse.contentData.leafNodes.length : this.activity.activityInfo.leafNodes.length ;
+      const activityCount = selectedCourse ? selectedCourse.contentData.leafNodes.length
+        : activity.activityInfo.leafNodes.length;
       if (activityCount && memberAgg) {
         progress = Math.round((memberAgg.value / activityCount) * 100);
       }
-      member.progress = '' + progress;
+      member.progress = '' + (progress > 100 ? 100 : progress);
     });
+
+    return memberList;
   }
 
   getActivityAggLastUpdatedOn() {
@@ -181,7 +184,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if ((c.mimeType === MimeType.COLLECTION) &&  (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
+      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {
@@ -192,11 +195,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   openActivityToc() {
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
-      { state: {
-        courseList: this.courseList,
-        mainCourseName: this.activity.activityInfo.name
-      }
-    });
+      {
+        state: {
+          courseList: this.courseList,
+          mainCourseName: this.activity.activityInfo.name
+        }
+      });
   }
 
   handleDeviceBackButton() {

@@ -2689,4 +2689,15 @@ describe('AppComponent', () => {
             }, 0);
         });
     });
+
+    it('should navigate to downloads if user clicked on it', () => {
+        // arrange
+        appComponent.isPlannedMaintenanceStarted = false;
+        mockRouter.navigate = jest.fn();
+        // act
+        appComponent.navigateToDownloads();
+        // assert
+        expect(appComponent.isPlannedMaintenanceStarted).toBeFalsy();
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DOWNLOAD_TAB]);
+    });
 });

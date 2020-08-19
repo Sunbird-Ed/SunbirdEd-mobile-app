@@ -38,8 +38,8 @@
     <!--Timer-->
     <div id="timer"></div>
     <!-- another text -->
-    <p id="maintenance-sub-text">{{'MAINTENANCE_SUB_TEXT' | translate}}</p>
-    <div class="text-center">
+    <p id="maintenance-sub-text" *ngIf="isOnBoardingCompleted">{{'MAINTENANCE_SUB_TEXT' | translate}}</p>
+    <div class="text-center" *ngIf="isOnBoardingCompleted">
       <ion-button id="navigate-downloads" (click)="navigateToDownloads()">{{'GO_TO_DOWNLOADS' | translate}}</ion-button>
     </div>
   </div>

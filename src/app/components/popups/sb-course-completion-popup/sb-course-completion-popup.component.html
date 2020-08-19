@@ -9,7 +9,7 @@
             </div>
             <div class="course-completion-title">{{'CONGRATULATIONS' | translate}}</div>
             <div class="course-completion-info">{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</div>
-            <div class="course-completion-cert" *ngIf="isCertified">
+            <div class="course-completion-cert" *ngIf="isCertified && certificateDescription">
                 <p>{{'COURSE_COMPLETION_POPUP_DESC' | translate}}</p>
                 <p>{{certificateDescription}}</p>
             </div>

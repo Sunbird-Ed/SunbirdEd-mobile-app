@@ -123,19 +123,13 @@ export class SelfDeclaredTeacherEditPage {
         config.default = this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].persona;
       } else if (config.code === 'tenant') {
         config.default = this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].orgId;
-      } else if (config.code === 'name') {
-        config.templateOptions.labelHtml.values['$1'] = this.profile.firstName;
-      } else if (config.code === 'state') {
-        config.templateOptions.labelHtml.values['$1'] = this.availableLocationState || 'Enter location from Profile page';
-      } else if (config.code === 'district') {
-        config.templateOptions.labelHtml.values['$1'] = this.availableLocationDistrict || 'Enter location from Profile page';
       }
     });
 
     this.tenantPersonaForm = personaTenantFormData;
-
-    console.log(this.tenantPersonaForm);
-    this.getTeacherDetailsFormApi(this.selectedTenant, false);
+    if (this.selectedTenant) {
+      this.getTeacherDetailsFormApi(this.selectedTenant, false);
+    }
   }
 
   async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
@@ -160,7 +154,23 @@ export class SelfDeclaredTeacherEditPage {
       }
 
       if (config.asyncValidation && config.asyncValidation.message) {
-        config.asyncValidation.message = this.commonUtilService.translateMessage(config.asyncValidation.message)
+        config.asyncValidation.message = this.commonUtilService.translateMessage(config.asyncValidation.message);
+      }
+
+      if (config.templateOptions && config.templateOptions.labelHtml && config.templateOptions.labelHtml.values) {
+        for (const key in config.templateOptions.labelHtml.values) {
+          if (config.templateOptions.labelHtml.values[key]) {
+            if (config.code === 'tnc' && key === '$tnc') {
+              config.templateOptions.labelHtml.values[key] =
+                this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key], { '%appName': this.appName });
+            }
+            if (config.code === 'tnc' && key === '$url') {
+              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl;
+            }
+            config.templateOptions.labelHtml.values[key] =
+              this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
+          }
+        }
       }
 
       if (config.children && config.children.length) {
@@ -246,18 +256,19 @@ export class SelfDeclaredTeacherEditPage {
         if (this.editType === 'edit') {
           return undefined;
         }
-        if (config.templateOptions && config.templateOptions.labelHtml &&
-          config.templateOptions.labelHtml.contents) {
-          for (let key in config.templateOptions.labelHtml.values) {
-            config.templateOptions.labelHtml.values[key] =
-              this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
-          }
-          config.templateOptions.labelHtml.values['$url'] = this.profile.tncLatestVersionUrl;
-          config.templateOptions.labelHtml.values['$appName'] = ' ' + this.appName + ' ';
-          return config;
-        }
         return config;
       }
+
+      if (config.code === 'name') {
+        config.templateOptions.labelHtml.values['$1'] = this.profile.firstName;
+      } else if (config.code === 'state') {
+        config.templateOptions.labelHtml.values['$1'] =
+          this.availableLocationState || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
+      } else if (config.code === 'district') {
+        config.templateOptions.labelHtml.values['$1'] =
+        this.availableLocationDistrict || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
+      }
+
       return config;
     }).filter((formData) => formData);
 
@@ -272,7 +283,7 @@ export class SelfDeclaredTeacherEditPage {
     }
     if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
       this.profile.declarations[0].info[childConfig.code]) {
-      childConfig.default = this.profile.declarations[0].info[childConfig.code]
+      childConfig.default = this.profile.declarations[0].info[childConfig.code];
     }
 
     if (this.editType === 'add') {
@@ -589,10 +600,14 @@ export class SelfDeclaredTeacherEditPage {
 
   tenantPersonaFormValueChanges(event) {
     this.tenantPersonaLatestFormValue = event;
-    console.log(event);
-    if (event.tenant && event.tenant !== this.selectedTenant) {
-      this.selectedTenant = event.tenant;
-      this.getTeacherDetailsFormApi(this.selectedTenant, true);
+    if (event && event.tenant && event.persona) {
+      if (!this.selectedTenant) {
+        this.selectedTenant = event.tenant;
+        this.getTeacherDetailsFormApi(this.selectedTenant, false);
+      } else if (event.tenant !== this.selectedTenant) {
+        this.selectedTenant = event.tenant;
+        this.getTeacherDetailsFormApi(this.selectedTenant, true);
+      }
     }
   }
 
@@ -611,17 +626,14 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   tenantPersonaFormStatusChanges(event) {
-    this.isTenantPersonaFormValid = event.isValid;
-    console.log('TENANT_FORM', event && event.isValid);
+    this.isTenantPersonaFormValid = event.isValid || event.valid;
   }
 
   declarationFormStatusChanges(event) {
     this.isDeclarationFormValid = event.isValid;
-    console.log('DECLARE_FORM', event && event.isValid);
   }
 
   linkClicked(event) {
-    console.log(event);
     this.commonUtilService.openLink(event);
   }
 
