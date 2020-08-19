@@ -548,6 +548,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
         this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
       } else if (content) {
+        if (!route) {
+          route = this.getRouterPath(content);
+        }
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
@@ -572,6 +575,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.closeProgressLoader();
       console.log(err);
     }
+  }
+
+  private getRouterPath(content) {
+    let route;
+    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      route = RouterLinks.ENROLLED_COURSE_DETAILS;
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      route = RouterLinks.COLLECTION_DETAIL_ETB;
+    } else {
+      route = RouterLinks.CONTENT_DETAILS;
+    }
+    return route;
   }
 
   private async navigateQuizContent(identifier, content, isFromLink, payloadUrl) {
