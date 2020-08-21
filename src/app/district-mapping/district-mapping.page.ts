@@ -231,8 +231,8 @@ export class DistrictMappingPage {
     await this.getStates();
     const correlationList: Array<CorrelationData> = [];
     if (this.stateName) {
-      correlationList.push({ id: this.stateName, type: CorReleationDataType.STATE });
-      correlationList.push({ id: this.districtName, type: CorReleationDataType.DISTRICT });
+      correlationList.push({ id: this.stateName || '', type: CorReleationDataType.STATE });
+      correlationList.push({ id: this.districtName || '', type: CorReleationDataType.DISTRICT });
     }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
