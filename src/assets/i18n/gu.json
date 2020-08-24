@@ -594,7 +594,7 @@
   "SD_CARD": "SD કાર્ડ",
   "SEARCH_FOR_GROUP_MEMBER": "ગ્રુપ સભ્ય માટે શોધ",
   "SEARCH_HINT": "શોધો",
-  "SEARCH_PLACEHOLDER": "કન્ટેન્ટ અહીં શોધો. દા.ત. 'વાર્તા'",
+  "SEARCH_PLACEHOLDER": "કન્ટેન્ટ શોધવા માટે લખો. દા.ત. 'વાર્તા'",
   "SEARCH_TO_FIND_CONTENT": "કન્ટેન્ટ  માટે {{%s}} સર્ચ કરો ",
   "SECONDS_AGO": "{{%s}} સેકંડ પહેલા",
   "SECOND_AGO": "{{%s}} સેકંડ પહેલા",

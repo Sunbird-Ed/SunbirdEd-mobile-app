@@ -775,6 +775,8 @@
   "WANT_TO_CHECK_FREE_TRAININGS": "Want to check courses?",
   "WARNING_PLEASE_MAKE_SOME_CHANGES": "Make changes",
   "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of WebView from the Google Play store.",
+  "WEEKS_AGO": "{{%s}} weeks ago",
+  "WEEK_AGO": "{{%s}} week ago",
   "WELCOME_BACK": "WELCOME BACK {{%s}}",
   "WHAT_IS_MEMBER_ID": "Where can I see the {{app_name}} ID?",
   "YEARS_AGO": "{{%s}} years ago",
