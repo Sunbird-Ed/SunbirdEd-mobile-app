@@ -420,8 +420,8 @@ describe('FaqReportIssuePage', () => {
     });
 
     describe('Closures', () => {
-        faqReportIssuePage.profile = mockUserProfile;
         it('Board closure should return board list', (done) => {
+            faqReportIssuePage.profile = mockUserProfile;
             // arrange
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(mockFrameworkList));
             // act
