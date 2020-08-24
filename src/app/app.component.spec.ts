@@ -948,48 +948,6 @@ describe('AppComponent', () => {
                 done();
             });
         });
-
-        it('should receive notification data when notification was not tapped', (done) => {
-            // arrange
-            mockPlatform.ready = jest.fn(() => {
-                return {
-                    then: jest.fn((cb) => cb('ready'))
-                } as any;
-            });
-            const mockData = {
-                id: 'some_id',
-                wasTapped: false,
-                actionData: '{\"key\":\"value\"}'
-            };
-            FCMPlugin.onNotification = jest.fn((callback, success, error) => {
-                callback(mockData);
-                success({});
-                error('');
-            });
-            mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
-            mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
-            mockNotificationSrc.setNotificationDetails = jest.fn();
-
-            // act
-            appComponent.ngOnInit();
-            // assert
-            setTimeout(() => {
-                expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
-                    InteractType.FCM,
-                    'some_page_id',
-                    { notification_id: 'some_id' },
-                    [{ id: 'some_id', type: 'NotificationID' }]
-                );
-                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
-                    InteractType.LOCAL,
-                    'some_page_id',
-                    undefined,
-                    [{ id: '', type: 'NotificationID' }]
-                );
-                done();
-            });
-        });
     });
 
     describe('checkForExperiment', () => {
