@@ -503,11 +503,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       that.zone.run(async () => {
         if (syncStat.error) {
           await loader.dismiss();
-          console.error('Telemetry Data Sync Error: ', syncStat);
           return;
         } else if (!syncStat.syncedEventCount) {
           await loader.dismiss();
-          console.error('Telemetry Data Sync Error: ', syncStat);
           return;
         }
 

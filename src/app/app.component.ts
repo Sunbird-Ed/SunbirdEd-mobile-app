@@ -337,33 +337,33 @@ export class AppComponent implements OnInit, AfterViewInit {
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
+        const value = {
+          notification_id: data.id
+        };
+        const corRelationList: Array<CorrelationData> = [];
+        const fcmId = data.id;
+        corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
+        this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+          InteractType.FCM,
+          this.activePageService.computePageId(this.router.url),
+          value,
+          corRelationList
+        );
+  
+        data['isRead'] = data.wasTapped ? 1 : 0;
+        data['actionData'] = JSON.parse(data['actionData']);
+        this.notificationServices.addNotification(data).subscribe((status) => {
+          this.events.publish('notification:received');
+          this.events.publish('notification-status:update', { isUnreadNotifications: true });
+        });
+        this.notificationSrc.setNotificationDetails(data);
+        if (this.isForeground) {
+          this.notificationSrc.handleNotification();
+        }
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
       }
 
-      const value = {
-        notification_id: data.id
-      };
-      const corRelationList: Array<CorrelationData> = [];
-      const fcmId = data.id;
-      corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
-      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.FCM,
-        this.activePageService.computePageId(this.router.url),
-        value,
-        corRelationList
-      );
-
-      data['isRead'] = data.wasTapped ? 1 : 0;
-      data['actionData'] = JSON.parse(data['actionData']);
-      this.notificationServices.addNotification(data).subscribe((status) => {
-        this.events.publish('notification:received');
-        this.events.publish('notification-status:update', { isUnreadNotifications: true });
-      });
-      this.notificationSrc.setNotificationDetails(data);
-      if (this.isForeground) {
-        this.notificationSrc.handleNotification();
-      }
     },
       (success) => {
         console.log('Notification Sucess Callback', success);

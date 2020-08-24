@@ -65,7 +65,6 @@ export class SelfDeclaredTeacherEditPage {
   tenantPersonaForm: FieldConfig<any>[] = [];
   appName = '';
   selectedTenant: string = '';
-  
 
   // @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
@@ -352,21 +351,28 @@ export class SelfDeclaredTeacherEditPage {
         return;
       }
 
-      const formValue = this.declaredLatestFormValue.children.externalIds;
-
       await loader.present();
 
       const declarations = [];
       const declaredDetails = this.declaredLatestFormValue.children && this.declaredLatestFormValue.children.externalIds;
+      Object.keys(declaredDetails).forEach((key) => {
+        if (typeof declaredDetails[key] === 'string') {
+          declaredDetails[key] = declaredDetails[key].trim();
+        }
+        if (declaredDetails[key].length === 0 || declaredDetails[key] === null) {
+          delete declaredDetails[key];
+        }
+      });
+
       let operation = '';
       if (!this.profile.declarations || !this.profile.declarations.length) {
-        operation = 'add'
+        operation = 'add';
       } else if (this.tenantPersonaLatestFormValue.tenant === this.profile.declarations[0].orgId) {
-        operation = 'edit'
+        operation = 'edit';
       } else if (this.tenantPersonaLatestFormValue.tenant !== this.profile.declarations[0].orgId) {
         const tenantPersonaData = { persona: this.profile.declarations[0].persona, tenant: this.profile.declarations[0].orgId }
         declarations.push(this.getDeclarationReqObject('remove', this.profile.declarations[0].info, tenantPersonaData));
-        operation = 'add'
+        operation = 'add';
       }
       declarations.push(this.getDeclarationReqObject(operation, declaredDetails, this.tenantPersonaLatestFormValue));
 
@@ -403,7 +409,7 @@ export class SelfDeclaredTeacherEditPage {
       orgId: tenantPersonaDetails.tenant,
       persona: tenantPersonaDetails.persona,
       info: declaredDetails
-    }
+    };
   }
 
   async showAddedSuccessfullPopup() {
