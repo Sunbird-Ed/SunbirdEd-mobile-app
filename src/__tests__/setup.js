@@ -30,7 +30,8 @@ global.cordova = {
         }
     },
     file: {
-        applicationDirectory: "/path"
+        applicationDirectory: "/path",
+        externalRootDirectory: '/path'
     },
     InAppBrowser: {
         open: () => ({
