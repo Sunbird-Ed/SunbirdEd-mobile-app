@@ -1,5 +1,5 @@
 import { TeacherIdVerificationComponent } from './teacher-id-verification-popup.component';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { PopoverController, NavParams, Events } from '@ionic/angular';
 import { TelemetryGeneratorService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
 import { ProfileService, HttpClientError, Response, HttpServerError } from 'sunbird-sdk';
@@ -38,6 +38,7 @@ describe('TeacherIdVerificationComponent', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn()
     };
+    const mockEvents: Partial<Events> = {};
 
 
     beforeAll(() => {
@@ -47,6 +48,7 @@ describe('TeacherIdVerificationComponent', () => {
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilService as CommonUtilService,
+            mockEvents as Events
         );
     });
 
@@ -283,6 +285,7 @@ describe('TeacherIdVerificationComponent', () => {
         it('should generate INTERACT telemetry for successsfull validation', (done) => {
             // arrange
             mockProfileService.userMigrate = jest.fn(() => of(userMigrationResponse));
+            mockEvents.publish = jest.fn(() => []);
             // act
             teacherIdVerificationComponent.externalUserVerfication({
                 userId: '0123456789',
@@ -304,6 +307,7 @@ describe('TeacherIdVerificationComponent', () => {
                     featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
                     ID.USER_VERIFICATION_SUCCESS);
                 done();
+                expect(mockEvents.publish).toHaveBeenCalled();
             }, 0);
         });
 
@@ -467,6 +471,7 @@ describe('TeacherIdVerificationComponent', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn()
     };
+    const mockEvents: Partial<Events> = {};
 
 
     beforeAll(() => {
@@ -476,6 +481,7 @@ describe('TeacherIdVerificationComponent', () => {
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilService as CommonUtilService,
+            mockEvents as Events
         );
     });
 
