@@ -436,6 +436,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       this.location.back();
+      this.location.back();
     }, 3000);
   }
 
@@ -909,7 +910,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
   responseSubmitted() {
     if (this.formContext !== FormConfigSubcategories.CONTENT_AVAILABILITY) {
-      this.location.back();
       this.location.back();
     }
   }
