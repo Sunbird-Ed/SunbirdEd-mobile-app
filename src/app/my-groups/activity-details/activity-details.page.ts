@@ -106,6 +106,9 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
+    if (this.selectedCourse) {
+      req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+    }
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -135,7 +138,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
-        this.filteredMemberList = this.calculateProgress(this.filteredMemberList, this.selectedCourse, this.activity);
       }
     } catch (e) {
       console.log(' CsGroupActivityDataAggregation err', e);
@@ -156,19 +158,13 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     return memberName;
   }
 
-  calculateProgress(memberList, selectedCourse, activity) {
-    memberList.forEach((member) => {
-      let progress = 0;
-      const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-      const activityCount = selectedCourse ? selectedCourse.contentData.leafNodes.length
-        : activity.activityInfo.leafNodes.length;
-      if (activityCount && memberAgg) {
-        progress = Math.round((memberAgg.value / activityCount) * 100);
-      }
-      member.progress = '' + (progress > 100 ? 100 : progress);
-    });
-
-    return memberList;
+  getMemberProgress(member) {
+    let progress = 0;
+    if (member.agg) {
+      const progressMetric = member.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.PROGRESS);
+      progress = progressMetric ? progressMetric.value : 0;
+    }
+    return '' + progress;
   }
 
   getActivityAggLastUpdatedOn() {

@@ -2,20 +2,30 @@ var fs = require("fs");
 var fsextra = require('fs-extra');
 
 var languageList = [
+    "Assamese",
+    "Bengali",
     "English",
+    "Gujarati",
     "Hindi",
     "Kannada",
     "Marathi",
+    "Oriya",
+    "Punjabi",
     "Tamil",
     "Telugu",
     "Urdu"
 ];
 
 var languageCodeList = [
+    "as",
+    "bn",
     "en",
+    "gu",
     "hi",
     "kn",
     "mr",
+    "or",
+    "pa",
     "ta",
     "te",
     "ur"
