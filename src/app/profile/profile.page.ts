@@ -5,7 +5,6 @@ import {
   ToastController,
   IonRefresher,
 } from '@ionic/angular';
-import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import {
   ContentCard,
   ContentType,
@@ -175,11 +174,6 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     this.doRefresh();
-    this.events.subscribe('profilePicture:update', (res) => {
-      if (res.isUploading && res.url !== '') {
-        this.imageUri = res.url;
-      }
-    });
     this.appName = await this.appVersion.getAppName();
     this.stateList = await this.commonUtilService.getStateList();
   }
@@ -233,7 +227,6 @@ export class ProfilePage implements OnInit {
         });
       })
       .catch(async error => {
-        console.error('Error while Fetching Data', error);
         this.refresh = false;
         await loader.dismiss();
       });
@@ -295,9 +288,6 @@ export class ProfilePage implements OnInit {
                           });
                         }
                       });
-                    if (profileData && profileData.avatar) {
-                      that.imageUri = profileData.avatar;
-                    }
                     that.formatRoles();
                     that.getOrgDetails();
                     that.userLocation = that.commonUtilService.getUserLocation(that.profile);
@@ -315,13 +305,6 @@ export class ProfilePage implements OnInit {
         }
       });
     });
-  }
-
-  /**
-   * Method to convert Array to Comma separated string
-   */
-  arrayToString(stringArray: Array<string>): string {
-    return stringArray.join(', ');
   }
 
   /**
@@ -347,7 +330,7 @@ export class ProfilePage implements OnInit {
    */
   showMoreItems(): void {
     this.rolesLimit = this.roles.length;
-    generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -366,7 +349,7 @@ export class ProfilePage implements OnInit {
 
   showMoreBadges(): void {
     this.badgesLimit = this.profile.badgeAssertions.length;
-    generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -381,7 +364,7 @@ export class ProfilePage implements OnInit {
 
   showMoreTrainings(): void {
     this.trainingsLimit = this.mappedTrainingCertificates.length;
-    generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -393,18 +376,6 @@ export class ProfilePage implements OnInit {
   showLessTrainings(): void {
     this.trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   }
-
-
-  /**
-   *  Returns the Object with given Keys only
-   * @param keys - Keys of the object which are required in new sub object
-   * @param obj - Actual object
-   */
-  getSubset(keys, obj) {
-    return keys.reduce((a, c) => ({ ...a, [c]: obj[c] }), {});
-  }
-
-
 
   /**
    * To get enrolled course(s) of logged-in user i.e, trainings in the UI.
@@ -893,16 +864,6 @@ export class ProfilePage implements OnInit {
       };
       await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
     }
-  }
-
-  async showTeacherIdVerificationPopup() {
-    const popover = await this.popoverCtrl.create({
-      component: TeacherIdVerificationComponent,
-      backdropDismiss: false,
-      cssClass: 'popover-alert'
-    });
-
-    await popover.present();
   }
 
   async openEnrolledCourse(coursecertificate) {
