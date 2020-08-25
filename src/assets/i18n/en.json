@@ -329,7 +329,7 @@
   "GROUP_MEMBER_SEARCH_PLACEHOLDER": "Search within group",
   "GROUP_NAME": "Group name",
   "GROUP_NAME_IS_REQUIRED": "You have to enter the group name",
-  "GROUP_TERMS_IS_REQUIRED": "You have to agree to {{app_name}} terms of service, before you proceed",
+  "GROUP_TERMS_IS_REQUIRED": "You have to agree to {{app_name}}'s group guidelines before you proceed",
   "GROUP_UPDATE_SUCCESS": "Group details updated successfully",
   "HABIT_REMINDER_NOTIFICATION_MESSAGE": "Learn something new on {{%s}} today!",
   "HELP": "Help",
