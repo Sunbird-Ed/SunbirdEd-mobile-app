@@ -39,6 +39,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -205,6 +206,9 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
+  groupId: string;
+  isFromGroupFlow = false;
+  addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   hiddenGroups = new Set();
   shownGroups = undefined;
@@ -252,6 +256,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
   deeplinkContent: any;
+  activityList;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -309,6 +314,21 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
     this.deeplinkContent = extras.deeplinkContent;
+    if (this.source === PageId.GROUP_DETAIL) {
+      this.isFromGroupFlow = true;
+      this.groupId = extras.groupId;
+      this.activityList = extras.activityList || [];
+      this.addActivityToGroupData = {
+        groupId: this.groupId,
+        activityId: this.identifier,
+        activityList: this.activityList,
+        activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
+        pageId: PageId.COLLECTION_DETAIL,
+        corRelationList: this.corRelationList,
+        source: this.source,
+        noOfPagesToRevertOnSuccess: -3
+      };
+    }
   }
 
   ngOnInit() {
@@ -492,9 +512,12 @@ export class CollectionDetailEtbPage implements OnInit {
       emitUpdateIfAny: refreshContentDetails
     };
     this.contentService.getContentDetails(option).toPromise()
-      .then((data: Content) => {
+      .then((data: Content | any) => {
         if (data) {
           this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          if (data.contentData.attributions && data.contentData.attributions.length) {
+            data.contentData.attributions = (data.contentData.attributions.sort()).join(', ');
+          }
           if (!data.isAvailableLocally) {
             this.contentDetail = data;
             this.telemetryGeneratorService.generatefastLoadingTelemetry(
@@ -560,7 +583,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.userRating = contentFeedback[0].rating;
       this.ratingComment = contentFeedback[0].comments;
     }
-
 
     if (Boolean(data.isAvailableLocally)) {
       this.showLoading = false;
@@ -787,7 +809,7 @@ export class CollectionDetailEtbPage implements OnInit {
       if (value.children) {
         this.getContentsSize(value.children);
       }
-      if (value.isAvailableLocally === false) {
+      if (!value.isAvailableLocally && value.contentData.downloadUrl) {
         this.downloadIdentifiers.add(value.contentData.identifier);
         this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
       }
@@ -834,7 +856,10 @@ export class CollectionDetailEtbPage implements OnInit {
         depth,
         contentState: this.stateData,
         corRelation: this.corRelationList,
-        breadCrumb: this.breadCrumb
+        breadCrumb: this.breadCrumb,
+        source: this.source,
+        groupId: this.groupId,
+        activityList: this.activityList
       }
     });
   }
@@ -1336,7 +1361,6 @@ export class CollectionDetailEtbPage implements OnInit {
                 PageId.COLLECTION_DETAIL,
                 JSON.stringify(stackTrace),
               );
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;

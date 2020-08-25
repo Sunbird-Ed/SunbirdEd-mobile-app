@@ -27,7 +27,7 @@ import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
-import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype } from '../../services';
+import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 describe('SearchPage', () => {
@@ -119,6 +119,9 @@ describe('SearchPage', () => {
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockgroupHandlerService: Partial<GroupHandlerService> = {
+        addActivityToGroup: jest.fn()
+    };
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -146,7 +149,8 @@ describe('SearchPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockNavCtrl as NavController,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockgroupHandlerService as GroupHandlerService
         );
     });
 
@@ -994,7 +998,8 @@ describe('SearchPage', () => {
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'
-                }
+                },
+                filterCriteria: {}
             };
             mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
@@ -1634,5 +1639,58 @@ describe('SearchPage', () => {
             );
         });
     });
+
+    // describe('add activity', () => {
+    //     it('should addActivityToGroup', () => {
+    //         // arrange
+    //         searchPage.groupId = 'id1';
+    //         searchPage.searchContentResult = [
+    //             {identifier: 'some_id', selected: true, contentType: 'contentType'}
+    //         ];
+    //         // act
+    //         searchPage.addActivityToGroup();
+    //         // assert
+    //         expect(mockgroupHandlerService.addActivityToGroup).toHaveBeenCalledWith(
+    //             'id1',
+    //             'some_id',
+    //             'contentType',
+    //             PageId.SEARCH,
+    //             expect.anything(),
+    //             -2
+    //         );
+    //     });
+
+    //     it('should not addActivityToGroup', () => {
+    //         // arrange
+    //         searchPage.searchContentResult = [
+    //             {identifier: 'id1', selected: true, contentType: 'contentType'}
+    //         ];
+    //         searchPage.activityList = [{
+    //             id: 'id1'
+    //         }];
+    //         // act
+    //         searchPage.addActivityToGroup();
+    //         // assert
+    //         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+    //     });
+    //     it('should open content', () => {
+    //         // arrange
+    //         const result = [
+    //             {identifier: 'some_id', selected: true, contentType: 'contentType'}
+    //         ];
+    //         searchPage.searchContentResult = result;
+    //         jest.spyOn(searchPage, 'openContent').mockImplementation();
+    //         // act
+    //         searchPage.openSelectedContent();
+    //         // assert
+    //         expect(searchPage.openContent).toHaveBeenCalledWith(
+    //             undefined,
+    //             result[0],
+    //             0,
+    //             undefined,
+    //             false
+    //         );
+    //     });
+    // });
 
 });

@@ -476,11 +476,34 @@ describe('QrcoderesultPage', () => {
     });
 
     describe('navigateToDetailsPage', () => {
+        it('should return a toast message if downloadUrl is undefined', () => {
+            const content = {
+                contentData: {
+                    contentType: ContentType.COURSE,
+                    downloadUrl: ''
+                }
+            };
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => {});
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            // act
+            qrcoderesultPage.navigateToDetailsPage(content);
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+        });
+
         it('should navigate to enrolled course details page', () => {
             // arrange
             const content = {
                 contentData: {
-                    contentType: ContentType.COURSE
+                    contentType: ContentType.COURSE,
+                    downloadUrl: 'sample-url'
                 }
             };
             qrcoderesultPage.corRelationList = [{id: 'do_123', type: 'Content'}];
@@ -490,7 +513,7 @@ describe('QrcoderesultPage', () => {
             };
             mockTelemetryGeneratorService.isCollection = jest.fn();
             // act
-            qrcoderesultPage.navigateToDetailsPage(content);
+            qrcoderesultPage.navigateToDetailsPage(content, [{identifier: 'do-123'}]);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(
                 [RouterLinks.ENROLLED_COURSE_DETAILS],
@@ -500,7 +523,10 @@ describe('QrcoderesultPage', () => {
         it('should navigate to collection details ETB page', () => {
             // arrange
             const content = {
-                mimeType: MimeType.COLLECTION
+                mimeType: MimeType.COLLECTION,
+                contentData: {
+                    downloadUrl: 'sample-url'
+                }
             };
             const paths = [
                 {identifier: 'id1'},
@@ -525,7 +551,10 @@ describe('QrcoderesultPage', () => {
         it('should navigate to content details page', () => {
             // arrange
             const content = {
-                identifier: 'id'
+                identifier: 'id',
+                contentData: {
+                    downloadUrl: 'sample-url'
+                }
             };
             qrcoderesultPage.corRelationList = [{id: 'd0_123', type: 'Content'}];
             mockTextbookTocService.setTextbookIds = jest.fn();

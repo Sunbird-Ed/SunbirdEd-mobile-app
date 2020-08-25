@@ -1,5 +1,6 @@
 import { Content, Rollup, TelemetryObject } from 'sunbird-sdk';
 import { Navigation } from '@angular/router';
+import { PageId } from '../../services';
 
 export const mockcollectionData: Partial<Navigation> = {
     id: 7,
@@ -77,7 +78,10 @@ export const mockcollectionData: Partial<Navigation> = {
                     'do_212911626908123136157'
                 ],
                 batchId: 'SAMPLE_BATCH'
-            }
+            },
+            source: PageId.GROUP_DETAIL,
+            groupId: 'g1',
+            activityList: []
         }
     }
 };

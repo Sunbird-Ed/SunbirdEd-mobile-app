@@ -611,7 +611,8 @@ describe('ContentDetailsPage', () => {
                     },
                     appIcon: 'sample-app-icon',
                     streamingUrl: 'streamingUrl',
-                    me_totalDownloads: true
+                    me_totalDownloads: true,
+                    attributions: ['sample-2', 'sample-1']
                 },
                 mimeType: 'application/vnd.ekstep.h5p',
                 contentMarker: [{
@@ -652,6 +653,7 @@ describe('ContentDetailsPage', () => {
             expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
             expect(contentDetailsPage.isChildContent).toBeTruthy();
             expect(contentDetailsPage.streamingUrl).toBe(request.contentData.streamingUrl);
+            expect(contentDetailsPage.content.contentData.attributions).toBe('sample-1, sample-2');
         });
 
         it('should not return api respone', () => {
@@ -1276,7 +1278,7 @@ describe('ContentDetailsPage', () => {
             // arrange
             mockAppGlobalService.showCourseCompletePopup = false;
             mockAppGlobalService.getUserId = jest.fn(() => 'userid');
-            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}'
+            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}';
             mockPreferences.getString = jest.fn((key) => {
                 switch (key) {
                     case PreferenceKey.CONTENT_CONTEXT:
@@ -1852,13 +1854,24 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('openConfirmPopUp', () => {
+        it('should return content not downloaded for undefined downloadUrl', (done) => {
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: ''} };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+                done();
+            }, 0);
+        });
+
         it('should open a content download popup for dismiss data', (done) => {
             // arrange
             contentDetailsPage.limitedShareContentFlag = false;
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 , downloadUrl: 'sample-url'} };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
@@ -1884,7 +1897,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100, downloadUrl: 'sample-url' } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ undefined }));
@@ -2292,7 +2305,6 @@ describe('ContentDetailsPage', () => {
         it('should invoke appVersion() and other subscription() when invoked', (done) => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockRatingHandler.showRatingPopup = jest.fn();
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
             const called: { [topic: EventTopics]: boolean } = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
@@ -2345,7 +2357,6 @@ describe('ContentDetailsPage', () => {
                 expect(mockRatingHandler.resetRating).toHaveBeenCalled();
                 expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
                 expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalled();
-                expect(mockRatingHandler.showRatingPopup).toHaveBeenCalled();
                 expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
                 done();
             }, 1000);
@@ -2354,7 +2365,6 @@ describe('ContentDetailsPage', () => {
         it('should invoke appVersion() and other subscription() if data is false when invoked', (done) => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
-            mockRatingHandler.showRatingPopup = jest.fn();
             mockContentPlayerHandler.setLastPlayedContentId = jest.fn();
             const called: { [topic: EventTopics]: boolean } = {};
             mockEvents.subscribe = jest.fn((topic, fn) => {
@@ -2549,11 +2559,18 @@ describe('ContentDetailsPage', () => {
             // arrange
             contentDetailsPage['playerEndEventTriggered'] = true;
             contentDetailsPage.showCourseCompletePopup = false;
-            contentDetailsPage.getContentState = jest.fn();
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'COURSE_STATE_UPDATE',
+                payload: {
+                    identifier: 'do-123',
+                    progress: 100
+                }
+            }));
+            jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation();
             // act
             contentDetailsPage.openCourseCompletionPopup().then(res => {
-                expect(contentDetailsPage['playerEndEventTriggered']).toBeFalsy();
                 expect(contentDetailsPage.getContentState).toHaveBeenCalled();
+                expect(mockEventBusService.events).toHaveBeenCalled();
                 done();
             });
         });
@@ -2561,12 +2578,24 @@ describe('ContentDetailsPage', () => {
         it('should open the course completion popup if the course is completed', (done) => {
             // arrange
             contentDetailsPage['playerEndEventTriggered'] = false;
+            jest.spyOn(contentDetailsPage, 'getContentState').mockImplementation();
+            contentDetailsPage.courseContext = '{"userId":"userid","courseId":' +
+                '"courseid","batchId":"batchid","isCertified":true,"leafNodeIds":["id1","id2"],"batchStatus":1}';
             contentDetailsPage.showCourseCompletePopup = true;
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({})),
             } as any)));
+            mockEventBusService.events = jest.fn(() => of({
+                type: 'COURSE_STATE_UPDATE',
+                payload: {
+                    identifier: 'do-123',
+                    progress: 100
+                }
+            }));
+
             contentDetailsPage.fetchCertificateDescription = jest.fn(() => Promise.resolve(''));
+
             // act
             contentDetailsPage.openCourseCompletionPopup().then(res => {
                 expect(mockPopoverController.create).toHaveBeenCalled();

@@ -66,7 +66,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.appGlobalService.redirectUrlAfterLogin = '';
   }
 
   private checkUserLoggedIn() {

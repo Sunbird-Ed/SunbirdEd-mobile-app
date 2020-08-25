@@ -777,10 +777,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.batchDetails = data;
           // console.log('this.batchDetails', this.batchDetails);
           this.handleUnenrollButton();
-          if (data.cert_templates && Object.keys(data.cert_templates).length &&
-            data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+          if (data.cert_templates) {
             this.isCertifiedCourse = true;
-            this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
+            if (Object.keys(data.cert_templates).length && data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+              this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
+            }
           } else {
             this.isCertifiedCourse = false;
           }
@@ -940,7 +941,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 PageId.COURSE_DETAIL,
                 JSON.stringify(stackTrace),
               );
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           }
         });
@@ -1225,7 +1225,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         if (value.children) {
           this.getContentsSize(value.children);
         }
-        if (value.isAvailableLocally === false) {
+        if (!value.isAvailableLocally && value.contentData.downloadUrl) {
           this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
@@ -1673,7 +1673,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType,
+    this.telemetryGeneratorService.generateEndTelemetry(objectType || ContentType.COURSE,
       Mode.PLAY,
       PageId.COURSE_DETAIL,
       Environment.HOME,

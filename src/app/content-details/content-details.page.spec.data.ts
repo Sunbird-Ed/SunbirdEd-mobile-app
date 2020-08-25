@@ -1,4 +1,5 @@
 import {Navigation} from '@angular/router';
+import { PageId } from '../../services';
 
 export const mockContentData: Partial<Navigation> = {
     id: 7,
@@ -79,7 +80,10 @@ export const mockContentData: Partial<Navigation> = {
             resumedCourseCardData: {
                 contentId: 'do-123'
             },
-            autoPlayQuizContent: true
+            autoPlayQuizContent: true,
+            source: PageId.GROUP_DETAIL,
+            groupId: 'g1',
+            activityList: []
         }
     }
 };

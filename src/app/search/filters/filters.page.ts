@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -11,6 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
+import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-filters',
@@ -20,13 +21,16 @@ import {
 export class FiltersPage {
 
   filterCriteria: any;
+  initialFilterCriteria: any;
 
   facetsFilter: Array<any> = [];
 
   unregisterBackButton: Subscription;
   source: string;
+  shouldEnableFilter = true;
 
   constructor(
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private popCtrl: PopoverController,
     private events: Events,
     private commonUtilService: CommonUtilService,
@@ -34,13 +38,13 @@ export class FiltersPage {
     private location: Location,
     private router: Router,
     private headerService: AppHeaderService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
-    this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
+    this.filterCriteria =  this.router.getCurrentNavigation().extras.state.filterCriteria;
+    this.initialFilterCriteria = this.router.getCurrentNavigation().extras.state.initialfilterCriteria;
     this.source = this.router.getCurrentNavigation().extras.state.source;
     this.init();
     this.handleBackButton();
-    console.log('filer ciriteria', this.filterCriteria);
   }
 
   ionViewWillEnter() {
@@ -73,6 +77,16 @@ export class FiltersPage {
       undefined,
       values);
     await popUp.present();
+    const { data } = await popUp.onDidDismiss();
+    if (data && data.isFilterApplied) {
+      this.applyInterimFilter();
+    }
+  }
+
+  reset() {
+    this.filterCriteria =  JSON.parse(JSON.stringify(this.initialFilterCriteria));
+    this.facetsFilter = [];
+    this.init();
   }
 
   applyFilter() {
@@ -162,6 +176,29 @@ export class FiltersPage {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
     });
+  }
+
+  public async applyInterimFilter() {
+    this.filterCriteria.mode = 'hard';
+    this.filterCriteria.searchType = SearchType.FILTER;
+    this.filterCriteria.fields = [];
+    this.shouldEnableFilter = false;
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.contentService.searchContent(this.filterCriteria).toPromise()
+      .then(async (responseData: ContentSearchResult) => {
+        await loader.dismiss();
+        this.shouldEnableFilter = true;
+        if (responseData) {
+          this.facetsFilter = [];
+          this.filterCriteria = undefined;
+          this.filterCriteria = responseData.filterCriteria;
+          this.init();
+        }
+      }).catch(async () => {
+        await loader.dismiss();
+        this.shouldEnableFilter = true;
+      });
   }
 
 }

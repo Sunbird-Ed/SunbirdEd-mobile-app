@@ -48,7 +48,8 @@ import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { applyProfileFilter } from '@app/util/filter.util';
+import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
+import { GroupHandlerService } from '@app/services';
 
 
 declare const cordova;
@@ -113,6 +114,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
   LibraryCardTypes = LibraryCardTypes;
+  initialFilterCriteria: any;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -141,7 +143,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private location: Location,
     private router: Router,
     private navCtrl: NavController,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private groupHandlerService: GroupHandlerService
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -435,6 +438,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         state: {
           source: this.source,
           groupId: this.groupId,
+          activityList: this.activityList,
           content: params.content,
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
@@ -493,6 +497,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           state: {
             source: this.source,
             groupId: this.groupId,
+            activityList: this.activityList,
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
@@ -745,6 +750,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['/filters'], {
         state: {
           filterCriteria: this.responseData.filterCriteria,
+          initialfilterCriteria: this.initialFilterCriteria,
           source: this.source
         }
       });
@@ -766,7 +772,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
               this.searchContentResult = responseData.contentDataList;
-
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
@@ -841,13 +846,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
     this.corRelationList = [];
-
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
           this.responseData = response;
           if (response) {
-
+            if (!this.initialFilterCriteria) {
+              this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
+            }
             this.addCorRelation(response.responseMessageId, 'API');
             this.searchContentResult = response.contentDataList;
             this.isEmptyResult = !this.searchContentResult || this.searchContentResult.length === 0;
@@ -1586,5 +1592,35 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     });
     return totalCount;
   }
+
+  // async addActivityToGroup() {
+  //   const content = this.searchContentResult.find((c) => c.selected);
+  //   if (this.activityList) {
+  //     const activityExist = this.activityList.find(activity => activity.id === content.identifier);
+  //     if (activityExist) {
+  //       this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
+  //       return;
+  //     }
+  //   }
+  //   this.groupHandlerService.addActivityToGroup(
+  //     this.groupId,
+  //     content.identifier,
+  //     content.contentType,
+  //     PageId.SEARCH,
+  //     this.corRelationList,
+  //     -2);
+  // }
+
+  // openSelectedContent() {
+  //   let index = 0;
+  //   let content;
+  //   this.searchContentResult.forEach((element, idx) => {
+  //     if (element.selected) {
+  //       index = idx;
+  //       content = element;
+  //     }
+  //   });
+  //   this.openContent(undefined, content, index, undefined, false);
+  // }
 
 }

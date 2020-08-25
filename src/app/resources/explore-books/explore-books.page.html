@@ -51,8 +51,9 @@
   </div>
   <ng-container *ngFor="let content of contentSearchResult; let i = index">
     <div class="sb-card-container sb-card-textbook-container">
-      <app-text-book-card [content]="content" [layoutName]="layoutName" (click)="openContent(content, i)">
-      </app-text-book-card>
+      <sb-library-card [content]="content" [type]="LibraryCardTypes.MOBILE_TEXTBOOK"
+        (click)="openContent(content, i)" [cardImg]="commonUtilService.getContentImg(content)">
+      </sb-library-card>
     </div>
   </ng-container>
 

@@ -1,17 +1,16 @@
 @import "src/assets/styles/_variables.scss";
 
 .add-to-group-button {
-    background-color: $green;
+    background-color: $blue;
     border: none;
     color: white;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 4px 0px;
     cursor: pointer;
     outline: none;
-    margin-bottom: 8px;
-    width: 100%;
-    padding: 16px 0px 16px 0px;
+    margin: 4px 0 8px;
+    width: 90%;
+    padding: 16px 0 16px 0;
 }

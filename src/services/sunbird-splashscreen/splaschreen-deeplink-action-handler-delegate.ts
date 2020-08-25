@@ -8,7 +8,7 @@ import {
 } from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, PopoverController } from '@ionic/angular';
+import { Events } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import {
   PageAssembleService,
@@ -46,14 +46,10 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
-import { ExternalChannelOverrideListener } from './external-channel-override-interface';
-import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
-import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
@@ -63,9 +59,7 @@ import { Location } from '@angular/common';
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;
 
-  private _isDelegateReady = false;
   private isOnboardingCompleted = false;
-  private loginPopup: any;
   private currentAppVersionCode: number;
   private progressLoaderId: string;
   private childContent;
@@ -74,7 +68,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
-    this._isDelegateReady = val;
     if (val && this.savedPayloadUrl) {
       this.handleDeeplink(this.savedPayloadUrl);
       this.savedPayloadUrl = null;
@@ -99,12 +92,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private router: Router,
     private appVersion: AppVersion,
     private utilityService: UtilityService,
-    private popoverCtrl: PopoverController,
     private loginHandlerService: LoginHandlerService,
     public translateService: TranslateService,
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
-    private container: ContainerService,
     private sbProgressLoader: SbProgressLoader,
     private location: Location
   ) {
@@ -147,20 +138,20 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         name: 'content deatil',
         code: 'contentDetail',
-        values: '(?:\\/(?:resources\\/play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
+        values: '(?:\\/(?:resources\\/play\\/content|play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
         route: 'content-details'
       },
       {
         name: 'Textbook detail',
         code: 'textbookDetail',
-        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+))',
+        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+))',
         route: 'collection-detail-etb',
         priority: 2
       },
       {
         name: 'Textbook content detail',
         code: 'textbookContentDetail',
-        values: '(?:\\/play\\/(?:content|collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
+        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
         route: 'collection-detail-etb',
         priority: 1
       },
@@ -208,7 +199,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (!!urlRegexMatch) {
         if (!matchedDeeplinkConfig ||
           (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
-          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
+          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
+            && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
           matchedDeeplinkConfig = config;
           urlMatch = urlRegexMatch;
         }
@@ -503,7 +495,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async handleNavigation(payloadUrl, identifier, dialCode, route) {
-
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();
@@ -627,34 +618,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     );
   }
 
-  private async showLoginWithoutOnboardingPopup(quizId) {
-    this.appGlobalServices.resetSavedQuizContent();
-    this.loginPopup = await this.popoverCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT'),
-        metaInfo: this.commonUtilService.translateMessage('QUIZ_CONTENTS_ONLY_REGISTERED_USERS'),
-        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-        isNotShowCloseIcon: true,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color',
-            isInternetNeededMessage: 'NEED_INTERNET_FOR_DEEPLINK_CONTENT'
-          }
-        ]
-      },
-      cssClass: 'sb-popover info',
-    });
-    await this.loginPopup.present();
-
-    const { data } = await this.loginPopup.onDidDismiss();
-    if (data && data.canDelete) {
-      this.loginHandlerService.signIn();
-      this.appGlobalServices.limitedShareQuizContent = quizId;
-    }
-    this.loginPopup = null;
-  }
   // This method is called only when a deeplink is clicked before Onboarding is not completed
   eventToSetDefaultOnboardingData(): void {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {

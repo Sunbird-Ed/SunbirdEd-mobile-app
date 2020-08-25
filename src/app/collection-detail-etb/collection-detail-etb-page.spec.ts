@@ -709,7 +709,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             const content = {
                 identifier: 'do_212911645382959104165',
-                contentData: { licenseDetails: undefined },
+                contentData: { licenseDetails: undefined, attributions: ['sample-3', 'sample-1'] },
                 isAvailableLocally: false,
                 children: { identifier: 'do_212911645382959104166' }
             };
@@ -721,6 +721,7 @@ describe('collectionDetailEtbPage', () => {
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
+                expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('sample-1, sample-3');
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
                     InteractSubtype.FAST_LOADING_INITIATED,
@@ -1160,12 +1161,14 @@ describe('collectionDetailEtbPage', () => {
                 identifier: 'do-123',
                 contentData: {
                     name: 'test',
-                    identifier: 'do-234'
+                    identifier: 'do-234',
+                    downloadUrl: 'sample-dowload-url'
                 },
                 children: [{
                     contentData: {
                         name: 'test',
-                        identifier: 'do-234'
+                        identifier: 'do-234',
+                        downloadUrl: 'sample-dowload-url'
                     }
                 }],
                 isAvailableLocally: false,

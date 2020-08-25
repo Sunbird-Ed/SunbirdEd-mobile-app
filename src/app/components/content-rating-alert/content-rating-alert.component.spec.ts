@@ -14,11 +14,8 @@ import {
     ImpressionType,
     InteractSubtype,
     InteractType,
-    Mode,
-    PageId,
     ImpressionSubtype
 } from '@app/services/telemetry-constants';
-import { declaredViewContainer } from '@angular/core/src/view/util';
 import { Location } from '@angular/common';
 
 describe('ContentRatingAlertComponent', () => {
@@ -425,6 +422,15 @@ describe('ContentRatingAlertComponent', () => {
     });
 
     describe('createRatingForm', () => {
+
+        it('should return if contentRating is 0', () => {
+            // arrange
+            // act
+            const data =  contentRatingAlertComponent.createRatingForm(0);
+            // assert
+            expect(data).toBeUndefined();
+        });
+
         it('', () => {
             // arrange
             contentRatingAlertComponent.contentRatingOptions = {

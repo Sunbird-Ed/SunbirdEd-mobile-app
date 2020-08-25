@@ -71,13 +71,6 @@ describe('MyGroupsPage', () => {
         expect(myGroupsPage).toBeTruthy();
     });
 
-    it('should reset redirectUrlAfterLogin on ngOninit', () => {
-        // act
-        myGroupsPage.ngOnInit();
-        // assert
-        expect(mockAppGlobalService.redirectUrlAfterLogin).toBe('');
-    });
-
     describe('openinfopopup', () => {
         it('should return undefined for backDrop clicked', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({

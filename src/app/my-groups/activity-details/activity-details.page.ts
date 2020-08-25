@@ -106,6 +106,9 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
+    if (this.selectedCourse) {
+      req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+    }
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -135,7 +138,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
-        this.calculateProgress();
       }
     } catch (e) {
       console.log(' CsGroupActivityDataAggregation err', e);
@@ -156,16 +158,13 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     return memberName;
   }
 
-  calculateProgress() {
-    this.filteredMemberList.forEach( (member) => {
-      let progress = 0;
-      const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-      const activityCount = this.selectedCourse ? this.selectedCourse.contentData.leafNodes.length : this.activity.activityInfo.leafNodes.length ;
-      if (activityCount && memberAgg) {
-        progress = Math.round((memberAgg.value / activityCount) * 100);
-      }
-      member.progress = '' + progress;
-    });
+  getMemberProgress(member) {
+    let progress = 0;
+    if (member.agg) {
+      const progressMetric = member.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.PROGRESS);
+      progress = progressMetric ? progressMetric.value : 0;
+    }
+    return '' + progress;
   }
 
   getActivityAggLastUpdatedOn() {
@@ -181,7 +180,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if ((c.mimeType === MimeType.COLLECTION) &&  (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
+      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {
@@ -192,11 +191,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   openActivityToc() {
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
-      { state: {
-        courseList: this.courseList,
-        mainCourseName: this.activity.activityInfo.name
-      }
-    });
+      {
+        state: {
+          courseList: this.courseList,
+          mainCourseName: this.activity.activityInfo.name
+        }
+      });
   }
 
   handleDeviceBackButton() {

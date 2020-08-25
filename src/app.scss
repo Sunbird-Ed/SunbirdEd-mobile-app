@@ -1422,10 +1422,6 @@ ion-modal.sb-progress-loader {
   }
 }
 .select-activity-popover {
-  .sb-popover-container {
-    max-height: 70vh;
-    overflow: auto;
-  }
   .sb-popover-title {
     text-align: left !important;
     margin-left: 1.5rem;
@@ -1443,3 +1439,56 @@ ion-modal.sb-progress-loader {
    position: absolute;
    top: 70vh;
   }
+
+body {
+  .unplanned-maintenance-banner {
+    display: none;
+    background-color: #F7B500;
+  }
+
+  .tabs-inner > ion-router-outlet > .ion-page {
+    padding-top: 0;
+    transition: padding-top 1s;
+  }
+
+  &.show-maintenance {
+    .unplanned-maintenance-banner {
+      display: block;
+    }
+
+    .tabs-inner > ion-router-outlet > .ion-page {
+      padding-top: 64px;
+    }
+    app-tabs ~ .ion-page {
+      padding-top: 64px ;
+    }
+  }
+}
+
+#timer {
+  width: 100vw;
+  text-align: center;
+  max-height: 48px;
+  display: inline-block;
+  list-style-type: none;
+  text-transform: uppercase;
+  color: map-get($colors, red);
+  font-size: 2.5rem;
+}
+
+#navigate-downloads {
+  --background: #{map-get($colors, facebook)};
+}
+#planned-maintenance-banner{
+  height: 100vh; z-index: 2000; background-color: white; display: inline-block
+}
+#planned-maintenance-text {
+  margin-top: 16px; text-align: center; margin-left: 4em; margin-right: 4em;
+}
+#maintenance-sub-text {
+  text-align: center; color: grey; padding-left: 4em; padding-right: 4em;
+}
+
+.required-asterisk{
+  color: map-get($colors, red);
+}
