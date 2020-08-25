@@ -436,6 +436,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       this.location.back();
+      this.location.back();
     }, 3000);
   }
 
