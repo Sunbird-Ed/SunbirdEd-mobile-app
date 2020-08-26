@@ -127,7 +127,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * This flag helps in knowing when the content player is closed and the user is back on content details page.
    */
   public isPlayerLaunched = false;
-  isGuestUser = false;
   launchPlayer: boolean;
   isResumedCourse: boolean;
   didViewLoad: boolean;

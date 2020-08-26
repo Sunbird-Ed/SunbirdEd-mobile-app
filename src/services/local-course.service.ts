@@ -1,8 +1,9 @@
 import { Injectable, Inject, NgZone } from '@angular/core';
 import {
   Batch, Course, CourseService, EnrollCourseRequest,
-  InteractType, AuthService, SharedPreferences, OAuthSession,
-  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError, NetworkError, GetContentStateRequest, ContentStateResponse
+  InteractType, SharedPreferences,
+  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
+  NetworkError, GetContentStateRequest, ContentStateResponse
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -18,8 +19,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 @Injectable()
 export class LocalCourseService {
@@ -27,7 +27,6 @@ export class LocalCourseService {
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -105,6 +104,7 @@ export class LocalCourseService {
     };
     return enrollCourseRequest;
   }
+
   prepareRequestValue(enrollCourseRequest): Map {
     const reqvalues = new Map();
     reqvalues['enrollReq'] = enrollCourseRequest;
@@ -114,23 +114,18 @@ export class LocalCourseService {
   // This method is called when the user login immediately after pressing JOIN TRAINING from app-components
   // And after filling signinOnboarding completely from externalId service.
   async checkCourseRedirect() {
-    const isloggedInUser = await this.authService.getSession().toPromise();
-    if (!this.appGlobalService.isSignInOnboardingCompleted && isloggedInUser) {
+    const isLoggedInUser = this.appGlobalService.isUserLoggedIn();
+    if (!this.appGlobalService.isSignInOnboardingCompleted && isLoggedInUser) {
       this.appGlobalService.isJoinTraningOnboardingFlow = true;
       return;
     }
+
     const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
     const courseDetail = await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise();
     if (batchDetails && courseDetail) {
-      const session: OAuthSession = await this.authService.getSession().toPromise();
-      let isGuestUser;
-      if (!session) {
-        isGuestUser = true;
-      } else {
-        isGuestUser = false;
-        this.userId = session.userToken;
-      }
-      if (JSON.parse(courseDetail).createdBy !== this.userId && !isGuestUser) {
+      this.userId = await this.appGlobalService.getActiveProfileUid();
+
+      if (JSON.parse(courseDetail).createdBy !== this.userId && isLoggedInUser) {
         this.enrollBatchAfterlogin(JSON.parse(batchDetails), JSON.parse(courseDetail));
       } else {
         this.events.publish('return_course');
@@ -172,7 +167,7 @@ export class LocalCourseService {
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           this.getEnrolledCourses();
           this.navigateTocourseDetails();
-          await this.sbProgressLoader.hide({id: 'login'});
+          await this.sbProgressLoader.hide({ id: 'login' });
         });
       }, (err) => {
         this.zone.run(async () => {
@@ -191,7 +186,7 @@ export class LocalCourseService {
             }
           }
           this.navigateTocourseDetails();
-          await this.sbProgressLoader.hide({id: 'login'});
+          await this.sbProgressLoader.hide({ id: 'login' });
         });
       });
   }

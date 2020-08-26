@@ -1,17 +1,28 @@
-import { Component, NgZone, Inject } from '@angular/core';
-import { NavController, Events, PopoverController, NavParams } from '@ionic/angular';
+import { Component, NgZone, Inject, OnInit } from '@angular/core';
+import {
+    NavController, Events,
+    PopoverController, NavParams
+} from '@ionic/angular';
 import {
     SharedPreferences,
-    AuthService,
     TelemetryObject,
     InteractType,
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, RouterLinks } from '@app/app/app.constant';
+import {
+    PreferenceKey, EventTopics,
+    ContentType, RouterLinks
+} from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
+import {
+    InteractSubtype,
+    Environment, PageId
+} from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import { LocalCourseService } from '@app/services';
+import {
+    LocalCourseService,
+    AppGlobalService
+} from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 
 @Component({
@@ -19,7 +30,7 @@ import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.inter
     templateUrl: './enrollment-details.component.html',
     styleUrls: ['./enrollment-details.component.scss'],
 })
-export class EnrollmentDetailsComponent {
+export class EnrollmentDetailsComponent implements OnInit {
     ongoingBatches: any;
     upcommingBatches: any;
     retiredBatched: any;
@@ -35,8 +46,8 @@ export class EnrollmentDetailsComponent {
     todayDate: string;
 
     constructor(
-        @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
+        private appGlobalService: AppGlobalService,
         public navCtrl: NavController,
         public navParams: NavParams,
         private events: Events,
@@ -52,8 +63,11 @@ export class EnrollmentDetailsComponent {
         this.retiredBatched = this.navParams.get('retiredBatched');
         this.todayDate = window.dayjs().format('YYYY-MM-DD');
         this.courseId = this.navParams.get('courseId');
-        this.getUserId();
+    }
 
+    async ngOnInit() {
+        this.userId = await this.appGlobalService.getActiveProfileUid();
+        this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
     }
 
     close(data?: any) {
@@ -88,7 +102,6 @@ export class EnrollmentDetailsComponent {
     }
 
     async enrollIntoBatch(content: any) {
-
         const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, content, this.courseId);
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.ENROLL_CLICKED,
@@ -119,22 +132,6 @@ export class EnrollmentDetailsComponent {
             }, (error) => {
                 loader.dismiss();
             });
-    }
-
-    /**
-     * Get logged-user id. User id is needed to enroll user into batch.
-     */
-    getUserId(): void {
-        this.authService.getSession().toPromise().then((session) => {
-            if (session === undefined || session == null) {
-                this.zone.run(() => { this.isGuestUser = true; });
-            } else {
-                this.zone.run(() => {
-                    this.isGuestUser = false;
-                    this.userId = session[ProfileConstants.USER_TOKEN];
-                });
-            }
-        });
     }
 
     navigateToDetailPage(content: any, layoutName?: string): void {
