@@ -518,17 +518,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    this.courseService.downloadCurrentProfileCourseCertificate({
-      courseId: course.courseId,
-      certificateToken: certificate.token
-    })
-      .subscribe((res) => {
-        this.socialShare.share('', '', res.path, '');
-      });
-  }
-
-  isResource(contentType) {
+  private isResource(contentType) {
     return contentType === ContentType.STORY ||
       contentType === ContentType.WORKSHEET;
   }
@@ -626,8 +616,6 @@ export class ProfilePage implements OnInit {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
   }
-
-
   /**
    * Searches contents created by the user
    */
@@ -655,8 +643,6 @@ export class ProfilePage implements OnInit {
         console.error('Error', error);
       });
   }
-
-
 
   async editMobileNumber() {
     const componentProps = {
@@ -686,7 +672,7 @@ export class ProfilePage implements OnInit {
     await this.showEditContactPopup(componentProps);
   }
 
-  async showEditContactPopup(componentProps) {
+  private async showEditContactPopup(componentProps) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
@@ -696,11 +682,11 @@ export class ProfilePage implements OnInit {
     const { data } = await popover.onDidDismiss();
 
     if (data && data.isEdited) {
-      this.callOTPPopover(componentProps.type, data.value);
+      await this.callOTPPopover(componentProps.type, data.value);
     }
   }
 
-  async callOTPPopover(type: string, key?: any) {
+  private async callOTPPopover(type: string, key?: any) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
         key,
@@ -732,7 +718,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async openContactVerifyPopup(component, componentProps, cssClass) {
+  private async openContactVerifyPopup(component, componentProps, cssClass) {
     const popover = await this.popoverCtrl.create({ component, componentProps, cssClass });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -740,7 +726,7 @@ export class ProfilePage implements OnInit {
     return data;
   }
 
-  async updatePhoneInfo(phone) {
+  private async updatePhoneInfo(phone) {
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
       phone,
@@ -749,7 +735,7 @@ export class ProfilePage implements OnInit {
     await this.updateProfile(req, 'PHONE_UPDATE_SUCCESS');
   }
 
-  async updateEmailInfo(email) {
+  private async updateEmailInfo(email) {
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
       email,
@@ -758,7 +744,7 @@ export class ProfilePage implements OnInit {
     await this.updateProfile(req, 'EMAIL_UPDATE_SUCCESS');
   }
 
-  async updateProfile(request: UpdateServerProfileInfoRequest, successMessage: string) {
+  private async updateProfile(request: UpdateServerProfileInfoRequest, successMessage: string) {
     const loader = await this.commonUtilService.getLoader();
     this.profileService.updateServerProfile(request).toPromise()
       .then(async () => {
@@ -809,7 +795,7 @@ export class ProfilePage implements OnInit {
   }
 
 
-  dismissMessage() {
+  private dismissMessage() {
     this.timer = setTimeout(() => {
       this.informationProfileName = false;
       this.informationOrgName = false;
@@ -1020,7 +1006,7 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
+  private async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
     const formReq: FormRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       type,

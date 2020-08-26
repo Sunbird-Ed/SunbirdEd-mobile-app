@@ -2,6 +2,7 @@ import {ProfileSource, ProfileType} from 'sunbird-sdk';
 
 export const mockProfileData = {
     uid: '123',
+    userId: 'sample_user_id',
     handle: 'sample_name',
     medium: ['English', 'Bengali'],
     board: ['CBSE'],
@@ -33,5 +34,9 @@ export const mockProfileData = {
     badgeAssertions: [
         'sample_badge1', 'sampleBadge 2'
     ],
-    mappedTrainingCertificates: [1, 2, 3]
+    mappedTrainingCertificates: [1, 2, 3],
+    phone: '99999999',
+    email: 'xyz@gmail.com',
+    recoveryEmail: 'abc@gmail.com',
+    recoveryPhone: '987654'
 };

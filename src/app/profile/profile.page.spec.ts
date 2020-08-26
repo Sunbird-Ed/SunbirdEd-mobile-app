@@ -28,6 +28,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 import {of, throwError} from 'rxjs';
 import {mockProfileData} from './profile.page.spec.data';
+import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -142,6 +143,22 @@ describe('Profile.page', () => {
     it('should create instance of profilePage', () => {
         // assert
         expect(profilePage).toBeTruthy();
+    });
+
+    it('should generate telemetry and navigate to download', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockRouter.navigate = jest.fn();
+        // act
+        profilePage.handleHeaderEvents({name: 'download'});
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+            Environment.HOME,
+            PageId.PROFILE
+        );
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ACTIVE_DOWNLOADS]);
     });
 
     it('should subscribe events with update_header and call headerService and also call defaultChannelProfile', () => {
@@ -298,7 +315,73 @@ describe('Profile.page', () => {
                 done();
             }, 0);
         });
+
+        it('should throw error and get to catch part', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                dismiss: dismissFn,
+            }));
+            mockCourseService.getEnrolledCourses = jest.fn(() => throwError('error'));
+            jest.spyOn(console, 'error').mockImplementation();
+            // act
+            profilePage.getEnrolledCourses(true, false);
+
+            setTimeout(() => {
+                // assert
+                expect(console.error).toHaveBeenCalledWith('error while loading enrolled courses', 'error');
+                done();
+            }, 0);
+        });
     });
+
+    describe('searchContent test-suites', () => {
+        it('should call for search Content and set the result data', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() =>
+                Promise.resolve(['sample_1', 'sample_2']));
+            mockContentService.searchContent = jest.fn(() => of({
+                    result:
+                        {
+                            contentDataList: ['sample_content_data_list']
+                        }
+                }
+                )
+            );
+            profilePage.userId = 'sample_user_id';
+            // act
+            profilePage.searchContent();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getSupportedContentFilterConfig)
+                    .toHaveBeenCalledWith(ContentFilterConfig.NAME_DOWNLOADS);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should call for search Content and throw error and go to catch block', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() =>
+                Promise.resolve(['sample_1', 'sample_2']));
+            mockContentService.searchContent = jest.fn(() => throwError('sample_search_error'));
+            profilePage.userId = undefined;
+            profilePage.loggedInUserId = 'sample_logged_in_user_id';
+            jest.spyOn(console, 'error').mockImplementation();
+            // act
+            profilePage.searchContent();
+            // assert
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.getSupportedContentFilterConfig)
+                    .toHaveBeenCalledWith(ContentFilterConfig.NAME_DOWNLOADS);
+                expect(mockContentService.searchContent).toHaveBeenCalled();
+                expect(console.error).toHaveBeenCalledWith('Error', 'sample_search_error');
+                done();
+            }, 0);
+        });
+
+    });
+
     describe('doRefresh()', () => {
         it('should call loader and refresher to false', (done) => {
             // arrange
@@ -379,7 +462,7 @@ describe('Profile.page', () => {
         );
     });
 
-    it('should set roleLimint when called upon', () => {
+    it('should set roleLimit when called upon', () => {
         // arrange
         // act
         profilePage.showLessItems();
@@ -431,6 +514,34 @@ describe('Profile.page', () => {
         profilePage.showLessTrainings();
         // assert
         expect(profilePage.trainingsLimit).toBe(3);
+    });
+
+    it('should go to catch part and called showToast message', (done) => {
+        // arrange
+        mockFileOpener.open = jest.fn(() => Promise.reject('error'));
+        mockCommonUtilService.showToast = jest.fn();
+        jest.spyOn(console, 'log').mockImplementation();
+        // act
+        profilePage.openpdf('file:///emulated/0/android/download/sample_file.pdf');
+        // assert
+        setTimeout(() => {
+            expect(console.log).toHaveBeenCalledWith('Error opening file', 'error');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
+            done();
+        }, 0);
+    });
+
+    it('should open file when path given as parameter', (done) => {
+        // arrange
+        mockFileOpener.open = jest.fn(() => Promise.resolve());
+        jest.spyOn(console, 'log').mockImplementation();
+        // act
+        profilePage.openpdf('file:///emulated/0/android/download/sample_file.pdf');
+        // assert
+        setTimeout(() => {
+            expect(console.log).toHaveBeenCalledWith('File is opened');
+            done();
+        }, 0);
     });
 
     describe('downloadCertificate', () => {
@@ -762,7 +873,7 @@ describe('Profile.page', () => {
             jest.spyOn(profilePage, 'openpdf').mockImplementation();
             // act
             profilePage.downloadTrainingCertificate({courseId: 'do_1234'}, {
-                id: 'sample_cert_id', token: 'AXOBC', name: 'sample_course-certificate_name',  url:
+                id: 'sample_cert_id', token: 'AXOBC', name: 'sample_course-certificate_name', url:
                     'https://sampleCertUrl.com'
             });
             // assert
@@ -785,9 +896,7 @@ describe('Profile.page', () => {
         });
 
 
-
-
-        it('should go to else part if certificate doesnt have url and doesnt have permission which leads to open popup', () => {
+        it('should go to else part if certificate doesnt have url and doesnt have permission which leads to open popup', (done) => {
             // arrange
             mockTranslateService.get = jest.fn(() => of('Certificate is getting downloaded'));
             mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
@@ -808,12 +917,6 @@ describe('Profile.page', () => {
             mockAndroidPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}));
             mockCommonUtilService.translateMessage = jest.fn(v => v);
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
-            mockToastController.create = jest.fn(() => {
-                return Promise.resolve({
-                    present: jest.fn(),
-                    dismiss: jest.fn()
-                });
-            });
             jest.spyOn(profilePage, 'openpdf').mockImplementation();
             mockCourseService.downloadCurrentProfileCourseCertificateV2 = jest.fn(() => of({path: 'sample_path'}));
             mockCertificateDownloadPdfService.download = jest.fn(() => Promise.resolve());
@@ -832,9 +935,383 @@ describe('Profile.page', () => {
                     values
                 );
                 expect(mockCourseService.downloadCurrentProfileCourseCertificateV2).toHaveBeenCalled();
-                expect(mockToastController.create).toHaveBeenCalledWith({message: 'Certificate is getting downloaded'});
-                expect(profilePage.openpdf).toHaveBeenCalledWith('sample_url');
+                expect(profilePage.openpdf).toHaveBeenCalledWith('sample_path');
+                done();
             }, 0);
+        });
+    });
+
+    describe('navigateToDetailPage test-suites', () => {
+        it('should navigate to course-details page based on the contentType', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            const values = new Map();
+            values['sectionName'] = 'Contributions';
+            values['positionClicked'] = 2;
+            // act
+            profilePage.navigateToDetailPage({contentId: 'do_1234', identifier: 'do_123', contentType: 'Course'}, 'completed', 2);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.USER,
+                PageId.PROFILE,
+                {id: 'do_1234', type: 'Course', version: undefined},
+                values
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
+                {
+                    state: {content: {contentId: 'do_1234', identifier: 'do_123', contentType: 'Course'}}
+                });
+        });
+
+        it('should navigate to collection-details page based on the mimeType', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            const values = new Map();
+            values['sectionName'] = 'Contributions';
+            values['positionClicked'] = 3;
+            // act
+            profilePage.navigateToDetailPage({
+                contentId: 'do_1234', identifier: 'do_123',
+                mimeType: 'application/vnd.ekstep.content-collection'
+            }, 'completed', 3);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.USER,
+                PageId.PROFILE,
+                {id: 'do_1234', type: undefined, version: undefined},
+                values
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.COLLECTION_DETAIL_ETB],
+                {
+                    state: {content: {contentId: 'do_1234', identifier: 'do_123', mimeType: 'application/vnd.ekstep.content-collection'}}
+                });
+        });
+
+        it('should navigate to content-details page based on the type', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            const values = new Map();
+            values['sectionName'] = 'Contributions';
+            values['positionClicked'] = 3;
+            // act
+            profilePage.navigateToDetailPage({
+                contentId: 'do_1234', identifier: 'do_123',
+                contentType: 'Story'
+            }, 'completed', 3);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.USER,
+                PageId.PROFILE,
+                {id: 'do_1234', type: 'Resource', version: undefined},
+                values
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS],
+                {
+                    state: {content: {contentId: 'do_1234', identifier: 'do_123', contentType: 'Story'}}
+                });
+        });
+
+        it('should navigate to course-details page based on the contentType and layout is progress', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            const values = new Map();
+            values['sectionName'] = 'Contributions';
+            values['positionClicked'] = 2;
+            // act
+            profilePage.navigateToDetailPage({identifier: 'do_123', contentType: 'Course'}, 'InProgress', 2);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.USER,
+                PageId.PROFILE,
+                {id: 'do_123', type: 'Course', version: undefined},
+                values
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
+                {
+                    state: {content: {identifier: 'do_123', contentType: 'Course'}}
+                });
+        });
+    });
+
+    describe('navigateToCategoriesEditPage test-suites', () => {
+        it('should navigate to categories edit page if network is available', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            profilePage.navigateToCategoriesEditPage();
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.EDIT_CLICKED,
+                Environment.HOME,
+                PageId.PROFILE, null
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
+        });
+
+        it('should show toast of no internet if network is not available', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            profilePage.navigateToCategoriesEditPage();
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+        });
+    });
+
+    describe('navigateToEditPersonalDetails  test-suites', () => {
+        it('should generate telemetry and navigate to district mapping if network is available', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            profilePage.navigateToEditPersonalDetails();
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.EDIT_CLICKED,
+                Environment.HOME,
+                PageId.PROFILE, null
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DISTRICT_MAPPING],
+                {
+                    state: {
+                        profile: mockProfileData,
+                        isShowBackButton: true
+                    }
+                });
+        });
+
+        it('should call showToast when network is not available', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            profilePage.navigateToEditPersonalDetails();
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+        });
+    });
+
+    describe('update phone and email test-suites', () => {
+        it('should translate message and call editContactPop with ' +
+            'current user phone number and user Id if phone number available', (done) => {
+            // arrange
+            mockCommonUtilService.translateMessage = jest.fn(v => v);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, OTPSuccess: true, value: '123456'}}))
+            } as any)));
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
+            jest.spyOn(profilePage, 'doRefresh').mockImplementation();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            profilePage.editMobileNumber();
+            setTimeout(() => {
+                // assert
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PHONE_UPDATE_SUCCESS');
+                done();
+            }, 0);
+        });
+
+        it('should update emailId when is any emailId is available', (done) => {
+            // arrange
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, OTPSuccess: true, value: '123456'}}))
+            } as any)));
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockProfileService.updateServerProfile = jest.fn(() => throwError('sample_error'));
+            jest.spyOn(profilePage, 'doRefresh').mockImplementation();
+            mockCommonUtilService.translateMessage = jest.fn(v => v);
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            profilePage.editEmail();
+            setTimeout(() => {
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
+                done();
+            }, 0);
+        });
+    });
+
+    it('should generate telemetry and generate popover and if edited set true and then update profile', (done) => {
+        // arrange
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {isEdited: true, value: '123456'}}))
+        } as any)));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockProfileService.updateServerProfile = jest.fn(() => of(mockProfileData));
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        profilePage.editRecoveryId();
+        // assert
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+                Environment.USER,
+                PageId.PROFILE
+            );
+            expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should go to else part if organisations list is equal to 1', () => {
+        // arrange
+        profilePage.profile.organisations = [{
+            organisationId: 'xyz',
+            roles: ['teacher', 'state_teacher'],
+            locations: {
+                state: 'tripura',
+                district: 'west_tripura',
+                block: 'dhaleshwar'
+            }
+        }];
+        mockCommonUtilService.getOrgLocation = jest.fn(() => {
+            return {state: 'tripura', district: 'west_tripura', block: 'dhaleshwar'};
+        });
+        // act
+        profilePage.getOrgDetails();
+        // assert
+        expect(mockCommonUtilService.getOrgLocation).toHaveBeenCalled();
+    });
+
+    describe('openEnrolledCourse test-suites', () => {
+        it('should get contentDetails and navigate to course-details page', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => of('sample_content'));
+            mockRouter.navigate = jest.fn();
+            // act
+            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            setTimeout(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
+                    {
+                        state: {
+                            content: 'sample_content',
+                            resumeCourseFlag: false
+                        }
+                    });
+                done();
+            });
+        });
+
+        it('should get contentDetails and throw console error', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => throwError('sample_error'));
+            jest.spyOn(console, 'error').mockImplementation();
+            // act
+            profilePage.openEnrolledCourse({courseId: 'do_123'});
+            setTimeout(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(console.error).toHaveBeenCalledWith('sample_error');
+                done();
+            });
+        });
+    });
+
+    describe('openSelfDeclareTeacherForm test-suites', () => {
+        it('should check of networkAvailability and if true then generate telemetry and navigate to teacher edit', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            const type = 'add';
+            // act
+            profilePage.openSelfDeclareTeacherForm(type);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                '',
+                Environment.USER,
+                PageId.PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                'btn-i-am-a-teacher'
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`],
+                {
+                    state: {
+                        profile: profilePage.profile
+                    }
+                });
+        });
+
+        it('should show toast if network is unavailable', () => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            const type = 'update';
+            // act
+            profilePage.openSelfDeclareTeacherForm(type);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                '',
+                Environment.USER,
+                PageId.PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                'btn-update'
+            );
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`],
+                {
+                    state: {
+                        profile: profilePage.profile
+                    }
+                });
         });
     });
 });
