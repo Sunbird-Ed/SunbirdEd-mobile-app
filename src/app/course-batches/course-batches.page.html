@@ -18,7 +18,7 @@
     </div>
 
     <div class="batch-list" padding-top>
-      <div *ngIf="ongoingBatches && ongoingBatches.length && !showLoader">
+      <div *ngIf="ongoingBatches && ongoingBatches.length">
         <div class="flex-card-container" *ngFor="let batch of ongoingBatches">
           <div class="card-text">
             <div class="batch-name">{{ batch.name }}</div>
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="batch-list" padding-top>
-      <div *ngIf="upcommingBatches && upcommingBatches.length && !showLoader">
+      <div *ngIf="upcommingBatches && upcommingBatches.length">
         <div class="flex-card-container" *ngFor="let batch of upcommingBatches">
           <div class="card-text">
             <div class="batch-name">{{ batch.name }}</div>
@@ -91,14 +91,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div *ngIf="showLoader">
-    <ion-row class="padding-top-30" padding>
-      <ion-col class="ion-text-center">
-        <p>{{ 'MSG_LOADING_BATCHES' | translate }}</p>
-        <ion-spinner padding></ion-spinner>
-      </ion-col>
-    </ion-row>
   </div>
 </ion-content>

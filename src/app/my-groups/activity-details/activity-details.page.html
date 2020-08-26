@@ -9,9 +9,7 @@
       <div class="font-14" *ngIf="showCourseDropdownSection">
         <div class="activity-toc clearfix" (click)="openActivityToc()">
           <span class="pull-left">{{selectedCourse?.name || activity?.activityInfo?.name}}</span>
-          <span class="pull-right">
-            <ion-icon class="ad-arrow-icon" name="ios-arrow-dropright-circle"></ion-icon>
-          </span>
+          <div class="activity-toc-change pull-right">{{'CHANGE' | translate}}</div>
         </div>
       </div>
       <div class="gd-member-search">

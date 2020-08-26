@@ -3,7 +3,6 @@ import {
   ContentService,
   SharedPreferences,
   CourseService,
-  AuthService,
   Batch,
   NetworkError,
   HttpClientError,
@@ -26,7 +25,6 @@ describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
 
   const mockCourseService: Partial<CourseService> = {};
-  const mockAuthService: Partial<AuthService> = {};
   const mockPreferences: Partial<ContentService> = {};
   const mockAppGlobalService: Partial<AppGlobalService> = {};
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -47,7 +45,6 @@ describe('LocalCourseService', () => {
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
-      mockAuthService as AuthService,
       mockPreferences as SharedPreferences,
       mockAppGlobalService as AppGlobalService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -63,6 +60,7 @@ describe('LocalCourseService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should create an instance of LocalCourseService', () => {
@@ -246,11 +244,6 @@ describe('LocalCourseService', () => {
   });
 
   describe('checkCourseRedirect', () => {
-    const authSession = {
-      access_token: 'access_token',
-      refresh_token: 'refresh_token',
-      userToken: 'userId'
-    };
     const courseAndBatchData: Batch = `{
       "identifier":"string",
       "id":"string",
@@ -277,11 +270,12 @@ describe('LocalCourseService', () => {
     it('should restrict the enrolling flow, if the user is not logged in.', (done) => {
       // arrange
       mockAppGlobalService.isSignInOnboardingCompleted = false;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.isJoinTraningOnboardingFlow).toEqual(true);
         done();
       }, 0);
@@ -289,42 +283,49 @@ describe('LocalCourseService', () => {
 
     it('should restrict the enrolling flow if batchId and course details are not saved in the preference.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
       mockPreferences.getString = jest.fn(() => of(undefined));
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        // expect(mockAppGlobalService.getActiveProfileUid).not.toHaveBeenCalled();
         done();
       }, 0);
     });
 
     it('should restrict the enrolling flow if session details is empty.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(undefined));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      mockPreferences.putString = jest.fn(() => of(undefined));
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, '');
         done();
       }, 0);
     });
 
     it('should restrict the enrolling flow if created id and the userId are same.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('other_userId'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      mockPreferences.putString = jest.fn(() => of(undefined));
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockEvents.publish).toHaveBeenCalledWith(expect.any(String));
         expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, expect.any(String));
         done();
@@ -333,9 +334,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -357,6 +358,8 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -366,9 +369,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference, but enrolledCourse is null.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -390,6 +393,8 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
@@ -398,9 +403,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference, but enrolledCourse is [].', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -422,6 +427,8 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
@@ -430,9 +437,12 @@ describe('LocalCourseService', () => {
 
     it('should handle Network error when getEnrolled Courses is called.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+      mockNgZone.run = jest.fn((cb) => {
+        cb();
+      }) as any;
       mockPreferences.getString = jest.fn((key) => {
         switch (key) {
           case PreferenceKey.BATCH_DETAIL_KEY:
@@ -463,9 +473,10 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -476,12 +487,10 @@ describe('LocalCourseService', () => {
 
     it('should handle HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
@@ -494,10 +503,11 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockEvents.publish).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -507,9 +517,9 @@ describe('LocalCourseService', () => {
 
     it('should handle HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -529,10 +539,11 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
@@ -542,9 +553,9 @@ describe('LocalCourseService', () => {
 
     it('should handle error other than HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -564,6 +575,8 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalled();
         done();
       }, 0);

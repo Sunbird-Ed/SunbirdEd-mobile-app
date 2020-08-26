@@ -695,7 +695,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               });
           } else {
             const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
-              userId: this.appGlobalServices.getUserId(),
+              userId: await this.appGlobalServices.getActiveProfileUid(),
             };
             const enrolledCourses = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise();
             let isCourseEnrolled;

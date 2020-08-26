@@ -1,14 +1,19 @@
 import { TextbookTocService } from './../collection-detail-etb/textbook-toc-service';
 import { CommonUtilService } from './../../services/common-util.service';
-import { Component, Inject, NgZone, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
-import { ContentType, MimeType, RouterLinks, EventTopics } from '../../app/app.constant';
+import {
+  Component, Inject, NgZone, OnDestroy,
+  ViewChild, ElementRef
+} from '@angular/core';
+import {
+  ContentType, MimeType,
+  RouterLinks, EventTopics
+} from '../../app/app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
 import { IonContent as iContent } from '@ionic/angular';
-// import map from 'lodash/map';
 import {
   ChildContentRequest,
   Content,
@@ -24,13 +29,9 @@ import {
   DownloadProgress,
   EventsBusEvent,
   EventsBusService,
-  Framework,
-  FrameworkCategoryCodesGroup,
-  FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
   GetAllProfileRequest,
-  GetSuggestedFrameworksRequest,
   MarkerType,
   NetworkError,
   PlayerService,
@@ -40,8 +41,11 @@ import {
   AuditState
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
-import { Environment, ImpressionType, InteractSubtype, InteractType,
-  PageId, CorReleationDataType, Mode, ObjectType, AuditType, ImpressionSubtype } from '../../services/telemetry-constants';
+import {
+  Environment, ImpressionType, InteractSubtype, InteractType,
+  PageId, CorReleationDataType, Mode, ObjectType,
+  AuditType, ImpressionSubtype
+} from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -50,7 +54,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { Platform, Events, NavController } from '@ionic/angular';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { mapTo, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
 declare const cordova;
 
@@ -217,12 +221,12 @@ export class QrcoderesultPage implements OnDestroy {
         this.getChildContents();
       } else {
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
-            InteractSubtype.FAST_LOADING_INITIATED,
-            PageId.DIAL_CODE_SCAN_RESULT,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList
+          InteractSubtype.FAST_LOADING_INITIATED,
+          PageId.DIAL_CODE_SCAN_RESULT,
+          undefined,
+          undefined,
+          undefined,
+          this.corRelationList
         );
         const getContentHeirarchyRequest: ContentDetailRequest = {
           contentId: this.identifier
@@ -236,12 +240,12 @@ export class QrcoderesultPage implements OnDestroy {
             this.results = [];
             this.findContentNode(content);
             this.telemetryGeneratorService.generatefastLoadingTelemetry(
-                InteractSubtype.FAST_LOADING_FINISHED,
-                PageId.DIAL_CODE_SCAN_RESULT,
-                undefined,
-                undefined,
-                undefined,
-                this.corRelationList
+              InteractSubtype.FAST_LOADING_FINISHED,
+              PageId.DIAL_CODE_SCAN_RESULT,
+              undefined,
+              undefined,
+              undefined,
+              this.corRelationList
             );
             if (this.results && this.results.length === 1) {
               this.backToPreviusPage = false;
@@ -260,7 +264,7 @@ export class QrcoderesultPage implements OnDestroy {
           }).catch((err) => {
             this.showSheenAnimation = false;
           });
-          // this.importContentInBackground([this.identifier], false);
+        // this.importContentInBackground([this.identifier], false);
       }
       this.backToPreviusPage = false;
     }
@@ -281,8 +285,10 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
 
     if (this.corRelationList && this.corRelationList.length) {
-      this.corRelationList.push({id: this.content.children ? this.content.children.length.toString() : '0',
-      type: CorReleationDataType.COUNT_CONTENT});
+      this.corRelationList.push({
+        id: this.content.children ? this.content.children.length.toString() : '0',
+        type: CorReleationDataType.COUNT_CONTENT
+      });
     }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
@@ -317,11 +323,11 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
- async handleBackButton(clickSource?) {
+  async handleBackButton(clickSource?) {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
-     clickSource === InteractSubtype.DEVICE_BACK_CLICKED ? true : false,
-     this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-     PageId.QR_CONTENT_RESULT
+      clickSource === InteractSubtype.DEVICE_BACK_CLICKED ? true : false,
+      this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+      PageId.QR_CONTENT_RESULT
     );
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -343,8 +349,16 @@ export class QrcoderesultPage implements OnDestroy {
         };
         this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
       }
-    } else if (this.appGlobalService.isGuestUser && this.isSingleContent && !this.appGlobalService.isProfileSettingsCompleted) {
-      const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true  } };
+    } else if (this.appGlobalService.isGuestUser
+      && this.isSingleContent
+      && !this.appGlobalService.isProfileSettingsCompleted) {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          isCreateNavigationStack: false,
+          hideBackButton: true,
+          showFrameworkCategoriesMenu: true
+        }
+      };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
       this.goBack();
@@ -375,21 +389,21 @@ export class QrcoderesultPage implements OnDestroy {
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
           if (this.isProfileUpdated) {
-             if (!await this.commonUtilService.isDeviceLocationAvailable()) {
+            if (!await this.commonUtilService.isDeviceLocationAvailable()) {
               const navigationExtras: NavigationExtras = {
                 state: {
                   isShowBackButton: false
                 }
               };
               this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
-             } else {
-              this.navCtrl.navigateBack([RouterLinks.TABS]);
-             }
-             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
             } else {
-              this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
-              window.history.go(-2);
+              this.navCtrl.navigateBack([RouterLinks.TABS]);
             }
+            this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
+          } else {
+            this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
+            window.history.go(-2);
+          }
         } else if (this.results && this.results.length === 1) {
           this.backToPreviusPage = false;
           this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
@@ -401,7 +415,7 @@ export class QrcoderesultPage implements OnDestroy {
               corRelation: this.corRelationList,
               onboarding: this.onboarding
             }
-           });
+          });
         }
       })
       .catch((err) => {
@@ -423,15 +437,15 @@ export class QrcoderesultPage implements OnDestroy {
     };
     this.profileService.getAllProfiles(profileRequest).pipe(
       map((profiles) => profiles.filter((profile) => !!profile.handle))
-      ).subscribe(profiles => {
-        if (profiles) {
-          this.userCount = profiles.length;
-        }
-        if (this.appGlobalService.isUserLoggedIn()) {
-          this.userCount += 1;
-        }
-      }, () => {
-      });
+    ).subscribe(profiles => {
+      if (profiles) {
+        this.userCount = profiles.length;
+      }
+      if (this.appGlobalService.isUserLoggedIn()) {
+        this.userCount += 1;
+      }
+    }, () => {
+    });
   }
 
   /**
@@ -518,7 +532,7 @@ export class QrcoderesultPage implements OnDestroy {
       // });
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
-          content: content,
+          content,
           corRelation: this.corRelationList
         }
       });
@@ -532,7 +546,7 @@ export class QrcoderesultPage implements OnDestroy {
       }
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
         state: {
-          content: content,
+          content,
           corRelation: this.corRelationList
         }
       });
@@ -563,9 +577,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-
-  /** funtion add elipses to the texts**/
-
   addElipsesInLongText(msg: string) {
     if (this.commonUtilService.translateMessage(msg).length >= 12) {
       return this.commonUtilService.translateMessage(msg).slice(0, 8) + '....';
@@ -574,10 +585,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  /**
-   * To set content details in local variable
-   * @param {string} identifier identifier of content / course
-   */
   setContentDetails(identifier, refreshContentDetails: boolean) {
     const option: ContentDetailRequest = {
       contentId: identifier,
@@ -671,8 +678,10 @@ export class QrcoderesultPage implements OnDestroy {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           const corRelationList: Array<CorrelationData> = [];
           corRelationList.push({ id: this.dialCode ? this.dialCode : '', type: CorReleationDataType.QR });
-          corRelationList.push({ id: this.content.leafNodesCount ? this.content.leafNodesCount.toString() : '0',
-          type: CorReleationDataType.COUNT_NODE });
+          corRelationList.push({
+            id: this.content.leafNodesCount ? this.content.leafNodesCount.toString() : '0',
+            type: CorReleationDataType.COUNT_NODE
+          });
           this.telemetryGeneratorService.generatePageLoadedTelemetry(
             PageId.TEXTBOOK_IMPORT,
             this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
@@ -704,13 +713,7 @@ export class QrcoderesultPage implements OnDestroy {
     }) as any;
   }
 
-  /**
-   * Function to get import content api request params
-   *
-   * @param {Array<string>} identifiers contains list of content identifier(s)
-   * @param {boolean} isChild
-   */
-  importContent(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
+  importContent(identifiers: Array<string>, isChild: boolean) {
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
@@ -737,12 +740,6 @@ export class QrcoderesultPage implements OnDestroy {
       });
   }
 
-  /**
-   * Function to get import content api request params
-   *
-   * @param {Array<string>} identifiers contains list of content identifier(s)
-   * @param {boolean} isChild
-   */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
     identifiers.forEach((value) => {
@@ -788,7 +785,7 @@ export class QrcoderesultPage implements OnDestroy {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true } });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true } });
     }
   }
   private showAllChild(content: any) {
@@ -888,9 +885,11 @@ export class QrcoderesultPage implements OnDestroy {
       }
     });
   }
+
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
+      case 'back':
+        this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
         break;
     }
   }
@@ -908,9 +907,13 @@ export class QrcoderesultPage implements OnDestroy {
 
   openTextbookToc() {
     this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-      { state: { childrenData: this.childrenData, parentId: this.identifier,
-        stckyUnitTitle: this.stckyUnitTitle , stckyindex: this.stckyindex,
-        latestParentNodes: this.latestParents} });
+      {
+        state: {
+          childrenData: this.childrenData, parentId: this.identifier,
+          stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
+          latestParentNodes: this.latestParents
+        }
+      });
     const values = new Map();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -963,10 +966,12 @@ export class QrcoderesultPage implements OnDestroy {
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     const telemetryObject = new TelemetryObject(content.identifier, objectType, undefined);
     if (this.corRelationList && this.corRelationList.length) {
-      this.corRelationList.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
-      this.corRelationList.push({id: content.contentType, type: CorReleationDataType.TYPE});
-      this.corRelationList.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
-      Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS});
+      this.corRelationList.push({ id: Mode.PLAY, type: CorReleationDataType.MODE });
+      this.corRelationList.push({ id: content.contentType, type: CorReleationDataType.TYPE });
+      this.corRelationList.push({
+        id: this.commonUtilService.networkInfo.isNetworkAvailable ?
+          Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS
+      });
     }
     const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -995,15 +1000,15 @@ export class QrcoderesultPage implements OnDestroy {
       dialcode ? ObjectType.TEXTBOOK : undefined,
       undefined, undefined,
       dialcode ? corRelationList : undefined
-     );
+    );
   }
 
- private generateAuditEventForAutoFill() {
+  private generateAuditEventForAutoFill() {
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES && this.appGlobalService.isOnBoardingCompleted) {
       let correlationlist: Array<CorrelationData> = this.populateCData(this.profile.board, CorReleationDataType.BOARD);
       correlationlist = correlationlist.concat(this.populateCData(this.profile.medium, CorReleationDataType.MEDIUM));
       correlationlist = correlationlist.concat(this.populateCData(this.profile.grade, CorReleationDataType.CLASS));
-      correlationlist.push({id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE});
+      correlationlist.push({ id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE });
       const rollup = ContentUtil.generateRollUp(this.content.hierarchyInfo, this.content.identifier);
       this.telemetryGeneratorService.generateAuditTelemetry(
         Environment.ONBOARDING,

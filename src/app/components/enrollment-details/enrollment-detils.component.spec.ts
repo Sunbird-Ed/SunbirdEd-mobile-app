@@ -1,10 +1,13 @@
-import { NavParams, Events, PopoverController, NavController } from '@ionic/angular';
+import {
+    NavParams, Events,
+    PopoverController, NavController
+} from '@ionic/angular';
 import { NgZone } from '@angular/core';
 import {
     TelemetryGeneratorService, CommonUtilService, LocalCourseService,
-    InteractSubtype, InteractType, PageId
+    InteractSubtype, InteractType, PageId, AppGlobalService
 } from '../../../services';
-import { AuthService, SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences } from 'sunbird-sdk';
 import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
 import { of } from 'rxjs';
@@ -14,12 +17,10 @@ describe('enrollmentdetailcomponent', () => {
 
     let enrollmentDetails: EnrollmentDetailsComponent;
 
-    const mockAuthService: Partial<AuthService> = {
-        getSession: jest.fn(() => of())
-    };
     const mockSharedPreferences: Partial<SharedPreferences> = {
         putString: jest.fn(() => of(undefined))
     };
+    const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockNavController: Partial<NavController> = {};
     const mockNavParams: Partial<NavParams> = {
         get: jest.fn(() => 'Dummy')
@@ -52,8 +53,8 @@ describe('enrollmentdetailcomponent', () => {
 
     beforeAll(() => {
         enrollmentDetails = new EnrollmentDetailsComponent(
-            mockAuthService as AuthService,
             mockSharedPreferences as SharedPreferences,
+            mockAppGlobalService as AppGlobalService,
             mockNavController as NavController,
             mockNavParams as NavParams,
             mockEvents as Events,
@@ -273,30 +274,17 @@ describe('enrollmentdetailcomponent', () => {
         });
     });
 
-    describe('getUserid()', () => {
-        it('should set userToken and isGuestUser', (done) => {
+    describe('ngOnInit()', () => {
+        it('should set user id and isGuestUser', (done) => {
             // arrange
-            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of({ userToken: 'userToken' }));
-            mockNgZone.run = jest.fn((callback) => callback());
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
             // act
-            enrollmentDetails.getUserId();
+            enrollmentDetails.ngOnInit();
             // assert
             setTimeout(() => {
-                expect(enrollmentDetails.isGuestUser).toEqual(false);
-                expect(enrollmentDetails.userId).toEqual('userToken');
-                done();
-            }, 0);
-        });
-
-        it('should mark guest user to true if session is empty', (done) => {
-            // arrange
-            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of(undefined));
-            mockNgZone.run = jest.fn((callback) => callback());
-            // act
-            enrollmentDetails.getUserId();
-            // assert
-            setTimeout(() => {
-                expect(enrollmentDetails.isGuestUser).toEqual(true);
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
                 done();
             }, 0);
         });
