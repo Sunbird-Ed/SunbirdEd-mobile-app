@@ -37,7 +37,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   courseList = [];
   showCourseDropdownSection = false;
   selectedCourse;
-  // courseData: Content;
+  courseData: Content;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -62,17 +62,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
-    this.courseList = [];
-    try {
-      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
-      this.getNestedCourses(courseData.children);
-      if (this.courseList.length) {
-        this.showCourseDropdownSection = true;
-        this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
-      }
-    } catch (err) {
-      console.log('fetchCollectionData err', err);
-    }
   }
 
   async ionViewWillEnter() {
@@ -81,6 +70,16 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
+    this.courseList = [];
+    try {
+      this.courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.getNestedCourses(this.courseData.children);
+      if (this.courseList.length) {
+        this.showCourseDropdownSection = true;
+      }
+    } catch (err) {
+      console.log('fetchCollectionData err', err);
+    }
     this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
     this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
@@ -108,6 +107,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     };
     if (this.selectedCourse) {
       req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+    } else {
+      req.leafNodesCount = this.courseData.contentData.leafNodes.length;
     }
     try {
       this.isActivityLoading = true;
