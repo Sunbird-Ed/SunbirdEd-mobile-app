@@ -86,7 +86,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   headerObservable: Subscription;
   backButtonFunc: Subscription;
   public objRollup: Rollup;
-  private deeplinkContent;
   private corRelationList: any;
 
   constructor(
