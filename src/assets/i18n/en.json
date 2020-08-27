@@ -618,7 +618,7 @@
   "SHARE_APP_LINK": "Get {{app_name}} app from: {{play_store_url}}",
   "SHARE_CONTENT_FAILED": "Unable to share content",
   "SHARE_CONTENT_FILE": "File sent from: {{app_name}}\nName: {{content_name}} \nGet {{app_name}} app from: {{play_store_url}}",
-  "SHARE_CONTENT_LINK": "See {{content_name}} on {{app_name}} at {{content_link}}\nGet {{app_name}} app from: {{play_store_url}}",
+  "SHARE_CONTENT_LINK": "I find {{content_name}} really interesting and helpful on {{app_name}}. {{content_link}}\n\nFor more such interesting content, download the {{app_name}} mobile app \n\n{{play_store_url}}",
   "SHARE_LINK": "Share link",
   "SHARE_TELEMETRY": "Share Telemetry",
   "SHARE_TELEMETRY_FAILED": "Unable to share telemetry",
