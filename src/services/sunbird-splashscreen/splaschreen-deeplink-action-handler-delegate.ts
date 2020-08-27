@@ -728,28 +728,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 });
             }
           }
-        } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
-          this.setTabsRoot();
-          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-            {
-              state: {
-                content,
-                deeplinkContent: this.childContent,
-                corRelation: this.getCorrelationList(payloadUrl)
-              }
-            });
         } else {
           this.setTabsRoot();
           this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.childContent,
               depth: 1,
-              // contentState,  // check in chapter detail page
               isChildContent: true,
-              // corRelation: this.corRelationList,
-              corRelation: undefined,
+              corRelation: this.getCorrelationList(payloadUrl),
               isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-              // course: this.updatedCourseCardData, // check in chapter detail page
               isOnboardingSkipped
             }
           });
