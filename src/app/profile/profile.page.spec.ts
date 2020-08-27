@@ -27,7 +27,7 @@ import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 import {of, throwError} from 'rxjs';
-import {mockProfileData} from './profile.page.spec.data';
+import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 
 describe('Profile.page', () => {
@@ -380,6 +380,26 @@ describe('Profile.page', () => {
             }, 0);
         });
 
+    });
+
+    describe('getSelfDeclaredDetails test-cases', () => {
+        it('checks if isCustodianOrgId is true and look for declarations and fetch form data from api', (done) => {
+            // arrange
+            profilePage.isCustodianOrgId = true;
+            mockFormService.getForm = jest.fn(() => of(mockFormData));
+            mockCommonUtilService.translateMessage = jest.fn(v => v);
+            // act
+            profilePage.getSelfDeclaredDetails();
+            // assert
+            setTimeout(() => {
+                expect(mockFormService.getForm).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('I_AM_A_PERSONA_WITH_TENANT', {
+                    '%persona': 'sample_persona',
+                    '%tenant': 'sample_label'
+                });
+                done();
+            }, 0);
+        });
     });
 
     describe('doRefresh()', () => {
@@ -1312,6 +1332,50 @@ describe('Profile.page', () => {
                         profile: profilePage.profile
                     }
                 });
+        });
+    });
+
+    describe('toggleTooltips test-cases', () => {
+        it('should go inside field has name in it and go inside dismiss message', () => {
+            // arrange
+            jest.useFakeTimers();
+            profilePage.informationProfileName = false;
+            const event = {stopPropagation: jest.fn()};
+            // act
+            profilePage.toggleTooltips(event, 'name');
+            jest.advanceTimersByTime(3001);
+            // assert
+            expect(profilePage.informationProfileName).toBe(false);
+            expect(profilePage.informationOrgName).toBe(false);
+            expect(event.stopPropagation).toHaveBeenCalled();
+            jest.useRealTimers();
+        });
+
+        it('should go inside field  name is org and set data and dismiss message called', () => {
+            // arrange
+            jest.useFakeTimers();
+            profilePage.informationProfileName = false;
+            const event = {stopPropagation: jest.fn()};
+            // act
+            profilePage.toggleTooltips(event, 'org');
+            jest.advanceTimersByTime(3001);
+            // assert
+            expect(profilePage.informationProfileName).toBe(false);
+            expect(profilePage.informationOrgName).toBe(false);
+            expect(event.stopPropagation).toHaveBeenCalled();
+            jest.useRealTimers();
+        });
+
+        it('should go to else part if field name is not org nor field', () => {
+            jest.useFakeTimers();
+            profilePage.informationProfileName = false;
+            const event = {stopPropagation: jest.fn()};
+            // act
+            profilePage.toggleTooltips(event, 'sample');
+            // assert
+            expect(profilePage.informationProfileName).toBe(false);
+            expect(profilePage.informationOrgName).toBe(false);
+            jest.useRealTimers();
         });
     });
 });
