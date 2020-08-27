@@ -38,5 +38,49 @@ export const mockProfileData = {
     phone: '99999999',
     email: 'xyz@gmail.com',
     recoveryEmail: 'abc@gmail.com',
-    recoveryPhone: '987654'
+    recoveryPhone: '987654',
+    declarations: [{
+        orgId: 'sample_org_id',
+        persona: 'sample_persona',
+        status: 'sample_status',
+        info: [{
+            data: 'sample_data'
+        }],
+        errorType: 'sample_,error_type',
+    }, {
+        orgId: 'sample_org_id2'
+    }]
+};
+
+export const mockFormData = {
+    form: {
+        data: {
+            fields: [
+                {
+                    code: 'tenant',
+                    templateOptions: {
+                        options: [{
+                            value: 'sample_org_id',
+                            label: 'sample_label'
+                        }
+                        ],
+                    },
+                },
+                {
+                    code: 'externalIds',
+                    children: [{
+                        code: 0,
+                        fieldName: 'sample_field_name'
+                    }],
+                    templateOptions: {
+                        options: [{
+                            value: 'sample_org_id',
+                            label: 'sample_label'
+                        }
+                        ],
+                    },
+                }
+            ],
+        },
+    },
 };
