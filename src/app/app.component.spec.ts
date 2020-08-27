@@ -2658,4 +2658,13 @@ describe('AppComponent', () => {
         expect(appComponent.isPlannedMaintenanceStarted).toBeFalsy();
         expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DOWNLOAD_TAB]);
     });
+
+    it('should set plannedMaintenanceBanner to false when user clicks on close icon', () => {
+        // arrange
+        appComponent.isPlannedMaintenanceStarted = false;
+        // act
+        appComponent.closePlannedMaintenanceBanner();
+        // assert
+        expect(appComponent.isPlannedMaintenanceStarted).toBeFalsy();
+    });
 });

@@ -503,6 +503,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.isPlannedMaintenanceStarted = true;
       this.isOnBoardingCompleted = this.appGlobalService.isOnBoardingCompleted;
       if (this.isPlannedMaintenanceStarted) {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW,
+          '',
+          PageId.PLANNED_MAINTENANCE_BANNER,
+          this.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+      );
         let  intervalRef;
         const backButtonSubscription = this.platform.backButton.subscribeWithPriority(13, () => {
           backButtonSubscription.unsubscribe();
@@ -880,5 +886,10 @@ export class AppComponent implements OnInit, AfterViewInit {
    navigateToDownloads() {
      this.isPlannedMaintenanceStarted = false;
      this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
+  }
+
+
+  closePlannedMaintenanceBanner() {
+    this.isPlannedMaintenanceStarted = false;
   }
 }
