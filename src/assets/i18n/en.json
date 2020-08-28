@@ -792,5 +792,6 @@
   "YOU_CAN_EDIT_TEACHER_INFO": "You can edit this information from your profile if you need to",
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
-  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded"
+  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
+  "UNENROL_FALIURE": "Cannot un-enrol now. Try again later"
 }
