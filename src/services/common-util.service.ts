@@ -9,12 +9,19 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria } from 'sunbird-sdk';
-
-import { PreferenceKey, ProfileConstants, RouterLinks, appLanguages, Location as loc } from '@app/app/app.constant';
-
+import {
+    SharedPreferences, ProfileService, Profile, ProfileType,
+    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria
+} from 'sunbird-sdk';
+import {
+    PreferenceKey, ProfileConstants, RouterLinks,
+    appLanguages, Location as loc
+} from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType, ObjectType } from '@app/services/telemetry-constants';
+import {
+    InteractType, InteractSubtype, PageId, Environment,
+    CorReleationDataType, ImpressionType, ObjectType
+} from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
@@ -192,7 +199,7 @@ export class CommonUtilService {
     async showContentComingSoonAlert(source, content?, dialCode?) {
         let message;
         if (content) {
-             message = await this.comingSoonMessageService.getComingSoonMessage(content);
+            message = await this.comingSoonMessageService.getComingSoonMessage(content);
         }
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -202,7 +209,7 @@ export class CommonUtilService {
         );
         if (source !== 'permission') {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
-            (dialCode ? dialCode : ''));
+                (dialCode ? dialCode : ''));
             return;
         }
         let popOver: any;
@@ -439,7 +446,7 @@ export class CommonUtilService {
 
 
     getUserLocation(profile: any) {
-        let userLocation = {
+        const userLocation = {
             state: {},
             district: {}
         };
@@ -553,7 +560,8 @@ export class CommonUtilService {
         });
     }
 
-    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+    public async buildPermissionPopover(
+        handler: (selectedButton: string) => void,
         appName: string, whichPermission: string,
         permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
         return this.popOverCtrl.create({
@@ -634,9 +642,9 @@ export class CommonUtilService {
         const req: LocationSearchCriteria = {
             from: CachedItemRequestSourceFrom.SERVER,
             filters: {
-              type: loc.TYPE_DISTRICT,
-              parentId: id || undefined,
-              code: code || undefined
+                type: loc.TYPE_DISTRICT,
+                parentId: id || undefined,
+                code: code || undefined
             }
         };
         try {
