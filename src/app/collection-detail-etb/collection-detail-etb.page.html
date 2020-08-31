@@ -222,8 +222,8 @@
   </div>
 </ion-content>
 
-<div *ngIf="isFromGroupFlow">
-  <add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
+<div>
+  <add-activity-to-group [pageId]="pageId" [identifier]="identifier"></add-activity-to-group>
 </div>
 
 <ng-container *ngIf="trackDownloads$ | async; let downloads">

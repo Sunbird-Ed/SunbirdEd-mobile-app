@@ -50,7 +50,7 @@ import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from '
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
 import { GroupHandlerService } from '@app/services';
-
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 declare const cordova;
 @Component({
@@ -67,7 +67,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   contentType: Array<string> = [];
   source: string;
   groupId: string;
-  activityFilters: any = {};
+  activityTypeData: any = {};
   activityList: GroupActivity[] = [];
   isFromGroupFlow = false;
   dialCode: string;
@@ -115,6 +115,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isQrCodeLinkToContent: any;
   LibraryCardTypes = LibraryCardTypes;
   initialFilterCriteria: any;
+  showAddToGroupButtons = false;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -158,7 +159,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.isFromGroupFlow = true;
       }
       this.groupId = extras.groupId;
-      this.activityFilters = extras.activityFilters;
+      this.activityTypeData = extras.activityTypeData;
       this.activityList = extras.activityList;
       this.enrolledCourses = extras.enrolledCourses;
       this.guestUser = extras.guestUser;
@@ -353,26 +354,29 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showContentDetails(collection, true);
   }
 
-  async openContent(collection, content, index?, isQrCodeLinkToSingleContent?) {
-    if (this.source === PageId.GROUP_DETAIL && this.activityList) {
-      const activityExist = this.activityList.find(activity => activity.id === content.identifier);
-      if (activityExist) {
-        this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
-        return;
-      }
-    }
-
-    this.showLoader = false;
-    this.parentContent = collection;
-    this.isQrCodeLinkToContent = isQrCodeLinkToSingleContent;
-    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
-    if (collection !== undefined) {
-      this.parentContent = collection;
-      this.childContent = content;
-      this.checkParent(collection, content);
+  async openContent(collection, content, index?, isQrCodeLinkToSingleContent?, markAsSelected?) {
+    if (markAsSelected && this.isFromGroupFlow) {
+      this.searchContentResult.forEach((element, idx) => {
+        if (idx === index) {
+          element.selected = true;
+        } else {
+          element.selected = false;
+        }
+      });
+      this.showAddToGroupButtons = true;
     } else {
       this.showLoader = false;
-      await this.checkRetiredOpenBatch(content);
+      this.parentContent = collection;
+      this.isQrCodeLinkToContent = isQrCodeLinkToSingleContent;
+      this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
+      if (collection !== undefined) {
+        this.parentContent = collection;
+        this.childContent = content;
+        this.checkParent(collection, content);
+      } else {
+        this.showLoader = false;
+        await this.checkRetiredOpenBatch(content);
+      }
     }
   }
 
@@ -433,7 +437,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           params.corRelation.push(correlationData);
         }
       }
-
+      CsGroupAddableBloc.instance.updateState(
+        {
+          pageIds: [PageId.COURSE_DETAIL],
+          params: {
+            ...CsGroupAddableBloc.instance.state.params,
+            corRelationList: params.corRelation,
+            noOfPagesToRevertOnSuccess: -3,
+            activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
+          }
+        }
+      );
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           source: this.source,
@@ -493,6 +507,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         }
 
       } else {
+        if (CsGroupAddableBloc.instance.initialised) {
+          CsGroupAddableBloc.instance.updateState(
+            {
+              pageIds: [PageId.COLLECTION_DETAIL],
+              params: {
+                ...CsGroupAddableBloc.instance.state.params,
+                corRelationList: params.corRelation,
+                noOfPagesToRevertOnSuccess: -3,
+                activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
+              }
+            }
+          );
+        }
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
             source: this.source,
@@ -508,6 +535,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
       }
     } else {
+      if (CsGroupAddableBloc.instance.initialised) {
+        CsGroupAddableBloc.instance.updateState(
+          {
+            pageIds: [PageId.CONTENT_DETAIL],
+            params: {
+              ...CsGroupAddableBloc.instance.state.params,
+              corRelationList: params.corRelation,
+              noOfPagesToRevertOnSuccess: -3,
+              activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
+            }
+          }
+        );
+      }
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: params.content,
@@ -821,7 +861,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
-      ... (this.activityFilters ? this.activityFilters : {})
     };
 
     if (this.profile && this.source === PageId.GROUP_DETAIL && shouldApplyProfileFilter) {
@@ -846,7 +885,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
     this.corRelationList = [];
-    this.contentService.searchContent(contentSearchRequest).toPromise()
+    let searchQuery;
+    if (this.activityTypeData) {
+      searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
+    }
+    this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
           this.responseData = response;
@@ -1593,34 +1636,34 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     return totalCount;
   }
 
-  // async addActivityToGroup() {
-  //   const content = this.searchContentResult.find((c) => c.selected);
-  //   if (this.activityList) {
-  //     const activityExist = this.activityList.find(activity => activity.id === content.identifier);
-  //     if (activityExist) {
-  //       this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
-  //       return;
-  //     }
-  //   }
-  //   this.groupHandlerService.addActivityToGroup(
-  //     this.groupId,
-  //     content.identifier,
-  //     content.contentType,
-  //     PageId.SEARCH,
-  //     this.corRelationList,
-  //     -2);
-  // }
+  async addActivityToGroup() {
+    const content = this.searchContentResult.find((c) => c.selected);
+    if (this.activityList) {
+      const activityExist = this.activityList.find(activity => activity.id === content.identifier);
+      if (activityExist) {
+        this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
+        return;
+      }
+    }
+    this.groupHandlerService.addActivityToGroup(
+      this.groupId,
+      content.identifier,
+      content.contentType,
+      PageId.SEARCH,
+      this.corRelationList,
+      -2);
+  }
 
-  // openSelectedContent() {
-  //   let index = 0;
-  //   let content;
-  //   this.searchContentResult.forEach((element, idx) => {
-  //     if (element.selected) {
-  //       index = idx;
-  //       content = element;
-  //     }
-  //   });
-  //   this.openContent(undefined, content, index, undefined, false);
-  // }
+  openSelectedContent() {
+    let index = 0;
+    let content;
+    this.searchContentResult.forEach((element, idx) => {
+      if (element.selected) {
+        index = idx;
+        content = element;
+      }
+    });
+    this.openContent(undefined, content, index, undefined, false);
+  }
 
 }

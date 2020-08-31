@@ -54,7 +54,6 @@ describe('GroupDetailsPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockPopoverCtrl as PopoverController,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockCommonUtilService as CommonUtilService,
             mockFilterPipe as FilterPipe,
             mockTelemetryGeneratorService as TelemetryGeneratorService
@@ -2021,151 +2020,6 @@ describe('GroupDetailsPage', () => {
 
     describe('showAddActivityPopup', () => {
         it('should return activity popup', (done) => {
-            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve({}));
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        selectedVal: {
-                            index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
-                            desc: 'ACTIVITY_COURSE_DESC',
-                            activityType: 'Content',
-                            isEnabled: true,
-                            filters: {
-                                contentTypes: [
-                                    'Course'
-                                ]
-                            }
-                        }
-                    }
-                }))
-            } as any)));
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
-            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
-                // assert
-                setTimeout(() => {
-                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                        InteractType.TOUCH,
-                        InteractSubtype.ADD_ACTIVITY_CLICKED,
-                        Environment.GROUP,
-                        PageId.GROUP_DETAIL);
-                    expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                    expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
-                    expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH],
-                        {
-                            state: {
-                                activityFilters: {
-                                    contentTypes: [
-                                        'Course'
-                                    ]
-                                },
-                                activityList: [],
-                                groupId: 'sample-group-id', source: 'group-detail'
-                            }
-                        });
-                }, 0);
-                done();
-            });
-        });
-
-        it('should not return activity popup if type is not content', (done) => {
-            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve({}));
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        selectedVal: {
-                            index: 0,
-                            title: 'ACTIVITY_COURSE_TITLE',
-                            desc: 'ACTIVITY_COURSE_DESC',
-                            activityType: 'Content',
-                            isEnabled: true,
-                            filters: {
-                                contentTypes: [
-                                    'Course'
-                                ]
-                            }
-                        }
-                    }
-                }))
-            } as any)));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
-                // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.ADD_ACTIVITY_CLICKED,
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL);
-                expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
-                done();
-            });
-        });
-
-        it('should not return activity popup if type is not content and dismissData is undefined', (done) => {
-            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.resolve({}));
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: undefined
-                }))
-            } as any)));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Select activity');
-            mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
-                // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.ADD_ACTIVITY_CLICKED,
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL);
-                expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'SELECT_ACTIVITY');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'NEXT');
-                done();
-            });
-        });
-
-        it('should not return activity popup if type is not content for catch part', (done) => {
-            mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi = jest.fn(() => Promise.reject({ error: 'error' }));
-            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
-                // assert
-                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.ADD_ACTIVITY_CLICKED,
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL);
-                expect(mockFormAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi).toHaveBeenCalled();
-                done();
-            });
-        });
-    });
-
-    describe('navigateToAddActivity', () => {
-        it('should return activity popup', (done) => {
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockGroupService.getSupportedActivities = jest.fn(() => of({
                 data: {
@@ -2190,7 +2044,7 @@ describe('GroupDetailsPage', () => {
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.navigateToAddActivity().then(() => {
+            groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2250,7 +2104,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.navigateToAddActivity().then(() => {
+            groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2290,7 +2144,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.navigateToAddActivity().then(() => {
+            groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2328,7 +2182,7 @@ describe('GroupDetailsPage', () => {
                 }
             })) as any;
             // act
-            groupDetailsPage.navigateToAddActivity().then(() => {
+            groupDetailsPage.showAddActivityPopup().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(

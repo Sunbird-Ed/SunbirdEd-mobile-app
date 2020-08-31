@@ -88,6 +88,7 @@ import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
 declare const cordova;
 
 @Component({
@@ -189,8 +190,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
-  groupId: string;
-  addActivityToGroupData: AddActivityToGroup;
+  // groupId: string;
+  // addActivityToGroupData: AddActivityToGroup;
   isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
@@ -237,6 +238,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   isFirstContent = false;
   nextContent: Content;
   certificateDescription = '';
+  private csGroupAddableBloc: CsGroupAddableBloc;
+  pageId = PageId.COURSE_DETAIL;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -267,6 +270,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler
   ) {
     this.objRollup = new Rollup();
+    this.csGroupAddableBloc = CsGroupAddableBloc.instance;
     // this.getUserId();
 
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -277,17 +281,22 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
-      if (this.source === PageId.GROUP_DETAIL) {
+      if (CsGroupAddableBloc.instance.initialised) {
         this.isFromGroupFlow = true;
-        this.groupId = extrasState.groupId;
-        this.addActivityToGroupData = {
-          groupId: this.groupId,
-          activityId: this.identifier,
-          activityType: this.courseCardData.contentType ? this.courseCardData.contentType : this.courseCardData.content.contentType,
-          pageId: PageId.COURSE_DETAIL,
-          corRelationList: this.corRelationList
-        };
       }
+      // if (this.source === PageId.GROUP_DETAIL) {
+        // this.isFromGroupFlow = true;
+        // this.groupId = extrasState.groupId;
+        // this.addActivityToGroupData = {
+        //   groupId: this.groupId,
+        //   activityId: this.identifier,
+        //   activityType: this.courseCardData.contentType ? this.courseCardData.contentType : this.courseCardData.content.contentType,
+        //   pageId: PageId.COURSE_DETAIL,
+        //   corRelationList: this.corRelationList,
+        //   activityList: extrasState.activityList || [],
+        //   noOfPagesToRevertOnSuccess: -3
+        // };
+      // }
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
@@ -1985,6 +1994,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (this.isFromGroupFlow) {
       return;
     }
+    // if (this.csGroupAddableBloc.state) {
+    //   return;
+    // }
 
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(

@@ -13,7 +13,7 @@
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="isFromGroupFlow">
-					<add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
+					<add-activity-to-group [identifier]="identifier" [pageId]="pageId"></add-activity-to-group>
 					<div class="enrollment-info"
 						*ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
 						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">

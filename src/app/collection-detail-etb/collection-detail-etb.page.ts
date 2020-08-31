@@ -206,8 +206,8 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
-  groupId: string;
-  isFromGroupFlow = false;
+  // groupId: string;
+  // isFromGroupFlow = false;
   addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   hiddenGroups = new Set();
@@ -256,7 +256,8 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
   deeplinkContent: any;
-  activityList;
+  pageId = PageId.COLLECTION_DETAIL;
+  // activityList;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -314,21 +315,21 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
     this.deeplinkContent = extras.deeplinkContent;
-    if (this.source === PageId.GROUP_DETAIL) {
-      this.isFromGroupFlow = true;
-      this.groupId = extras.groupId;
-      this.activityList = extras.activityList || [];
-      this.addActivityToGroupData = {
-        groupId: this.groupId,
-        activityId: this.identifier,
-        activityList: this.activityList,
-        activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
-        pageId: PageId.COLLECTION_DETAIL,
-        corRelationList: this.corRelationList,
-        source: this.source,
-        noOfPagesToRevertOnSuccess: -3
-      };
-    }
+    // if (this.source === PageId.GROUP_DETAIL) {
+    //   this.isFromGroupFlow = true;
+    //   this.groupId = extras.groupId;
+    //   this.activityList = extras.activityList || [];
+    //   this.addActivityToGroupData = {
+    //     groupId: this.groupId,
+    //     activityId: this.identifier,
+    //     activityList: this.activityList,
+    //     activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
+    //     pageId: PageId.COLLECTION_DETAIL,
+    //     corRelationList: this.corRelationList,
+    //     source: this.source,
+    //     noOfPagesToRevertOnSuccess: -3
+    //   };
+    // }
   }
 
   ngOnInit() {
@@ -857,9 +858,9 @@ export class CollectionDetailEtbPage implements OnInit {
         contentState: this.stateData,
         corRelation: this.corRelationList,
         breadCrumb: this.breadCrumb,
-        source: this.source,
-        groupId: this.groupId,
-        activityList: this.activityList
+        // source: this.source,
+        // groupId: this.groupId,
+        // activityList: this.activityList
       }
     });
   }

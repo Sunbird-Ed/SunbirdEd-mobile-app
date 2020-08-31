@@ -56,7 +56,6 @@ export class GroupDetailsPage implements OnInit {
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService
@@ -805,53 +804,6 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async showAddActivityPopup() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
-      return;
-    }
-
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
-    try {
-      const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
-
-      const selectActivityPopup = await this.popoverCtrl.create({
-        component: SbGenericFormPopoverComponent,
-        componentProps: {
-          sbPopoverHeading: this.commonUtilService.translateMessage('SELECT_ACTIVITY'),
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('NEXT'),
-              btnClass: 'popover-color'
-            }
-          ],
-          icon: null,
-          formItems: supportedActivityList
-        },
-        cssClass: 'sb-popover info select-activity-popover',
-      });
-      await selectActivityPopup.present();
-      const { data } = await selectActivityPopup.onDidDismiss();
-      if (data && data.selectedVal && data.selectedVal.activityType === 'Content') {
-        this.search(data);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  private async search(data) {
-    this.router.navigate([RouterLinks.SEARCH], {
-      state: {
-        activityFilters: data.selectedVal.filters,
-        source: PageId.GROUP_DETAIL,
-        groupId: this.groupId,
-        activityList: this.activityList
-      }
-    });
-  }
-
-  async navigateToAddActivity() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
