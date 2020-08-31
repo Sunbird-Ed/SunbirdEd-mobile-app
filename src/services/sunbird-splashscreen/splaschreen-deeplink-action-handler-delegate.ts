@@ -539,6 +539,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
         this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
       } else if (content) {
+        if (!route) {
+          route = this.getRouterPath(content);
+        }
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
@@ -563,6 +566,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.closeProgressLoader();
       console.log(err);
     }
+  }
+
+  private getRouterPath(content) {
+    let route;
+    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      route = RouterLinks.ENROLLED_COURSE_DETAILS;
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      route = RouterLinks.COLLECTION_DETAIL_ETB;
+    } else {
+      route = RouterLinks.CONTENT_DETAILS;
+    }
+    return route;
   }
 
   private async navigateQuizContent(identifier, content, isFromLink, payloadUrl) {
@@ -728,28 +743,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 });
             }
           }
-        } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
-          this.setTabsRoot();
-          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-            {
-              state: {
-                content,
-                deeplinkContent: this.childContent,
-                corRelation: this.getCorrelationList(payloadUrl)
-              }
-            });
         } else {
           this.setTabsRoot();
           this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.childContent,
               depth: 1,
-              // contentState,  // check in chapter detail page
               isChildContent: true,
-              // corRelation: this.corRelationList,
-              corRelation: undefined,
+              corRelation: this.getCorrelationList(payloadUrl),
               isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-              // course: this.updatedCourseCardData, // check in chapter detail page
               isOnboardingSkipped
             }
           });

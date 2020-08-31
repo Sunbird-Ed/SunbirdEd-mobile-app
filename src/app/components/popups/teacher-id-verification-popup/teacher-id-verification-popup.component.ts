@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { PopoverController, NavParams, Events } from '@ionic/angular';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProfileService, UserFeed, UserMigrateRequest, HttpClientError } from 'sunbird-sdk';
+import { ProfileService, UserMigrateRequest, HttpClientError } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { featureIdMap } from '@app/feature-id-map';
@@ -48,7 +48,9 @@ export class TeacherIdVerificationComponent implements OnInit {
     private popOverCtrl: PopoverController,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtilService: CommonUtilService) {
+    private commonUtilService: CommonUtilService,
+    private events: Events
+  ) {
     if (this.navParams.data) {
       this.userFeed = this.navParams.data.userFeed;
       this.stateList = this.userFeed.data.prospectChannels;
@@ -148,6 +150,7 @@ export class TeacherIdVerificationComponent implements OnInit {
             featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
             ID.USER_VERIFICATION_SUCCESS
           );
+          this.events.publish('loggedInProfile:update');
         }
       })
       .catch((error) => {

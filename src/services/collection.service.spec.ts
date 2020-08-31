@@ -2,17 +2,20 @@ import { of, throwError } from 'rxjs';
 import {
   ContentService,
 } from 'sunbird-sdk';
-import { CollectionService } from './collection.service';
+import { CollectionService,  } from './collection.service';
+import { CommonUtilService } from './common-util.service';
 
 
 describe('LocalCourseService', () => {
   let collectionService: CollectionService;
 
   const mockContentService: Partial<ContentService> = {};
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
 
   beforeAll(() => {
     collectionService = new CollectionService(
       mockContentService as ContentService,
+      mockCommonUtilService as CommonUtilService,
     );
   });
 
@@ -27,6 +30,9 @@ describe('LocalCourseService', () => {
   describe('fetchCollectionData', () => {
     it('should fetch content heirarchy if data not available locally', (done) => {
         // arrange
+        mockCommonUtilService.networkInfo = {
+          isNetworkAvailable: false
+        };
         const contentDetails = {
             isAvailableLocally : false
         };
