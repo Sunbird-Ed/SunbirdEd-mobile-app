@@ -382,8 +382,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         return this.formValues.children.subcategory[field];
       }
       return undefined;
-    } else if(this.profile) {
-      
+    } else if (this.profile) {
     }
   }
 
@@ -474,17 +473,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
-      correlationlist.push({ id: this.extractPrepareFieldStr('board'), type: CorReleationDataType.BOARD });
+      correlationlist.push({ id: this.extractPrepareFieldStr('board') || '', type: CorReleationDataType.BOARD });
       // Medium
-      correlationlist.push({ id: this.extractPrepareFieldStr('medium'), type: CorReleationDataType.MEDIUM });
+      correlationlist.push({ id: this.extractPrepareFieldStr('medium') || '', type: CorReleationDataType.MEDIUM });
       // Grade
-      correlationlist.push({ id: this.extractPrepareFieldStr('grade'), type: CorReleationDataType.CLASS });
+      correlationlist.push({ id: this.extractPrepareFieldStr('grade') || '', type: CorReleationDataType.CLASS });
       // Subject
-      correlationlist.push({ id: this.extractPrepareFieldStr('subject'), type: CorReleationDataType.SUBJECT });
+      correlationlist.push({ id: this.extractPrepareFieldStr('subject') || '', type: CorReleationDataType.SUBJECT });
       // Content Type
-      correlationlist.push({ id: this.extractPrepareFieldStr('contenttype'), type: CorReleationDataType.CONTENT_TYPE });
+      correlationlist.push({ id: this.extractPrepareFieldStr('contenttype') || '', type: CorReleationDataType.CONTENT_TYPE });
       // Content name
-      correlationlist.push({ id: this.extractPrepareFieldStr('contentname'), type: CorReleationDataType.CONTENT_NAME });
+      correlationlist.push({ id: this.extractPrepareFieldStr('contentname') || '', type: CorReleationDataType.CONTENT_NAME });
     }
 
     return correlationlist ? correlationlist : undefined;
