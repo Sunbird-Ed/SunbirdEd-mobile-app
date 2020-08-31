@@ -36,14 +36,14 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
   CourseCertificate,
-  SharedPreferences,
   CertificateAlreadyDownloaded,
   NetworkError,
   FormRequest,
-  FormService
+  FormService,
+  FrameworkService
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
@@ -51,7 +51,6 @@ import {
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
 import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -112,8 +111,7 @@ export class ProfilePage implements OnInit {
   headerObservable: any;
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
-  isDefaultChannelProfile$: Observable<boolean>;
-  private stateList: any;
+  isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
   selfDeclarationInfo: any;
@@ -123,10 +121,9 @@ export class ProfilePage implements OnInit {
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     @Inject('FORM_SERVICE') private formService: FormService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private zone: NgZone,
-    private route: ActivatedRoute,
     private router: Router,
     private popoverCtrl: PopoverController,
     private events: Events,
@@ -181,7 +178,6 @@ export class ProfilePage implements OnInit {
       }
     });
     this.appName = await this.appVersion.getAppName();
-    this.stateList = await this.commonUtilService.getStateList();
   }
 
   ionViewWillEnter() {
@@ -192,7 +188,6 @@ export class ProfilePage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton();
-    this.isDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile();
   }
 
   ionViewWillLeave(): void {
@@ -272,9 +267,11 @@ export class ProfilePage implements OnInit {
           }
           that.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
-              that.zone.run(() => {
+              that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
+                that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
