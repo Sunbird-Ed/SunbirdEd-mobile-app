@@ -52,13 +52,13 @@
             </span>
         </p>
         <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
-        <div *ngIf="(organisationName !== profile.rootOrgName) && !(isDefaultChannelProfile$ | async) && orgDetails">
+        <div *ngIf="(organisationName !== profile.rootOrgName) && !isDefaultChannelProfile && orgDetails">
             <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
                 {{orgDetails?.district?.name}}</span></div>
             <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}: {{orgDetails?.state?.name}}</span></div>
     </div>
     </div>
-    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !(isDefaultChannelProfile$ | async)">
+    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !isDefaultChannelProfile">
         <div *ngIf="orgDetails">
             <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}: </span>
                 <span>{{orgDetails?.district?.name}}</span></div>
