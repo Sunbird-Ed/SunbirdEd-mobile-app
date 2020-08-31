@@ -629,7 +629,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
-              this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+              // this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+              this.commonUtilService.showToast(this.commonUtilService.translateMessage('UNENROL_FALIURE'));
             }
           });
         });

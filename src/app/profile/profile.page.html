@@ -23,9 +23,12 @@
             </span>
         </p>
         <p class="MT0 MB30">
-            <span class="app-name"> {{appName}} </span> <span class="txt-uppercase"> {{'ID' | translate }}: </span>
+            <span class="app-name"> {{appName}} </span>
+            <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
-            <span class="profile-share-icon"><ion-icon md="md-share" class="share-icon"></ion-icon></span>
+            <span class="profile-share-icon" (click)="shareUsername()">
+                <ion-icon md="md-share" class="share-icon"></ion-icon>
+            </span>
         </p>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
@@ -58,13 +61,14 @@
         <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
         <div *ngIf="(organisationName !== profile.rootOrgName) && !(isDefaultChannelProfile$ | async) && orgDetails">
             <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
-                {{orgDetails?.district?.name}}</span></div>
+                    {{orgDetails?.district?.name}}</span></div>
             <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}: {{orgDetails?.state?.name}}</span></div>
-    </div>
+        </div>
     </div>
     <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !(isDefaultChannelProfile$ | async)">
         <div *ngIf="orgDetails">
-            <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}: </span>
+            <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}:
+                </span>
                 <span>{{orgDetails?.district?.name}}</span></div>
             <div><span *ngIf="orgDetails && orgDetails?.state?.name" class="bolder">{{'STATE' | translate}}: </span>
                 <span>{{orgDetails?.state?.name}}</span></div>
@@ -88,11 +92,12 @@
         </div>
         <div class="container MT10 MB10 edit-options">
 
-            <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="navigateToEditPersonalDetails()"
+                class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
-            <div class="self-declare-btn" *ngIf = "!profile?.declarations?.length">
+            <div class="self-declare-btn" *ngIf="!profile?.declarations?.length">
                 <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
                     {{'SUBMIT_MY_DETAILS' | translate}}
                 </ion-button>
@@ -181,7 +186,7 @@
     <div class="self-declare-teacher-details" *ngIf="isCustodianOrgId &&  profile?.declarations?.length">
         <p class="declare-info">{{'MY_DETAILS' | translate | titlecase }}</p>
 
-        <div class="container" *ngIf = "personaTenantDeclaration">
+        <div class="container" *ngIf="personaTenantDeclaration">
             <div>{{personaTenantDeclaration}}</div>
         </div>
 
@@ -226,7 +231,8 @@
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
-                <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="refresh-icon" (click)="getEnrolledCourses(true, true)" ></ion-icon>
+                <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="refresh-icon"
+                    (click)="getEnrolledCourses(true, true)"></ion-icon>
             </div>
             <div class="content">
                 <div class="bolder heading f16">
@@ -239,9 +245,12 @@
                             {{certificate.courseName}}
                         </div>
                         <div>
-                            <span *ngIf="certificate.status === 1 || certificate.status === 0" class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="completed-status-text"> {{ 'COMPLETED' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="lighter"> {{certificate.dateTime | date:'MMMM yyyy'}} </span>
+                            <span *ngIf="certificate.status === 1 || certificate.status === 0"
+                                class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
+                            <span *ngIf="certificate.status === 2" class="completed-status-text">
+                                {{ 'COMPLETED' | translate }}</span>
+                            <span *ngIf="certificate.status === 2" class="lighter">
+                                {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
                     </div>
                     <div class="training-2" *ngIf="certificate?.certificate">
@@ -284,8 +293,7 @@
                                         <img class="app-icon" alt="app"
                                             [src]="commonUtilService.convertFileSrc(courseItem?.appIcon)" />
                                     </ion-col>
-                                    <ion-col size="9"
-                                        style="margin-bottom: 5px; padding: 0 0 0 15px;">
+                                    <ion-col size="9" style="margin-bottom: 5px; padding: 0 0 0 15px;">
                                         <div style="margin-bottom: 5px;" *ngIf="courseItem.resourceType">
                                             <ion-button fill="outline" class="badge">
                                                 {{courseItem?.resourceType}}

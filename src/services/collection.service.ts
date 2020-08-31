@@ -4,7 +4,7 @@ import {
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { Environment, InteractSubtype, PageId } from './telemetry-constants';
-import { CommonUtilService } from './common-util.service';
+import { CommonUtilService } from '@app/services';
 
 
 @Injectable()
@@ -12,6 +12,7 @@ export class CollectionService {
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private commonUtilService: CommonUtilService
   ) {
   }
 
@@ -25,7 +26,7 @@ export class CollectionService {
 
     try {
       const data = await this.contentService.getContentDetails(option).toPromise();
-      if (!data.isAvailableLocally) {
+      if (this.commonUtilService.networkInfo.isNetworkAvailable || !data.isAvailableLocally) {
         return this.getCourseHierarchy(option);
       } else {
         return this.getChildContents(id);

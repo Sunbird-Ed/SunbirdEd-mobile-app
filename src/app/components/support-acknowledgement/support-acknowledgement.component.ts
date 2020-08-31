@@ -19,7 +19,6 @@ export class SupportAcknowledgement {
 
     openDialpad() {
         window.open("tel:" + this.boardContact.contactinfo.number, "_system");
-        // window.open("tel:" + this.boardContact.contactinfo.number, "_blank");
     }
 
 }

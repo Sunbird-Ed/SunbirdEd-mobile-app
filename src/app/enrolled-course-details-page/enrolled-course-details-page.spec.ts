@@ -878,7 +878,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService.unenrollCourse = jest.fn(() => throwError(''));
             mockCommonUtilService.showToast = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockEvents.publish = jest.fn(() => []);
+            mockCommonUtilService.translateMessage = jest.fn();
             // act
             enrolledCourseDetailsPage.handleUnenrollment(true);
             // assert
@@ -888,7 +888,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockEvents.publish).toHaveBeenCalledWith('UNENROL_COURSE_SUCCESS', {});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('UNENROL_FALIURE'));
                 done();
             }, 0);
         });

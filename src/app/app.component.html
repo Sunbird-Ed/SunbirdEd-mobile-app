@@ -28,6 +28,7 @@
   </ion-split-pane>
 
   <div id="planned-maintenance-banner" [hidden]="!isPlannedMaintenanceStarted">
+    <img style="float: right; padding: 16px;" src="assets/imgs/close_tutorial.svg" alt="" (click)="closePlannedMaintenanceBanner()">
     <!--Image-->
     <img src="../assets/imgs/ic_maintenance.svg" alt="maintenance" style="margin-top: 50%;">
     <!-- some text -->
