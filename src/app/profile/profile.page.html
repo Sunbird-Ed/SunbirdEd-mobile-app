@@ -22,7 +22,11 @@
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
-        <p class="MT0 MB30"><span class="app-name"> {{appName}} </span> <span class="txt-uppercase"> {{'ID' | translate }}: </span><span>{{profile?.userName}}</span></p>
+        <p class="MT0 MB30">
+            <span class="app-name"> {{appName}} </span> <span class="txt-uppercase"> {{'ID' | translate }}: </span>
+            <span>{{profile?.userName}}</span>
+            <span class="profile-share-icon"><ion-icon md="md-share" class="share-icon"></ion-icon></span>
+        </p>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
