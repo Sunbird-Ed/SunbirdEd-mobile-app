@@ -487,21 +487,7 @@ export class ProfilePage implements OnInit {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        if (certificate. url) {
-          const downloadRequest = {
-            courseId: course.courseId,
-            certificateToken: certificate.token
-          };
-          this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
-          });
-        } else {
+        if (certificate.identifier) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
               { courseId: course.courseId },
               (svgData, callback) => {
@@ -515,12 +501,33 @@ export class ProfilePage implements OnInit {
                 }
                 this.openpdf(res.path);
               }).catch(async (err) => {
+                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                  await this.downloadLegacyCertificate(course, certificate, toast);
+                }
                 await this.handleCertificateDownloadIssue(toast, err, certificate);
           });
+        } else {
+         await this.downloadLegacyCertificate(course, certificate, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
+    });
+  }
+
+  private async downloadLegacyCertificate(course, certificate, toast) {
+    const downloadRequest = {
+      courseId: course.courseId,
+      certificateToken: certificate.token
+    };
+    this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
+        .then(async (res) => {
+          if (toast) {
+            await toast.dismiss();
+          }
+          this.openpdf(res.path);
+        }).catch(async (err) => {
+      await this.handleCertificateDownloadIssue(toast, err, certificate);
     });
   }
 
@@ -534,6 +541,8 @@ export class ProfilePage implements OnInit {
       this.openpdf(filePath);
     } else if (NetworkError.isInstance(err)) {
       this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+    } else {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
     }
   }
 
