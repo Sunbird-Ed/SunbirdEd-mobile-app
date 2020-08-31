@@ -35,30 +35,38 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
   CourseCertificate,
-  SharedPreferences,
   CertificateAlreadyDownloaded,
   NetworkError,
   FormRequest,
   FormService
 } from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
+import {
+  Environment, InteractSubtype,
+  InteractType, PageId, ID
+} from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import {
+  EditContactVerifyPopupComponent
+} from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
 } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
-import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
+import {
+  AccountRecoveryInfoComponent
+} from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
-import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
+import {
+  AndroidPermissionsStatus,
+  AndroidPermission
+} from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
+import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 
 @Component({
   selector: 'app-profile',
@@ -122,7 +130,6 @@ export class ProfilePage implements OnInit {
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     @Inject('FORM_SERVICE') private formService: FormService,
     private zone: NgZone,
     private route: ActivatedRoute,
@@ -133,7 +140,7 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    private socialShare: SocialSharing,
+    private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
@@ -458,36 +465,36 @@ export class ProfilePage implements OnInit {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        if (certificate. url) {
+        if (certificate.url) {
           const downloadRequest = {
             courseId: course.courseId,
             certificateToken: certificate.token
           };
           this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
-          });
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              await this.handleCertificateDownloadIssue(toast, err, certificate);
+            });
         } else {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId },
-              (svgData, callback) => {
-                this.certificateDownloadAsPdfService.download(
-                    svgData, (fileName, pdfData) => callback(pdfData as any)
-                );
-              }).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
-          });
+            { courseId: course.courseId },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              await this.handleCertificateDownloadIssue(toast, err, certificate);
+            });
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -933,7 +940,7 @@ export class ProfilePage implements OnInit {
               });
           }
         }, this.appName, this.commonUtilService.translateMessage
-          ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
@@ -970,7 +977,7 @@ export class ProfilePage implements OnInit {
       const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
       const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
-      tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
+        tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
       this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
         '%persona': this.selfDeclarationInfo.persona || '',
@@ -1022,6 +1029,15 @@ export class ProfilePage implements OnInit {
       formData = await this.fetchFormApi(formReq);
     }
     return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+  }
+
+  shareUsername() {
+    const translatedMsg = this.commonUtilService.translateMessage('SHARE_USERNAME', {
+      app_name: this.appName,
+      user_name: this.profile.firstName + ' ' + this.profile.lastName,
+      diksha_id: this.profile.userName
+    });
+    this.socialSharing.share(translatedMsg);
   }
 
 }

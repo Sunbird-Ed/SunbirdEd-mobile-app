@@ -622,6 +622,7 @@
   "SHARE_TELEMETRY_FAILED": "Unable to share telemetry",
   "SHARE_TELEMETRY_NO_DATA_FOUND": "No telemetry data found",
   "SHARE_THIS": "Share",
+  "SHARE_USERNAME": "The {{app_name}} ID of {{user_name}} is \"{{diksha_id}}\"",
   "SHOW": "Show",
   "SHOWING_ITEMS": "Showing {{%s}} items",
   "SHOWING_RESULTS_FOR": "Showing {{%count}} results for '{{%query}}'",

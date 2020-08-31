@@ -15,9 +15,6 @@ describe('SbAppSharePopupComponent', () => {
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
-    const mockDeviceInfo: Partial<DeviceInfo> = {
-        getDeviceID: jest.fn(() => '0123456789')
-    };
     const mockPlatform: Partial<Platform> = {};
     const mocksocialSharing: Partial<SocialSharing> = {
         share: jest.fn()
@@ -54,14 +51,9 @@ describe('SbAppSharePopupComponent', () => {
     const mockRouter: Partial<Router> = {
         navigate: jest.fn()
     };
-    const mockToastController: Partial<ToastController> = {
-        create: jest.fn(),
-        dismiss: jest.fn()
-    };
 
     beforeAll(() => {
         sbAppSharePopupComponent = new SbAppSharePopupComponent(
-            mockDeviceInfo as DeviceInfo,
             mockPopoverCtrl as PopoverController,
             mocksocialSharing as SocialSharing,
             mockPlatform as Platform,
@@ -71,7 +63,6 @@ describe('SbAppSharePopupComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockPermissionService as AndroidPermissionsService,
             mockRouter as Router,
-            mockToastController as ToastController,
             mockCommonUtilService as CommonUtilService);
     });
 
@@ -177,7 +168,7 @@ describe('SbAppSharePopupComponent', () => {
                 Environment.SETTINGS);
             expect(sbAppSharePopupComponent.shareUrl).toEqual(
                 'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
+                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
             done();
         }, 0);
     });
@@ -205,7 +196,7 @@ describe('SbAppSharePopupComponent', () => {
                 Environment.SETTINGS);
             expect(sbAppSharePopupComponent.shareUrl).toEqual(
                 'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
+                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
             done();
         }, 0);
     });
