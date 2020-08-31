@@ -20,7 +20,9 @@ describe('ContentShareHandlerService', () => {
 
     const mockContentService: Partial<ContentService> = {};
     const mockStorageService: Partial<StorageService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getAppName: jest.fn(() => Promise.resolve('app_name'))
+    };
     const mockSocialSharing: Partial<SocialSharing> = {};
     const mockAppVersion: Partial<AppVersion> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -43,15 +45,6 @@ describe('ContentShareHandlerService', () => {
 
     it('should create a instance of sbSharePopupComponent', () => {
         expect(contentShareHandlerService).toBeTruthy();
-    });
-
-    it('ngOnInit', () => {
-        // arrange
-        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('app_name'));
-        // act
-        contentShareHandlerService.ngOnInit();
-        // assert
-        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
     });
 
     describe('shareContent', () => {
