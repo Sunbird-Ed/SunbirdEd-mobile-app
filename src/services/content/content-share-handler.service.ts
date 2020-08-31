@@ -1,4 +1,4 @@
-import { Injectable, Inject, OnInit } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import {
   ContentService, StorageService, ContentExportRequest,
   ContentExportResponse, Content, Rollup,
@@ -16,7 +16,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
   providedIn: 'root'
 })
 
-export class ContentShareHandlerService implements OnInit {
+export class ContentShareHandlerService {
 
   private telemetryObject: TelemetryObject;
   private appName: string;
@@ -28,10 +28,6 @@ export class ContentShareHandlerService implements OnInit {
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion) {
-
-  }
-
-  ngOnInit(): void {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
