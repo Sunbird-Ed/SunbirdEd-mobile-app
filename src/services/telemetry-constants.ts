@@ -148,7 +148,8 @@ export enum PageId {
     ACTIVITY_DETAIL = 'activity-detail',
     TEXTBOOK_IMPORT = 'textbookimport',
     ACTIVITY_TOC = 'activity-toc',
-    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group'
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
+    PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner'
 }
 
 export enum LogType {

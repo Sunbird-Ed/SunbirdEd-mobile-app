@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
-import { TextBookCardComponent } from './text-book-card/text-book-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { PbHorizontalComponent } from './pb-horizontal/pb-horizontal.component';
 import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
@@ -57,7 +56,6 @@ import { AddActivityToGroupComponent } from './add-activity-to-group/add-activit
   declarations: [
     ApplicationHeaderComponent,
     SignInCardComponent,
-    TextBookCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
@@ -148,7 +146,6 @@ import { AddActivityToGroupComponent } from './add-activity-to-group/add-activit
   exports: [
     ApplicationHeaderComponent,
     SignInCardComponent,
-    TextBookCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,

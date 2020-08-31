@@ -23,6 +23,7 @@ import { mockNavigationResp, mockFormConfig, mockProfile, mockUserProfile, mockF
 import { of } from 'rxjs';
 import { resolve } from 'dns';
 import { FormConfigSubcategories } from '../app.constant';
+import { FormControl } from '@angular/forms';
 
 window['supportfile'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
@@ -48,10 +49,12 @@ describe('FaqReportIssuePage', () => {
         getDeviceID: jest.fn(() => '23123124')
     };
     const mockFrameworkService: Partial<FrameworkService> = {
-        getFrameworkDetails: jest.fn()
+        getFrameworkDetails: jest.fn(() => of(mockFrameworkList)),
+        getFrameworkCategoryTerms: jest.fn(() => of(mockFrameworkList))
     };
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
-        getActiveChannelSuggestedFrameworkList: jest.fn()
+        getActiveChannelSuggestedFrameworkList: jest.fn(),
+        getFrameworkCategoryTerms: jest.fn(() => of(mockFrameworkList))
     };
     const mockTelemetryService: Partial<TelemetryService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -83,8 +86,12 @@ describe('FaqReportIssuePage', () => {
         getAppName: jest.fn(() => Promise.resolve('AppName'))
     };
     const mockTranslateService: Partial<TranslateService> = {};
+    const loader = {
+        present: jest.fn(),
+        dismiss: jest.fn()
+    };
     const mockModalController: Partial<ModalController> = {
-        create: jest.fn()
+        create: jest.fn(() => loader) as any
     };
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn(fn => fn())
@@ -414,6 +421,7 @@ describe('FaqReportIssuePage', () => {
 
     describe('Closures', () => {
         it('Board closure should return board list', (done) => {
+            faqReportIssuePage.profile = mockUserProfile;
             // arrange
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(mockFrameworkList));
             // act
@@ -425,16 +433,57 @@ describe('FaqReportIssuePage', () => {
             });
         });
 
-        it('Medium closure should return medium list', () => {
+        it('Medium closure should return medium list', (done) => {
             // arrange
             const context = {
-                valueChanges: of({ code: 'k_2-11-4' })
+                valueChanges: of(
+                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
+                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
+                ),
+                value: { code: 'k_2-11-4' }
             };
             // act
             faqReportIssuePage.formConfig[1].children.contentquality[1].templateOptions.options(
             {}, context, jest.fn(), jest.fn()
             ).subscribe((val) => {
                 expect(val.length).toEqual(5);
+                done();
+            });
+        });
+
+        it('Grade closure should return medium list', (done) => {
+            // arrange
+            const context = {
+                valueChanges: of(
+                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
+                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
+                ),
+                value: { code: 'k_2-11-4' }
+            };
+            // act
+            faqReportIssuePage.formConfig[1].children.contentquality[2].templateOptions.options(
+            {}, context, jest.fn(), jest.fn()
+            ).subscribe((val) => {
+                expect(val.length).toEqual(5);
+                done();
+            });
+        });
+
+        it('Subject closure should return medium list', (done) => {
+            // arrange
+            const context = {
+                valueChanges: of(
+                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
+                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
+                ),
+                value: { code: 'k_2-11-4' }
+            };
+            // act
+            faqReportIssuePage.formConfig[1].children.contentquality[3].templateOptions.options(
+            {}, context, jest.fn(), jest.fn()
+            ).subscribe((val) => {
+                expect(val.length).toEqual(5);
+                done();
             });
         });
     });

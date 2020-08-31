@@ -255,7 +255,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
-  deeplinkContent: any;
   activityList;
 
   constructor(
@@ -313,7 +312,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
-    this.deeplinkContent = extras.deeplinkContent;
     if (this.source === PageId.GROUP_DETAIL) {
       this.isFromGroupFlow = true;
       this.groupId = extras.groupId;
@@ -372,10 +370,6 @@ export class CollectionDetailEtbPage implements OnInit {
 
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: this.identifier });
-    if (this.deeplinkContent && this.collectionChildComp) {
-      this.collectionChildComp.navigateToDetailsPage(this.deeplinkContent, '');
-      this.deeplinkContent = null;
-    }
   }
 
   private assignCardData() {

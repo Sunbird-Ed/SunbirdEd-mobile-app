@@ -37,7 +37,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   courseList = [];
   showCourseDropdownSection = false;
   selectedCourse;
-  // courseData: Content;
+  courseData: Content;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -62,17 +62,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       '',
       PageId.ACTIVITY_DETAIL,
       Environment.GROUP);
-    this.courseList = [];
-    try {
-      const courseData = await this.collectionService.fetchCollectionData(this.activity.id);
-      this.getNestedCourses(courseData.children);
-      if (this.courseList.length) {
-        this.showCourseDropdownSection = true;
-        this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
-      }
-    } catch (err) {
-      console.log('fetchCollectionData err', err);
-    }
   }
 
   async ionViewWillEnter() {
@@ -81,6 +70,16 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
+    this.courseList = [];
+    try {
+      this.courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.getNestedCourses(this.courseData.children);
+      if (this.courseList.length) {
+        this.showCourseDropdownSection = true;
+      }
+    } catch (err) {
+      console.log('fetchCollectionData err', err);
+    }
     this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
     this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
   }
@@ -106,6 +105,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
+    if (this.selectedCourse) {
+      req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+    } else {
+      req.leafNodesCount = this.courseData.contentData.leafNodes.length;
+    }
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
@@ -135,7 +139,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         }
         this.filteredMemberList = new Array(...this.memberList);
         this.isActivityLoading = false;
-        this.filteredMemberList = this.calculateProgress(this.filteredMemberList, this.selectedCourse, this.activity);
       }
     } catch (e) {
       console.log(' CsGroupActivityDataAggregation err', e);
@@ -156,19 +159,13 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     return memberName;
   }
 
-  calculateProgress(memberList, selectedCourse, activity) {
-    memberList.forEach((member) => {
-      let progress = 0;
-      const memberAgg = member.agg.find(a => a.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-      const activityCount = selectedCourse ? selectedCourse.contentData.leafNodes.length
-        : activity.activityInfo.leafNodes.length;
-      if (activityCount && memberAgg) {
-        progress = Math.round((memberAgg.value / activityCount) * 100);
-      }
-      member.progress = '' + (progress > 100 ? 100 : progress);
-    });
-
-    return memberList;
+  getMemberProgress(member) {
+    let progress = 0;
+    if (member.agg) {
+      const progressMetric = member.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.PROGRESS);
+      progress = progressMetric ? progressMetric.value : 0;
+    }
+    return '' + progress;
   }
 
   getActivityAggLastUpdatedOn() {
