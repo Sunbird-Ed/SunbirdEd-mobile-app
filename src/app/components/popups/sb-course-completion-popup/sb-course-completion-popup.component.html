@@ -13,8 +13,9 @@
                 <p>{{'COURSE_COMPLETION_POPUP_DESC' | translate}}</p>
                 <p>{{certificateDescription}}</p>
             </div>
-            <div class="course-completion-cert" *ngIf="isOnline && !isCertified">{{'COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | translate}}</div>
+            <div class="course-completion-cert" *ngIf="isOnline && !isCertified">
+                {{'COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | translate}}
+            </div>
         </div>
-       </div>
-  </ion-content>
-    
+    </div>
+</ion-content>

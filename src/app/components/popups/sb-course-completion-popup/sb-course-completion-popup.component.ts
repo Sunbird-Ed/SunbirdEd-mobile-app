@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services';
+
 @Component({
   selector: 'app-my-groups-popover',
   templateUrl: './sb-course-completion-popup.component.html'
 })
 export class CourseCompletionPopoverComponent {
+
   isCertified = false;
   isOnline = true;
   certificateDescription = '';
+
   constructor(
     private popOverCtrl: PopoverController,
     private navParams: NavParams,
