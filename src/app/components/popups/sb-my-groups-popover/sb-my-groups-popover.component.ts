@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './sb-my-groups-popover.component.html',
   styleUrls: ['./sb-my-groups-popover.component.scss'],
 })
-export class MyGroupsPopoverComponent implements OnInit{
+export class MyGroupsPopoverComponent implements OnInit {
 
   title: string;
   body: any;
@@ -47,19 +47,19 @@ export class MyGroupsPopoverComponent implements OnInit{
 
     if (this.isFromAddMember) {
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-          ImpressionSubtype.DISPLAY_DIKSHA_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP);
+        ImpressionSubtype.DISPLAY_DIKSHA_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP);
     } else {
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-          ImpressionSubtype.GROUP_TUTORIAL, PageId.MY_GROUP, Environment.GROUP);
+        ImpressionSubtype.GROUP_TUTORIAL, PageId.MY_GROUP, Environment.GROUP);
     }
   }
 
   close(getStartedClicked: boolean) {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        getStartedClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
-        Environment.GROUP,
-        PageId.MY_GROUP
+      InteractType.TOUCH,
+      getStartedClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
+      Environment.GROUP,
+      this.isFromAddMember ? PageId.ADD_MEMBER : PageId.MY_GROUP
     );
     this.popOverCtrl.dismiss();
   }

@@ -1,5 +1,5 @@
-import {MyGroupsPopoverComponent} from '@app/app/components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import {NavParams, PopoverController, Platform} from '@ionic/angular';
+import { MyGroupsPopoverComponent } from '@app/app/components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import {
     CommonUtilService,
     Environment, ImpressionSubtype,
@@ -50,6 +50,7 @@ describe('MyGroupsPopoverComponent', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should create instance of myGroupspopoverComponent', () => {
@@ -83,6 +84,14 @@ describe('MyGroupsPopoverComponent', () => {
             // arrange
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockNavParams.get = jest.fn((arg) => {
+                let value;
+                switch (arg) {
+                    case 'isFromAddMember':
+                        value = true;
+                }
+                return value;
+            });
             // act
             myGroupsPopoverComponent.ionViewWillEnter();
             // assert
@@ -145,6 +154,23 @@ describe('MyGroupsPopoverComponent', () => {
                 InteractSubtype.CLOSE_CLICKED,
                 Environment.GROUP,
                 PageId.MY_GROUP
+            );
+            expect(mockPopoverController.dismiss).toHaveBeenCalled();
+        });
+
+        it('should call interact telemetry and popoverController when close() called upon with false and from add member flow', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockPopoverController.dismiss = jest.fn();
+            myGroupsPopoverComponent.isFromAddMember = true;
+            // act
+            myGroupsPopoverComponent.close(false);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CLOSE_CLICKED,
+                Environment.GROUP,
+                PageId.ADD_MEMBER
             );
             expect(mockPopoverController.dismiss).toHaveBeenCalled();
         });
