@@ -134,9 +134,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
-  // groupId: string;
-  // isFromGroupFlow = false;
-  // addActivityToGroupData: AddActivityToGroup;
   userCount = 0;
   shouldGenerateTelemetry = true;
   playOnlineSpinner: boolean;
@@ -235,20 +232,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
       this.source = extras.source || this.source;
-      // if (this.source === PageId.GROUP_DETAIL) {
-      //   this.isFromGroupFlow = true;
-      //   this.groupId = extras.groupId;
-      //   this.addActivityToGroupData = {
-      //     groupId: this.groupId,
-      //     activityId: this.identifier,
-      //     activityList: extras.activityList || [],
-      //     activityType: this.cardData.contentType,
-      //     pageId: PageId.CONTENT_DETAIL,
-      //     corRelationList: this.corRelationList,
-      //     noOfPagesToRevertOnSuccess: -4
-      //   };
-      // }
-
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;

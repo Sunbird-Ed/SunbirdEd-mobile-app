@@ -190,8 +190,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
-  // groupId: string;
-  // addActivityToGroupData: AddActivityToGroup;
   isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
@@ -284,19 +282,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       if (CsGroupAddableBloc.instance.initialised) {
         this.isFromGroupFlow = true;
       }
-      // if (this.source === PageId.GROUP_DETAIL) {
-        // this.isFromGroupFlow = true;
-        // this.groupId = extrasState.groupId;
-        // this.addActivityToGroupData = {
-        //   groupId: this.groupId,
-        //   activityId: this.identifier,
-        //   activityType: this.courseCardData.contentType ? this.courseCardData.contentType : this.courseCardData.content.contentType,
-        //   pageId: PageId.COURSE_DETAIL,
-        //   corRelationList: this.corRelationList,
-        //   activityList: extrasState.activityList || [],
-        //   noOfPagesToRevertOnSuccess: -3
-        // };
-      // }
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }

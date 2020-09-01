@@ -206,8 +206,6 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
-  // groupId: string;
-  // isFromGroupFlow = false;
   addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   hiddenGroups = new Set();
@@ -255,7 +253,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
-  // activityList;
   pageId = PageId.COLLECTION_DETAIL;
 
   constructor(
@@ -313,21 +310,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
-    // if (this.source === PageId.GROUP_DETAIL) {
-    //   this.isFromGroupFlow = true;
-    //   this.groupId = extras.groupId;
-    //   this.activityList = extras.activityList || [];
-    //   this.addActivityToGroupData = {
-    //     groupId: this.groupId,
-    //     activityId: this.identifier,
-    //     activityList: this.activityList,
-    //     activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
-    //     pageId: PageId.COLLECTION_DETAIL,
-    //     corRelationList: this.corRelationList,
-    //     source: this.source,
-    //     noOfPagesToRevertOnSuccess: -3
-    //   };
-    // }
   }
 
   ngOnInit() {
@@ -851,10 +833,7 @@ export class CollectionDetailEtbPage implements OnInit {
         depth,
         contentState: this.stateData,
         corRelation: this.corRelationList,
-        breadCrumb: this.breadCrumb,
-        // source: this.source,
-        // groupId: this.groupId,
-        // activityList: this.activityList
+        breadCrumb: this.breadCrumb
       }
     });
   }

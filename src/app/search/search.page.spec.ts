@@ -346,7 +346,7 @@ describe('SearchPage', () => {
                 params: {}
             };
             jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
-            jest.spyOn(CsGroupAddableBloc.instance, 'updateState').mockReturnValue(undefined);
+            jest.spyOn(CsGroupAddableBloc.instance, 'updateState').mockImplementation();
         });
         it('openCollection', () => {
             // arrange
