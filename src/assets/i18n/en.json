@@ -794,5 +794,6 @@
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
   "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
-  "UNENROL_FALIURE": "Cannot un-enrol now. Try again later"
+  "UNENROL_FALIURE": "Cannot un-enrol now. Try again later",
+  "CONTENT_TYPE": "Content Type"
 }
