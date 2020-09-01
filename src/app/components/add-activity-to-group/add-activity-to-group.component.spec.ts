@@ -1,5 +1,7 @@
+import { of } from 'rxjs';
 import { AddActivityToGroupComponent } from './add-activity-to-group.component';
 import { GroupHandlerService, CommonUtilService } from '@app/services';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 describe('AddActivityToGroupComponent', () => {
     let addActivityToGroupComponent: AddActivityToGroupComponent;
@@ -24,15 +26,44 @@ describe('AddActivityToGroupComponent', () => {
         expect(addActivityToGroupComponent).toBeTruthy();
     });
 
-    // describe('ngOninit', () => {
-    //     beforeEach(() => {
-    //         const state = {
-    //             pageIds: [],
-    //             params: {}
-    //         };
-    //         jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
-    //     });
-    // });
+    describe('ngOninit', () => {
+        // beforeEach(() => {
+        //     const state = {
+        //         pageIds: [],
+        //         params: {}
+        //     };
+        //     jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
+        // });
+
+        describe('when groupaddablecontext is not initialised', () => {
+            it('should initialise the state as undefined', (done) => {
+                // arrange
+                jest.spyOn(CsGroupAddableBloc.instance, 'initialised', 'get').mockReturnValue(false);
+                // act
+                addActivityToGroupComponent.ngOnInit();
+                // assert
+                addActivityToGroupComponent.state$.subscribe((v) => {
+                    expect(v).toBeUndefined();
+                    done();
+                });
+            });
+        });
+        describe('when groupaddablecontext is initialised', () => {
+            it('should initialise the state with CsGroupAddableBloc', (done) => {
+                // arrange
+                jest.spyOn(CsGroupAddableBloc.instance, 'initialised', 'get').mockReturnValue(true);
+                jest.spyOn(CsGroupAddableBloc.instance, 'state$', 'get').mockReturnValue(of({pageIds: ['page1']}));
+                addActivityToGroupComponent.pageId = 'page1';
+                // act
+                addActivityToGroupComponent.ngOnInit();
+                // assert
+                addActivityToGroupComponent.state$.subscribe((v) => {
+                    expect(v).toEqual({pageIds: ['page1']});
+                    done();
+                });
+            });
+        });
+    });
 
     describe('addActivityToGroup', () => {
         it('should addActivityToGroup', (done) => {

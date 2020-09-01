@@ -123,7 +123,6 @@ describe('SearchPage', () => {
     const mockgroupHandlerService: Partial<GroupHandlerService> = {
         addActivityToGroup: jest.fn()
     };
-    // const csGroupAddableBloc: Partial<CsGroupAddableBloc> = {};
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -347,6 +346,7 @@ describe('SearchPage', () => {
                 params: {}
             };
             jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
+            jest.spyOn(CsGroupAddableBloc.instance, 'updateState').mockReturnValue(undefined);
         });
         it('openCollection', () => {
             // arrange
