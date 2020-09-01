@@ -29,6 +29,7 @@ import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -122,6 +123,7 @@ describe('SearchPage', () => {
     const mockgroupHandlerService: Partial<GroupHandlerService> = {
         addActivityToGroup: jest.fn()
     };
+    // const csGroupAddableBloc: Partial<CsGroupAddableBloc> = {};
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -340,13 +342,11 @@ describe('SearchPage', () => {
 
     describe('openCollection', () => {
         beforeEach(() => {
-            const csGroupAddableBlocInstance = {
-                updateState: jest.fn(),
-                state: {
-                    params: {}
-                }
+            const state = {
+                pageIds: [],
+                params: {}
             };
-            jest.spyOn(CsGroupAddableBloc, 'instance').mockReturnValue(csGroupAddableBlocInstance);
+            jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
         });
         it('openCollection', () => {
             // arrange

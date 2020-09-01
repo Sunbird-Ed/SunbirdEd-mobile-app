@@ -27,7 +27,6 @@ export class AddActivityToGroupComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('this.csGroupAddableBloc', CsGroupAddableBloc.instance);
         if (CsGroupAddableBloc.instance.initialised) {
             this.state$ = CsGroupAddableBloc.instance.state$.pipe(
                 filter((state) => state && state.pageIds.includes(this.pageId))
@@ -41,8 +40,8 @@ export class AddActivityToGroupComponent implements OnInit {
         if (state.params.activityList) {
             const activityExist = state.params.activityList.find(activity => activity.id === this.identifier);
             if (activityExist) {
-              this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
-              return;
+                this.commonUtilService.showToast('ACTIVITY_ALREADY_ADDED_IN_GROUP');
+                return;
             }
         }
         this.groupHandlerService.addActivityToGroup(state.params.groupId, this.identifier, state.params.activityType,
