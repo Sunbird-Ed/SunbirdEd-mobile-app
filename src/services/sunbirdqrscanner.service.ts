@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, Observable, Observer } from 'rxjs';
 import { Profile, ProfileType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
 import {
   Environment,
@@ -22,10 +21,9 @@ import { Platform, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { initTabs, GUEST_TEACHER_TABS, GUEST_STUDENT_TABS } from '@app/app/module.service';
 import { NavigationExtras, Router } from '@angular/router';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { RouterLinks } from '@app/app/app.constant';
-import { mergeMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 declare const cordova;
 @Injectable()
@@ -107,7 +105,7 @@ export class SunbirdQRScanner {
     });
   }
 
-  async showPopover(pageId: string): Promise<string | undefined> {
+  private async showPopover(pageId: string): Promise<string | undefined> {
     return new Promise<string | undefined>(async (resolve, reject) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (whichBtnClicked: string) => {
@@ -172,7 +170,7 @@ export class SunbirdQRScanner {
     }, 100);
   }
 
-getProfileSettingConfig() {
+private getProfileSettingConfig() {
     this.profile = this.appGlobalService.getCurrentUser();
     if (this.commonUtilService.isAccessibleForNonStudentRole(this.profile.profileType)) {
       initTabs(this.container, GUEST_TEACHER_TABS);
@@ -258,7 +256,7 @@ getProfileSettingConfig() {
     });
   }
 
-generateImpressionTelemetry(source, dialCode?) {
+private generateImpressionTelemetry(source, dialCode?) {
     if (dialCode) {
      const corRelationList: Array<CorrelationData> = [];
      corRelationList.push({id: dialCode, type: CorReleationDataType.QR});
@@ -281,14 +279,14 @@ generateImpressionTelemetry(source, dialCode?) {
      }
   }
 
-generateStartEvent(pageId: string) {
+private generateStartEvent(pageId: string) {
     const telemetryObject = new TelemetryObject('', 'qr', undefined);
     this.telemetryGeneratorService.generateStartTelemetry(
       PageId.QRCodeScanner,
       telemetryObject);
   }
 
-generateEndEvent(pageId: string, qrData: string) {
+private generateEndEvent(pageId: string, qrData: string) {
     if (pageId) {
       const telemetryObject: TelemetryObject = new TelemetryObject(qrData, 'qr', undefined);
 
@@ -302,7 +300,7 @@ generateEndEvent(pageId: string, qrData: string) {
     }
   }
 
-  async showInvalidCodeAlert(scannedData) {
+  private async showInvalidCodeAlert(scannedData) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QR_CODE_INVALID,
