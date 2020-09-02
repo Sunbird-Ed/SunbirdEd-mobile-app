@@ -21,8 +21,6 @@ import { Platform, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { initTabs, GUEST_TEACHER_TABS, GUEST_STUDENT_TABS } from '@app/app/module.service';
 import { NavigationExtras, Router } from '@angular/router';
-import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
-import { RouterLinks } from '@app/app/app.constant';
 import { take } from 'rxjs/operators';
 
 declare const cordova;
@@ -54,7 +52,6 @@ export class SunbirdQRScanner {
     private commonUtilService: CommonUtilService,
     private appVersion: AppVersion,
     private toastController: ToastController,
-    private popCtrl: PopoverController,
     private router: Router
   ) {
     const that = this;
@@ -313,58 +310,20 @@ private generateEndEvent(pageId: string, qrData: string) {
         type: CorReleationDataType.CHILD_UI
       }];
       this.telemetryGeneratorService.generateImpressionTelemetry(
-        InteractSubtype.QR_CODE_INVALID, '',
-        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : this.source,
-        this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        corRelationList
-        );
+          InteractSubtype.QR_CODE_INVALID, '',
+          this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : this.source,
+          this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+      );
       this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR', this.source, scannedData);
       return;
     }
-    let popUp;
-    const self = this;
-    const callback: QRAlertCallBack = {
-      tryAgain() {
-        popUp.dismiss().then(() => {
-          this.pauseSubscription.unsubscribe();
-        });
-        self.startScanner(self.source, self.showButton);
-      },
-      cancel() {
-        popUp.dismiss().then(() => {
-          this.pauseSubscription.unsubscribe();
-        });
-
-        if (self.showButton) {
-          if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-            const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
-            self.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-          } else {
-            this.getProfileSettingConfig();
-          }
-        }
-      }
-    };
-
-    popUp = await this.popCtrl.create({
-      component: QRScannerAlert,
-      componentProps: {
-        callback,
-        invalidContent: true,
-        messageKey: 'UNKNOWN_QR',
-        tryAgainKey: 'TRY_DIFF_QR'
-      },
-      cssClass: 'qr-alert-invalid'
-    });
-
-    await popUp.present();
   }
 }
-
 export interface QRResultCallback {
   dialcode(scanResult: string, code: string);
 

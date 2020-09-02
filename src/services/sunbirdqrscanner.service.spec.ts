@@ -1,6 +1,6 @@
 import {SunbirdQRScanner} from './sunbirdqrscanner.service';
 import {TranslateService} from '@ngx-translate/core';
-import {Platform, PopoverController, ToastController} from '@ionic/angular';
+import {Platform, ToastController} from '@ionic/angular';
 import {Router} from '@angular/router';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {CommonUtilService} from './common-util.service';
@@ -45,10 +45,17 @@ describe('SunbirdQRScanner', () => {
         getAppName: jest.fn(() => Promise.resolve('sunbird'))
     };
     const mockToastController: Partial<ToastController> = {};
-    const mockPopoverController: Partial<PopoverController> = {};
     const mockRouter: Partial<Router> = {};
 
-    beforeAll(() => {
+    const instantiateSunbirdQrScannerService = () => {
+        mockTranslateService.onLangChange = {
+            subscribe: jest.fn((fn) => {
+                return fn({});
+            })
+        } as any;
+        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+        mockTranslateService.get = jest.fn(() => of('sample_translation'));
+        mockTranslateService.instant = jest.fn(() => 'sample_translation');
         sunbirdQRScanner = new SunbirdQRScanner(
             mockTranslateService as TranslateService,
             mockPlatform as Platform,
@@ -60,9 +67,11 @@ describe('SunbirdQRScanner', () => {
             mockCommonUtilService as CommonUtilService,
             mockAppVersion as AppVersion,
             mockToastController as ToastController,
-            mockPopoverController as PopoverController,
             mockRouter as Router,
         );
+    };
+    beforeAll(() => {
+        instantiateSunbirdQrScannerService();
     });
 
     beforeEach(() => {
@@ -249,34 +258,294 @@ describe('SunbirdQRScanner', () => {
         });
     });
 
-    describe('showInvalidCodeAlert', () => {
-        it('should show Invalid Code Alert', () => {
+    describe('skip qr code test cases', () => {
+
+        beforeEach(() => {
+            instantiateSunbirdQrScannerService();
+        });
+
+        it('should start qrScanner and get Scanned results equals skip', (done) => {
             // arrange
-            const scannedData = 'sample-scan-data';
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            sunbirdQRScanner.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            const profile: Profile = {
+                uid: '1234',
+                handle: 'sample_name',
+                profileType: ProfileType.TEACHER,
+            };
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-            mockCommonUtilService.afterOnBoardQRErrorAlert = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('skip');
+            });
+            mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
+            jest.spyOn(sunbirdQRScanner, 'stopScanner').mockImplementation();
+            mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            mockContainerService.removeAllTabs = jest.fn();
+            mockContainerService.addTab = jest.fn();
             // act
-            sunbirdQRScanner.showInvalidCodeAlert(scannedData);
+            sunbirdQRScanner.startScanner(PageId.PROFILE_SETTINGS, true);
             // assert
             setTimeout(() => {
+                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {state: {loginMode: 'guest'}});
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.NO_QR_CODE_CLICKED,
+                    Environment.ONBOARDING,
+                    PageId.QRCodeScanner);
+                expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                    'qr',
+                    Mode.PLAY,
+                    PageId.QRCodeScanner,
+                    Environment.HOME,
+                    {id: '', type: 'qr', version: undefined}
+                );
+                done();
+            }, 0);
+        });
+
+        it('should create student tabs if current profileType is student after clicking skip', (done) => {
+            // arrange
+            const profile: Profile = {
+                uid: '1234',
+                handle: 'sample_name',
+                profileType: ProfileType.STUDENT,
+            };
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('skip');
+            });
+            mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            jest.spyOn(global.qrScanner, 'stopScanner').mockImplementation();
+            mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            mockContainerService.removeAllTabs = jest.fn();
+            mockContainerService.addTab = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner(undefined, true);
+            setTimeout(() => {
+                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {state: {loginMode: 'guest'}});
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.NO_QR_CODE_CLICKED,
+                    Environment.ONBOARDING,
+                    PageId.QRCodeScanner);
+                done();
+            }, 0);
+        });
+
+        it('should call stop scanner when display category page returns true', (done) => {
+            // arrange
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('skip');
+            });
+            jest.spyOn(sunbirdQRScanner, 'stopScanner').mockImplementation();
+            // act
+            sunbirdQRScanner.startScanner('profile', true);
+            // assert
+            setTimeout(() => {
+                expect(sunbirdQRScanner.stopScanner).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+    });
+
+
+    describe('cancel telemetry test cases', () => {
+        beforeEach(() => {
+            instantiateSunbirdQrScannerService();
+        });
+        it('should check for scanned Data if it is cancel navback then generate telemetry', (done) => {
+
+
+            mockPlatform.pause = of(1, 2) as any;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}));
+
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('cancel_nav_back');
+            });
+            mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve('cancel_nav_back'));
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner(PageId.COURSES, false).then(() => {
+                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith('cancel_nav_back');
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.SCAN,
+                    Environment.HOME,
+                    true
+                );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
-                    InteractSubtype.QR_CODE_INVALID,
-                    Environment.ONBOARDING,
-                    undefined
-                );
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    InteractSubtype.QR_CODE_INVALID, '',
-                    sunbirdQRScanner.source,
+                    InteractSubtype.QRCodeScanCancelled,
                     Environment.HOME,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined
+                    PageId.QRCodeScanner
                 );
+                expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                    'qr',
+                    Mode.PLAY,
+                    PageId.QRCodeScanner,
+                    Environment.HOME,
+                    {id: '', type: 'qr', version: undefined}
+                );
+                done();
+            });
+        });
+
+        it('should check for scanned Data if it is cancel hwback then generate telemetry', (done) => {
+
+            mockPlatform.pause = of(1, 2) as any;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}));
+
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('cancel_hw_back');
+            });
+            mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve('cancel_hw_back'));
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner(undefined, false).then(() => {
+                expect(global.qrScanner.startScanner).toHaveBeenCalled();
+                expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith('cancel_hw_back');
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                    true,
+                    Environment.HOME,
+                    PageId.SCAN
+                );
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.OTHER,
+                    InteractSubtype.QRCodeScanCancelled,
+                    Environment.HOME,
+                    PageId.QRCodeScanner
+                );
+                done();
+            });
+        });
+    });
+
+    describe('scanned data conditions result handler', () => {
+        beforeEach(() => {
+            instantiateSunbirdQrScannerService();
+        });
+        it('should check if it has contentId then call handleContentId()', (done) => {
+            // arrange
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('sample_content_id');
+            });
+            mockQRScannerResultHandler.parseDialCode = jest.fn();
+            mockQRScannerResultHandler.isContentId = jest.fn(() => true);
+            mockQRScannerResultHandler.handleContentId = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner('resources', false);
+            // assert
+            setTimeout(() => {
+                expect(mockQRScannerResultHandler.isContentId).toHaveBeenCalledWith('sample_content_id');
+                expect(mockQRScannerResultHandler.handleContentId).toHaveBeenCalledWith('resources', 'sample_content_id');
+                done();
+            }, 0);
+        });
+
+        it('should check scanned data has certificate linked to it', (done) => {
+            // arrange
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('/certs/sample_content_id');
+            });
+            mockQRScannerResultHandler.isContentId = jest.fn();
+            mockQRScannerResultHandler.parseDialCode = jest.fn();
+            mockQRScannerResultHandler.handleCertsQR = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner('courses', false);
+            // assert
+            setTimeout(() => {
+                expect(mockQRScannerResultHandler.handleCertsQR).toHaveBeenCalledWith('courses', '/certs/sample_content_id');
+                done();
+            }, 0);
+        });
+
+        it('should check if it has invalid QRCODE()', (done) => {
+            // arrange
+            mockPlatform.pause = of(1, 2) as any;
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateStartTelemetry = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() =>
+                Promise.resolve({hasPermission: true}));
+            jest.spyOn(global.qrScanner, 'startScanner').mockImplementation((_, __, ___, ____, _____, ______, cb) => {
+                cb('invalid');
+            });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockQRScannerResultHandler.isContentId = jest.fn();
+            mockQRScannerResultHandler.parseDialCode = jest.fn();
+            mockQRScannerResultHandler.handleInvalidQRCode = jest.fn();
+            mockCommonUtilService.afterOnBoardQRErrorAlert = jest.fn();
+            // act
+            sunbirdQRScanner.startScanner('resources', false);
+            // assert
+            setTimeout(() => {
+                expect(mockQRScannerResultHandler.handleInvalidQRCode).toHaveBeenCalledWith('resources', 'invalid');
+                expect(mockCommonUtilService.afterOnBoardQRErrorAlert)
+                    .toHaveBeenCalledWith('INVALID_QR', 'UNKNOWN_QR', 'resources', 'invalid');
+                done();
             }, 0);
         });
     });
