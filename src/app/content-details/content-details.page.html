@@ -346,6 +346,6 @@
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">
 </app-sb-download-popup>
-<div *ngIf="isFromGroupFlow">
-  <add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
+<div>
+  <add-activity-to-group [identifier]="identifier" [pageId]="pageId"></add-activity-to-group>
 </div>

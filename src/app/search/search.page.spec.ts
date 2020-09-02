@@ -29,6 +29,7 @@ import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -339,6 +340,14 @@ describe('SearchPage', () => {
     });
 
     describe('openCollection', () => {
+        beforeEach(() => {
+            const state = {
+                pageIds: [],
+                params: {}
+            };
+            jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
+            jest.spyOn(CsGroupAddableBloc.instance, 'updateState').mockImplementation();
+        });
         it('openCollection', () => {
             // arrange
             const collection = {
@@ -1640,57 +1649,57 @@ describe('SearchPage', () => {
         });
     });
 
-    // describe('add activity', () => {
-    //     it('should addActivityToGroup', () => {
-    //         // arrange
-    //         searchPage.groupId = 'id1';
-    //         searchPage.searchContentResult = [
-    //             {identifier: 'some_id', selected: true, contentType: 'contentType'}
-    //         ];
-    //         // act
-    //         searchPage.addActivityToGroup();
-    //         // assert
-    //         expect(mockgroupHandlerService.addActivityToGroup).toHaveBeenCalledWith(
-    //             'id1',
-    //             'some_id',
-    //             'contentType',
-    //             PageId.SEARCH,
-    //             expect.anything(),
-    //             -2
-    //         );
-    //     });
+    describe('add activity', () => {
+        it('should addActivityToGroup', () => {
+            // arrange
+            searchPage.groupId = 'id1';
+            searchPage.searchContentResult = [
+                {identifier: 'some_id', selected: true, contentType: 'contentType'}
+            ];
+            // act
+            searchPage.addActivityToGroup();
+            // assert
+            expect(mockgroupHandlerService.addActivityToGroup).toHaveBeenCalledWith(
+                'id1',
+                'some_id',
+                'contentType',
+                PageId.SEARCH,
+                expect.anything(),
+                -2
+            );
+        });
 
-    //     it('should not addActivityToGroup', () => {
-    //         // arrange
-    //         searchPage.searchContentResult = [
-    //             {identifier: 'id1', selected: true, contentType: 'contentType'}
-    //         ];
-    //         searchPage.activityList = [{
-    //             id: 'id1'
-    //         }];
-    //         // act
-    //         searchPage.addActivityToGroup();
-    //         // assert
-    //         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-    //     });
-    //     it('should open content', () => {
-    //         // arrange
-    //         const result = [
-    //             {identifier: 'some_id', selected: true, contentType: 'contentType'}
-    //         ];
-    //         searchPage.searchContentResult = result;
-    //         jest.spyOn(searchPage, 'openContent').mockImplementation();
-    //         // act
-    //         searchPage.openSelectedContent();
-    //         // assert
-    //         expect(searchPage.openContent).toHaveBeenCalledWith(
-    //             undefined,
-    //             result[0],
-    //             0,
-    //             undefined,
-    //             false
-    //         );
-    //     });
-    // });
+        it('should not addActivityToGroup', () => {
+            // arrange
+            searchPage.searchContentResult = [
+                {identifier: 'id1', selected: true, contentType: 'contentType'}
+            ];
+            searchPage.activityList = [{
+                id: 'id1'
+            }];
+            // act
+            searchPage.addActivityToGroup();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        });
+        it('should open content', () => {
+            // arrange
+            const result = [
+                {identifier: 'some_id', selected: true, contentType: 'contentType'}
+            ];
+            searchPage.searchContentResult = result;
+            jest.spyOn(searchPage, 'openContent').mockImplementation();
+            // act
+            searchPage.openSelectedContent();
+            // assert
+            expect(searchPage.openContent).toHaveBeenCalledWith(
+                undefined,
+                result[0],
+                0,
+                undefined,
+                false
+            );
+        });
+    });
 
 });

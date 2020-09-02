@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { Platform} from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -16,6 +16,7 @@ import { AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { ContentUtil } from '@app/util/content-util';
 import { RouterLinks } from '@app/app/app.constant';
+import { CsGroupAddableBloc, CsGroupAddableState} from '@project-sunbird/client-services/blocs';
 
 
 @Component({
@@ -24,13 +25,14 @@ import { RouterLinks } from '@app/app/app.constant';
     styleUrls: ['./add-activity-to-group.page.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class AddActivityToGroupPage {
+export class AddActivityToGroupPage implements OnInit, OnDestroy {
 
     unregisterBackButton: Subscription;
     headerObservable: any;
     supportedActivityList: Array<any>;
     groupId: string;
     activityList;
+    private csGroupAddableBloc: CsGroupAddableBloc;
 
     constructor(
         private router: Router,
@@ -44,6 +46,13 @@ export class AddActivityToGroupPage {
             this.supportedActivityList = extras.supportedActivityList;
             this.groupId = extras.groupId;
             this.activityList = extras.activityList;
+        }
+        this.csGroupAddableBloc = CsGroupAddableBloc.instance;
+    }
+
+    ngOnInit() {
+        if (!this.csGroupAddableBloc.initialised) {
+            this.csGroupAddableBloc.init();
         }
     }
 
@@ -68,6 +77,10 @@ export class AddActivityToGroupPage {
         }
     }
 
+    ngOnDestroy() {
+        this.csGroupAddableBloc.dispose();
+    }
+
     handleBackButton(isNavBack: boolean) {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
         this.location.back();
@@ -88,6 +101,14 @@ export class AddActivityToGroupPage {
     }
 
     async search(data) {
+        this.csGroupAddableBloc.updateState({
+            pageIds:  [],
+            params: {
+                groupId: this.groupId,
+                activityList: this.activityList,
+            }
+        }
+        );
         this.router.navigate([RouterLinks.SEARCH], {
           state: {
             activityTypeData: data,
