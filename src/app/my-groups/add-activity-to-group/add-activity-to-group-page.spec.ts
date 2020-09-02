@@ -1,12 +1,11 @@
-import { PageId, Environment, ImpressionType, InteractSubtype } from '../../../services/telemetry-constants';
+import { PageId, Environment, ImpressionType } from '../../../services/telemetry-constants';
 import { AddActivityToGroupPage } from './add-activity-to-group.page';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services';
 import { AppHeaderService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of, throwError } from 'rxjs';
-import { InteractType } from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
 
 describe('AddActivityToGroupPage', () => {
@@ -25,7 +24,7 @@ describe('AddActivityToGroupPage', () => {
                     },
                     groupId: 'g1',
                     supportedActivityList: [
-                        {title: 'some_title'}
+                        { title: 'some_title' }
                     ]
                 }
             }
@@ -64,8 +63,8 @@ describe('AddActivityToGroupPage', () => {
         // act
         addActivityToGroupPage.handleBackButton(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-        .toHaveBeenCalledWith(PageId.ACTIVITY_TOC, Environment.GROUP, true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.ACTIVITY_TOC, Environment.GROUP, true, undefined, addActivityToGroupPage.corRelationList);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -82,7 +81,7 @@ describe('AddActivityToGroupPage', () => {
 
     it('should invoked handleDeviceBackButton', () => {
         mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({event: {}}))) as any
+            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({ event: {} }))) as any
         } as any;
         jest.spyOn(addActivityToGroupPage, 'handleBackButton').mockImplementation();
         // act
@@ -113,8 +112,8 @@ describe('AddActivityToGroupPage', () => {
                     ImpressionType.VIEW,
                     '',
                     PageId.ADD_ACTIVITY_TO_GROUP,
-                    Environment.GROUP
-                );
+                    Environment.GROUP,
+                    undefined, undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
                 done();
             }, 0);
         });
@@ -150,7 +149,18 @@ describe('AddActivityToGroupPage', () => {
             // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(
                 [RouterLinks.SEARCH],
-                expect.anything()
+                {
+                    state: {
+                        activityList: {
+                            contentType: 'Course',
+                            identifier: 'id1'
+                        },
+                        groupId: 'g1',
+                        activityTypeData: 'data',
+                        corRelation: addActivityToGroupPage.corRelationList,
+                        source: 'group-detail'
+                    }
+                }
             );
         });
     });

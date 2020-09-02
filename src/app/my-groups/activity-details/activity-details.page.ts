@@ -1,17 +1,25 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import {
+  Component, OnInit,
+  Inject, OnDestroy
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
-  ImpressionType, TelemetryGeneratorService, CollectionService, AppGlobalService
+  ImpressionType, TelemetryGeneratorService,
+  CollectionService, AppGlobalService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, Content, Group, MimeType
+  CachedItemRequestSourceFrom, Content,
+  Group, MimeType, CorrelationData
 } from '@project-sunbird/sunbird-sdk';
-import { CsGroupActivityDataAggregation, CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
+import {
+  CsGroupActivityDataAggregation,
+  CsGroupActivityAggregationMetric
+} from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ContentType, RouterLinks } from './../../app.constant';
@@ -23,6 +31,7 @@ import { ContentType, RouterLinks } from './../../app.constant';
 })
 export class ActivityDetailsPage implements OnInit, OnDestroy {
 
+  corRelationList: Array<CorrelationData>;
   isActivityLoading = false;
   loggedinUser: GroupMember;
   headerObservable: any;
@@ -55,13 +64,13 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.loggedinUser = extras.loggedinUser;
     this.group = extras.group;
     this.activity = extras.activity;
+    this.corRelationList = extras.corRelation;
   }
 
   async ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-      '',
-      PageId.ACTIVITY_DETAIL,
-      Environment.GROUP);
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '', PageId.ACTIVITY_DETAIL, Environment.GROUP,
+      undefined, undefined, undefined, undefined, this.corRelationList);
   }
 
   async ionViewWillEnter() {
@@ -215,7 +224,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   handleBackButton(isNavBack) {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_DETAIL, Environment.GROUP, isNavBack);
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_DETAIL,
+      Environment.GROUP, isNavBack, undefined, this.corRelationList);
     this.location.back();
   }
 

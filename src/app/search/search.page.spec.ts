@@ -362,8 +362,8 @@ describe('SearchPage', () => {
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.HOME,
                 PageId.DIAL_SEARCH,
-                expect.anything(),
-                expect.anything(),
+                { id: 'identifier', type: undefined, version: undefined },
+                { root: true },
                 undefined,
                 undefined
             );
@@ -1622,10 +1622,10 @@ describe('SearchPage', () => {
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                     ImpressionType.SEARCH,
                     Environment.HOME, false, undefined,
-                    [{id: '', type: 'API'},
-                    {id: '', type: 'API'},
-                    {id: 'SearchResult', type: 'Section'},
-                    {id: 'filter', type: 'DiscoveryType'}]
+                    [{ id: '', type: 'API' },
+                    { id: '', type: 'API' },
+                    { id: 'SearchResult', type: 'Section' },
+                    { id: 'filter', type: 'DiscoveryType' }]
                 );
             });
         });
@@ -1654,7 +1654,7 @@ describe('SearchPage', () => {
             // arrange
             searchPage.groupId = 'id1';
             searchPage.searchContentResult = [
-                {identifier: 'some_id', selected: true, contentType: 'contentType'}
+                { identifier: 'some_id', selected: true, contentType: 'contentType' }
             ];
             // act
             searchPage.addActivityToGroup();
@@ -1672,7 +1672,7 @@ describe('SearchPage', () => {
         it('should not addActivityToGroup', () => {
             // arrange
             searchPage.searchContentResult = [
-                {identifier: 'id1', selected: true, contentType: 'contentType'}
+                { identifier: 'id1', selected: true, contentType: 'contentType' }
             ];
             searchPage.activityList = [{
                 id: 'id1'
@@ -1685,7 +1685,7 @@ describe('SearchPage', () => {
         it('should open content', () => {
             // arrange
             const result = [
-                {identifier: 'some_id', selected: true, contentType: 'contentType'}
+                { identifier: 'some_id', selected: true, contentType: 'contentType' }
             ];
             searchPage.searchContentResult = result;
             jest.spyOn(searchPage, 'openContent').mockImplementation();

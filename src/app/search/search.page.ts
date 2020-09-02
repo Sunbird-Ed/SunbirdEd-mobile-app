@@ -1644,7 +1644,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         pageIds: [pageId],
         params: {
           ...CsGroupAddableBloc.instance.state.params,
-          corRelationList: params.corRelation,
+          corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
           activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
         }
