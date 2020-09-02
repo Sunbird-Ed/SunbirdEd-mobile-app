@@ -860,6 +860,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     let searchQuery;
     if (this.activityTypeData) {
       searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
+      searchQuery.request.query = this.searchKeywords;
+      searchQuery.request.facets = contentSearchRequest.facets;
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
@@ -1642,6 +1644,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     CsGroupAddableBloc.instance.updateState(
       {
         pageIds: [pageId],
+        groupId: CsGroupAddableBloc.instance.state.groupId,
         params: {
           ...CsGroupAddableBloc.instance.state.params,
           corRelationList: params.corRelation,
