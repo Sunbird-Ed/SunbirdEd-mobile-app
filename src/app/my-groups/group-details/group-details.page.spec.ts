@@ -2018,7 +2018,7 @@ describe('GroupDetailsPage', () => {
             });
     });
 
-    describe('showAddActivityPopup', () => {
+    describe('navigateToAddActivityPage', () => {
         it('should return activity popup', (done) => {
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockGroupService.getSupportedActivities = jest.fn(() => of({
@@ -2044,7 +2044,7 @@ describe('GroupDetailsPage', () => {
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
+            groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2104,7 +2104,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
+            groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2144,7 +2144,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'Next');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
+            groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2182,7 +2182,7 @@ describe('GroupDetailsPage', () => {
                 }
             })) as any;
             // act
-            groupDetailsPage.showAddActivityPopup().then(() => {
+            groupDetailsPage.navigateToAddActivityPage().then(() => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(

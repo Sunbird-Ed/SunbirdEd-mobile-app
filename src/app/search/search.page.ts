@@ -437,17 +437,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           params.corRelation.push(correlationData);
         }
       }
-      CsGroupAddableBloc.instance.updateState(
-        {
-          pageIds: [PageId.COURSE_DETAIL],
-          params: {
-            ...CsGroupAddableBloc.instance.state.params,
-            corRelationList: params.corRelation,
-            noOfPagesToRevertOnSuccess: -3,
-            activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
-          }
-        }
-      );
+      if (CsGroupAddableBloc.instance.initialised) {
+        this.updateCsGroupAddableBloc(params, PageId.COURSE_DETAIL);
+      }
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           source: this.source,
@@ -508,17 +500,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
       } else {
         if (CsGroupAddableBloc.instance.initialised) {
-          CsGroupAddableBloc.instance.updateState(
-            {
-              pageIds: [PageId.COLLECTION_DETAIL],
-              params: {
-                ...CsGroupAddableBloc.instance.state.params,
-                corRelationList: params.corRelation,
-                noOfPagesToRevertOnSuccess: -3,
-                activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
-              }
-            }
-          );
+          this.updateCsGroupAddableBloc(params, PageId.COLLECTION_DETAIL);
         }
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
@@ -536,17 +518,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
     } else {
       if (CsGroupAddableBloc.instance.initialised) {
-        CsGroupAddableBloc.instance.updateState(
-          {
-            pageIds: [PageId.CONTENT_DETAIL],
-            params: {
-              ...CsGroupAddableBloc.instance.state.params,
-              corRelationList: params.corRelation,
-              noOfPagesToRevertOnSuccess: -3,
-              activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
-            }
-          }
-        );
+        this.updateCsGroupAddableBloc(params, PageId.CONTENT_DETAIL);
       }
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
@@ -889,6 +861,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.activityTypeData) {
       searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
     }
+    console.log('contentSearchRequest', contentSearchRequest);
+    console.log('searchQuery', searchQuery);
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
@@ -1664,6 +1638,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.openContent(undefined, content, index, undefined, false);
+  }
+
+  private updateCsGroupAddableBloc(params, pageId) {
+    CsGroupAddableBloc.instance.updateState(
+      {
+        pageIds: [pageId],
+        params: {
+          ...CsGroupAddableBloc.instance.state.params,
+          corRelationList: params.corRelation,
+          noOfPagesToRevertOnSuccess: -3,
+          activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
+        }
+      }
+    );
   }
 
 }

@@ -803,7 +803,7 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  async showAddActivityPopup() {
+  async navigateToAddActivityPage() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
