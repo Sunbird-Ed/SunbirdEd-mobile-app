@@ -861,8 +861,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.activityTypeData) {
       searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
     }
-    console.log('contentSearchRequest', contentSearchRequest);
-    console.log('searchQuery', searchQuery);
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
