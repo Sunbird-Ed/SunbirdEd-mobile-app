@@ -57,9 +57,8 @@ var formRequestArray = [{
     },
     {
         'type': 'group',
-        'subType': 'activities',
-        'action': 'list',
-        'component': 'app'
+        'subType': 'activities_v2',
+        'action': 'list'
     },
     {
         'type': 'dynamicform',

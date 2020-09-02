@@ -113,7 +113,7 @@
 
 <ion-footer *ngIf="activeTab=='activities' && loggedinUser?.role === 'admin'">
   <div class="cd-btn">
-    <button class="sb-btn-large" (click)="showAddActivityPopup()">
+    <button class="sb-btn-large" (click)="navigateToAddActivityPage()">
       + {{'ADD_ACTIVITY' | translate}}
     </button>
   </div>
