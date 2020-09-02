@@ -114,8 +114,8 @@ describe('ActivityDetailsPage', () => {
                 ImpressionType.VIEW,
                 '',
                 PageId.ACTIVITY_DETAIL,
-                Environment.GROUP
-            );
+                Environment.GROUP,
+                undefined, undefined, undefined, undefined, activityDetailsPage.corRelationList);
         });
     });
 
@@ -141,7 +141,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -228,7 +228,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -313,7 +313,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -559,8 +559,8 @@ describe('ActivityDetailsPage', () => {
         // act
         activityDetailsPage.handleBackButton(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-            .toHaveBeenCalledWith(PageId.ACTIVITY_DETAIL, Environment.GROUP, true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.ACTIVITY_DETAIL, Environment.GROUP, true, undefined, activityDetailsPage.corRelationList);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 

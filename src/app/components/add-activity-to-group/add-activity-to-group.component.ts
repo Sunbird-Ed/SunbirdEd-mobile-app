@@ -45,7 +45,7 @@ export class AddActivityToGroupComponent implements OnInit {
             }
         }
         this.groupHandlerService.addActivityToGroup(state.params.groupId, this.identifier, state.params.activityType,
-            this.pageId, state.params.corRelationList, state.params.noOfPagesToRevertOnSuccess);
+            this.pageId, state.params.corRelation, state.params.noOfPagesToRevertOnSuccess);
     }
 
 }

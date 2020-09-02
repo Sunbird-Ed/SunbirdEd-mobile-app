@@ -2,12 +2,19 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
-  AppHeaderService, PageId,
-  CommonUtilService, AppGlobalService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment, ImpressionType, ID, FormAndFrameworkUtilService
+  AppHeaderService,
+  CommonUtilService, AppGlobalService, TelemetryGeneratorService
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
+import {
+  InteractType,
+  InteractSubtype,
+  Environment, PageId,
+  ImpressionType,
+  CorReleationDataType,
+  ID
+} from '@app/services/telemetry-constants';
 import { Platform, PopoverController } from '@ionic/angular';
 import {
   GroupService, GetByIdRequest, Group,
@@ -17,13 +24,17 @@ import {
   CachedItemRequestSourceFrom, GroupUpdateMembersResponse,
   GroupActivity,
   Form,
-  GroupSupportedActivitiesFormField
+  GroupSupportedActivitiesFormField,
+  CorrelationData
 } from '@project-sunbird/sunbird-sdk';
-import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
+import {
+  OverflowMenuComponent
+} from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
-import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import {
+  SbGenericPopoverComponent
+} from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
-import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 
 @Component({
   selector: 'app-group-details',
@@ -32,6 +43,7 @@ import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-gen
 })
 export class GroupDetailsPage implements OnInit {
 
+  corRelationList: Array<CorrelationData> = [];
   isGroupLoading = false;
   userId: string;
   headerObservable: any;
@@ -69,6 +81,10 @@ export class GroupDetailsPage implements OnInit {
       .then((uid) => {
         this.userId = uid;
       });
+
+    this.corRelationList.push({ id: this.groupId, type: CorReleationDataType.GROUP_ID });
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP,
+      undefined, undefined, undefined, undefined, this.corRelationList);
   }
 
   ionViewWillEnter() {
@@ -78,13 +94,13 @@ export class GroupDetailsPage implements OnInit {
     });
     this.handleDeviceBackButton();
     this.fetchGroupDetails();
-
-    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP);
   }
 
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
+      console.log('ionViewWillLeave');
+      
       this.unregisterBackButton.unsubscribe();
     }
   }
@@ -104,17 +120,22 @@ export class GroupDetailsPage implements OnInit {
   }
 
   handleBackButton(isNavBack) {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.GROUP_DETAIL, Environment.GROUP, isNavBack);
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.GROUP_DETAIL,
+      Environment.GROUP, isNavBack, undefined, this.corRelationList);
+
     this.location.back();
   }
 
   navigateToAddUserPage() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
+      InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId,
-        memberList: this.memberList
+        memberList: this.memberList,
+        corRelation: this.corRelationList
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
@@ -187,10 +208,10 @@ export class GroupDetailsPage implements OnInit {
     this.activeTab = tab;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
-        : InteractSubtype.MEMBER_TAB_CLICKED,
+      tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED : InteractSubtype.MEMBER_TAB_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
   }
 
   async groupMenuClick(event) {
@@ -213,18 +234,21 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
-      console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.EDIT_GROUP_CLICKED,
           Environment.GROUP,
-          PageId.GROUP_DETAIL);
+          PageId.GROUP_DETAIL,
+          undefined, undefined, undefined, this.corRelationList);
         this.router.navigate(
           [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
-            state: { groupDetails: this.groupDetails }
-          }
+            state: {
+              groupDetails: this.groupDetails,
+              corRelation: this.corRelationList
+            }
+          },
         );
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
@@ -247,7 +271,6 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
-      console.log('dataon dismiss', data);
       this.showRemoveActivityPopup(selectedActivity);
     }
   }
@@ -271,7 +294,6 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
-      console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_MAKE_GROUP_ADMIN') {
         this.showMakeGroupAdminPopup(selectedMember);
       } else if (data.selectedItem === 'MENU_REMOVE_FROM_GROUP') {
@@ -287,7 +309,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.DELETE_GROUP_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -320,7 +344,7 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.DELETE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -341,7 +365,7 @@ export class GroupDetailsPage implements OnInit {
           undefined,
           undefined,
           undefined,
-          undefined,
+          this.corRelationList,
           ID.DELETE_GROUP
         );
       } catch (e) {
@@ -357,7 +381,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.LEAVE_GROUP_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const leaveGroupConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -390,7 +416,7 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.LEAVE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -420,7 +446,7 @@ export class GroupDetailsPage implements OnInit {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.LEAVE_GROUP);
         }
       } catch (e) {
@@ -436,7 +462,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.REMOVE_ACTIVITY_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const removeActivityConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -469,10 +497,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.REMOVE_ACTIVITY);
-      // const loader = await this.commonUtilService.getLoader();
-      // await loader.present();
+
       this.isGroupLoading = true;
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
@@ -482,7 +509,7 @@ export class GroupDetailsPage implements OnInit {
       };
       try {
         const removeActivitiesResponse = await this.groupService.removeActivities(removeActivitiesRequest).toPromise();
-        // await loader.dismiss();
+
         this.isGroupLoading = false;
         if (removeActivitiesResponse.error
           && removeActivitiesResponse.error.activities
@@ -498,14 +525,13 @@ export class GroupDetailsPage implements OnInit {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.REMOVE_ACTIVITY);
           this.fetchGroupDetails();
         }
       } catch (e) {
-        // await loader.dismiss();
+        console.error('showRemoveActivityPopup', e);
         this.isGroupLoading = false;
-        console.error(e);
         this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
       }
     }
@@ -516,7 +542,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.REMOVE_MEMBER_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const removeMemberConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -549,10 +577,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.REMOVE_MEMBER);
-      // const loader = await this.commonUtilService.getLoader();
-      // await loader.present();
+
       this.isGroupLoading = true;
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
@@ -563,7 +590,6 @@ export class GroupDetailsPage implements OnInit {
       try {
         const removeMemberResponse = await this.groupService.removeMembers(removeMembersRequest).toPromise();
 
-        // await loader.dismiss();
         this.isGroupLoading = false;
         if (removeMemberResponse.error
           && removeMemberResponse.error.members
@@ -579,8 +605,9 @@ export class GroupDetailsPage implements OnInit {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.REMOVE_MEMBER);
+
           this.fetchGroupDetails();
         }
       } catch (e) {
@@ -597,7 +624,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.MAKE_GROUP_ADMIN_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -631,10 +660,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.MAKE_GROUP_ADMIN);
-      // const loader = await this.commonUtilService.getLoader();
-      // await loader.present();
+
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
@@ -664,14 +692,14 @@ export class GroupDetailsPage implements OnInit {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.MAKE_GROUP_ADMIN);
+
           this.fetchGroupDetails();
         }
       } catch (e) {
-        // await loader.dismiss();
+        console.error('showMakeGroupAdminPopup', e);
         this.isGroupLoading = false;
-        console.error(e);
         this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
       }
     }
@@ -682,7 +710,9 @@ export class GroupDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.DISMISS_GROUP_ADMIN_CLICKED,
       Environment.GROUP,
-      PageId.GROUP_DETAIL);
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     const dismissAsGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -716,10 +746,9 @@ export class GroupDetailsPage implements OnInit {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.DISMISS_GROUP_ADMIN);
-      // const loader = await this.commonUtilService.getLoader();
-      // await loader.present();
+
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
@@ -748,8 +777,9 @@ export class GroupDetailsPage implements OnInit {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.DISMISS_GROUP_ADMIN);
+
           this.fetchGroupDetails();
         }
       } catch (e) {
@@ -762,13 +792,11 @@ export class GroupDetailsPage implements OnInit {
   }
 
   onMemberSearch(query) {
-    console.log('onMemberSearch', query);
     this.memberSearchQuery = query;
     this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'name', query)];
   }
 
   onActivitySearch(query) {
-    console.log('onActivitySearch', query);
     this.activitySearchQuery = query;
     // this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
     this.filteredActivityList = this.activityList.filter(
@@ -787,7 +815,8 @@ export class GroupDetailsPage implements OnInit {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
         {
           state: {
-            content: activity.activityInfo
+            content: activity.activityInfo,
+            corRelation: this.corRelationList
           }
         });
     } else {
@@ -796,7 +825,8 @@ export class GroupDetailsPage implements OnInit {
           loggedinUser: this.loggedinUser,
           group: this.groupDetails,
           memberList: this.memberList,
-          activity
+          activity,
+          corRelation: this.corRelationList
         }
       };
       this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
@@ -810,7 +840,9 @@ export class GroupDetailsPage implements OnInit {
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
+      InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     try {
       const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
         = await this.groupService.getSupportedActivities().toPromise();
@@ -824,12 +856,13 @@ export class GroupDetailsPage implements OnInit {
             state: {
               supportedActivityList,
               groupId: this.groupId,
-              activityList: this.activityList
+              activityList: this.activityList,
+              corRelation: this.corRelationList
             }
           });
       }
     } catch (e) {
-      console.log(e);
+      console.error('navigateToAddActivityPage', e);
     }
   }
 
