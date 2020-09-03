@@ -23,7 +23,8 @@ import { Subscription, Observable } from 'rxjs';
 import { ContentType, EventTopics, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
-  TelemetryGeneratorService
+  TelemetryGeneratorService,
+  UtilityService
 } from '../../services';
 import { Location } from '@angular/common';
 
@@ -40,6 +41,8 @@ import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { TrackingEnabled } from '@project-sunbird/client-services/models';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -269,6 +272,7 @@ export class CollectionDetailEtbPage implements OnInit {
     private platform: Platform,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
+    private navService: NavigationService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
@@ -817,44 +821,48 @@ export class CollectionDetailEtbPage implements OnInit {
 
   navigateToDetailsPage(content: any, depth) {
     this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
+      switch(ContentUtil.isTrackable(content)) {
+        case 1 || 0:
+          this.navService.navigateToTrackableCollection({
             content,
             depth,
             contentState: this.stateData,
             corRelation: this.corRelationList
-          }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.isDepthChild = true;
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: {
+          });
+          break;
+        case -1:
+          this.navService.navigateToContent({
+            isChildContent: true,
             content,
             depth,
             contentState: this.stateData,
-            corRelation: this.corRelationList
-          }
-        });
-      } else {
-        this.navigateToContentPage(content, depth);
+            corRelation: this.corRelationList,
+            breadCrumb: this.breadCrumb,
+            source: this.source,
+            groupId: this.groupId,
+            activityList: this.activityList
+          });
       }
-    });
-  }
-
-  navigateToContentPage(content: any, depth) {
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-      state: {
-        isChildContent: true,
-        content,
-        depth,
-        contentState: this.stateData,
-        corRelation: this.corRelationList,
-        breadCrumb: this.breadCrumb,
-        source: this.source,
-        groupId: this.groupId,
-        activityList: this.activityList
-      }
+      // if (content.contentType === ContentType.COURSE) { // TODO condition check needed
+      //   this.navService.navigateToTrackableCollection({
+      //     content,
+      //     depth,
+      //     contentState: this.stateData,
+      //     corRelation: this.corRelationList
+      //   });
+      // } else {
+      //   this.navService.navigateToContent({
+      //     isChildContent: true,
+      //     content,
+      //     depth,
+      //     contentState: this.stateData,
+      //     corRelation: this.corRelationList,
+      //     breadCrumb: this.breadCrumb,
+      //     source: this.source,
+      //     groupId: this.groupId,
+      //     activityList: this.activityList
+      //   });
+      // }
     });
   }
 
@@ -1257,8 +1265,10 @@ export class CollectionDetailEtbPage implements OnInit {
   openTextbookToc() {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
-    this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-      { state: { childrenData: this.childrenData, parentId: this.identifier } });
+    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], 
+    { childrenData: this.childrenData, parentId: this.identifier })
+    // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], // **** check needed ****
+    //   { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();
     values['selectChapterVisible'] = this.isChapterVisible;
     this.telemetryGeneratorService.generateInteractTelemetry(
