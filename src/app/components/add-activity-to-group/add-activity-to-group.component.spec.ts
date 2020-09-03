@@ -70,8 +70,8 @@ describe('AddActivityToGroupComponent', () => {
             // arrange
             const data = {
                 pageIds: [],
+                groupId: 'group_id',
                 params: {
-                    groupId: 'group_id',
                     activityId: 'some_identifier',
                     activityType: 'some_type',
                     pageId: 'some_page_id',
@@ -99,12 +99,12 @@ describe('AddActivityToGroupComponent', () => {
             // arrange
             const data = {
                 pageIds: [],
+                groupId: 'group_id',
                 params: {
-                    groupId: 'group_id',
                     activityId: 'some_identifier',
                     activityType: 'some_type',
                     pageId: 'some_page_id',
-                    corRelationList: [],
+                    corRelation: [],
                     noOfPagesToRevertOnSuccess: -3,
                     activityList: [{
                         id: 'some_identifier'

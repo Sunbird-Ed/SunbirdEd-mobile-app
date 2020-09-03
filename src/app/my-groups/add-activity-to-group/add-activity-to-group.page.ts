@@ -101,9 +101,9 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
 
     async search(data) {
         this.csGroupAddableBloc.updateState({
-            pageIds: [],
+            pageIds:  [],
+            groupId: this.groupId,
             params: {
-                groupId: this.groupId,
                 activityList: this.activityList,
                 corRelation: this.corRelationList
             }

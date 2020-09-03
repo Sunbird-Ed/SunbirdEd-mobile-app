@@ -47,7 +47,7 @@
     "@ionic/angular": "^4.11.2",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "^3.3.3",
+    "@project-sunbird/client-services": "^3.3.7",
     "@project-sunbird/common-consumption": "^3.2.11",
     "@project-sunbird/content-player": "3.2.6",
     "@project-sunbird/sb-styles": "0.0.6",

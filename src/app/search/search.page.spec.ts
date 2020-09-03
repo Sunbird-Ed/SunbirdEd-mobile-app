@@ -343,6 +343,7 @@ describe('SearchPage', () => {
         beforeEach(() => {
             const state = {
                 pageIds: [],
+                groupId: 'g1',
                 params: {}
             };
             jest.spyOn(CsGroupAddableBloc.instance, 'state', 'get').mockReturnValue(state);
