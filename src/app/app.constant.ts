@@ -78,7 +78,7 @@ export class Search {
         'gradeLevel',
         'subject',
         'medium',
-        'resourceType',
+        'contentType',
         'publisher'
     ];
 

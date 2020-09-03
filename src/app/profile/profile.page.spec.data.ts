@@ -10,7 +10,8 @@ export const mockProfileData = {
     source: ProfileSource.SERVER,
     rootOrgId: 'sample_1',
     rootOrg: {
-        rootOrgId: 'sample_org_id'
+        rootOrgId: 'sample_org_id',
+        hashTagId: 'sample_hashTagId'
     },
     roleList: [{id: 'teacher', name: 'private'}, {id: 'state_teacher', name: 'public'}],
     organisations: [{

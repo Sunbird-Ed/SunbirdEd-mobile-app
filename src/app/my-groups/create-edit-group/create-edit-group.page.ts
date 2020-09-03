@@ -4,7 +4,8 @@ import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  GroupService, GroupCreateRequest, GroupMembershipType, UpdateByIdRequest
+  GroupService, GroupCreateRequest, GroupMembershipType,
+  UpdateByIdRequest, CorrelationData
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -12,7 +13,8 @@ import { Location } from '@angular/common';
 import { UtilityService } from '@app/services';
 import { RouterLinks } from '@app/app/app.constant';
 import {
-  Environment, ID, ImpressionSubtype, ImpressionType, InteractType, PageId,
+  Environment, ID, ImpressionSubtype,
+  ImpressionType, InteractType, PageId,
   TelemetryGeneratorService, InteractSubtype
 } from '@app/services';
 import { Router } from '@angular/router';
@@ -24,6 +26,7 @@ import { Router } from '@angular/router';
 })
 export class CreateEditGroupPage {
 
+  corRelationList: Array<CorrelationData>;
   appName: string;
   createGroupFormSubmitted = false;
   createGroupForm: FormGroup;
@@ -57,7 +60,7 @@ export class CreateEditGroupPage {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras && extras.groupDetails) {
       this.groupDetails = extras.groupDetails;
-      console.log('this.groupDetails', this.groupDetails);
+      this.corRelationList = extras.corRelation;
     }
     this.initializeForm();
   }
@@ -72,8 +75,9 @@ export class CreateEditGroupPage {
     this.handleBackButtonEvents();
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
 
-    this.telemetryGeneratorService.generateImpressionTelemetry
-      (ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP);
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
+      undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
@@ -83,7 +87,7 @@ export class CreateEditGroupPage {
       undefined,
       undefined,
       undefined,
-      undefined,
+      this.corRelationList,
       ID.CREATE_GROUP
     );
   }
@@ -106,7 +110,8 @@ export class CreateEditGroupPage {
       if (activePortal) {
         activePortal.dismiss();
       } else {
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP, Environment.GROUP, false);
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
+          Environment.GROUP, false, undefined, this.corRelationList);
         this.location.back();
       }
     });
@@ -164,7 +169,7 @@ export class CreateEditGroupPage {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.CREATE_GROUP
       );
       this.location.back();
@@ -196,7 +201,7 @@ export class CreateEditGroupPage {
         undefined,
         undefined,
         undefined,
-        undefined,
+        this.corRelationList,
         ID.CREATE_GROUP
       );
       this.location.back();
@@ -210,8 +215,8 @@ export class CreateEditGroupPage {
       InteractType.TOUCH,
       InteractSubtype.TERMS_OF_USE_CLICKED,
       Environment.GROUP,
-      PageId.CREATE_GROUP
-    );
+      PageId.CREATE_GROUP,
+      undefined, undefined, undefined, this.corRelationList);
     const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE + '#groupGuidelines';
     const options
@@ -223,7 +228,8 @@ export class CreateEditGroupPage {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP, Environment.GROUP, true);
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP,
+          Environment.GROUP, true, undefined, this.corRelationList);
         this.location.back();
         break;
     }

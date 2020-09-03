@@ -97,3 +97,8 @@ global.FCMPlugin = {
 global.sbsync = {
     onSyncSuccess: () => {}
 }
+
+global.qrScanner = {
+    startScanner: (screenTitle, displayText, displayTextColor, buttonText, showButton, isRTL, callback) => {},
+    stopScanner: () => {}
+}

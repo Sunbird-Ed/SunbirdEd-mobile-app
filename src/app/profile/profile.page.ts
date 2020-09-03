@@ -38,16 +38,12 @@ import {
   CertificateAlreadyDownloaded,
   NetworkError,
   FormRequest,
-  FormService
+  FormService,
+  FrameworkService
 } from 'sunbird-sdk';
-import {
-  Environment, InteractSubtype,
-  InteractType, PageId, ID
-} from '@app/services/telemetry-constants';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import {
-  EditContactVerifyPopupComponent
-} from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
+import { Router, NavigationExtras } from '@angular/router';
+import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
 } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
@@ -55,7 +51,6 @@ import {
   AccountRecoveryInfoComponent
 } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
 import {
   AndroidPermissionsStatus,
@@ -120,8 +115,7 @@ export class ProfilePage implements OnInit {
   headerObservable: any;
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
-  isDefaultChannelProfile$: Observable<boolean>;
-  private stateList: any;
+  isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
   selfDeclarationInfo: any;
@@ -132,8 +126,8 @@ export class ProfilePage implements OnInit {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('FORM_SERVICE') private formService: FormService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private zone: NgZone,
-    private route: ActivatedRoute,
     private router: Router,
     private popoverCtrl: PopoverController,
     private events: Events,
@@ -184,7 +178,6 @@ export class ProfilePage implements OnInit {
   async ngOnInit() {
     this.doRefresh();
     this.appName = await this.appVersion.getAppName();
-    this.stateList = await this.commonUtilService.getStateList();
   }
 
   ionViewWillEnter() {
@@ -195,7 +188,6 @@ export class ProfilePage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton();
-    this.isDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile();
   }
 
   ionViewWillLeave(): void {
@@ -274,9 +266,11 @@ export class ProfilePage implements OnInit {
           }
           that.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
-              that.zone.run(() => {
+              that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
+                that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
@@ -467,40 +461,47 @@ export class ProfilePage implements OnInit {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        if (certificate.url) {
-          const downloadRequest = {
-            courseId: course.courseId,
-            certificateToken: certificate.token
-          };
-          this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-              await this.handleCertificateDownloadIssue(toast, err, certificate);
-            });
-        } else {
+        if (certificate.identifier) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-            { courseId: course.courseId },
-            (svgData, callback) => {
-              this.certificateDownloadAsPdfService.download(
-                svgData, (fileName, pdfData) => callback(pdfData as any)
-              );
-            }).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-              await this.handleCertificateDownloadIssue(toast, err, certificate);
-            });
+              { courseId: course.courseId },
+              (svgData, callback) => {
+                this.certificateDownloadAsPdfService.download(
+                    svgData, (fileName, pdfData) => callback(pdfData as any)
+                );
+              }).toPromise()
+              .then(async (res) => {
+                if (toast) {
+                  await toast.dismiss();
+                }
+                this.openpdf(res.path);
+              }).catch(async (err) => {
+                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                  await this.downloadLegacyCertificate(course, certificate, toast);
+                }
+                await this.handleCertificateDownloadIssue(toast, err, certificate);
+          });
+        } else {
+         await this.downloadLegacyCertificate(course, certificate, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
+    });
+  }
+
+  private async downloadLegacyCertificate(course, certificate, toast) {
+    const downloadRequest = {
+      courseId: course.courseId,
+      certificateToken: certificate.token
+    };
+    this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
+        .then(async (res) => {
+          if (toast) {
+            await toast.dismiss();
+          }
+          this.openpdf(res.path);
+        }).catch(async (err) => {
+      await this.handleCertificateDownloadIssue(toast, err, certificate);
     });
   }
 
@@ -514,6 +515,8 @@ export class ProfilePage implements OnInit {
       this.openpdf(filePath);
     } else if (NetworkError.isInstance(err)) {
       this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+    } else {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
     }
   }
 
