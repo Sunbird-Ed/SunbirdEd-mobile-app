@@ -50,6 +50,7 @@ import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from '
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.util';
 import { GroupHandlerService } from '@app/services';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 
 declare const cordova;
@@ -144,7 +145,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private navCtrl: NavController,
     private sbProgressLoader: SbProgressLoader,
-    private groupHandlerService: GroupHandlerService
+    private groupHandlerService: GroupHandlerService,
+    private navService: NavigationService
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -412,89 +414,82 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.appGlobalService.setOnBoardingCompleted();
     }
 
-    if (content.contentType === ContentType.COURSE) {
-      if (!this.guestUser) {
-        this.enrolledCourses = await this.getEnrolledCourses(false, false);
-      } else {
-        this.enrolledCourses = [];
-      }
-      if (this.enrolledCourses && this.enrolledCourses.length) {
-        for (let i = 0; i < this.enrolledCourses.length; i++) {
-          if (content.identifier === this.enrolledCourses[i].courseId) {
-            params.content = this.enrolledCourses[i];
+    switch(ContentUtil.isTrackable(content)) {
+      case 1:
+        if (!this.guestUser) {
+          this.enrolledCourses = await this.getEnrolledCourses(false, false);
+        } else {
+          this.enrolledCourses = [];
+        }
+        if (this.enrolledCourses && this.enrolledCourses.length) {
+          for (let i = 0; i < this.enrolledCourses.length; i++) {
+            if (content.identifier === this.enrolledCourses[i].courseId) {
+              params.content = this.enrolledCourses[i];
+            }
           }
         }
-      }
-      const correlationData: CorrelationData = new CorrelationData();
-      if (this.source === PageId.GROUP_DETAIL) {
-        correlationData.id = PageId.GROUP_DETAIL;
-        correlationData.type = CorReleationDataType.FROM_PAGE;
-        if (params && params.corRelation) {
-          params.corRelation.push(correlationData);
+        const correlationData: CorrelationData = new CorrelationData();
+        if (this.source === PageId.GROUP_DETAIL) {
+          correlationData.id = PageId.GROUP_DETAIL;
+          correlationData.type = CorReleationDataType.FROM_PAGE;
+          if (params && params.corRelation) {
+            params.corRelation.push(correlationData);
+          }
         }
-      }
-
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
-          source: this.source,
-          groupId: this.groupId,
-          activityList: this.activityList,
-          content: params.content,
-          corRelation: params.corRelation,
-          isSingleContent: params.isSingleContent,
-          onboarding: params.onboarding,
-          parentContent: params.parentContent,
-          isQrCodeLinkToContent: params.isQrCodeLinkToContent,
-          isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
-        }
-      });
-      if (this.isSingleContent) {
-        this.isSingleContent = false;
-        // migration-TODO
-        // const view = this.navCtrl.getActive();
-        // this.navCtrl.removeView(view);
-      }
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      if (this.isDialCodeSearch && !isRootContent) {
-        params.isCreateNavigationStack = true;
-
-        const corRelationList: Array<CorrelationData> = [];
-        corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
-
-        const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.SELECT_BOOK, '',
-          this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-          PageId.QR_BOOK_RESULT,
-          telemetryObject,
-          undefined, undefined,
-          corRelationList
-        );
-
-        this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
-          state: {
+        this.navService.navigateToTrackableCollection(
+          {
+            source: this.source,
+            groupId: this.groupId,
+            activityList: this.activityList,
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent,
-            isProfileUpdated: params.isProfileUpdated,
             isQrCodeLinkToContent: params.isQrCodeLinkToContent,
-            isAvailableLocally: params.isAvailableLocally,
-            source: params.source,
-            dialCode: this.dialCode
+            isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
           }
-        });
+        );
         if (this.isSingleContent) {
           this.isSingleContent = false;
-          // migration-TODO
-          // const view = this.navCtrl.getActive();
-          // this.navCtrl.removeView(view);
         }
-
-      } else {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: {
+        break;
+      case 0:
+        if (this.isDialCodeSearch && !isRootContent) {
+          params.isCreateNavigationStack = true;
+  
+          const corRelationList: Array<CorrelationData> = [];
+          corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
+  
+          const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SELECT_BOOK, '',
+            this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+            PageId.QR_BOOK_RESULT,
+            telemetryObject,
+            undefined, undefined,
+            corRelationList
+          );
+  
+          this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
+            state: {
+              content: params.content,
+              corRelation: params.corRelation,
+              isSingleContent: params.isSingleContent,
+              onboarding: params.onboarding,
+              parentContent: params.parentContent,
+              isProfileUpdated: params.isProfileUpdated,
+              isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+              isAvailableLocally: params.isAvailableLocally,
+              source: params.source,
+              dialCode: this.dialCode
+            }
+          });
+          if (this.isSingleContent) {
+            this.isSingleContent = false;
+          }
+        } else {
+          this.navService.navigateToCollection({
             source: this.source,
             groupId: this.groupId,
             activityList: this.activityList,
@@ -503,21 +498,120 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent
-          }
-        });
-
-      }
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
+          });
+        }
+        break;
+      case -1:
+        this.navService.navigateToContent({
           content: params.content,
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent
-        }
-      });
+        });
+        break;
     }
+
+    // if (content.contentType === ContentType.COURSE) {
+    //   if (!this.guestUser) {
+    //     this.enrolledCourses = await this.getEnrolledCourses(false, false);
+    //   } else {
+    //     this.enrolledCourses = [];
+    //   }
+    //   if (this.enrolledCourses && this.enrolledCourses.length) {
+    //     for (let i = 0; i < this.enrolledCourses.length; i++) {
+    //       if (content.identifier === this.enrolledCourses[i].courseId) {
+    //         params.content = this.enrolledCourses[i];
+    //       }
+    //     }
+    //   }
+    //   const correlationData: CorrelationData = new CorrelationData();
+    //   if (this.source === PageId.GROUP_DETAIL) {
+    //     correlationData.id = PageId.GROUP_DETAIL;
+    //     correlationData.type = CorReleationDataType.FROM_PAGE;
+    //     if (params && params.corRelation) {
+    //       params.corRelation.push(correlationData);
+    //     }
+    //   }
+    //   console.log('Content Data', content);
+    //   this.navService.navigateToTrackableOrETB(
+    //     content,
+    //     {
+    //       source: this.source,
+    //       groupId: this.groupId,
+    //       activityList: this.activityList,
+    //       content: params.content,
+    //       corRelation: params.corRelation,
+    //       isSingleContent: params.isSingleContent,
+    //       onboarding: params.onboarding,
+    //       parentContent: params.parentContent,
+    //       isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+    //       isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
+    //     }
+    //   );
+    //   if (this.isSingleContent) {
+    //     this.isSingleContent = false;
+    //   }
+    // } else if (content.mimeType === MimeType.COLLECTION) {
+    //   if (this.isDialCodeSearch && !isRootContent) {
+    //     params.isCreateNavigationStack = true;
+
+    //     const corRelationList: Array<CorrelationData> = [];
+    //     corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
+
+    //     const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
+    //     this.telemetryGeneratorService.generateInteractTelemetry(
+    //       InteractType.SELECT_BOOK, '',
+    //       this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+    //       PageId.QR_BOOK_RESULT,
+    //       telemetryObject,
+    //       undefined, undefined,
+    //       corRelationList
+    //     );
+
+    //     this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
+    //       state: {
+    //         content: params.content,
+    //         corRelation: params.corRelation,
+    //         isSingleContent: params.isSingleContent,
+    //         onboarding: params.onboarding,
+    //         parentContent: params.parentContent,
+    //         isProfileUpdated: params.isProfileUpdated,
+    //         isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+    //         isAvailableLocally: params.isAvailableLocally,
+    //         source: params.source,
+    //         dialCode: this.dialCode
+    //       }
+    //     });
+    //     if (this.isSingleContent) {
+    //       this.isSingleContent = false;
+    //     }
+    //   } else {
+    //     // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+    //     //   state: {
+    //     //     source: this.source,
+    //     //     groupId: this.groupId,
+    //     //     activityList: this.activityList,
+    //     //     content: params.content,
+    //     //     corRelation: params.corRelation,
+    //     //     isSingleContent: params.isSingleContent,
+    //     //     onboarding: params.onboarding,
+    //     //     parentContent: params.parentContent
+    //     //   }
+    //     // });
+
+    //   }
+    // } else {
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+    //     state: {
+    //       content: params.content,
+    //       corRelation: params.corRelation,
+    //       isSingleContent: params.isSingleContent,
+    //       onboarding: params.onboarding,
+    //       parentContent: params.parentContent
+    //     }
+    //   });
+    // }
   }
 
   setGrade(reset, grades) {
