@@ -110,7 +110,14 @@ export class ProfilePage implements OnInit {
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
-  mappedTrainingCertificates: CourseCertificate[] = [];
+  mappedTrainingCertificates: {
+    courseName: string,
+    dateTime: string,
+    courseId: string,
+    certificate?: string,
+    issuedCertificate?: string,
+    status: number
+  }[] = [];
   isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
@@ -436,7 +443,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  mapTrainingsToCertificates(trainings: Course[]): CourseCertificate[] {
+  mapTrainingsToCertificates(trainings: Course[]) {
     /**
      * If certificate is there loop through certificates and add certificates in accumulator
      * with Course_Name and Date
@@ -448,19 +455,28 @@ export class ProfilePage implements OnInit {
         dateTime: course.dateTime,
         courseId: course.courseId,
         certificate: undefined,
+        issuedCertificate: undefined,
         status: course.status
       };
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
-        accumulator = accumulator.concat(oneCert);
-      } else {
-        accumulator = accumulator.concat(oneCert);
       }
+      if (course.issuedCertificates && course.issuedCertificates.length) {
+        oneCert.issuedCertificate = course.issuedCertificates[0];
+      }
+      accumulator = accumulator.concat(oneCert);
       return accumulator;
     }, []);
   }
 
-  async downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
+  async downloadTrainingCertificate(course: {
+    courseName: string,
+    dateTime: string,
+    courseId: string,
+    certificate?: CourseCertificate,
+    issuedCertificate?: CourseCertificate,
+    status: number
+  }) {
     const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
     const toastOptions = {
       message: downloadMessage || 'Certificate getting downloaded'
@@ -468,7 +484,7 @@ export class ProfilePage implements OnInit {
 
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, ContentType.CERTIFICATE, undefined);
 
         const values = new Map();
         values['courseId'] = course.courseId;
@@ -484,9 +500,9 @@ export class ProfilePage implements OnInit {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        if (certificate.identifier) {
+        if (course.issuedCertificate) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId },
+              { courseId: course.courseId, certificate: course.issuedCertificate },
               (svgData, callback) => {
                 this.certificateDownloadAsPdfService.download(
                     svgData, (fileName, pdfData) => callback(pdfData as any)
@@ -499,12 +515,12 @@ export class ProfilePage implements OnInit {
                 this.openpdf(res.path);
               }).catch(async (err) => {
                 if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                  await this.downloadLegacyCertificate(course, certificate, toast);
+                  await this.downloadLegacyCertificate(course, toast);
                 }
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
+                await this.handleCertificateDownloadIssue(toast, err);
           });
         } else {
-         await this.downloadLegacyCertificate(course, certificate, toast);
+         await this.downloadLegacyCertificate(course, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -512,10 +528,10 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  private async downloadLegacyCertificate(course, certificate, toast) {
+  private async downloadLegacyCertificate(course, toast) {
     const downloadRequest = {
       courseId: course.courseId,
-      certificateToken: certificate.token
+      certificate: course.certificate
     };
     this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
         .then(async (res) => {
@@ -524,18 +540,16 @@ export class ProfilePage implements OnInit {
           }
           this.openpdf(res.path);
         }).catch(async (err) => {
-      await this.handleCertificateDownloadIssue(toast, err, certificate);
+      await this.handleCertificateDownloadIssue(toast, err);
     });
   }
 
-  private async handleCertificateDownloadIssue(toast: any, err: any, certificate) {
+  private async handleCertificateDownloadIssue(toast: any, err: any) {
     if (toast) {
       await toast.dismiss();
     }
     if (err instanceof CertificateAlreadyDownloaded) {
-      const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
-      const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
-      this.openpdf(filePath);
+      this.openpdf(err.filePath);
     } else if (NetworkError.isInstance(err)) {
       this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
     } else {
@@ -556,7 +570,7 @@ export class ProfilePage implements OnInit {
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
     this.courseService.downloadCurrentProfileCourseCertificate({
       courseId: course.courseId,
-      certificateToken: certificate.token
+      certificate: course
     })
       .subscribe((res) => {
         this.socialShare.share('', '', res.path, '');
