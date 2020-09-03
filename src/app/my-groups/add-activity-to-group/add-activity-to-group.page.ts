@@ -1,22 +1,18 @@
 import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
-import { Platform} from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
     Environment,
-    ImpressionSubtype,
     ImpressionType,
-    InteractSubtype,
-    InteractType,
     PageId
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import { AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
-import { ContentUtil } from '@app/util/content-util';
 import { RouterLinks } from '@app/app/app.constant';
-import { CsGroupAddableBloc, CsGroupAddableState} from '@project-sunbird/client-services/blocs';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 
 @Component({
@@ -27,6 +23,7 @@ import { CsGroupAddableBloc, CsGroupAddableState} from '@project-sunbird/client-
 })
 export class AddActivityToGroupPage implements OnInit, OnDestroy {
 
+    corRelationList: Array<CorrelationData>;
     unregisterBackButton: Subscription;
     headerObservable: any;
     supportedActivityList: Array<any>;
@@ -43,6 +40,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
     ) {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
+            this.corRelationList = extras.corRelation;
             this.supportedActivityList = extras.supportedActivityList;
             this.groupId = extras.groupId;
             this.activityList = extras.activityList;
@@ -66,8 +64,8 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             ImpressionType.VIEW,
             '',
             PageId.ADD_ACTIVITY_TO_GROUP,
-            Environment.GROUP
-        );
+            Environment.GROUP,
+            undefined, undefined, undefined, undefined, this.corRelationList);
     }
 
     ionViewWillLeave() {
@@ -82,13 +80,14 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
     }
 
     handleBackButton(isNavBack: boolean) {
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC,
+            Environment.GROUP, isNavBack, undefined, this.corRelationList);
         this.location.back();
     }
 
     handleDeviceBackButton() {
         this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-          this.handleBackButton(false);
+            this.handleBackButton(false);
         });
     }
 
@@ -106,17 +105,19 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             groupId: this.groupId,
             params: {
                 activityList: this.activityList,
+                corRelation: this.corRelationList
             }
         }
         );
         this.router.navigate([RouterLinks.SEARCH], {
-          state: {
-            activityTypeData: data,
-            source: PageId.GROUP_DETAIL,
-            groupId: this.groupId,
-            activityList: this.activityList
-          }
+            state: {
+                activityTypeData: data,
+                source: PageId.GROUP_DETAIL,
+                groupId: this.groupId,
+                activityList: this.activityList,
+                corRelation: this.corRelationList
+            }
         });
-      }
+    }
 
 }

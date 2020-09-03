@@ -8,7 +8,8 @@ import {
   GroupService,
   ProfileService,
   SystemSettingsService,
-  SharedPreferences
+  SharedPreferences,
+  CorrelationData
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -36,6 +37,8 @@ import { RecaptchaComponent } from 'ng-recaptcha';
   styleUrls: ['./add-member-to-group.page.scss'],
 })
 export class AddMemberToGroupPage {
+
+  corRelationList: Array<CorrelationData>;
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
@@ -66,9 +69,10 @@ export class AddMemberToGroupPage {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
     this.memberList = extras.memberList;
+    this.corRelationList = extras.corRelation;
   }
 
-  async getGoogleCaptchaSiteKey(): Promise<{isCaptchaEnabled: boolean , captchaKey: string }> {
+  async getGoogleCaptchaSiteKey(): Promise<{ isCaptchaEnabled: boolean, captchaKey: string }> {
     if (this.commonUtilService.getGoogleCaptchaConfig().size === 0) {
       return this.systemSettingsService.getSystemSettings({ id: 'appGoogleReCaptcha' }).toPromise()
         .then((res) => {
@@ -76,13 +80,13 @@ export class AddMemberToGroupPage {
           const isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
           const captchaKey = captchaConfig['key'] || captchaConfig.get('key');
           this.commonUtilService.setGoogleCaptchaConfig(captchaKey, isCaptchaEnabled);
-          return {isCaptchaEnabled, captchaKey};
+          return { isCaptchaEnabled, captchaKey };
         });
     } else if (Boolean(this.commonUtilService.getGoogleCaptchaConfig())) {
-      const captchaConfig =  this.commonUtilService.getGoogleCaptchaConfig();
+      const captchaConfig = this.commonUtilService.getGoogleCaptchaConfig();
       const isCaptchaEnabled = captchaConfig['isEnabled'] || captchaConfig.get('isEnabled');
       const captchaKey = captchaConfig['key'] || captchaConfig.get('key');
-      return {isCaptchaEnabled, captchaKey};
+      return { isCaptchaEnabled, captchaKey };
     }
   }
 
@@ -132,14 +136,15 @@ export class AddMemberToGroupPage {
     if (this.isUserIdVerified) {
       this.isUserIdVerified = false;
     } else {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ADD_MEMBER, Environment.GROUP, isNavBack);
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ADD_MEMBER,
+        Environment.GROUP, isNavBack, undefined, this.corRelationList);
       this.location.back();
     }
   }
 
   async onVerifyClick() {
     let captchaResponse: string | undefined;
-    const  {isCaptchaEnabled, captchaKey} = await this.getGoogleCaptchaSiteKey();
+    const { isCaptchaEnabled, captchaKey } = await this.getGoogleCaptchaSiteKey();
     if (isCaptchaEnabled) {
       await this.sbUtility.verifyCaptcha(captchaKey).then((res) => {
         captchaResponse = res;
@@ -151,7 +156,9 @@ export class AddMemberToGroupPage {
       InteractType.TOUCH,
       InteractSubtype.VERIFY_CLICKED,
       Environment.GROUP,
-      PageId.ADD_MEMBER);
+      PageId.ADD_MEMBER,
+      undefined, undefined, undefined, this.corRelationList);
+
     if (!this.username) {
       this.showErrorMsg = true;
       return;
@@ -172,8 +179,9 @@ export class AddMemberToGroupPage {
       undefined,
       undefined,
       undefined,
-      undefined,
+      this.corRelationList,
       ID.VERIFY_MEMBER);
+
     this.showLoader = true;
     this.profileService.checkServerProfileExists(checkUserExistsRequest).toPromise()
       .then(async (checkUserExistsResponse) => {
@@ -181,6 +189,7 @@ export class AddMemberToGroupPage {
         if (checkUserExistsResponse && checkUserExistsResponse.exists) {
           this.userDetails = checkUserExistsResponse;
           this.isUserIdVerified = true;
+
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -189,7 +198,7 @@ export class AddMemberToGroupPage {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.VERIFY_MEMBER);
         } else {
           this.showErrorMsg = true;
@@ -223,9 +232,12 @@ export class AddMemberToGroupPage {
       InteractType.TOUCH,
       InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
       Environment.GROUP,
-      PageId.ADD_MEMBER);
+      PageId.ADD_MEMBER,
+      undefined, undefined, undefined, this.corRelationList);
+
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.INITIATED,
       '',
@@ -234,7 +246,7 @@ export class AddMemberToGroupPage {
       undefined,
       undefined,
       undefined,
-      undefined,
+      this.corRelationList,
       ID.ADD_MEMBER_TO_GROUP);
     const addMemberToGroupReq: AddMembersRequest = {
       groupId: this.groupId,
@@ -251,6 +263,7 @@ export class AddMemberToGroupPage {
           throw res.error.members[0];
         } else {
           await loader.dismiss();
+
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -259,8 +272,9 @@ export class AddMemberToGroupPage {
             undefined,
             undefined,
             undefined,
-            undefined,
+            this.corRelationList,
             ID.ADD_MEMBER_TO_GROUP);
+
           this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
           this.location.back();
         }

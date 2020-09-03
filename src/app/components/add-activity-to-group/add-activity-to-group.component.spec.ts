@@ -52,13 +52,13 @@ describe('AddActivityToGroupComponent', () => {
             it('should initialise the state with CsGroupAddableBloc', (done) => {
                 // arrange
                 jest.spyOn(CsGroupAddableBloc.instance, 'initialised', 'get').mockReturnValue(true);
-                jest.spyOn(CsGroupAddableBloc.instance, 'state$', 'get').mockReturnValue(of({pageIds: ['page1']}));
+                jest.spyOn(CsGroupAddableBloc.instance, 'state$', 'get').mockReturnValue(of({ pageIds: ['page1'] }));
                 addActivityToGroupComponent.pageId = 'page1';
                 // act
                 addActivityToGroupComponent.ngOnInit();
                 // assert
                 addActivityToGroupComponent.state$.subscribe((v) => {
-                    expect(v).toEqual({pageIds: ['page1']});
+                    expect(v).toEqual({ pageIds: ['page1'] });
                     done();
                 });
             });
@@ -75,7 +75,7 @@ describe('AddActivityToGroupComponent', () => {
                     activityId: 'some_identifier',
                     activityType: 'some_type',
                     pageId: 'some_page_id',
-                    corRelationList: [],
+                    corRelation: [],
                     noOfPagesToRevertOnSuccess: -3,
                     activityList: [{
                         id: 'some_identifier1'
@@ -89,8 +89,8 @@ describe('AddActivityToGroupComponent', () => {
             addActivityToGroupComponent.addActivityToGroup(data);
             // assert
             setTimeout(() => {
-                expect(mockGroupHandlerService.addActivityToGroup).toHaveBeenCalledWith('group_id', 'some_identifier',
-                    'some_type', 'some_page_id', [], -3);
+                expect(mockGroupHandlerService.addActivityToGroup).toHaveBeenCalledWith(
+                    'group_id', 'some_identifier', 'some_type', 'some_page_id', [], -3);
                 done();
             }, 0);
         });

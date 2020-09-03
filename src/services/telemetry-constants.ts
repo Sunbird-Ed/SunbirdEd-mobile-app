@@ -546,6 +546,7 @@ export enum CorReleationDataType {
     SCAN = 'Scan',
     SOURCE = 'Source',
     NOTIFICATION_ID = 'NotificationID',
+    GROUP_ID = 'GroupId',
     CONTENT_TYPE = 'ContentType',
     /* New Telemetry for Telemetry Structure change
     * for old telemetry structure please add in above
