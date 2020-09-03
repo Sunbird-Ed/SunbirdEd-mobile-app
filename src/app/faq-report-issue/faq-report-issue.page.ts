@@ -582,7 +582,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   getClosure(type: string) {
-    console.log(this.formConfig[1].children.contentquality[0]);
     switch (type) {
       case 'board':
         return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder(this.profile);
