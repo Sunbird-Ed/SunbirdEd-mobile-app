@@ -567,16 +567,6 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    this.courseService.downloadCurrentProfileCourseCertificate({
-      courseId: course.courseId,
-      certificate: course
-    })
-      .subscribe((res) => {
-        this.socialShare.share('', '', res.path, '');
-      });
-  }
-
   isResource(contentType) {
     return contentType === ContentType.STORY ||
       contentType === ContentType.WORKSHEET;
