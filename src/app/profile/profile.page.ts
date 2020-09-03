@@ -549,6 +549,7 @@ export class ProfilePage implements OnInit {
       await toast.dismiss();
     }
     if (err instanceof CertificateAlreadyDownloaded) {
+      this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
       this.openpdf(err.filePath);
     } else if (NetworkError.isInstance(err)) {
       this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
