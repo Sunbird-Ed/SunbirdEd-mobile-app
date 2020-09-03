@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
   CommonUtilService, AppGlobalService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment, ImpressionType, ID, FormAndFrameworkUtilService
+  InteractType, InteractSubtype, Environment, ImpressionType, ID, FormAndFrameworkUtilService, UtilityService
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
@@ -24,6 +24,7 @@ import GraphemeSplitter from 'grapheme-splitter';
 import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-group-details',
@@ -56,6 +57,7 @@ export class GroupDetailsPage implements OnInit {
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
+    private navService: NavigationService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
@@ -785,12 +787,17 @@ export class GroupDetailsPage implements OnInit {
 
   onActivityCardClick(activity) {
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+      this.navService.navigateToTrackableCollection(
         {
-          state: {
-            content: activity.activityInfo
-          }
-        });
+          content: activity.activityInfo
+        }
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+      //   {
+      //     state: {
+      //       content: activity.activityInfo
+      //     }
+      //   });
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
