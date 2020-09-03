@@ -70,7 +70,6 @@ export class GroupDetailsPage implements OnInit {
     private platform: Platform,
     private popoverCtrl: PopoverController,
     private navService: NavigationService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService
