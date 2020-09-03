@@ -75,7 +75,7 @@ describe('AddActivityToGroupComponent', () => {
                     activityId: 'some_identifier',
                     activityType: 'some_type',
                     pageId: 'some_page_id',
-                    corRelation: [],
+                    corRelationList: [],
                     noOfPagesToRevertOnSuccess: -3,
                     activityList: [{
                         id: 'some_identifier1'
