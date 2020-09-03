@@ -72,6 +72,8 @@ import { applyProfileFilter } from '@app/util/filter.util';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
+import { UtilityService } from '@app/services';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-resources',
@@ -250,6 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public toastController: ToastController,
     public menuCtrl: MenuController,
     private headerService: AppHeaderService,
+    private navService: NavigationService,
     private router: Router,
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
@@ -950,7 +953,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+      this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
+      // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
@@ -1202,12 +1206,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         undefined,
         corRelationList
       );
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
+      console.log('Content Data', event);
+      this.navService.navigateToTrackableCollection(
+        {
           content: event.data.contents[0],
           corRelation: corRelationList
         }
-      });
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      //   state: {
+      //     content: event.data.contents[0],
+      //     corRelation: corRelationList
+      //   }
+      // });
     }
   }
 }

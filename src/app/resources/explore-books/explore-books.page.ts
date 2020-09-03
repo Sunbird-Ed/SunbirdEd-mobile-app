@@ -35,6 +35,8 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
+import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-explore-books',
@@ -145,7 +147,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private navService: NavigationService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
@@ -354,11 +357,12 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }
     };
 
-    if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(content, navigationExtras.state);
+    // if (content.mimeType === MimeType.COLLECTION) {
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
+    // } else {
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
+    // }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
