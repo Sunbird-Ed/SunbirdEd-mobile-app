@@ -76,9 +76,10 @@ describe('ManageUserProfilesPage', () => {
     it('should initiate the backbutton events and the telemetry events', () => {
       // arrange
       mockAppHeaderService.showHeaderWithBackButton = jest.fn();
+      const data = {name: 'back'};
       const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
       mockAppHeaderService.headerEventEmitted$ = {
-        subscribe: jest.fn((fn) => fn(mockHeaderEventsSubscription) as any)
+        subscribe: jest.fn((fn) =>  {fn(data); return mockHeaderEventsSubscription; })
       } as any;
       let subscribeWithPriorityCallback;
       const mockBackBtnFunc = {unsubscribe: jest.fn()};
