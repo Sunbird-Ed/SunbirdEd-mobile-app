@@ -88,8 +88,7 @@ export class CollectionChildComponent implements OnInit {
     this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
   }
 
-  checkHierarchy() {
-    console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
+  private checkHierarchy() {
     if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
       this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
       for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {

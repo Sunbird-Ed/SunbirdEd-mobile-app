@@ -63,7 +63,7 @@ describe('CollectionChildComponent', () => {
     jest.resetAllMocks();
   });
 
-  it('should be craeate a instance of CollectionChildComponent', () => {
+  it('should be create a instance of CollectionChildComponent', () => {
     expect(collectionChildComponent).toBeTruthy();
   });
 
@@ -179,7 +179,7 @@ describe('CollectionChildComponent', () => {
           done();
         }, 0);
       });
-      it('sbPopoverMainTitle should be CONTENT_IS_BEEING_ADDED + content name', (done) => {
+      it('sbPopoverMainTitle should be CONTENT_IS_BEING_ADDED + content name', (done) => {
         // arrange
         mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
           present: jest.fn(() => Promise.resolve({})),
@@ -773,6 +773,33 @@ describe('CollectionChildComponent', () => {
           }, 0);
         });
     });
+  });
+
+  it('should check for latestParent name if available then check for hierarchyInfo', () => {
+      // arrange
+      collectionChildComponent.childData = mockChildContentData;
+      mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+      collectionChildComponent.stckyindex = 0;
+      collectionChildComponent.latestParentNodes = [
+          {
+              hierarchyInfo: [
+                  {
+                      identifier: 'do_123',
+                      contentType: 'textbook'
+                  },
+                  {
+                      identifier: 'do098',
+                      contentType: 'resources'
+                  }
+              ]
+          }
+      ];
+      mockEvents.publish = jest.fn();
+      collectionChildComponent.latestParentName = 'sample_name';
+      // act
+      collectionChildComponent.ngOnInit();
+      // assert
+      expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.TOC_COLLECTION_CHILD_ID, {id: 'do_21274246255366963214046'});
   });
 
 });
