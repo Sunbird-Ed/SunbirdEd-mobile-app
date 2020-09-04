@@ -96,7 +96,7 @@ global.FCMPlugin = {
 }
 
 global.sbsync = {
-    onSyncSuccess: () => {}
+    onSyncSucces: () => {}
 }
 
 global.qrScanner = {

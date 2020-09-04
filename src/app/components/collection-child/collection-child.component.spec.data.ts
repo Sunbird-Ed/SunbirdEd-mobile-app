@@ -3,7 +3,19 @@ import { Navigation } from '@angular/router';
 
 export const mockChildContentData: Content = {
     identifier: 'do_21274246255366963214046',
-    contentData: {}
+    basePath: 'samplePath',
+    contentData: {
+        name: 'sample_name',
+        appIcon: 'sample_icon'
+    },
+    hierarchyInfo: [{
+        identifier: 'do_123',
+        contentType: 'textbook'
+    }, {
+        identifier: 'do098',
+        contentType: 'resources'
+    }],
+
 };
 
 export const mockCompletedContentStatusData: ContentStateResponse = {
