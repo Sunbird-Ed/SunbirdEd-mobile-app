@@ -68,6 +68,7 @@ global.splashscreen = {
     markImportDone: () => { },
     hide: () => { },
     clearPrefs: () => { },
+    setContent: () => { }
 }
 
 global.codePush = {
