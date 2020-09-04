@@ -354,6 +354,39 @@ describe('LoginHandlerService', () => {
                 done();
             }, 0);
         });
+
+        it('should go to catch block if getSession returns undefined', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
+            mockSbProgressLoader.show = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of('true'));
+            mockAuthService.getSession = jest.fn(() => of(throwError('error')));
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of());
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            loginHandlerService.signIn();
+
+            setTimeout(() => {
+                expect(mockAuthService.getSession).toHaveBeenCalled();
+                expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+                done();
+            }, 0);
+        });
     });
 
     describe('getDefaultProfileRequest()', () => {
