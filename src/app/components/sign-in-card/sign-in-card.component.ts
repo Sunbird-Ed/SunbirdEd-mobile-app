@@ -70,10 +70,6 @@ export class SignInCardComponent implements OnInit {
       });
   }
 
-  ngOnInit() {
-
-  }
-
   async signIn(skipNavigation?) {
     this.appGlobalService.resetSavedQuizContent();
     // clean the preferences to avoid unnecessary enrolment
@@ -147,7 +143,6 @@ export class SignInCardComponent implements OnInit {
           });
         })
         .catch(async (err) => {
-          console.error(err);
           this.sbProgressLoader.hide({id: 'login'});
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
@@ -158,7 +153,7 @@ export class SignInCardComponent implements OnInit {
     }
   }
 
-  refreshProfileData() {
+  private refreshProfileData() {
     const that = this;
 
     return new Promise<any>((resolve, reject) => {
@@ -208,7 +203,7 @@ export class SignInCardComponent implements OnInit {
 
                   });
               }).catch((err) => {
-                reject(err);
+              reject(err);
               });
           } else {
             reject('session is null');
@@ -217,7 +212,7 @@ export class SignInCardComponent implements OnInit {
     });
   }
 
-  refreshTenantData(tenantSlug: string, title: string) {
+  private refreshTenantData(tenantSlug: string, title: string) {
     const tenantInfoRequest: TenantInfoRequest = {slug: tenantSlug};
     return new Promise((resolve, reject) => {
       this.profileService.getTenantInfo(tenantInfoRequest).toPromise()
@@ -236,7 +231,7 @@ export class SignInCardComponent implements OnInit {
     });
   }
 
-  generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
+  private generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
     const valuesMap = new Map();
     valuesMap['UID'] = uid;
     this.telemetryGeneratorService.generateInteractTelemetry(
