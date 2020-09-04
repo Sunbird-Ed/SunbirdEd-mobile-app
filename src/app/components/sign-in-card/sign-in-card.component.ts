@@ -38,7 +38,7 @@ import {Context as SbProgressLoaderContext, SbProgressLoader} from '../../../ser
   templateUrl: './sign-in-card.component.html',
   styleUrls: ['./sign-in-card.component.scss'],
 })
-export class SignInCardComponent implements OnInit {
+export class SignInCardComponent {
 
   @Input() source = '';
   @Input() title = 'OVERLAY_LABEL_COMMON';
