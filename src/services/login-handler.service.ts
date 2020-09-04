@@ -36,12 +36,6 @@ import {Context as SbProgressLoaderContext, SbProgressLoader} from '@app/service
 @Injectable()
 export class LoginHandlerService {
 
-//   appName = '';
-//   @Input() source = '';
-//   @Input() title = 'OVERLAY_LABEL_COMMON';
-//   @Input() description = 'OVERLAY_INFO_TEXT_COMMON';
-//   @Output() valueChange = new EventEmitter();
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -70,15 +64,7 @@ export class LoginHandlerService {
   async signIn(skipNavigation?) {
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-    //   this.valueChange.emit(true);
     } else {
-    //   this.telemetryGeneratorService.generateInteractTelemetry(
-    //     InteractType.TOUCH,
-    //     InteractSubtype.SIGNIN_OVERLAY_CLICKED,
-    //     Environment.HOME,
-    //     this.source, null
-    //   );
-
       this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
 
       const that = this;
@@ -135,7 +121,6 @@ export class LoginHandlerService {
           });
         })
         .catch(async (err) => {
-          console.error(err);
           this.sbProgressLoader.hide({id: 'login'});
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
@@ -146,7 +131,7 @@ export class LoginHandlerService {
     }
   }
 
-  refreshProfileData() {
+  private refreshProfileData() {
     const that = this;
 
     return new Promise<any>((resolve, reject) => {
@@ -196,7 +181,7 @@ export class LoginHandlerService {
     });
   }
 
-  refreshTenantData(slug: string, title: string) {
+  private refreshTenantData(slug: string, title: string) {
     return new Promise((resolve, reject) => {
       this.profileService.getTenantInfo({ slug: '' }).toPromise()
         .then(async (res) => {
@@ -214,7 +199,7 @@ export class LoginHandlerService {
     });
   }
 
-  generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
+  private generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
     const valuesMap = new Map();
     valuesMap['UID'] = uid;
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -244,7 +229,7 @@ export class LoginHandlerService {
     });
   }
 
-  getDefaultProfileRequest() {
+  private getDefaultProfileRequest() {
     const profile = this.appGlobalService.getCurrentUser();
     const profileRequest: Profile = {
       uid: profile.uid,
