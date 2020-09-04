@@ -233,9 +233,10 @@
 .sb-textbook-container {
   // margin-top: ($base-block-space * 3);
   @include padding(($base-block-space * 1));
-  width: 100%;
+  width: 98.5%;
   &:last-child{
       margin-bottom: ($base-block-space * 2);
+      margin-left: 3px;
   }
 
   .sb-textbook-items {
@@ -328,3 +329,27 @@
   }
 }
 
+.sb-recently-viewed-container {
+  min-height: 135px;
+  padding-top: 8px;
+  .sb-recently-viewed-items{
+    height: ($base-block-space * 11);
+    width: 100%;
+    position: relative;
+    @include padding(($base-block-space * 1), 0);
+    .sb-recenlty-viewed-title {
+      font-weight: 700;
+      font-size: 18px;
+      padding-top: 5px;
+      font-family: "Noto Sans";	
+      overflow: auto;
+      margin-bottom: ($base-block-space * 1.5);
+    @include padding(0, ($base-block-space * 1));
+
+    }
+      .sb-card-scroll-container{
+      overflow-x: auto;
+      padding: 0 0 8px 0;
+    }
+  }
+}
