@@ -858,7 +858,7 @@ describe('CollectionChildComponent', () => {
           expect(collectionChildComponent.sameHierarchy).toBeFalsy();
       });
 
-      it('should check for latestParent name if available then go to else part if hierarchyInfo length doesn`t matches', () => {
+    it('should check for latestParent name if available then go to else part if hierarchyInfo length doesn`t matches', () => {
           // arrange
           collectionChildComponent.childData = mockChildContentData;
           mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
