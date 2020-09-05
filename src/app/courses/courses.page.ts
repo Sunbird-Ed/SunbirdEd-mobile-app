@@ -484,17 +484,10 @@ export class CoursesPage implements OnInit, OnDestroy {
   /**
    * It will fetch the guest user profile details
    */
-  getCurrentUser(): void {
+  private getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
-    if (this.commonUtilService.isAccessibleForNonStudentRole(profileType) && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
-      this.showSignInCard = true;
-    } else {
-      this.showSignInCard = false;
-    }
-  }
-
-  scanQRCode() {
-    this.qrScanner.startScanner(PageId.COURSES);
+    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType) &&
+        this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
   }
 
   async search() {
@@ -588,7 +581,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       });
     }
   }
-  async presentToastForOffline(msg: string) {
+  private async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
       duration: 3000,
       message: this.commonUtilService.translateMessage(msg),
@@ -684,7 +677,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       });
   }
 
-  contentDetailsImportCall(identifier) {
+  private contentDetailsImportCall(identifier) {
     this.subscribeSdkEvent();
     this.showOverlay = true;
     this.importContent([identifier], false);
@@ -737,7 +730,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   }
 
-  navigateToContentDetailsPage(content) {
+  private navigateToContentDetailsPage(content) {
     const identifier = content.contentId || content.identifier;
     const extras: NavigationExtras = {
       state: {
@@ -758,7 +751,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.CONTENT_DETAILS], extras);
   }
 
-  importContent(identifiers, isChild) {
+  private importContent(identifiers, isChild) {
     const option: ContentImportRequest = {
       contentImportArray: this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
@@ -789,13 +782,13 @@ export class CoursesPage implements OnInit, OnDestroy {
    * This method removes the loading/downloading overlay and displays the error message
    * and also shows the bottom navigation bar
    */
-  removeOverlayAndShowError(): any {
+  private removeOverlayAndShowError(): any {
     this.commonUtilService.showToast('COURSE_NOT_AVAILABLE');
     this.tabBarElement.style.display = 'flex';
     this.showOverlay = false;
   }
 
-  subscribeSdkEvent() {
+  private subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
       this.ngZone.run(() => {
         if (event.type === DownloadEventType.PROGRESS) {
@@ -839,7 +832,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  redirectToActivedownloads() {
+  private redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
