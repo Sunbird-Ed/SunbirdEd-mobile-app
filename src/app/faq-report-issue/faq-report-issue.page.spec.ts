@@ -15,15 +15,21 @@ import {
     TelemetryService,
     TelemetryGeneratorService
  } from 'sunbird-sdk';
- import { AppGlobalService } from '@app/services/app-global-service.service';
- import { CommonUtilService } from '@app/services/common-util.service';
- import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
- import { Location, formatNumber } from '@angular/common';
-import { mockNavigationResp, mockFormConfig, mockProfile, mockUserProfile, mockFormValue, mockStateList, mockFrameworkList } from './faq-report-issue.page.spec.data';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+import { Location } from '@angular/common';
+import {
+    mockNavigationResp,
+    mockFormConfig,
+    mockProfile,
+    mockUserProfile,
+    mockFormValue,
+    mockStateList,
+    mockFrameworkList
+} from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
-import { resolve } from 'dns';
-import { FormConfigSubcategories } from '../app.constant';
-import { FormControl } from '@angular/forms';
+import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
 
 window['supportfile'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
@@ -99,6 +105,12 @@ describe('FaqReportIssuePage', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getStateContactList: jest.fn(() => Promise.resolve(mockStateList))
     };
+    const mockFrameworkCommonFormConfigBuilder: Partial<FrameworkCommonFormConfigBuilder> = {
+        getBoardConfigOptionsBuilder: jest.fn(),
+        getMediumConfigOptionsBuilder: jest.fn(),
+        getGradeConfigOptionsBuilder: jest.fn(),
+        getSubjectConfigOptionsBuilder: jest.fn(),
+    };
 
     beforeAll(() => {
         faqReportIssuePage = new FaqReportIssuePage(
@@ -120,7 +132,8 @@ describe('FaqReportIssuePage', () => {
             mockTranslateService as TranslateService,
             mockModalController as ModalController,
             mockNgZone as NgZone,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockFrameworkCommonFormConfigBuilder as FrameworkCommonFormConfigBuilder
         );
     });
 
@@ -137,7 +150,6 @@ describe('FaqReportIssuePage', () => {
             expect(faqReportIssuePage).toBeTruthy();
             expect(faqReportIssuePage.formContext).toBeDefined();
             expect(faqReportIssuePage.data).toBeDefined();
-            expect(typeof(faqReportIssuePage.formConfig[1].children.contentquality[0].templateOptions.options)).toEqual('function');
             expect(faqReportIssuePage.profile).toEqual(mockProfile);
         });
     });
@@ -416,75 +428,6 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.responseSubmitted();
             // assert
             expect(mockLocation.back).toBeCalled();
-        });
-    });
-
-    describe('Closures', () => {
-        it('Board closure should return board list', (done) => {
-            faqReportIssuePage.profile = mockUserProfile;
-            // arrange
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(mockFrameworkList));
-            // act
-            faqReportIssuePage.formConfig[1].children.contentquality[0].templateOptions.options(
-            {}, undefined, jest.fn(), jest.fn()
-            ).subscribe((val) => {
-                expect(val.length).toEqual(5);
-                done();
-            });
-        });
-
-        it('Medium closure should return medium list', (done) => {
-            // arrange
-            const context = {
-                valueChanges: of(
-                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
-                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
-                ),
-                value: { code: 'k_2-11-4' }
-            };
-            // act
-            faqReportIssuePage.formConfig[1].children.contentquality[1].templateOptions.options(
-            {}, context, jest.fn(), jest.fn()
-            ).subscribe((val) => {
-                expect(val.length).toEqual(5);
-                done();
-            });
-        });
-
-        it('Grade closure should return medium list', (done) => {
-            // arrange
-            const context = {
-                valueChanges: of(
-                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
-                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
-                ),
-                value: { code: 'k_2-11-4' }
-            };
-            // act
-            faqReportIssuePage.formConfig[1].children.contentquality[2].templateOptions.options(
-            {}, context, jest.fn(), jest.fn()
-            ).subscribe((val) => {
-                expect(val.length).toEqual(5);
-                done();
-            });
-        });
-
-        it('Subject closure should return medium list', (done) => {
-            // arrange
-            const context = {
-                valueChanges: of(
-                    { code: 'k_2-11-4', name: 'State (Andhra Pradesh)' },
-                    { code: 'k_2-11-3', name: 'State (Karnataka)' }
-                ),
-                value: { code: 'k_2-11-4' }
-            };
-            // act
-            faqReportIssuePage.formConfig[1].children.contentquality[3].templateOptions.options(
-            {}, context, jest.fn(), jest.fn()
-            ).subscribe((val) => {
-                expect(val.length).toEqual(5);
-                done();
-            });
         });
     });
 
