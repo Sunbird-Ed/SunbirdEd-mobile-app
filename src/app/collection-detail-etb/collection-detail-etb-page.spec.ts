@@ -35,6 +35,7 @@ import { ContentDeleteHandler } from '../../services/content/content-delete-hand
 import { isObject } from 'util';
 import { MimeType } from '../../app/app.constant';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -104,6 +105,12 @@ describe('collectionDetailEtbPage', () => {
     };
 
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockNavigationService: Partial<NavigationService> = {
+        navigateToTrackableCollection: jest.fn(),
+        navigateToContent: jest.fn(),
+        navigateTo: jest.fn(),
+        navigateToCollection: jest.fn()
+    };
 
     beforeEach(() => {
         const div = document.createElement('div');
@@ -121,6 +128,7 @@ describe('collectionDetailEtbPage', () => {
             mockplatform as Platform,
             mockappGlobalService as AppGlobalService,
             mockCommonUtilService as CommonUtilService,
+            mockNavigationService as NavigationService,
             mocktelemetryGeneratorService as TelemetryGeneratorService,
             mockfileSizePipe as FileSizePipe,
             mockHeaderService as AppHeaderService,
@@ -1213,19 +1221,7 @@ describe('collectionDetailEtbPage', () => {
             collectionDetailEtbPage.navigateToDetailsPage(content, depth);
             // assert
             expect(mockzone.run).toHaveBeenCalled();
-            expect(mockrouter.navigate).toHaveBeenCalled();
-        });
-
-        it('should go to collection-detail-etb page if mimeType is COLLECTION', () => {
-            // arrange
-            const content = { identifier: 'do-123', mimeType: MimeType.COLLECTION }, depth = 2;
-            mockzone.run = jest.fn((fn) => fn());
-            mockrouter.navigate = jest.fn(() => Promise.resolve(true));
-            // act
-            collectionDetailEtbPage.navigateToDetailsPage(content, depth);
-            // assert
-            expect(mockzone.run).toHaveBeenCalled();
-            expect(mockrouter.navigate).toHaveBeenCalled();
+            expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalled();
         });
 
 
@@ -1238,18 +1234,8 @@ describe('collectionDetailEtbPage', () => {
             collectionDetailEtbPage.navigateToDetailsPage(content, depth);
             // assert
             expect(mockzone.run).toHaveBeenCalled();
-            expect(mockrouter.navigate).toHaveBeenCalled();
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalled();
         });
-    });
-
-    it('should navigate To ContentPage', () => {
-        // arrange
-        const content = { identifier: 'do-123' }, depth = 2;
-        mockrouter.navigate = jest.fn(() => Promise.resolve(true));
-        // act
-        collectionDetailEtbPage.navigateToContentPage(content, depth);
-        // assert
-        expect(mockrouter.navigate).toHaveBeenCalled();
     });
 
     it('should reset all properties', () => {

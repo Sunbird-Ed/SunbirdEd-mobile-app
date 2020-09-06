@@ -194,7 +194,7 @@ export class CollectionChildComponent implements OnInit {
               this.navService.navigateToContent(contentDetailsParams.state);
             };
   
-            if (content.contentData.contentType === ContentType.SELF_ASSESS
+            if (content.contentType === ContentType.SELF_ASSESS
               && this.batch && this.batch.status === 2) {
               this.assessemtnAlert = await this.popoverCtrl.create({
                 component: SbGenericPopoverComponent,

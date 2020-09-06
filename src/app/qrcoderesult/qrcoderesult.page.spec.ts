@@ -28,6 +28,7 @@ import { NgZone } from '@angular/core';
 import { CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType } from '../../services';
 import { File } from '@ionic-native/file/ngx';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('QrcoderesultPage', () => {
     let qrcoderesultPage: QrcoderesultPage;
@@ -98,6 +99,12 @@ describe('QrcoderesultPage', () => {
         },
         resetTextbookIds: jest.fn()
     };
+    const mockNavigationService: Partial<NavigationService> = {
+        navigateToTrackableCollection: jest.fn(),
+        navigateToCollection: jest.fn(),
+        navigateToContent: jest.fn(),
+        navigateTo: jest.fn()
+    };
 
     beforeAll(() => {
         qrcoderesultPage = new QrcoderesultPage(
@@ -118,6 +125,7 @@ describe('QrcoderesultPage', () => {
             mockLocation as Location,
             mockFile as File,
             mockHeaderService as AppHeaderService,
+            mockNavigationService as NavigationService,
             mockRouter as Router,
             mockNavCtrl as NavController,
             mockRatingHandler as RatingHandler,
@@ -515,10 +523,7 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content, [{identifier: 'do-123'}]);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.ENROLLED_COURSE_DETAILS],
-                expect.anything()
-            );
+            
         });
         it('should navigate to collection details ETB page', () => {
             // arrange
@@ -540,8 +545,7 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content, paths, 'sampleId');
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.COLLECTION_DETAIL_ETB],
+            expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
                 expect.anything()
             );
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith(
@@ -564,8 +568,7 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.CONTENT_DETAILS],
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
                 expect.anything()
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
@@ -862,7 +865,7 @@ describe('QrcoderesultPage', () => {
         // act
         qrcoderesultPage.openTextbookToc();
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith(
+        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
             [`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
             expect.anything()
         );

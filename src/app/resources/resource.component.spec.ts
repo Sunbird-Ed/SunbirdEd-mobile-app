@@ -41,6 +41,7 @@ import { NEVER, of, Subscription } from 'rxjs';
 import { NotificationService } from '@app/services';
 import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
 import { ImpressionType } from '../../services/telemetry-constants';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -107,6 +108,10 @@ describe('ResourcesComponent', () => {
     const mockAppNotificationService: Partial<NotificationService> = {};
     const mockChangeRef: Partial<ChangeDetectorRef> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
+    const mockNavService: Partial<NavigationService> = {
+        navigateToCollection: jest.fn()
+    };
+
 
     const constructComponent = () => {
         resourcesComponent = new ResourcesComponent(
@@ -130,6 +135,7 @@ describe('ResourcesComponent', () => {
             mockToastCtrlService as ToastController,
             mockMenuController as MenuController,
             mockHeaderService as AppHeaderService,
+            mockNavService as NavigationService,
             mockRouter as Router,
             mockChangeRef as ChangeDetectorRef,
             mockAppNotificationService as NotificationService,
@@ -1150,7 +1156,7 @@ describe('ResourcesComponent', () => {
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-            expect(mockRouter.navigate).toHaveBeenCalled();
+            expect(mockNavService.navigateToCollection).toHaveBeenCalled();
         });
 
     it('should cover else part after interact event called and check network availability' +

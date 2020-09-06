@@ -836,7 +836,8 @@ export class GroupDetailsPage implements OnInit {
           corRelation: this.corRelationList
         }
       };
-      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras.state);
+      // this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
     }
   }
 

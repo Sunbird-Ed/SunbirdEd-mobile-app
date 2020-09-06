@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { NavigationService } from '../services/navigation-handler.service';
 
 declare const cordova;
 
@@ -54,6 +55,9 @@ describe('QRScannerResultHandler', () => {
 
   const mockPageAssembleService: Partial<PageAssembleService> = {};
   const mockFrameworkService: Partial<FrameworkService> = {};
+  const mockNavigationService: Partial<NavigationService> = {
+    navigateToDetailPage: jest.fn()
+  };
 
 
   beforeAll(() => {
@@ -68,7 +72,8 @@ describe('QRScannerResultHandler', () => {
       mockNavController as NavController,
       mockEvents as Events,
       mockAppglobalService as AppGlobalService,
-      mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+      mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+      mockNavigationService as NavigationService
     );
   });
 
@@ -212,15 +217,16 @@ describe('QRScannerResultHandler', () => {
         type: CorReleationDataType.ACCESS_TYPE
       }];
       setTimeout(() => {
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['/content-details'], {
-          state: {
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalledWith(
+          content,
+          {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
             {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
-        });
+        );
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([{
           id: 'igot', type: 'Source'
         }, {
@@ -266,15 +272,16 @@ describe('QRScannerResultHandler', () => {
         type: CorReleationDataType.ACCESS_TYPE
       }];
       setTimeout(() => {
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection-detail-etb'], {
-          state: {
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalledWith(
+          content,
+          {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
             {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
-        });
+        );
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([
           {id: 'igot', type: 'Source'},
           {id: 'other', type: 'Role'}
@@ -313,15 +320,16 @@ describe('QRScannerResultHandler', () => {
       values['scannedData'] = 'https://sunbirded.org/learn/course/do_12345';
       values['action'] = 'ContentDetail';
       setTimeout(() => {
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['/enrolled-course-details'], {
-          state: {
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalledWith(
+          content,
+          {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
             {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
-        });
+        );
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
