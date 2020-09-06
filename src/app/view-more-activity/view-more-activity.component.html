@@ -18,6 +18,10 @@
             </sb-my-course-card>
             <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item" [section]="null"
               [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-course-card>
+            <sb-library-card [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [content]="item"
+              [type]="'mobile_textbook'" (cardClick)="navigateToDetailPage(item)" [isLoading]="isLoading"
+              [cardImg]="item?.appIcon || defaultAppIcon">
+            </sb-library-card>
           </div>
         </ng-container>
         <ng-container *ngIf="isLoading">
@@ -25,6 +29,10 @@
             <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [isLoading]="isLoading">
             </sb-my-course-card>
             <sb-course-card *ngIf="pageType === 'popularCourses'" [isLoading]="isLoading"></sb-course-card>
+            <sb-library-card [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [content]="item"
+              [type]="'mobile_textbook'" (cardClick)="navigateToDetailPage(item)" [isLoading]="isLoading"
+              [cardImg]="item?.appIcon || defaultAppIcon">
+            </sb-library-card>
           </div>
         </ng-container>
       </div>

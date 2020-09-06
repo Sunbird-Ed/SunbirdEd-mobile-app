@@ -463,25 +463,25 @@ export class ProfilePage implements OnInit {
         }
         if (certificate.identifier) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId },
-              (svgData, callback) => {
-                this.certificateDownloadAsPdfService.download(
-                    svgData, (fileName, pdfData) => callback(pdfData as any)
-                );
-              }).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                  await this.downloadLegacyCertificate(course, certificate, toast);
-                }
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
-          });
+            { courseId: course.courseId },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                await this.downloadLegacyCertificate(course, certificate, toast);
+              }
+              await this.handleCertificateDownloadIssue(toast, err, certificate);
+            });
         } else {
-         await this.downloadLegacyCertificate(course, certificate, toast);
+          await this.downloadLegacyCertificate(course, certificate, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -495,14 +495,14 @@ export class ProfilePage implements OnInit {
       certificateToken: certificate.token
     };
     this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then(async (res) => {
-          if (toast) {
-            await toast.dismiss();
-          }
-          this.openpdf(res.path);
-        }).catch(async (err) => {
-      await this.handleCertificateDownloadIssue(toast, err, certificate);
-    });
+      .then(async (res) => {
+        if (toast) {
+          await toast.dismiss();
+        }
+        this.openpdf(res.path);
+      }).catch(async (err) => {
+        await this.handleCertificateDownloadIssue(toast, err, certificate);
+      });
   }
 
   private async handleCertificateDownloadIssue(toast: any, err: any, certificate) {
@@ -1050,9 +1050,13 @@ export class ProfilePage implements OnInit {
   }
 
   shareUsername() {
+    let fullName = this.profile.firstName;
+    if (this.profile.lastName) {
+      fullName = fullName + ' ' + this.profile.lastName;
+    }
     const translatedMsg = this.commonUtilService.translateMessage('SHARE_USERNAME', {
       app_name: this.appName,
-      user_name: this.profile.firstName + ' ' + this.profile.lastName,
+      user_name: fullName,
       diksha_id: this.profile.userName
     });
     this.socialSharing.share(translatedMsg);

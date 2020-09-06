@@ -37,8 +37,9 @@ import {
   SortOrder,
   CorrelationData,
   ContentsGroupedByPageSection,
-  SearchAndGroupContentRequest,
-  CachedItemRequestSourceFrom
+  ContentAggregatorRequest,
+  CachedItemRequestSourceFrom,
+  ContentAggregatorResponse
 } from 'sunbird-sdk';
 
 import {
@@ -72,8 +73,8 @@ import { applyProfileFilter } from '@app/util/filter.util';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { UtilityService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 
 @Component({
   selector: 'app-resources',
@@ -181,6 +182,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
    * Flag to show latest and popular course loader
    */
   pageApiLoader = true;
+  dynamicResponse: any;
+  courseCardType = CourseCardGridTypes;
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
@@ -464,26 +467,34 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    const request: SearchAndGroupContentRequest = {
-      from: isPullToRefreshed ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE,
-      groupBy: 'subject',
-      combination: {
+    const request: ContentAggregatorRequest = {
+      applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
         gradeLevel: this.getGroupByPageReq.grade
       },
-      searchCriteria: this.getGroupByPageReq
+      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+        contentSearchCriteria.board = this.getGroupByPageReq.board;
+        contentSearchCriteria.medium = this.getGroupByPageReq.medium;
+        contentSearchCriteria.grade = this.getGroupByPageReq.grade;
+        return contentSearchCriteria;
+      }
     };
 
     const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.searchAndGroupContent(requestBody).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
+    this.contentService.aggregateContent(request).toPromise()
+      .then((response: ContentAggregatorResponse) => {
         this.ngZone.run(() => {
-          this.searchGroupingContents = response;
+          this.dynamicResponse = response.result;
+          this.courseList = [];
+          response.result.forEach((val) => {
+            val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
+            if (val.orientation === 'vertical') {
+              this.searchGroupingContents = val.section;
+            }
+          });
           const newSections = [];
           this.getCategoryData();
-          // Get the course data
-          this.getCurriculumCourses(requestBody, response);
           this.searchGroupingContents.sections.forEach(section => {
             if (section.name) {
               if (has(section.name, this.selectedLanguage)) {
@@ -573,60 +584,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.source, undefined,
             errValues);
         });
-      });
-  }
-
-  private getCurriculumCourses(request: SearchAndGroupContentRequest, bookResponse) {
-    if (bookResponse && bookResponse.combination) {
-      if (bookResponse.combination.medium) {
-        request.searchCriteria.medium = [bookResponse.combination.medium];
-        request.combination.medium = [bookResponse.combination.medium];
-      }
-      if (bookResponse.combination.gradeLevel) {
-        request.searchCriteria.grade = [bookResponse.combination.gradeLevel];
-        request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
-      }
-    }
-    request.searchCriteria.contentTypes = [ContentType.COURSE];
-    request.searchCriteria.languageCode = this.selectedLanguage;
-    // request.searchCriteria.framework = ;
-    console.log('getCurriculumCourses:request = ', request);
-
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
-        console.log('getCurriculumCourses:response = ', response);
-        this.ngZone.run(() => {
-          this.courseList = [];
-          response.sections.forEach(section => {
-            let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
-            if (section.contents) {
-              if (section.contents.length === 1) {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1', 1);
-              } else {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
-              }
-            }
-            const contentListObj = {
-              contents: section.contents,
-              title: section.name,
-              count: countLabel,
-              theme: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].background
-                : null,
-
-              titleColor: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].titleColor
-                : null,
-
-              cardImg: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].icon
-                : null
-            };
-            this.courseList.push(contentListObj);
-          });
-        });
-      })
-      .catch(error => {
       });
   }
 
@@ -1220,5 +1177,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       //   }
       // });
     }
+  }
+
+  navigateToViewMoreContentsPage(section) {
+    const pageName = 'TV Programs';
+    const params: NavigationExtras = {
+      state: {
+        requestParams: {
+          request: section.searchCriteria
+        },
+        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+        pageName
+      }
+    };
+    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 }

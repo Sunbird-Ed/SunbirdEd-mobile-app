@@ -68,6 +68,7 @@ global.splashscreen = {
     markImportDone: () => { },
     hide: () => { },
     clearPrefs: () => { },
+    setContent: () => { }
 }
 
 global.codePush = {
@@ -95,7 +96,7 @@ global.FCMPlugin = {
 }
 
 global.sbsync = {
-    onSyncSuccess: () => {}
+    onSyncSucces: () => {}
 }
 
 global.qrScanner = {

@@ -1263,8 +1263,8 @@ describe('Profile.page', () => {
         // arrange
         profilePage.profile = {
             userName: 'some_username',
-            firstName: '',
-            lastName: ''
+            firstName: 'First',
+            lastName: 'Last'
         };
         mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
             switch (key) {

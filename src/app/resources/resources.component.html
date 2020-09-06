@@ -23,16 +23,46 @@
         </ion-label>
       </ion-item>
     </ion-list>
+    <div *ngFor="let result of dynamicResponse; let i=index;">
+      <div *ngIf="result.orientation === 'horizontal'">
+        <div *ngFor="let section of result.section?.sections">
+          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length">
+            <div class="sb-recently-viewed-items">
+              <div class="sb-recenlty-viewed-title">{{result.name}}
+                <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
+                  (click)="navigateToViewMoreContentsPage(result);">
+                  {{ 'VIEW_ALL' | translate }}</button>
+              </div>
 
-    <div class="sb-course-container" *ngIf="courseList.length">
-      <sb-course-cards-hlist [multiRow]="courseList.length > 3" [contentList]="courseList"
-        [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
-        (cardClick)="onCourseCardClick($event)" [maxCardCount]="20">
-      </sb-course-cards-hlist>
-    </div>
-    <div *ngIf="searchApiLoader" class="sb-course-container">
-      <sb-course-cards-hlist [type]="curiculum_course_card_grid" [isLoading]="searchApiLoader">
-      </sb-course-cards-hlist>
+              <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
+                <div class="sb-card-container sb-card-recently-container">
+                  <div class="recently-viewed-card-size" *ngFor="let content of section.contents">
+                    <sb-library-card
+                      [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
+                      [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
+                      (cardClick)="navigateToDetailPage($event, content);"
+                      [cardImg]="content?.appIcon || defaultAppIcon">
+                    </sb-library-card>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="result.orientation === 'vertical'">
+        <div class="section-header-style" *ngIf="storyAndWorksheets.length">{{result.name}}</div>
+        <div *ngFor="let items of storyAndWorksheets">
+          <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
+            <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
+              [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+              [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
+              (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)"
+              (cardClick)="navigateToDetailPage($event, items.name)">
+            </sb-library-cards-stack>
+          </div>
+        </div>
+      </div>
     </div>
 
     <ion-list class="m-n" *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
@@ -47,19 +77,6 @@
         </ion-label>
       </ion-item>
     </ion-list>
-
-    <div [ngClass]="{'sb-course-container': courseList.length === 0}" class="sb-course-heading"
-      *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
-    </div>
-    <div *ngFor="let items of storyAndWorksheets">
-      <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
-        <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
-          [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [viewMoreButtonText]="'VIEW_MORE' | translate"
-          [maxCardCount]="3" (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)"
-          (cardClick)="navigateToDetailPage($event, items.name)">
-        </sb-library-cards-stack>
-      </div>
-    </div>
     <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">
       <div class="text-center" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
         <p class="information">{{'NO_BOOKS_TEXT' | translate:{'%s': appLabel} }}</p>
