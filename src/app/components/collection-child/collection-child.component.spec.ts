@@ -19,6 +19,7 @@ import {
 import { Content } from 'sunbird-sdk';
 import { EventTopics } from '@app/app/app.constant';
 import { MimeType, ContentType, RouterLinks } from '../../app.constant';
+import { NavigationService } from '../../../services/navigation-handler.service';
 
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
@@ -39,6 +40,12 @@ describe('CollectionChildComponent', () => {
   };
   const mockLocation: Partial<Location> = {};
   const mockEvents: Partial<Events> = {};
+  const mockNavigationService: Partial<NavigationService> = {
+    navigateToDetailPage: jest.fn(),
+    navigateToContent: jest.fn(),
+    navigateToTrackableCollection: jest.fn(),
+    navigateToCollection: jest.fn()
+  };
 
   const constructComponent = () => {
     collectionChildComponent = new CollectionChildComponent(
@@ -50,7 +57,8 @@ describe('CollectionChildComponent', () => {
       mockTextbookTocService as TextbookTocService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockLocation as Location,
-      mockEvents as Events
+      mockEvents as Events,
+      mockNavigationService as NavigationService
     );
   };
 
@@ -518,13 +526,10 @@ describe('CollectionChildComponent', () => {
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith(
-          expect.arrayContaining([RouterLinks.COLLECTION_DETAIL_ETB]),
+        expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
           expect.objectContaining({
-            state: expect.objectContaining({
-              content,
-              depth: ''
-            })
+            content,
+            depth: ''
           })
         );
       });
@@ -545,14 +550,11 @@ describe('CollectionChildComponent', () => {
           expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
             rootUnitId: undefined, contentId: content.identifier, unit: undefined
           });
-          expect(mockRouter.navigate).toHaveBeenCalledWith(
-            expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+          expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
             expect.objectContaining({
-              state: expect.objectContaining({
-                isChildContent: true,
-                content,
-                depth: ''
-              })
+              isChildContent: true,
+              content,
+              depth: ''
             })
           );
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -619,14 +621,11 @@ describe('CollectionChildComponent', () => {
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
               rootUnitId: undefined, contentId: content.identifier, unit: undefined
             });
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
               expect.objectContaining({
-                state: expect.objectContaining({
-                  isChildContent: true,
-                  content,
-                  depth: ''
-                })
+                isChildContent: true,
+                content,
+                depth: ''
               })
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -694,14 +693,11 @@ describe('CollectionChildComponent', () => {
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
               rootUnitId: undefined, contentId: content.identifier, unit: undefined
             });
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
               expect.objectContaining({
-                state: expect.objectContaining({
-                  isChildContent: true,
-                  content,
-                  depth: ''
-                })
+                isChildContent: true,
+                content,
+                depth: ''
               })
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(

@@ -61,7 +61,8 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
+import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-profile',
@@ -138,6 +139,7 @@ export class ProfilePage implements OnInit {
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
+    private navService: NavigationService,
     private sbProgressLoader: SbProgressLoader,
     private fileOpener: FileOpener,
     private toastController: ToastController,
@@ -556,28 +558,34 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
-    if (content.contentType === ContentType.COURSE) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    } else {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      {
+        content
+      }
+    );
+    // if (content.contentType === ContentType.COURSE) {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
+    // } else if (content.mimeType === MimeType.COLLECTION) {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
+    // } else {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
+    // }
   }
 
   updateLocalProfile(framework) {
@@ -871,7 +879,14 @@ export class ProfilePage implements OnInit {
           resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
         }
       };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
+      console.log('Content Data', content);
+      this.navService.navigateToTrackableCollection(
+        {
+          content,
+          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
+        }
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }

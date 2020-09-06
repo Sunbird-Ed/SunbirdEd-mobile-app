@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype
+  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype, UtilityService
 } from '@app/services';
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
@@ -12,6 +12,7 @@ import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -39,6 +40,7 @@ export class CurriculumCoursesPage implements OnInit {
     private appHeaderService: AppHeaderService,
     private appGlobalService: AppGlobalService,
     private translate: TranslateService,
+    private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -112,12 +114,19 @@ export class CurriculumCoursesPage implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, course.identifier),
       this.corRelationList);
-    this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-      state: {
-        content: course,
-        corRelationList: this.corRelationList
-      }
-    });
+      console.log('Content Data', course);
+      this.navService.navigateToTrackableCollection(
+        {
+          content: course,
+          corRelationList: this.corRelationList
+        }
+      );
+    // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+    //   state: {
+    //     content: course,
+    //     corRelationList: this.corRelationList
+    //   }
+    // });
   }
 
   async getEnrolledCourses(userId: string) {

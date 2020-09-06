@@ -56,6 +56,8 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { map } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
+import { UtilityService } from '@app/services';
+import { NavigationService } from '@app/services/navigation-handler.service';
 declare const cordova;
 
 @Component({
@@ -150,6 +152,7 @@ export class QrcoderesultPage implements OnDestroy {
     private location: Location,
     private file: File,
     private headerService: AppHeaderService,
+    private navService: NavigationService,
     private router: Router,
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
@@ -525,46 +528,29 @@ export class QrcoderesultPage implements OnDestroy {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
-    if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content,
-      //   corRelation: this.corRelationList
-      // });
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
+    switch(ContentUtil.isTrackable(content)) {
+      case 1:
+        this.navService.navigateToTrackableCollection({
           content,
           corRelation: this.corRelationList
+        });
+        break;
+      case 0:
+        if (paths.length && paths.length >= 2) {
+          this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
         }
-      });
-    } else if (content && content.mimeType === MimeType.COLLECTION) {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: content,
-      //   corRelation: this.corRelationList
-      // });
-      if (paths.length && paths.length >= 2) {
-        this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
-      }
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state: {
+        this.navService.navigateToCollection({
           content,
           corRelation: this.corRelationList
-        }
-      });
-    } else {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-        !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-        PageId.DIAL_CODE_SCAN_RESULT);
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content,
-      //   depth: '1',
-      //   isChildContent: true,
-      //   downloadAndPlay: true,
-      //   corRelation: this.corRelationList
-      // });
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
+        });
+        break;
+      case -1:
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+          !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+          PageId.DIAL_CODE_SCAN_RESULT);
+        this.navService.navigateToContent({
           content,
           depth: '1',
           isChildContent: true,
@@ -572,9 +558,44 @@ export class QrcoderesultPage implements OnDestroy {
           corRelation: this.corRelationList,
           onboarding: this.onboarding,
           source: this.source
-        }
-      });
+        });
+        break;
     }
+    // if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
+    //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+    //     state: {
+    //       content,
+    //       corRelation: this.corRelationList
+    //     }
+    //   });
+    // } else if (content && content.mimeType === MimeType.COLLECTION) {
+    //   if (paths.length && paths.length >= 2) {
+    //     this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
+    //   }
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+    //     state: {
+    //       content,
+    //       corRelation: this.corRelationList
+    //     }
+    //   });
+    // } else {
+    //   this.telemetryGeneratorService.generateInteractTelemetry(
+    //     InteractType.TOUCH,
+    //     Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+    //     !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+    //     PageId.DIAL_CODE_SCAN_RESULT);
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+    //     state: {
+    //       content,
+    //       depth: '1',
+    //       isChildContent: true,
+    //       downloadAndPlay: true,
+    //       corRelation: this.corRelationList,
+    //       onboarding: this.onboarding,
+    //       source: this.source
+    //     }
+    //   });
+    // }
   }
 
   addElipsesInLongText(msg: string) {
@@ -906,14 +927,19 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   openTextbookToc() {
-    this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
-      {
-        state: {
-          childrenData: this.childrenData, parentId: this.identifier,
-          stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
-          latestParentNodes: this.latestParents
-        }
-      });
+    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], {
+      childrenData: this.childrenData, parentId: this.identifier,
+      stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
+      latestParentNodes: this.latestParents
+    });
+    // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+    //   {
+    //     state: {
+    //       childrenData: this.childrenData, parentId: this.identifier,
+    //       stckyUnitTitle: this.stckyUnitTitle, stckyindex: this.stckyindex,
+    //       latestParentNodes: this.latestParents
+    //     }
+    //   });
     const values = new Map();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

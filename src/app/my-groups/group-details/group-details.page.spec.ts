@@ -16,6 +16,7 @@ import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { NavigationService } from '../../../services/navigation-handler.service';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
@@ -43,6 +44,10 @@ describe('GroupDetailsPage', () => {
         })) as any
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockNavigationService: Partial<NavigationService> = {
+        navigateToTrackableCollection: jest.fn(),
+        navigateTo: jest.fn()
+    };
 
     beforeAll(() => {
         groupDetailsPage = new GroupDetailsPage(
@@ -53,6 +58,7 @@ describe('GroupDetailsPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockPopoverCtrl as PopoverController,
+            mockNavigationService as NavigationService,
             mockCommonUtilService as CommonUtilService,
             mockFilterPipe as FilterPipe,
             mockTelemetryGeneratorService as TelemetryGeneratorService
@@ -2052,16 +2058,14 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.onActivityCardClick({ activityInfo: {} });
 
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-            {
-                state: {
-                    loggedinUser: groupDetailsPage.loggedinUser,
-                    group: groupDetailsPage.groupDetails,
-                    memberList: groupDetailsPage.memberList,
-                    activity: { activityInfo: {} },
-                    corRelation: groupDetailsPage.corRelationList
-                }
-            });
+        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],{
+            loggedinUser: groupDetailsPage.loggedinUser,
+            group: groupDetailsPage.groupDetails,
+            memberList: groupDetailsPage.memberList,
+            activity: { activityInfo: {} },
+            corRelation: groupDetailsPage.corRelationList
+        
+        });
     });
 
     it('should not navigate To course page if loggeding user is not a admin', () => {
@@ -2073,36 +2077,11 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.onActivityCardClick({ activityInfo: {} });
 
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
-            {
-                state: {
-                    content: {},
-                    corRelation: groupDetailsPage.corRelationList
-                }
-            });
-    });
-
-    it('should not navigate To ActivityDetails page if loggeding user is a admin', () => {
-        // arrange
-        groupDetailsPage.loggedinUser = { role: GroupMemberRole.ADMIN } as any;
-        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-
-        // act
-        groupDetailsPage.onActivityCardClick({ activityInfo: {} });
-
-        // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
-            {
-                state: {
-                    loggedinUser: groupDetailsPage.loggedinUser,
-                    group: groupDetailsPage.groupDetails,
-                    memberList: groupDetailsPage.memberList,
-                    activity: {
-                        activityInfo: {}
-                    },
-                    corRelation: groupDetailsPage.corRelationList
-                }
-            });
+        expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalledWith({
+            content: {},
+            corRelation: groupDetailsPage.corRelationList
+        
+        });
     });
 
     describe('navigateToAddActivityPage', () => {
