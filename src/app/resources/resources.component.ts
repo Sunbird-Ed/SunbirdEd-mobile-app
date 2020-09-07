@@ -1223,14 +1223,33 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService) {
+  async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService,
+                                   telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
     if (!commonUtilService.networkInfo.isNetworkAvailable) {
       await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
       return;
     }
+    const selectedCorRelation: Array<CorrelationData> = [];
+    for (const key in formOutput) {
+      if (typeof formOutput[key] === 'string') {
+        selectedCorRelation.push({ id: formOutput[key], type: key });
+      } else if (typeof formOutput[key] === 'object' && formOutput[key].name ) {
+        selectedCorRelation.push({ id: formOutput[key].name, type: key });
+      }
+    }
+    telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SUBMIT_CLICKED,
+      Environment.HOME,
+      PageId.FRAMEWORK_SELECTION,
+      undefined,
+      undefined,
+      undefined,
+      selectedCorRelation);
     const params = {
       formInput,
       formOutput,
+      corRelation
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }

@@ -1489,10 +1489,16 @@ describe('ResourcesComponent', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            const formOutput = {
+                board: { name: 'STATE' }
+            };
             mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            resourcesComponent.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService).then(() => {
+            resourcesComponent.onFrameworkSelectionSubmit({}, formOutput, mockRouter, mockCommonUtilService,
+                mockTelemetryGeneratorService, []).then(() => {
                 // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             });

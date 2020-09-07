@@ -801,8 +801,8 @@
   "FOUND_CONTENT_THAT_MATCH_YOR_NEED": "We've found some content that matches your need!",
   "SIMILAR_CONTENT_THAT_MAY_MATCH_YOR_NEED": "Other boards may have interesting content to suit your need!",
   "SEEK_HELP": "Seek help",
-  "STILL_COULD_NOT_FIND_CONTENT": "Still could'nt find what you were looking for?",
-  "PLEASE_CLICK_ON_HELP_BUTTON": "Please click on the help button.",
+  "COULD_NOT_FIND_CONTENT_YET": "Couldn't find your content as yet ?",
+  "CLICK_THE_BUTTON_BELOW": "Click the button below",
   "NO_CONTENT_FOUND_MATCHING": "No content found matching",
   "YOUR_BOARD_IS_YET_TO_ADD_MORE_CONTENT": "Your board is yet to add more content.",
   "CLICK_ON_THE_HELP_BUTTON": "Click on the help button"

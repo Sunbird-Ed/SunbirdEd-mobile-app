@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService, CorReleationDataType, PageId, TelemetryGeneratorService, ImpressionType, Environment } from '@app/services';
 import { FieldConfig } from 'common-form-elements';
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 @Injectable({ providedIn: 'root' })
 export class FrameworkSelectionDelegateService {
@@ -10,7 +11,8 @@ export class FrameworkSelectionDelegateService {
 }
 
 export interface FrameworkSelectionActionsDelegate {
-  onFrameworkSelectionSubmit(formInput?: any, formOutput?: any, router?: Router, commonUtilService?: CommonUtilService);
+  onFrameworkSelectionSubmit(formInput?: any, formOutput?: any, router?: Router, commonUtilService?: CommonUtilService,
+                             telemetryGeneratorService?: TelemetryGeneratorService, corRelation?: Array<CorrelationData>);
 }
 
 @Component({
@@ -28,13 +30,15 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   submitDetails: { label?: string, navigateTo?: string };
   isFrameworkFormValid = false;
   selectedFrameworkData: any;
+  corRelation: Array<CorrelationData> = [];
 
   constructor(
     private router: Router,
     private frameworkCommonFormConfigBuilder: FrameworkCommonFormConfigBuilder,
     private appHeaderService: AppHeaderService,
     public commonUtilService: CommonUtilService,
-    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService
+    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
     this.getNavParams();
   }
@@ -45,15 +49,27 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
       this.title = paramData.title;
       this.subTitle = paramData.subTitle;
       this.formConfig = paramData.formConfig;
+      this.corRelation = paramData.corRelation;
       this.formConfigInput = paramData.formConfig && Array.isArray(paramData.formConfig) ?
         JSON.parse(JSON.stringify(paramData.formConfig)) : [];
       this.submitDetails = paramData.submitDetails;
     }
+    this.corRelation.push({ id: PageId.FRAMEWORK_SELECTION, type: CorReleationDataType.FROM_PAGE });
   }
 
   ngOnInit(): void {
     this.initilizeFormConfig();
     this.appHeaderService.showHeaderWithBackButton();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.FRAMEWORK_SELECTION,
+      Environment.USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelation);
   }
 
   ngOnDestroy(): void {
@@ -82,7 +98,8 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   submitForm() {
     if (this.frameworkSelectionDelegateService.delegate) {
       this.frameworkSelectionDelegateService.delegate.onFrameworkSelectionSubmit(
-        this.formConfigInput, this.selectedFrameworkData, this.router, this.commonUtilService
+        this.formConfigInput, this.selectedFrameworkData, this.router, this.commonUtilService,
+        this.telemetryGeneratorService, this.corRelation
       );
     }
   }

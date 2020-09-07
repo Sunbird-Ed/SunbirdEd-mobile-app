@@ -2,14 +2,14 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '@app/services';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '@app/services';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {
   ContentSearchCriteria,
   ContentSearchResult,
   ContentService,
-  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService
+  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService, CorrelationData
 } from 'sunbird-sdk';
 import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
 import { Router } from '@angular/router';
@@ -48,7 +48,8 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
   contentOrder = ContentOrder;
   relevantContentCount = this.displayCount;
   similarContentCount = this.displayCount;
-
+  isLoading = false;
+  corRelation: Array<CorrelationData> = [];
 
   constructor(
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
@@ -63,13 +64,24 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.getNavParam();
   }
   async ngOnInit() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.RELEVANT_CONTENTS,
+      Environment.USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelation);
   }
 
   private getNavParam() {
+    this.isLoading = true;
     const navExtras = this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state;
     if (navExtras) {
       this.formInput = navExtras.formInput;
-
+      this.corRelation = navExtras.corRelation;
       this.paramsData = navExtras.formOutput;
       this.selectedFramework.board = this.paramsData.board && this.paramsData.board.name ? [this.paramsData.board.name] : [];
       this.selectedFramework.medium = this.paramsData.medium && this.paramsData.medium.name ? [this.paramsData.medium.name] : [];
@@ -81,6 +93,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.prepareContentRequest();
     this.getRelevantContents();
     this.getSimilarContents();
+    this.corRelation.push({ id: PageId.RELEVANT_CONTENTS, type: CorReleationDataType.FROM_PAGE });
   }
 
   private prepareContentRequest() {
@@ -97,21 +110,28 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
   }
 
   private async getSimilarContents() {
-    const similarContentRequest: ContentSearchCriteria = { ...this.searchRequest };
+    try {
+      const similarContentRequest: ContentSearchCriteria = { ...this.searchRequest };
 
-    if (this.selectedFramework.board && this.defaultBoard.length && this.selectedFramework.board.find(e => e === this.defaultBoard[0])) {
-      similarContentRequest.board = await this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]);
-    } else {
-      similarContentRequest.board = this.defaultBoard[0];
+      if (this.selectedFramework.board && this.defaultBoard.length && this.selectedFramework.board.find(e => e === this.defaultBoard[0])) {
+        similarContentRequest.board = await this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]);
+      } else {
+        similarContentRequest.board = this.defaultBoard[0];
+      }
+      similarContentRequest.mode = 'soft';
+
+      similarContentRequest.contentTypes = this.getContentTypeList();
+      const contentList = await this.fetchContentResult(similarContentRequest);
+      contentList.sort((a) => {
+        const val = (a['contentType'] !== this.searchRequest.contentTypes[0]) ? 1 : -1;
+        return val;
+      });
+      this.similarContentList = contentList;
+      this.isLoading = false;
+    } catch (e) {
+      this.isLoading = false;
     }
-    similarContentRequest.mode = 'soft';
 
-    similarContentRequest.contentTypes = this.getContentTypeList();
-    this.similarContentList = await this.fetchContentResult(similarContentRequest);
-    this.similarContentList.sort((a) => {
-      const val = (a['contentType'] !== this.searchRequest.contentTypes[0]) ? 1 : -1;
-      return val;
-    });
   }
 
   private async fetchContentResult(request: ContentSearchCriteria): Promise<any[]> {
@@ -164,10 +184,24 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     } else {
       this.similarContentCount += this.displayCount;
     }
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.VIEW_MORE_CLICKED,
+      Environment.HOME,
+      PageId.RELEVANT_CONTENTS)
   }
 
   async goToHelp() {
-    this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.HELP_CLICKED,
+      Environment.HOME,
+      PageId.RELEVANT_CONTENTS);
+
+    this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
+      state: {
+        corRelation: this.corRelation
+    }});
   }
 
   private getContentTypeList() {

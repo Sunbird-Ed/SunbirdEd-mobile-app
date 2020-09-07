@@ -124,7 +124,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
       this.formContext = this.router.getCurrentNavigation().extras.state.formCnotext;
-      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation || [];
       if (this.router.getCurrentNavigation().extras.state.showHeader) {
         this.headerService.showHeaderWithBackButton();
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -273,8 +273,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,
-      PageId.FAQ_REPORT_ISSUE, undefined,
-      values
+      PageId.FAQ_REPORT_ISSUE,
+      undefined,
+      values,
+      undefined,
+      this.corRelationList
     );
   }
 
