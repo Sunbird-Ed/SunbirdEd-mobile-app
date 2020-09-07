@@ -75,6 +75,7 @@ import { animationGrowInTopRight } from '../animations/animation-grow-in-top-rig
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
 
 @Component({
   selector: 'app-resources',
@@ -259,7 +260,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -333,6 +335,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+
   }
 
   generateNetworkType() {
@@ -1117,6 +1120,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.frameworkSelectionDelegateService.delegate = undefined;
   }
 
   onCourseCardClick(event) {
@@ -1192,4 +1196,43 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
+
+  async requestMoreContent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LET_US_KNOW_CLICKED,
+      Environment.LIBRARY,
+      PageId.LIBRARY,
+    );
+
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
+    this.appGlobalService.formConfig = formConfig;
+    this.frameworkSelectionDelegateService.delegate = { onFrameworkSelectionSubmit: this.onFrameworkSelectionSubmit };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
+    {
+      state: {
+        showHeader: true,
+        corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
+        title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
+        subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+        formConfig,
+        submitDetails: {
+          label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+        }
+      }
+    });
+  }
+
+  async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService) {
+    if (!commonUtilService.networkInfo.isNetworkAvailable) {
+      await this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
+      return;
+    }
+    const params = {
+      formInput,
+      formOutput,
+    };
+    router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
+  }
+
 }

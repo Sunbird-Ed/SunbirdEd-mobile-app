@@ -9,6 +9,7 @@ import { DirectivesModule } from '@app/directives/directives.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-sort.component';
+import { ResourcesRoutingModule } from './resources-routing.module';
 
 @NgModule({
   declarations: [
@@ -21,12 +22,7 @@ import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-so
       scrollAssist: true,
     }),
     TranslateModule.forChild(),
-    RouterModule.forChild([
-      {
-        path: '',
-        component: ResourcesComponent
-      }
-    ]),
+    ResourcesRoutingModule,
     ComponentsModule,
     DirectivesModule,
     ReactiveFormsModule,

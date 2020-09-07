@@ -71,6 +71,12 @@ var formRequestArray = [{
         'subType': 'boardContactInfo',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'dynamicForm',
+        'subType': 'contentRequest',
+        'action': 'submit',
+        'component': 'app'
     }
 ];
 

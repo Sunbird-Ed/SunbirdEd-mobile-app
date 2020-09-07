@@ -1,0 +1,212 @@
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '@app/services';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
+import {
+  ContentSearchCriteria,
+  ContentSearchResult,
+  ContentService,
+  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService
+} from 'sunbird-sdk';
+import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
+import { Router } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
+import { TranslateService } from '@ngx-translate/core';
+
+enum ContentOrder {
+  RELEVANT = 'RELEVANT',
+  SIMILAR = 'SIMILAR',
+}
+@Component({
+  selector: 'app-relevant-contents',
+  templateUrl: './relevant-contents.page.html',
+  styleUrls: ['./relevant-contents.page.scss'],
+})
+export class RelevantContentsPage implements OnInit, OnDestroy {
+  private displayCount = 4;
+  private formInput: any;
+  private searchRequest: ContentSearchCriteria = {
+    searchType: SearchType.SEARCH,
+    facets: Search.FACETS_ETB,
+    fields: ExploreConstants.REQUIRED_FIELDS
+  };
+  private selectedFramework = {
+    board: [],
+    medium: [],
+    grade: [],
+    subject: [],
+    contentType: [],
+  };
+  private paramsData: any;
+  private defaultBoard = [];
+
+  relevantContentList: Array<any> = [];
+  similarContentList: Array<any>[];
+  contentOrder = ContentOrder;
+  relevantContentCount = this.displayCount;
+  similarContentCount = this.displayCount;
+
+
+  constructor(
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private platform: Platform,
+    public commonUtilService: CommonUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
+    private translate: TranslateService,
+    private router: Router,
+  ) {
+    this.getNavParam();
+  }
+  async ngOnInit() {
+  }
+
+  private getNavParam() {
+    const navExtras = this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state;
+    if (navExtras) {
+      this.formInput = navExtras.formInput;
+
+      this.paramsData = navExtras.formOutput;
+      this.selectedFramework.board = this.paramsData.board && this.paramsData.board.name ? [this.paramsData.board.name] : [];
+      this.selectedFramework.medium = this.paramsData.medium && this.paramsData.medium.name ? [this.paramsData.medium.name] : [];
+      this.selectedFramework.grade = this.paramsData.grade && this.paramsData.grade.name ? [this.paramsData.grade.name] : [];
+      this.selectedFramework.subject = this.paramsData.subject && this.paramsData.subject.name ? [this.paramsData.subject.name] : [];
+      this.selectedFramework.contentType = [this.paramsData.contenttype];
+    }
+    this.getDefaultBoard();
+    this.prepareContentRequest();
+    this.getRelevantContents();
+    this.getSimilarContents();
+  }
+
+  private prepareContentRequest() {
+    this.searchRequest.board = this.selectedFramework.board;
+    this.searchRequest.medium = this.selectedFramework.medium;
+    this.searchRequest.grade = this.selectedFramework.grade;
+    this.searchRequest.subject = this.selectedFramework.subject;
+    this.searchRequest.contentTypes = this.selectedFramework.contentType;
+    this.searchRequest.mode = 'hard';
+  }
+
+  private async getRelevantContents() {
+    this.relevantContentList = await this.fetchContentResult(this.searchRequest);
+  }
+
+  private async getSimilarContents() {
+    const similarContentRequest: ContentSearchCriteria = { ...this.searchRequest };
+
+    if (this.selectedFramework.board && this.defaultBoard.length && this.selectedFramework.board.find(e => e === this.defaultBoard[0])) {
+      similarContentRequest.board = await this.getBoardList(this.searchRequest.board && this.searchRequest.board[0]);
+    } else {
+      similarContentRequest.board = this.defaultBoard[0];
+    }
+    similarContentRequest.mode = 'soft';
+
+    similarContentRequest.contentTypes = this.getContentTypeList();
+    this.similarContentList = await this.fetchContentResult(similarContentRequest);
+    this.similarContentList.sort((a) => {
+      const val = (a['contentType'] !== this.searchRequest.contentTypes[0]) ? 1 : -1;
+      return val;
+    });
+  }
+
+  private async fetchContentResult(request: ContentSearchCriteria): Promise<any[]> {
+    try {
+      const result: ContentSearchResult = await this.contentService.searchContent(request).toPromise();
+      const contentList = result.contentDataList;
+      if (contentList && contentList.length) {
+        for (let i = 0; i < contentList.length; i++) {
+          contentList[i] = this.commonUtilService.getContentIcon(contentList[i]);
+        }
+      }
+      return contentList || [];
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+  }
+
+  ngOnDestroy(): void {
+
+  }
+
+  navigateToTextBookDetailPage(event) {
+    const item = event.data;
+    const index = event.index;
+    const identifier = item.contentId || item.identifier;
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
+    const corRelationList = [{ id: item.name, type: CorReleationDataType.SUBJECT }];
+    const values = {};
+    values['sectionName'] = item.subject;
+    values['positionClicked'] = index;
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      Environment.HOME,
+      PageId.EXPLORE_MORE_CONTENT,
+      telemetryObject,
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      corRelationList);
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
+  }
+
+  viewMoreContent(type: ContentOrder) {
+    if (type === this.contentOrder.RELEVANT) {
+      this.relevantContentCount += this.displayCount;
+    } else {
+      this.similarContentCount += this.displayCount;
+    }
+  }
+
+  async goToHelp() {
+    this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
+  }
+
+  private getContentTypeList() {
+    const contentTypeConfig: any = this.formInput.find(e => e.code === 'contenttype');
+    const contentTypeList = []
+    const list = (contentTypeConfig && contentTypeConfig.templateOptions && contentTypeConfig.templateOptions.options) || [];
+    list.forEach(element => {
+      contentTypeList.push(element.value);
+    });
+    return contentTypeList;
+  }
+
+  private getDefaultBoard() {
+    const boardConfig = this.formInput.find(e => e.code === 'board');
+    this.defaultBoard = boardConfig && boardConfig.templateOptions && boardConfig.templateOptions.dataSrc &&
+      boardConfig.templateOptions.dataSrc.params && boardConfig.templateOptions.dataSrc.params.relevantTerms ?
+      boardConfig.templateOptions.dataSrc.params.relevantTerms : [];
+  }
+
+  private async getBoardList(board) {
+    const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+      from: CachedItemRequestSourceFrom.CACHE,
+      language: this.translate.currentLang,
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+    };
+
+    try {
+      const list = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise();
+      const boardList = [];
+      list.forEach(element => {
+        if (element.name !== board) {
+          boardList.push(element.name);
+        }
+      });
+
+      return boardList || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+}

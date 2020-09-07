@@ -654,4 +654,23 @@ export class CommonUtilService {
             return [];
         }
     }
+
+    getContentIcon(content, defaultImg?) {
+        if (!content || !content.appIcon) {
+            return content;
+        }
+
+        defaultImg = defaultImg ? defaultImg : this.convertFileSrc('assets/imgs/ic_launcher.png');
+
+        if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
+            if (this.networkInfo.isNetworkAvailable) {
+                content.cardImg = content.appIcon;
+            } else {
+                content.appIcon = defaultImg;
+            }
+        } else if (content.basePath) {
+            content.appIcon = content.basePath + '/' + content.appIcon;
+        }
+        return content;
+    }
 }
