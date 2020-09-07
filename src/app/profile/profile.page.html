@@ -253,9 +253,9 @@
                                 {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
                     </div>
-                    <div class="training-2" *ngIf="certificate?.certificate">
+                    <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
-                            (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
+                            (click)="downloadTrainingCertificate(certificate)">
                             <ion-icon class="view-icon" name="md-eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
