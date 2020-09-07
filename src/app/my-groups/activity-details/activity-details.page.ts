@@ -42,7 +42,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   filteredMemberList: any;
   memberSearchQuery: string;
   group: Group;
-  activity: GroupActivity;
+  activity: any;
   courseList = [];
   showCourseDropdownSection = false;
   selectedCourse;
@@ -81,7 +81,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.handleDeviceBackButton();
     this.courseList = [];
     try {
-      this.courseData = await this.collectionService.fetchCollectionData(this.activity.id);
+      this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier);
       this.getNestedCourses(this.courseData.children);
       if (this.courseList.length) {
         this.showCourseDropdownSection = true;
@@ -90,7 +90,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       console.log('fetchCollectionData err', err);
     }
     this.selectedCourse = this.courseList.find((s) => s.identifier === this.appGlobalService.selectedActivityCourseId) || '';
-    this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.id);
+    this.getActvityDetails(this.appGlobalService.selectedActivityCourseId || this.activity.identifier);
   }
 
   ionViewWillLeave() {
@@ -204,7 +204,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       {
         state: {
           courseList: this.courseList,
-          mainCourseName: this.activity.activityInfo.name
+          mainCourseName: this.activity.name
         }
       });
   }
