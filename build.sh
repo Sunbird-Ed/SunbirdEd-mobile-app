@@ -11,7 +11,7 @@ SUNBIRD_CORDOVA_COUNTER=0
 
 # Pass build branch as input
 buildBranch="$1"
-npm install
+rm package-lock.json && npm install
 
 file="./build_config"
 while IFS="=" read -r key value; do
