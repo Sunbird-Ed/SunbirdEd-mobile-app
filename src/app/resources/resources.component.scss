@@ -150,3 +150,26 @@
   max-width: 50%;
   width: 50%;
 }
+
+.sb-card-recently-container {
+  .recently-viewed-card-size{
+    margin: 0 8px; 
+    min-width:288px;
+    max-width:288px;
+    &:only-child {
+      min-width: 100%;
+      max-width: calc(100vw - 32px);
+    }
+  }
+}
+.course-card-pd{
+  padding: 1px 0 12px;
+}
+
+.section-header-style{
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  padding-top: 14px;
+  padding-bottom: 4px;
+}

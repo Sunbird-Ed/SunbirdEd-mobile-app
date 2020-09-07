@@ -17,6 +17,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
 import { AddActivityToGroup } from '../../my-groups/group.interface';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-collection-child',
@@ -77,6 +78,7 @@ export class CollectionChildComponent implements OnInit {
     private telemetryService: TelemetryGeneratorService,
     private location: Location,
     private events: Events,
+    private navService: NavigationService
   ) { }
 
   ngOnInit(): void {
@@ -88,8 +90,7 @@ export class CollectionChildComponent implements OnInit {
     this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
   }
 
-  checkHierarchy() {
-    console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
+  private checkHierarchy() {
     if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
       this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
       for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {
@@ -150,94 +151,164 @@ export class CollectionChildComponent implements OnInit {
     } else if (this.isEnrolled && this.isBatchNotStarted && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
       this.events.publish('courseToc:content-clicked', { isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled });
     } else {
-      //   migration-TODO : remove unnecessary
-      //   const stateData = this.navParams.get('contentState');
       const values = {
         contentClicked: content.identifier
       };
-      // values['parentId'] = this.bookID;
       this.zone.run(async () => {
-        if (content.contentType === ContentType.COURSE) {
-          //   migration-TODO : remove unnecessary
-          // this.navCtrl.push(EnrolledCourseDetailsPage, {
-          //   content: content,
-          //   depth: depth,
-          //   contentState: stateData,
-          //   corRelation: this.corRelationList,
-          //   breadCrumb: this.breadCrumb
-          // });
-        } else if (content.mimeType === MimeType.COLLECTION) {
-          this.isDepthChild = true;
-          const collectionDetailsParams: NavigationExtras = {
-            state: {
-              content,
-              depth,
-              // migration-TODO : remove unnece
-              // contentState: stateData,
-              corRelation: this.corRelationList,
-              breadCrumb: this.breadCrumb
-            }
-          };
-          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
-        } else {
-          const goToContentDetails = () => {
-            this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
-
-            this.telemetryService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              InteractSubtype.CONTENT_CLICKED,
-              Environment.HOME,
-              PageId.COLLECTION_DETAIL, this.telemetryObject,
-              values, this.objRollup, this.corRelationList
-            );
-            const contentDetailsParams: NavigationExtras = {
+        switch(ContentUtil.isTrackable(content)) {
+          case 0:
+            this.isDepthChild = true;
+            const collectionDetailsParams: NavigationExtras = {
               state: {
-                isChildContent: true,
                 content,
                 depth,
-                course: this.updatedCourseCardData || undefined,
                 corRelation: this.corRelationList,
-                breadCrumb: this.breadCrumb,
-                ...this.addActivityToGroupData
+                breadCrumb: this.breadCrumb
               }
             };
-            this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
-          };
-
-          if (content.contentData.contentType === ContentType.SELF_ASSESS
-            && this.batch && this.batch.status === 2) {
-            this.assessemtnAlert = await this.popoverCtrl.create({
-              component: SbGenericPopoverComponent,
-              componentProps: {
-                sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
-                sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
-                  'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
-                actionsButtons: [
-                  {
-                    btntext: this.commonUtilService.translateMessage('SKIP'),
-                    btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                  }, {
-                    btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
-                    btnClass: 'popover-color'
-                  }
-                ],
-                showHeader: true,
-                icon: null
-              },
-              cssClass: 'sb-popover sb-dw-delete-popover',
-              showBackdrop: false,
-              backdropDismiss: false,
-              animated: true
-            });
-            await this.assessemtnAlert.present();
-            const { data } = await this.assessemtnAlert.onDidDismiss();
-            if (data && data.isLeftButtonClicked === false) {
+            this.navService.navigateToCollection(collectionDetailsParams.state);
+            break;
+          default:
+            const goToContentDetails = () => {
+              this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+  
+              this.telemetryService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.HOME,
+                PageId.COLLECTION_DETAIL, this.telemetryObject,
+                values, this.objRollup, this.corRelationList
+              );
+              const contentDetailsParams: NavigationExtras = {
+                state: {
+                  isChildContent: true,
+                  content,
+                  depth,
+                  course: this.updatedCourseCardData || undefined,
+                  corRelation: this.corRelationList,
+                  breadCrumb: this.breadCrumb,
+                  ...this.addActivityToGroupData
+                }
+              };
+              this.navService.navigateToContent(contentDetailsParams.state);
+            };
+  
+            if (content.contentType === ContentType.SELF_ASSESS
+              && this.batch && this.batch.status === 2) {
+              this.assessemtnAlert = await this.popoverCtrl.create({
+                component: SbGenericPopoverComponent,
+                componentProps: {
+                  sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
+                  sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
+                    'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+                  actionsButtons: [
+                    {
+                      btntext: this.commonUtilService.translateMessage('SKIP'),
+                      btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                    }, {
+                      btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
+                      btnClass: 'popover-color'
+                    }
+                  ],
+                  showHeader: true,
+                  icon: null
+                },
+                cssClass: 'sb-popover sb-dw-delete-popover',
+                showBackdrop: false,
+                backdropDismiss: false,
+                animated: true
+              });
+              await this.assessemtnAlert.present();
+              const { data } = await this.assessemtnAlert.onDidDismiss();
+              if (data && data.isLeftButtonClicked === false) {
+                goToContentDetails();
+              }
+            } else {
               goToContentDetails();
             }
-          } else {
-            goToContentDetails();
-          }
+            break;
         }
+        // if (content.contentType === ContentType.COURSE) {
+        //   //   migration-TODO : remove unnecessary
+        //   // this.navCtrl.push(EnrolledCourseDetailsPage, {
+        //   //   content: content,
+        //   //   depth: depth,
+        //   //   contentState: stateData,
+        //   //   corRelation: this.corRelationList,
+        //   //   breadCrumb: this.breadCrumb
+        //   // });
+        // } else if (content.mimeType === MimeType.COLLECTION) {
+        //   this.isDepthChild = true;
+        //   const collectionDetailsParams: NavigationExtras = {
+        //     state: {
+        //       content,
+        //       depth,
+        //       // migration-TODO : remove unnece
+        //       // contentState: stateData,
+        //       corRelation: this.corRelationList,
+        //       breadCrumb: this.breadCrumb
+        //     }
+        //   };
+        //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
+        // } else {
+        //   const goToContentDetails = () => {
+        //     this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+
+        //     this.telemetryService.generateInteractTelemetry(
+        //       InteractType.TOUCH,
+        //       InteractSubtype.CONTENT_CLICKED,
+        //       Environment.HOME,
+        //       PageId.COLLECTION_DETAIL, this.telemetryObject,
+        //       values, this.objRollup, this.corRelationList
+        //     );
+        //     const contentDetailsParams: NavigationExtras = {
+        //       state: {
+        //         isChildContent: true,
+        //         content,
+        //         depth,
+        //         course: this.updatedCourseCardData || undefined,
+        //         corRelation: this.corRelationList,
+        //         breadCrumb: this.breadCrumb,
+        //         ...this.addActivityToGroupData
+        //       }
+        //     };
+        //     this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
+        //   };
+
+        //   if (content.contentData.contentType === ContentType.SELF_ASSESS
+        //     && this.batch && this.batch.status === 2) {
+        //     this.assessemtnAlert = await this.popoverCtrl.create({
+        //       component: SbGenericPopoverComponent,
+        //       componentProps: {
+        //         sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
+        //         sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
+        //           'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+        //         actionsButtons: [
+        //           {
+        //             btntext: this.commonUtilService.translateMessage('SKIP'),
+        //             btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+        //           }, {
+        //             btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
+        //             btnClass: 'popover-color'
+        //           }
+        //         ],
+        //         showHeader: true,
+        //         icon: null
+        //       },
+        //       cssClass: 'sb-popover sb-dw-delete-popover',
+        //       showBackdrop: false,
+        //       backdropDismiss: false,
+        //       animated: true
+        //     });
+        //     await this.assessemtnAlert.present();
+        //     const { data } = await this.assessemtnAlert.onDidDismiss();
+        //     if (data && data.isLeftButtonClicked === false) {
+        //       goToContentDetails();
+        //     }
+        //   } else {
+        //     goToContentDetails();
+        //   }
+        // }
       });
     }
   }

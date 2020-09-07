@@ -19,6 +19,7 @@ import {
 import { Content } from 'sunbird-sdk';
 import { EventTopics } from '@app/app/app.constant';
 import { MimeType, ContentType, RouterLinks } from '../../app.constant';
+import { NavigationService } from '../../../services/navigation-handler.service';
 
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
@@ -39,6 +40,12 @@ describe('CollectionChildComponent', () => {
   };
   const mockLocation: Partial<Location> = {};
   const mockEvents: Partial<Events> = {};
+  const mockNavigationService: Partial<NavigationService> = {
+    navigateToDetailPage: jest.fn(),
+    navigateToContent: jest.fn(),
+    navigateToTrackableCollection: jest.fn(),
+    navigateToCollection: jest.fn()
+  };
 
   const constructComponent = () => {
     collectionChildComponent = new CollectionChildComponent(
@@ -50,7 +57,8 @@ describe('CollectionChildComponent', () => {
       mockTextbookTocService as TextbookTocService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockLocation as Location,
-      mockEvents as Events
+      mockEvents as Events,
+      mockNavigationService as NavigationService
     );
   };
 
@@ -63,7 +71,7 @@ describe('CollectionChildComponent', () => {
     jest.resetAllMocks();
   });
 
-  it('should be craeate a instance of CollectionChildComponent', () => {
+  it('should be create a instance of CollectionChildComponent', () => {
     expect(collectionChildComponent).toBeTruthy();
   });
 
@@ -179,7 +187,7 @@ describe('CollectionChildComponent', () => {
           done();
         }, 0);
       });
-      it('sbPopoverMainTitle should be CONTENT_IS_BEEING_ADDED + content name', (done) => {
+      it('sbPopoverMainTitle should be CONTENT_IS_BEING_ADDED + content name', (done) => {
         // arrange
         mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
           present: jest.fn(() => Promise.resolve({})),
@@ -518,13 +526,10 @@ describe('CollectionChildComponent', () => {
         // act
         collectionChildComponent.navigateToDetailsPage(content, '');
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith(
-          expect.arrayContaining([RouterLinks.COLLECTION_DETAIL_ETB]),
+        expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
           expect.objectContaining({
-            state: expect.objectContaining({
-              content,
-              depth: ''
-            })
+            content,
+            depth: ''
           })
         );
       });
@@ -545,14 +550,11 @@ describe('CollectionChildComponent', () => {
           expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
             rootUnitId: undefined, contentId: content.identifier, unit: undefined
           });
-          expect(mockRouter.navigate).toHaveBeenCalledWith(
-            expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+          expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
             expect.objectContaining({
-              state: expect.objectContaining({
-                isChildContent: true,
-                content,
-                depth: ''
-              })
+              isChildContent: true,
+              content,
+              depth: ''
             })
           );
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -619,14 +621,11 @@ describe('CollectionChildComponent', () => {
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
               rootUnitId: undefined, contentId: content.identifier, unit: undefined
             });
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
               expect.objectContaining({
-                state: expect.objectContaining({
-                  isChildContent: true,
-                  content,
-                  depth: ''
-                })
+                isChildContent: true,
+                content,
+                depth: ''
               })
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -694,14 +693,11 @@ describe('CollectionChildComponent', () => {
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
               rootUnitId: undefined, contentId: content.identifier, unit: undefined
             });
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
               expect.objectContaining({
-                state: expect.objectContaining({
-                  isChildContent: true,
-                  content,
-                  depth: ''
-                })
+                isChildContent: true,
+                content,
+                depth: ''
               })
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -775,4 +771,111 @@ describe('CollectionChildComponent', () => {
     });
   });
 
+  describe('ngOnInt check hierarchy changes', () => {
+
+    it('should check for latestParent name if available then check for hierarchyInfo', () => {
+      // arrange
+      collectionChildComponent.childData = mockChildContentData;
+      mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+      collectionChildComponent.stckyindex = 0;
+      collectionChildComponent.latestParentNodes = [
+        {
+          hierarchyInfo: [
+            {
+              identifier: 'do_123',
+              contentType: 'textbook'
+            },
+            {
+              identifier: 'do098',
+              contentType: 'resources'
+            }
+          ]
+        }
+      ];
+      mockEvents.publish = jest.fn();
+      collectionChildComponent.latestParentName = 'sample_name';
+      // act
+      collectionChildComponent.ngOnInit();
+      // assert
+      expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.TOC_COLLECTION_CHILD_ID, {id: 'do_21274246255366963214046'});
+    });
+
+    it('should check for latestParent name if available then go to else part if parent name doesn`t matches', () => {
+          // arrange
+          collectionChildComponent.childData = mockChildContentData;
+          mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+          collectionChildComponent.stckyindex = 0;
+          collectionChildComponent.latestParentNodes = [
+              {
+                  hierarchyInfo: [
+                      {
+                          identifier: 'do_123',
+                          contentType: 'textbook'
+                      },
+                      {
+                          identifier: 'do098',
+                          contentType: 'resources'
+                      }
+                  ]
+              }
+          ];
+          mockEvents.publish = jest.fn();
+          collectionChildComponent.latestParentName = 'different name';
+          // act
+          collectionChildComponent.ngOnInit();
+          // assert
+          expect(mockEvents.publish).not.toHaveBeenCalledWith(EventTopics.TOC_COLLECTION_CHILD_ID, {id: 'do_21274246255366963214046'});
+      });
+
+    it('should check for latestParent name if available then go to else part if hierarchyInfo identifier doesn`t matches', () => {
+          // arrange
+          collectionChildComponent.childData = mockChildContentData;
+          mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+          collectionChildComponent.stckyindex = 0;
+          collectionChildComponent.latestParentNodes = [
+              {
+                  hierarchyInfo: [
+                      {
+                          identifier: 'do_11234455',
+                          contentType: 'textbook'
+                      },
+                      {
+                          identifier: 'do098',
+                          contentType: 'resources'
+                      }
+                  ]
+              }
+          ];
+          mockEvents.publish = jest.fn();
+          collectionChildComponent.latestParentName = 'different name';
+          // act
+          collectionChildComponent.ngOnInit();
+          // assert
+          expect(collectionChildComponent.sameHierarchy).toBeFalsy();
+      });
+
+    it('should check for latestParent name if available then go to else part if hierarchyInfo length doesn`t matches', () => {
+          // arrange
+          collectionChildComponent.childData = mockChildContentData;
+          mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+          collectionChildComponent.stckyindex = 0;
+          collectionChildComponent.latestParentNodes = [
+              {
+                  hierarchyInfo: [
+                      {
+                          identifier: 'do_11234455',
+                          contentType: 'textbook'
+                      },
+                  ]
+              }
+          ];
+          mockEvents.publish = jest.fn();
+          collectionChildComponent.latestParentName = 'different name';
+          // act
+          collectionChildComponent.ngOnInit();
+          // assert
+          expect(collectionChildComponent.sameHierarchy).toBeFalsy();
+      });
+
+  });
 });

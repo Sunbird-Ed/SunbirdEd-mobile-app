@@ -61,7 +61,8 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
+import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-profile',
@@ -138,6 +139,7 @@ export class ProfilePage implements OnInit {
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
+    private navService: NavigationService,
     private sbProgressLoader: SbProgressLoader,
     private fileOpener: FileOpener,
     private toastController: ToastController,
@@ -461,25 +463,25 @@ export class ProfilePage implements OnInit {
         }
         if (certificate.identifier) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId },
-              (svgData, callback) => {
-                this.certificateDownloadAsPdfService.download(
-                    svgData, (fileName, pdfData) => callback(pdfData as any)
-                );
-              }).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                  await this.downloadLegacyCertificate(course, certificate, toast);
-                }
-                await this.handleCertificateDownloadIssue(toast, err, certificate);
-          });
+            { courseId: course.courseId },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                await this.downloadLegacyCertificate(course, certificate, toast);
+              }
+              await this.handleCertificateDownloadIssue(toast, err, certificate);
+            });
         } else {
-         await this.downloadLegacyCertificate(course, certificate, toast);
+          await this.downloadLegacyCertificate(course, certificate, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -493,14 +495,14 @@ export class ProfilePage implements OnInit {
       certificateToken: certificate.token
     };
     this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then(async (res) => {
-          if (toast) {
-            await toast.dismiss();
-          }
-          this.openpdf(res.path);
-        }).catch(async (err) => {
-      await this.handleCertificateDownloadIssue(toast, err, certificate);
-    });
+      .then(async (res) => {
+        if (toast) {
+          await toast.dismiss();
+        }
+        this.openpdf(res.path);
+      }).catch(async (err) => {
+        await this.handleCertificateDownloadIssue(toast, err, certificate);
+      });
   }
 
   private async handleCertificateDownloadIssue(toast: any, err: any, certificate) {
@@ -556,28 +558,34 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
-    if (content.contentType === ContentType.COURSE) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    } else {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      {
+        content
+      }
+    );
+    // if (content.contentType === ContentType.COURSE) {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
+    // } else if (content.mimeType === MimeType.COLLECTION) {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
+    // } else {
+    //   const navigationExtras: NavigationExtras = {
+    //     state: {
+    //       content
+    //     }
+    //   };
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
+    // }
   }
 
   updateLocalProfile(framework) {
@@ -871,7 +879,14 @@ export class ProfilePage implements OnInit {
           resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
         }
       };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
+      console.log('Content Data', content);
+      this.navService.navigateToTrackableCollection(
+        {
+          content,
+          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
+        }
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }
@@ -1035,9 +1050,13 @@ export class ProfilePage implements OnInit {
   }
 
   shareUsername() {
+    let fullName = this.profile.firstName;
+    if (this.profile.lastName) {
+      fullName = fullName + ' ' + this.profile.lastName;
+    }
     const translatedMsg = this.commonUtilService.translateMessage('SHARE_USERNAME', {
       app_name: this.appName,
-      user_name: this.profile.firstName + ' ' + this.profile.lastName,
+      user_name: fullName,
       diksha_id: this.profile.userName
     });
     this.socialSharing.share(translatedMsg);

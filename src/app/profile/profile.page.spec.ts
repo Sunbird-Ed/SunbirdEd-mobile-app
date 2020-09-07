@@ -28,6 +28,7 @@ import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 import {of, throwError} from 'rxjs';
 import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -107,6 +108,10 @@ describe('Profile.page', () => {
     const mockFrameworkService: Partial<FrameworkService> = {
         setActiveChannelId: jest.fn(() => of(undefined))
     };
+    const mockNavService: Partial<NavigationService> = {
+        navigateToDetailPage: jest.fn(),
+        navigateToTrackableCollection: jest.fn()
+    };
 
     beforeAll(() => {
         profilePage = new ProfilePage(
@@ -128,6 +133,7 @@ describe('Profile.page', () => {
             mockAppHeaderService as AppHeaderService,
             mockAndroidPermissionService as AndroidPermissionsService,
             mockAppVersion as AppVersion,
+            mockNavService as NavigationService,
             mockSbProgressLoader as SbProgressLoader,
             mockFileOpener as FileOpener,
             mockToastController as ToastController,
@@ -924,94 +930,7 @@ describe('Profile.page', () => {
                 {id: 'do_1234', type: 'Course', version: undefined},
                 values
             );
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
-                {
-                    state: {content: {contentId: 'do_1234', identifier: 'do_123', contentType: 'Course'}}
-                });
-        });
-
-        it('should navigate to collection-details page based on the mimeType', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn();
-            const values = new Map();
-            values['sectionName'] = 'Contributions';
-            values['positionClicked'] = 3;
-            // act
-            profilePage.navigateToDetailPage({
-                contentId: 'do_1234', identifier: 'do_123',
-                mimeType: 'application/vnd.ekstep.content-collection'
-            }, 'completed', 3);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.USER,
-                PageId.PROFILE,
-                {id: 'do_1234', type: undefined, version: undefined},
-                values
-            );
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.COLLECTION_DETAIL_ETB],
-                {
-                    state: {
-                        content: {
-                            contentId: 'do_1234',
-                            identifier: 'do_123',
-                            mimeType: 'application/vnd.ekstep.content-collection'
-                        }
-                    }
-                });
-        });
-
-        it('should navigate to content-details page based on the type', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn();
-            const values = new Map();
-            values['sectionName'] = 'Contributions';
-            values['positionClicked'] = 3;
-            // act
-            profilePage.navigateToDetailPage({
-                contentId: 'do_1234', identifier: 'do_123',
-                contentType: 'Story'
-            }, 'completed', 3);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.USER,
-                PageId.PROFILE,
-                {id: 'do_1234', type: 'Resource', version: undefined},
-                values
-            );
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS],
-                {
-                    state: {content: {contentId: 'do_1234', identifier: 'do_123', contentType: 'Story'}}
-                });
-        });
-
-        it('should navigate to course-details page based on the contentType and layout is progress', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn();
-            const values = new Map();
-            values['sectionName'] = 'Contributions';
-            values['positionClicked'] = 2;
-            // act
-            profilePage.navigateToDetailPage({identifier: 'do_123', contentType: 'Course'}, 'InProgress', 2);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.USER,
-                PageId.PROFILE,
-                {id: 'do_123', type: 'Course', version: undefined},
-                values
-            );
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
-                {
-                    state: {content: {identifier: 'do_123', contentType: 'Course'}}
-                });
+            expect(mockNavService.navigateToDetailPage).toBeCalled();
         });
     });
 
@@ -1212,13 +1131,12 @@ describe('Profile.page', () => {
             setTimeout(() => {
                 // assert
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.ENROLLED_COURSE_DETAILS],
+                expect(mockNavService.navigateToTrackableCollection).toHaveBeenCalledWith(    
                     {
-                        state: {
-                            content: 'sample_content',
-                            resumeCourseFlag: false
-                        }
-                    });
+                        content: 'sample_content',
+                        resumeCourseFlag: false
+                    }
+                );
                 done();
             });
         });
@@ -1345,8 +1263,8 @@ describe('Profile.page', () => {
         // arrange
         profilePage.profile = {
             userName: 'some_username',
-            firstName: '',
-            lastName: ''
+            firstName: 'First',
+            lastName: 'Last'
         };
         mockCommonUtilService.translateMessage = jest.fn((key, fields) => {
             switch (key) {

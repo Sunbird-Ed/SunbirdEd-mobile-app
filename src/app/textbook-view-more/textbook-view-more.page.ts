@@ -9,6 +9,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { Location } from '@angular/common';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-textbook-view-more',
@@ -34,7 +35,8 @@ export class TextbookViewMorePage {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private navService: NavigationService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
@@ -86,6 +88,9 @@ export class TextbookViewMorePage {
       telemetryObject,
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
+      this.navService.navigateToCollection({
+        content: item
+      });
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
         state: {
           content: item

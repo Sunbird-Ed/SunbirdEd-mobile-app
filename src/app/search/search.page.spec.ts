@@ -30,6 +30,7 @@ import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandlerService } from '../../services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -123,6 +124,14 @@ describe('SearchPage', () => {
     const mockgroupHandlerService: Partial<GroupHandlerService> = {
         addActivityToGroup: jest.fn()
     };
+    const mockNavigationService: Partial<NavigationService> = {
+        navigateTo: jest.fn(),
+        navigateToCollection: jest.fn(),
+        navigateToDetailPage: jest.fn(),
+        navigateToContent: jest.fn(),
+        navigateToTrackableCollection: jest.fn()
+    };
+
     beforeAll(() => {
         searchPage = new SearchPage(
             mockContentService as ContentService,
@@ -150,8 +159,9 @@ describe('SearchPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockNavCtrl as NavController,
-            mockSbProgressLoader as SbProgressLoader,
-            mockgroupHandlerService as GroupHandlerService
+            mockSbProgressLoader as SbProgressLoadere,
+            mockgroupHandlerService as GroupHandlerService,
+            mockNavigationService as NavigationService
         );
     });
 
@@ -384,8 +394,7 @@ describe('SearchPage', () => {
             searchPage.openCollection(collection);
             // assert
             expect(searchPage.enrolledCourses.length).toEqual(0);
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.ENROLLED_COURSE_DETAILS],
+            expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalledWith(
                 expect.anything()
             );
         });
@@ -452,8 +461,7 @@ describe('SearchPage', () => {
             // act
             searchPage.openCollection(collection);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.COLLECTION_DETAIL_ETB],
+            expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
                 expect.anything()
             );
         });
@@ -471,8 +479,7 @@ describe('SearchPage', () => {
             // act
             searchPage.openCollection(collection);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.CONTENT_DETAILS],
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
                 expect.anything()
             );
         });
@@ -1162,8 +1169,7 @@ describe('SearchPage', () => {
             setTimeout(() => {
                 expect(searchPage.batches).toEqual(getCourseBatchesResp);
                 expect(searchPage.loader.dismiss).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    [RouterLinks.CONTENT_DETAILS],
+                expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
                     expect.anything()
                 );
                 done();
@@ -1444,8 +1450,7 @@ describe('SearchPage', () => {
             searchPage.checkParent('parent', 'child');
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    [RouterLinks.CONTENT_DETAILS],
+                expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
                     expect.anything()
                 );
                 done();

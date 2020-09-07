@@ -11,8 +11,9 @@ import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-po
 import { InteractSubtype, Environment, PageId, ActionButtonType, CorReleationDataType } from '../../../services/telemetry-constants';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, UtilityService } from '@app/services';
 import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-downloads-tab',
@@ -44,6 +45,7 @@ export class DownloadsTabComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private zone: NgZone,
+    private navService: NavigationService,
     private headerService: AppHeaderService) {
   }
   ngOnInit(): void {
@@ -305,20 +307,23 @@ export class DownloadsTabComponent implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, content.identifier),
       corRelationList);
-    if (!this.selectedContents.length) {
-      if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: { content }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: { content }
-        });
-      } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: { content }
-        });
-      }
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      { content }
+    );
+    
+    // if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
+    //     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+    //       state: { content }
+    //     });
+    // } else if (content.mimeType === MimeType.COLLECTION) {
+    //     this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+    //       state: { content }
+    //     });
+    // } else {
+    //     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+    //       state: { content }
+    //     });
+    // }
   }
 }

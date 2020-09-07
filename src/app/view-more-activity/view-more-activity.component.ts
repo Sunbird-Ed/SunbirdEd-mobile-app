@@ -50,6 +50,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -145,6 +146,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private zone: NgZone,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
+    private navService: NavigationService
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -476,15 +478,16 @@ export class ViewMoreActivityComponent implements OnInit {
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
       values);
-    if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state: { content }
-      });
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: { content }
-      });
-    }
+    this.navService.navigateToDetailPage(content, { content });
+    // if (content.mimeType === MimeType.COLLECTION) {
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+    //     state: { content }
+    //   });
+    // } else {
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+    //     state: { content }
+    //   });
+    // }
   }
 
   getContentImg(content) {
@@ -628,20 +631,29 @@ export class ViewMoreActivityComponent implements OnInit {
       this.commonUtilService.deDupe(corRelationList, 'type'));
 
     this.zone.run(async () => {
-      if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: { content }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: { content }
-        });
-
+      if (layoutName === 'enrolledCourse') {
+        this.navService.navigateToTrackableCollection({ content });
       } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: { content }
-        });
+        this.navService.navigateToDetailPage(
+          content,
+          { content }
+        );
       }
+      // } else if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
+      //   console.log('Content Data', content);
+      //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      //     state: { content }
+      //   });
+      // } else if (content.mimeType === MimeType.COLLECTION) {
+      //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+      //     state: { content }
+      //   });
+
+      // } else {
+      //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+      //     state: { content }
+      //   });
+      // }
     });
   }
 

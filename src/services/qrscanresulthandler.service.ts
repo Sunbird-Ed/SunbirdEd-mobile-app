@@ -31,6 +31,7 @@ import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
+import { NavigationService } from './navigation-handler.service';
 
 declare var cordova;
 
@@ -52,7 +53,8 @@ export class QRScannerResultHandler {
     private navCtrl: NavController,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private formFrameWorkUtilService: FormAndFrameworkUtilService
+    private formFrameWorkUtilService: FormAndFrameworkUtilService,
+    private navService: NavigationService
   ) {
   }
 
@@ -233,13 +235,17 @@ export class QRScannerResultHandler {
       }
     };
 
-    if (content.contentData.contentType === ContentType.COURSE) {
-      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
-    } else {
-      this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      navigationExtras.state
+    );
+    // if (content.contentData.contentType === ContentType.COURSE) {
+    //   this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
+    // } else if (content.mimeType === MimeType.COLLECTION) {
+    //   this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
+    // } else {
+    //   this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
+    // }
   }
 
   generateQRScanSuccessInteractEvent(scannedData, action, dialCode?, certificate?:

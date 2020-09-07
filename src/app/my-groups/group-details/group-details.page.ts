@@ -38,6 +38,7 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
 import { ViewMoreActivityDelegateService, ViewMoreActivityActionsDelegate } from '../view-more-activity/view-more-activity.page';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-group-details',
@@ -72,6 +73,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
+    private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -838,13 +840,18 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const activity = event.data;
     console.log('onActivityCardClick', activity);
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+      this.navService.navigateToTrackableCollection(
         {
-          state: {
-            content: activity.activityInfo,
-            corRelation: this.corRelationList
-          }
-        });
+          content: activity.activityInfo,
+          corRelation: this.corRelationList
+        }
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+      //   {
+      //     state: {
+      //       content: activity.activityInfo
+      //     }
+      //   });
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -855,7 +862,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           corRelation: this.corRelationList
         }
       };
-      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras.state);
+      // this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
     }
   }
 
