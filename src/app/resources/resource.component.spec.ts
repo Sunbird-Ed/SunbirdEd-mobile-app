@@ -1463,4 +1463,53 @@ describe('ResourcesComponent', () => {
         expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalledWith(request.title, '');
         expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.VIEW_MORE_ACTIVITY], params);
     });
+
+    describe('requestMoreContent()', () => {
+        it('should prepare the delegate and navigate to Framework details page', (done) => {
+            // act
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockFormAndFrameworkUtilService.getContentRequestFormConfig = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            resourcesComponent.requestMoreContent().then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getContentRequestFormConfig).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('onFrameworkSelectionSubmit()', () => {
+        it('should prepare the delegate navigation method for Frameworkdetails page when internet is available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockRouter.navigate = jest.fn();
+            // act
+            resourcesComponent.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService).then(() => {
+                // assert
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should show the offline toast when internet is now available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            resourcesComponent.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService).then(() => {
+                // assert
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
 });
