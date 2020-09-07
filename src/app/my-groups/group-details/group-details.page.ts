@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
@@ -15,7 +15,7 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import { Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController, Events } from '@ionic/angular';
 import {
   GroupService, GetByIdRequest, Group,
   GroupMember, GroupMemberRole, DeleteByIdRequest,
@@ -35,6 +35,9 @@ import {
   SbGenericPopoverComponent
 } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
+import { ViewMoreActivityDelegateService, ViewMoreActivityActionsDelegate } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
@@ -42,7 +45,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
   templateUrl: './group-details.page.html',
   styleUrls: ['./group-details.page.scss'],
 })
-export class GroupDetailsPage implements OnInit {
+export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActionsDelegate {
 
   corRelationList: Array<CorrelationData> = [];
   isGroupLoading = false;
@@ -51,8 +54,9 @@ export class GroupDetailsPage implements OnInit {
   groupId: string;
   groupDetails: Group;
   activeTab = 'activities';
-  activityList: GroupActivity[] = [];
+  activityList: ActivitiesGrouped[] = [];
   filteredActivityList = [];
+  groupedActivityListMap: {[title: string]: GroupActivity[]};
   memberList: GroupMember[] = [];
   filteredMemberList = [];
   memberSearchQuery: string;
@@ -72,7 +76,8 @@ export class GroupDetailsPage implements OnInit {
     private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -87,6 +92,12 @@ export class GroupDetailsPage implements OnInit {
     this.corRelationList.push({ id: this.groupId, type: CorReleationDataType.GROUP_ID });
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP,
       undefined, undefined, undefined, undefined, this.corRelationList);
+
+    this.viewMoreActivityDelegateService.delegate = this;
+  }
+
+  ngOnDestroy() {
+    this.viewMoreActivityDelegateService.delegate = undefined;
   }
 
   ionViewWillEnter() {
@@ -101,8 +112,6 @@ export class GroupDetailsPage implements OnInit {
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
-      console.log('ionViewWillLeave');
-      
       this.unregisterBackButton.unsubscribe();
     }
   }
@@ -151,13 +160,14 @@ export class GroupDetailsPage implements OnInit {
       userId: this.userId,
       options: {
         includeMembers: true,
-        includeActivities: true
+        includeActivities: true,
+        groupActivities: true
       }
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       this.memberList = this.groupDetails.members;
-      this.activityList = this.groupDetails.activities;
+      this.activityList = this.groupDetails.activitiesGrouped;
 
       if (this.memberList) {
         this.memberList.sort((a, b) => {
@@ -181,6 +191,17 @@ export class GroupDetailsPage implements OnInit {
       this.filteredMemberList = new Array(...this.memberList);
       this.filteredActivityList = new Array(...this.activityList);
 
+      this.groupedActivityListMap = this.filteredActivityList.reduce((acc, activityGroup) => {
+        acc[activityGroup.title] = activityGroup.items.map((i) => {
+          const activity = {
+            ...i.activityInfo,
+            type: i.type,
+            cardImg: this.commonUtilService.getContentImg(i.activityInfo)
+          };
+          return activity;
+        });
+        return acc;
+      }, {});
       this.isGroupLoading = false;
     } catch (e) {
       this.isGroupLoading = false;
@@ -260,7 +281,8 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  async activityMenuClick(event, selectedActivity) {
+  async activityMenuClick(event): Promise<boolean> {
+    const selectedActivity = event.data;
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
       componentProps: {
@@ -273,8 +295,9 @@ export class GroupDetailsPage implements OnInit {
 
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
-      this.showRemoveActivityPopup(selectedActivity);
+      return this.showRemoveActivityPopup(selectedActivity);
     }
+    return false;
   }
 
   async memberMenuClick(event, selectedMember) {
@@ -459,7 +482,7 @@ export class GroupDetailsPage implements OnInit {
     }
   }
 
-  private async showRemoveActivityPopup(selectedActivity) {
+  private async showRemoveActivityPopup(selectedActivity): Promise<boolean> {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.REMOVE_ACTIVITY_CLICKED,
@@ -488,7 +511,7 @@ export class GroupDetailsPage implements OnInit {
     if (data && data.isLeftButtonClicked) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
-        return;
+        return false;
       }
 
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -506,7 +529,7 @@ export class GroupDetailsPage implements OnInit {
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
         removeActivitiesRequest: {
-          activityIds: [selectedActivity.id]
+          activityIds: [selectedActivity.identifier]
         }
       };
       try {
@@ -517,6 +540,7 @@ export class GroupDetailsPage implements OnInit {
           && removeActivitiesResponse.error.activities
           && removeActivitiesResponse.error.activities.length) {
           this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
+          return false;
         } else {
           this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -530,11 +554,13 @@ export class GroupDetailsPage implements OnInit {
             this.corRelationList,
             ID.REMOVE_ACTIVITY);
           this.fetchGroupDetails();
+          return true;
         }
       } catch (e) {
         console.error('showRemoveActivityPopup', e);
         this.isGroupLoading = false;
         this.commonUtilService.showToast('REMOVE_ACTIVITY_ERROR_MSG');
+        return false;
       }
     }
   }
@@ -799,11 +825,10 @@ export class GroupDetailsPage implements OnInit {
   }
 
   onActivitySearch(query) {
-    this.activitySearchQuery = query;
-    // this.filteredActivityList = [...this.filterPipe.transform(this.activityList, 'name', query)];
-    this.filteredActivityList = this.activityList.filter(
-      (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
-    );
+    // this.activitySearchQuery = query;
+    // this.filteredActivityList = this.activityList.filter(
+    //   (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
+    // );
   }
 
   extractInitial(name) {
@@ -812,7 +837,8 @@ export class GroupDetailsPage implements OnInit {
     return split[0];
   }
 
-  onActivityCardClick(activity) {
+  onActivityCardClick(event) {
+    const activity = event.data;
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
       this.navService.navigateToTrackableCollection(
         {
@@ -872,6 +898,32 @@ export class GroupDetailsPage implements OnInit {
     } catch (e) {
       console.error('navigateToAddActivityPage', e);
     }
+  }
+
+  navigateToViewMorePage(activityGroup) {
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
+    {
+      state: {
+        isMenu: this.loggedinUser.role === 'admin',
+        activityGroup,
+        groupId: this.groupId,
+        previousPageId: PageId.GROUP_DETAIL
+      }
+    });
+  }
+
+  onViewMoreCardClick(event: Event, activity: GroupActivity) {
+    const data = {
+      data: {
+        ...activity.activityInfo,
+        type: activity.type
+      }
+    };
+    this.onActivityCardClick(data);
+  }
+
+  onViewMoreCardMenuClick(event, activity) {
+    return this.activityMenuClick(event);
   }
 
 }

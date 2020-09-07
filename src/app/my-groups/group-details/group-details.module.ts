@@ -11,6 +11,7 @@ import { ComponentsModule } from '../../components/components.module';
 import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { AddActivityToGroupPage } from '../add-activity-to-group/add-activity-to-group.page';
+import { ViewMoreActivityPage, ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
 
 const routes: Routes = [
   {
@@ -20,11 +21,15 @@ const routes: Routes = [
   {
     path: RouterLinks.ADD_ACTIVITY_TO_GROUP,
     component: AddActivityToGroupPage
+  },
+  {
+    path: RouterLinks.ACTIVITY_VIEW_MORE,
+    component: ViewMoreActivityPage
   }
 ];
 
 @NgModule({
-  declarations: [GroupDetailsPage, AddActivityToGroupPage],
+  declarations: [GroupDetailsPage, AddActivityToGroupPage, ViewMoreActivityPage],
   imports: [
     CommonModule,
     FormsModule,
@@ -37,6 +42,7 @@ const routes: Routes = [
     PipesModule
   ],
   exports: [GroupDetailsPage],
+  providers: [ViewMoreActivityDelegateService],
   entryComponents: [OverflowMenuComponent]
 })
 export class GroupDetailsPageModule {}
