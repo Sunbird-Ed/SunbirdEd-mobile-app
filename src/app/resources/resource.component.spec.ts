@@ -42,6 +42,7 @@ import { NotificationService } from '@app/services';
 import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
 import { ImpressionType } from '../../services/telemetry-constants';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { FrameworkSelectionDelegateService, FrameworkSelectionActionsDelegate } from '../profile/framework-selection/framework-selection.page';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -111,6 +112,11 @@ describe('ResourcesComponent', () => {
     const mockNavService: Partial<NavigationService> = {
         navigateToCollection: jest.fn()
     };
+    const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {
+        delegate: {
+            onFrameworkSelectionSubmit: jest.fn()
+        }
+    }
 
 
     const constructComponent = () => {
@@ -139,7 +145,8 @@ describe('ResourcesComponent', () => {
             mockRouter as Router,
             mockChangeRef as ChangeDetectorRef,
             mockAppNotificationService as NotificationService,
-            mockPopoverCtrl as PopoverController
+            mockPopoverCtrl as PopoverController,
+            mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService
         );
     };
     beforeAll(() => {
