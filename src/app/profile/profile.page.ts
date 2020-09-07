@@ -114,7 +114,14 @@ export class ProfilePage implements OnInit {
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
-  mappedTrainingCertificates: CourseCertificate[] = [];
+  mappedTrainingCertificates: {
+    courseName: string,
+    dateTime: string,
+    courseId: string,
+    certificate?: string,
+    issuedCertificate?: string,
+    status: number
+  }[] = [];
   isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
