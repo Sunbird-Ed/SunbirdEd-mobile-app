@@ -112,8 +112,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
-      console.log('ionViewWillLeave');
-      
       this.unregisterBackButton.unsubscribe();
     }
   }
@@ -168,7 +166,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
-      console.log('groupDetails', this.groupDetails);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
 
@@ -195,10 +192,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.filteredActivityList = new Array(...this.activityList);
 
       this.groupedActivityListMap = this.filteredActivityList.reduce((acc, activityGroup) => {
-        acc[activityGroup.title] = activityGroup.items.map((i) => i.activityInfo);
+        acc[activityGroup.title] = activityGroup.items.map((i) => {
+          const activity = {
+            ...i.activityInfo,
+            type: i.type,
+            cardImg: this.commonUtilService.getContentImg(i.activityInfo)
+          };
+          return activity;
+        });
         return acc;
       }, {});
-      console.log('groupedActivityListMap', this.groupedActivityListMap);
       this.isGroupLoading = false;
     } catch (e) {
       this.isGroupLoading = false;
@@ -280,8 +283,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   async activityMenuClick(event): Promise<boolean> {
     const selectedActivity = event.data;
-    console.log('activityMenuClick event', event);
-    console.log('activityMenuClick selectedActivity', selectedActivity);
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
       componentProps: {
@@ -838,7 +839,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   onActivityCardClick(event) {
     const activity = event.data;
-    console.log('onActivityCardClick', activity);
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
       this.navService.navigateToTrackableCollection(
         {
@@ -901,10 +901,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   navigateToViewMorePage(activityGroup) {
-    // activityGroup.items.forEach(activity => {
-    //   activity.cardImg = this.commonUtilService.getContentImg(activity.appIcon)
-    // });
-    console.log('navigateToViewMorePage list', activityGroup);
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
     {
       state: {
@@ -917,14 +913,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   onViewMoreCardClick(event: Event, activity: GroupActivity) {
-    console.log('onActivityCardClick event', event);
-    console.log('onActivityCardClick activity', activity);
-    this.onActivityCardClick({data: activity});
+    const data = {
+      data: {
+        ...activity.activityInfo,
+        type: activity.type
+      }
+    };
+    this.onActivityCardClick(data);
   }
 
   onViewMoreCardMenuClick(event, activity) {
-    console.log('onViewMoreActivityRemove event', event);
-    console.log('onActivityCardClick activity', activity);
     return this.activityMenuClick(event);
   }
 

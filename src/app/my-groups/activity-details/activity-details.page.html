@@ -1,14 +1,14 @@
 <ion-content>
   <div class="ad-container">
     <div class="ad-card-container">
-      <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
-        [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo">
+      <sb-course-card *ngIf="activity.type === 'Course'" [section]="null"
+        [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
       </sb-course-card>
     </div>
     <div class="ad-member-container">
       <div class="font-14" *ngIf="showCourseDropdownSection">
         <div class="activity-toc clearfix" (click)="openActivityToc()">
-          <span class="pull-left">{{selectedCourse?.name || activity?.activityInfo?.name}}</span>
+          <span class="pull-left">{{selectedCourse?.name || activity?.name}}</span>
           <div class="activity-toc-change pull-right">{{'CHANGE' | translate}}</div>
         </div>
       </div>
