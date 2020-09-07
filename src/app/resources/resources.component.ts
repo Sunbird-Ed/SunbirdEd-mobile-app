@@ -1225,7 +1225,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService) {
     if (!commonUtilService.networkInfo.isNetworkAvailable) {
-      await this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
+      await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
       return;
     }
     const params = {

@@ -1000,4 +1000,25 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
+  describe('getContentRequestFormConfig()', () => {
+    it('should return the formConfig for reuest content', (done) => {
+      // arrange
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+            fields: []
+          }
+        }
+      }));
+      // act
+      formAndFrameworkUtilService.getContentRequestFormConfig().then(() => {
+        // assert
+        expect(mockFormService.getForm).toHaveBeenCalled();
+        done();
+      });
+      // assert
+
+    });
+  });
+
 });

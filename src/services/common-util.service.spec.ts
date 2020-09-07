@@ -633,4 +633,61 @@ describe('CommonUtilService', () => {
     });
   });
 
+  describe('getContentIcon()', () => {
+    it('should return the content if content icon is not present', () => {
+      // arrange
+      const content = null;
+      // act
+      commonUtilService.getContentIcon(content);
+      // assert
+      expect(content).toEqual(null);
+    });
+
+    it('should assign cardImage with card icon if internet is present', () => {
+      // arrange
+      const content = { appIcon: 'http:sampleurl.com', cardImg: '' };
+      commonUtilService.networkInfo = { isNetworkAvailable: true };
+      commonUtilService.convertFileSrc = jest.fn();
+      // act
+      commonUtilService.getContentIcon(content);
+      // assert
+      expect(commonUtilService.convertFileSrc).toHaveBeenCalled();
+      expect(content.cardImg).toEqual(content.appIcon);
+    });
+
+    it('should assign default image if internet is not present', () => {
+      // arrange
+      const content = { appIcon: 'http:sampleurl.com', cardImg: '' };
+      commonUtilService.networkInfo = { isNetworkAvailable: false };
+      const defaultImg = 'assets/imgs/ic_launcher.png';
+      // act
+      commonUtilService.getContentIcon(content, defaultImg);
+      // assert
+      expect(content.appIcon).toEqual(defaultImg);
+    });
+
+    it('should append the basepath with the appIcon if basepath is present', () => {
+      // arrange
+      const img = 'someImg';
+      const content = { appIcon: img, cardImg: '', basePath: 'http:sampleurl.com' };
+      const defaultImg = 'assets/imgs/ic_launcher.png';
+      const appededImg = content.basePath + '/' + img;
+      // act
+      commonUtilService.getContentIcon(content, defaultImg);
+      // assert
+      expect(content.appIcon).toEqual(appededImg);
+    });
+
+    it('should return the content if the above conditions are not satisfied', () => {
+      // arrange
+      const content = { appIcon: 'someImg'};
+      const defaultImg = 'assets/imgs/ic_launcher.png';
+      // act
+      commonUtilService.getContentIcon(content, defaultImg);
+      // assert
+      expect(content.appIcon).toEqual(content.appIcon);
+    });
+
+  });
+
 });

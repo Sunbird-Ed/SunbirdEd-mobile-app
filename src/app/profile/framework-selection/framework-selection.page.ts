@@ -80,7 +80,6 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   }
 
   submitForm() {
-    // this.router.navigate([this.submitDetails.navigateTo], { state: this.selectedFrameworkData });
     if (this.frameworkSelectionDelegateService.delegate) {
       this.frameworkSelectionDelegateService.delegate.onFrameworkSelectionSubmit(
         this.formConfigInput, this.selectedFrameworkData, this.router, this.commonUtilService
