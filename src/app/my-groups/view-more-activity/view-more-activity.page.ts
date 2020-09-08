@@ -15,6 +15,7 @@ import {
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupActivity } from '@project-sunbird/sunbird-sdk';
+import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
 
 @Injectable({ providedIn: GroupDetailsPageModule })
 export class ViewMoreActivityDelegateService {
@@ -36,7 +37,7 @@ export class ViewMoreActivityPage implements OnInit, OnDestroy {
 
     unregisterBackButton: Subscription;
     headerObservable: any;
-    activityGroup: Array<any>;
+    activityGroup: ActivitiesGrouped;
     groupId: string;
     isMenu: boolean;
     previousPageId?: string;
@@ -116,7 +117,7 @@ export class ViewMoreActivityPage implements OnInit, OnDestroy {
         if (this.viewMoreActivityDelegateService.delegate) {
             this.viewMoreActivityDelegateService.delegate.onViewMoreCardMenuClick(event, activity).then((isRemoved) => {
                 if (isRemoved) {
-                    this.activityGroup['items'].splice(i, 1);
+                    this.activityGroup.items.splice(i, 1);
                 }
             });
         }
