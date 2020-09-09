@@ -4,8 +4,13 @@
       <sb-course-card *ngIf="activity.type === 'Course'" [section]="null"
         [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
       </sb-course-card>
+      <sb-library-card *ngIf="activity.type === 'TextBook'" [content]="activity" [type]="'mobile_textbook'" (click)="onActivityCardClick($event, activity)"
+        [cardImg]="commonUtilService.getContentImg(activity)" [isMenu]="false"
+        (menuClick)="activityMenuClick($event, activity, i)">
+      </sb-library-card>
     </div>
     <div class="ad-member-container">
+      <div class="ad-note" *ngIf="activity.type === 'TextBook'" [innerHTML]="'PROGRESS_CANNOT_BE_TRACKED' | translate"></div>
       <div class="font-14" *ngIf="showCourseDropdownSection">
         <div class="activity-toc clearfix" (click)="openActivityToc()">
           <span class="pull-left">{{selectedCourse?.name || activity?.name}}</span>
@@ -30,9 +35,13 @@
         </div>
         <div *ngIf="!isActivityLoading">
           <div *ngFor="let member of filteredMemberList; let i = index">
-            <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+            <sb-member-card *ngIf="activity.type === 'Course'" [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
               [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
               [title]="getMemberName(member)" [progressDisplay]="getMemberProgress(member)">
+            </sb-member-card>
+            <sb-member-card *ngIf="activity.type === 'TextBook'" [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+              [identifier]="member.userId" [indexOfMember]="i" [initial]="member.name | initial"
+              [title]="getMemberName(member)">
             </sb-member-card>
           </div>
         </div>

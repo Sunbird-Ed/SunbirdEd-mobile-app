@@ -82,7 +82,7 @@
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!isGroupLoading && (!filteredActivityList || !filteredActivityList.length)" class="text-center">
+        <div *ngIf="!isGroupLoading && (!activityList || !activityList.length)" class="text-center">
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
             <img src="assets/imgs/no_activity.svg" alt="">
           </div>
@@ -97,39 +97,18 @@
           </div>
         </div>
         <div *ngIf="!isGroupLoading">
-          <div *ngFor="let activityGroup of filteredActivityList; let i = index" class="mb-8">
+          <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8">
             <div class="gd-card-head" *ngIf="activityGroup.items?.length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>
               <span class="gd-card-titile">{{activityGroup.title | translate}}</span>
             </div>
-            <div *ngIf="activityGroup.title === 'ACTIVITY_COURSE_TITLE'">
-              <!-- <div class="sc-content" *ngFor="let activity of activityGroup.items;">
-                <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
-                  [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo"
-                  (click)="onActivityCardClick(activity)" [isMenu]="loggedinUser.role === 'admin'"
-                  (menuClick)="activityMenuClick($event, activity)">
-                </sb-course-card>
-              </div> -->
-              <sb-library-cards-stack [title]="activityGroup?.name" [contentList]="groupedActivityListMap[activityGroup?.title]"
-                  [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [cardType]="'course'" [viewMoreButtonText]="'VIEW_MORE' | translate"
-                  [maxCardCount]="3" (viewMoreClick)="navigateToViewMorePage(activityGroup)" [isMenu]="loggedinUser.role === 'admin'"
-                  (cardClick)="onActivityCardClick($event)" (menuClick)="activityMenuClick($event)">
-                </sb-library-cards-stack>
-            </div>
-            <div *ngIf="activityGroup.title !== 'ACTIVITY_COURSE_TITLE'">
-              <!-- <div class="sc-content" *ngFor="let activity of activityGroup.items;">
-                <sb-library-card [content]="activity.activityInfo" [type]="'mobile_textbook'" (click)="onActivityCardClick(activity)"
-                [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [isMenu]="loggedinUser.role === 'admin'"
-                (menuClick)="activityMenuClick($event, activity)">
-                </sb-library-card>
-              </div> -->
-              <div>
-                <sb-library-cards-stack [title]="activityGroup?.name" [contentList]="groupedActivityListMap[activityGroup?.title]"
+            <div>
+              <sb-library-cards-stack [title]="activityGroup?.name" [contentList]="filteredGroupedActivityListMap[activityGroup?.title]"
                   [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [viewMoreButtonText]="'VIEW_MORE' | translate"
+                  [cardType]="activityGroup.title === 'ACTIVITY_COURSE_TITLE' ? 'course' : 'textbook' " 
                   [maxCardCount]="3" (viewMoreClick)="navigateToViewMorePage(activityGroup)" [isMenu]="loggedinUser.role === 'admin'"
                   (cardClick)="onActivityCardClick($event)" (menuClick)="activityMenuClick($event)">
                 </sb-library-cards-stack>
-              </div>
             </div>
           </div>
         </div>

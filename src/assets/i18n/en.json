@@ -805,5 +805,6 @@
   "CLICK_THE_BUTTON_BELOW": "Click the button below",
   "NO_CONTENT_FOUND_MATCHING": "No content found matching",
   "YOUR_BOARD_IS_YET_TO_ADD_MORE_CONTENT": "Your board is yet to add more content.",
-  "CLICK_ON_THE_HELP_BUTTON": "Click on the help button"
+  "CLICK_ON_THE_HELP_BUTTON": "Click on the help button",
+  "PROGRESS_CANNOT_BE_TRACKED": "<span>Note :</span> Progress cannot be tracked for textbooks"
 }
