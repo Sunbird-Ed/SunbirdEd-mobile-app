@@ -130,16 +130,17 @@
         <variable name="GOOGLE_SERVICES_VERSION" value="4.2.0" />
         <variable name="ANDROID_DEFAULT_NOTIFICATION_ICON" value="@mipmap/ic_launcher" />
     </plugin>
-    <plugin name="cordova-plugin-advanced-http" spec="^2.4.1" />
-    <plugin name="cordova-plugin-android-permissions" spec="^1.0.2" />
+    <plugin name="cordova-plugin-advanced-http" spec="^2.5.1" />
+    <plugin name="cordova-plugin-android-permissions" spec="^1.1.0" />
     <plugin name="cordova-plugin-media" spec="^5.0.3" />
     <plugin name="cordova.plugins.diagnostic" spec="^5.0.2">
         <variable name="ANDROID_SUPPORT_VERSION" value="28.+" />
     </plugin>
     <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
-    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git" />
+    <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
+    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
-    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git" />
+    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0" />
     <plugin name="cordova-android-support-gradle-release" spec="^3.0.1">
         <variable name="ANDROID_SUPPORT_VERSION" value="28.0.0" />
     </plugin>
@@ -152,6 +153,5 @@
     <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
-    <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <engine name="android" spec="^8.1.0" />
+    <engine name="android" spec="^9.0.0" />
 </widget>
