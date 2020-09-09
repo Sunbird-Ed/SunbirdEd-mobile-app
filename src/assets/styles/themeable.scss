@@ -1,0 +1,52 @@
+@import "./variables";
+
+ion-toolbar {
+  --background: #{map-get($colors, joy_primary)};
+}
+
+ion-content {
+  --background: #{map-get($colors, joy_secondary)};
+}
+
+ion-footer {
+  background: map-get($colors, joy_secondary) ;
+}
+
+ion-item {
+  --background: #{map-get($colors, joy_secondary)};
+  ion-label{
+    color: $blue !important;
+  }
+  ion-select{
+    border: 1px solid $blue !important;
+  }
+}
+
+ion-radio {
+  --color-checked: $blue !important;
+}
+
+ion-card, button{
+  box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+}
+
+ion-alert{
+  [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md{
+    border-color: $blue !important;
+    background-color: $blue !important;
+  }
+
+  [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md{
+    border-color: $blue !important;
+    .alert-radio-inner.sc-ion-alert-md{
+      background-color: $blue !important;
+    }
+  }
+}
+
+// language-settings page
+.sb-btn {
+  border-radius: 20px !important;
+  background-color: $blue !important;
+}
+

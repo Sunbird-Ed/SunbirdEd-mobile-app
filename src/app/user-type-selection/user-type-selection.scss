@@ -7,16 +7,11 @@ ion-content {
 }
 :host {
   .card-related-style {
-    //border-style: solid;
-    //border-width: 2px;
-    //border-radius: 6px !important;
-    //margin-inline-start: unset !important;
-    //margin-inline-end: unset !important;
     text-align: center;
     position: relative;
-    box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
+    box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
     background-color: map-get($colors, white);
-    border-radius: 4px;
+    border-radius: 16px;
   }
 
   .description {
@@ -60,7 +55,7 @@ ion-content {
     height: calc(100% - 20px);
     width: 100% !important;
     &.selected {
-      border:3px solid map-get($colors, vived_blue_fe);
+      border:3px solid $blue;
     }
     > ion-grid {
       height: 100%;
