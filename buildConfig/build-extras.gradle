@@ -60,7 +60,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 22
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
         versionName "3.3.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
@@ -267,15 +267,30 @@ android {
         def versionName = name
 
         if (flavorName.equals("dev")) {
-            preBuild.dependsOn(dev)
+            // preBuild.dependsOn(dev)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirDev
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
             println "inside dev task"
         }
         if (flavorName.equals("staging")) {
-            preBuild.dependsOn(staging)
+            // preBuild.dependsOn(staging)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirStaging
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
             println "inside staging task"
         }
         if (flavorName.equals("production")) {
-            preBuild.dependsOn(prod)
+            // preBuild.dependsOn(prod)
+            preBuild.dependsOn  myclean
+            preBuild.dependsOn  copyDirProd
+            preBuild.dependsOn  copyDirNotificationConfig
+            preBuild.dependsOn  copyDirFaq
+            preBuild.dependsOn  copyDirContentRating
             println "inside production task"
         }
 
@@ -297,8 +312,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    // implementation 'com.google.android.gms:play-services-analytics:10.+'
     implementation 'com.android.support:multidex:1.0.3'
+    // implementation 'androidx.multidex:multidex:2.0.1'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true;
     }
