@@ -2315,16 +2315,19 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.onMemberSearch('');
             expect(mockFilterPipe.transform).toHaveBeenCalled();
         });
-        xit('should return filtered activityList', () => {
+        it('should return filtered activityList', () => {
             // assert
-            groupDetailsPage.activityList = [
-                { activityInfo: { name: 'name1' } },
-                { activityInfo: { name: 'name2' } }
-            ] as any;
+            groupDetailsPage.groupedActivityListMap = {
+                course: [
+                    { name: 'name1' } ,
+                    { name: 'name2' }
+                ]
+            } as any;
+            groupDetailsPage.filteredGroupedActivityListMap = {};
             // act
             groupDetailsPage.onActivitySearch('name1');
             // assert
-            expect(groupDetailsPage.filteredActivityList).toEqual([{ activityInfo: { name: 'name1' } }]);
+            expect(groupDetailsPage.filteredGroupedActivityListMap).toEqual({ course: [{ name: 'name1' }] });
         });
     });
 
