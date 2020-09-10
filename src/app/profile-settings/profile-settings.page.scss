@@ -72,17 +72,20 @@
   .padding-bottom-if-header {
     padding-bottom: 80px !important;
   }
-  .board-btn{
-    font-size: 16px;
-    color: $blue;
-  }
+  .board-select-dummy{
+    width: 100vw;
+    margin: 0 auto;
+    ion-item{	
+      // z-index: -1;	
+      pointer-events: none;	
+    }
   .ps-container{
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100%;
     .qr-container {
-      background-color: map-get($colors, joy_secondary);
+      background-color: #EDF4F9;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -182,8 +185,7 @@
       .title {
         display: block;
         font-weight: bold;
-        color: $blue;
-        font-size: 16px;
+        color: #024F9D;
       }
       .sub-title {
         padding: 8px 10% 0 10%;
@@ -195,12 +197,12 @@
       margin-top: 16px;
       .qr-btn {
         display: inline-block;
-        background-color: $blue;
+        background-color: map-get($colors, primary);
         padding: 10px 20px;
         text-align: center;
         color: map-get($colors, white);
         border-radius: 5px;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
         img {
           vertical-align: middle;
         }
@@ -329,18 +331,4 @@
   0% {right: 0;}
   50% {right: 10px;}
   100% {right: 0;}
-}
-
-img.arrow-icon{
-  display: inline-block;
-  width: 22px;
-  margin-top: -3px;
-  &.animate {
-    position: relative;
-    animation: dropDown 5s linear infinite;
-    animation-duration: 0.9s;
-  }
-  @include rtl {
-    transform: rotate(180deg);
-  }
 }

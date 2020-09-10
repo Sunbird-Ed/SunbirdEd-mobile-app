@@ -28,24 +28,37 @@
 					<div class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</div>
 					<div class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</div>
 				</div>
+				<div class="board-select-dummy" (click)="boardClicked($event)">
+					<ion-item appCustomIonSelect>
+						<ion-label position="stacked" class="label-font text-uppercase align-text">
+							{{'BOARD' | translate }}</ion-label>
+						<ion-select multiple="false" class="ion-text-capitalize" formControlName="syllabus"
+							[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()"
+							okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
+							placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+							<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+								{{eachSyllabus.name}}&lrm;</ion-select-option>
+						</ion-select>
+					</ion-item>
+				</div>
 
-				<div class="m-16">
-					<label class="board-btn">{{'BOARD' | translate }}</label>
+				<!-- <div class="m-16">
+					<label class="board-btn-text">{{'BOARD' | translate }}</label>
 					<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block continue"
           [style.background-color]="btnColor" (click)="boardClicked()">
-					<ion-grid class="ion-no-padding">
-						<ion-row class="ion-justify-content-between">
-							<ion-col class="ion-no-padding">
-								<img class="arrow-icon" src="assets/imgs/ic_back.svg" style="visibility: hidden" [class.animate]="true"  alt="">
-							</ion-col>
-							<ion-col class="ion-no-padding">{{ 'BOARD_OPTION_TEXT' | translate }}</ion-col>
-							<ion-col class="ion-no-padding text-align-end ion-align-self-center">
-								<img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="true" alt="">
-							</ion-col>
-						</ion-row>
-					</ion-grid>
-				</button>
-				</div>
+						<ion-grid class="ion-no-padding">
+							<ion-row class="ion-justify-content-between">
+								<ion-col class="ion-no-padding">
+									<img class="arrow-icon" src="assets/imgs/ic_back.svg" style="visibility: hidden" [class.animate]="true"  alt="">
+								</ion-col>
+								<ion-col class="ion-no-padding">{{ 'BOARD_OPTION_TEXT' | translate }}</ion-col>
+								<ion-col class="ion-no-padding text-align-end ion-align-self-center">
+									<img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="true" alt="">
+								</ion-col>
+							</ion-row>
+						</ion-grid>
+					</button>
+				</div> -->
 			</div>
 		</div>
 		<div novalidate class="form-position" *ngIf="!showQRScanner">

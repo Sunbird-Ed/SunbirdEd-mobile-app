@@ -44,8 +44,7 @@ ion-content {
   text-align: center;
   position: relative;
   margin-bottom: 0;
-  border-radius: 16px !important;
-  box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
   background-color: map-get($colors, white);
   ion-radio {
     display: none;
@@ -59,7 +58,7 @@ ion-content {
     text-align: center;
   }
   &.selected {
-    background-color: $blue;
+    background-color: map-get($colors, vived_blue_fe);
     box-shadow: 0 20px 40px -10px rgba(2,79,157,0.3);
     ion-label {
       color: white;

@@ -9,9 +9,9 @@ ion-content {
   .card-related-style {
     text-align: center;
     position: relative;
-    box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
     background-color: map-get($colors, white);
-    border-radius: 16px;
+    border-radius: 4px;
   }
 
   .description {
@@ -55,7 +55,7 @@ ion-content {
     height: calc(100% - 20px);
     width: 100% !important;
     &.selected {
-      border:3px solid $blue;
+      border:3px solid map-get($colors, vived_blue_fe);
     }
     > ion-grid {
       height: 100%;

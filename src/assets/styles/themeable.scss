@@ -1,29 +1,36 @@
-@import "./variables";
+:root {
+  --joyful-primary: red;
+  --joyful-secondary: #E9E8D9;
+  --joyful-warning: #FFD954;
+
+  --joyful-white: #FFFFFF;
+  --joyful-black: #000000;
+}
 
 ion-toolbar {
-  --background: #{map-get($colors, joy_primary)};
+  --background: var(--joyful-warning);
 }
 
 ion-content {
-  --background: #{map-get($colors, joy_secondary)};
+  --background: var(--joyful-secondary);
 }
 
 ion-footer {
-  background: map-get($colors, joy_secondary) ;
+  background: var(--joyful-secondary);
 }
 
 ion-item {
-  --background: #{map-get($colors, joy_secondary)};
+  --background: var(--joyful-secondary);
   ion-label{
-    color: $blue !important;
+    color: var(--joyful-primary) !important;
   }
   ion-select{
-    border: 1px solid $blue !important;
+    border: 1px solid var(--joyful-primary) !important;
   }
 }
 
 ion-radio {
-  --color-checked: $blue !important;
+  --color-checked: var(--joyful-primary) !important;
 }
 
 ion-card, button{
@@ -32,21 +39,60 @@ ion-card, button{
 
 ion-alert{
   [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md{
-    border-color: $blue !important;
-    background-color: $blue !important;
+    border-color: var(--joyful-primary) !important;
+    background-color: var(--joyful-primary) !important;
   }
 
   [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md{
-    border-color: $blue !important;
+    border-color: var(--joyful-primary) !important;
     .alert-radio-inner.sc-ion-alert-md{
-      background-color: $blue !important;
+      background-color: var(--joyful-primary) !important;
     }
   }
 }
 
-// language-settings page
+ion-card{
+  border-radius: 16px !important;
+  box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+  background-color: var(--joyful-white);
+  &.selected {
+    border:3px solid var(--joyful-primary) !important;
+  }
+}
+
 .sb-btn {
   border-radius: 20px !important;
-  background-color: $blue !important;
+  background-color: var(--joyful-primary) !important;
+}
+
+
+// language-settings page
+page-language-settings{
+  .language-card {
+    &.selected {
+      background-color: var(--joyful-primary) !important;
+    }
+  }
+}
+
+// user-type-selection page
+app-profile-settings{
+  .title{
+    color: var(--joyful-primary) !important;
+  }
+
+  .qr-btn{
+    background-color: var(--joyful-primary) !important;
+  }
+
+  .board-btn-text{
+    color: var(--joyful-primary) !important;
+  }
+
+  .ps-container {
+    .qr-container {
+      background-color: var(--joyful-secondary) !important;
+    }
+  }
 }
 
