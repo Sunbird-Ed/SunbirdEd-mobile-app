@@ -108,9 +108,7 @@ export class BatchConstants {
         'startDate',
         'endDate',
         'enrollmentEndDate',
-        'cert_templates',
-        'trackable',
-        'primaryCategory'
+        'cert_templates'
     ];
     // createdFor ,courseAdditionalInfo, participant, updatedDate, createdDate, courseCreator, mentors
 }
@@ -157,7 +155,9 @@ export class ExploreConstants {
         'dialecodes',
         'size',
         'batches',
-        'organisation'
+        'organisation',
+        'trackable',
+        'primaryCategory'
     ];
 }
 
