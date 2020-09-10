@@ -225,6 +225,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }),
       tap((v) => {
         setTimeout(() => {
+          this.showAddToGroupButtons = false;
           this.changeDetectionRef.detectChanges();
         });
       }) as any
