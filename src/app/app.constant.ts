@@ -108,7 +108,9 @@ export class BatchConstants {
         'startDate',
         'endDate',
         'enrollmentEndDate',
-        'cert_templates'
+        'cert_templates',
+        'trackable',
+        'primaryCategory'
     ];
     // createdFor ,courseAdditionalInfo, participant, updatedDate, createdDate, courseCreator, mentors
 }
