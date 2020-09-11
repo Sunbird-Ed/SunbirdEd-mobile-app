@@ -1,3 +1,4 @@
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 export class ContentType {
     public static readonly STORY = 'Story';
     public static readonly WORKSHEET = 'Worksheet';
@@ -53,6 +54,31 @@ export class ContentType {
     ];
 }
 
+export class PrimaryCategory {
+
+    public static readonly FOR_COURSE_TAB = [
+        CsPrimaryCategory.COURSE
+    ];
+    public static readonly FOR_LIBRARY_TAB = [
+        CsPrimaryCategory.COURSE,
+        CsPrimaryCategory.TEACHER_RESOURCE,
+        CsPrimaryCategory.LEARNING_RESOURCE,
+        CsPrimaryCategory.EXPLANATION_CONTENT,
+        CsPrimaryCategory.CONTENT_PLAYLIST,
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.PRACTICE_QUESTION_SET,
+        CsPrimaryCategory.E_TEXTBOOK,
+        CsPrimaryCategory.COURSE_ASSESSMENT
+    ];
+    public static readonly FOR_DOWNLOADED_TAB = PrimaryCategory.FOR_LIBRARY_TAB;
+
+    public static readonly FOR_DIAL_CODE_SEARCH = [
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.TEXTBOOK_UNIT,
+        CsPrimaryCategory.COURSE
+    ];
+}
+
 export class MimeType {
     public static readonly COLLECTION = 'application/vnd.ekstep.content-collection';
     public static readonly VIDEO = ['video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4',
@@ -78,7 +104,7 @@ export class Search {
         'gradeLevel',
         'subject',
         'medium',
-        'contentType',
+        'primaryCategory',
         'publisher'
     ];
 
@@ -89,6 +115,7 @@ export class Search {
         'subject',
         'medium',
         'contentType',
+        'primaryCategory',
         'channel'
     ];
 }
@@ -104,7 +131,6 @@ export class BatchConstants {
         'courseId',
         'status',
         'createdBy',
-        // 'creatorDetails',
         'startDate',
         'endDate',
         'enrollmentEndDate',
@@ -415,6 +441,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CODE_PRIMARY_CATEGORY = 'primaryCategory';
     public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
@@ -586,9 +613,9 @@ export class IgnoreTelemetryPatters {
 }
 
 export class FormConfigCategories {
-    public static readonly CONTENT = "content";
+    public static readonly CONTENT = 'content';
 }
 export class FormConfigSubcategories {
-    public static readonly CONTENT_QUALITY = "contentquality";
-    public static readonly CONTENT_AVAILABILITY = "contentavailability";
+    public static readonly CONTENT_QUALITY = 'contentquality';
+    public static readonly CONTENT_AVAILABILITY = 'contentavailability';
 }
