@@ -28,7 +28,7 @@ import {
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, GroupErrorCodes } from '@app/app/app.constant';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
@@ -281,7 +281,11 @@ export class AddMemberToGroupPage {
       }).catch(async (e) => {
         console.log(e);
         await loader.dismiss();
-        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+        if (e.body && e.body.error && e.body.error.members && e.body.error.members[0].errorCode === GroupErrorCodes.EXCEEDED_MEMBER_MAX_LIMIT) {
+          this.commonUtilService.showToast('ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS');
+        } else {
+          this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+        }
       });
   }
 

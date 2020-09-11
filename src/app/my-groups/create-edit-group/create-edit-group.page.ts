@@ -11,7 +11,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { UtilityService } from '@app/services';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks, GroupErrorCodes } from '@app/app/app.constant';
 import {
   Environment, ID, ImpressionSubtype,
   ImpressionType, InteractType, PageId,
@@ -176,7 +176,11 @@ export class CreateEditGroupPage {
     }).catch(async (err) => {
       console.error(err);
       await loader.dismiss();
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      if (err.body && err.body.params && err.body.params.status === GroupErrorCodes.EXCEEDED_GROUP_MAX_LIMIT) {
+        this.commonUtilService.showToast('ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS');
+      } else {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      }
     });
   }
 
