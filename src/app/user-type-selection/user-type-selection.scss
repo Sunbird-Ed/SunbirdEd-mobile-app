@@ -7,11 +7,6 @@ ion-content {
 }
 :host {
   .card-related-style {
-    //border-style: solid;
-    //border-width: 2px;
-    //border-radius: 6px !important;
-    //margin-inline-start: unset !important;
-    //margin-inline-end: unset !important;
     text-align: center;
     position: relative;
     box-shadow: 0 20px 40px -10px map-get($colors, light_silver);

@@ -16,8 +16,7 @@
 @import "./assets/styles/rtl_helper";
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
-@import "./assets/styles/variables";
-@import "./assets/styles/variables";
+@import "./assets/styles/themeable";
 
 :root {
   --ion-default-font: "NotoSans";
@@ -214,14 +213,14 @@ ul.rating .ion-md-star-outline:before {
 }
 
 .select-box.select-alert .alert-button:first-child:not(:only-child) {
-  background: transparent !important;
-  color: map-get($colors, primary) !important;
+  background: transparent;
+  color: map-get($colors, primary);
   // margin-right: 1%;
 }
 
 .select-box.select-alert .alert-button:last-child:not(:only-child) {
-  background: map-get($colors, primary) !important;
-  color: map-get($colors, white) !important;
+  background: map-get($colors, primary);
+  color: map-get($colors, white);
   // margin-left: 5%;
 }
 
@@ -238,7 +237,7 @@ ul.rating .ion-md-star-outline:before {
     text-transform: uppercase;
     border-style: solid;
     border-width: 1px;
-    border-radius: 4px !important;
+    border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
     font-size: 1rem;
@@ -1095,7 +1094,7 @@ ion-split-pane {
     text-transform: uppercase;
     border-style: solid;
     border-width: 1px;
-    border-radius: 4px !important;
+    border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
     font-size: 1rem;
@@ -1113,7 +1112,7 @@ ion-split-pane {
 
 
 .ftue-changes.select-alert .alert-button:last-child:not(:only-child) {
-  background: map-get($colors, primary) !important;
+  background: map-get($colors, primary);
   color: map-get($colors, white) !important;
   // margin-left: 5%;
 }
