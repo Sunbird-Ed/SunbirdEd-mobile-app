@@ -18,6 +18,7 @@ import { Environment, InteractSubtype, InteractType } from '../../../services/te
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { PageId } from './../../../services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-content-actions',
@@ -112,12 +113,9 @@ export class ContentActionsComponent {
           component: SbPopoverComponent,
           componentProps: {
             content: this.content,
-            // isChild: this.isDepthChild,
             objRollup: this.objRollup,
-            // pageName: PageId.COLLECTION_DETAIL,
             corRelationList: this.corRelationList,
             sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE'),
-            // sbPopoverMainTitle: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE_MSG'),
             sbPopoverMainTitle: this.content.name,
             actionsButtons: [
               {
@@ -126,10 +124,7 @@ export class ContentActionsComponent {
               },
             ],
             icon: null,
-            metaInfo:
-              // this.contentDetail.contentTypesCount.TextBookUnit + 'items' +
-              // this.batchDetails.courseAdditionalInfo.leafNodesCount + 'items' +
-              '(' + this.fileSizePipe.transform(this.content.size, 2) + ')',
+            metaInfo: '(' + this.fileSizePipe.transform(this.content.size, 2) + ')',
             sbPopoverContent: 'Are you sure you want to delete ?'
           },
           cssClass: 'sb-popover danger',
@@ -144,7 +139,6 @@ export class ContentActionsComponent {
       }
       case 1: {
         this.popOverCtrl.dismiss();
-        // this.reportIssue();
         break;
       }
     }
@@ -153,13 +147,12 @@ export class ContentActionsComponent {
   /*
    * shows alert to confirm unenroll send back user selection */
   async unenroll() {
-    const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UNENROL_CLICKED,
       Environment.HOME,
       this.pageName,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(this.content),
       undefined,
       this.objRollup,
       this.corRelationList);
@@ -175,14 +168,13 @@ export class ContentActionsComponent {
   }
 
   async deleteContent() {
-    const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.pkgVersion);
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DELETE_CLICKED,
       Environment.HOME,
       this.pageName,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(this.content),
       undefined,
       this.objRollup,
       this.corRelationList);
