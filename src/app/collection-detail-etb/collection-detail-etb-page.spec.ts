@@ -717,7 +717,8 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             const content = {
                 identifier: 'do_212911645382959104165',
-                contentData: { licenseDetails: undefined, attributions: ['sample-3', 'sample-1'] },
+                primaryCategory: 'Digital Textbook',
+                contentData: { primaryCategory: 'Digital Textbook', licenseDetails: undefined, attributions: ['sample-3', 'sample-1'] },
                 isAvailableLocally: false,
                 children: { identifier: 'do_212911645382959104166' }
             };
@@ -725,20 +726,12 @@ describe('collectionDetailEtbPage', () => {
             mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             mockContentService.getContentHeirarchy = jest.fn(() => of(content));
             jest.spyOn(collectionDetailEtbPage, 'importContentInBackground').mockReturnValue();
-            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', ContentType.COURSE, undefined);
+            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Digital Textbook', undefined);
             // act
             collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
                 // assert
                 expect(collectionDetailEtbPage.contentDetail.contentData.attributions).toBe('sample-1, sample-3');
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
-                expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
-                    InteractSubtype.FAST_LOADING_INITIATED,
-                    PageId.COLLECTION_DETAIL,
-                    mockTelemetryObject,
-                    undefined,
-                    {},
-                    undefined
-                );
                 expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
                 done();
             });
@@ -1037,7 +1030,7 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             const content = {
                 identifier: 'do-123',
-                contentData: { name: 'test' },
+                contentData: { name: 'test',  primaryCategory: 'Digital Textbook' },
                 children: [{ identifier: 'sample-id' }]
             };
             collectionDetailEtbPage.cardData = {
@@ -1073,7 +1066,7 @@ describe('collectionDetailEtbPage', () => {
             document.getElementById = jest.fn(() => ({ scrollIntoView: jest.fn() })) as any;
             mocktextbookTocService.resetTextbookIds = jest.fn();
             mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Course', undefined);
+            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Digital Textbook', undefined);
             // act
             collectionDetailEtbPage.setChildContents();
             // assert
@@ -1082,16 +1075,6 @@ describe('collectionDetailEtbPage', () => {
                 expect(mockchangeDetectionRef.detectChanges).toHaveBeenCalled();
                 expect(collectionDetailEtbPage.childrenData).toBeTruthy();
                 // expect(mocktextbookTocService.resetTextbookIds).toHaveBeenCalled();
-                expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.OTHER,
-                    InteractSubtype.IMPORT_COMPLETED,
-                    Environment.HOME,
-                    PageId.COLLECTION_DETAIL,
-                    mockTelemetryObject,
-                    undefined,
-                    {},
-                    undefined
-                );
                 done();
             }, 10);
         });
