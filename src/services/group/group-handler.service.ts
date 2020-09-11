@@ -93,12 +93,11 @@ export class GroupHandlerService {
     } catch (e) {
       console.error(e);
       await loader.dismiss();
-      console.log('e.code', e.code);
-      if (e.body && e.body.error && e.body.error.activities && e.body.error.activities[0] === GroupErrorCodes.EXCEEDED_ACTIVITY_MAX_LIMIT) {
-        this.commonUtilService.showToast('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
-      } else {
-        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
-      }
+      // if (e.body && e.body.error && e.body.error.activities && e.body.error.activities[0] === GroupErrorCodes.EXCEEDED_ACTIVITY_MAX_LIMIT) {
+      //   this.commonUtilService.showToast('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
+      // } else {
+      this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+      // }
       this.location.back();
     }
   }
