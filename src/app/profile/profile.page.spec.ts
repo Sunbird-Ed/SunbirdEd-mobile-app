@@ -915,7 +915,8 @@ describe('Profile.page', () => {
             profilePage.navigateToDetailPage({
                 contentId: 'do_1234',
                 identifier: 'do_123',
-                contentType: 'Course'
+                contentType: 'Course',
+                primaryCategory: 'Course'
             }, 'completed', 2);
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -923,7 +924,7 @@ describe('Profile.page', () => {
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.USER,
                 PageId.PROFILE,
-                {id: 'do_1234', type: 'Course', version: undefined},
+                {id: 'do_123', type: 'Course', version: undefined},
                 values
             );
             expect(mockNavService.navigateToDetailPage).toBeCalled();
