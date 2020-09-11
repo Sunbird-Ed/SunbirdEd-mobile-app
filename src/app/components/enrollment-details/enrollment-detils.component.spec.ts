@@ -195,6 +195,7 @@ describe('enrollmentdetailcomponent', () => {
                 courseId: 'courseId',
                 batchId: 'batchId',
                 contentId: 'contentId',
+                primaryCategory: 'Learning Resource',
                 id: 'contentId'
             };
             const loader = {
@@ -203,7 +204,7 @@ describe('enrollmentdetailcomponent', () => {
             };
             const telemetryObj = {
                 id: content.contentId,
-                type: 'Resource',
+                type: 'Learning Resource',
                 version: ''
             };
             const values = new Map();
@@ -331,11 +332,12 @@ describe('enrollmentdetailcomponent', () => {
                 batchId: 'batchId',
                 id: 'contentId',
                 contentType: 'TextBook',
+                primaryCategory: 'Digital Textbook',
                 mimeType: 'application/vnd.ekstep.content-collection'
             };
             const telemetryObj = {
                 id: content.contentId,
-                type: 'TextBook',
+                type: 'Digital Textbook',
                 version: ''
             };
             const values = new Map();
