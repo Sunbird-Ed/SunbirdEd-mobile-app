@@ -536,7 +536,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       }
 
-      // this.appGlobalServices.skipCoachScreenForDeeplink = true;
       if (content && content.contentData &&
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
         this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
@@ -674,9 +673,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     }
     if (this.childContent) {
-      switch(ContentUtil.isTrackable(this.childContent)) {
+      switch (ContentUtil.isTrackable(this.childContent)) {
         case 0:
-          switch(ContentUtil.isTrackable(content)) {
+          switch (ContentUtil.isTrackable(content)) {
             case 1:
               const chapterParams: NavigationExtras = {
                 state: {
@@ -700,7 +699,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           }
           break;
         case -1 || 1:
-          switch(ContentUtil.isTrackable(content)) {
+          switch (ContentUtil.isTrackable(content)) {
             case 1:
               if (this.appGlobalServices.isGuestUser) { // guest user
                 this.setTabsRoot();
@@ -732,7 +731,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   });
                 } else { // not enrolled in batch
                   this.setTabsRoot();
-                  console.log('Content Data', content);
                   this.navService.navigateToTrackableCollection({
                     content,
                     isFromChannelDeeplink,
@@ -755,126 +753,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           }
           break;
       }
-      // if (this.childContent.mimeType === MimeType.COLLECTION) { // switch case 0
-      //   if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) { // switch 1
-      //     const chapterParams: NavigationExtras = {
-      //       state: {
-      //         courseContent: content,
-      //         chapterData: this.childContent,
-      //         isOnboardingSkipped,
-      //         isFromDeeplink: true,
-      //       }
-      //     };
-      //     this.closeProgressLoader();
-      //     this.setTabsRoot();
-      //     this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
-      //       chapterParams);
-      //   } else {
-      //     this.setTabsRoot();
-      //     if (content.contentData.trackable) { // *****
-      //         this.navService.navigateToDetailPage(
-      //           content,
-      //           {
-      //             content,
-      //             corRelation: this.getCorrelationList(payloadUrl)
-      //           }
-      //         );
-      //     } else { // *****
-      //       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-      //         {
-      //           state: {
-      //             content,
-      //             corRelation: this.getCorrelationList(payloadUrl)
-      //           }
-      //         });
-      //       }
-      //     }
-      // } else { // switch 0,-1
-      //   if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) { // switch case 1
-      //     if (this.appGlobalServices.isGuestUser) { // guest user
-      //       this.setTabsRoot();
-      //       console.log('Content Data', content);
-      //       if (content.contentData.trackable) { // ****
-      //         this.navService.navigateToDetailPage(
-      //           content,
-      //           {
-      //             content,
-      //             corRelation: this.getCorrelationList(payloadUrl)
-      //           }
-      //         );
-      //       } else { // *****
-      //         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-      //           {
-      //             state: {
-      //               content,
-      //               isFromChannelDeeplink,
-      //               corRelation: this.getCorrelationList(payloadUrl)
-      //             }
-      //           });
-      //       }
-      //     } else { // loggedin user
-      //       const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
-      //         userId: await this.appGlobalServices.getActiveProfileUid(),
-      //       };
-      //       const enrolledCourses = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise();
-      //       let isCourseEnrolled;
-      //       if (enrolledCourses && enrolledCourses.length > 0) {
-      //         isCourseEnrolled = enrolledCourses.find(course => {
-      //           return course.contentId === childContentId;
-      //         });
-      //       }
-      //       if (isCourseEnrolled) { // already enrolled
-      //         this.setTabsRoot();
-      //         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-      //           state: {
-      //             content: this.childContent,
-      //             depth: 1,
-      //             isChildContent: true,
-      //             corRelation: undefined,
-      //             isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-      //             isOnboardingSkipped
-      //           }
-      //         });
-      //       } else { // not enrolled in batch
-      //         this.setTabsRoot();
-      //         console.log('Content Data', content);
-      //         if (content.contentData.trackable) { // ******
-      //           this.navService.navigateToDetailPage(
-      //             content,
-      //             {
-      //               content,
-      //               corRelation: this.getCorrelationList(payloadUrl)
-      //             }
-      //           );
-      //         } else { // ******
-      //           this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-      //             {
-      //               state: {
-      //                 content,
-      //                 isFromChannelDeeplink,
-      //                 corRelation: this.getCorrelationList(payloadUrl)
-      //               }
-      //             });
-      //         }
-      //       }
-      //     }
-      //   } else {
-      //     this.setTabsRoot();
-      //     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-      //       state: {
-      //         content: this.childContent,
-      //         depth: 1,
-      //         isChildContent: true,
-      //         corRelation: this.getCorrelationList(payloadUrl),
-      //         isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-      //         isOnboardingSkipped
-      //       }
-      //     });
-      //   }
-      // }
     } else {
       this.setTabsRoot();
-      switch(ContentUtil.isTrackable(content)) {
+      switch (ContentUtil.isTrackable(content)) {
         case 1:
           this.navService.navigateToTrackableCollection({
             content,

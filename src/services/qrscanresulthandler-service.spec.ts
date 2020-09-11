@@ -197,7 +197,7 @@ describe('QRScannerResultHandler', () => {
     it('should navigate to ContentDetails page if the scanned data is a content deeplink', (done) => {
       // arrange
       const scannData =  'https://sunbirded.org/get/dial/ABCDEF?channel=igot&role=other';
-      const content = { identifier: 'do_12345', contentData: { contentType: 'Resource' } } as any;
+      const content = { identifier: 'do_12345', contentData: { contentType: 'Resource', primaryCategory: 'Learning Resource' } } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
       mockTelemetryService.updateCampaignParameters = jest.fn();
       jest.spyOn(qRScannerResultHandler, 'generateQRScanSuccessInteractEvent').mockImplementation(() => {
@@ -235,7 +235,7 @@ describe('QRScannerResultHandler', () => {
 
         expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
           params,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'Resource', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: undefined },
           corRelationData);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
@@ -251,7 +251,7 @@ describe('QRScannerResultHandler', () => {
       const scannData =  'https://sunbirded.org/get/dial/ABCDEF?channel=igot&role=other';
       const content = {
         identifier: 'do_12345', mimeType: 'application/vnd.ekstep.content-collection',
-        contentData: { contentType: 'Resource' }
+        contentData: { contentType: 'Resource', primaryCategory: 'Learning Resource' }
       } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
       mockTelemetryService.updateCampaignParameters = jest.fn();
@@ -289,7 +289,7 @@ describe('QRScannerResultHandler', () => {
 
         expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
           params,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'Resource', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: undefined },
           corRelationData);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
@@ -304,7 +304,7 @@ describe('QRScannerResultHandler', () => {
       // arrange
       const content = {
         identifier: 'do_12345',
-        contentData: { contentType: 'Course' }
+        contentData: { contentType: 'Course', primaryCategory: 'Course' }
       } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
       mockTelemetryService.updateCampaignParameters = jest.fn();
@@ -394,7 +394,8 @@ describe('QRScannerResultHandler', () => {
         mockNavController as NavController,
         mockEvents as Events,
         mockAppglobalService as AppGlobalService,
-        mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+        mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+        mockNavigationService as NavigationService
       );
     });
     it('should generate INTERACT and END event in case of invalid dialcode', () => {
