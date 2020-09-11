@@ -81,6 +81,7 @@ import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { AddActivityToGroup } from '../my-groups/group.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 declare const window;
 @Component({
@@ -654,7 +655,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent() {
     this.telemetryGeneratorService.generateEndTelemetry(
-      this.telemetryObject.type ? this.telemetryObject.type : ContentType.RESOURCE,
+      this.telemetryObject.type ? this.telemetryObject.type : CsPrimaryCategory.LEARNING_RESOURCE,
       Mode.PLAY,
       PageId.CONTENT_DETAIL,
       Environment.HOME,
@@ -865,8 +866,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (data) {
         this.downloadContent();
       } else {
-        // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
-        // this.content.contentData.pkgVersion);
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CLOSE_CLICKED,

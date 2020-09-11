@@ -479,15 +479,6 @@ export class ViewMoreActivityComponent implements OnInit {
       telemetryObject,
       values);
     this.navService.navigateToDetailPage(content, { content });
-    // if (content.mimeType === MimeType.COLLECTION) {
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-    //     state: { content }
-    //   });
-    // } else {
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-    //     state: { content }
-    //   });
-    // }
   }
 
   getContentImg(content) {

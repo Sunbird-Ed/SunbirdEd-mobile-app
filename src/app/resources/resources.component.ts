@@ -705,11 +705,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: contentTypes,
+        primaryCategories,
         source: PageId.LIBRARY
       }
     });
@@ -1048,7 +1048,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
+      primaryCategories: [],
       audience: this.audienceFilter,
       recentlyViewed: false,
     };

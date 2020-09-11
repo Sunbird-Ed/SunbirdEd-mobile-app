@@ -1079,7 +1079,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.generateEndEvent();
             // assert
-            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith('Learning Resource',
                 Mode.PLAY,
                 PageId.CONTENT_DETAIL,
                 Environment.HOME,
