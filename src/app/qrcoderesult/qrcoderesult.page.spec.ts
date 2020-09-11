@@ -502,7 +502,6 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
         });
 

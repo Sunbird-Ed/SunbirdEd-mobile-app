@@ -7,8 +7,6 @@ import {
 } from '@ionic/angular';
 import {
   ContentCard,
-  ContentType,
-  MimeType,
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
@@ -61,8 +59,10 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
+import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-profile',
@@ -461,7 +461,7 @@ export class ProfilePage implements OnInit {
 
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, ContentType.CERTIFICATE, undefined);
+        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
 
         const values = new Map();
         values['courseId'] = course.courseId;
@@ -479,25 +479,25 @@ export class ProfilePage implements OnInit {
         }
         if (course.issuedCertificate) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId, certificate: course.issuedCertificate },
-              (svgData, callback) => {
-                this.certificateDownloadAsPdfService.download(
-                    svgData, (fileName, pdfData) => callback(pdfData as any)
-                );
-              }).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                  await this.downloadLegacyCertificate(course, toast);
-                }
-                await this.handleCertificateDownloadIssue(toast, err);
-          });
+            { courseId: course.courseId, certificate: course.issuedCertificate },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                await this.downloadLegacyCertificate(course, toast);
+              }
+              await this.handleCertificateDownloadIssue(toast, err);
+            });
         } else {
-         await this.downloadLegacyCertificate(course, toast);
+          await this.downloadLegacyCertificate(course, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -511,14 +511,14 @@ export class ProfilePage implements OnInit {
       certificate: course.certificate
     };
     this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then(async (res) => {
-          if (toast) {
-            await toast.dismiss();
-          }
-          this.openpdf(res.path);
-        }).catch(async (err) => {
-      await this.handleCertificateDownloadIssue(toast, err);
-    });
+      .then(async (res) => {
+        if (toast) {
+          await toast.dismiss();
+        }
+        this.openpdf(res.path);
+      }).catch(async (err) => {
+        await this.handleCertificateDownloadIssue(toast, err);
+      });
   }
 
   private async handleCertificateDownloadIssue(toast: any, err: any) {
@@ -544,11 +544,6 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  private isResource(contentType) {
-    return contentType === ContentType.STORY ||
-      contentType === ContentType.WORKSHEET;
-  }
-
   /**
    * Navigate to the course/content details page
    */
@@ -556,10 +551,9 @@ export class ProfilePage implements OnInit {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, ContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsContentType.COURSE, undefined);
     } else {
-      const telemetryObjectType = this.isResource(content.contentType) ? ContentType.RESOURCE : content.contentType;
-      telemetryObject = new TelemetryObject(identifier, telemetryObjectType, undefined);
+      telemetryObject = ContentUtil.getTelemetryObject(content);
     }
 
     const values = new Map();
@@ -578,28 +572,6 @@ export class ProfilePage implements OnInit {
         content
       }
     );
-    // if (content.contentType === ContentType.COURSE) {
-    //   const navigationExtras: NavigationExtras = {
-    //     state: {
-    //       content
-    //     }
-    //   };
-    //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
-    // } else if (content.mimeType === MimeType.COLLECTION) {
-    //   const navigationExtras: NavigationExtras = {
-    //     state: {
-    //       content
-    //     }
-    //   };
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    // } else {
-    //   const navigationExtras: NavigationExtras = {
-    //     state: {
-    //       content
-    //     }
-    //   };
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    // }
   }
 
   updateLocalProfile(framework) {

@@ -65,7 +65,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   showLoading: boolean;
   downloadProgress: any;
   @ViewChild('searchInput') searchBar;
-  contentType: Array<string> = [];
+  primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
   activityTypeData: any = {};
@@ -154,7 +154,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (extras) {
       this.dialCode = extras.dialCode;
-      this.contentType = extras.contentType;
+      this.primaryCategories = extras.primaryCategories;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       if (this.source === PageId.GROUP_DETAIL) {
@@ -465,10 +465,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       case 0:
         if (this.isDialCodeSearch && !isRootContent) {
           params.isCreateNavigationStack = true;
-  
+
           const corRelationList: Array<CorrelationData> = [];
           corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
-  
+
           const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SELECT_BOOK, '',
@@ -923,7 +923,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentSearchRequest: ContentSearchCriteria = {
       searchType: SearchType.SEARCH,
       query: this.searchKeywords,
-      contentTypes: this.contentType,
+      primaryCategories: this.primaryCategories,
       facets: Search.FACETS,
       audience: this.audienceFilter,
       mode: 'soft',
@@ -1131,14 +1131,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.showLoader = true;
 
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
-    this.contentType = contentTypes;
+    this.primaryCategories = primaryCategories;
 
     // Page API START
     const pageAssemblefilter: PageAssembleFilter = {};
     pageAssemblefilter.dialcodes = this.dialCode;
-    pageAssemblefilter.contentType = this.contentType;
+    pageAssemblefilter.primaryCategory = this.primaryCategories;
 
     const pageAssembleCriteria: PageAssembleCriteria = {
       name: PageName.DIAL_CODE,
@@ -1149,7 +1149,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.profile && this.profile.board && this.profile.board.length) {
       pageAssembleCriteria.userProfile = { board: applyProfileFilter(this.appGlobalService, this.profile.board, [], 'board') };
     }
-    // pageAssembleCriteria.hardRefresh = true;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
       .then((res: any) => {
@@ -1158,7 +1157,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           if (sections && sections.length) {
             this.addCorRelation(sections[0].resmsgId, 'API');
             this.processDialCodeResult(sections);
-            // this.updateFilterIcon();  // TO DO
           }
           this.showLoader = false;
         });
@@ -1184,7 +1182,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.location.back();
         });
       });
-    // Page API END
   }
 
   generateInteractEvent(identifier, contentType, pkgVersion, index) {

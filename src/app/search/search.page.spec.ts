@@ -72,7 +72,7 @@ describe('SearchPage', () => {
     const mockRoterExtras = {
         extras: {
             state: {
-                contentType: 'contentType',
+                primaryCategories: 'primaryCategories',
                 corRelationList: 'corRelationList',
                 source: 'source',
                 enrolledCourses: 'enrolledCourses' as any,
@@ -159,7 +159,7 @@ describe('SearchPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockNavCtrl as NavController,
-            mockSbProgressLoader as SbProgressLoadere,
+            mockSbProgressLoader as SbProgressLoader,
             mockgroupHandlerService as GroupHandlerService,
             mockNavigationService as NavigationService
         );
@@ -172,7 +172,7 @@ describe('SearchPage', () => {
 
     it('should create a instance of searchPage', () => {
         expect(searchPage).toBeTruthy();
-        expect(searchPage.contentType).toEqual('contentType');
+        expect(searchPage.primaryCategories).toEqual('primaryCategories');
     });
 
     // arrange
@@ -1227,7 +1227,7 @@ describe('SearchPage', () => {
                     dialAssembleResp.sections
                 );
                 expect(searchPage.isDialCodeSearch).toBe(true);
-                expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
+                expect(searchPage.primaryCategories).toEqual(getSupportedContentFilterConfigResp);
                 done();
             }, 0);
         });
@@ -1246,7 +1246,7 @@ describe('SearchPage', () => {
             // assert
             setTimeout(() => {
                 expect(searchPage.isDialCodeSearch).toBe(true);
-                expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
+                expect(searchPage.primaryCategories).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
                 expect(mockLocation.back).toHaveBeenCalled();
                 done();
@@ -1270,7 +1270,7 @@ describe('SearchPage', () => {
             // assert
             setTimeout(() => {
                 expect(searchPage.isDialCodeSearch).toBe(true);
-                expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
+                expect(searchPage.primaryCategories).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
