@@ -214,14 +214,14 @@ ul.rating .ion-md-star-outline:before {
 }
 
 .select-box.select-alert .alert-button:first-child:not(:only-child) {
-  background: transparent !important;
-  color: $blue !important;
+  background: transparent;
+  color: map-get($colors, primary);
   // margin-right: 1%;
 }
 
 .select-box.select-alert .alert-button:last-child:not(:only-child) {
-  background: $blue !important;
-  color: map-get($colors, white) !important;
+  background: map-get($colors, primary);
+  color: map-get($colors, white);
   // margin-left: 5%;
 }
 
@@ -234,11 +234,11 @@ ul.rating .ion-md-star-outline:before {
   display: inline-block !important;
   text-align: center;
   .alert-button {
-    border-color: $blue;
+    border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
     border-width: 1px;
-    border-radius: 4px !important;
+    border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
     font-size: 1rem;
@@ -1091,12 +1091,11 @@ ion-split-pane {
   display: inline-block !important;
   text-align: center;
   .alert-button {
-    border-color: $blue;
-    color: $blue;
+    border-color: map-get($colors, primary);
     text-transform: uppercase;
     border-style: solid;
     border-width: 1px;
-    border-radius: 4px !important;
+    border-radius: 4px;
     overflow: hidden;
     height: 2.8rem;
     font-size: 1rem;
@@ -1114,7 +1113,7 @@ ion-split-pane {
 
 
 .ftue-changes.select-alert .alert-button:last-child:not(:only-child) {
-  background: $blue !important;
+  background: map-get($colors, primary);
   color: map-get($colors, white) !important;
   // margin-left: 5%;
 }
