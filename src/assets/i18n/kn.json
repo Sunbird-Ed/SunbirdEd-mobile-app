@@ -163,7 +163,7 @@
   "COURSES_IN_PROGRESS": "ನನ್ನ ಕೋರ್ಸ್ ಗಳು",
   "COURSE_COMPLETED_LABEL": "{{%s}}% ಪೂರ್ಣಗೊಂಡಿತು",
   "COURSE_COMPLETION_POPUP_DESC": "ನೀವು 7 ದಿನಗಳ ಒಳಗಾಗಿ ನಿಮ್ಮ ನೋಂದಾಯಿತ ಸಂಪರ್ಕ ವಿವರಕ್ಕೆ ಕೋರ್ಸ್ ಪ್ರಮಾಣಪತ್ರದ ಕುರಿತು ಸೂಚನೆ ಪಡೆಯುವಿರಿ",
-  "COURSE_COMPLETION_POPUP_NO_CERTIFICATE": "ಟಿಪ್ಪಣಿ: ಈ ಕೋರ್ಸ್ ಗೆ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ",
+  "COURSE_COMPLETION_POPUP_NO_CERTIFICATE": "ಟಿಪ್ಪಣಿ: ಈ ಕೋರ್ಸ್ ಗೆ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ ",
   "COURSE_ENDED": "{{%s}} ರಂದು ಕೋರ್ಸ್ ಪೂರ್ಣಗೊಂಡಿತು",
   "COURSE_ENDED_ON": "ಕೋರ್ಸ್ ಕೊನೆಗೊಂಡಿದ್ದು {{%s}}",
   "COURSE_ENROLLED": "ನೀವು ಕೋರ್ಸ್ ಗೆ ಸೇರಿದ್ದೀರಿ",

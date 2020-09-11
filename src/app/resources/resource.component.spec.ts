@@ -42,6 +42,7 @@ import { NotificationService } from '@app/services';
 import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
 import { ImpressionType } from '../../services/telemetry-constants';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { FrameworkSelectionDelegateService, FrameworkSelectionActionsDelegate } from '../profile/framework-selection/framework-selection.page';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -111,6 +112,11 @@ describe('ResourcesComponent', () => {
     const mockNavService: Partial<NavigationService> = {
         navigateToCollection: jest.fn()
     };
+    const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {
+        delegate: {
+            onFrameworkSelectionSubmit: jest.fn()
+        }
+    }
 
 
     const constructComponent = () => {
@@ -139,7 +145,8 @@ describe('ResourcesComponent', () => {
             mockRouter as Router,
             mockChangeRef as ChangeDetectorRef,
             mockAppNotificationService as NotificationService,
-            mockPopoverCtrl as PopoverController
+            mockPopoverCtrl as PopoverController,
+            mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService
         );
     };
     beforeAll(() => {
@@ -1455,5 +1462,60 @@ describe('ResourcesComponent', () => {
         // assert
         expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalledWith(request.title, '');
         expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.VIEW_MORE_ACTIVITY], params);
+    });
+
+    describe('requestMoreContent()', () => {
+        it('should prepare the delegate and navigate to Framework details page', (done) => {
+            // act
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockFormAndFrameworkUtilService.getContentRequestFormConfig = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            resourcesComponent.requestMoreContent().then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getContentRequestFormConfig).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('onFrameworkSelectionSubmit()', () => {
+        it('should prepare the delegate navigation method for Frameworkdetails page when internet is available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            const formOutput = {
+                board: { name: 'STATE' }
+            };
+            mockRouter.navigate = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            resourcesComponent.onFrameworkSelectionSubmit({}, formOutput, mockRouter, mockCommonUtilService,
+                mockTelemetryGeneratorService, []).then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should show the offline toast when internet is now available', (done) => {
+            // act
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            resourcesComponent.onFrameworkSelectionSubmit({}, {}, mockRouter, mockCommonUtilService).then(() => {
+                // assert
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            });
+        });
     });
 });

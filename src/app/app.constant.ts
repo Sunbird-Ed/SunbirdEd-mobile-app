@@ -155,7 +155,9 @@ export class ExploreConstants {
         'dialecodes',
         'size',
         'batches',
-        'organisation'
+        'organisation',
+        'trackable',
+        'primaryCategory'
     ];
 }
 
@@ -444,6 +446,7 @@ export class RouterLinks {
     public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
     public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
+    public static readonly FRAMEWORK_SELECTION = 'framework-selection';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
@@ -460,6 +463,7 @@ export class RouterLinks {
     public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
     public static readonly TEXTBOOK_TOC = 'textbook-toc';
     public static readonly EXPLORE_BOOK = 'explore-book';
+    public static readonly RELEVANT_CONTENTS = 'relevant-contents';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';

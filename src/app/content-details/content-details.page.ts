@@ -82,6 +82,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 
+declare const window;
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',

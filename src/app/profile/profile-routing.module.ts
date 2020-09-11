@@ -14,6 +14,10 @@ const routes: Routes = [
     {
         path: RouterLinks.SELF_DECLARED_TEACHER_EDIT + '/:mode' ,
         loadChildren: './self-declared-teacher-edit/self-declared-teacher-edit.module#SelfDeclaredTeacherEditPageModule'
+    },
+    {
+        path: RouterLinks.FRAMEWORK_SELECTION,
+        loadChildren: './framework-selection/framework-selection.module#FrameworkSelectionPageModule'
     }
 ];
 

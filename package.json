@@ -98,7 +98,7 @@
     "grapheme-splitter": "^1.0.4",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.0.0",
     "ng-recaptcha": "^5.0.0",
     "rxjs": "^6.5.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
@@ -117,8 +117,8 @@
     "ionic_enable_lint": false
   },
   "devDependencies": {
-    "@angular-devkit/architect": "~0.13.8",
-    "@angular-devkit/build-angular": "~0.13.8",
+    "@angular-devkit/architect": "0.13.9",
+    "@angular-devkit/build-angular": "0.13.9",
     "@angular-devkit/core": "~7.3.8",
     "@angular-devkit/schematics": "~7.3.8",
     "@angular/cli": "~7.3.8",
