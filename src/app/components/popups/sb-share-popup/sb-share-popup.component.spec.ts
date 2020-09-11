@@ -35,7 +35,8 @@ describe('SbSharePopupComponent', () => {
                         contentType: 'Resource',
                         contentData: {
                             contentType: 'Resource',
-                            pkgVersion: '1'
+                            pkgVersion: '1',
+                            primaryCategory: 'Learning Resource'
                         }
                     } as any;
                     break;
@@ -116,7 +117,7 @@ describe('SbSharePopupComponent', () => {
                 '',
                 Environment.HOME,
                 'content-detail',
-                { id: 'do_123', type: 'Resource', version: '1' },
+                { id: 'do_123', type: 'Learning Resource', version: '1' },
                 undefined,
                 { l1: 'do_1', l2: 'do_12' },
                 undefined,
@@ -126,7 +127,7 @@ describe('SbSharePopupComponent', () => {
                 PageId.SHARE_CONTENT_POPUP,
                 Environment.HOME,
                 'do_123',
-                'Resource',
+                'Learning Resource',
                 '1',
                 { l1: 'do_1', l2: 'do_12' },
                 undefined);
