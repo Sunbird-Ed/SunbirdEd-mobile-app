@@ -55,10 +55,8 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
   constructor(
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private platform: Platform,
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private location: Location,
     private translate: TranslateService,
     private router: Router,
     private navService: NavigationService
@@ -103,7 +101,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.searchRequest.medium = this.selectedFramework.medium;
     this.searchRequest.grade = this.selectedFramework.grade;
     this.searchRequest.subject = this.selectedFramework.subject;
-    this.searchRequest.contentTypes = this.selectedFramework.contentType;
+    this.searchRequest.primaryCategories = this.selectedFramework.contentType;
     this.searchRequest.mode = 'hard';
   }
 

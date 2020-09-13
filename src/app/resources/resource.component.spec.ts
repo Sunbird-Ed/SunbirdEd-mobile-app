@@ -1163,7 +1163,7 @@ describe('ResourcesComponent', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
+                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             expect(mockNavService.navigateToCollection).toHaveBeenCalled();
@@ -1184,7 +1184,7 @@ describe('ResourcesComponent', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
+                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
         });
@@ -1205,7 +1205,7 @@ describe('ResourcesComponent', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.LIBRARY,
-            { id: 'sample_doId', type: 'textbook', version: undefined });
+            { id: 'do_id1234', type: 'textbook', version: '' });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
         expect(mockRouter.navigate).toHaveBeenCalled();
     });
@@ -1224,7 +1224,7 @@ describe('ResourcesComponent', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.LIBRARY,
-            { id: 'do_id1234', type: 'textbook', version: undefined });
+            { id: 'do_id1234', type: 'textbook', version: '' });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
     });
 
