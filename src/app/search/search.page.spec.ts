@@ -1,5 +1,5 @@
 import { SearchPage } from './search.page';
-import { MimeType, ContentType, RouterLinks } from '@app/app/app.constant';
+import { MimeType, RouterLinks } from '@app/app/app.constant';
 import {
     FrameworkService,
     FrameworkUtilService,
@@ -31,6 +31,7 @@ import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandler
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('SearchPage', () => {
     let searchPage: SearchPage;
@@ -108,7 +109,9 @@ describe('SearchPage', () => {
         putString: jest.fn(),
         getString: jest.fn(() => of('ka' as any))
     };
-    const mockCourseService: Partial<CourseService> = {};
+    const mockCourseService: Partial<CourseService> = {
+        getEnrolledCourses: jest.fn(() => of([]))
+    };
     const mocksearchHistoryService: Partial<SearchHistoryService> = {};
     const mockAppversion: Partial<AppVersion> = {
         getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app')),
@@ -362,7 +365,8 @@ describe('SearchPage', () => {
         it('openCollection', () => {
             // arrange
             const collection = {
-                identifier: 'identifier'
+                identifier: 'identifier',
+                contentType: 'collection'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             // act
@@ -373,7 +377,7 @@ describe('SearchPage', () => {
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.HOME,
                 PageId.DIAL_SEARCH,
-                { id: 'identifier', type: undefined, version: undefined },
+                { id: 'identifier', type: 'collection', version: '' },
                 { root: true },
                 undefined,
                 undefined
@@ -383,7 +387,7 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                contentType: ContentType.COURSE
+                contentType: 'Course'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -402,7 +406,7 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                contentType: ContentType.COURSE
+                contentType: 'Course'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -427,7 +431,7 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                contentType: ContentType.COURSE
+                contentType: 'Course'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -449,7 +453,8 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                mimeType: MimeType.COLLECTION
+                mimeType: MimeType.COLLECTION,
+                contentType: 'collection'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -469,7 +474,8 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                mimeType: 'MimeType.COLLECTION'
+                mimeType: 'MimeType.COLLECTION',
+                contentType: 'collection'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -640,7 +646,8 @@ describe('SearchPage', () => {
         it('should set profile data accordingly', (done) => {
             // arrange
             const data = {
-                framework: 'framework1'
+                framework: 'framework1',
+                contentType: 'Resource'
             };
             const profile = {
                 syllabus: ['framework1']
@@ -663,7 +670,8 @@ describe('SearchPage', () => {
                 framework: 'framework1',
                 board: 'board',
                 medium: ['medium1'],
-                gradeLevel: ['grade1']
+                gradeLevel: ['grade1'],
+                contentType: 'Resource'
             };
             const profile = {
                 syllabus: ['framework']
@@ -714,7 +722,8 @@ describe('SearchPage', () => {
                 framework: 'framework1',
                 board: 'board',
                 medium: ['medium1'],
-                gradeLevel: ['grade1']
+                gradeLevel: ['grade1'],
+                contentType: 'Resource'
             };
             const profile = {
                 syllabus: ['framework1'],
@@ -766,7 +775,8 @@ describe('SearchPage', () => {
                 framework: 'framework1',
                 board: 'board',
                 medium: ['medium1'],
-                gradeLevel: ['grade1']
+                gradeLevel: ['grade1'],
+                contentType: 'Resource'
             };
             const profile = {
                 syllabus: ['framework1'],
@@ -822,7 +832,8 @@ describe('SearchPage', () => {
                 framework: 'framework1',
                 board: 'board',
                 medium: ['medium1'],
-                gradeLevel: ['grade1']
+                gradeLevel: ['grade1'],
+                contentType: 'Resource'
             };
             const profile = {
                 syllabus: ['framework1'],
@@ -1153,7 +1164,8 @@ describe('SearchPage', () => {
                 isNetworkAvailable: true
             };
             const contentMock = {
-                identifier: 'id'
+                identifier: 'id',
+                contentType: 'Resource'
             };
             const getCourseBatchesResp = [
             ];
@@ -1184,7 +1196,8 @@ describe('SearchPage', () => {
                 isNetworkAvailable: true
             };
             const contentMock = {
-                identifier: 'id'
+                identifier: 'id',
+                contentType: 'Resource'
             };
             mockCourseService.getCourseBatches = jest.fn(() => throwError({}));
             // act
@@ -1414,13 +1427,15 @@ describe('SearchPage', () => {
             // arrange
             const getContentDetailsResp = {
                 isAvailableLocally: true,
+                contentType: 'collection',
                 contentData: {
                     identifier: 'id1'
                 }
             };
             const collection = {
                 identifier: 'identifier',
-                mimeType: MimeType.COLLECTION
+                mimeType: MimeType.COLLECTION,
+                contentType: 'collection'
             };
             searchPage.isDialCodeSearch = true;
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve({}));
@@ -1446,8 +1461,15 @@ describe('SearchPage', () => {
             const getContentDetailsResp = undefined;
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
             mockAppGlobalService.getCurrentUser = jest.fn(() => { });
+            const content = {
+                isAvailableLocally: true,
+                contentType: 'resource',
+                contentData: {
+                    identifier: 'id1'
+                }
+            };
             // act
-            searchPage.checkParent('parent', 'child');
+            searchPage.checkParent('parent', content);
             // assert
             setTimeout(() => {
                 expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
@@ -1460,6 +1482,7 @@ describe('SearchPage', () => {
             // arrange
             const getContentDetailsResp = {
                 isAvailableLocally: false,
+                contentType: 'collection',
                 contentData: {
                     identifier: 'id1'
                 }
@@ -1523,69 +1546,6 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
-        // it('should show toast when content not available', (done) => {
-        //     // arrange
-        //     mockCommonUtilService.networkInfo = {
-        //         isNetworkAvailable: true
-        //     };
-        //     const importContentResp = [
-        //         {status: 'status', identifier: 'id1'}];
-        //     mockContentService.importContent = jest.fn(() => of(importContentResp));
-        //     const parent = {identifier: 'id'};
-        //     // act
-        //     searchPage.downloadParentContent(parent);
-        //     // assert
-        //     expect(searchPage.downloadProgress).toEqual(0);
-        //     expect(searchPage.isDownloadStarted).toEqual(true);
-        //     setTimeout(() => {
-        //         expect(searchPage.showLoading).toBe(false);
-        //         expect(searchPage.isDownloadStarted).toBe(false);
-        //         expect(searchPage.queuedIdentifiers.length).toEqual(0);
-        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_CONTENT_NOT_AVAILABLE');
-        //         done();
-        //     }, 0);
-        // });
-        // it('should show toast when network not available', (done) => {
-        //     // arrange
-        //     mockCommonUtilService.networkInfo = {
-        //         isNetworkAvailable: false
-        //     };
-        //     const importContentResp = [
-        //         {status: 'status', identifier: 'id1'}];
-        //     mockContentService.importContent = jest.fn(() => of(importContentResp));
-        //     const parent = {identifier: 'id'};
-        //     // act
-        //     searchPage.downloadParentContent(parent);
-        //     // assert
-        //     expect(searchPage.downloadProgress).toEqual(0);
-        //     expect(searchPage.isDownloadStarted).toEqual(true);
-        //     setTimeout(() => {
-        //         expect(searchPage.showLoading).toBe(false);
-        //         expect(searchPage.isDownloadStarted).toBe(false);
-        //         expect(searchPage.queuedIdentifiers.length).toEqual(0);
-        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
-        //         done();
-        //     }, 0);
-        // });
-        // it('should handle error scenario while importing', (done) => {
-        //     // arrange
-        //     mockCommonUtilService.networkInfo = {
-        //         isNetworkAvailable: true
-        //     };
-        //     mockContentService.importContent = jest.fn(() => throwError({ CONNECTION_ERROR: 'CONNECTION_ERROR' }));
-        //     const parent = {identifier: 'id'};
-        //     // act
-        //     searchPage.downloadParentContent(parent);
-        //     // assert
-        //     expect(searchPage.downloadProgress).toEqual(0);
-        //     expect(searchPage.isDownloadStarted).toEqual(true);
-        //     setTimeout(() => {
-        //         expect(searchPage.showLoading).toBe(false);
-        //         expect(searchPage.isDownloadStarted).toBe(false);
-        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
-        //         done();
-        //     }, 0);
-        // });
 
         describe('handleDeviceBackButton', () => {
             it('should handle Device BackButton for dialcode', () => {

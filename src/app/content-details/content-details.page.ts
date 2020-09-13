@@ -43,7 +43,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, ContentType, PreferenceKey
+  ShareItemType, PreferenceKey
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
