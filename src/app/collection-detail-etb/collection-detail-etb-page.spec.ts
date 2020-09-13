@@ -1210,7 +1210,7 @@ describe('collectionDetailEtbPage', () => {
 
         it('should go to content-details page', () => {
             // arrange
-            const content = { identifier: 'do-123' }, depth = 2;
+            const content = { identifier: 'do-123', contentType: 'learning resource' }, depth = 2;
             mockzone.run = jest.fn((fn) => fn());
             mockrouter.navigate = jest.fn(() => Promise.resolve(true));
             // act

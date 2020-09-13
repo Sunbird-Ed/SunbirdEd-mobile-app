@@ -87,7 +87,7 @@ describe('SbSharePopupComponent', () => {
         expect(sbSharePopupComponent).toBeTruthy();
     });
 
-    fit('should generate telemetry on ngOninit', (done) => {
+    it('should generate telemetry on ngOninit', (done) => {
         // arrange
         const unsubscribeFn = jest.fn();
         sbSharePopupComponent.backButtonFunc = {
