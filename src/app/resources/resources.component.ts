@@ -45,7 +45,6 @@ import {
 import {
   AudienceFilter,
   ContentCard,
-  ContentType,
   PreferenceKey,
   Search,
   ProfileConstants,
@@ -54,7 +53,8 @@ import {
   EventTopics,
   ExploreConstants,
   FormConfigSubcategories,
-  FormConfigCategories
+  FormConfigCategories,
+  PrimaryCategory
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -76,6 +76,7 @@ import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-t
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
+import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-resources',
@@ -442,7 +443,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
-    this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
   }
@@ -899,7 +900,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
     const values = {};
     values['sectionName'] = item.subject;
@@ -908,27 +908,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
-      // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
   navigateToTextbookPage(items, subject) {
-    const identifier = items.contentId || items.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, items.contentType, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject);
+      ContentUtil.getTelemetryObject(items));
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
@@ -1021,7 +1017,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
-        contentType: ContentType.FOR_LIBRARY_TAB,
+        primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.getGroupByPageReq.grade,
         selectedMedium: this.getGroupByPageReq.medium
       }

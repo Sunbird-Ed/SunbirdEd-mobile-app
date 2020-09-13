@@ -1,7 +1,8 @@
 import { Rollup, Content, ContentData, TelemetryObject, CorrelationData } from 'sunbird-sdk';
 import { CorReleationDataType } from '@app/services/telemetry-constants';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
-import { ContentType, MimeType } from '@app/app/app.constant';
+import { MimeType } from '@app/app/app.constant';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 export class ContentUtil {
 
 
@@ -101,7 +102,10 @@ export class ContentUtil {
    */
   public static getTelemetryObject(content): TelemetryObject {
     const identifier = content.identifier || content.contentId;
-    const primaryCategory = content.contentData ? content.contentData.primaryCategory : content.primaryCategory;
+    let primaryCategory = content.contentData ? content.contentData.primaryCategory : content.primaryCategory;
+    if (!primaryCategory) {
+      primaryCategory = content.contentData ? content.contentData.contentType : content.contentType;
+    }
     const pkgVersion = content.contentData ? content.contentData.pkgVersion : content.pkgVersion;
     return new TelemetryObject(identifier, primaryCategory, pkgVersion || '');
   }
@@ -177,7 +181,7 @@ export class ContentUtil {
         return -1;
       }
     } else {
-      if (content.contentType === ContentType.COURSE) {
+      if (content.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
         // Trackable
         return 1;
       } else if (content.mimeType === MimeType.COLLECTION) {

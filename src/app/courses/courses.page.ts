@@ -7,7 +7,7 @@ import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import {
   ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext
+  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, MimeType, ProgressPopupContext
 } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';

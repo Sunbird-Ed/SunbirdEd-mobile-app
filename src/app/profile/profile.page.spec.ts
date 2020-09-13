@@ -924,7 +924,7 @@ describe('Profile.page', () => {
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.USER,
                 PageId.PROFILE,
-                {id: 'do_123', type: 'Course', version: undefined},
+                {id: 'do_123', type: 'Course', version: ''},
                 values
             );
             expect(mockNavService.navigateToDetailPage).toBeCalled();
