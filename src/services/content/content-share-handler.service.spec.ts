@@ -12,7 +12,7 @@ import {
     InteractType, InteractSubtype,
     Environment, PageId
 } from '../telemetry-constants';
-import { ContentType } from '../../app/app.constant';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('ContentShareHandlerService', () => {
 
@@ -84,7 +84,7 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -145,14 +145,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -220,14 +220,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'textbook_do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'textbook_do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -284,14 +284,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -315,7 +315,7 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COURSE,
+                    contentType: CsContentType.COURSE,
                     primaryCategory: 'Course',
                 }
             };
@@ -341,14 +341,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: 'Course', version: undefined
+                        id: 'do_id', type: 'Course', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -372,7 +372,7 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COURSE,
+                    contentType: CsContentType.COURSE,
                     primaryCategory: 'Course',
                 }
             };
@@ -398,14 +398,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: 'Course', version: undefined
+                        id: 'do_id', type: 'Course', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -429,7 +429,7 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.TEXTBOOK,
+                    contentType: CsContentType.TEXTBOOK,
                     primaryCategory: 'Digital Textbook',
                 }
             };
@@ -455,14 +455,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: 'Digital Textbook', version: undefined
+                        id: 'do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: 'Digital Textbook', version: undefined
+                        id: 'do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -486,7 +486,7 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'content_do_id',
                 contentData: {
-                    contentType: ContentType.TEXTBOOK,
+                    contentType: CsContentType.TEXTBOOK,
                     primaryCategory: 'Digital Textbook',
                 }
             };
@@ -512,14 +512,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'content_do_id', type: 'Digital Textbook', version: undefined
+                        id: 'content_do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'content_do_id', type: 'Digital Textbook', version: undefined
+                        id: 'content_do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -543,7 +543,7 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COLLECTION,
+                    contentType: CsContentType.COLLECTION,
                     primaryCategory: 'Content Playlist',
                 }
             };
@@ -569,14 +569,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: 'Content Playlist', version: undefined
+                        id: 'do_id', type: 'Content Playlist', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: 'Content Playlist', version: undefined
+                        id: 'do_id', type: 'Content Playlist', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -629,14 +629,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'primaryCategory', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();

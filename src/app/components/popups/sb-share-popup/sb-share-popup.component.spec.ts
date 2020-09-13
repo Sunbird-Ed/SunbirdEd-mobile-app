@@ -16,7 +16,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
-import { ContentType, MimeType } from '../../../app.constant';
+import { MimeType } from '../../../app.constant';
+import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
@@ -33,6 +34,7 @@ describe('SbSharePopupComponent', () => {
                     value = {
                         identifier: 'do_123',
                         contentType: 'Resource',
+                        primaryCategory: 'learning resource',
                         contentData: {
                             contentType: 'Resource',
                             pkgVersion: '1',
@@ -85,7 +87,7 @@ describe('SbSharePopupComponent', () => {
         expect(sbSharePopupComponent).toBeTruthy();
     });
 
-    it('should generate telemetry on ngOninit', (done) => {
+    fit('should generate telemetry on ngOninit', (done) => {
         // arrange
         const unsubscribeFn = jest.fn();
         sbSharePopupComponent.backButtonFunc = {
@@ -95,7 +97,8 @@ describe('SbSharePopupComponent', () => {
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('baseurl'));
         mockContentService.getContentDetails = jest.fn(() => of({
-            identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: ContentType.TEXTBOOK
+            identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: CsContentType.TEXTBOOK,
+            primaryCategory: CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase()
         }));
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, cb) => {

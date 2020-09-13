@@ -18,9 +18,9 @@ import {
 } from '@app/services/telemetry-constants';
 import { Content } from 'sunbird-sdk';
 import { EventTopics } from '@app/app/app.constant';
-import { MimeType, ContentType, RouterLinks } from '../../app.constant';
+import { MimeType, RouterLinks } from '../../app.constant';
 import { NavigationService } from '../../../services/navigation-handler.service';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
@@ -239,27 +239,27 @@ describe('CollectionChildComponent', () => {
         // arrange
         const content = {
           contentData: {
-            contentType: ContentType.SELF_ASSESS,
+            contentType: CsContentType.SELF_ASSESS,
             primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
           }
         } as any;
         // act
         const contentTypeIcon = collectionChildComponent.getMediaIcon(content);
         // assert
-        expect(content.contentData.contentType).toEqual(ContentType.SELF_ASSESS);
+        expect(content.contentData.contentType).toEqual(CsContentType.SELF_ASSESS);
         expect(contentTypeIcon).toBe('./assets/imgs/selfassess.svg');
       });
       it('Should get touch icon for conetnt type other than SelfAssess', () => {
         // arrange
         const content = {
           contentData: {
-            contentType: ContentType.RESOURCE
+            contentType: CsContentType.RESOURCE
           }
         } as any;
         // act
         const contentTypeIcon = collectionChildComponent.getMediaIcon(content);
         // assert
-        expect(content.contentData.contentType).toEqual(ContentType.RESOURCE);
+        expect(content.contentData.contentType).toEqual(CsContentType.RESOURCE);
         expect(contentTypeIcon).toBe('./assets/imgs/touch.svg');
       });
       it('Should get doc icon for mimeTypes application/pdf', () => {
@@ -510,7 +510,7 @@ describe('CollectionChildComponent', () => {
         // arrange
         const content = {
           identifier: 'some_identifier',
-          contentType: ContentType.COURSE
+          contentType: CsContentType.COURSE
         };
         mockZone.run = jest.fn((fn) => fn());
         // act
@@ -522,7 +522,7 @@ describe('CollectionChildComponent', () => {
         const content = {
           identifier: 'some_identifier',
           mimeType: MimeType.COLLECTION,
-          contentType: ContentType.TEXTBOOK
+          contentType: CsContentType.TEXTBOOK
         };
         mockZone.run = jest.fn((fn) => fn());
         // act
@@ -540,10 +540,10 @@ describe('CollectionChildComponent', () => {
           // arrange
           const content = {
             identifier: 'some_identifier',
-            contentType: ContentType.RESOURCE,
+            contentType: CsContentType.RESOURCE,
             primaryCategory: CsPrimaryCategory.TEACHER_RESOURCE.toLowerCase(),
             contentData: {
-              contentType: ContentType.RESOURCE,
+              contentType: CsContentType.RESOURCE,
               primaryCategory: CsPrimaryCategory.TEACHER_RESOURCE
             }
           };
@@ -592,10 +592,10 @@ describe('CollectionChildComponent', () => {
           });
           const content = {
             identifier: 'some_identifier',
-            contentType: ContentType.SELF_ASSESS,
+            contentType: CsContentType.SELF_ASSESS,
             primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase(),
             contentData: {
-              contentType: ContentType.SELF_ASSESS,
+              contentType: CsContentType.SELF_ASSESS,
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             },
             status: '2'
@@ -653,10 +653,10 @@ describe('CollectionChildComponent', () => {
           });
           const content = {
             identifier: 'some_identifier',
-            contentType: ContentType.SELF_ASSESS,
+            contentType: CsContentType.SELF_ASSESS,
             primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase(),
             contentData: {
-              contentType: ContentType.SELF_ASSESS,
+              contentType: CsContentType.SELF_ASSESS,
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             }
           };
@@ -727,10 +727,10 @@ describe('CollectionChildComponent', () => {
           });
           const content = {
             identifier: 'some_identifier',
-            contentType: ContentType.SELF_ASSESS,
+            contentType: CsContentType.SELF_ASSESS,
             primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT.toLowerCase(),
             contentData: {
-              contentType: ContentType.SELF_ASSESS,
+              contentType: CsContentType.SELF_ASSESS,
               primaryCategory: CsPrimaryCategory.COURSE_ASSESSMENT
             }
           };

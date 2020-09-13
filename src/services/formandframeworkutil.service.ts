@@ -24,7 +24,7 @@ import {
     FrameworkCategoryCode
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 

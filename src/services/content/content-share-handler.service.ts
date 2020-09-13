@@ -8,7 +8,6 @@ import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { ContentType } from '../../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 

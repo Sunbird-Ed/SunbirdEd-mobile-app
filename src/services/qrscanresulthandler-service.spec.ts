@@ -1,9 +1,9 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
-import { TelemetryService, TelemetryObject, Mode, ContentService,
+import { TelemetryService, Mode, ContentService,
    FrameworkService, PageAssembleService } from 'sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
-  LogLevel, CorReleationDataType, CorrelationData
+  CorReleationDataType, CorrelationData
 } from '@app/services/telemetry-constants';
 import { of, throwError } from 'rxjs';
 import { CommonUtilService } from './common-util.service';
@@ -235,7 +235,7 @@ describe('QRScannerResultHandler', () => {
 
         expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
           params,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: '' },
           corRelationData);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
@@ -289,7 +289,7 @@ describe('QRScannerResultHandler', () => {
 
         expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
           params,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'Learning Resource', version: '' },
           corRelationData);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,

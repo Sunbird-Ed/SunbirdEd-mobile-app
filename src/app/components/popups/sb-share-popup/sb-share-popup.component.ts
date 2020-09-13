@@ -27,7 +27,7 @@ import {
   AndroidPermissionsStatus
 } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -123,7 +123,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     }
 
     let endPoint = '';
-    if (content.primaryCategory.toLowerCase() === CsContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) {
       endPoint = ShareUrl.COURSE;
     } else if (content.mimeType === MimeType.COLLECTION) {
       endPoint = ShareUrl.COLLECTION;

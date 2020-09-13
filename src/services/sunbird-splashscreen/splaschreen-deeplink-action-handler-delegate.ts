@@ -39,7 +39,7 @@ import {
   CourseService
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
+import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -55,6 +55,7 @@ import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 import { Location } from '@angular/common';
 import { NavigationService } from '../navigation-handler.service';
+import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -571,7 +572,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private getRouterPath(content) {
     let route;
-    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory === CsContentType.COURSE.toLowerCase()) {
       route = RouterLinks.ENROLLED_COURSE_DETAILS;
     } else if (content.mimeType === MimeType.COLLECTION) {
       route = RouterLinks.COLLECTION_DETAIL_ETB;
@@ -726,7 +727,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                     depth: 1,
                     isChildContent: true,
                     corRelation: undefined,
-                    isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
+                    isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                     isOnboardingSkipped
                   });
                 } else { // not enrolled in batch
@@ -746,7 +747,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 depth: 1,
                 isChildContent: true,
                 corRelation: this.getCorrelationList(payloadUrl),
-                isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
+                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
               break;
@@ -771,26 +772,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           });
           break;
       }
-      // if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-      //   console.log('Content Data', content);
-      //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-      //     {
-      //       state: {
-      //         content,
-      //         isOnboardingSkipped,
-      //         isFromChannelDeeplink,
-      //         corRelation: this.getCorrelationList(payloadUrl)
-      //       }
-      //     });
-      // } else {
-      //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-      //     {
-      //       state: {
-      //         content,
-      //         corRelation: this.getCorrelationList(payloadUrl)
-      //       }
-      //     });
-      // }
     }
   }
 
