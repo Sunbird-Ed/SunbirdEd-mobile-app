@@ -169,7 +169,7 @@
   "COURSE_ENROLLED": "ଆପଣ ପାଠ୍ୟକ୍ରମରେ ଯୋଗ ଦେଇଛନ୍ତି",
   "COURSE_LAST_UPDATED_ON": "କୋର୍ସ ଅପଡେଟ୍ ତାରିଖ  {{last_updated_on_date}}",
   "COURSE_NOT_AVAILABLE": "ଏହି ପାଠ୍ୟକ୍ରମ ଏବେ ଉପଲବ୍ଧ ନାହିଁ ",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "ଏହି କୋର୍ସରେ ସାର୍ଟିଫିକେଟ୍ ନାହିଁ",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "ନୋଟ୍: ଏବେ ଏହି କୋର୍ସରେ ସାର୍ଟିଫିକେଟ୍ ନାହିଁ । ପରେ କୋର୍ସ ପ୍ରସ୍ତୁତକର୍ତ୍ତା ସାର୍ଟିଫିକେଟ ଯୋଗ କରିପାରନ୍ତି ।",
   "COURSE_PROGRESS_COMPLETED": "ଶେଷ ହୋଇଛି:  {{%s}}",
   "COURSE_UNENROLLED": "ଆପଣ ପାଠ୍ୟକ୍ରମରୁ ବାହାରି ଯାଇଛନ୍ତି",
   "COURSE_WILL_BE_AVAILABLE": "{{%s}}ରୁ ପାଠ୍ୟକ୍ରମ ଉପଲବ୍ଧ ହେବ ",

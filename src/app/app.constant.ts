@@ -79,7 +79,8 @@ export class Search {
         'subject',
         'medium',
         'contentType',
-        'publisher'
+        'publisher',
+        'mimeType'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -108,9 +109,7 @@ export class BatchConstants {
         'startDate',
         'endDate',
         'enrollmentEndDate',
-        'cert_templates',
-        'trackable',
-        'primaryCategory'
+        'cert_templates'
     ];
     // createdFor ,courseAdditionalInfo, participant, updatedDate, createdDate, courseCreator, mentors
 }
@@ -157,7 +156,9 @@ export class ExploreConstants {
         'dialecodes',
         'size',
         'batches',
-        'organisation'
+        'organisation',
+        'trackable',
+        'primaryCategory'
     ];
 }
 
