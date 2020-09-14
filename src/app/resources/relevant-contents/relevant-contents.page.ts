@@ -15,6 +15,7 @@ import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { TranslateService } from '@ngx-translate/core';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 enum ContentOrder {
   RELEVANT = 'RELEVANT',
@@ -60,6 +61,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     private location: Location,
     private translate: TranslateService,
     private router: Router,
+    private navService: NavigationService
   ) {
     this.getNavParam();
   }
@@ -173,7 +175,10 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+      this.navService.navigateToDetailPage(
+        item,
+        { content: item, corRelation: corRelationList }
+      );
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }

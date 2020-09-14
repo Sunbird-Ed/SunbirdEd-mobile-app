@@ -169,7 +169,7 @@
   "COURSE_ENROLLED": "আপনি এই প্রশিক্ষণে যোগদান করেছেন",
   "COURSE_LAST_UPDATED_ON": "কোর্সটি শেষ বার আপডেটেড করা হয়েছে {{last_updated_on_date}}",
   "COURSE_NOT_AVAILABLE": "এই কোর্স  আর সক্রিয় নেই",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "এই কোর্সের কোনো শংসাপত্র নেই",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "বিঃদ্রঃ- বর্তমানে, এই কোর্সে একটি শংসাপত্র নেই।  কোর্স স্রষ্টা পরে শংসাপত্র সংযুক্ত করতে পারেন।",
   "COURSE_PROGRESS_COMPLETED": "সমাপ্ত: {{%s}} %",
   "COURSE_UNENROLLED": "আপনি প্রশিক্ষণটি ত্যাগ করেছেন",
   "COURSE_WILL_BE_AVAILABLE": "{{%s}} থেকে ব্যাচটি পাওয়া যাবে",

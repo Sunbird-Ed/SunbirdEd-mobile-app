@@ -55,8 +55,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   groupDetails: Group;
   activeTab = 'activities';
   activityList: ActivitiesGrouped[] = [];
-  filteredActivityList = [];
   groupedActivityListMap: {[title: string]: GroupActivity[]};
+  filteredGroupedActivityListMap: {[title: string]: GroupActivity[]};
   memberList: GroupMember[] = [];
   filteredMemberList = [];
   memberSearchQuery: string;
@@ -189,9 +189,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.groupCreator = this.memberList.find(m => m.userId === this.groupDetails.createdBy);
 
       this.filteredMemberList = new Array(...this.memberList);
-      this.filteredActivityList = new Array(...this.activityList);
 
-      this.groupedActivityListMap = this.filteredActivityList.reduce((acc, activityGroup) => {
+      this.groupedActivityListMap = this.activityList.reduce((acc, activityGroup) => {
         acc[activityGroup.title] = activityGroup.items.map((i) => {
           const activity = {
             ...i.activityInfo,
@@ -202,6 +201,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         });
         return acc;
       }, {});
+      this.filteredGroupedActivityListMap = {...this.groupedActivityListMap};
       this.isGroupLoading = false;
     } catch (e) {
       this.isGroupLoading = false;
@@ -825,10 +825,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   onActivitySearch(query) {
-    // this.activitySearchQuery = query;
-    // this.filteredActivityList = this.activityList.filter(
-    //   (activity) => activity.activityInfo.name.toLowerCase().includes(query.toLowerCase())
-    // );
+    for (const property in this.groupedActivityListMap) {
+      if (this.groupedActivityListMap[property].length) {
+        this.filteredGroupedActivityListMap[property] = this.groupedActivityListMap[property].filter(
+            (activity) => activity['name'].toLowerCase().includes(query.toLowerCase())
+          );
+      }
+    }
   }
 
   extractInitial(name) {

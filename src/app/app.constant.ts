@@ -155,7 +155,9 @@ export class ExploreConstants {
         'dialecodes',
         'size',
         'batches',
-        'organisation'
+        'organisation',
+        'trackable',
+        'primaryCategory'
     ];
 }
 
