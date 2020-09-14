@@ -640,7 +640,9 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   linkClicked(event) {
-    this.commonUtilService.openLink(event);
+    if (event && event.data && event.data.url) {
+      this.commonUtilService.openLink(event.data.url);
+    }
   }
 
   async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
