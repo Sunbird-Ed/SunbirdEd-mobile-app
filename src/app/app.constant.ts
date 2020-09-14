@@ -79,7 +79,8 @@ export class Search {
         'subject',
         'medium',
         'contentType',
-        'publisher'
+        'publisher',
+        'mimeType'
     ];
 
     public static readonly FACETS_COURSE = [
