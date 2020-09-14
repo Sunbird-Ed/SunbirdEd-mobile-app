@@ -247,8 +247,6 @@
                         <div>
                             <span *ngIf="certificate.status === 1 || certificate.status === 0"
                                 class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="completed-status-text">
-                                {{ 'COMPLETED' | translate }}</span>
                             <span *ngIf="certificate.status === 2" class="lighter">
                                 {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
@@ -294,8 +292,6 @@
                         <div>
                             <span *ngIf="certificate.status === 1 || certificate.status === 0"
                                 class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="completed-status-text">
-                                {{ 'COMPLETED' | translate }}</span>
                             <span *ngIf="certificate.status === 2" class="lighter">
                                 {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
