@@ -10,7 +10,6 @@
   <div *ngIf="formConfig" class="framework-form-bg">
     <sb-form 
       [config]='formConfig'
-      [platform]='"mobile"'
       (valueChanges)="valueChanged($event)" 
       (statusChanges)="statusChanged($event)">
     </sb-form>
