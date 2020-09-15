@@ -1,13 +1,19 @@
 html[data-theme="JOYFUL"]{
 
   --joyful-primary: #024f9d;
+  // --joyful-primary: red;
   --joyful-secondary: #E9E8D9;
   --joyful-tertiary: #F2F2EA;
   --joyful-warning: #FFD954;
 
   --joyful-white: #FFFFFF;
   --joyful-black: #000000;
+  --joyful-dark-gray: #222222;
   --joyful-gray: #333333;
+  --joyful-light-gray: #999999;
+
+  --joyful-green: #008840;
+  --joyful-light-green: #BFE1CF;
 
   ion-toolbar {
     --background: var(--joyful-warning);
@@ -15,6 +21,10 @@ html[data-theme="JOYFUL"]{
       ion-button{
         --background: var(--joyful-warning) !important;
         --color: var(--joyful-primary) !important;
+        box-shadow: none !important;
+      }
+      ion-back-button{
+        box-shadow: none !important;
       }
     }
   }
@@ -29,6 +39,10 @@ html[data-theme="JOYFUL"]{
 
   ion-button{
     --background: var(--joyful-primary) !important;
+    --color: var(--joyful-white) !important;
+    --border-radius: 20px !important;
+    --border-color: var(--joyful-primary) !important;
+    box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
   }
 
   ion-item {
@@ -98,6 +112,13 @@ html[data-theme="JOYFUL"]{
     background: var(--joyful-primary) !important;
     color: var(--joyful-white) !important;
   }
+  .select-box .alert-wrapper{
+    background-color: var(--joyful-tertiary);
+    border-radius: 16px 16px 0 0;
+  }
+  .select-box .alert-tappable.sc-ion-alert-md {
+    box-shadow: none !important;
+  }
 
   // SelectBox popup Radio button styles
   .ftue-changes .alert-button-group .alert-button{
@@ -109,6 +130,13 @@ html[data-theme="JOYFUL"]{
   .ftue-changes.select-alert .alert-button:last-child:not(:only-child){
     background: var(--joyful-primary) !important;
     color: var(--joyful-white) !important;
+  }
+  .ftue-changes .alert-wrapper{
+    background-color: var(--joyful-tertiary);
+    border-radius: 16px 16px 0 0;
+  }
+  .ftue-changes .alert-tappable.sc-ion-alert-md{
+    box-shadow: none !important;
   }
 
   // SB- button styles
@@ -169,6 +197,23 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // application-header Component
+  app-application-header{
+    .sb-menu-list{
+      background-color: var(--joyful-secondary) !important;
+    }
+    .circle-badge{
+      background-color: var(--joyful-secondary) !important;
+      border-color: var(--joyful-secondary) !important;
+    }
+    .sb-menu-item{
+      color: var(--joyful-primary);
+    }
+    .sb-menu-item-language{
+      color: var(--joyful-gray) !important;
+    }
+  }
+
   // language-settings page
   page-language-settings{
     .language-card {
@@ -217,6 +262,35 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // Resourses page
+  app-resources{
+    sb-library-filters{
+      .sb-pills-container{
+        background: transparent !important;
+      }
+
+      .sb-medium-pills-container, .sb-grade-pills-container {
+        .pill{
+          border-color: var(--joyful-white) !important;
+          color: var(--joyful-gray) !important;
+          box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+          margin-right: 1rem !important;
+        }
+        .pill.active{
+          color: var(--joyful-white) !important;
+          background-color: var(--joyful-primary) !important;
+          border-color: var(--joyful-primary) !important;
+        }
+      }
+
+      .sb-medium-pills-container {
+        .pill{
+          border-radius: 4px !important;
+        }
+      }
+    }
+  }
+
   // Courses page
   app-courses{
     .course-grid-bg{
@@ -247,6 +321,13 @@ html[data-theme="JOYFUL"]{
       box-shadow: 0 20px 40px -10px #D8D8D8 !important;
       border-radius: 12px !important;
     }
+
+    ion-card{
+      text-align: center;
+    }
+    .sign-in-card-text{
+      font-weight: normal !important;
+    }
   }
 
   // enrolled-course-details page
@@ -254,6 +335,123 @@ html[data-theme="JOYFUL"]{
     .enrolled-course-card-button{
       background-color: var(--joyful-primary) !important;
       border-radius: 50px !important;
+    }
+    .view-credits{
+      strong{
+        color: var(--joyful-dark-gray) !important;
+      }
+    }
+  }
+
+  // guest-profile page
+  app-guest-profile{
+    .profile-info{
+      background-color: var(--joyful-tertiary);
+      border-radius: 0 0 0 16px;
+    }
+    .details-container{
+      margin: 8px;
+      background-color: var(--joyful-white);
+      border-radius: 16px;
+    }
+    .signin-card-bg{
+      background-color: transparent !important;
+    }
+  }
+
+  // profile-page
+  app-profile{
+    .basic-profile-details{
+      background-color: var(--joyful-tertiary);
+    }
+    .roles-container{
+      .roles{
+        margin-bottom: 4px !important;
+        color: var(--joyful-primary) !important;
+        border: 1px solid var(--joyful-primary) !important;
+        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+      }
+    }
+    .self-declare-btn{
+      margin: 8px !important;
+      padding: 8px;
+      background-color: var(--joyful-light-green);
+      border-radius: 16px;
+      ion-button{
+        --background: var(--joyful-green) !important;
+      }
+    }
+    .contacts{
+      margin: 8px;
+      background-color: var(--joyful-white) !important;
+      border-radius: 16px;
+      .email ,.phone{
+        border: 1px solid var(--joyful-primary) !important;
+        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+        .icon{
+          color: var(--joyful-primary);
+        }
+        .value{
+          color: var(--joyful-gray);
+        }
+      }
+      .email.light ,.phone.light{
+        .icon{
+          color: var(--joyful-light-gray);
+        }
+        .value{
+          color: var(--joyful-light-gray);
+        }
+      }
+    }
+    .school-details{
+      margin: 8px;
+      border-radius: 16px;
+      background-color: var(--joyful-white) !important;
+    }
+    .self-declare-teacher-details{
+      margin: 8px;
+      border-radius: 16px;
+      background-color: var(--joyful-primary) !important;
+      ion-button{
+        --color: var(--joyful-primary) !important;
+      }
+    }
+  }
+
+  // collection-details-etb page
+  app-collection-detail-etb{
+    .sb-dt-card{
+      margin: 0 0 8px;
+      background-color: var(--joyful-white);
+      border-radius: 16px;
+      box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+      .sb-btn-tile{
+        box-shadow: none !important;
+      }
+      .img-container{
+        border-radius: 8px !important;
+      }
+    }
+
+    .collection-etb-filter{
+      .sb-chapter-dd {
+        border-radius: 16px;
+        margin-bottom: 8px;
+        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+      }
+      .sb-slider-pills-container {
+        .sb-pills-container{
+          border-radius: 16px;
+          margin-bottom: 8px;
+          .pill{
+            box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+          }
+        }
+      }
+      .sticky-header-title-box {
+        --background: var(--joyful-tertiary) !important;
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 <ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space">
   <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
-  <div class="padding-top-10 padding-bottom-10 ion-text-center">
+  <div class="profile-info padding-top-10 padding-bottom-10 ion-text-center">
     <p class="profile-name">
       <span class="user">{{profile?.handle | titlecase}}</span>
       <span>
