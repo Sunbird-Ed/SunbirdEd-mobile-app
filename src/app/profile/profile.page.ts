@@ -126,6 +126,7 @@ export class ProfilePage implements OnInit {
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
   selfDeclarationInfo: any;
+  learnerPassbook: any[] = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -408,6 +409,7 @@ export class ProfilePage implements OnInit {
       returnFreshCourses: !!refresher
     };
     this.mappedTrainingCertificates = [];
+    this.learnerPassbook = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
         if (res.length) {
@@ -440,6 +442,9 @@ export class ProfilePage implements OnInit {
       }
       if (course.issuedCertificates && course.issuedCertificates.length) {
         oneCert.issuedCertificate = course.issuedCertificates[0];
+      }
+      if (oneCert.certificate || oneCert.issuedCertificate) {
+        this.learnerPassbook = this.learnerPassbook.concat(oneCert);
       }
       accumulator = accumulator.concat(oneCert);
       return accumulator;

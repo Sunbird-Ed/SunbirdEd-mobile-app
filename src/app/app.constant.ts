@@ -79,7 +79,8 @@ export class Search {
         'subject',
         'medium',
         'contentType',
-        'publisher'
+        'publisher',
+        'mimeType'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -155,7 +156,9 @@ export class ExploreConstants {
         'dialecodes',
         'size',
         'batches',
-        'organisation'
+        'organisation',
+        'trackable',
+        'primaryCategory'
     ];
 }
 

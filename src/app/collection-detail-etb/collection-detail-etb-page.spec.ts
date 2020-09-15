@@ -1,41 +1,46 @@
-import { CollectionDetailEtbPage } from './collection-detail-etb.page';
+import {CollectionDetailEtbPage} from './collection-detail-etb.page';
 import {
-    ContentService, EventsBusService, ProfileService, TelemetryErrorCode,
-    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject,
-    DownloadService
+    ContentImportResponse,
+    ContentImportStatus,
+    ContentService,
+    DownloadService,
+    EventsBusService,
+    ProfileService,
+    StorageService,
+    TelemetryErrorCode,
+    TelemetryObject
 } from 'sunbird-sdk';
-import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
-import { NgZone, ChangeDetectorRef } from '@angular/core';
+import {Events, IonContent, Platform, PopoverController} from '@ionic/angular';
+import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
-    AppGlobalService, CommonUtilService,
-    TelemetryGeneratorService, AppHeaderService,
-    InteractSubtype, Environment, ImpressionType
+    AppGlobalService,
+    AppHeaderService,
+    CommonUtilService,
+    Environment,
+    ImpressionType,
+    InteractSubtype,
+    TelemetryGeneratorService
 } from '../../services';
-import {
-    InteractType, PageId, ID, Mode, ErrorType
-} from '../../services/telemetry-constants';
-import { FileSizePipe } from '../../pipes/file-size/file-size';
-import { Router } from '@angular/router';
-import { TextbookTocService } from './textbook-toc-service';
-import { Location } from '@angular/common';
+import {ErrorType, ID, InteractType, Mode, PageId} from '../../services/telemetry-constants';
+import {FileSizePipe} from '../../pipes/file-size/file-size';
+import {Router} from '@angular/router';
+import {TextbookTocService} from './textbook-toc-service';
+import {Location} from '@angular/common';
 import {
     contentDetailsMcokResponse1,
     contentDetailsMcokResponse2,
     contentDetailsMcokResponse3,
     mockcollectionData,
-    mockContentData,
-    mockContentInfo
+    mockContentData
 } from './collection-detail-etb-page.spec.data';
-import { of, Subscription, throwError } from 'rxjs';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ContentUtil } from '@app/util/content-util';
-import { EventTopics } from '@app/app/app.constant';
-import { ShareItemType, ContentType } from '../app.constant';
-import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
-import { isObject } from 'util';
-import { MimeType } from '../../app/app.constant';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { NavigationService } from '../../services/navigation-handler.service';
+import {of, Subscription, throwError} from 'rxjs';
+import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
+import {EventTopics} from '@app/app/app.constant';
+import {ContentType, ShareItemType} from '../app.constant';
+import {ContentDeleteHandler} from '../../services/content/content-delete-handler';
+import {isObject} from 'util';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {NavigationService} from '../../services/navigation-handler.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -115,7 +120,7 @@ describe('collectionDetailEtbPage', () => {
     beforeEach(() => {
         const div = document.createElement('div');
         document.body.appendChild(div);
-        window['scrollWindow'] = { getScrollElement: () => Promise.resolve({ scrollTo: jest.fn() }) };
+        window['scrollWindow'] = {getScrollElement: () => Promise.resolve({scrollTo: jest.fn()})};
         collectionDetailEtbPage = new CollectionDetailEtbPage(
             mockContentService as ContentService,
             mockEventBusService as EventsBusService,
@@ -1069,8 +1074,8 @@ describe('collectionDetailEtbPage', () => {
                     classList: clases
                 }
             };
-            window['scrollWindow'] = { getScrollElement: () => Promise.resolve({ scrollTo: jest.fn() }) };
-            document.getElementById = jest.fn(() => ({ scrollIntoView: jest.fn() })) as any;
+            window['scrollWindow'] = {getScrollElement: () => Promise.resolve({scrollTo: jest.fn()})};
+            document.getElementById = jest.fn(() => ({scrollIntoView: jest.fn()})) as any;
             mocktextbookTocService.resetTextbookIds = jest.fn();
             mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', 'Course', undefined);

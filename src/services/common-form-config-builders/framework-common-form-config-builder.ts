@@ -1,17 +1,17 @@
-import { Injectable, Inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements';
-import { defer, EMPTY, of } from 'rxjs';
-import { catchError, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import {Inject, Injectable} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {FieldConfigOption, FieldConfigOptionsBuilder} from 'common-form-elements';
+import {defer, EMPTY, of} from 'rxjs';
+import {catchError, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {TranslateService} from '@ngx-translate/core';
 import {
-  GetSuggestedFrameworksRequest,
   CachedItemRequestSourceFrom,
-  FrameworkCategoryCodesGroup,
-  FrameworkUtilService,
-  FrameworkService,
   FrameworkCategoryCode,
+  FrameworkCategoryCodesGroup,
+  FrameworkService,
+  FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
+  GetSuggestedFrameworksRequest,
   Profile
 } from '@project-sunbird/sunbird-sdk';
 
@@ -195,17 +195,17 @@ export class FrameworkCommonFormConfigBuilder {
     });
   }
 
-  getSubjectConfigOptionsBuilder(profile?: Profile): FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> {
+  getSubjectConfigOptionsBuilder(profile?: Profile, enableOtherAsOption?: boolean): FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> {
     return ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
       if (!context) {
         return of([]);
       }
       return context.valueChanges.pipe(
-        distinctUntilChanged((v1, v2) => {
-          return this.valueComparator(v1 && v1.code, v2 && v2.code);
-        }),
-        tap(notifyLoading),
-        switchMap((value) => {
+          distinctUntilChanged((v1, v2) => {
+            return this.valueComparator(v1 && v1.code, v2 && v2.code);
+          }),
+          tap(notifyLoading),
+          switchMap((value) => {
           if (!value) {
             return of([]);
           }
@@ -221,7 +221,7 @@ export class FrameworkCommonFormConfigBuilder {
             };
 
             const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
-            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
+            const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string } | 'other'>[] = [];
             list.forEach(element => {
               const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
                 label: element.name,
@@ -234,10 +234,18 @@ export class FrameworkCommonFormConfigBuilder {
               options.push(value);
 
               if (!context.dirty && profile && profile.subject && profile.subject.length
-                && profile.subject[0] === element.code) {
+                  && profile.subject[0] === element.code) {
                 control.patchValue(value.value);
               }
             });
+
+            if (enableOtherAsOption) {
+              options.push({
+                label: 'Other',
+                value: 'other'
+              });
+            }
+
             return options;
           });
         }),
