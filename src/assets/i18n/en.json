@@ -810,5 +810,6 @@
   "CLICK_ON_THE_HELP_BUTTON": "Click on the help button",
   "PROGRESS_CANNOT_BE_TRACKED": "<span>Note :</span> Progress cannot be tracked for textbooks",
   "MEDIA_TYPE": "Media Type",
-  "COLLECTION": "Collection"
+  "COLLECTION": "Collection",
+  "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters not allowed"
 }
