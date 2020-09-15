@@ -809,6 +809,9 @@
   "YOUR_BOARD_IS_YET_TO_ADD_MORE_CONTENT": "Your board is yet to add more content.",
   "CLICK_ON_THE_HELP_BUTTON": "Click on the help button",
   "PROGRESS_CANNOT_BE_TRACKED": "<span>Note :</span> Progress cannot be tracked for textbooks",
+  "ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS": "You have exceeded the maximum number of activities that can be added for the group",
+  "ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS": "You have exceeded the maximum number of members that can be added to the group",
+  "ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS": "You have exceeded the maximum number of groups that can be created",
   "MEDIA_TYPE": "Media Type",
   "COLLECTION": "Collection",
   "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters not allowed"
