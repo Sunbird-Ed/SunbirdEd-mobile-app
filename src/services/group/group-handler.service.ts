@@ -73,7 +73,11 @@ export class GroupHandlerService {
       if (addActivityResponse.error
         && addActivityResponse.error.activities
         && addActivityResponse.error.activities.length) {
-        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        if (addActivityResponse.error.activities[0].errorCode === GroupErrorCodes.EXCEEDED_ACTIVITY_MAX_LIMIT) {
+          this.commonUtilService.showToast('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
+        } else {
+          this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        }
         this.location.back();
       } else {
         this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');
@@ -93,11 +97,7 @@ export class GroupHandlerService {
     } catch (e) {
       console.error(e);
       await loader.dismiss();
-      // if (e.body && e.body.error && e.body.error.activities && e.body.error.activities[0] === GroupErrorCodes.EXCEEDED_ACTIVITY_MAX_LIMIT) {
-      //   this.commonUtilService.showToast('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
-      // } else {
       this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
-      // }
       this.location.back();
     }
   }

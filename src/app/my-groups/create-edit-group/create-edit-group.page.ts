@@ -176,11 +176,12 @@ export class CreateEditGroupPage {
     }).catch(async (err) => {
       console.error(err);
       await loader.dismiss();
-      // if (err.body && err.body.params && err.body.params.status === GroupErrorCodes.EXCEEDED_GROUP_MAX_LIMIT) {
-      //   this.commonUtilService.showToast('ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS');
-      // } else {
+      if (err.response && err.response.body && err.response.body.params
+        && err.response.body.params.status === GroupErrorCodes.EXCEEDED_GROUP_MAX_LIMIT) {
+        this.commonUtilService.showToast('ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS');
+      } else {
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-      // }
+      }
     });
   }
 

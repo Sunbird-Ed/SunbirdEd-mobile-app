@@ -259,11 +259,13 @@ export class AddMemberToGroupPage {
     };
     this.groupService.addMembers(addMemberToGroupReq).toPromise()
       .then(async (res) => {
+        await loader.dismiss();
         if (res.error && res.error.members && res.error.members.length) {
-          throw res.error.members[0];
+          console.log('in err');
+          if (res.error.members[0].errorCode === GroupErrorCodes.EXCEEDED_MEMBER_MAX_LIMIT) {
+            this.commonUtilService.showToast('ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS');
+          }
         } else {
-          await loader.dismiss();
-
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
@@ -281,11 +283,7 @@ export class AddMemberToGroupPage {
       }).catch(async (e) => {
         console.log(e);
         await loader.dismiss();
-        // if (e.body && e.body.error && e.body.error.members && e.body.error.members[0].errorCode === GroupErrorCodes.EXCEEDED_MEMBER_MAX_LIMIT) {
-        //   this.commonUtilService.showToast('ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS');
-        // } else {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-        // }
       });
   }
 
