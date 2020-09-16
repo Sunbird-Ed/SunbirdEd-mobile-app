@@ -1,0 +1,91 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
+
+.cr-terms-checkbox-label{
+  padding-left: 5px;
+}
+.cr-input-primary {
+  display: inline-flex;
+}
+
+.btn-label {
+  float: right;
+  display: inline-flex;
+}
+
+#main-content {
+  overflow-y: scroll;
+  background: white;
+}
+
+.consent-popover-info {  
+  overflow: hidden;
+  padding: 14px;
+}
+
+.flex-container {
+  width: 100%;
+  height: 100%;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.header {  
+  flex-grow: 0;
+  flex-shrink: 0;
+  color: #222222;
+  font-family: "Noto Sans";
+  font-size: 20px;
+  letter-spacing: 0;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.body {
+  
+  display: block;
+  
+  flex-grow: 1;
+  flex-shrink: 1;
+  
+  overflow-y: scroll;
+}
+
+.footer {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.save-changes{
+  color: white;
+  background-color: #024F9D;
+  font-size: 16px;
+  padding: 8px 51px;
+  margin-left: 18px;
+  border: 2px solid #024F9D
+}
+.save-changes-not-agree{
+  color: #024F9D;
+  background-color: white;
+  padding: 14px;
+  font-size: 16px;
+  padding: 8px 32px;
+  border: 2px solid #024F9D
+}
+.btn-info{
+  padding: 12px;
+  text-align: center;
+}
+
+.profile-info{
+  color: #666666;
+  font-family: "Noto Sans";
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+
+.profile-info-section{
+  display: grid;
+  grid-template-columns: 110px 250px;
+}

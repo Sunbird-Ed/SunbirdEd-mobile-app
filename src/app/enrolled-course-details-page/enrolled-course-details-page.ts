@@ -88,7 +88,7 @@ import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 declare const cordova;
 
 @Component({
@@ -238,6 +238,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
   pageId = PageId.COURSE_DETAIL;
+  showShareData = false;
+  isDataShare = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1370,6 +1372,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       this.licenseSectionClicked('collapsed');
     }
+  }
+
+  editDataSettings() {
+    this.showShareData = !this.showShareData;
+  }
+
+  expandDataSettings() {
+    this.showShareData = false;
+    this.isDataShare = !this.isDataShare;
   }
 
   handleBackButton() {

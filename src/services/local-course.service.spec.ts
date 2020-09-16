@@ -9,7 +9,7 @@ import {
   HttpServerError
 } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';
@@ -41,6 +41,7 @@ describe('LocalCourseService', () => {
   const mockSbProgressLoader: Partial<SbProgressLoader> = {
     hide: jest.fn()
   };
+  const mockPopoverCtrl: Partial<PopoverController> = {};
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
@@ -54,7 +55,8 @@ describe('LocalCourseService', () => {
       mockAppVersion as AppVersion,
       mockRouter as Router,
       mockLocation as Location,
-      mockSbProgressLoader as SbProgressLoader
+      mockSbProgressLoader as SbProgressLoader,
+      mockPopoverCtrl as PopoverController,
     );
   });
 
@@ -85,10 +87,14 @@ describe('LocalCourseService', () => {
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
+      mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+        present: jest.fn(() => Promise.resolve())
+      }) as any);
 
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockPopoverCtrl.create).toHaveBeenCalled();
         done();
       });
     });

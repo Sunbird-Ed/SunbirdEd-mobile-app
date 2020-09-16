@@ -118,6 +118,12 @@
         margin-top: 9px;
         margin-bottom: 10px;
     }
+    .hr-border-bottom-share {
+      box-sizing: border-box;
+      height: 1px;
+      border: 1px solid #E9DED3;
+      margin-top: 8px;
+  }
     hr {
         border:0.5px solid $gray-300;
     }
@@ -541,3 +547,43 @@ ion-segment-button{
     margin-right: 8px;
   }
 }
+
+.edit-setting{
+  float: right;
+  padding: 12px;
+  color: #024f9d;
+  font-weight: bold;
+}
+
+.save-changes{
+  border-radius: 20px !important;
+  color: white;
+  background-color: #024F9D;
+  padding: 14px;
+  outline: none;
+  border: none;
+  box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+.ds-m0 {
+  color: #333333;
+  font-family: "Noto Sans";
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 20px;
+}
+
+.ds-item{
+  --padding-start: 0px;
+}
+ion-radio{
+  margin-right: 10px !important;
+}
+.font-14-new{
+  font-size: 16px !important;
+  margin-top: 8px;
+}
+

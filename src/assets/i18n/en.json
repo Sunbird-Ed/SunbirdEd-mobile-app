@@ -814,5 +814,20 @@
   "ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS": "You have exceeded the maximum number of groups that can be created",
   "MEDIA_TYPE": "Media Type",
   "COLLECTION": "Collection",
-  "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters not allowed"
+  "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters not allowed",
+  "DATA_SETTINGS": "Data Settings",
+  "DATA_SHARING_IS_ON": "DATA SHARING IS ON",
+  "SHARE_WITH_ADMINISTRATOR": "You have agreed to share your profile Information with the Administrator of this course",
+  "EDIT_SETTING": "Edit Setting",
+  "CLOSE": "Close",
+  "UPDATE_SETTINGS": "Update Settings",
+  "SHARE_PROFILE": "Share my Profile Information",
+  "NOT_SHARE_PROFILE": "Do not share my Profile Information",
+  "SAVE_CHANGES": "Save Changes",
+  "SUBMITTING_DATA_SETTINGS": "Your data settings are submitted successfully",
+  "PROFILE_DETAILS": "Profile details",
+  "EDIT_CONSENT_POPUP": "You can edit these details from your profile page",
+  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my my profile details with the course administrator in accordance with the",
+  "INSTANCE_TERMS_OF_USE": " {instance} Terms of Use",
+  "DONT_SHARE": "Don't share"
 }

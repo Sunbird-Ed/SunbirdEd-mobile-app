@@ -14,12 +14,13 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
 
 @Injectable()
 export class LocalCourseService {
@@ -36,7 +37,8 @@ export class LocalCourseService {
     private appVersion: AppVersion,
     private router: Router,
     private location: Location,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
@@ -44,7 +46,7 @@ export class LocalCourseService {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
-      map((data: boolean) => {
+      map(async (data: boolean) => {
         if (data) {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -55,6 +57,7 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
+          await this.showConsentPopup();
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -247,6 +250,16 @@ export class LocalCourseService {
         resolve(progress);
       }
     });
+  }
+
+  async showConsentPopup() {
+    const popover = await this.popoverCtrl.create({
+      component: ConsentPiiPopupComponent,
+      componentProps: {
+      },
+      cssClass: 'sb-popover',
+    });
+    await popover.present();
   }
 
 }
