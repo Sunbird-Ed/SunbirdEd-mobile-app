@@ -813,5 +813,6 @@
   "ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS": "You have exceeded the maximum number of members that can be added to the group",
   "ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS": "You have exceeded the maximum number of groups that can be created",
   "MEDIA_TYPE": "Media Type",
-  "COLLECTION": "Collection"
+  "COLLECTION": "Collection",
+  "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters not allowed"
 }
