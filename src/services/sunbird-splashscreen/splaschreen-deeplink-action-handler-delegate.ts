@@ -55,7 +55,7 @@ import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 import { Location } from '@angular/common';
 import { NavigationService } from '../navigation-handler.service';
-import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -572,7 +572,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private getRouterPath(content) {
     let route;
-    if (content.primaryCategory === CsContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory === CsPrimaryCategory.COURSE.toLowerCase()) {
       route = RouterLinks.ENROLLED_COURSE_DETAILS;
     } else if (content.mimeType === MimeType.COLLECTION) {
       route = RouterLinks.COLLECTION_DETAIL_ETB;

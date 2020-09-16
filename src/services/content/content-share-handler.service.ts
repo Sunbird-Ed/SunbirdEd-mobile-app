@@ -37,7 +37,8 @@ export class ContentShareHandlerService {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_CONTENT_INITIATED,
-      content.contentData.contentType, corRelationList, rollup, pageId);
+      this.getPrimaryCategory(content),
+      corRelationList, rollup, pageId);
 
     let contentId;
     if (rollup && rollup.l1 && rollup.l1 !== content.identifier) {
@@ -59,7 +60,7 @@ export class ContentShareHandlerService {
     } else if (shareParams && shareParams.byLink && shareParams.link) {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
-        content.contentData.contentType, corRelationList, rollup, pageId);
+        this.getPrimaryCategory(content), corRelationList, rollup, pageId);
 
       let contentLink = this.getContentUtm(shareParams.link);
       if (moduleId) {
@@ -106,7 +107,7 @@ export class ContentShareHandlerService {
           this.social.share(shareLink, '', '' + response.exportedFilePath, '');
         }
         this.generateShareInteractEvents(InteractType.OTHER,
-          InteractSubtype.SHARE_CONTENT_SUCCESS, content.contentData.contentType, corRelationList, rollup, pageId);
+          InteractSubtype.SHARE_CONTENT_SUCCESS, this.getPrimaryCategory(content), corRelationList, rollup, pageId);
       }).catch(async (err) => {
         console.error('ContentShareHandlerService - exportContent', err);
 
@@ -127,9 +128,9 @@ export class ContentShareHandlerService {
     return contentLink + '?' + contentUTM;
   }
 
-  private generateShareInteractEvents(interactType, subType, contentType, corRelationList, rollup, pageId) {
+  private generateShareInteractEvents(interactType, subType, primaryCategory, corRelationList, rollup, pageId) {
     const values = new Map();
-    values['ContentType'] = contentType;
+    values['category'] = primaryCategory;
     this.telemetryGeneratorService.generateInteractTelemetry(interactType,
       subType,
       Environment.HOME,
@@ -138,5 +139,9 @@ export class ContentShareHandlerService {
       values,
       rollup,
       corRelationList);
+  }
+
+  private getPrimaryCategory(content: Content) {
+    return content.contentData.primaryCategory ? content.contentData.primaryCategory : content.contentData.contentType;
   }
 }

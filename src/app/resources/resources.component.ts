@@ -76,7 +76,7 @@ import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-t
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
-import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-resources',
@@ -1249,5 +1249,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
-
 }

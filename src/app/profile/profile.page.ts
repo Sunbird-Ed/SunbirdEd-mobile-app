@@ -61,8 +61,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ContentUtil } from '@app/util/content-util';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-profile',
@@ -551,7 +551,7 @@ export class ProfilePage implements OnInit {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, CsContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, undefined);
     } else {
       telemetryObject = ContentUtil.getTelemetryObject(content);
     }

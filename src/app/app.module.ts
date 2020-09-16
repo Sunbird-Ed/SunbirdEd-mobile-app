@@ -69,7 +69,7 @@ import { ExternalIdVerificationService } from '@app/services/externalid-verifica
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -362,7 +362,7 @@ export const sunbirdSdkFactory =
           showEndPage: false,
           endPage: [{
             template: 'assessment',
-            contentType: [CsPrimaryCategory.COURSE_ASSESSMENT]
+            contentType: [CsContentType.SELF_ASSESS]
           }],
           splash: {
             webLink: '',

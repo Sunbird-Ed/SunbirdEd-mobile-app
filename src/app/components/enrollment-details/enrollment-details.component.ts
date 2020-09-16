@@ -24,7 +24,7 @@ import {
     AppGlobalService
 } from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentUtil } from '@app/util/content-util';
 
 @Component({
@@ -140,7 +140,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         const identifier = content.contentId || content.identifier;
         let telemetryObject;
         if (layoutName === this.layoutInProgress) {
-            telemetryObject = new TelemetryObject(identifier, CsContentType.COURSE, '');
+            telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, '');
         } else {
             telemetryObject = ContentUtil.getTelemetryObject(content);
         }

@@ -30,7 +30,7 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
@@ -961,7 +961,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, CsContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, undefined);
     } else {
       telemetryObject = ContentUtil.getTelemetryObject(content);
     }

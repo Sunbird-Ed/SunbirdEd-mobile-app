@@ -39,7 +39,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     medium: [],
     grade: [],
     subject: [],
-    contentType: [],
+    primaryCategory: [],
   };
   private paramsData: any;
   private defaultBoard = [];
@@ -87,7 +87,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       this.selectedFramework.medium = this.paramsData.medium && this.paramsData.medium.name ? [this.paramsData.medium.name] : [];
       this.selectedFramework.grade = this.paramsData.grade && this.paramsData.grade.name ? [this.paramsData.grade.name] : [];
       this.selectedFramework.subject = this.paramsData.subject && this.paramsData.subject.name ? [this.paramsData.subject.name] : [];
-      this.selectedFramework.contentType = [this.paramsData.contenttype];
+      this.selectedFramework.primaryCategory = [this.paramsData.primaryCategory];
     }
     this.getDefaultBoard();
     this.prepareContentRequest();
@@ -101,7 +101,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.searchRequest.medium = this.selectedFramework.medium;
     this.searchRequest.grade = this.selectedFramework.grade;
     this.searchRequest.subject = this.selectedFramework.subject;
-    this.searchRequest.primaryCategories = this.selectedFramework.contentType;
+    this.searchRequest.primaryCategories = this.selectedFramework.primaryCategory;
     this.searchRequest.mode = 'hard';
   }
 

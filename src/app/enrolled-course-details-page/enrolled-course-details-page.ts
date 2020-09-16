@@ -89,7 +89,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 declare const cordova;
 
 @Component({
@@ -1658,7 +1658,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateStartEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || CsContentType.COURSE, objectVersion);
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
       telemetryObject,
       this.objRollup,
@@ -1667,8 +1667,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateEndEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || CsContentType.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType || CsContentType.COURSE,
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
+    this.telemetryGeneratorService.generateEndTelemetry(objectType || CsPrimaryCategory.COURSE,
       Mode.PLAY,
       PageId.COURSE_DETAIL,
       Environment.HOME,
