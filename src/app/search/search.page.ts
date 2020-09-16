@@ -761,6 +761,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter() {
+    this.showAddToGroupButtons = false;
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
@@ -808,7 +809,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
       return;
     }
-
+    this.showAddToGroupButtons = false;
     this.addSearchHistoryEntry();
 
     this.showLoader = true;

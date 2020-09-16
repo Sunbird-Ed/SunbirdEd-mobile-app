@@ -10,6 +10,7 @@ import {
   ImpressionType, Environment
 } from '@app/services';
 import { CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { FieldConfigOptionsBuilder } from '@app/app/components/common-forms/field-config';
 
 @Injectable({ providedIn: 'root' })
 export class FrameworkSelectionDelegateService {
@@ -65,7 +66,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initilizeFormConfig();
+    this.initializeFormConfig();
     this.appHeaderService.showHeaderWithBackButton();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -83,11 +84,11 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     this.frameworkSelectionDelegateService.delegate = undefined;
   }
 
-  initilizeFormConfig() {
+  initializeFormConfig() {
     if (this.formConfig) {
       this.formConfig.forEach(ele => {
         if (ele.templateOptions.dataSrc) {
-          this.converDataSrcToClosure(ele);
+          this.convertDataSrcToClosure(ele);
         }
       });
     }
@@ -110,19 +111,19 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     }
   }
 
-  converDataSrcToClosure(ele) {
+  convertDataSrcToClosure(ele) {
     const dataSrc = ele.templateOptions.dataSrc;
     switch (dataSrc.marker) {
       case 'ACTIVE_CHANNEL.SUGGESTED_FRAMEWORK_LIST.MAPPED_TO_FRAMEWORKCATEGORIES':
         ele.templateOptions.options = this.getClosure('board');
         break;
       case 'FRAMEWORK_CATEGORY_TERMS':
-        ele.templateOptions.options = this.getClosure(dataSrc.params.categoryCode);
+        ele.templateOptions.options = this.getClosure(dataSrc.params.categoryCode, !!(ele.children && ele.children.other));
         break;
     }
   }
 
-  getClosure(type: string) {
+  getClosure(type: string, enableOtherOption?: boolean): FieldConfigOptionsBuilder<any> {
     switch (type) {
       case 'board':
         return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder();
@@ -131,7 +132,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
       case 'grade':
         return this.frameworkCommonFormConfigBuilder.getGradeConfigOptionsBuilder();
       case 'subject':
-        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder();
+        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder(null, enableOtherOption);
     }
   }
 
