@@ -525,6 +525,32 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // header
+  .ui-container::after {
+    content: '';
+    width: 100%;
+    height: 172px;
+    display: block;
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    border-bottom-left-radius: 20px;
+    background-color: var(--joyful-warning) !important;
+  }
+  .ui-content{
+    z-index: 2;
+    position: relative;
+  }
+
+  .sb-slider-pills-container{
+    .sb-grade-pills-container {
+      background: transparent !important;
+    }
+    .sb-medium-pills-container{
+      background: transparent !important;
+    }
+  }
+
   // textbook-view-more component
   app-textbook-view-more{
     .sb-card-container{
