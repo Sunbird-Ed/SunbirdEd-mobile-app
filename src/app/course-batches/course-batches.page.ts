@@ -123,6 +123,9 @@ export class CourseBatchesPage implements OnInit {
   }
 
   async enrollIntoBatch(batch: Batch) {
+    if (!this.localCourseService.isEnrollable([batch])) {
+      return false;
+    }
     const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED,

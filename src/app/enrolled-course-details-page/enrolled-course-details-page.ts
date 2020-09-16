@@ -1567,6 +1567,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
+
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (this.batches.length) {
         if (this.batches.length === 1) {
@@ -1983,6 +1987,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     // if (this.csGroupAddableBloc.state) {
     //   return;
     // }
+
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
 
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(
