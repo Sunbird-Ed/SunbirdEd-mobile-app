@@ -4,7 +4,7 @@
     border-radius: 4px !important;
   }
   .sign-in-card-text {
-    font-weight: 600 !important;
+    font-weight: 600;
     color: map-get($colors, primary_black) !important;
   }
   ion-card {
@@ -37,9 +37,9 @@
         color: map-get($colors, primary_black);
       }
       ion-button{
-        --background: #{$green} !important;
-        --background-hover: #{$green} !important;
-        --background-activated: #{$green} !important;
+        --background: #{$green};
+        --background-hover: #{$green};
+        --background-activated: #{$green};
       }
     }
   }
