@@ -111,6 +111,7 @@ const data: Partial<ContentData> = {
   me_averageRating: 4,
   contentEncoding: 'gzip',
   contentType: 'Course',
+  primaryCategory: 'Course',
   identifier: 'do_21281258639073280011490',
   audience: [
     'Learner'

@@ -19,7 +19,7 @@ describe('TelemetryGeneratorService', () => {
     error: jest.fn(() => of({} as any)),
   };
 
-  const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
+  const telemetryObject = new TelemetryObject('do_12345', 'Learning Resource', '1');
   const rollUp = { l1: 'do_1', l2: 'do_12', l3: 'do_123', l4: 'do_1234' };
   const corRelationList = [{ id: 'SearchResult', type: 'Section' }];
   const values = new Map();
@@ -31,7 +31,8 @@ describe('TelemetryGeneratorService', () => {
     pkgVersion: '1',
     contentData: {
       contentType: 'Resource',
-      pkgVersion: '1'
+      pkgVersion: '1',
+      primaryCategory: 'Learning Resource'
     }
   } as any;
   const mockSbProgressLoader: Partial<SbProgressLoader> = {};

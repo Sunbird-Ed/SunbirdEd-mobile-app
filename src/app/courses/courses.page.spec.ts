@@ -31,6 +31,7 @@ import {BatchConstants, ContentCard, PageName} from '../app.constant';
 import {LocalCourseService} from '../../services/local-course.service';
 import {SbProgressLoader} from '../../services/sb-progress-loader.service';
 import {CsNetworkError} from '@project-sunbird/client-services/core/http-service';
+import { NavigationService } from '../../services/navigation-handler.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -64,8 +65,14 @@ describe('CoursesPage', () => {
         generateExtraInfoTelemetry: jest.fn()
     };
     const mockToastController: Partial<ToastController> = {};
-    const mockLocalCourseService: Partial<LocalCourseService> = {};
-    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {
+        hide: jest.fn()
+    };
+    const mockNavService: Partial<NavigationService> = {
+        navigateToTrackableCollection: jest.fn(),
+        navigateToCollection: jest.fn(),
+        navigateToContent: jest.fn()
+    };
 
     beforeAll(() => {
         coursesPage = new CoursesPage(
@@ -89,8 +96,8 @@ describe('CoursesPage', () => {
             mockRouter as Router,
             mockToastController as ToastController,
             mockHeaderService as AppHeaderService,
-            mockLocalCourseService as LocalCourseService,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockNavService as NavigationService
         );
     });
 
@@ -852,7 +859,8 @@ describe('CoursesPage', () => {
             // arrange
             const mockContent = {
                 contentId: 'do123',
-                contentType: 'Course'
+                contentType: 'Course',
+                pkgVersion: 1
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.deDupe = jest.fn();
@@ -873,7 +881,6 @@ describe('CoursesPage', () => {
                     'home', 'Course', {id: 'do123', type: 'Course', version: undefined},
                     values, {l1: 'do123'}, undefined
                 );
-                expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             });
         });
@@ -903,10 +910,9 @@ describe('CoursesPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.CONTENT_CLICKED,
-                    'home', 'Collection', {id: 'do123', type: 'Resource', version: undefined},
+                    'home', 'Collection', {id: 'do123', type: 'collection', version: ''},
                     values, {l1: 'do123'}, undefined
                 );
-                expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             });
         });
@@ -934,10 +940,9 @@ describe('CoursesPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.CONTENT_CLICKED,
-                    'home', 'library', {id: 'do123', type: 'Resource', version: undefined},
+                    'home', 'library', {id: 'do123', type: 'Resource', version: ''},
                     values, {l1: 'do123'}, undefined
                 );
-                expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             });
         });

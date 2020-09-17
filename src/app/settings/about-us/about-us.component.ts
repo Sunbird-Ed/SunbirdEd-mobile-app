@@ -14,7 +14,7 @@ import {
   Environment,
   ImpressionType
 } from '../../../services';
-import { ContentType, AudienceFilter, RouterLinks, GenericAppConfig } from '../../app.constant';
+import { AudienceFilter, RouterLinks, GenericAppConfig, PrimaryCategory } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -100,7 +100,7 @@ export class AboutUsComponent implements OnInit {
       server: true
     };
     const contentRequest: ContentRequest = {
-      contentTypes: ContentType.FOR_DOWNLOADED_TAB,
+      primaryCategories: PrimaryCategory.FOR_DOWNLOADED_TAB,
       audience: AudienceFilter.GUEST_TEACHER
     };
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(
