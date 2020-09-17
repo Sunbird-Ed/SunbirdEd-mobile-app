@@ -4,8 +4,8 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import {Observable, combineLatest, Subscription} from 'rxjs';
-import {mergeMap, filter, tap, mapTo, take} from 'rxjs/operators';
+import { Observable, combineLatest, Subscription } from 'rxjs';
+import { mergeMap, filter, tap, mapTo, take } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
@@ -171,7 +171,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
       const localNotificationId = cordova.plugins.notification.local.launchDetails.id;
-      corRelationList.push({ id: localNotificationId  ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      corRelationList.push({ id: localNotificationId ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
@@ -279,6 +279,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private checkForExperiment() {
+    if (codePush === null) {
+      return;
+    }
     /**
      * TODO
      * call the update
@@ -342,14 +345,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         };
         const corRelationList: Array<CorrelationData> = [];
         const fcmId = data.id;
-        corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
+        corRelationList.push({ id: fcmId ? fcmId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
         this.telemetryGeneratorService.generateNotificationClickedTelemetry(
           InteractType.FCM,
           this.activePageService.computePageId(this.router.url),
           value,
           corRelationList
         );
-  
+
         data['isRead'] = data.wasTapped ? 1 : 0;
         data['actionData'] = JSON.parse(data['actionData']);
         this.notificationServices.addNotification(data).subscribe((status) => {
@@ -497,8 +500,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     // planned maintenance
     this.eventSubscription = this.eventsBusService.events(EventNamespace.ERROR).pipe(
-        filter((event) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
-        take(1)
+      filter((event) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
+      take(1)
     ).subscribe(() => {
       this.isPlannedMaintenanceStarted = true;
       this.isOnBoardingCompleted = this.appGlobalService.isOnBoardingCompleted;
@@ -508,8 +511,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           '',
           PageId.PLANNED_MAINTENANCE_BANNER,
           this.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
-      );
-        let  intervalRef;
+        );
+        let intervalRef;
         const backButtonSubscription = this.platform.backButton.subscribeWithPriority(13, () => {
           backButtonSubscription.unsubscribe();
           this.isPlannedMaintenanceStarted = false;
@@ -818,26 +821,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private getCampaignParameter() {
     this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then((data) => {
-        if (data) {
-          const response = JSON.parse(data);
-          const utmValue = response['val'];
-          if (response.val && response.val.length) {
-            this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
-          }
-          const utmTelemetry = {
-            utm_data: utmValue
-          };
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.OTHER,
-            InteractSubtype.UTM_INFO,
-            Environment.HOME,
-            PageId.HOME,
-            undefined,
-            utmTelemetry,
-            undefined);
-          this.utilityService.clearUtmInfo();
+      if (data) {
+        const response = JSON.parse(data);
+        const utmValue = response['val'];
+        if (response.val && response.val.length) {
+          this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
+        }
+        const utmTelemetry = {
+          utm_data: utmValue
+        };
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.UTM_INFO,
+          Environment.HOME,
+          PageId.HOME,
+          undefined,
+          utmTelemetry,
+          undefined);
+        this.utilityService.clearUtmInfo();
       }
-      })
+    })
       .catch(error => {
         console.log('Error is', error);
       });
@@ -883,9 +886,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-   navigateToDownloads() {
-     this.isPlannedMaintenanceStarted = false;
-     this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
+  navigateToDownloads() {
+    this.isPlannedMaintenanceStarted = false;
+    this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
   }
 
 
