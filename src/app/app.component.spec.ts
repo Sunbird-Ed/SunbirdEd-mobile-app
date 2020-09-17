@@ -621,18 +621,17 @@ describe('AppComponent', () => {
                 deploymentKey: ''
             };
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: hotCodePushKey }));
-            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
 
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
-                expect(mockCodePushExperimentService.setDefaultDeploymentKey).not.toHaveBeenCalled();
+                // expect(mockPreferences.putString).not.toHaveBeenCalled();
                 done();
             });
         });
-        it('should not set setDefaultDeploymentKey if hotCodePushKey is empty', (done) => {
+        it('should not set DEPLOYMENT_KEY if hotCodePushKey is empty', (done) => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
                 return {
@@ -640,18 +639,17 @@ describe('AppComponent', () => {
                 } as any;
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"\"}' }));
-            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
 
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
-                expect(mockCodePushExperimentService.setDefaultDeploymentKey).not.toHaveBeenCalled();
+                // expect(mockPreferences.putString).not.toHaveBeenCalled();
                 done();
-            });
+            }, 0);
         });
-        it('should set setDefaultDeploymentKey if hotCodePushKey not empty', (done) => {
+        it('should set DEPLOYMENT_KEY if hotCodePushKey not empty', (done) => {
             // arrange
             mockPlatform.ready = jest.fn(() => {
                 return {
@@ -659,16 +657,17 @@ describe('AppComponent', () => {
                 } as any;
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
-            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
+            mockPreferences.putString = jest.fn(() => of(undefined));
 
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
-                expect(mockCodePushExperimentService.setDefaultDeploymentKey).toHaveBeenCalled();
+                expect(mockPreferences.putString).toHaveBeenCalledWith(
+                    PreferenceKey.DEPLOYMENT_KEY, 'some_key');
                 done();
-            });
+            }, 0);
         });
     });
     describe('checkForCodeUpdates', () => {
