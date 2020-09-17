@@ -24,7 +24,7 @@ import {
     FrameworkCategoryCode
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
@@ -337,7 +337,7 @@ export class FormAndFrameworkUtilService {
     public async invokeContentFilterConfigFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
-            subType: 'content',
+            subType: 'content_v2',
             action: 'filter',
         };
 
@@ -370,26 +370,22 @@ export class FormAndFrameworkUtilService {
         if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
             switch (name) {
                 case ContentFilterConfig.NAME_LIBRARY:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    libraryTabContentTypes = PrimaryCategory.FOR_LIBRARY_TAB;
                     break;
                 case ContentFilterConfig.NAME_COURSE:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    libraryTabContentTypes = PrimaryCategory.FOR_COURSE_TAB;
                     break;
                 case ContentFilterConfig.NAME_DOWNLOADS:
-                    libraryTabContentTypes = ContentType.FOR_DOWNLOADED_TAB;
+                    libraryTabContentTypes = PrimaryCategory.FOR_DOWNLOADED_TAB;
                     break;
                 case ContentFilterConfig.NAME_DIALCODE:
-                    libraryTabContentTypes = ContentType.FOR_DIAL_CODE_SEARCH;
+                    libraryTabContentTypes = PrimaryCategory.FOR_DIAL_CODE_SEARCH;
                     break;
             }
         } else {
             for (const field of contentFilterConfig) {
-                if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
-                    if (field.name === ContentFilterConfig.NAME_LIBRARY || field.name === ContentFilterConfig.NAME_COURSE) {
-                        libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
-                    } else {
-                        libraryTabContentTypes = field.values;
-                    }
+                if (field.name === name && field.code === ContentFilterConfig.CODE_PRIMARY_CATEGORY) {
+                    libraryTabContentTypes = field.values;
                     break;
                 }
             }

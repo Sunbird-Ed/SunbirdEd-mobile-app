@@ -43,24 +43,32 @@ import {
   TelemetryErrorCode,
   TelemetryObject
 } from 'sunbird-sdk';
-import {Environment, ErrorType, ID, ImpressionType, InteractSubtype, InteractType, Mode, PageId} from '../../services/telemetry-constants';
-import {Observable, Subscription} from 'rxjs';
-import {ContentType, EventTopics, RouterLinks, ShareItemType} from '../../app/app.constant';
-import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '../../services';
-import {Location} from '@angular/common';
+import {
+  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
+} from '../../services/telemetry-constants';
+import { Subscription, Observable } from 'rxjs';
+import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
+import {
+  AppGlobalService, AppHeaderService, CommonUtilService,
+  TelemetryGeneratorService
+} from '../../services';
+import { Location } from '@angular/common';
 
-import {SbSharePopupComponent} from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
-import {CollectionChildComponent, ConfirmAlertComponent} from '../components';
-import {Router} from '@angular/router';
-import {ContentUtil} from '@app/util/content-util';
-import {share, tap} from 'rxjs/operators';
-import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {ContentInfo} from '@app/services/content/content-info';
-import {ContentDeleteHandler} from '@app/services/content/content-delete-handler';
-import {SbProgressLoader} from '../../services/sb-progress-loader.service';
-import {AddActivityToGroup} from '../my-groups/group.interface';
-import {NavigationService} from '@app/services/navigation-handler.service';
+import {
+  ConfirmAlertComponent, CollectionChildComponent
+} from '../components';
+import { Router, NavigationExtras } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
+import { tap, share } from 'rxjs/operators';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { AddActivityToGroup } from '../my-groups/group.interface';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -486,7 +494,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else {
       this.location.back();
     }
@@ -823,7 +831,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   navigateToDetailsPage(content: any, depth) {
     this.zone.run(() => {
-      switch(ContentUtil.isTrackable(content)) {
+      switch (ContentUtil.isTrackable(content)) {
         case 1 || 0:
           this.navService.navigateToTrackableCollection({
             content,
@@ -842,26 +850,6 @@ export class CollectionDetailEtbPage implements OnInit {
             breadCrumb: this.breadCrumb
           });
       }
-      // if (content.contentType === ContentType.COURSE) { // TODO condition check needed
-      //   this.navService.navigateToTrackableCollection({
-      //     content,
-      //     depth,
-      //     contentState: this.stateData,
-      //     corRelation: this.corRelationList
-      //   });
-      // } else {
-      //   this.navService.navigateToContent({
-      //     isChildContent: true,
-      //     content,
-      //     depth,
-      //     contentState: this.stateData,
-      //     corRelation: this.corRelationList,
-      //     breadCrumb: this.breadCrumb,
-      //     source: this.source,
-      //     groupId: this.groupId,
-      //     activityList: this.activityList
-      //   });
-      // }
     });
   }
 
@@ -1048,7 +1036,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateEndTelemetry(
-      objectType ? objectType : ContentType.TEXTBOOK,
+      objectType ? objectType : CsPrimaryCategory.DIGITAL_TEXTBOOK,
       Mode.PLAY,
       PageId.COLLECTION_DETAIL,
       Environment.HOME,
@@ -1264,8 +1252,8 @@ export class CollectionDetailEtbPage implements OnInit {
   openTextbookToc() {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
-    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], 
-    { childrenData: this.childrenData, parentId: this.identifier })
+    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+      { childrenData: this.childrenData, parentId: this.identifier })
     // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], // **** check needed ****
     //   { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();

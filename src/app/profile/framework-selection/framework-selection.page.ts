@@ -1,26 +1,26 @@
-import {Component, Injectable, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {FrameworkCommonFormConfigBuilder} from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
 import {
   AppHeaderService,
   CommonUtilService,
   CorReleationDataType,
-  Environment,
-  ImpressionType,
   PageId,
-  TelemetryGeneratorService
+  TelemetryGeneratorService,
+  ImpressionType, Environment
 } from '@app/services';
-import {CorrelationData} from '@project-sunbird/sunbird-sdk';
-import {FieldConfigOptionsBuilder} from 'common-form-elements';
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { FieldConfigOptionsBuilder } from '@app/app/components/common-forms/field-config';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class FrameworkSelectionDelegateService {
   delegate?: FrameworkSelectionActionsDelegate;
 }
 
 export interface FrameworkSelectionActionsDelegate {
-  onFrameworkSelectionSubmit(formInput?: any, formOutput?: any, router?: Router, commonUtilService?: CommonUtilService,
-                             telemetryGeneratorService?: TelemetryGeneratorService, corRelation?: Array<CorrelationData>);
+  onFrameworkSelectionSubmit(formInput?: any,
+    formOutput?: any, router?: Router,
+    commonUtilService?: CommonUtilService, telemetryGeneratorService?: TelemetryGeneratorService, corRelation?: Array<CorrelationData>);
 }
 
 @Component({
@@ -95,7 +95,6 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   }
 
   valueChanged(event) {
-    console.log(event);
     this.selectedFrameworkData = event;
   }
 
