@@ -30,14 +30,14 @@ export class ConsentPiiPopupComponent {
             });
         });
     }
-    closePopover() {
-        this.popOverCtrl.dismiss(true);
+    closePopover(data) {
+        this.popOverCtrl.dismiss(data);
     }
     dontShare() {
-        this.closePopover();
+        this.closePopover('dontShare');
     }
     share() {
-        this.closePopover();
+        this.closePopover('share');
         this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
     }
 

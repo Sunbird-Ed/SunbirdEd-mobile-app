@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse
+  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
 import { forEach } from '@angular/router/src/utils/collection';
+import { UserConsent } from '@project-sunbird/client-services/models';
 
 @Injectable()
 export class LocalCourseService {
@@ -59,7 +60,12 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
-          await this.showConsentPopup();
+          const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) as ContentData;
+         // if (contentData.userConsent === UserConsent.YES) {
+            setTimeout(() => {
+               this.showConsentPopup();
+            }, 2000);
+         // }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -297,6 +303,7 @@ export class LocalCourseService {
       cssClass: 'sb-popover',
     });
     await popover.present();
+    const data = await popover.onDidDismiss();
+    console.log('cancel data', data);
   }
-
 }
