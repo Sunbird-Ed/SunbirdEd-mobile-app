@@ -47,13 +47,14 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { EventTopics, ContentType, ShareItemType, ContentFilterConfig } from '../app.constant';
+import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -1063,7 +1064,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.generateEndEvent();
             // assert
-            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(CsContentType.RESOURCE,
                 Mode.PLAY,
                 PageId.CONTENT_DETAIL,
                 Environment.HOME,
@@ -1079,7 +1080,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.generateEndEvent();
             // assert
-            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith('Learning Resource',
                 Mode.PLAY,
                 PageId.CONTENT_DETAIL,
                 Environment.HOME,

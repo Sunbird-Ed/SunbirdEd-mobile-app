@@ -5,7 +5,7 @@ import {
   ViewChild, ElementRef
 } from '@angular/core';
 import {
-  ContentType, MimeType,
+  MimeType,
   RouterLinks, EventTopics
 } from '../../app/app.constant';
 import { TranslateService } from '@ngx-translate/core';
@@ -476,10 +476,6 @@ export class QrcoderesultPage implements OnDestroy {
     AppGlobalService.isPlayerLaunched = true;
     const values = new Map();
     values['isStreaming'] = request.streaming;
-    const identifier = content.identifier;
-    let telemetryObject: TelemetryObject;
-    const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-    telemetryObject = new TelemetryObject(identifier, objectType, undefined);
     this.openPlayer(content, request);
     this.interactEventForPlayAndDownload(content, true);
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -487,18 +483,14 @@ export class QrcoderesultPage implements OnDestroy {
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       undefined,
       undefined,
       this.corRelationList);
   }
 
   playOnline(content) {
-    const identifier = content.identifier;
-    let telemetryObject: TelemetryObject;
-    const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-    telemetryObject = new TelemetryObject(identifier, objectType, undefined);
-
+    const telemetryObject = ContentUtil.getTelemetryObject(content);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
@@ -506,12 +498,11 @@ export class QrcoderesultPage implements OnDestroy {
       telemetryObject);
     if (content.contentData.streamingUrl && !content.isAvailableLocally) {
       const rollup = ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier);
-      const telemetryObjectData = new TelemetryObject(identifier, ObjectType.CONTENT, undefined);
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_CARD, '',
         this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
         PageId.QR_CONTENT_RESULT,
-        telemetryObjectData,
+        telemetryObject,
         undefined,
         rollup,
         this.corRelationList
@@ -528,7 +519,7 @@ export class QrcoderesultPage implements OnDestroy {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }
-    switch(ContentUtil.isTrackable(content)) {
+    switch (ContentUtil.isTrackable(content)) {
       case 1:
         this.navService.navigateToTrackableCollection({
           content,
@@ -561,41 +552,6 @@ export class QrcoderesultPage implements OnDestroy {
         });
         break;
     }
-    // if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
-    //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-    //     state: {
-    //       content,
-    //       corRelation: this.corRelationList
-    //     }
-    //   });
-    // } else if (content && content.mimeType === MimeType.COLLECTION) {
-    //   if (paths.length && paths.length >= 2) {
-    //     this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
-    //   }
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-    //     state: {
-    //       content,
-    //       corRelation: this.corRelationList
-    //     }
-    //   });
-    // } else {
-    //   this.telemetryGeneratorService.generateInteractTelemetry(
-    //     InteractType.TOUCH,
-    //     Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-    //     !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-    //     PageId.DIAL_CODE_SCAN_RESULT);
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-    //     state: {
-    //       content,
-    //       depth: '1',
-    //       isChildContent: true,
-    //       downloadAndPlay: true,
-    //       corRelation: this.corRelationList,
-    //       onboarding: this.onboarding,
-    //       source: this.source
-    //     }
-    //   });
-    // }
   }
 
   addElipsesInLongText(msg: string) {
@@ -989,11 +945,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   private interactEventForPlayAndDownload(content, play) {
-    const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-    const telemetryObject = new TelemetryObject(content.identifier, objectType, undefined);
+    const telemetryObject = ContentUtil.getTelemetryObject(content);
     if (this.corRelationList && this.corRelationList.length) {
       this.corRelationList.push({ id: Mode.PLAY, type: CorReleationDataType.MODE });
-      this.corRelationList.push({ id: content.contentType, type: CorReleationDataType.TYPE });
+      this.corRelationList.push({ id: telemetryObject.type || '', type: CorReleationDataType.TYPE });
       this.corRelationList.push({
         id: this.commonUtilService.networkInfo.isNetworkAvailable ?
           Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS

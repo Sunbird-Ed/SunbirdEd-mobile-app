@@ -643,7 +643,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.invokeContentFilterConfigFormApi().then((response) => {
-        expect(response[0].values.length).toEqual(5);
+        expect(response[0].values.length).toEqual(9);
         done();
       });
     });
@@ -670,9 +670,17 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Course',
+          'Teacher Resource',
+          'Learning Resource',
+          'Explanation Content',
+          'Content Playlist',
+          'Digital Textbook',
+          'Practice Question Set',
+          'eTextbook',
+          'Course Assessment'
+        ]));
         done();
       });
     });
@@ -681,13 +689,21 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+      Promise.resolve( Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Course',
+          'Teacher Resource',
+          'Learning Resource',
+          'Explanation Content',
+          'Content Playlist',
+          'Digital Textbook',
+          'Practice Question Set',
+          'eTextbook',
+          'Course Assessment'
+        ]));
         done();
       });
     });
@@ -696,13 +712,19 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+      Promise.resolve(mockContentConfigResponse.form.data.fields));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('course').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toContain('Course');
+        expect(response).toContain('Teacher Resource');
+        expect(response).toContain('Learning Resource');
+        expect(response).toContain('Explanation Content');
+        expect(response).toContain('Content Playlist');
+        expect(response).toContain('Digital Textbook');
+        expect(response).toContain('Practice Question Set');
+        expect(response).toContain('eTextbook');
+        expect(response).toContain('Course Assessment');
         done();
       });
     });
@@ -711,14 +733,20 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+        Promise.resolve( Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource',
-          'Course']);
+        expect(response).toContain('Course');
+        expect(response).toContain('Teacher Resource');
+        expect(response).toContain('Learning Resource');
+        expect(response).toContain('Explanation Content');
+        expect(response).toContain('Content Playlist');
+        expect(response).toContain('Digital Textbook');
+        expect(response).toContain('Practice Question Set');
+        expect(response).toContain('eTextbook');
+        expect(response).toContain('Course Assessment');
+
         done();
       });
     });
@@ -731,7 +759,11 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('dialcode').then((response) => {
-        expect(response).toEqual(['TextBook', 'TextBookUnit', 'Course']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Digital Textbook',
+          'Textbook Unit',
+          'Course'
+        ]));
         expect(formAndFrameworkUtilService['getCachedContentFilterConfig']()).toBeUndefined();
         done();
       });

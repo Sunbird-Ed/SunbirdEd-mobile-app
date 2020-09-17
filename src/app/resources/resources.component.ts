@@ -1,14 +1,14 @@
-import {PageFilterCallback} from './../page-filter/page-filter.page';
-import {AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController} from '@ionic/angular';
-import {NavigationExtras, Router} from '@angular/router';
-import {animate, group, state, style, transition, trigger} from '@angular/animations';
-import {TranslateService} from '@ngx-translate/core';
+import { PageFilterCallback } from './../page-filter/page-filter.page';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
+import { NavigationExtras, Router } from '@angular/router';
+import { animate, group, state, style, transition, trigger } from '@angular/animations';
+import { TranslateService } from '@ngx-translate/core';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import {Subscription} from 'rxjs';
-import {Network} from '@ionic-native/network/ngx';
-import {CourseCardGridTypes, LibraryFiltersLayout} from '@project-sunbird/common-consumption';
+import { Subscription } from 'rxjs';
+import { Network } from '@ionic-native/network/ngx';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
@@ -38,20 +38,21 @@ import {
   AudienceFilter,
   ContentCard,
   ContentFilterConfig,
-  ContentType,
   EventTopics,
   ExploreConstants,
   PreferenceKey,
   ProfileConstants,
   RouterLinks,
+  FormConfigCategories,
+  PrimaryCategory,
   Search
 } from '@app/app/app.constant';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {SunbirdQRScanner} from '@app/services/sunbirdqrscanner.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
   CorReleationDataType,
   Environment,
@@ -61,19 +62,21 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
-import {AppHeaderService} from '@app/services/app-header.service';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {ContentUtil} from '@app/util/content-util';
-import {NotificationService} from '@app/services/notification.service';
-import {applyProfileFilter} from '@app/util/filter.util';
-import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
-import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
-import {NavigationService} from '@app/services/navigation-handler.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ContentUtil } from '@app/util/content-util';
+import { NotificationService } from '@app/services/notification.service';
+import { applyProfileFilter } from '@app/util/filter.util';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import {
-  FrameworkSelectionActionsDelegate,
-  FrameworkSelectionDelegateService
+  FrameworkSelectionDelegateService,
+  FrameworkSelectionActionsDelegate
 } from '../profile/framework-selection/framework-selection.page';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-resources',
@@ -83,7 +86,7 @@ import {
     trigger('appear', [
       state('true', style({
         left: '{{left_indent}}',
-      }), {params: {left_indent: 0}}), // default parameters values required
+      }), { params: { left_indent: 0 } }), // default parameters values required
 
       transition('* => active', [
         style({ width: 5, opacity: 0 }),
@@ -440,7 +443,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
-    this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
   }
@@ -703,11 +706,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: contentTypes,
+        primaryCategories,
         source: PageId.LIBRARY
       }
     });
@@ -897,7 +900,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
     const values = {};
     values['sectionName'] = item.subject;
@@ -906,27 +908,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
-      // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
   navigateToTextbookPage(items, subject) {
-    const identifier = items.contentId || items.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, items.contentType, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject);
+      ContentUtil.getTelemetryObject(items));
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
@@ -1019,7 +1017,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
-        contentType: ContentType.FOR_LIBRARY_TAB,
+        primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.getGroupByPageReq.grade,
         selectedMedium: this.getGroupByPageReq.medium
       }
@@ -1046,7 +1044,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
+      primaryCategories: [],
       audience: this.audienceFilter,
       recentlyViewed: false,
     };
@@ -1207,22 +1205,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
-        {
-          state: {
-            showHeader: true,
-            corRelation: [{id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE}],
-            title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-            subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
-            formConfig,
-            submitDetails: {
-              label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+      {
+        state: {
+          showHeader: true,
+          corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
+          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
+          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          formConfig,
+          submitDetails: {
+            label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+          }
         }
-      }
-    });
+      });
   }
 
   async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService,
-                                   telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
+    telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
     if (!commonUtilService.networkInfo.isNetworkAvailable) {
       await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
       return;
@@ -1241,13 +1239,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     for (const key in formOutput) {
       if (typeof formOutput[key] === 'string') {
-        selectedCorRelation.push({id: formOutput[key], type: key});
+        selectedCorRelation.push({ id: formOutput[key], type: key });
       } else if (typeof formOutput[key] === 'object' && formOutput[key].name) {
-        selectedCorRelation.push({id: formOutput[key].name, type: key});
+        selectedCorRelation.push({ id: formOutput[key].name, type: key });
       }
     }
     telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
+      InteractType.TOUCH,
       InteractSubtype.SUBMIT_CLICKED,
       Environment.HOME,
       PageId.FRAMEWORK_SELECTION,
@@ -1262,5 +1260,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
-
 }
