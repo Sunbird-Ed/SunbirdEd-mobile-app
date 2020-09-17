@@ -16,6 +16,7 @@ html[data-theme="JOYFUL"]{
 
   ion-toolbar {
     --background: var(--joyful-warning);
+    border-bottom-left-radius: 20px;
     ion-buttons{
       ion-button{
         --background: var(--joyful-warning) !important;
@@ -427,14 +428,16 @@ html[data-theme="JOYFUL"]{
       background-color: var(--joyful-tertiary) !important;
     }
     .enrolled-course-bg{
-      background: var(--joyful-secondary) !important;
+      // background: var(--joyful-secondary) !important;
+      background: transparent !important;
     }
   }
 
   // View-more-activity page
   app-view-more-activity{
     .view-more-course-bg{
-      background: var(--joyful-secondary) !important;
+      // background: var(--joyful-secondary) !important;
+      background: transparent !important;
     }
 
     .title, .count-text{
@@ -588,6 +591,9 @@ html[data-theme="JOYFUL"]{
   }
 
   // header
+  ion-header::after{
+    background-image: none;
+  }
   .ui-container::after {
     content: '';
     width: 100%;
