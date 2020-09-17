@@ -31,13 +31,18 @@ export class ConsentPiiPopupComponent {
         });
     }
     closePopover(data) {
-        this.popOverCtrl.dismiss(data);
+        const request = {
+            data,
+            consumerId: this.profile.serverProfile.rootOrgId,
+            userId: this.profile.serverProfile.id
+        };
+        this.popOverCtrl.dismiss(request);
     }
     dontShare() {
-        this.closePopover('dontShare');
+        this.closePopover('No');
     }
     share() {
-        this.closePopover('share');
+        this.closePopover('Yes');
         this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
     }
 

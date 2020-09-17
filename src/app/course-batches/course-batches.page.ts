@@ -151,7 +151,7 @@ export class CourseBatchesPage implements OnInit {
         corRelationList: this.corRelationList
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this.course).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));

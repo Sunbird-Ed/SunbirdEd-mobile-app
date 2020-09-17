@@ -330,7 +330,7 @@
 										<strong>{{'UPDATE_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" (ionChange)="onSelected()">
-										<ion-radio-group [(ngModel)]="dataSyncType">
+										<ion-radio-group [(ngModel)]="isShared" name="isShared">
 										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px;">
 											<ion-label class="ds-m0">{{'SHARE_PROFILE' | translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="yes" slot="start"></ion-radio>

@@ -241,6 +241,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   pageId = PageId.COURSE_DETAIL;
   showShareData = false;
   isDataShare = false;
+  isShared: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1862,7 +1863,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         corRelationList: this.corRelationList
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this.course).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
@@ -2059,6 +2060,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
+  }
+
+  onSelected() {
+   console.log('enrolled data', this.isShared);
   }
 
 }

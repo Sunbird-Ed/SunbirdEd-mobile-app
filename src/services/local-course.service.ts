@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData
+  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData, ProfileService
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
 import { forEach } from '@angular/router/src/utils/collection';
-import { UserConsent } from '@project-sunbird/client-services/models';
+import { UserConsent, Consent, ConsentStatus } from '@project-sunbird/client-services/models';
 
 @Injectable()
 export class LocalCourseService {
@@ -31,6 +31,7 @@ export class LocalCourseService {
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
@@ -45,7 +46,7 @@ export class LocalCourseService {
   ) {
   }
 
-  enrollIntoBatch(enrollCourse: EnrollCourse): Observable<any> {
+  enrollIntoBatch(enrollCourse: EnrollCourse, content?): Observable<any> {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
@@ -60,12 +61,13 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
-          const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) as ContentData;
-         // if (contentData.userConsent === UserConsent.YES) {
+          // const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) ?
+          //   JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) : content;
+          if (content.userConsent === UserConsent.YES) {
             setTimeout(() => {
-               this.showConsentPopup();
-            }, 2000);
-         // }
+              this.showConsentPopup(enrollCourse, content);
+            }, 1000);
+          }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -296,7 +298,7 @@ export class LocalCourseService {
     return true;
   }
 
-  async showConsentPopup() {
+  async showConsentPopup(course, content) {
     const popover = await this.popoverCtrl.create({
       component: ConsentPiiPopupComponent,
       componentProps: {
@@ -304,7 +306,30 @@ export class LocalCourseService {
       cssClass: 'sb-popover',
     });
     await popover.present();
-    const data = await popover.onDidDismiss();
-    console.log('cancel data', data);
+    const dismissResponse = await popover.onDidDismiss();
+    if (dismissResponse.data.data === 'Yes') {
+      const request: Consent = {
+        status: ConsentStatus.ACTIVE,
+        userId: dismissResponse.data.userId,
+        consumerId: dismissResponse.data.consumerId,
+        objectId: course.batch.courseId,
+        objectType: content.primaryCategory,
+        expiry: JSON.stringify(new Date())
+      };
+      this.profileService.updateConsent(request).toPromise()
+        .then((data) => {
+          console.log('update consent', data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+      this.profileService.getConsent(request).toPromise()
+        .then((data) => {
+          console.log('get consent', data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
   }
 }
