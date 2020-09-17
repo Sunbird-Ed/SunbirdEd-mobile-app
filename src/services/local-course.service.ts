@@ -17,9 +17,10 @@ import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Injectable()
 export class LocalCourseService {
@@ -36,7 +37,8 @@ export class LocalCourseService {
     private appVersion: AppVersion,
     private router: Router,
     private location: Location,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private datePipe: DatePipe
   ) {
   }
 
@@ -247,6 +249,41 @@ export class LocalCourseService {
         resolve(progress);
       }
     });
+  }
+
+  isEnrollable(batches) {
+    let latestBatch = batches[0];
+    batches.forEach((batch) => {
+      if (batch.enrollmentEndDate &&
+        new Date(batch.startDate) > new Date(latestBatch.startDate)) {
+        latestBatch = batch;
+      }
+    });
+    // start date is not passed, then check show message
+    // start date is passed, then check for enrollmentenddate
+    // enrollmentenddate is passed then show message
+    if (new Date(latestBatch.startDate) < new Date()) {
+      this.commonUtilService.showToast(
+        'ENROLLMENT_STARTS_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(latestBatch.startDate)
+      );
+      return false;
+    } else if (true) {
+      this.commonUtilService.showToast(
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(latestBatch.enrollmentEndDate)
+      );
+      return false;
+    }
+    return true;
   }
 
 }
