@@ -136,7 +136,7 @@
     "@ionic/angular-toolkit": "~1.5.1",
     "@ionic/v4-migration-tslint": "^1.7.1",
     "@types/jest": "^25.2.1",
-    "@types/node": "^12.11.5",
+    "@types/node": "12.11.5",
     "babel-jest": "^25.4.0",
     "babel-polyfill": "^6.26.0",
     "fs-extra": "^8.1.0",
