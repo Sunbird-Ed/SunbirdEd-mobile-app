@@ -1,14 +1,14 @@
-import {PageFilterCallback} from './../page-filter/page-filter.page';
-import {AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController} from '@ionic/angular';
-import {NavigationExtras, Router} from '@angular/router';
-import {animate, group, state, style, transition, trigger} from '@angular/animations';
-import {TranslateService} from '@ngx-translate/core';
+import { PageFilterCallback } from './../page-filter/page-filter.page';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
+import { NavigationExtras, Router } from '@angular/router';
+import { animate, group, state, style, transition, trigger } from '@angular/animations';
+import { TranslateService } from '@ngx-translate/core';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import {Subscription} from 'rxjs';
-import {Network} from '@ionic-native/network/ngx';
-import {CourseCardGridTypes, LibraryFiltersLayout} from '@project-sunbird/common-consumption';
+import { Subscription } from 'rxjs';
+import { Network } from '@ionic-native/network/ngx';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
@@ -47,12 +47,12 @@ import {
   PrimaryCategory,
   Search
 } from '@app/app/app.constant';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {SunbirdQRScanner} from '@app/services/sunbirdqrscanner.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
   CorReleationDataType,
   Environment,
@@ -72,7 +72,10 @@ import { animationGrowInTopRight } from '../animations/animation-grow-in-top-rig
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
-import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
+import {
+  FrameworkSelectionDelegateService,
+  FrameworkSelectionActionsDelegate
+} from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
@@ -83,7 +86,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
     trigger('appear', [
       state('true', style({
         left: '{{left_indent}}',
-      }), {params: {left_indent: 0}}), // default parameters values required
+      }), { params: { left_indent: 0 } }), // default parameters values required
 
       transition('* => active', [
         style({ width: 5, opacity: 0 }),
@@ -1202,22 +1205,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.appGlobalService.formConfig = formConfig;
     this.frameworkSelectionDelegateService.delegate = this;
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
-        {
-          state: {
-            showHeader: true,
-            corRelation: [{id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE}],
-            title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-            subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
-            formConfig,
-            submitDetails: {
-              label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+      {
+        state: {
+          showHeader: true,
+          corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
+          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
+          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          formConfig,
+          submitDetails: {
+            label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+          }
         }
-      }
-    });
+      });
   }
 
   async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService,
-                                   telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
+    telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
     if (!commonUtilService.networkInfo.isNetworkAvailable) {
       await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
       return;
@@ -1236,13 +1239,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     for (const key in formOutput) {
       if (typeof formOutput[key] === 'string') {
-        selectedCorRelation.push({id: formOutput[key], type: key});
+        selectedCorRelation.push({ id: formOutput[key], type: key });
       } else if (typeof formOutput[key] === 'object' && formOutput[key].name) {
-        selectedCorRelation.push({id: formOutput[key].name, type: key});
+        selectedCorRelation.push({ id: formOutput[key].name, type: key });
       }
     }
     telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
+      InteractType.TOUCH,
       InteractSubtype.SUBMIT_CLICKED,
       Environment.HOME,
       PageId.FRAMEWORK_SELECTION,
