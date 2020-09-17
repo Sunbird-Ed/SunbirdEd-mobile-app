@@ -1,11 +1,19 @@
-import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import { AppHeaderService, CommonUtilService, CorReleationDataType, PageId, TelemetryGeneratorService, ImpressionType, Environment } from '@app/services';
-import { FieldConfig } from 'common-form-elements';
-import { CorrelationData } from '@project-sunbird/sunbird-sdk';
+import {Component, Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {FrameworkCommonFormConfigBuilder} from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import {
+  AppHeaderService,
+  CommonUtilService,
+  CorReleationDataType,
+  Environment,
+  ImpressionType,
+  PageId,
+  TelemetryGeneratorService
+} from '@app/services';
+import {CorrelationData} from '@project-sunbird/sunbird-sdk';
+import {FieldConfigOptionsBuilder} from 'common-form-elements';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FrameworkSelectionDelegateService {
   delegate?: FrameworkSelectionActionsDelegate;
 }
@@ -58,7 +66,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initilizeFormConfig();
+    this.initializeFormConfig();
     this.appHeaderService.showHeaderWithBackButton();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -76,11 +84,11 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     this.frameworkSelectionDelegateService.delegate = undefined;
   }
 
-  initilizeFormConfig() {
+  initializeFormConfig() {
     if (this.formConfig) {
       this.formConfig.forEach(ele => {
         if (ele.templateOptions.dataSrc) {
-          this.converDataSrcToClosure(ele);
+          this.convertDataSrcToClosure(ele);
         }
       });
     }
@@ -104,19 +112,19 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
     }
   }
 
-  converDataSrcToClosure(ele) {
+  convertDataSrcToClosure(ele) {
     const dataSrc = ele.templateOptions.dataSrc;
     switch (dataSrc.marker) {
       case 'ACTIVE_CHANNEL.SUGGESTED_FRAMEWORK_LIST.MAPPED_TO_FRAMEWORKCATEGORIES':
         ele.templateOptions.options = this.getClosure('board');
         break;
       case 'FRAMEWORK_CATEGORY_TERMS':
-        ele.templateOptions.options = this.getClosure(dataSrc.params.categoryCode);
+        ele.templateOptions.options = this.getClosure(dataSrc.params.categoryCode, !!(ele.children && ele.children.other));
         break;
     }
   }
 
-  getClosure(type: string) {
+  getClosure(type: string, enableOtherOption?: boolean): FieldConfigOptionsBuilder<any> {
     switch (type) {
       case 'board':
         return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder();
@@ -125,7 +133,7 @@ export class FrameworkSelectionPage implements OnInit, OnDestroy {
       case 'grade':
         return this.frameworkCommonFormConfigBuilder.getGradeConfigOptionsBuilder();
       case 'subject':
-        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder();
+        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder(null, enableOtherOption);
     }
   }
 

@@ -1,29 +1,28 @@
-import { PageFilterCallback } from './../page-filter/page-filter.page';
-import {
-  Component, OnInit, AfterViewInit, Inject, NgZone,
-  ViewChild, OnDestroy, ChangeDetectorRef
-} from '@angular/core';
-import {
-  IonContent as ContentView, Events, ToastController,
-  MenuController, PopoverController, IonRefresher
-} from '@ionic/angular';
-import { NavigationExtras, Router } from '@angular/router';
-import { animate, group, state, style, transition, trigger } from '@angular/animations';
-import { TranslateService } from '@ngx-translate/core';
+import {PageFilterCallback} from './../page-filter/page-filter.page';
+import {AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController} from '@ionic/angular';
+import {NavigationExtras, Router} from '@angular/router';
+import {animate, group, state, style, transition, trigger} from '@angular/animations';
+import {TranslateService} from '@ngx-translate/core';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { Subscription } from 'rxjs';
-import { Network } from '@ionic-native/network/ngx';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
+import {Subscription} from 'rxjs';
+import {Network} from '@ionic-native/network/ngx';
+import {CourseCardGridTypes, LibraryFiltersLayout} from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
+  ContentAggregatorRequest,
+  ContentAggregatorResponse,
   ContentEventType,
+  ContentRequest,
   ContentSearchCriteria,
   ContentService,
+  CorrelationData,
   EventsBusEvent,
   EventsBusService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
+  FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
   Profile,
@@ -31,51 +30,50 @@ import {
   ProfileType,
   SearchType,
   SharedPreferences,
-  TelemetryObject,
-  ContentRequest,
-  FrameworkService,
   SortOrder,
-  CorrelationData,
-  ContentsGroupedByPageSection,
-  ContentAggregatorRequest,
-  CachedItemRequestSourceFrom,
-  ContentAggregatorResponse
+  TelemetryObject
 } from 'sunbird-sdk';
 
 import {
   AudienceFilter,
   ContentCard,
-  ContentType,
-  PreferenceKey,
-  Search,
-  ProfileConstants,
-  RouterLinks,
   ContentFilterConfig,
+  ContentType,
   EventTopics,
   ExploreConstants,
-  FormConfigSubcategories,
-  FormConfigCategories
+  PreferenceKey,
+  ProfileConstants,
+  RouterLinks,
+  Search
 } from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import {AppGlobalService} from '@app/services/app-global-service.service';
+import {SunbirdQRScanner} from '@app/services/sunbirdqrscanner.service';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
+import {CommonUtilService} from '@app/services/common-util.service';
+import {FormAndFrameworkUtilService} from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType
+  CorReleationDataType,
+  Environment,
+  ID,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
 } from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { ContentUtil } from '@app/util/content-util';
-import { NotificationService } from '@app/services/notification.service';
-import { applyProfileFilter } from '@app/util/filter.util';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
-import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
-import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
-import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
+import {AppHeaderService} from '@app/services/app-header.service';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {ContentUtil} from '@app/util/content-util';
+import {NotificationService} from '@app/services/notification.service';
+import {applyProfileFilter} from '@app/util/filter.util';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
+import {NavigationService} from '@app/services/navigation-handler.service';
+import {
+  FrameworkSelectionActionsDelegate,
+  FrameworkSelectionDelegateService
+} from '../profile/framework-selection/framework-selection.page';
 
 @Component({
   selector: 'app-resources',
@@ -85,7 +83,7 @@ import { FrameworkSelectionDelegateService } from '../profile/framework-selectio
     trigger('appear', [
       state('true', style({
         left: '{{left_indent}}',
-      }), { params: { left_indent: 0 } }), // default parameters values required
+      }), {params: {left_indent: 0}}), // default parameters values required
 
       transition('* => active', [
         style({ width: 5, opacity: 0 }),
@@ -119,7 +117,7 @@ import { FrameworkSelectionDelegateService } from '../profile/framework-selectio
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
   @ViewChild('libraryRefresher') refresher: IonRefresher;
 
   pageLoadedSuccess = false;
@@ -1207,17 +1205,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
     this.appGlobalService.formConfig = formConfig;
-    this.frameworkSelectionDelegateService.delegate = { onFrameworkSelectionSubmit: this.onFrameworkSelectionSubmit };
+    this.frameworkSelectionDelegateService.delegate = this;
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
-    {
-      state: {
-        showHeader: true,
-        corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-        title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-        subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
-        formConfig,
-        submitDetails: {
-          label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+        {
+          state: {
+            showHeader: true,
+            corRelation: [{id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE}],
+            title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
+            subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+            formConfig,
+            submitDetails: {
+              label: this.commonUtilService.translateMessage('BTN_SUBMIT')
         }
       }
     });
@@ -1230,15 +1228,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const selectedCorRelation: Array<CorrelationData> = [];
+
+    if (formOutput['children']) {
+      for (const key in formOutput['children']) {
+        if (formOutput[key] && formOutput['children'][key]['other']) {
+          formOutput[key] = formOutput['children'][key]['other'];
+        }
+      }
+
+      delete formOutput['children'];
+    }
+
     for (const key in formOutput) {
       if (typeof formOutput[key] === 'string') {
-        selectedCorRelation.push({ id: formOutput[key], type: key });
-      } else if (typeof formOutput[key] === 'object' && formOutput[key].name ) {
-        selectedCorRelation.push({ id: formOutput[key].name, type: key });
+        selectedCorRelation.push({id: formOutput[key], type: key});
+      } else if (typeof formOutput[key] === 'object' && formOutput[key].name) {
+        selectedCorRelation.push({id: formOutput[key].name, type: key});
       }
     }
     telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
+        InteractType.TOUCH,
       InteractSubtype.SUBMIT_CLICKED,
       Environment.HOME,
       PageId.FRAMEWORK_SELECTION,

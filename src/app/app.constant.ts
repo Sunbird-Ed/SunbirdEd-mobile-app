@@ -79,7 +79,8 @@ export class Search {
         'subject',
         'medium',
         'contentType',
-        'publisher'
+        'publisher',
+        'mimeType'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -591,4 +592,10 @@ export class FormConfigCategories {
 export class FormConfigSubcategories {
     public static readonly CONTENT_QUALITY = "contentquality";
     public static readonly CONTENT_AVAILABILITY = "contentavailability";
+}
+
+export class GroupErrorCodes {
+    public static readonly EXCEEDED_GROUP_MAX_LIMIT = 'EXCEEDED_GROUP_MAX_LIMIT';
+    public static readonly EXCEEDED_MEMBER_MAX_LIMIT = 'EXCEEDED_MEMBER_MAX_LIMIT';
+    public static readonly EXCEEDED_ACTIVITY_MAX_LIMIT = 'EXCEEDED_ACTIVITY_MAX_LIMIT';
 }
