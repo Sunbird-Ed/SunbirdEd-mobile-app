@@ -254,15 +254,16 @@ export class LocalCourseService {
   isEnrollable(batches) {
     let latestBatch = batches[0];
     batches.forEach((batch) => {
-      if (batch.enrollmentEndDate &&
-        new Date(batch.startDate) > new Date(latestBatch.startDate)) {
+      if (batch.startDate &&
+        (new Date(batch.startDate) > new Date(latestBatch.startDate))) {
         latestBatch = batch;
       }
     });
     // start date is not passed, then check show message
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
-    if (new Date(latestBatch.startDate) < new Date()) {
+
+    if (latestBatch.startDate && (new Date(latestBatch.startDate) > new Date())) {
       this.commonUtilService.showToast(
         'ENROLLMENT_STARTS_ON',
         null,
@@ -272,7 +273,7 @@ export class LocalCourseService {
         this.datePipe.transform(latestBatch.startDate)
       );
       return false;
-    } else if (true) {
+    } else if (latestBatch.enrollmentEndDate && (new Date(latestBatch.enrollmentEndDate) < new Date())) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
         null,
