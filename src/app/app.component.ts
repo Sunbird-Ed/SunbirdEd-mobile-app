@@ -228,7 +228,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (res && res.value) {
           const value = JSON.parse(res.value);
           if (value.deploymentKey) {
-            this.codePushExperimentService.setDefaultDeploymentKey(res.value).subscribe();
+            this.preferences.putString(PreferenceKey.DEPLOYMENT_KEY, value.deploymentKey).subscribe();
           }
         }
       }).catch(err => {
