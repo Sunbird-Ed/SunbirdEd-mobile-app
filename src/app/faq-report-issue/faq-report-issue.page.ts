@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentType, AudienceFilter, ProfileConstants, FormConfigSubcategories } from '../app.constant';
+import { AudienceFilter, ProfileConstants, FormConfigSubcategories, PrimaryCategory } from '../app.constant';
 import {
   ProfileService,
   ContentService,
@@ -231,7 +231,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       server: true
     };
     const contentRequest: ContentRequest = {
-      contentTypes: ContentType.FOR_DOWNLOADED_TAB,
+      primaryCategories: PrimaryCategory.FOR_DOWNLOADED_TAB,
       audience: AudienceFilter.GUEST_TEACHER
     };
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(

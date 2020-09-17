@@ -22,7 +22,8 @@ import {
 } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ContentType, RouterLinks } from './../../app.constant';
+import { RouterLinks } from './../../app.constant';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-activity-details',
@@ -190,7 +191,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
+      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase())) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {

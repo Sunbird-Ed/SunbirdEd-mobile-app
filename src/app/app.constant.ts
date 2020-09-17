@@ -1,55 +1,26 @@
-export class ContentType {
-    public static readonly STORY = 'Story';
-    public static readonly WORKSHEET = 'Worksheet';
-    public static readonly GAME = 'Game';
-    public static readonly RESOURCE = 'Resource';
-    public static readonly COLLECTION = 'Collection';
-    public static readonly TEXTBOOK = 'TextBook';
-    public static readonly E_TEXTBOOK = 'eTextBook';
-    public static readonly LESSON_PLAN = 'LessonPlan';
-    public static readonly COURSE = 'Course';
-    public static readonly CERTIFICATE = 'Certificate';
-    public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
-    public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
-    public static readonly COURSE_UNIT = 'CourseUnit';
-    public static readonly FOCUS_SPOT = 'FocusSpot';
-    public static readonly LEARNING_OUTCOME_DEFINITION = 'LearningOutcomeDefinition';
-    public static readonly PRACTICE_QUESTION_SET = 'PracticeQuestionSet';
-    public static readonly CURIOSITY_QUESTIONS = 'CuriosityQuestions';
-    public static readonly MARKING_SCHEME_RUBRIC = 'MarkingSchemeRubric';
-    public static readonly EXPLANATION_RESOURCE = 'ExplanationResource';
-    public static readonly EXPERIENTIAL_RESOURCE = 'ExperientialResource';
-    public static readonly SELF_ASSESS = 'SelfAssess';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+export class PrimaryCategory {
 
     public static readonly FOR_COURSE_TAB = [
-        ContentType.COURSE
+        CsPrimaryCategory.COURSE
     ];
     public static readonly FOR_LIBRARY_TAB = [
-        ContentType.STORY,
-        ContentType.WORKSHEET,
-        ContentType.GAME,
-        ContentType.RESOURCE,
-        ContentType.COLLECTION,
-        ContentType.TEXTBOOK,
-        ContentType.E_TEXTBOOK,
-        ContentType.LESSON_PLAN,
-        ContentType.FOCUS_SPOT,
-        ContentType.LEARNING_OUTCOME_DEFINITION,
-        ContentType.PRACTICE_QUESTION_SET,
-        ContentType.CURIOSITY_QUESTIONS,
-        ContentType.MARKING_SCHEME_RUBRIC,
-        ContentType.EXPLANATION_RESOURCE,
-        ContentType.EXPERIENTIAL_RESOURCE
+        CsPrimaryCategory.COURSE,
+        CsPrimaryCategory.TEACHER_RESOURCE,
+        CsPrimaryCategory.LEARNING_RESOURCE,
+        CsPrimaryCategory.EXPLANATION_CONTENT,
+        CsPrimaryCategory.CONTENT_PLAYLIST,
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.PRACTICE_QUESTION_SET,
+        CsPrimaryCategory.E_TEXTBOOK,
+        CsPrimaryCategory.COURSE_ASSESSMENT
     ];
-    // TODO: not need to pass content types, by default all the content types should display
-    public static readonly FOR_DOWNLOADED_TAB = [
-        ...ContentType.FOR_LIBRARY_TAB,
-        ...ContentType.FOR_COURSE_TAB
-    ];
+    public static readonly FOR_DOWNLOADED_TAB = PrimaryCategory.FOR_LIBRARY_TAB;
+
     public static readonly FOR_DIAL_CODE_SEARCH = [
-        ContentType.TEXTBOOK,
-        ContentType.TEXTBOOK_UNIT,
-        ContentType.COURSE
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.TEXTBOOK_UNIT,
+        CsPrimaryCategory.COURSE
     ];
 }
 
@@ -78,7 +49,7 @@ export class Search {
         'gradeLevel',
         'subject',
         'medium',
-        'contentType',
+        'primaryCategory',
         'publisher',
         'mimeType'
     ];
@@ -90,6 +61,7 @@ export class Search {
         'subject',
         'medium',
         'contentType',
+        'primaryCategory',
         'channel'
     ];
 }
@@ -105,7 +77,6 @@ export class BatchConstants {
         'courseId',
         'status',
         'createdBy',
-        // 'creatorDetails',
         'startDate',
         'endDate',
         'enrollmentEndDate',
@@ -416,6 +387,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CODE_PRIMARY_CATEGORY = 'primaryCategory';
     public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
@@ -587,11 +559,11 @@ export class IgnoreTelemetryPatters {
 }
 
 export class FormConfigCategories {
-    public static readonly CONTENT = "content";
+    public static readonly CONTENT = 'content';
 }
 export class FormConfigSubcategories {
-    public static readonly CONTENT_QUALITY = "contentquality";
-    public static readonly CONTENT_AVAILABILITY = "contentavailability";
+    public static readonly CONTENT_QUALITY = 'contentquality';
+    public static readonly CONTENT_AVAILABILITY = 'contentavailability';
 }
 
 export class GroupErrorCodes {

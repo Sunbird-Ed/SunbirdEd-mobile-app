@@ -4,7 +4,7 @@ import {
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
-import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks } from 'app/app.constant';
+import { AudienceFilter, MimeType, Search, ExploreConstants } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
   Environment,
@@ -35,8 +35,8 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
-import { ContentUtil } from '@app/util/content-util';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-explore-books',
@@ -113,14 +113,14 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   ];
   headerObservable: any;
   unregisterBackButton: Subscription;
-  contentType: Array<string> = [];
+  primaryCategories: Array<string> = [];
   audienceFilter = [];
   contentSearchResult: Array<any> = [];
   showLoader = false;
   searchFormSubscription?: Subscription;
   selectedGrade: string;
   selectedMedium: string;
-  selectedContentType = 'all';
+  selectedPrimartCategory = 'all';
 
   searchForm: FormGroup = new FormGroup({
     grade: new FormControl([]),
@@ -157,7 +157,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.categoryGradeLevels = extras.categoryGradeLevels;
       this.subjects = extras.subjects;
       this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true });
-      this.contentType = extras.contentType;
+      this.primaryCategories = extras.primaryCategories;
 
       this.corRelationList = [
         ... this.populateCData(this.selectedGrade, CorReleationDataType.CLASS),
@@ -271,7 +271,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           ...this.searchForm.getRawValue(),
           query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
-          contentTypes: this.selectedContentType === ContentType.TEXTBOOK ? [ContentType.TEXTBOOK] : this.contentType,
+          primaryCategories: this.selectedPrimartCategory === CsPrimaryCategory.DIGITAL_TEXTBOOK ?
+            [CsPrimaryCategory.DIGITAL_TEXTBOOK] : this.primaryCategories,
           facets: Search.FACETS,
           audience: this.audienceFilter,
           mode: 'soft',
@@ -448,9 +449,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     this.generateMimeTypeClickedTelemetry(mimeType.name);
 
     if (idx === index) {
-      this.selectedContentType = ContentType.TEXTBOOK;
+      this.selectedPrimartCategory = CsPrimaryCategory.DIGITAL_TEXTBOOK;
     } else {
-      this.selectedContentType = 'all';
+      this.selectedPrimartCategory = 'all';
     }
   }
 

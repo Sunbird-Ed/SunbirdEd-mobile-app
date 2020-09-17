@@ -7,7 +7,7 @@ import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import {
   ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext
+  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, MimeType, ProgressPopupContext
 } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
@@ -29,8 +29,9 @@ import { AppHeaderService } from '../../services/app-header.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LocalCourseService } from '@app/services/local-course.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-courses',
@@ -124,8 +125,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
-    private localCourseService: LocalCourseService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private navService: NavigationService
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -487,7 +488,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   private getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
     this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType) &&
-        this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
+      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
   }
 
   async search() {
@@ -495,11 +496,11 @@ export class CoursesPage implements OnInit, OnDestroy {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.COURSES);
-    const contentType = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_COURSE);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType,
+        primaryCategories,
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
         guestUser: this.guestUser,
@@ -567,12 +568,10 @@ export class CoursesPage implements OnInit, OnDestroy {
       callback: this.pageFilterCallBack,
       pageId: PageId.COURSES
     };
-    // Already apllied filter
     if (this.courseFilter) {
       filterOptions['filter'] = this.courseFilter;
       this.showFilterPage(filterOptions);
     } else {
-      // TODO: Need to add loader
       this.formAndFrameworkUtilService.getCourseFilterConfig().then((data) => {
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
@@ -962,10 +961,9 @@ export class CoursesPage implements OnInit, OnDestroy {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, ContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, undefined);
     } else {
-      const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-      telemetryObject = new TelemetryObject(identifier, objectType, undefined);
+      telemetryObject = ContentUtil.getTelemetryObject(content);
     }
 
     const corRelationList: Array<CorrelationData> = [{
@@ -993,28 +991,22 @@ export class CoursesPage implements OnInit, OnDestroy {
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
-    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
-          content,
-          isCourse: true,
-          corRelation: corRelationList
-        }
+    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || ContentUtil.isTrackable(content) === 1) {
+      this.navService.navigateToTrackableCollection({
+        content,
+        isCourse: true,
+        corRelation: corRelationList
       });
     } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-        state: {
-          content,
-          corRelation: corRelationList
-        }
+      this.navService.navigateToCollection({
+        content,
+        corRelation: corRelationList
       });
     } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content,
-          isCourse: true,
-          corRelation: corRelationList
-        }
+      this.navService.navigateToContent({
+        content,
+        isCourse: true,
+        corRelation: corRelationList
       });
     }
   }

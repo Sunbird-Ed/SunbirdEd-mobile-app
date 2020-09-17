@@ -293,48 +293,64 @@ export const mockContentConfigResponse =
 {
   form : {
     type :  'config' ,
-    subtype :  'content' ,
+    subtype :  'content_v2' ,
     action :  'filter' ,
     data : {
       action :  'filter' ,
       fields : [
        {
           name :  'library' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Resource' ,
-            'Collection' ,
-            'TextBook' ,
-            'LessonPlan' ,
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'course' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'downloads' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Resource' ,
-            'Collection' ,
-            'TextBook' ,
-            'LessonPlan' ,
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'dialcode' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'TextBook' ,
-            'TextBookUnit' ,
-            'Course'
-         ]
+            'Course',
+            'Digital Textbook',
+            'Textbook Unit'
+          ]
        }
      ]
    }
