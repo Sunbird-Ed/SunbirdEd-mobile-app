@@ -114,10 +114,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
-    if (this.selectedCourse) {
-      req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
-    } else {
-      req.leafNodesCount = this.courseData.contentData.leafNodes.length;
+    if (this.activity.type.toLowerCase() === 'course') {
+      if (this.selectedCourse) {
+        req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+      } else {
+        req.leafNodesCount = this.courseData.contentData.leafNodes.length;
+      }
     }
     try {
       this.isActivityLoading = true;
