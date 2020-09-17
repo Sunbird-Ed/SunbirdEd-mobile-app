@@ -170,6 +170,9 @@ describe('ActivityDetailsPage', () => {
                     }
                 })) as any
             };
+            activityDetailsPage.activity = {
+                type: 'Course'
+            };
             // act
             activityDetailsPage.ionViewWillEnter();
             // assert
