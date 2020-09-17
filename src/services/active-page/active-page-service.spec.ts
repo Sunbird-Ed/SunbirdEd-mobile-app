@@ -35,7 +35,7 @@ describe('ContentPlayerHandler', () => {
             expect(activePageService.computePageId(RouterLinks.ACTIVE_DOWNLOADS)).toEqual(PageId.ACTIVE_DOWNLOADS);
             expect(activePageService.computePageId(RouterLinks.COURSE_BATCHES)).toEqual(PageId.COURSE_BATCHES);
             expect(activePageService.computePageId(RouterLinks.DISTRICT_MAPPING)).toEqual(PageId.DISTRICT_MAPPING);
-            expect(activePageService.computePageId(RouterLinks.USER_AND_GROUPS)).toEqual(PageId.HOME);
+            expect(activePageService.computePageId(RouterLinks.PLAYER)).toEqual(PageId.HOME);
         });
     });
 });

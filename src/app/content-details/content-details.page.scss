@@ -17,15 +17,15 @@
 }
 
 .scroll-content {
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
 .btn-progress-highlight {
-  left: 0px;
+  left: 0;
   background: $primary-800;
   height: 5px;
   position: absolute;
   border-radius: inherit;
-  border: 0px;
+  border: 0;
 }
 
 .btn-popover-progress-container {
@@ -113,9 +113,7 @@
   margin-left: 8px;
   margin-right: 8px;
 }
-.sb-dt-card {
-  background-color: $primary-100;
-}
+
 .sb-dt-card .sb-dt-card-actions .sb-btn-tile-group .sb-btn-tile {
   background: transparent;
 }
@@ -128,3 +126,9 @@
   pointer-events: none !important;
   cursor: default;
 }
+
+.download-disabled{
+  opacity: 0.5 !important;
+  cursor: default;
+}
+

@@ -42,7 +42,6 @@
   [ngClass]="{'offline': !content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
     <ion-row class="P010">
       <ul class="breadcrumbs">
-        <!-- (click)="showSwitchUserAlert(true)" -->
         <li *ngFor="let result of paths[i]" (click)="navigateToDetailsPage(paths[i][0], paths[i], content?.identifier)">
           {{ (result?.contentData?.name?.length>30)? (result?.contentData?.name | slice:0:30)+'...' :
           (result?.contentData?.name) }}
@@ -82,7 +81,7 @@
           <ion-col class="ion-no-padding" style="z-index: 100;" *ngIf="!content?.downloadable"
             (click)="navigateToDetailsPage(content)">
             <button class="qr-result-btn ion-no-padding ion-text-uppercase" expand="block" color="light"
-              style="color:#0D7DFC; z-index: 100;">
+              style="color:#0D7DFC; z-index: 100;" [ngClass]="!(content.contentData?.downloadUrl) ? 'download-disabled' : null">
               <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;
               {{'DOWNLOAD'| translate}}
             </button>

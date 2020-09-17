@@ -8,14 +8,14 @@
     width: 100%;
     .date-time {
       color: $gray-200;
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       line-height: 20px;
     }
     .title {
       width: 100%;
       color: $blue;
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 14px;
       font-weight: bold;
       letter-spacing: -0.4px;
@@ -23,7 +23,7 @@
     }
     .description {
       color: $gray-400;
-      font-family: ".SF NS Display";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       letter-spacing: -0.34px;
       line-height: 20px;
@@ -42,7 +42,7 @@
       white-space: normal;
       border-radius: 2px;
       background-color: map-get($colors, white_f1);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       line-height: 20px;
       margin-top: 8px;
@@ -63,7 +63,7 @@
     .update-now-btn {
       height: 20px;
       color: $blue;
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: -0.34px;

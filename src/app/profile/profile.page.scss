@@ -98,7 +98,6 @@
           transform: translateY(-56%);
           position: relative;
           top: 50%;
-          transform: perspective(1px) translateY(-50%);
         }
       }
       .info {
@@ -111,10 +110,7 @@
       min-height: 32px;
       font-size: 14px !important;
       color: map-get($colors, primary_black);
-      font-size: 14px !important;
       width: 100%;
-      white-space: normal;
-      min-height: 32px;
     }
 
     h6.second-line-ellipsis {
@@ -316,7 +312,7 @@
   }
 
   .enrolled-status-text {
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     font-size: 12px;
     font-weight: bold;
   }
@@ -331,25 +327,13 @@
     color: $green;
   }
 
-  .self-declare-teacher-btn{
+  .self-declare-btn{
     margin: 8px 0 16px;
     ion-button{
       text-transform: none;
-      --background: #008840 !important;
+      --background: #{map-get($colors, dark_green)} !important;
       --padding-start: 24px;
       --padding-end: 24px;
-    }
-    
-    .question-badge{
-      background-color: white;
-      color: $green;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      padding-top: 2px;
-      margin: 0 0 2px 8px;
-      font-size: 14px;
-      font-weight: bold;
     }
   }
 
@@ -374,7 +358,8 @@
 
     .declare-info{
       margin: 0;
-      font-size: 12px;
+      font-size: 14px;
+      font-weight: bold;
     }
   }
 
@@ -396,4 +381,24 @@
     background: map-get($colors, white_e8);
     border-radius: 18px;
   }
+
+  .declared-error-container{
+    margin: auto;
+    @include margin(null, null, 8px, null);
+    width: 50%;
+    border: 1px solid map-get($colors, danger);
+    border-left: 5px solid map-get($colors, danger);
+    border-radius: 10px;
+    background: map-get($colors, white);
+    @include padding(8px, 0, 8px, 0);
+
+    .declared-status{
+      color: map-get($colors, danger);
+    }
+
+    .declared-message{
+      color: map-get($colors, black);
+    }
+  }
+
 }

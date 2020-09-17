@@ -14,11 +14,8 @@ import {
     ImpressionType,
     InteractSubtype,
     InteractType,
-    Mode,
-    PageId,
     ImpressionSubtype
 } from '@app/services/telemetry-constants';
-import { declaredViewContainer } from '@angular/core/src/view/util';
 import { Location } from '@angular/common';
 
 describe('ContentRatingAlertComponent', () => {
@@ -124,24 +121,25 @@ describe('ContentRatingAlertComponent', () => {
         expect(contentRatingAlertComponent).toBeTruthy();
     });
 
-    // it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
-    //     // arrange
+    it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
+        // arrange
 
-    //     // act
-    //     contentRatingAlertComponent.ionViewWillEnter();
-    //     // assert
-    //     expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-    //         ImpressionType.VIEW,
-    //         ImpressionSubtype.RATING_POPUP,
-    //         'content-detail',
-    //         Environment.HOME, 'do_12345',
-    //         'Resource',
-    //         '1');
-    // });
+        // act
+        contentRatingAlertComponent.ionViewWillEnter();
+        // assert
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW,
+            ImpressionSubtype.RATING_POPUP,
+            'content-detail',
+            Environment.HOME, 'do_12345',
+            'Resource',
+            '1');
+    });
 
     it('should submit rating and generate INTERACT telemetry successfully', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
+        mockTelemetryService.log =  jest.fn(() => throwError(undefined)),
         contentRatingAlertComponent.ratingOptions = [{
             key: 'key',
             value: 'val',
@@ -162,7 +160,7 @@ describe('ContentRatingAlertComponent', () => {
         const paramsMap = new Map();
         paramsMap['Ratings'] = 5;
         paramsMap['Comment'] = 'key';
-        contentRatingAlertComponent.navigateBack = 'navigateBack';
+        contentRatingAlertComponent.navigateBack = true;
         jest.spyOn(mockLocation, 'back').mockImplementation();
         // act
         contentRatingAlertComponent.submit();
@@ -182,6 +180,121 @@ describe('ContentRatingAlertComponent', () => {
             'green-toast'
         );
         expect(mockLocation.back).toHaveBeenCalled();
+    });
+
+    it('should submit rating and generate INTERACT telemetry successfully and should not navigate', () => {
+        // arrange
+        mockPopoverCtrl.dismiss = jest.fn();
+        mockTelemetryService.log =  jest.fn(() => throwError(undefined)),
+        contentRatingAlertComponent.ratingOptions = [{
+            key: 'key',
+            value: 'val',
+            isChecked: true
+        }];
+        contentRatingAlertComponent.commentText = '';
+        const feebackRequest: ContentFeedback = {
+            contentId: 'do_12345',
+            rating: 5,
+            comments: 'key',
+            contentVersion: '1'
+        };
+        const viewDissMissData = {
+            message: 'rating.success',
+            rating: 5,
+            comment: 'key'
+        };
+        const paramsMap = new Map();
+        paramsMap['Ratings'] = 5;
+        paramsMap['Comment'] = 'key';
+        contentRatingAlertComponent.navigateBack = false;
+        jest.spyOn(mockLocation, 'back').mockImplementation();
+        // act
+        contentRatingAlertComponent.submit();
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.RATING_SUBMITTED,
+            Environment.HOME,
+            'content-detail',
+            {id: 'do_12345', version: '1', type: 'Resource'},
+            paramsMap);
+        expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
+        expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
+            'THANK_FOR_RATING',
+            false,
+            'green-toast'
+        );
+        expect(mockLocation.back).not.toHaveBeenCalled();
+    });
+
+    it('comment text should be empty id isChecked is false', () => {
+        // arrange
+        mockPopoverCtrl.dismiss = jest.fn();
+        mockContentFeedbackService.sendFeedback = jest.fn(() => throwError({ error: 'API_ERROR' }));
+        contentRatingAlertComponent.ratingOptions = [{
+            key: 'key',
+            value: 'val',
+            isChecked: false
+        }];
+
+        // act
+        contentRatingAlertComponent.submit();
+        // assert
+        expect(contentRatingAlertComponent.allComments).toBeFalsy();
+    });
+
+    it('comment text should populated  with comma separated value if ratingOptions has more than one entry', () => {
+        // arrange
+        mockPopoverCtrl.dismiss = jest.fn();
+        mockContentFeedbackService.sendFeedback = jest.fn(() => throwError({ error: 'API_ERROR' }));
+        contentRatingAlertComponent.ratingOptions = [{
+            key: 'comment1',
+            value: 'val',
+            isChecked: true
+        }, {
+            key: 'comment2',
+            value: 'val',
+            isChecked: true
+        }];
+
+        // act
+        contentRatingAlertComponent.submit();
+        // assert
+        expect(contentRatingAlertComponent.allComments).toEqual('comment1,comment2');
+    });
+
+    it('comment text should populated  with other comment for other comments', () => {
+        // arrange
+        mockPopoverCtrl.dismiss = jest.fn();
+        mockContentFeedbackService.sendFeedback = jest.fn(() => throwError({ error: 'API_ERROR' }));
+        contentRatingAlertComponent.commentText = 'some_comment';
+        contentRatingAlertComponent.ratingOptions = [];
+        // act
+        contentRatingAlertComponent.submit();
+        // assert
+        expect(contentRatingAlertComponent.allComments).toEqual('OTHER,OTHER-some_comment');
+    });
+
+    it('comment text should populated  with other comment if commentText is available if previous comment is empty', () => {
+        // arrange
+        mockPopoverCtrl.dismiss = jest.fn();
+        mockContentFeedbackService.sendFeedback = jest.fn(() => throwError({ error: 'API_ERROR' }));
+        contentRatingAlertComponent.commentText = 'some_comment';
+        contentRatingAlertComponent.ratingCount = 5;
+        contentRatingAlertComponent.ratingOptions = [{
+            key: 'comment1',
+            value: 'val',
+            isChecked: true
+        }, {
+            key: 'comment2',
+            value: 'val',
+            isChecked: true
+        }];
+        // act
+        contentRatingAlertComponent.submit();
+        // assert
+        expect(contentRatingAlertComponent.allComments).toEqual('comment1,comment2,OTHER,OTHER-some_comment');
     });
 
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
@@ -231,6 +344,15 @@ describe('ContentRatingAlertComponent', () => {
             contentRatingAlertComponent.ionViewWillLeave();
             // assert
             expect(mockBackBtnFunc.unsubscribe).toBeCalled();
+        });
+
+        it('should call unsubscribe', () => {
+            // arrange
+            contentRatingAlertComponent.backButtonFunc = undefined;
+            // act
+            contentRatingAlertComponent.ionViewWillLeave();
+            // assert
+            expect(contentRatingAlertComponent.backButtonFunc).toBeFalsy();
         });
     });
 
@@ -300,6 +422,15 @@ describe('ContentRatingAlertComponent', () => {
     });
 
     describe('createRatingForm', () => {
+
+        it('should return if contentRating is 0', () => {
+            // arrange
+            // act
+            const data =  contentRatingAlertComponent.createRatingForm(0);
+            // assert
+            expect(data).toBeUndefined();
+        });
+
         it('', () => {
             // arrange
             contentRatingAlertComponent.contentRatingOptions = {
@@ -462,6 +593,110 @@ describe('ContentRatingAlertComponent', () => {
             expect(mockFormService.getForm).toHaveBeenCalled();
             expect(contentRatingAlertComponent.allComments).toBeUndefined();
             done();
+        });
+    });
+
+    describe('ratingOptsChanged', () => {
+        it('should call unsubscribe', () => {
+            // act
+            contentRatingAlertComponent.ratingOptsChanged('quality_not_good');
+            // assert
+            expect(contentRatingAlertComponent.showCommentBox).toBeFalsy();
+        });
+    });
+
+    describe('generateContentRatingTelemetry', () => {
+        it('should call unsubscribe', () => {
+            // act
+            contentRatingAlertComponent.ratingOptsChanged('quality_not_good');
+            // assert
+            expect(contentRatingAlertComponent.showCommentBox).toBeFalsy();
+        });
+    });
+
+    describe('extractComments', () => {
+        it('should update the comment text to empty', () => {
+            // act
+            contentRatingAlertComponent.extractComments('OTHER-,comment1,comment2');
+            // assert
+            expect(contentRatingAlertComponent.commentText).toEqual('');
+        });
+    });
+
+    describe('generateContentFeedbackTelemetry', () => {
+        it('should invoke the feedback method as per the raatingOptions', (done) => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = [{
+                key: 'comment1',
+                value: 'val',
+                isChecked: true
+            }, {
+                key: 'other',
+                value: 'val',
+                isChecked: true
+            }, {
+                key: 'comment3',
+                value: 'val',
+                isChecked: false
+            }];
+            // act
+            contentRatingAlertComponent.generateContentFeedbackTelemetry('OTHER-,comment1,comment2');
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryService.feedback).toHaveBeenCalledTimes(2);
+                done();
+            }, 0);
+
+        });
+
+        it('should invoke the feedback method as per the ratingOptions if feedback API is throwing error', (done) => {
+            // arrange
+            mockTelemetryService.feedback = jest.fn(() => throwError({}));
+            contentRatingAlertComponent.ratingOptions = [{
+                key: 'comment1',
+                value: 'val',
+                isChecked: true
+            }, {
+                key: 'other',
+                value: 'val',
+                isChecked: true
+            }, {
+                key: 'comment3',
+                value: 'val',
+                isChecked: false
+            }];
+            // act
+            contentRatingAlertComponent.generateContentFeedbackTelemetry('OTHER-,comment1,comment2');
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryService.feedback).toHaveBeenCalledTimes(2);
+                done();
+            }, 0);
+
+        });
+    });
+
+    describe('populateComments', () => {
+        it('should not populate ratingOptions', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = undefined;
+            // act
+            contentRatingAlertComponent.populateComments([]);
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions).toBeFalsy();
+        });
+
+        it('should not populate ratingOptions', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = undefined;
+            contentRatingAlertComponent.allComments = undefined;
+            contentRatingAlertComponent.userRating = 1;
+            // act
+            contentRatingAlertComponent.populateComments(
+                [{1: {options: [{key: 'CONTENT_INACCURATE', idx: 1, value: 'Content is inaccurate'}],
+                ratingText: 'Very Bad', question: 'Would you like to tell us more?'}}]);
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions).toBeTruthy();
         });
     });
 

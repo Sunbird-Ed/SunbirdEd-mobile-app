@@ -62,7 +62,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "3.1.$ext.buildNumber"
+        versionName "3.2.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true

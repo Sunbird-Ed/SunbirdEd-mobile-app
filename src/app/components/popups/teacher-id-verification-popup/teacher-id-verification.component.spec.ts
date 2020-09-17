@@ -1,8 +1,8 @@
 import { TeacherIdVerificationComponent } from './teacher-id-verification-popup.component';
-import { PopoverController, NavParams } from '@ionic/angular';
+import { PopoverController, NavParams, Events } from '@ionic/angular';
 import { TelemetryGeneratorService, CommonUtilService } from '../../../../services';
 import { of, throwError } from 'rxjs';
-import { ProfileService, HttpClientError, Response } from 'sunbird-sdk';
+import { ProfileService, HttpClientError, Response, HttpServerError } from 'sunbird-sdk';
 import { featureIdMap } from '@app/feature-id-map';
 import {
     Environment,
@@ -38,6 +38,7 @@ describe('TeacherIdVerificationComponent', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn()
     };
+    const mockEvents: Partial<Events> = {};
 
 
     beforeAll(() => {
@@ -47,6 +48,7 @@ describe('TeacherIdVerificationComponent', () => {
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilService as CommonUtilService,
+            mockEvents as Events
         );
     });
 
@@ -181,6 +183,19 @@ describe('TeacherIdVerificationComponent', () => {
                 done();
             }, 0);
         });
+
+        it('should not close the popup in value is expected', (done) => {
+            // arrange
+            jest.spyOn(teacherIdVerificationComponent, 'closePopup');
+            mockProfileService.userMigrate = jest.fn(() => of({ responseCode: 'ok1' }));
+            // act
+            teacherIdVerificationComponent.teacherConfirmation(false);
+            // assert
+            setTimeout(() => {
+                expect(teacherIdVerificationComponent.closePopup).not.toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 
     describe('submitTeacherId()', () => {
@@ -210,12 +225,67 @@ describe('TeacherIdVerificationComponent', () => {
                 featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
                 ID.USER_VERIFICATION_SUBMITED);
         });
+
+        it('should invoke the userMigrate API with channel as stateName', () => {
+            // arrange
+            teacherIdVerificationComponent.teacherIdForm = { value: { teacherId: 'SAMPLE_TEACHERID' } } as any;
+            teacherIdVerificationComponent.stateName = 'TN';
+            jest.spyOn(teacherIdVerificationComponent, 'externalUserVerfication');
+            // act
+            teacherIdVerificationComponent.submitTeacherId();
+            // assert
+            expect(teacherIdVerificationComponent.count).toEqual(1);
+            expect(teacherIdVerificationComponent.externalUserVerfication).toHaveBeenCalledWith({
+                userId: '0123456789',
+                userExtId: 'SAMPLE_TEACHERID',
+                channel: 'TN',
+                action: 'accept',
+                feedId: '0123456789'
+            });
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                '',
+                Environment.HOME,
+                PageId.EXTERNAL_USER_VERIFICATION_POPUP,
+                undefined,
+                undefined,
+                undefined,
+                featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+                ID.USER_VERIFICATION_SUBMITED);
+        });
+
+        it('should not inovoke the userMigrate api is teacherId is empty ', () => {
+            // arrange
+            teacherIdVerificationComponent.teacherIdForm = { value: { teacherId: undefined } } as any;
+            teacherIdVerificationComponent.stateName = '';
+            jest.spyOn(teacherIdVerificationComponent, 'externalUserVerfication');
+            // act
+            teacherIdVerificationComponent.submitTeacherId();
+            // assert
+            expect(teacherIdVerificationComponent.count).toEqual(1);
+            expect(teacherIdVerificationComponent.externalUserVerfication).not.toHaveBeenCalledWith({
+                userId: '0123456789',
+                userExtId: 'SAMPLE_TEACHERID',
+                channel: 'tn',
+                action: 'accept',
+                feedId: '0123456789'
+            });
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                '',
+                Environment.HOME,
+                PageId.EXTERNAL_USER_VERIFICATION_POPUP,
+                undefined,
+                undefined,
+                undefined,
+                featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+                ID.USER_VERIFICATION_SUBMITED);
+        });
     });
 
     describe('externalUserVerfication()', () => {
         it('should generate INTERACT telemetry for successsfull validation', (done) => {
             // arrange
             mockProfileService.userMigrate = jest.fn(() => of(userMigrationResponse));
+            mockEvents.publish = jest.fn(() => []);
             // act
             teacherIdVerificationComponent.externalUserVerfication({
                 userId: '0123456789',
@@ -237,6 +307,7 @@ describe('TeacherIdVerificationComponent', () => {
                     featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
                     ID.USER_VERIFICATION_SUCCESS);
                 done();
+                expect(mockEvents.publish).toHaveBeenCalled();
             }, 0);
         });
 
@@ -358,5 +429,69 @@ describe('TeacherIdVerificationComponent', () => {
                 done();
             }, 0);
         });
+
+        it('should not show any TOAST if its not a client error', (done) => {
+            // arrange
+            const sunbirdResponse = new Response<any>();
+            sunbirdResponse.responseCode = 500;
+            sunbirdResponse.body = {};
+            mockProfileService.userMigrate = jest.fn(() => throwError(new HttpServerError('', sunbirdResponse)));
+            jest.spyOn(teacherIdVerificationComponent, 'closePopup');
+            // act
+            teacherIdVerificationComponent.externalUserVerfication({});
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).not.toHaveBeenCalledWith('USER_IS_NOT_VERIFIED');
+                expect(teacherIdVerificationComponent.closePopup).not.toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+});
+
+describe('TeacherIdVerificationComponent', () => {
+    let teacherIdVerificationComponent: TeacherIdVerificationComponent;
+
+    const userMigrationResponse = { responseCode: 'ok' } as any;
+    const mockProfileService: Partial<ProfileService> = {
+        userMigrate: jest.fn(() => of(userMigrationResponse))
+    };
+    const mockPopOverController: Partial<PopoverController> = {
+        dismiss: jest.fn()
+    };
+    const mockNavParams: Partial<NavParams> = {
+        data: undefined
+    };
+
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateImpressionTelemetry: jest.fn(),
+        generateInteractTelemetry: jest.fn()
+    };
+
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
+    const mockEvents: Partial<Events> = {};
+
+
+    beforeAll(() => {
+        teacherIdVerificationComponent = new TeacherIdVerificationComponent(
+            mockProfileService as ProfileService,
+            mockPopOverController as PopoverController,
+            mockNavParams as NavParams,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockCommonUtilService as CommonUtilService,
+            mockEvents as Events
+        );
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should not populate the attributes ', () => {
+        expect(teacherIdVerificationComponent.userFeed).toBeFalsy();
+        expect(teacherIdVerificationComponent.stateList).toBeFalsy();
+        expect(teacherIdVerificationComponent.tenantMessages).toBeFalsy();
     });
 });

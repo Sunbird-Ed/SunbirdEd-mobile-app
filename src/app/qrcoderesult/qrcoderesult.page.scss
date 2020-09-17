@@ -99,7 +99,6 @@
                     transform: translateY(-56%);
                     position: relative;
                     top: 50%;
-                    transform: perspective(1px) translateY(-50%);
                 }
             }
             
@@ -215,7 +214,12 @@
     }
     .offline{
         opacity: 0.5;
-    }      
+    }   
+    
+    .download-disabled{
+        opacity: 0.5 !important;
+        cursor: default;
+      }
 }
     
     

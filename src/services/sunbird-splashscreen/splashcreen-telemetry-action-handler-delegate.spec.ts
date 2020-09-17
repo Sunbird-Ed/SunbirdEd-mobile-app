@@ -43,7 +43,28 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         env: Environment.HOME,
         type: ImpressionType.VIEW,
         pageId: PageId.SPLASH
-      }
+      };
+      mockTelemetryService.impression = jest.fn(() => {
+        return of(undefined);
+      });
+      // act
+      splashcreenTelemetryActionHandlerDelegate.onAction(payload);
+      // assert
+      expect(mockTelemetryService.impression).toHaveBeenCalledWith(telemetryData);
+    });
+
+    it('should generate an impression event if is firstTime is false', () => {
+      // arrange
+      const payload: TelemetryActionPayload = {
+        eid: 'IMPRESSION',
+        extraInfo: {
+        }
+      };
+      const telemetryData = {
+        env: Environment.HOME,
+        type: ImpressionType.VIEW,
+        pageId: PageId.SPLASH
+      };
       mockTelemetryService.impression = jest.fn(() => {
         return of(undefined);
       });
@@ -68,7 +89,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         valueMap: {
           ...payload.extraInfo
         }
-      }
+      };
       mockTelemetryService.interact = jest.fn(() => {
         return of(undefined);
       });
@@ -77,6 +98,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       // assert
       expect(mockTelemetryService.interact).toHaveBeenCalledWith(telemetryData);
     });
+
 
     it('should not generate any event', (done) => {
       // arrange

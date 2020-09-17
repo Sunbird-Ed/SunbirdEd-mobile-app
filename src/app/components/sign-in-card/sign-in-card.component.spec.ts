@@ -1,5 +1,5 @@
 import { SignInCardComponent } from './sign-in-card.component';
-import { ProfileService, GroupService, AuthService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileService, AuthService, SharedPreferences } from 'sunbird-sdk';
 import {
     CommonUtilService, AppGlobalService, TelemetryGeneratorService,
     ContainerService, FormAndFrameworkUtilService
@@ -8,12 +8,12 @@ import { NavController, Events } from '@ionic/angular';
 import { NgZone } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
+import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
+import { Router } from '@angular/router';
 
 describe('SignInCardComponent', () => {
     let signInCardComponent: SignInCardComponent;
     const mockProfileService: Partial<ProfileService> = {
-    };
-    const mockGroupService: Partial<GroupService> = {
     };
     const mockAuthService: Partial<AuthService> = {
     };
@@ -45,13 +45,15 @@ describe('SignInCardComponent', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         resetSavedQuizContent: jest.fn()
     };
-
-
+    const mockrouter: Partial<Router> = {
+        // getCurrentNavigation: jest.fn(() => mockcollectionData as any),
+        navigate: jest.fn(() => Promise.resolve(true))
+    };
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         signInCardComponent = new SignInCardComponent(
             mockProfileService as ProfileService,
-            mockGroupService as GroupService,
             mockAuthService as AuthService,
             mockSharedPreferences as SharedPreferences,
             mockNavController as NavController,
@@ -62,7 +64,9 @@ describe('SignInCardComponent', () => {
             mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockEvents as Events,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockrouter as Router,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 

@@ -3,10 +3,6 @@
 @import "src/assets/styles/_variables.scss";
 
 :host {
-    /*     .popover-content{
-            height:85px !important;
-        } */
-    
         .item.item-block {
             border-bottom: 2px solid map-get($colors, gray_light);
             &:last-child {

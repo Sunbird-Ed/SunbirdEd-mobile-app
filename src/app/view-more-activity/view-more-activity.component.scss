@@ -68,17 +68,6 @@
         padding: 0 0 8px 0;
       }
     }
-    .sb-card-textbook-container,
-    .sb-card-view-all-container {
-      app-view-all-card {
-        border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-        &:last-child {
-          .sb-card {
-            border-bottom: none;
-          }
-        }
-      }
-    }
   }
 
   .view-more-course-bg {
@@ -86,14 +75,14 @@
     padding: 8px;
     .title {
       color: map-get($colors, white);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 16px;
       font-weight: bold;
       margin: 12px 0 0;
     }
     .count-text {
       color: map-get($colors, white_fa);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       margin: 0 0 12px;
     }

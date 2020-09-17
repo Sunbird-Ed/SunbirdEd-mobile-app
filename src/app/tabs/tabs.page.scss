@@ -3,9 +3,6 @@
 @import "src/assets/styles/_variables.scss";
 
 ion-tabs {
-  ion-tab-button {
-    --color-selected: #{$blue};
-   }
   .rm-before{
     &::before {
       position: relative !important;
@@ -88,7 +85,9 @@ ion-tabs {
     background-size: contain;
   }
   ion-tab-button {
+    --color-selected: #{$blue};
     background: transparent;
+
     ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
       background-image: url(/assets/imgs/ic_courses1.png);
     }
@@ -161,14 +160,9 @@ ion-tabs {
     ion-label {
       font-size: 12px;
     }
-  }
-
-  ion-tab-button.tab-selected,
-  ion-tab-button:not(.tab-selected) {
     ion-icon:not([aria-label="qrscanner"]) {
       font-size: 20px;
       margin-top: 8px;
-      // height:20px;
     }
   }
 }

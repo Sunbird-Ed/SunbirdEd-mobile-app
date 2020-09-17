@@ -23,7 +23,7 @@ iframe {
   }
   body{
     background-color: map-get($colors, $light-blue);
-    font-family: 'Noto Sans';
+      font-family: 'Noto Sans', sans-serif;
 }
 .panelText{
     font-size: 14px;
@@ -51,14 +51,12 @@ p{
     padding: 16px;
 }
 .help-header>h4,.help-header-send-email>h4{
-    margin: 0;
     padding:0;
     font-weight: 700;
     max-width: 1024px;
     margin: 0 auto;
 }
 .help-header>p,.help-header-send-email>p{
-    margin: 0;
     font-weight: 100;
     max-width: 1024px;
     margin: 0 auto;
@@ -83,7 +81,6 @@ p{
 @media only screen and (max-width : 1024px) {
 
     .info-msg-send-email>p,.info-msg>p{
-        margin: 0;
         padding: 8px 16px;
         max-width: 1024px;
         margin: 0 auto;
@@ -93,8 +90,7 @@ p{
 @media only screen and (min-width : 1025px) {
 
     .info-msg-send-email>p,.info-msg>p{
-        margin: 0;
-        padding: 16px 0px;
+        padding: 16px 0;
         max-width: 1024px;
         margin: 0 auto;
     }
@@ -104,16 +100,13 @@ p{
     float:right;
 } 
 .panel{
-    border-radius: 0px !important;
+    border-radius: 0 !important;
     border-top: 0;
     border-left: 0;
     border-right: 0;
     box-shadow:none !important;
     border-bottom: solid 1px lightgray;
     font-size: 16px;
-}
-.panel-default{
-
 }
 
 .panel-heading {
@@ -229,11 +222,11 @@ p{
         font-size: 12px;
     }
     .initiate-email-info-button{
-        left: 0px;
-    right: 0px;
+        left: 0;
+    right: 0;
     position: fixed;
     top: 80vh;
-    padding: 0px 16px;
+    padding: 0 16px;
     }
 }
 @media only screen and (min-width : 1025px) {
@@ -284,8 +277,8 @@ img>.report-button{
     }
     .send-email-info{
         max-width: 570px;
-        padding: 10px 0px !important;
-        margin: left;
+        padding: 10px 0 !important;
+        margin: initial;
         float: left;
     }
     .submit-button{

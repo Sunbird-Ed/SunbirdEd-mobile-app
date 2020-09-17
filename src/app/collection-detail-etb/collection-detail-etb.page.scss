@@ -87,7 +87,7 @@ ion-card {
 }
 
 ion-card .card .card-md {
-  margin: 0px;
+  margin: 0;
 }
 
 .M0 {
@@ -95,7 +95,7 @@ ion-card .card .card-md {
 }
 
 .P15 {
-  padding: 15 !important;
+  padding: 15px !important;
 }
 
 .M5 {
@@ -131,8 +131,8 @@ ion-card .card .card-md {
 }
 
 .MLR0 {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .ML20 {
@@ -208,7 +208,7 @@ ion-card .card .card-md {
 }
 
 .content-padding {
-  padding: 8px 8px 0px 8px;
+  padding: 8px 8px 0 8px;
 }
 
 .subtitle-color {
@@ -286,10 +286,6 @@ ion-card .card .card-md {
   color: map-get($colors, white);
 }
 
-.yellow-gold {
-  color: map-get($colors, bright_yellow)
-}
-
 .light-black {
   color: map-get($colors, light_black_51);
 }
@@ -318,11 +314,6 @@ ion-card .card .card-md {
   color: $orange;
 }
 
-shadow {
-  margin: none;
-  box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
-}
-
 //  Details card
 .details-card {
   border-radius: 2px;
@@ -340,7 +331,7 @@ shadow {
       grid-template-columns: 1fr;
       margin-right: 5px;
       padding: 10px;
-      font-size: 2 rem;
+      font-size: 2rem;
 
       .item {
         flex: 1 1 auto;
@@ -352,7 +343,6 @@ shadow {
 
     .left {
       overflow: hidden;
-      display: grid;
       grid-template-columns: 1fr;
       display: flex;
       flex-direction: column;
@@ -388,7 +378,7 @@ shadow {
       grid-template-columns: 1fr;
       margin-right: 5px;
       padding: 10px;
-      font-size: 2 rem;
+      font-size: 2rem;
     }
 
     .right {
@@ -408,7 +398,6 @@ shadow {
 
     .left {
       overflow: hidden;
-      display: grid;
       grid-template-columns: 1fr;
       display: flex;
       flex-direction: column;
@@ -428,8 +417,7 @@ shadow {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        margin: 0;
-        margin-bottom: 3px;
+        margin: 0 0 3px;
         padding: 0;
         font-weight: 500;
         font-style: normal;
@@ -519,199 +507,6 @@ shadow {
 
 .sb-row {
   width: 100%;
-}
-
-.details-card {
-  border-radius: 2px;
-  box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
-  background-color: map-get($colors, white);
-
-  .content-unit {
-    display: grid;
-    //grid-gap: 13px;
-    grid-template-columns: 3fr .4fr;
-
-    .pull-right {
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-      margin-right: 5px;
-      padding: 10px;
-      font-size: 2rem;
-
-      .item {
-        flex: 1 1 auto;
-        justify-content: right;
-        align-items: center;
-        display: flex;
-      }
-    }
-
-    .left {
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-      display: flex;
-      flex-direction: column;
-      @include padding(15px, 0, 15px, 15px);
-
-      .item {
-        flex: 1 1 auto;
-        justify-content: left;
-        align-items: center;
-        display: flex;
-      }
-    }
-  }
-
-  .W-88 {
-    width: 88px;
-  }
-
-  .rating {
-    display: flex;
-    justify-content: flex-end;
-    align-items: end;
-  }
-
-  .content {
-    display: grid;
-    //grid-gap: 13px;
-    grid-template-columns: 2.9fr 1fr;
-
-    .pull-right {
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-      margin-right: 5px;
-      padding: 10px;
-      font-size: 2rem;
-    }
-
-    .right {
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-      padding: 15px;
-
-      //grid-template-rows: 1fr;
-      .img-container {
-        // background-color: grey;
-        width: 100%;
-        min-height: 54px;
-        max-height: 54px;
-      }
-    }
-
-    .left {
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-      display: flex;
-      flex-direction: column;
-      @include padding(15px, 0, 15px, 15px);
-
-      .item {
-        flex: 1 1 auto;
-        justify-content: left;
-        align-items: center;
-        display: flex;
-      }
-
-      .title {
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        margin: 0;
-        margin-bottom: 3px;
-        padding: 0;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: -0.4px;
-        color: map-get($colors, primary_black);
-        height: 42px;
-      }
-
-      .info {
-        font-size: 12px;
-        font-weight: 500;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: -0.4px;
-        color: map-get($colors, dark_gray);
-      }
-    }
-
-    &.single-column {
-      display: grid;
-      grid-template-columns: 1fr;
-
-      .left {
-        @include padding(15px);
-      }
-
-      .tag {
-        border-radius: 2px;
-        @include padding(3px, 7px);
-        color: map-get($colors, light-blue);
-        font-size: 10px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.1;
-        letter-spacing: -0.4px;
-        border: 1px solid map-get($colors, light-blue);
-        display: inline-flex;
-
-        &:not(:last-child) {
-          @include margin(null, 10px, null, null);
-        }
-      }
-    }
-
-  }
-
-  .btn-caption-container {
-    display: inline-grid;
-    grid-template-columns: 1fr;
-    @include margin(null, 20px, null, null);
-
-    &:last-child {
-      @include margin(null, 0, null, null);
-    }
-
-    .btn-caption {
-      color: map-get($colors, secondary-light);
-      text-transform: capitalize;
-      font-weight: 500;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: normal;
-      letter-spacing: -0.3px;
-      display: inline-block;
-      text-align: center;
-    }
-
-    .action-btn {
-      height: auto;
-
-      ion-icon {
-        line-height: 30px;
-
-      }
-
-    }
-  }
-}
-
-.scroll-content {
-  padding-bottom: 20% !important;
 }
 
 .sb-topics-containe {

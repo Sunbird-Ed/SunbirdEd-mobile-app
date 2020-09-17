@@ -13,7 +13,6 @@ import {
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
-  Location as loc
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -37,13 +36,14 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
   CourseCertificate,
-  SharedPreferences,
   CertificateAlreadyDownloaded,
   NetworkError,
-  LocationSearchCriteria
+  FormRequest,
+  FormService,
+  FrameworkService
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
   EditContactDetailsPopupComponent
@@ -51,18 +51,20 @@ import {
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
 import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { FieldConfig } from 'common-form-elements';
+import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
+  providers: [CertificateDownloadAsPdfService]
 })
 export class ProfilePage implements OnInit {
 
@@ -108,19 +110,27 @@ export class ProfilePage implements OnInit {
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
-  mappedTrainingCertificates: CourseCertificate[] = [];
-  isDefaultChannelProfile$: Observable<boolean>;
-  selfDeclaredTeacherDetails: any;
-  private stateList: any;
+  mappedTrainingCertificates: {
+    courseName: string,
+    dateTime: string,
+    courseId: string,
+    certificate?: string,
+    issuedCertificate?: string,
+    status: number
+  }[] = [];
+  isDefaultChannelProfile: boolean;
+  personaTenantDeclaration: string;
+  selfDeclaredDetails: any[] = [];
+  selfDeclarationInfo: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private zone: NgZone,
-    private route: ActivatedRoute,
     private router: Router,
     private popoverCtrl: PopoverController,
     private events: Events,
@@ -135,7 +145,8 @@ export class ProfilePage implements OnInit {
     private sbProgressLoader: SbProgressLoader,
     private fileOpener: FileOpener,
     private toastController: ToastController,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -174,7 +185,6 @@ export class ProfilePage implements OnInit {
       }
     });
     this.appName = await this.appVersion.getAppName();
-    this.stateList = await this.commonUtilService.getStateList();
   }
 
   ionViewWillEnter() {
@@ -185,7 +195,6 @@ export class ProfilePage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton();
-    this.isDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile();
   }
 
   ionViewWillLeave(): void {
@@ -197,7 +206,7 @@ export class ProfilePage implements OnInit {
   ionViewDidEnter() {
     this.refresher.disabled = false;
   }
-  
+
   async doRefresh(refresher?) {
     const loader = await this.commonUtilService.getLoader();
     this.isRefreshProfile = true;
@@ -222,7 +231,7 @@ export class ProfilePage implements OnInit {
 
           this.getEnrolledCourses(refresher);
           this.searchContent();
-          this.getSelfDeclaredTeacherDetails();
+          this.getSelfDeclaredDetails();
         });
       })
       .catch(async error => {
@@ -265,9 +274,11 @@ export class ProfilePage implements OnInit {
           }
           that.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
-              that.zone.run(() => {
+              that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
+                that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
@@ -417,7 +428,7 @@ export class ProfilePage implements OnInit {
     }
     const option = {
       userId: this.profile.userId || this.profile.id,
-      returnFreshCourses: refresher ? true : false
+      returnFreshCourses: !!refresher
     };
     this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
@@ -432,7 +443,7 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  mapTrainingsToCertificates(trainings: Course[]): CourseCertificate[] {
+  mapTrainingsToCertificates(trainings: Course[]) {
     /**
      * If certificate is there loop through certificates and add certificates in accumulator
      * with Course_Name and Date
@@ -444,25 +455,28 @@ export class ProfilePage implements OnInit {
         dateTime: course.dateTime,
         courseId: course.courseId,
         certificate: undefined,
+        issuedCertificate: undefined,
         status: course.status
       };
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
-        accumulator = accumulator.concat(oneCert);
-      } else {
-        accumulator = accumulator.concat(oneCert);
       }
+      if (course.issuedCertificates && course.issuedCertificates.length) {
+        oneCert.issuedCertificate = course.issuedCertificates[0];
+      }
+      accumulator = accumulator.concat(oneCert);
       return accumulator;
     }, []);
   }
 
-  // getCertificateCourse(certificate: CourseCertificate): Course {
-  //   return this.trainingsCompleted.find((course: Course) => {
-  //     return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
-  //   });
-  // }
-
-  async downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
+  async downloadTrainingCertificate(course: {
+    courseName: string,
+    dateTime: string,
+    courseId: string,
+    certificate?: CourseCertificate,
+    issuedCertificate?: CourseCertificate,
+    status: number
+  }) {
     const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
     const toastOptions = {
       message: downloadMessage || 'Certificate getting downloaded'
@@ -470,7 +484,7 @@ export class ProfilePage implements OnInit {
 
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, ContentType.CERTIFICATE, undefined);
 
         const values = new Map();
         values['courseId'] = course.courseId;
@@ -481,37 +495,66 @@ export class ProfilePage implements OnInit {
           PageId.PROFILE, // page name
           telemetryObject,
           values);
-        const downloadRequest = {
-          courseId: course.courseId,
-          certificateToken: certificate.token
-        };
         let toast;
         if (this.commonUtilService.networkInfo.isNetworkAvailable) {
           toast = await this.toastController.create(toastOptions);
           await toast.present();
         }
-        this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-          .then(async (res) => {
-            if (toast) {
-              await toast.dismiss();
-            }
-            this.openpdf(res.path);
-          }).catch(async (err) => {
-            if (toast) {
-              await toast.dismiss();
-            }
-            if (err instanceof CertificateAlreadyDownloaded) {
-              const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
-              const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
-              this.openpdf(filePath);
-            } else if (NetworkError.isInstance(err)) {
-              this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
-            }
+        if (course.issuedCertificate) {
+          this.courseService.downloadCurrentProfileCourseCertificateV2(
+              { courseId: course.courseId, certificate: course.issuedCertificate },
+              (svgData, callback) => {
+                this.certificateDownloadAsPdfService.download(
+                    svgData, (fileName, pdfData) => callback(pdfData as any)
+                );
+              }).toPromise()
+              .then(async (res) => {
+                if (toast) {
+                  await toast.dismiss();
+                }
+                this.openpdf(res.path);
+              }).catch(async (err) => {
+                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                  await this.downloadLegacyCertificate(course, toast);
+                }
+                await this.handleCertificateDownloadIssue(toast, err);
           });
+        } else {
+         await this.downloadLegacyCertificate(course, toast);
+        }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
+  }
+
+  private async downloadLegacyCertificate(course, toast) {
+    const downloadRequest = {
+      courseId: course.courseId,
+      certificate: course.certificate
+    };
+    this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
+        .then(async (res) => {
+          if (toast) {
+            await toast.dismiss();
+          }
+          this.openpdf(res.path);
+        }).catch(async (err) => {
+      await this.handleCertificateDownloadIssue(toast, err);
+    });
+  }
+
+  private async handleCertificateDownloadIssue(toast: any, err: any) {
+    if (toast) {
+      await toast.dismiss();
+    }
+    if (err instanceof CertificateAlreadyDownloaded) {
+      this.openpdf(err.filePath);
+    } else if (NetworkError.isInstance(err)) {
+      this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+    } else {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
+    }
   }
 
   openpdf(path) {
@@ -521,16 +564,6 @@ export class ProfilePage implements OnInit {
       .catch((e) => {
         console.log('Error opening file', e);
         this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
-      });
-  }
-
-  shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    this.courseService.downloadCurrentProfileCourseCertificate({
-      courseId: course.courseId,
-      certificateToken: certificate.token
-    })
-      .subscribe((res) => {
-        this.socialShare.share('', '', res.path, '');
       });
   }
 
@@ -568,7 +601,7 @@ export class ProfilePage implements OnInit {
           content
         }
       };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras)
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
     } else if (content.mimeType === MimeType.COLLECTION) {
       const navigationExtras: NavigationExtras = {
         state: {
@@ -664,7 +697,7 @@ export class ProfilePage implements OnInit {
 
 
 
-  async editMobileNumber(event) {
+  async editMobileNumber() {
     const componentProps = {
       phone: this.profile.phone,
       title: this.profile.phone ?
@@ -678,7 +711,7 @@ export class ProfilePage implements OnInit {
     await this.showEditContactPopup(componentProps);
   }
 
-  async editEmail(event) {
+  async editEmail() {
     const componentProps = {
       email: this.profile.email,
       title: this.profile.email ?
@@ -771,7 +804,7 @@ export class ProfilePage implements OnInit {
         await loader.dismiss();
         this.doRefresh();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage(successMessage));
-      }).catch(async (e) => {
+      }).catch(async () => {
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
       });
@@ -898,7 +931,7 @@ export class ProfilePage implements OnInit {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
-    return new Promise<boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -919,7 +952,7 @@ export class ProfilePage implements OnInit {
 
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
     // await this.popoverCtrl.dismiss();
-    return new Promise<boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
@@ -962,7 +995,8 @@ export class ProfilePage implements OnInit {
                 resolve(undefined);
               });
           }
-        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        }, this.appName, this.commonUtilService.translateMessage
+          ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
@@ -992,58 +1026,65 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  async getSelfDeclaredTeacherDetails() {
-    this.selfDeclaredTeacherDetails = {
-      state: '',
-      district: '',
-      schoolName: '',
-      udiseId: '',
-      teacherId: ''
-    };
+  async getSelfDeclaredDetails() {
 
-    if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
-      let stateCode = '';
-      let districtCode = '';
-      let stateDetails;
-      let districtDetails;
+    if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
+      this.selfDeclarationInfo = this.profile.declarations[0];
+      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+      const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
+      const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
+      tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
-      this.profile.externalIds.forEach(ele => {
-        switch (ele.idType) {
-          case 'declared-state':
-            stateCode = ele.id;
-            break;
-          case 'declared-district':
-            districtCode = ele.id;
-            break;
-          case 'declared-phone':
-            this.selfDeclaredTeacherDetails.mobile = ele.id;
-            break;
-          case 'declared-email':
-            this.selfDeclaredTeacherDetails.email = ele.id;
-            break;
-          case 'declared-school-name':
-            this.selfDeclaredTeacherDetails.schoolName = ele.id;
-            break;
-          case 'declared-school-udise-code':
-            this.selfDeclaredTeacherDetails.udiseId = ele.id;
-            break;
-          case 'declared-ext-id':
-            this.selfDeclaredTeacherDetails.teacherId = ele.id;
-            break;
-        }
+      this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
+        '%persona': this.selfDeclarationInfo.persona || '',
+        '%tenant': (tenantDetails && tenantDetails.label) || ''
       });
-      if (stateCode && this.stateList && this.stateList.length) {
-        stateDetails = this.stateList.find(state => state.code === stateCode);
-        this.selfDeclaredTeacherDetails.state = (stateDetails && stateDetails.name) || '';
+
+      if (this.selfDeclarationInfo.orgId) {
+        const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', this.selfDeclarationInfo.orgId);
+        const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
+        this.selfDeclaredDetails = [];
+        (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {
+          if (this.profile.declarations[0].info[config.code]) {
+            this.selfDeclaredDetails.push({ name: config.fieldName, value: this.profile.declarations[0].info[config.code] });
+          }
+        });
+
       }
-      if (stateDetails && stateDetails.id) {
-        const districtList = await this.commonUtilService.getDistrictList(stateDetails.id);
-        districtDetails = districtList.find(district => district.code === districtCode);
-        this.selfDeclaredTeacherDetails.district = (districtDetails && districtDetails.name) || '';
+
+      this.selfDeclaredDetails.push({ name: 'Status', value: this.profile.declarations[0].status || 'PENDING' });
+
+      if (this.selfDeclarationInfo.errorType) {
+        this.selfDeclarationInfo.errorType = this.selfDeclarationInfo.errorType.split(',');
       }
     }
+
   }
 
+  private async fetchFormApi(req) {
+    return await this.formService.getForm(req).toPromise().then(res => {
+      return res;
+    }).catch(err => {
+      return null;
+    });
+  }
 
+  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
+    const formReq: FormRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
+      type,
+      subType,
+      action,
+      rootOrgId: rootOrgId || '*',
+      component: 'app'
+    };
+
+    let formData: any = await this.fetchFormApi(formReq);
+    if (!formData) {
+      formReq.rootOrgId = '*';
+      formData = await this.fetchFormApi(formReq);
+    }
+    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+  }
 
 }

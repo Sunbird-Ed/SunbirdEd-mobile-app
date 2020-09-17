@@ -104,10 +104,6 @@ export class FaqHelpPage implements OnInit {
     }
   }
 
-  public getJSON(): Observable<any> {
-    return this.http.get(this.jsonURL);
-  }
-
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
@@ -122,7 +118,6 @@ export class FaqHelpPage implements OnInit {
     };
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
-        console.log('faqdata', res);
         faqRequest.faqUrl = res.value;
       }).catch(err => {
       });
@@ -220,6 +215,7 @@ export class FaqHelpPage implements OnInit {
   }
 
   generateInteractTelemetry(interactSubtype, values) {
+    values.values.value.description = values.values.value.description.replace(/(<([^>]+)>)/ig, '');
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,

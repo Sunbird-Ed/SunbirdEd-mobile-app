@@ -1,4 +1,3 @@
-import { take } from 'rxjs/operators';
 import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {

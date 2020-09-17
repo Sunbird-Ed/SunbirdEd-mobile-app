@@ -1,0 +1,16 @@
+.activity-toc-title{
+    font-size: 16px;
+    margin: 0;
+    font-weight: bold;
+    padding: 16px;
+}
+.add-activity-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 8px;
+    .add-activity-content{
+        margin-right: 8px;
+        width: 45%;
+    }
+}

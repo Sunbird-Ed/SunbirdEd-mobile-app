@@ -84,7 +84,7 @@ export class EnrollmentDetailsComponent {
         }
 
         // store the contentContextMap in shared preference and access it from SDK
-        this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
+        this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise();
     }
 
     async enrollIntoBatch(content: any) {
@@ -127,7 +127,6 @@ export class EnrollmentDetailsComponent {
     getUserId(): void {
         this.authService.getSession().toPromise().then((session) => {
             if (session === undefined || session == null) {
-                console.log('session expired');
                 this.zone.run(() => { this.isGuestUser = true; });
             } else {
                 this.zone.run(() => {

@@ -1,0 +1,17 @@
+<div class="container">
+    <div class="header">
+        <div class="h-6per">
+            <ion-icon name="close" (click)="close()" class="close"></ion-icon>
+        </div>
+        <div class="h-90cent">
+            <h4 class="message">{{'RESPONSE_ACKNOWLEGED' | translate}}</h4>
+            <span>{{'FOR_SUPPORT' | translate:{'%s': boardContact.name} }}</span>
+            <div class="m-10">
+                <span>call</span>
+                <span class="contact-no"> {{boardContact.contactinfo.number}}</span>
+            </div>
+            <span>{{boardContact.message}}</span>
+            <button (click)="openDialpad()" class="btn-call">Call</button>
+        </div>
+    </div>
+</div>

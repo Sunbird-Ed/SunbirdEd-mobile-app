@@ -2,7 +2,7 @@
   <div class="my-cr-bg">
     <p class="my-cr-title">
       {{'MY_GROUPS' | translate}}
-      <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()">
+      <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="">
     </p>
 
 
@@ -10,8 +10,7 @@
       <div></div>
       <div>
         <div class="my-cr-card-img">
-          <img src="assets/imgs/ic_my_groups.svg">
-          <!-- <img src="{{appLogo}}"> -->
+          <img src="assets/imgs/ic_my_groups.svg" alt="">
         </div>
         <p class="my-cr-subtitle">{{'LOGIN_TO_CREATE_GROUP_DESCRIPTION' | translate}}</p>
       </div>
@@ -30,7 +29,7 @@
       </div>
       <div class="my-cr-btn">
         <button class="sb-btn-large" (click)="createClassroom()">
-          <img src="assets/imgs/ic_group_add_white.svg">
+          <img src="assets/imgs/ic_group_add_white.svg" alt="">
           {{'CREATE_GROUP' | translate}}
         </button>
       </div>

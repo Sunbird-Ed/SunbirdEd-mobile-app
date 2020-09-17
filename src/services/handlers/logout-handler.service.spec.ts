@@ -21,15 +21,6 @@ describe('LogoutHandlerService', () => {
         })))
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {
-        // getString: jest.fn((arg) => {
-        //     let value;
-        //     switch (arg) {
-        //         case PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN:
-        //             value = '0123456789';
-        //             break;
-        //     }
-        //     return of(value);
-        // })
         getString: jest.fn(),
         putString: jest.fn(() => of(undefined))
     };
@@ -191,6 +182,42 @@ describe('LogoutHandlerService', () => {
                 switch (arg) {
                     case PreferenceKey.SELECTED_USER_TYPE:
                         value = 'student';
+                        break;
+                    case PreferenceKey.IS_ONBOARDING_COMPLETED:
+                        value = 'false';
+                        break;
+                    case PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN:
+                        value = undefined;
+                        break;
+                }
+                return of(value);
+            });
+            // act
+            logoutHandlerService.onLogout();
+            // assert
+            setTimeout(() => {
+                expect(mockRoute.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`], { queryParams: { reOnboard: true } });
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+                    InteractSubtype.LOGOUT_SUCCESS,
+                    Environment.HOME,
+                    PageId.LOGOUT,
+                    undefined,
+                    { UID: '' });
+                done();
+            }, 0);
+        });
+
+        it('should navigate to profile-settings page  for profile types other than student and teacher', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => false);
+            jest.spyOn(mockSharedPreferences, 'getString').mockImplementation((arg) => {
+                let value;
+                switch (arg) {
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        value = 'other';
                         break;
                     case PreferenceKey.IS_ONBOARDING_COMPLETED:
                         value = 'false';

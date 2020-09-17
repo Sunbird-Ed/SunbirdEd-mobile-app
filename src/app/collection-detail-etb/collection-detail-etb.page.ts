@@ -39,6 +39,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -205,8 +206,12 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
+  groupId: string;
+  isFromGroupFlow = false;
+  addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
-  shownGroup = null;
+  hiddenGroups = new Set();
+  shownGroups = undefined;
   content: any;
   data: any;
   isChild = false;
@@ -236,9 +241,7 @@ export class CollectionDetailEtbPage implements OnInit {
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
   private previousHeaderBottomOffset?: number;
-  lastContentPlayed: string;
   isContentPlayed = false;
-  playingContent: Content;
   contentDeleteObservable: any;
 
   _licenseDetails: any;
@@ -252,7 +255,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this._licenseDetails = val;
     }
   }
-  deeplinkContent: any;
+  activityList;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -309,7 +312,21 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
-    this.deeplinkContent = extras.deeplinkContent;
+    if (this.source === PageId.GROUP_DETAIL) {
+      this.isFromGroupFlow = true;
+      this.groupId = extras.groupId;
+      this.activityList = extras.activityList || [];
+      this.addActivityToGroupData = {
+        groupId: this.groupId,
+        activityId: this.identifier,
+        activityList: this.activityList,
+        activityType: this.content.contentType ? this.content.contentType : this.content.contentData.contentType,
+        pageId: PageId.COLLECTION_DETAIL,
+        corRelationList: this.corRelationList,
+        source: this.source,
+        noOfPagesToRevertOnSuccess: -3
+      };
+    }
   }
 
   ngOnInit() {
@@ -330,7 +347,8 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.shownGroup = null;
+      this.hiddenGroups.clear();
+      this.shownGroups = undefined;
       this.assignCardData();
       this.resetVariables();
       this.setContentDetails(this.identifier, true);
@@ -352,10 +370,6 @@ export class CollectionDetailEtbPage implements OnInit {
 
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: this.identifier });
-    if (this.deeplinkContent && this.collectionChildComp) {
-      this.collectionChildComp.navigateToDetailsPage(this.deeplinkContent, '');
-      this.deeplinkContent = null;
-    }
   }
 
   private assignCardData() {
@@ -372,7 +386,8 @@ export class CollectionDetailEtbPage implements OnInit {
 
   refreshContentDetails(data) {
     this.resetVariables();
-    this.shownGroup = null;
+    this.shownGroups = undefined;
+    this.hiddenGroups.clear();
     this.setExtrasData(data);
     this.didViewLoad = false;
     this.assignCardData();
@@ -403,16 +418,17 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
-
   // toggle the card
   toggleGroup(group, content, openCarousel?) {
     let isCollapsed = true;
     if (!openCarousel && this.isGroupShown(group)) {
       isCollapsed = false;
-      this.shownGroup = null;
+      this.shownGroups = undefined;
+      this.hiddenGroups.add(group);
     } else {
       isCollapsed = false;
-      this.shownGroup = group;
+      this.shownGroups = group;
+      this.hiddenGroups.delete(group);
       setTimeout(() => {
         if (document.getElementById(content.identifier)) {
           window['scrollWindow'].getScrollElement()
@@ -441,7 +457,11 @@ export class CollectionDetailEtbPage implements OnInit {
 
   // to check whether the card is toggled or not
   isGroupShown(group) {
-    return this.shownGroup === group;
+    if (this.activeMimeTypeFilter.indexOf('all') === 0) {
+      return this.shownGroups === group;
+    } else {
+      return !this.hiddenGroups.has(group);
+    }
   }
 
   changeValue(text) {
@@ -486,9 +506,12 @@ export class CollectionDetailEtbPage implements OnInit {
       emitUpdateIfAny: refreshContentDetails
     };
     this.contentService.getContentDetails(option).toPromise()
-      .then((data: Content) => {
+      .then((data: Content | any) => {
         if (data) {
           this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          if (data.contentData.attributions && data.contentData.attributions.length) {
+            data.contentData.attributions = (data.contentData.attributions.sort()).join(', ');
+          }
           if (!data.isAvailableLocally) {
             this.contentDetail = data;
             this.telemetryGeneratorService.generatefastLoadingTelemetry(
@@ -554,7 +577,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.userRating = contentFeedback[0].rating;
       this.ratingComment = contentFeedback[0].comments;
     }
-
 
     if (Boolean(data.isAvailableLocally)) {
       this.showLoading = false;
@@ -781,7 +803,7 @@ export class CollectionDetailEtbPage implements OnInit {
       if (value.children) {
         this.getContentsSize(value.children);
       }
-      if (value.isAvailableLocally === false) {
+      if (!value.isAvailableLocally && value.contentData.downloadUrl) {
         this.downloadIdentifiers.add(value.contentData.identifier);
         this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
       }
@@ -828,7 +850,10 @@ export class CollectionDetailEtbPage implements OnInit {
         depth,
         contentState: this.stateData,
         corRelation: this.corRelationList,
-        breadCrumb: this.breadCrumb
+        breadCrumb: this.breadCrumb,
+        source: this.source,
+        groupId: this.groupId,
+        activityList: this.activityList
       }
     });
   }
@@ -892,7 +917,9 @@ export class CollectionDetailEtbPage implements OnInit {
               this.showDownloadBtn = false;
               this.isDownloadCompleted = true;
               this.showDownload = false;
-              this.contentDetail.isAvailableLocally = true;
+              if (this.contentDetail) {
+                this.contentDetail.isAvailableLocally = true;
+              }
               this.downloadPercentage = 0;
               this.updateSavedResources();
               this.setChildContents();
@@ -1228,7 +1255,8 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   openTextbookToc() {
-    this.shownGroup = null;
+    this.hiddenGroups.clear();
+    this.shownGroups = undefined;
     this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
       { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();
@@ -1327,7 +1355,6 @@ export class CollectionDetailEtbPage implements OnInit {
                 PageId.COLLECTION_DETAIL,
                 JSON.stringify(stackTrace),
               );
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
@@ -1354,54 +1381,24 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   playContent(event) {
-    this.headerService.hideHeader();
-
-    this.playingContent = event.content;
-    const contentInfo: ContentInfo = {
-      telemetryObject: ContentUtil.getTelemetryObject(this.playingContent),
-      rollUp: ContentUtil.generateRollUp(this.playingContent.hierarchyInfo, this.playingContent.identifier),
-      correlationList: this.corRelationList,
-      hierachyInfo: this.playingContent.hierarchyInfo
+    const telemetryDetails = {
+      pageId: PageId.COLLECTION_DETAIL,
+      corRelationList: this.corRelationList
     };
-    let isStreaming: boolean;
-    let shouldDownloadAndPlay: boolean;
-    if (this.playingContent.contentData.streamingUrl &&
-      this.commonUtilService.networkInfo.isNetworkAvailable && !(this.playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) {
-      isStreaming = true;
-      shouldDownloadAndPlay = false;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
-      isStreaming = false;
-      shouldDownloadAndPlay = false;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
-      isStreaming = false;
-      shouldDownloadAndPlay = true;
-      this.lastContentPlayed = this.playingContent.identifier;
-      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
-      this.navigateToContentPage(this.playingContent, 1);
-    } else {
-      this.navigateToContentPage(this.playingContent, 1);
-    }
+
+    const navExtras = {
+      state: {
+        isChildContent: true,
+        content: event.content,
+        depth: 1,
+        contentState: this.stateData,
+        corRelation: this.corRelationList,
+        breadCrumb: this.breadCrumb
+      }
+    };
+
+    this.contentPlayerHandler.playContent(event.content, navExtras, telemetryDetails, false);
+
   }
 
-  private generateInteractTelemetry(isStreaming: boolean, telemetryObject, rollup, correlationData) {
-    const subType: string = isStreaming ? InteractSubtype.PLAY_ONLINE : InteractSubtype.PLAY_FROM_DEVICE;
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      subType,
-      Environment.HOME,
-      PageId.COLLECTION_DETAIL,
-      telemetryObject,
-      undefined,
-      rollup,
-      correlationData,
-    );
-  }
 }

@@ -5,6 +5,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {CommonUtilService, Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
 import {FileSizePipe} from '@app/pipes/file-size/file-size';
 import {of, throwError} from 'rxjs';
+import { PageId } from '../../../services';
 
 describe('ContentActionsComponent', () => {
     let contentActionsComponent: ContentActionsComponent;
@@ -68,12 +69,11 @@ describe('ContentActionsComponent', () => {
     beforeAll(() => {
         contentActionsComponent = new ContentActionsComponent(
             mockContentService as ContentService,
+            mockAuthService as AuthService,
             mockNavParams as NavParams,
             mockToastCtrl as ToastController,
-            mockAuthService as AuthService,
             mockEvents as Events,
             mockTranslateService as TranslateService,
-            mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFileSizePipe as FileSizePipe,
@@ -319,6 +319,107 @@ describe('ContentActionsComponent', () => {
             done();
         }, 0);
 
+    });
+
+    describe('download', () => {
+        it('should dismiss the popup', () => {
+            // arrange
+            // act
+            contentActionsComponent.download();
+            // assert
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ download: true });
+        });
+    });
+
+    describe('share', () => {
+        it('should dismiss the popup', () => {
+            // arrange
+            // act
+            contentActionsComponent.share();
+            // assert
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ share: true });
+        });
+    });
+
+});
+
+describe('ContentActionsComponent', () => {
+    let contentActionsComponent: ContentActionsComponent;
+    const mockContentService: Partial<ContentService> = {};
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn((arg) => {
+            let value;
+            switch (arg) {
+                case 'pageName':
+                    value = PageId.CHAPTER_DETAILS;
+                    break;
+                case 'isChild':
+                    value = false;
+                    break;
+                case 'content':
+                    value = undefined;
+                    break;
+                case 'objRollup':
+                    value = [
+                        {
+                            l1: 'samplel1',
+                            l2: 'samplel2'
+                        }
+                    ];
+                    break;
+                case 'corRelationList':
+                    value = [{id: 'sampleId', type: 'textbook'}, {id: 'sampleDoid', type: 'unit'}];
+            }
+            return value;
+        })
+    };
+    const mockToastCtrl: Partial<ToastController> = {};
+    const mockAuthService: Partial<AuthService> = {
+        getSession: jest.fn(() => of({
+            access_token: 'sample_access_token',
+            refresh_token: 'sample_refresh_token',
+        }))
+    };
+    const mockEvents: Partial<Events> = {};
+    const mockTranslateService: Partial<TranslateService> = {};
+    const mockPlatform: Partial<Platform> = {};
+    let subscribeWithPriorityCallback;
+    const mockBackBtnFunc = {unsubscribe: jest.fn()};
+    const subscribeWithPriorityData = jest.fn((val, callback) => {
+        subscribeWithPriorityCallback = callback;
+        return mockBackBtnFunc;
+    });
+    mockPlatform.backButton = {
+        subscribeWithPriority: subscribeWithPriorityData,
+    } as any;
+    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockFileSizePipe: Partial<FileSizePipe> = {};
+    const mockPopoverCtrl: Partial<PopoverController> = {
+        dismiss: jest.fn()
+    };
+    beforeAll(() => {
+        contentActionsComponent = new ContentActionsComponent(
+            mockContentService as ContentService,
+            mockAuthService as AuthService,
+            mockNavParams as NavParams,
+            mockToastCtrl as ToastController,
+            mockEvents as Events,
+            mockTranslateService as TranslateService,
+            mockCommonUtilService as CommonUtilService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockFileSizePipe as FileSizePipe,
+            mockPopoverCtrl as PopoverController
+        );
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should create instance of contentActionsComponent page', () => {
+        // arrange
+        expect(contentActionsComponent).toBeTruthy();
     });
 
 });

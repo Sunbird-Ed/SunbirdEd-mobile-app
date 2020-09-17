@@ -1,7 +1,9 @@
+@import "src/assets/styles/_variables.scss";
+
 .container {
     width: -webkit-fill-available;
     height: -webkit-fill-available;
-    background: #020202a1;
+    background: map-get($colors, light_black);
     position: fixed;
     top: 0px;
     display: -webkit-flexbox;
@@ -17,7 +19,7 @@
 }
 
 .header {
-    background-color: #e5f3eb;
+    background-color: map-get($colors, whitish_light_green);
     width: 300px;
     height: 265px;
     margin: 0 auto;
@@ -44,7 +46,7 @@
 }
 
 .message {
-    color: #008840;
+    color: $green;
     font-weight: bolder;    
 }
 
@@ -54,15 +56,15 @@
 
 .contact-no {
     font-weight: 900;
-    color: #024f9d;
+    color: map-get($colors, deep_blue)
 }
 
 .btn-call {
     width: 90%;
     height: 14%;
     font-size: 16px;
-    color: #fff;
-    background: #008840;
+    color: $white;
+    background: $green;
     margin-top: 24px;
 }
 
@@ -71,14 +73,13 @@
 }
 
 .icon-checkmark {
-    color: #008840;
+    color: $green;
     display: block;
     width: 50px;
     height: 50px;
 }
 
 .inner-container {
-    display: block;
     width: 80%;
     height: 60%;
     align-items: center;
@@ -88,7 +89,7 @@
 }
 
 .text {
-    color: #008840;
+    color: $green;
     font-weight: bold;
     font-size: 20px;
     margin: 16px 0px;

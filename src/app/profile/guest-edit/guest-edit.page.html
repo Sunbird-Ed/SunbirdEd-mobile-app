@@ -22,8 +22,6 @@
           </ion-label>
           <ion-radio [value]="ProfileType.TEACHER" class="MR10" slot="start"></ion-radio>
         </ion-item>
-        <!-- <p class="ion-padding-start" *ngIf="guestEditForm?.value?.profileType === ProfileType.TEACHER">
-          {{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p> -->
 
         <ion-item lines="none">
           <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.OTHER }">

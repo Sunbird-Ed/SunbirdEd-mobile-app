@@ -2,11 +2,11 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
 .scroll-content{
-    padding: 0% !important;
+    padding: 0 !important;
 }
   body{
     background-color: $light-blue;
-    font-family: 'Noto Sans';
+      font-family: 'Noto Sans', sans-serif;
 }
 
 .rotate{
@@ -29,14 +29,12 @@ P{
     padding: 16px;
 }
 .help-header>h4,.help-header-send-email>h4{
-    margin: 0;
     padding:0;
     font-weight: 700;
     max-width: 1024px;
     margin: 0 auto;
 }
 .help-header>p,.help-header-send-email>p{
-    margin: 0;
     font-weight: 100;
     max-width: 1024px;
     margin: 0 auto;
@@ -52,7 +50,6 @@ P{
 @media only screen and (max-width : 1024px) {
 
     .info-msg-send-email>p,.info-msg>p{
-        margin: 0;
         padding: 8px 16px;
         max-width: 1024px;
         margin: 0 auto;
@@ -62,7 +59,6 @@ P{
 @media only screen and (min-width : 1025px) {
 
     .info-msg-send-email>p,.info-msg>p{
-        margin: 0;
         padding: 16px 0px;
         max-width: 1024px;
         margin: 0 auto;
@@ -80,9 +76,6 @@ P{
     box-shadow:none !important;
 
 }
-.panel-default{
-
-}
 
 .panel-heading {
     padding: 16px 16px;
@@ -92,13 +85,13 @@ P{
     max-width: 1024px;
 }
 .panel-group .panel+.panel{
-    border-radius: 0px;
-    margin-top: 0px;
+    border-radius: 0;
+    margin-top: 0;
 
 }
 .panel-default>.panel-heading{
     background-color: map-get($colors, white);
-    border-radius: 0px !important;
+    border-radius: 0 !important;
 }
 .panel-body{
     background-color: map-get($colors, white_fa);
@@ -142,7 +135,7 @@ P{
 .panel-info>h6{
     font-weight: 700;
     margin-top: 20px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .input-text{
@@ -192,12 +185,12 @@ P{
         padding-right: 16px;
     }
     .initiate-email-info-button {
-        background: #FFF;
-        left: 0px;
-        right: 0px;
+        background: $white;
+        left: 0;
+        right: 0;
         position: fixed;
         top: 90vh;
-        padding: 0px 16px 70px 16px;
+        padding: 0 16px 70px 16px;
     }
 }
 @media only screen and (min-width : 1025px) {
@@ -246,8 +239,8 @@ img>.report-button{
     }
     .send-email-info{
         max-width: 570px;
-        padding: 10px 0px !important;
-        margin: left;
+        padding: 10px 0 !important;
+        margin: initial;
         float: left;
     }
     .submit-button{
@@ -255,10 +248,10 @@ img>.report-button{
         float: right;
         color: map-get($colors, white);
         background: $blue;
-        border-radius: 0px;
+        border-radius: 0;
         border-style:solid;
         border-color:  $blue;
-        margin: 10px 0px 16px 0px;
+        margin: 10px 0 16px 0;
         height: 32px;
         outline: none;
     }
@@ -376,17 +369,17 @@ ion-item.item-label-stacked {
         color: map-get($colors, primary_black);
     }
     ion-select {
-        border-color: map-get($colors, primary_black);;
+        border-color: map-get($colors, primary_black);
         // Inside Shadow DOM
         .select-icon {
           .select-icon-inner {
-            border-color: map-get($colors, primary_black);;
+            border-color: map-get($colors, primary_black);
             animation: none;
           }
         }
         // Inside Shadow DOM
         .select-placeholder {
-          color: map-get($colors, primary_black);;
+          color: map-get($colors, primary_black);
         }
       }
 }

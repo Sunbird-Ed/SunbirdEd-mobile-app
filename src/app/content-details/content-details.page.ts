@@ -30,7 +30,11 @@ import {
   Course,
   DownloadService,
   ObjectType,
-  SharedPreferences
+  SharedPreferences,
+  EventNamespace,
+  ContentEvent,
+  ContentUpdate,
+  CourseService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -47,7 +51,7 @@ import {
   UtilityService,
   TelemetryGeneratorService,
   CommonUtilService,
- } from '@app/services';
+} from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -68,7 +72,7 @@ import { ChildContentHandler } from '@app/services/content/child-content-handler
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { map } from 'rxjs/operators';
+import { map, filter, take, tap } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -76,6 +80,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
+import { AddActivityToGroup } from '../my-groups/group.interface';
 
 @Component({
   selector: 'app-content-details',
@@ -88,7 +93,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   shouldOpenPlayAsPopup = false;
   apiLevel: number;
   appAvailability: string;
-  content: Content;
+  content: Content | any;
   playingContent: Content;
   isChildContent = false;
   contentDetails: any;
@@ -130,6 +135,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
+  groupId: string;
+  isFromGroupFlow = false;
+  addActivityToGroupData: AddActivityToGroup;
   userCount = 0;
   shouldGenerateTelemetry = true;
   playOnlineSpinner: boolean;
@@ -166,6 +174,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   onboarding = false;
   showCourseCompletePopup = false;
   courseContext: any;
+  private contentProgressSubscription: Subscription;
+  private playerEndEventTriggered: boolean;
+  isCourseCertificateShown: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -174,6 +185,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -223,6 +235,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
       this.source = extras.source || this.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+        this.groupId = extras.groupId;
+        this.addActivityToGroupData = {
+          groupId: this.groupId,
+          activityId: this.identifier,
+          activityList: extras.activityList || [],
+          activityType: this.cardData.contentType,
+          pageId: PageId.CONTENT_DETAIL,
+          corRelationList: this.corRelationList,
+          noOfPagesToRevertOnSuccess: -4
+        };
+      }
+
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;
@@ -282,15 +308,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.generateEndEvent();
       // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
       // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
-      const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
       this.getNavParams();
       // this.subscribeEvents();
-
-      // show popup for previous content
       setTimeout(() => {
-        this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
         this.contentPlayerHandler.setLastPlayedContentId('');
         this.generateTelemetry(true);
       }, 1000);
@@ -301,6 +323,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
     this.events.unsubscribe(EventTopics.NEXT_CONTENT);
     this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
+
+    if (this.contentProgressSubscription) {
+      this.contentProgressSubscription.unsubscribe();
+    }
   }
 
   /**
@@ -443,19 +469,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          if (this.showCourseCompletePopup) {
-            this.ratingHandler.showRatingPopup(
-              this.isContentPlayed,
-              data,
-              'automatic',
-              this.corRelationList,
-              this.objRollup,
-              this.shouldNavigateBack,
-              () => { this.openCourseCompletionPopup(); });
-          } else {
-            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
-           this.shouldNavigateBack);
-          }
+          this.ratingHandler.showRatingPopup(
+            this.isContentPlayed,
+            data,
+            'automatic',
+            this.corRelationList,
+            this.objRollup,
+            this.shouldNavigateBack,
+            () => { this.openCourseCompletionPopup(); });
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -511,6 +532,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.content.contentData.streamingUrl &&
       !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
+    }
+    if (this.content.contentData.attributions && this.content.contentData.attributions.length) {
+      this.content.contentData.attributions = (this.content.contentData.attributions.sort()).join(', ');
     }
 
     if (!this.isChildContent && this.content.contentMarker.length
@@ -689,7 +713,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
       window.history.go(-2);
     } else {
-      this.events.publish('event:update_recently_viewed');
       this.location.back();
     }
   }
@@ -825,6 +848,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
+    if (!(this.content.contentData.downloadUrl)) {
+      this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+      return;
+    }
     if (this.limitedShareContentFlag) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
@@ -1064,10 +1091,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           {
             btntext: this.commonUtilService.translateMessage('YES'),
             btnClass: 'popover-color'
-          },
-          {
-            btntext: this.commonUtilService.translateMessage('CHANGE_USER'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
           }
         ],
         icon: null
@@ -1082,13 +1105,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
-    } else if (data && data.isLeftButtonClicked === false) {
-      const playConfig: any = {};
-      playConfig.playContent = true;
-      playConfig.streaming = isStreaming;
-      this.router.navigate([RouterLinks.USER_AND_GROUPS], {
-        state: { playConfig }
-      });
     }
   }
 
@@ -1381,23 +1397,63 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async openCourseCompletionPopup() {
+    if (this.isCourseCertificateShown) {
+      return;
+    }
+    await this.getContentState();
+
+    if (!this.showCourseCompletePopup) {
+      if (this.contentProgressSubscription) {
+        this.contentProgressSubscription.unsubscribe();
+      }
+
+      this.contentProgressSubscription = this.eventBusService.events(EventNamespace.CONTENT)
+          .pipe(
+              filter((event) =>
+                  event.type === ContentEventType.COURSE_STATE_UPDATED && this.course &&
+                  (event as ContentUpdate).payload.contentId === this.course.contentId && this.shouldOpenPlayAsPopup
+              ),
+              take(1),
+              tap(() => this.openCourseCompletionPopup())
+          )
+          .subscribe();
+
+      return;
+    }
     const popUp = await this.popoverCtrl.create({
       component: CourseCompletionPopoverComponent,
       componentProps: {
-        isCertified: this.courseContext['isCertified']
+        isCertified: this.courseContext['isCertified'],
+        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId)
       },
       cssClass: 'sb-course-completion-popover',
     });
+    this.isCourseCertificateShown = true;
     await popUp.present();
     const { data } = await popUp.onDidDismiss();
     if (data === undefined) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.CLOSE_CLICKED,
-            PageId.COURSE_COMPLETION_POPUP,
-            Environment.HOME
-        );
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CLOSE_CLICKED,
+        PageId.COURSE_COMPLETION_POPUP,
+        Environment.HOME
+      );
     }
+  }
+
+  async fetchCertificateDescription(batchId) {
+    if (!batchId) {
+      return '';
+    }
+    try {
+      const batchDetails = await this.courseService.getBatchDetails({ batchId }).toPromise();
+      return (batchDetails && batchDetails.cert_templates && Object.keys(batchDetails.cert_templates).length &&
+        batchDetails.cert_templates[Object.keys(batchDetails.cert_templates)[0]].description) || '';
+    } catch (e) {
+      console.log(e);
+      return '';
+    }
+
   }
 
 }

@@ -4,8 +4,8 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
+import {Observable, combineLatest, Subscription} from 'rxjs';
+import {mergeMap, filter, tap, mapTo, take} from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
@@ -68,6 +68,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   appVersion: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
   isForeground: boolean;
+  isPlannedMaintenanceStarted = false;
+  isUnplannedMaintenanceStarted = false;
+  timeLeft: string;
+  eventSubscription: Subscription;
+  isTimeAvailable = false;
+  isOnBoardingCompleted: boolean;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -331,33 +337,33 @@ export class AppComponent implements OnInit, AfterViewInit {
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
+        const value = {
+          notification_id: data.id
+        };
+        const corRelationList: Array<CorrelationData> = [];
+        const fcmId = data.id;
+        corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
+        this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+          InteractType.FCM,
+          this.activePageService.computePageId(this.router.url),
+          value,
+          corRelationList
+        );
+  
+        data['isRead'] = data.wasTapped ? 1 : 0;
+        data['actionData'] = JSON.parse(data['actionData']);
+        this.notificationServices.addNotification(data).subscribe((status) => {
+          this.events.publish('notification:received');
+          this.events.publish('notification-status:update', { isUnreadNotifications: true });
+        });
+        this.notificationSrc.setNotificationDetails(data);
+        if (this.isForeground) {
+          this.notificationSrc.handleNotification();
+        }
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
       }
 
-      const value = {
-        notification_id: data.id
-      };
-      const corRelationList: Array<CorrelationData> = [];
-      const fcmId = data.id;
-      corRelationList.push({ id: fcmId ? fcmId + '' : '' , type: CorReleationDataType.NOTIFICATION_ID });
-      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.FCM,
-        this.activePageService.computePageId(this.router.url),
-        value,
-        corRelationList
-      );
-
-      data['isRead'] = data.wasTapped ? 1 : 0;
-      data['actionData'] = JSON.parse(data['actionData']);
-      this.notificationServices.addNotification(data).subscribe((status) => {
-        this.events.publish('notification:received');
-        this.events.publish('notification-status:update', { isUnreadNotifications: true });
-      });
-      this.notificationSrc.setNotificationDetails(data);
-      if (this.isForeground) {
-        this.notificationSrc.handleNotification();
-      }
     },
       (success) => {
         console.log('Notification Sucess Callback', success);
@@ -472,18 +478,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeEvents() {
-    this.events.subscribe(EventTopics.COACH_MARK_SEEN, (data) => {
-      this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
-      setTimeout(() => {
-        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
-        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-          'style',
-          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-        );
-      }, 2000);
-      this.appName = data.appName;
-    });
     this.events.subscribe(EventTopics.TAB_CHANGE, (pageId) => {
       this.zone.run(() => {
         this.generateInteractEvent(pageId);
@@ -501,6 +495,59 @@ export class AppComponent implements OnInit, AfterViewInit {
         document.documentElement.dir = 'ltr';
       }
     });
+    // planned maintenance
+    this.eventSubscription = this.eventsBusService.events(EventNamespace.ERROR).pipe(
+        filter((event) => event.type === ErrorEventType.PLANNED_MAINTENANCE_PERIOD),
+        take(1)
+    ).subscribe(() => {
+      this.isPlannedMaintenanceStarted = true;
+      this.isOnBoardingCompleted = this.appGlobalService.isOnBoardingCompleted;
+      if (this.isPlannedMaintenanceStarted) {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW,
+          '',
+          PageId.PLANNED_MAINTENANCE_BANNER,
+          this.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+      );
+        let  intervalRef;
+        const backButtonSubscription = this.platform.backButton.subscribeWithPriority(13, () => {
+          backButtonSubscription.unsubscribe();
+          this.isPlannedMaintenanceStarted = false;
+          if (intervalRef) {
+            clearInterval(intervalRef);
+            intervalRef = undefined;
+          }
+        });
+        // for timer optional
+        // const second = 1000,
+        //     minute = second * 60,
+        //     hour = minute * 60,
+        //     day = hour * 24;
+        //
+        // const countDown = new Date('Aug 14, 2020 00:00:00').getTime();
+        // intervalRef = setInterval(() => {
+        //   this.isTimeAvailable = true;
+        //   const now = new Date().getTime(),
+        //           distance = countDown - now;
+        //
+        //       document.getElementById('timer').innerText = `${Math.floor((distance % (day)) / (hour))} : ${Math.floor((distance % (hour)) / (minute))} : ${Math.floor((distance % (minute)) / second)}`;
+        //
+        //     }, second);
+      }
+    });
+    // unplanned maintenance
+    // this.events.subscribe('EventTopics:maintenance:unplanned', (data) => {
+    //   this.isUnplannedMaintenanceStarted = data.isUnplannedMaintenanceStarted;
+    //   if (this.isUnplannedMaintenanceStarted) {
+    //     this.timeLeft = '3';
+    //     window.document.body.classList.add('show-maintenance');
+    //   }
+    // });
+  }
+
+  closeUnPlannedMaintenanceBanner() {
+    window.document.body.classList.remove('show-maintenance');
+    this.isUnplannedMaintenanceStarted = false;
   }
 
   private generateInteractEvent(pageId: string) {
@@ -671,7 +718,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
-        || (routeUrl.indexOf(RouterLinks.SHARE_USER_AND_GROUPS) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
@@ -704,16 +750,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
         this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
-        break;
-
-      case 'REPORTS':
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.REPORTS_CLICKED,
-          Environment.USER,
-          PageId.PROFILE);
-        const navigationExtrasReports: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.REPORTS}`], navigationExtrasReports);
         break;
 
       case 'SETTINGS': {
@@ -847,4 +883,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+   navigateToDownloads() {
+     this.isPlannedMaintenanceStarted = false;
+     this.router.navigate([RouterLinks.DOWNLOAD_TAB]);
+  }
+
+
+  closePlannedMaintenanceBanner() {
+    this.isPlannedMaintenanceStarted = false;
+  }
 }

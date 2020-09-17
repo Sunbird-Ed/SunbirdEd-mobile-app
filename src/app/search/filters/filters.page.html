@@ -1,5 +1,10 @@
 <ion-content>
-  <h6 class="subtitle ion-padding ion-no-margin">{{ 'FILTER_BY' | translate }} </h6>
+  <div class="subtitle ion-padding ion-no-margin">
+    <h6 style="display:inline-block;" >{{ 'FILTER_BY' | translate }}</h6>
+    <ion-button color="dark" class="reset_button" fill="outline" (click)="reset()">{{ 'RESET' | translate}}
+      <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+    </ion-button>
+  </div>
   <div *ngIf="facetsFilter && facetsFilter.length">
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
@@ -10,6 +15,8 @@
           <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
           <ion-label *ngIf="facet?.name === 'resourceType'" text-capitalize>{{ 'RESOURCE_TYPE' | translate }}
           </ion-label>
+          <ion-label *ngIf="facet?.name === 'publisher'" text-capitalize>{{ 'PUBLISHER' | translate }}
+          </ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">
@@ -19,8 +26,10 @@
     </div>
   </div>
 </ion-content>
-<ion-footer>
-  <ion-toolbar padding-left padding-right>
-    <ion-button expand="full" color="primary" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
-  </ion-toolbar>
+<ion-footer class="footer">
+  <ion-row>
+    <ion-col>
+    <ion-button expand="block" [disabled]="!shouldEnableFilter" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
+    </ion-col>
+  </ion-row>
 </ion-footer>

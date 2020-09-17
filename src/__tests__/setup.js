@@ -14,10 +14,19 @@ global.cordova = {
             }
         },
         diagnostic: {
-            switchToSettings: () => { }
+            switchToSettings: () => { },
+            getPermissionAuthorizationStatus: () => { },
+            permissionStatus: {
+                DENIED_ALWAYS: 'DENIED_ALWAYS'
+            }
         },
         printer: {
             print: () => { }
+        },
+        permissions: {
+            checkPermission: () => { },
+            requestPermissions: () => { },
+            checkPermission: () => { }
         }
     },
     file: {
@@ -82,4 +91,8 @@ global.FCMPlugin = {
     onNotification: () => {},
     onTokenRefresh: () => {},
     subscribeToTopic: () => {}
+}
+
+global.sbsync = {
+    onSyncSuccess: () => {}
 }

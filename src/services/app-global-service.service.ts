@@ -83,6 +83,8 @@ export class AppGlobalService implements OnDestroy {
     private _generateCourseUnitCompleteTelemetry = false;
     private _showCourseCompletePopup = false;
     private _formConfig: any;
+    private _selectedActivityCourseId: string;
+    private _redirectUrlAfterLogin: string;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -763,6 +765,23 @@ export class AppGlobalService implements OnDestroy {
     set formConfig(value) {
         this._formConfig = value;
     }
+
+    get selectedActivityCourseId() {
+        return this._selectedActivityCourseId;
+    }
+
+    set selectedActivityCourseId(value) {
+        this._selectedActivityCourseId = value;
+    }
+
+    get redirectUrlAfterLogin() {
+        return this._redirectUrlAfterLogin;
+    }
+
+    set redirectUrlAfterLogin(value) {
+        this._redirectUrlAfterLogin = value;
+    }
+
 
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page

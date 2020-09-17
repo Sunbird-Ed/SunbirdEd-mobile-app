@@ -2,7 +2,6 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Platform, PopoverController } from '@ionic/angular';
 import { NavParams } from '@ionic/angular';
 import {
-  Content,
   ContentFeedback,
   ContentFeedbackService,
   TelemetryLogRequest,
@@ -24,18 +23,17 @@ import {
   InteractSubtype,
   InteractType,
   LogLevel,
-  LogType,
-  ObjectType
+  LogType
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-content-rating-alert',
   templateUrl: './content-rating-alert.component.html',
   styleUrls: ['./content-rating-alert.component.scss'],
 })
-export class ContentRatingAlertComponent implements OnInit {
+export class ContentRatingAlertComponent {
   private readonly COMMENT_PREFIX = 'OTHER-';
   isDisable = false;
   userId = '';
@@ -79,10 +77,6 @@ export class ContentRatingAlertComponent implements OnInit {
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
     this.navigateBack = this.navParams.get('navigateBack');
-  }
-
-  ngOnInit() {
-    // this.content = this.navParams.get('content');
   }
 
   ionViewWillEnter() {
@@ -131,17 +125,14 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   rateContent(ratingCount) {
-    // this.showCommentBox = true;
     this.ratingCount = ratingCount;
     this.createRatingForm(ratingCount);
   }
 
   cancel() {
-    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
   closePopover() {
-    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
 
@@ -149,12 +140,12 @@ export class ContentRatingAlertComponent implements OnInit {
     let comment = '';
     this.ratingOptions.forEach(element => {
       if (element.key.toLowerCase() !== 'other' && element.isChecked) {
-        comment += comment.length ? ',' + element.key :  element.key;
+        comment += comment.length ? ',' + element.key : element.key;
       }
     });
     if (this.commentText) {
       const text = 'OTHER,' + this.COMMENT_PREFIX + this.commentText;
-      comment += comment.length ? ',' + text :  text;
+      comment += comment.length ? ',' + text : text;
     }
     this.allComments = comment;
     const option: ContentFeedback = {
@@ -183,9 +174,13 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   createRatingForm(rating) {
-    this.ratingMetaInfo =  { ratingText: this.contentRatingOptions[rating].ratingText,
-                          ratingQuestion: this.contentRatingOptions[rating].question
-                        };
+    if (rating === 0) {
+      return;
+    }
+    this.ratingMetaInfo = {
+      ratingText: this.contentRatingOptions[rating].ratingText,
+      ratingQuestion: this.contentRatingOptions[rating].question
+    };
     this.ratingOptions = this.contentRatingOptions[rating].options;
     this.ratingOptions.forEach(element => {
       element.isChecked = false;
@@ -217,22 +212,16 @@ export class ContentRatingAlertComponent implements OnInit {
   async invokeContentRatingFormApi() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     const req: FormRequest = {
-        type: 'contentfeedback',
-        subType: selectedLanguage,
-        action: 'get'
+      type: 'contentfeedback',
+      subType: selectedLanguage,
+      action: 'get'
     };
     this.formService.getForm(req).toPromise()
       .then((res: any) => {
-          const data = res.form.data.fields;
-          if (data.length) {
-              this.contentRatingOptions = data[0];
-              this.createRatingForm(this.userRating);
-              if (this.allComments) {
-                this.extractComments(this.allComments);
-              }
-          }
+        const data = res.form.data.fields;
+        this.populateComments(data);
       }).catch((error: any) => {
-          this.getDefaultContentRatingFormApi();
+        this.getDefaultContentRatingFormApi();
       });
   }
 
@@ -243,17 +232,21 @@ export class ContentRatingAlertComponent implements OnInit {
       action: 'get'
     };
     this.formService.getForm(req).toPromise()
-    .then((res: any) => {
+      .then((res: any) => {
         const data = res.form.data.fields;
-        if (data.length) {
-            this.contentRatingOptions = data[0];
-            this.createRatingForm(this.userRating);
-            if (this.allComments) {
-              this.extractComments(this.allComments);
-            }
-        }
-    }).catch((error: any) => {
-    });
+        this.populateComments(data);
+      }).catch((error: any) => {
+      });
+  }
+
+  populateComments(data) {
+    if (data.length) {
+      this.contentRatingOptions = data[0];
+      this.createRatingForm(this.userRating);
+      if (this.allComments) {
+        this.extractComments(this.allComments);
+      }
+    }
   }
 
   generateContentRatingTelemetry(option) {

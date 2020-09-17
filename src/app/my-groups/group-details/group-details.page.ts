@@ -3,9 +3,8 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
-  FormAndFrameworkUtilService,
   CommonUtilService, AppGlobalService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment, ImpressionType, ID
+  InteractType, InteractSubtype, Environment, ImpressionType, ID, FormAndFrameworkUtilService
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
@@ -16,13 +15,15 @@ import {
   RemoveMembersRequest,
   UpdateMembersRequest, RemoveActivitiesRequest,
   CachedItemRequestSourceFrom, GroupUpdateMembersResponse,
-  GroupActivity
+  GroupActivity,
+  Form,
+  GroupSupportedActivitiesFormField
 } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
-import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 
 @Component({
   selector: 'app-group-details',
@@ -186,11 +187,11 @@ export class GroupDetailsPage implements OnInit {
   switchTabs(tab) {
     this.activeTab = tab;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
-            : InteractSubtype.MEMBER_TAB_CLICKED,
-        Environment.GROUP,
-        PageId.GROUP_DETAIL);
+      InteractType.TOUCH,
+      tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED
+        : InteractSubtype.MEMBER_TAB_CLICKED,
+      Environment.GROUP,
+      PageId.GROUP_DETAIL);
   }
 
   async groupMenuClick(event) {
@@ -216,10 +217,10 @@ export class GroupDetailsPage implements OnInit {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.EDIT_GROUP_CLICKED,
-            Environment.GROUP,
-            PageId.GROUP_DETAIL);
+          InteractType.TOUCH,
+          InteractSubtype.EDIT_GROUP_CLICKED,
+          Environment.GROUP,
+          PageId.GROUP_DETAIL);
         this.router.navigate(
           [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
@@ -776,12 +777,6 @@ export class GroupDetailsPage implements OnInit {
     );
   }
 
-  // sortActivityList() {
-  //   this.filteredActivityList.sort((a, b) => {
-  //     return a.activityInfo.name.localeCompare(b.activityInfo.name);
-  //   });
-  // }
-
   extractInitial(name) {
     const splitter = new GraphemeSplitter();
     const split: string[] = splitter.splitGraphemes(name.trim());
@@ -854,6 +849,36 @@ export class GroupDetailsPage implements OnInit {
         activityList: this.activityList
       }
     });
+  }
+
+  async navigateToAddActivity() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+      return;
+    }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
+    try {
+      const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
+        = await this.groupService.getSupportedActivities().toPromise();
+      if (supportedActivityResponse && supportedActivityResponse.data && supportedActivityResponse.data.fields) {
+        const supportedActivityList = supportedActivityResponse.data.fields;
+        supportedActivityList.forEach(activity => {
+          activity.title = this.commonUtilService.translateMessage(activity.title);
+        });
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+          {
+            state: {
+              supportedActivityList,
+              groupId: this.groupId,
+              activityList: this.activityList
+            }
+          });
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 
 }

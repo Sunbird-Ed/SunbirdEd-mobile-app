@@ -22,7 +22,7 @@
   .main-title{
     .meta-info{
       padding: 5px 0 16px 0 !important;
-      font-size: 14px !important;;
+      font-size: 14px !important;
     }
     .rating-qstn{
       margin-left: 16px;
@@ -38,11 +38,6 @@
       padding: 8px 8px 8px 0;
       border-bottom: 1px solid map-get($colors, light_gray_8c);
       margin-left: 16px;
-      // &:last-child{
-      //   &.active{
-      //     border-bottom: none;
-      //   }
-      // }
       .rating-label{
         color: $gray-300;
         font-size: 14px;

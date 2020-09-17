@@ -192,8 +192,9 @@
 
         <div class="sb-btn-tile-group">
           <div *ngIf="content && !this.limitedShareContentFlag">
-            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
-              [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only class="sb-btn-tile">
+            <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()" 
+            [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
+            [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only class="sb-btn-tile">
               <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
               <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
               <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
@@ -290,12 +291,12 @@
           <div class="sb-info"
             *ngIf="content?.contentData?.attributions && !content?.contentData?.contributors && !content?.contentData?.creators">
             <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.attributions.join(', ')}}</div>
-          </div>
-          <div class="sb-info" *ngIf="content?.contentData?.contributors || content?.contentData?.creators">
-            <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
             <div class="sb-content-title-data">{{mergeProperties(['attributions', 'contributors', 'creators'])}}</div>
           </div>
+          <!-- <div class="sb-info" *ngIf="content?.contentData?.contributors || content?.contentData?.creators">
+            <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
+            <div class="sb-content-title-data">{{mergeProperties(['attributions', 'contributors', 'creators'])}}</div>
+          </div> -->
           <div class="sb-info" *ngIf="content?.contentData?.origin">
             <div class="sb-content-title">{{'ORIGINAL_CONTENT_DATA' | translate}}</div>
           </div>
@@ -336,6 +337,7 @@
       </ion-card>
     </div>
   </div>
+
 </ion-content>
 
 <!-- Page footer -->
@@ -344,3 +346,6 @@
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">
 </app-sb-download-popup>
+<div *ngIf="isFromGroupFlow">
+  <add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
+</div>

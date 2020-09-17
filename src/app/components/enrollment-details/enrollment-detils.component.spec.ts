@@ -1,11 +1,14 @@
-import { NavParams, Events, PopoverController, NavController } from "@ionic/angular";
-import { NgZone } from "@angular/core";
-import { TelemetryGeneratorService, CommonUtilService, LocalCourseService, InteractSubtype, InteractType } from "../../../services";
-import { AuthService, SharedPreferences } from "sunbird-sdk";
-import { Router } from "@angular/router";
+import { NavParams, Events, PopoverController, NavController } from '@ionic/angular';
+import { NgZone } from '@angular/core';
+import {
+    TelemetryGeneratorService, CommonUtilService, LocalCourseService,
+    InteractSubtype, InteractType, PageId
+} from '../../../services';
+import { AuthService, SharedPreferences } from 'sunbird-sdk';
+import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
-import { of } from "rxjs";
-import { PreferenceKey, EventTopics, RouterLinks } from "../../app.constant";
+import { of } from 'rxjs';
+import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
 
 describe('enrollmentdetailcomponent', () => {
 
@@ -15,11 +18,11 @@ describe('enrollmentdetailcomponent', () => {
         getSession: jest.fn(() => of())
     };
     const mockSharedPreferences: Partial<SharedPreferences> = {
-        putString: jest.fn()
+        putString: jest.fn(() => of(undefined))
     };
     const mockNavController: Partial<NavController> = {};
     const mockNavParams: Partial<NavParams> = {
-        get: jest.fn(() => "Deummy")
+        get: jest.fn(() => 'Dummy')
     };
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
@@ -86,8 +89,23 @@ describe('enrollmentdetailcomponent', () => {
         });
     });
 
+    describe('saveContentContext()', () => {
+        it('should set userToken and isGuestUser', () => {
+            // arrange
+            const content = {
+                userId: 'userId',
+                courseId: 'courseId',
+                id: 'contentId'
+            };
+            // act
+            enrollmentDetails.saveContentContext(content);
+            // assert
+            expect(mockSharedPreferences.putString).toHaveBeenCalled();
+        });
+    });
+
     describe('resumeCourse()', () => {
-        it('should call saveContext publish close and putString', () => { 
+        it('should call saveContext publish close and putString', () => {
             // arrange
             const content = {
                 userId: 'userId',
@@ -113,7 +131,7 @@ describe('enrollmentdetailcomponent', () => {
             expect(enrollmentDetails.close).toBeCalled();
             expect(mockSharedPreferences.putString).toBeCalledWith(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
         });
-    
+
         it('should call navigate', (done) => {
             // arrange
             const content = {
@@ -168,7 +186,7 @@ describe('enrollmentdetailcomponent', () => {
                 done();
             }, 0);
         });
-    
+
         it('should go to navigateToDetailPage and call navigate, content.contentId to "contentId"', (done) => {
             // arrange
             const content = {
@@ -212,7 +230,7 @@ describe('enrollmentdetailcomponent', () => {
                 done();
             }, 0);
         });
-    
+
         it('should go to navigateToDetailPage set content.contentId to "courseId"', (done) => {
             // arrange
             const content = {
@@ -236,7 +254,7 @@ describe('enrollmentdetailcomponent', () => {
                 done();
             }, 0);
         });
-    
+
         it('should fail and dismiss loader', (done) => {
             // arrange
             const loader = {
@@ -258,7 +276,7 @@ describe('enrollmentdetailcomponent', () => {
     describe('getUserid()', () => {
         it('should set userToken and isGuestUser', (done) => {
             // arrange
-            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of({ userToken: 'userToken'}));
+            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of({ userToken: 'userToken' }));
             mockNgZone.run = jest.fn((callback) => callback());
             // act
             enrollmentDetails.getUserId();
@@ -266,6 +284,19 @@ describe('enrollmentdetailcomponent', () => {
             setTimeout(() => {
                 expect(enrollmentDetails.isGuestUser).toEqual(false);
                 expect(enrollmentDetails.userId).toEqual('userToken');
+                done();
+            }, 0);
+        });
+
+        it('should mark guest user to true if session is empty', (done) => {
+            // arrange
+            jest.spyOn(mockAuthService, 'getSession').mockReturnValue(of(undefined));
+            mockNgZone.run = jest.fn((callback) => callback());
+            // act
+            enrollmentDetails.getUserId();
+            // assert
+            setTimeout(() => {
+                expect(enrollmentDetails.isGuestUser).toEqual(true);
                 done();
             }, 0);
         });
@@ -299,7 +330,40 @@ describe('enrollmentdetailcomponent', () => {
                 telemetryObj,
                 values
             );
-    
+        });
+
+        it('should navigate if the contentType is collection', () => {
+            // arrange
+            enrollmentDetails.pageName = PageId.COURSES;
+            enrollmentDetails.layoutInProgress = 'layout';
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
+            const content = {
+                userId: 'userId',
+                contentId: 'courseId',
+                batchId: 'batchId',
+                id: 'contentId',
+                contentType: 'TextBook',
+                mimeType: 'application/vnd.ekstep.content-collection'
+            };
+            const telemetryObj = {
+                id: content.contentId,
+                type: 'TextBook',
+                version: ''
+            };
+            const values = new Map();
+            values['sectionName'] = undefined;
+            values['positionClicked'] = undefined;
+            // act
+            enrollmentDetails.navigateToDetailPage(content);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                undefined,
+                PageId.COURSES,
+                telemetryObj,
+                values
+            );
         });
     });
 

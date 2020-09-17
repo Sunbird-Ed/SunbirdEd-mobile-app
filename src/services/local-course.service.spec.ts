@@ -1,5 +1,14 @@
 import { LocalCourseService } from './local-course.service';
-import { ContentService, SharedPreferences, CourseService, AuthService, Batch, NetworkError, HttpClientError } from 'sunbird-sdk';
+import {
+  ContentService,
+  SharedPreferences,
+  CourseService,
+  AuthService,
+  Batch,
+  NetworkError,
+  HttpClientError,
+  HttpServerError
+} from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
@@ -10,7 +19,7 @@ import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 
 describe('LocalCourseService', () => {
@@ -31,7 +40,9 @@ describe('LocalCourseService', () => {
   const mockLocation: Partial<Location> = {
     back: jest.fn()
   };
-  const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+  const mockSbProgressLoader: Partial<SbProgressLoader> = {
+    hide: jest.fn()
+  };
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
@@ -153,7 +164,7 @@ describe('LocalCourseService', () => {
         corRelationList: [],
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-      const networkError = new NetworkError({code: 'samp'});
+      const networkError = new NetworkError({ code: 'samp' });
       mockCourseService.enrollCourse = jest.fn(() => throwError(networkError));
       mockCommonUtilService.translateMessage = jest.fn();
       mockCommonUtilService.showToast = jest.fn();
@@ -348,7 +359,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
     });
@@ -367,7 +378,7 @@ describe('LocalCourseService', () => {
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
-      mockNgZone.run = jest.fn((fn) => fn()); 
+      mockNgZone.run = jest.fn((fn) => fn());
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
@@ -380,7 +391,7 @@ describe('LocalCourseService', () => {
       // assert
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
     });
@@ -412,7 +423,7 @@ describe('LocalCourseService', () => {
       // assert
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
     });
@@ -422,7 +433,16 @@ describe('LocalCourseService', () => {
       authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
       mockAuthService.getSession = jest.fn(() => of(authSession));
-      mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      mockPreferences.getString = jest.fn((key) => {
+        switch (key) {
+          case PreferenceKey.BATCH_DETAIL_KEY:
+            return of(courseAndBatchData);
+          case PreferenceKey.COURSE_DATA_KEY:
+            return of(courseAndBatchData);
+          case PreferenceKey.CDATA_KEY:
+            return of(undefined);
+        }
+      });
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -433,7 +453,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
-      mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
+      mockCourseService.getEnrolledCourses = jest.fn(() => throwError({}));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       const networkError = new NetworkError('sample_error');
@@ -448,7 +468,7 @@ describe('LocalCourseService', () => {
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
 
         done();
       }, 0);
@@ -480,7 +500,7 @@ describe('LocalCourseService', () => {
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
     });
@@ -520,6 +540,35 @@ describe('LocalCourseService', () => {
       }, 0);
     });
 
+    it('should handle error other than HttpClient error when course is already enrolled.', (done) => {
+      // arrange
+      authSession['userToken'] = 'userId';
+      mockAppGlobalService.isSignInOnboardingCompleted = true;
+      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      })) as any;
+      mockCommonUtilService.showToast = jest.fn();
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockPreferences.putString = jest.fn(() => of(undefined));
+      const httpClientError = new HttpServerError('http_server_error', { body: {} });
+      jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(httpClientError));
+      mockNgZone.run = jest.fn((cb) => {
+        cb();
+      }) as any;
+      // act
+      localCourseService.checkCourseRedirect();
+      // assert
+      setTimeout(() => {
+        expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
   });
 
   describe('navigateTocourseDetails()', () => {
@@ -547,11 +596,11 @@ describe('LocalCourseService', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
-        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2 
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2
       };
       const contentStatus = {
-                contentList: [{contentId: 'id1', status: 2}]
-            };
+        contentList: [{ contentId: 'id1', status: 2 }]
+      };
       mockCourseService.getContentState = jest.fn(() => of(contentStatus));
       // act
       localCourseService.getCourseProgress(context).then((res) => {
@@ -564,9 +613,37 @@ describe('LocalCourseService', () => {
       // arrange
       mockAppGlobalService.getUserId = jest.fn(() => 'user');
       const context = {
-        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2 
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2
       };
       mockCourseService.getContentState = jest.fn(() => throwError(''));
+      // act
+      localCourseService.getCourseProgress(context).then((res) => {
+        expect(res).toBe(0);
+        done();
+      });
+    });
+
+    it('should return 0 progress if getContentState return empty response', (done) => {
+      // arrange
+      mockAppGlobalService.getUserId = jest.fn(() => 'user');
+      const context = {
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2
+      };
+      mockCourseService.getContentState = jest.fn(() => of(undefined));
+      // act
+      localCourseService.getCourseProgress(context).then((res) => {
+        expect(res).toBe(0);
+        done();
+      });
+    });
+
+    it('should return 0 progress if getContentState return wrong data', (done) => {
+      // arrange
+      mockAppGlobalService.getUserId = jest.fn(() => 'user');
+      const context = {
+        userId: 'userid', courseId: 'courseid', batchId: 'batchid', isCertified: false, leafNodeIds: ['id1'], batchStatus: 2
+      };
+      mockCourseService.getContentState = jest.fn(() => of({ contentList: [{ contentId: 'do_1234' }] }));
       // act
       localCourseService.getCourseProgress(context).then((res) => {
         expect(res).toBe(0);

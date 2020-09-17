@@ -40,6 +40,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   headerObservable: any;
   userId: string;
   unregisterBackButton: Subscription;
+  fromRegistrationFlow = false;
 
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -55,13 +56,16 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private location: Location
-  ) { }
+  ) {
+    if (this.router.getCurrentNavigation()) {
+      const extras = this.router.getCurrentNavigation().extras.state;
+      if (extras) {
+        this.fromRegistrationFlow = extras.fromRegistrationFlow;
+      }
+    }
+  }
 
   ngOnInit() {
-    this.checkUserLoggedIn();
-    if (!this.isGuestUser) {
-      this.groupListLoader = true;
-    }
   }
 
   private checkUserLoggedIn() {
@@ -69,6 +73,10 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
+    this.checkUserLoggedIn();
+    if (!this.isGuestUser) {
+      this.groupListLoader = true;
+    }
     this.handleBackButton();
     this.headerService.showHeaderWithBackButton(['groupInfo']);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -125,8 +133,26 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         break;
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
-        this.location.back();
+        this.goback();
         break;
+    }
+  }
+
+  private handleBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.MY_GROUP,
+        Environment.GROUP,
+        false);
+      this.goback();
+    });
+  }
+
+  goback() {
+    if (this.fromRegistrationFlow) {
+      this.router.navigate([RouterLinks.TABS]);
+    } else {
+      this.location.back();
     }
   }
 
@@ -147,7 +173,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       Environment.GROUP,
       PageId.MY_GROUP
     );
-    this.loginHandlerService.signIn({ skipRootNavigation: true });
+    this.loginHandlerService.signIn({ skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS });
   }
 
   async fetchGroupList() {
@@ -208,16 +234,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } else if (data.closeDeletePopOver) { // Close clicked
     } else if (data.canDelete) {
     }
-  }
-
-  private handleBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.MY_GROUP,
-        Environment.GROUP,
-        false);
-      this.location.back();
-    });
   }
 
 }

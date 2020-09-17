@@ -6,6 +6,7 @@
 :host {
     ion-card{
       margin: 0 0 10px 0 !important;
+      --ion-item-background: white;
     }
     .z-index-0 {
       z-index: 0 !important;
@@ -66,6 +67,7 @@
     }
     .child-item{
         --padding-start: 0 !important;
+        @include padding(null, null, null, 0 !important)
     }
     .text-transform-none{
         text-transform: none !important;
@@ -99,9 +101,6 @@
         background-color: map-get($colors, pale_green);
         margin-bottom: 0 !important;
     }
-    ion-card{
-        --ion-item-background: white;
-    }
     .play-icon{
        display: inline;
        width: 21px;
@@ -113,8 +112,8 @@
     }
     .hr-border-bottom {
         box-sizing: border-box;
-        height: 1px;	
-        width: 100%;	
+        height: 1px;
+        width: 100%;
         border: 0.5px solid map-get($colors, medium_gray);
         margin-top: 9px;
         margin-bottom: 10px;
@@ -123,7 +122,6 @@
         border:0.5px solid $gray-300;
     }
     .blurbackground {
-        // background-color: gray !important;
         .progress-inner-primary {
             background-color: gray !important;
         }
@@ -151,13 +149,10 @@
             width: 100%;
             bottom: 0;
             padding-bottom: 16px;
-        } 
-    }
-    .child-item {
-        @include padding(null, null, null, 0 !important)
+        }
     }
     .scroll-content {
-        margin-bottom: 0px !important;
+        margin-bottom: 0 !important;
     }
 
     .toolbar-p-16{
@@ -175,14 +170,14 @@
     .list-mb-48{
         margin-bottom: ($base-block-space * 6) !important;
     }
-    
+
     .sc-ion-buttons-md-s ion-button {
         height: 20px;
         font-size: 10px;
     }
     .label-margin-bottom{
       margin-bottom: 3px !important;
-    } 
+    }
     .sb-accordian-header{
       padding: 12px 14px;
       .dd-icon {
@@ -215,12 +210,11 @@
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 4px 0px;
         cursor: pointer;
         outline: none;
-        margin-bottom: 8px;
+        margin: 4px 0 8px;
         width: 100%;
-        padding: 16px 0px 16px 0px;
+        padding: 16px 0 16px 0;
     }
     .segment-button-checked{
       ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
@@ -232,7 +226,7 @@
       margin: 0px 0px 10px 11px;
     }
     .hr-div {
-      padding: 0px 10px 0px 10px;       
+      padding: 0px 10px 0px 10px;
     }
     hr.hr-height {
       height: 32px;
@@ -240,7 +234,7 @@
     .segment-button-indicator{
       width: 84% !important;
       margin-right: 8% !important;
-    }  
+    }
     .info-icon-pr-8 {
       padding-right: 8px !important;
     }
@@ -287,7 +281,7 @@
       float: right;
     }
     }
-    
+
   }
   .showLicensce{
     p{
@@ -301,7 +295,6 @@
     align-items:center;
     background-color: map-get($colors, pale_blue_f6);
     padding: 4px;
-    margin-bottom: 12px;
     .certificate-icon {
       padding-right: 5px;
     }
@@ -314,14 +307,11 @@
   .wrapper {
     grid-template-columns: 100px 100px 100px auto;
     margin-bottom: -8px;
-  }  
-  .wrapper {
     border-radius: 5px;
-  }
-  
-  .wrapper > div {
-    border-radius: 5px;
-    padding: 1em 0;
+    & > div {
+      border-radius: 5px;
+      padding: 1em 0;
+    }
   }
 
   .pull-right{
@@ -331,7 +321,6 @@
     display: block;
     width: 100%;
     height: 16px;
-    width: 4px;
     margin-top: 18px;
     float: right;
   }
@@ -359,7 +348,7 @@
     }
     .text-container{
       color: map-get($colors, office_green);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 14px !important;
       font-weight: bold;
       width: 80%;
@@ -374,7 +363,7 @@
     height: 18px;
     width: 63px;
     color: map-get($colors, granite_gray);
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     font-size: 13px !important;
     line-height: 20px;
     text-align: center;
@@ -395,11 +384,11 @@
   .margin-bottom-16{
     margin-bottom: 16px;
   }
-  
+
   .sb-course-progress-container{
       background-color: map-get($colors, pale_blue);
       padding: 8px;
-      height: 70px;	
+      height: 70px;
       width: auto;
   }
 
@@ -417,7 +406,7 @@
   .sb-batch-end-container{
     background-color: map-get($colors, pale_red);
     padding: 8px 16px;
-    height: auto;	
+    height: auto;
     width: auto;
     .batch-end-main-heading{
       font-size: 12px !important;
@@ -426,14 +415,14 @@
     }
     .batch-end-sub-heading{
       color: map-get($colors, primary_black);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px !important;
     }
   }
   .enrollment-end-date{
     font-size: 12px;
     color: map-get($colors, primary_black);
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", sans-serif;
     ion-icon{
       position: relative;
       top: 2px;
@@ -445,7 +434,7 @@
   .sb-course-end-container{
     background-color: map-get($colors, pale_red);
     padding: 10px;
-    height: 70px;	
+    height: 70px;
     width: auto;
     .main-heading{
       font-size: 14px !important;
@@ -453,7 +442,7 @@
     }
     .sub-heading{
       color: map-get($colors, primary_black);
-      font-family: "Noto Sans";
+      font-family: "Noto Sans", sans-serif;
       font-size: 12px !important;
     }
 }
@@ -533,4 +522,22 @@ ion-segment-button{
   opacity: 0.7 !important;
   pointer-events: none;
   cursor: default;
+}
+
+.course-modified {
+  padding: 16px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  border: 1px solid map-get($colors, dark_orange);
+  border-radius: 2px;
+  background-color: map-get($colors, ligth_yellow);
+  color: $gray-800;
+  font-size: 12px;
+
+  .alert {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    margin-right: 8px;
+  }
 }

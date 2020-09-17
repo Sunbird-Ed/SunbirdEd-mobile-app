@@ -8,7 +8,7 @@ import {
 } from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, PopoverController } from '@ionic/angular';
+import { Events } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import {
   PageAssembleService,
@@ -46,14 +46,10 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
-import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
-import { ExternalChannelOverrideListener } from './external-channel-override-interface';
-import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
-import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
@@ -63,9 +59,7 @@ import { Location } from '@angular/common';
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedPayloadUrl: any;
 
-  private _isDelegateReady = false;
   private isOnboardingCompleted = false;
-  private loginPopup: any;
   private currentAppVersionCode: number;
   private progressLoaderId: string;
   private childContent;
@@ -74,7 +68,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
-    this._isDelegateReady = val;
     if (val && this.savedPayloadUrl) {
       this.handleDeeplink(this.savedPayloadUrl);
       this.savedPayloadUrl = null;
@@ -99,12 +92,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private router: Router,
     private appVersion: AppVersion,
     private utilityService: UtilityService,
-    private popoverCtrl: PopoverController,
     private loginHandlerService: LoginHandlerService,
     public translateService: TranslateService,
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
-    private container: ContainerService,
     private sbProgressLoader: SbProgressLoader,
     private location: Location
   ) {
@@ -208,7 +199,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (!!urlRegexMatch) {
         if (!matchedDeeplinkConfig ||
           (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
-          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
+          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
+            && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
           matchedDeeplinkConfig = config;
           urlMatch = urlRegexMatch;
         }
@@ -503,7 +495,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async handleNavigation(payloadUrl, identifier, dialCode, route) {
-
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();
@@ -548,6 +539,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
         this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
       } else if (content) {
+        if (!route) {
+          route = this.getRouterPath(content);
+        }
         if (content.mimeType === MimeType.COLLECTION) {
           this.navigateToCollection(identifier, content, payloadUrl, route);
         } else {
@@ -572,6 +566,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.closeProgressLoader();
       console.log(err);
     }
+  }
+
+  private getRouterPath(content) {
+    let route;
+    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      route = RouterLinks.ENROLLED_COURSE_DETAILS;
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      route = RouterLinks.COLLECTION_DETAIL_ETB;
+    } else {
+      route = RouterLinks.CONTENT_DETAILS;
+    }
+    return route;
   }
 
   private async navigateQuizContent(identifier, content, isFromLink, payloadUrl) {
@@ -627,34 +633,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     );
   }
 
-  private async showLoginWithoutOnboardingPopup(quizId) {
-    this.appGlobalServices.resetSavedQuizContent();
-    this.loginPopup = await this.popoverCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT'),
-        metaInfo: this.commonUtilService.translateMessage('QUIZ_CONTENTS_ONLY_REGISTERED_USERS'),
-        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-        isNotShowCloseIcon: true,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
-            btnClass: 'popover-color',
-            isInternetNeededMessage: 'NEED_INTERNET_FOR_DEEPLINK_CONTENT'
-          }
-        ]
-      },
-      cssClass: 'sb-popover info',
-    });
-    await this.loginPopup.present();
-
-    const { data } = await this.loginPopup.onDidDismiss();
-    if (data && data.canDelete) {
-      this.loginHandlerService.signIn();
-      this.appGlobalServices.limitedShareQuizContent = quizId;
-    }
-    this.loginPopup = null;
-  }
   // This method is called only when a deeplink is clicked before Onboarding is not completed
   eventToSetDefaultOnboardingData(): void {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
@@ -765,28 +743,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 });
             }
           }
-        } else if (content.contentType.toLowerCase() === ContentType.TEXTBOOK.toLowerCase()) {
-          this.setTabsRoot();
-          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-            {
-              state: {
-                content,
-                deeplinkContent: this.childContent,
-                corRelation: this.getCorrelationList(payloadUrl)
-              }
-            });
         } else {
           this.setTabsRoot();
           this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.childContent,
               depth: 1,
-              // contentState,  // check in chapter detail page
               isChildContent: true,
-              // corRelation: this.corRelationList,
-              corRelation: undefined,
+              corRelation: this.getCorrelationList(payloadUrl),
               isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-              // course: this.updatedCourseCardData, // check in chapter detail page
               isOnboardingSkipped
             }
           });

@@ -62,6 +62,8 @@
   
     .sb-popover-items{
         padding-bottom: 0 !important;
+        background-color: map-get($colors, white);
+        border-radius: 5px;
     }
   
     .sb-popover-footer{
@@ -94,10 +96,4 @@
       --padding-bottom: 5%;
       --background: transparent;
     }
-
-    .sb-popover-items{
-      background-color: map-get($colors, white);
-      border-radius: 5px;
-    }
-        
   }

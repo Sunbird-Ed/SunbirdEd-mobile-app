@@ -19,11 +19,7 @@ ion-content {
       animation-duration: 0.9s;
     }
     @include rtl {
-
       transform: rotate(180deg);
-    }
-    @include ltr {
-
     }
   }
   @keyframes dropDown {

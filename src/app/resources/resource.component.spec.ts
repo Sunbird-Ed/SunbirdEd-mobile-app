@@ -1,5 +1,4 @@
 import { ResourcesComponent } from '@app/app/resources/resources.component';
-import { Container } from 'inversify';
 import {
     ContentEventType,
     ContentSearchCriteria,
@@ -16,7 +15,6 @@ import {
     ProfileType,
     SearchType,
     SharedPreferences,
-    TelemetryObject
 } from 'sunbird-sdk';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
@@ -46,7 +44,6 @@ import { ImpressionType } from '../../services/telemetry-constants';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
-    const container = new Container();
 
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({}))
@@ -155,7 +152,6 @@ describe('ResourcesComponent', () => {
         // arrange
         mockQRScanner.startScanner = jest.fn();
         jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
-        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'swipeDownToRefresh').mockImplementation();
@@ -200,7 +196,6 @@ describe('ResourcesComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockEvents.subscribe).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             done();
@@ -469,13 +464,11 @@ describe('ResourcesComponent', () => {
 
     it('should call relevant methods inside when ngOnInit() called at the beginning', (done) => {
         // arrange
-        resourcesComponent.appliedFilter = 'sample_filter';
         mockSharedPreference.getBoolean = jest.fn(() => of(false));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
-        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         const data = jest.fn((fn) => fn());
         mockCommonUtilService.networkAvailability$ = {
             subscribe: data
@@ -485,11 +478,6 @@ describe('ResourcesComponent', () => {
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
-            }
-            if (resourcesComponent.appliedFilter) {
-            }
-            if (topic === 'event:update_recently_viewed') {
-                fn();
             }
         });
         resourcesComponent.storyAndWorksheets = [{
@@ -512,8 +500,6 @@ describe('ResourcesComponent', () => {
             );
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
@@ -523,12 +509,10 @@ describe('ResourcesComponent', () => {
 
     it('should appIcon is not avilable', (done) => {
         // arrange
-        resourcesComponent.appliedFilter = 'sample_filter';
         mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
-        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         const data = jest.fn((fn) => fn());
         mockCommonUtilService.networkAvailability$ = {
             subscribe: data
@@ -538,11 +522,6 @@ describe('ResourcesComponent', () => {
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
-            }
-            if (resourcesComponent.appliedFilter) {
-            }
-            if (topic === 'event:update_recently_viewed') {
-                fn();
             }
         });
         resourcesComponent.storyAndWorksheets = [{
@@ -560,8 +539,6 @@ describe('ResourcesComponent', () => {
             expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
@@ -571,12 +548,10 @@ describe('ResourcesComponent', () => {
 
     it('should appIcon is not avilable', (done) => {
         // arrange
-        resourcesComponent.appliedFilter = 'sample_filter';
         mockSharedPreference.getBoolean = jest.fn(() => of(true));
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
-        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         const data = jest.fn((fn) => fn());
         mockCommonUtilService.networkAvailability$ = {
             subscribe: data
@@ -586,11 +561,6 @@ describe('ResourcesComponent', () => {
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
-            }
-            if (resourcesComponent.appliedFilter) {
-            }
-            if (topic === 'event:update_recently_viewed') {
-                fn();
             }
         });
         resourcesComponent.storyAndWorksheets = [{
@@ -609,8 +579,6 @@ describe('ResourcesComponent', () => {
             expect(mockSharedPreference.getBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN);
             expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
             expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
-            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
             expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
@@ -713,14 +681,12 @@ describe('ResourcesComponent', () => {
             };
             resourcesComponent.guestUser = true;
             const profileType = jest.spyOn(mockAppGlobalService, 'getGuestUserType').mockReturnValue(ProfileType.TEACHER);
-            jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
             jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
             jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue(mockGuestProfile);
             // act
             resourcesComponent.getCurrentUser();
             // assert
             expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
         });
 
@@ -739,21 +705,18 @@ describe('ResourcesComponent', () => {
             };
             resourcesComponent.guestUser = true;
             const profileType = jest.spyOn(mockAppGlobalService, 'getGuestUserType').mockReturnValue(ProfileType.STUDENT);
-            jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
             jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
             jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue(mockGuestProfile);
             // act
             resourcesComponent.getCurrentUser();
             // assert
             expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
         });
 
         it('should assign audiance filter as loggedIn if current user is loggedIn', () => {
             // arrange
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
             jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
             jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockImplementation();
             // act
@@ -761,31 +724,7 @@ describe('ResourcesComponent', () => {
             // assert
             expect(resourcesComponent.audienceFilter).toEqual(['instructor', 'learner']);
             expect(resourcesComponent.getLocalContent).toHaveBeenCalled();
-            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalledWith();
-        });
-    });
-
-    describe('NavigateToViewMoreActivity from various pages', () => {
-        it('should navigate to viewMoreActivity when user clicked from savedResources', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            // act
-            resourcesComponent.navigateToViewMoreContentsPage(resourcesComponent.savedResourcesSection);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockRouter.navigate).toHaveBeenCalled();
-        });
-        it('should navigate to ViewMoreAcitvity when user clicked on from recentlyViewed', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-            // act
-            resourcesComponent.navigateToViewMoreContentsPage(resourcesComponent.recentViewedSection);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockRouter.navigate).toHaveBeenCalled();
         });
     });
 
@@ -1033,84 +972,6 @@ describe('ResourcesComponent', () => {
 
     });
 
-    it('should call recentlyViewedCardClick method and perform navigation to collection details page if mimetype is collection', () => {
-        // arrange
-        const event = {
-            data: {
-                identifier: 'do_123456789',
-                mimeType: 'application/vnd.ekstep.content-collection',
-                contentType: 'sample-content-type'
-            }
-        };
-        const course = {
-            isAvailableLocally: true,
-            mimeType: 'application/vnd.ekstep.content-collection'
-        };
-
-        const telemetryObject: Partial<TelemetryObject> = {
-            id: 'do_123456789',
-            type: 'sample-content-type',
-            version: ''
-        };
-        const values = {
-            sectionName: 'Recently Viewed',
-            positionClicked: undefined
-        };
-        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.recentlyViewedCardClick(event, course);
-        // assert
-        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            'TOUCH',
-            'content-clicked',
-            'home',
-            'library',
-            telemetryObject,
-            values
-        );
-    });
-
-    it('should call recentlyViewedCardClick method and perform navigation to content details page if mimetype is non collection', () => {
-        // arrange
-        const event = {
-            data: {
-                identifier: 'do_123456789',
-                mimeType: 'application/vnd.ekstep.content-collection',
-                contentType: 'sample-content-type'
-            }
-        };
-        const course = {
-            isAvailableLocally: true,
-            mimeType: 'vide0/mp4'
-        };
-
-        const telemetryObject: Partial<TelemetryObject> = {
-            id: 'do_123456789',
-            type: 'sample-content-type',
-            version: ''
-        };
-        const values = {
-            sectionName: 'Recently Viewed',
-            positionClicked: undefined
-        };
-        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.recentlyViewedCardClick(event, course);
-        // assert
-        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            'TOUCH',
-            'content-clicked',
-            'home',
-            'library',
-            telemetryObject,
-            values
-        );
-    });
-
     it('should check for subscription and unsubscribe all those events on ngOnDestroy()', () => {
         // arrange
         resourcesComponent.networkSubscription = true;
@@ -1132,7 +993,6 @@ describe('ResourcesComponent', () => {
             type: ContentEventType.IMPORT_COMPLETED,
 
         }));
-        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getLocalContent').mockImplementation();
         // act
         resourcesComponent.subscribeSdkEvent();

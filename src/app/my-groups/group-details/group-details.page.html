@@ -42,7 +42,7 @@
           <div class="gd-add-member-container">
             <div *ngIf="loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
               <span class="gd-add-member-icon">
-                <img src="assets/imgs/ic_person_add_white.svg">
+                <img src="assets/imgs/ic_person_add_white.svg" alt="">
               </span>
               <span class="gd-large-text">
                 {{'ADD_MEMBER' | translate}}
@@ -105,12 +105,6 @@
             </sb-course-card>
           </div>
         </div>
-
-        <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
-          (click)="openCourseDetails(course)"></sb-course-card> -->
-        <!-- <div *ngFor="let item of [0,1,2,3,4]" class="mb-8 mt-8">
-        <sb-course-card [isLoading]="true"></sb-course-card>
-      </div> -->
       </div>
     </div>
   </div>

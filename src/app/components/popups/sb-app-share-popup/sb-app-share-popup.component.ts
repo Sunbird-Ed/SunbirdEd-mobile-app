@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { DeviceInfo } from 'sunbird-sdk';
 import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '@app/services';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import {ShareMode, ShareItemType, RouterLinks} from '@app/app/app.constant';
+import {ShareMode, ShareItemType} from '@app/app/app.constant';
 import {AndroidPermissionsService} from '../../../../services/android-permissions/android-permissions.service';
 import {Router} from '@angular/router';
 import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';

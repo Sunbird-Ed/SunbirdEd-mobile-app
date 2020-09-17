@@ -1,6 +1,12 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
-import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { IonContent as ContentView, Events, ToastController, MenuController, PopoverController, IonRefresher } from '@ionic/angular';
+import {
+  Component, OnInit, AfterViewInit, Inject, NgZone,
+  ViewChild, OnDestroy, ChangeDetectorRef
+} from '@angular/core';
+import {
+  IonContent as ContentView, Events, ToastController,
+  MenuController, PopoverController, IonRefresher
+} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,16 +43,13 @@ import {
 
 import {
   AudienceFilter,
-  CardSectionName,
   ContentCard,
   ContentType,
   PreferenceKey,
-  ViewMore,
   Search,
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
-  MimeType,
   EventTopics,
   ExploreConstants,
   FormConfigSubcategories,
@@ -120,7 +123,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedValue: Array<string> = [];
   guestUser = false;
   showSignInCard = false;
-  recentlyViewedResources: Array<any>;
   userId: string;
   showLoader = false;
 
@@ -145,15 +147,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   searchApiLoader = true;
   isOnBoardingCardCompleted = false;
   public source = PageId.LIBRARY;
-  resourceFilter: any;
-  appliedFilter: any;
-  filterIcon = './assets/imgs/ic_action_filter.png';
   selectedLanguage = 'en';
   audienceFilter = [];
   profile: Profile;
   appLabel: string;
   mode = 'soft';
-  isFilterApplied = false;
   pageFilterCallBack: PageFilterCallback;
   getGroupByPageReq: ContentSearchCriteria = {
     searchType: SearchType.SEARCH
@@ -162,8 +160,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   layoutName = 'textbook';
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   layoutSavedContent = ContentCard.LAYOUT_SAVED_CONTENT;
-  savedResourcesSection = CardSectionName.SECTION_SAVED_RESOURCES;
-  recentViewedSection = CardSectionName.SECTION_RECENT_RESOURCES;
   categoryGradeLevels: any;
   categoryMediums: any;
   current_index: any;
@@ -283,7 +279,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.events.subscribe('savedResources:update', (res) => {
       if (res && res.update) {
-        this.loadRecentlyViewedContent(true);
         this.getLocalContent();
       }
     });
@@ -328,20 +323,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       this.scrollToTop();
-      if (data.trim().toUpperCase() === 'LIBRARY') {
-        if (this.appliedFilter) {
-          this.filterIcon = './assets/imgs/ic_action_filter.png';
-          this.resourceFilter = undefined;
-          this.appliedFilter = undefined;
-          this.isFilterApplied = false;
-          this.getPopularContent();
-        }
-      } else if (data === '') {
+      if (data === '') {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
-    });
-    this.events.subscribe('event:update_recently_viewed', () => {
-      this.loadRecentlyViewedContent();
     });
   }
 
@@ -399,91 +383,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.profile = this.appGlobalService.getCurrentUser();
-    this.loadRecentlyViewedContent();
     this.getLocalContent();
-  }
-
-  navigateToViewMoreContentsPage(section: string) {
-    const values = {};
-    let headerTitle;
-    let pageName;
-    let showDownloadOnlyToggleBtn;
-    const uid = this.profile ? this.profile.uid : undefined;
-    if (section === this.savedResourcesSection) {
-      values['SectionName'] = this.savedResourcesSection;
-      headerTitle = 'SAVED_RESOURCES';
-      pageName = ViewMore.PAGE_RESOURCE_SAVED;
-    } else if (section === this.recentViewedSection) {
-      values['SectionName'] = this.recentViewedSection;
-      headerTitle = 'RECENTLY_VIEWED';
-      pageName = ViewMore.PAGE_RESOURCE_RECENTLY_VIEWED;
-      showDownloadOnlyToggleBtn = true;
-    }
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.VIEWALL_CLICKED,
-      Environment.HOME,
-      this.source, undefined,
-      values);
-
-    const resourcesParams: NavigationExtras = {
-      state: {
-        headerTitle,
-        pageName,
-        showDownloadOnlyToggle: showDownloadOnlyToggleBtn,
-        uid,
-        audience: this.audienceFilter,
-      }
-    };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
-  }
-
-  /**
- * Load/get recently viewed content
- */
-  // hide recently viewed as part of school@home
-  async loadRecentlyViewedContent(hideLoaderFlag?: boolean) {
-    // this.recentlyViewedResources = [];
-    // if (!hideLoaderFlag) {
-    //   this.showLoader = true;
-    // }
-    // const requestParams: ContentRequest = {
-    //   uid: this.profile ? this.profile.uid : undefined,
-    //   contentTypes: [],
-    //   audience: this.audienceFilter,
-    //   recentlyViewed: true,
-    //   limit: 20
-    // };
-
-    // this.contentService.getContents(requestParams).toPromise()
-    //   .then(data => {
-    //     data.forEach((value) => {
-    //       value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
-    //       if (value.contentData.appIcon) {
-    //         if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
-    //           if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-    //             value.contentData.appIcon = value.contentData.appIcon;
-    //           } else {
-    //             value.contentData.appIcon = this.defaultImg;
-    //           }
-    //         } else if (value.basePath) {
-    //           value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
-    //         }
-    //       }
-    //     });
-    //     this.ngZone.run(() => {
-    //       this.recentlyViewedResources = data;
-    //       if (!hideLoaderFlag) {
-    //         this.showLoader = false;
-    //       }
-    //     });
-    //   })
-    //   .catch(() => {
-    //     this.ngZone.run(() => {
-    //       if (!hideLoaderFlag) {
-    //         this.showLoader = false;
-    //       }
-    //     });
-    //   });
   }
 
   /**
@@ -501,8 +401,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.mode = contentSearchCriteria.mode;
 
-    if (this.profile && !this.isFilterApplied) {
-
+    if (this.profile) {
       if (this.profile.board && this.profile.board.length) {
         contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
           contentSearchCriteria.board, 'board');
@@ -811,7 +710,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
       if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-        this.loadRecentlyViewedContent();
         this.getLocalContent();
       }
     }) as any;
@@ -1071,7 +969,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
-          content: items,
+          contentList: items,
           subjectName: subject
         }
       });
@@ -1153,44 +1051,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.contentView.scrollToTop();
   }
 
-  async requestMoreContent() {
-
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.LET_US_KNOW_CLICKED,
-      Environment.LIBRARY,
-      PageId.LIBRARY);
-
-    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
-    formConfig[0]['default'] = FormConfigCategories.CONTENT;
-    formConfig[0].templateOptions['hidden'] = true;
-    formConfig[1]['default'] = FormConfigSubcategories.CONTENT_AVAILABILITY;
-    formConfig[1].templateOptions['hidden'] = true;
-    this.profile && this.profile.syllabus ?
-    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][0]['default'] = { code: this.profile.syllabus[0] } : null;
-    this.profile && this.profile.medium ?
-    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][1]['default'] = { code: this.profile.medium[0] } : null;
-    this.profile && this.profile.grade ?
-    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][2]['default'] = { code: this.profile.grade[0] } : null;
-    this.profile && this.profile.subject ?
-    formConfig[1].children[FormConfigSubcategories.CONTENT_AVAILABILITY][3]['default'] = { code: this.profile.subject[0] } : null;
-    this.appGlobalService.formConfig = formConfig;
-    this.router.navigate([`/${RouterLinks.FAQ_REPORT_ISSUE}`],
-    {
-      state: {
-        showHeader: true,
-        corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-        formCnotext: FormConfigSubcategories.CONTENT_AVAILABILITY,
-        data: {
-          constants: {
-            reportIssue: 'Content Request'
-          }
-        }
-      }
-    });
-
-  }
-
   async exploreOtherContents() {
     const navigationExtras = {
       state: {
@@ -1218,6 +1078,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       undefined, undefined, corRelationList,
       ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
+
   async getLocalContent() {
     this.locallyDownloadResources = [];
 
@@ -1238,45 +1099,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.frameworkService.getActiveChannelId().subscribe((data) => {
       this.channelId = data;
     });
-  }
-
-  recentlyViewedCardClick(event, course) {
-    const item = event.data;
-    const index = event.index;
-
-    const identifier = item.contentId || item.identifier;
-
-    const type = this.telemetryGeneratorService.isCollection(item.mimeType) ?
-      item.contentType : ContentType.RESOURCE;
-
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
-    const values = {};
-    values['sectionName'] = this.recentViewedSection;
-    values['positionClicked'] = index;
-
-    if (!course.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
-      return false;
-    }
-
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CONTENT_CLICKED,
-      'home',
-      'library',
-      telemetryObject,
-      values);
-    if (course.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state: {
-          content: course
-        }
-      });
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: course.contentData
-        }
-      });
-    }
   }
 
   private initNetworkDetection() {
@@ -1338,7 +1160,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onCourseCardClick(event) {
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({ id: event.data.title, type: CorReleationDataType.SUBJECT });
+    corRelationList.push({ id: event.data.title || '', type: CorReleationDataType.SUBJECT });
     corRelationList.push({ id: (event.data.contents.length).toString(), type: CorReleationDataType.COURSE_COUNT });
 
     if (event.data.contents && event.data.contents.length > 1) {

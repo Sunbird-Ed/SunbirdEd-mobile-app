@@ -1,7 +1,16 @@
-import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
+import { Component, Inject, ChangeDetectorRef, NgZone, ViewChild } from '@angular/core';
 import {
-  LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult, CachedItemRequestSourceFrom, CorrelationData, AuditState
+  LocationSearchCriteria,
+  ProfileService,
+  SharedPreferences,
+  Profile,
+  DeviceRegisterRequest,
+  DeviceRegisterService,
+  DeviceInfo,
+  LocationSearchResult,
+  CachedItemRequestSourceFrom,
+  CorrelationData,
+  AuditState
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig, RegexPatterns } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -57,6 +66,7 @@ export class DistrictMappingPage {
   get showStates(): boolean {
     return this._showStates;
   }
+
   set showStates(value: boolean) {
     this._showStates = value;
 
@@ -141,15 +151,16 @@ export class DistrictMappingPage {
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
-        tap(() => this.changeDetectionRef.detectChanges())
+      tap(() => this.changeDetectionRef.detectChanges())
     );
   }
+
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
     this.districtCode = '';
     this.isLocationChanged = true;
-    if (this.isAutoPopulated) { // TODO: Do we need this if.
+    if (this.isAutoPopulated) {
       this.isPopulatedLocationChanged = true;
     }
     if (this.isPopulatedLocationChanged) {
@@ -209,19 +220,19 @@ export class DistrictMappingPage {
       this.getEnvironment()
     );
     this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW,
-        '',
-        PageId.DISTRICT_MAPPING,
-        this.getEnvironment(), '', '', '', undefined,
-        featureIdMap.location.LOCATION_CAPTURE);
+      ImpressionType.VIEW,
+      '',
+      PageId.DISTRICT_MAPPING,
+      this.getEnvironment(), '', '', '', undefined,
+      featureIdMap.location.LOCATION_CAPTURE);
 
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
     const correlationList: Array<CorrelationData> = [];
     if (this.stateName) {
-      correlationList.push({ id: this.stateName, type: CorReleationDataType.STATE });
-      correlationList.push({ id: this.districtName, type: CorReleationDataType.DISTRICT });
+      correlationList.push({ id: this.stateName || '', type: CorReleationDataType.STATE });
+      correlationList.push({ id: this.districtName || '', type: CorReleationDataType.DISTRICT });
     }
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.LOCATION,
@@ -275,7 +286,7 @@ export class DistrictMappingPage {
 
   ionViewWillLeave(): void {
     if (this.backButtonFunc) {
-    this.backButtonFunc.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -283,8 +294,8 @@ export class DistrictMappingPage {
   // validates the name input feild
   validateName() {
     if (this.name) {
-     // return !Boolean(this.name.match(/^[a-zA-Z0-9/./s]*$/));
-     return false;
+      // return !Boolean(this.name.match(/^[a-zA-Z0-9/./s]*$/));
+      return false;
     }
   }
 
@@ -384,8 +395,8 @@ export class DistrictMappingPage {
       isLocationUpdated = true;
     }
     const corReletionList: CorrelationData[] = [];
-    corReletionList.push({id: this.stateName, type: CorReleationDataType.STATE}),
-    corReletionList.push({id: this.districtName, type: CorReleationDataType.DISTRICT});
+    corReletionList.push({ id: this.stateName, type: CorReleationDataType.STATE }),
+      corReletionList.push({ id: this.districtName, type: CorReleationDataType.DISTRICT });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       this.getEnvironment(),
@@ -573,7 +584,7 @@ export class DistrictMappingPage {
   cancelEvent(category?: string) {
     const correlationList: Array<CorrelationData> = [];
     /* New Telemetry */
-    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       this.getEnvironment(),
@@ -611,9 +622,11 @@ export class DistrictMappingPage {
   }
 
   generateTelemetryForCategorySelect(value, isState) {
-    const corRelationList: CorrelationData[] = [{id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI}];
-    corRelationList.push({id: value,
-      type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT});
+    const corRelationList: CorrelationData[] = [{ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI }];
+    corRelationList.push({
+      id: value,
+      type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT
+    });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       this.getEnvironment(),

@@ -94,6 +94,7 @@ describe('ContentDeleteHandler', () => {
             }), 0);
         });
 
+
         it('should  show CONTENT_DELETE_FAILED TOAST if content not found', (done) => {
             // arrange
             mockContentService.deleteContent = jest.fn(() => of({ status: -1 } as any));
@@ -151,5 +152,40 @@ describe('ContentDeleteHandler', () => {
                 done();
             }, 0);
         });
+
+        it('should show Delete Popup if sizeOnDevice is available', () => {
+            // arrange
+            content['sizeOnDevice'] = 1000;
+            jest.spyOn(contentDeleteHandler, 'deleteContent').mockImplementation();
+            // act
+            contentDeleteHandler.showContentDeletePopup(content, true, { telemetryObject } as ContentInfo, 'content-detail');
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, 'content-detail',
+                PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
+                Environment.HOME,
+                telemetryObject.id,
+                telemetryObject.type,
+                telemetryObject.version,
+                undefined,
+                undefined);
+        });
+
+        it('should not invoke deleteCOntent if popup doesnot send canDelete', () => {
+            // arrange
+            content['sizeOnDevice'] = 1000;
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: {} }))
+            } as any)));
+            const deleteContentMock = jest.spyOn(contentDeleteHandler, 'deleteContent');
+            deleteContentMock .mockImplementation();
+            // act
+            contentDeleteHandler.showContentDeletePopup(content, true, { telemetryObject } as ContentInfo, 'content-detail');
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            expect(deleteContentMock).not.toHaveBeenCalled();
+        });
+
     });
 });

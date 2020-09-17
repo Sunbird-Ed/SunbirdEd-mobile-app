@@ -78,7 +78,8 @@ export class Search {
         'gradeLevel',
         'subject',
         'medium',
-        'resourceType'
+        'resourceType',
+        'publisher'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -121,7 +122,8 @@ export class ProfileConstants {
         'topics',
         'organisations',
         'roles',
-        'locations'
+        'locations',
+        'declarations'
     ];
 
     public static readonly CONTACT_TYPE_PHONE = 'phone';
@@ -189,8 +191,6 @@ export class ShareUrl {
 }
 
 export class MenuOverflow {
-    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
     public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP'];
     public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_LEAVE_GROUP'];
@@ -198,11 +198,6 @@ export class MenuOverflow {
     public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_ACTIVITY_ADMIN = ['MENU_REMOVE_ACTIVITY'];
-}
-
-export class SideMenu {
-    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
 }
 
 export class FormConstant {
@@ -355,16 +350,9 @@ export class ContentCard {
     public static readonly LAYOUT_SAVED_CONTENT = 'SavedContent';
 }
 
-export class CardSectionName {
-    public static readonly SECTION_SAVED_RESOURCES = 'Saved Resources';
-    public static readonly SECTION_RECENT_RESOURCES = 'Recently Viewed';
-}
-
 export class ViewMore {
     public static readonly PAGE_COURSE_ENROLLED = 'course.EnrolledCourses';
     public static readonly PAGE_COURSE_POPULAR = 'course.PopularContent';
-    public static readonly PAGE_RESOURCE_SAVED = 'resource.SavedResources';
-    public static readonly PAGE_RESOURCE_RECENTLY_VIEWED = 'resource.RecentlyViewed';
 }
 
 export class Location {
@@ -447,14 +435,6 @@ export class RouterLinks {
     public static readonly TABS = 'tabs';
     public static readonly TABS_COURSE = 'tabs/courses';
 
-    // Users and Groups Routs
-    public static readonly USER_AND_GROUPS = 'user-and-groups';
-    public static readonly ADD_OR_REMOVE_GROUP_USER = 'add-or-remove-group-user';
-    public static readonly GROUP_DETAILS = 'group-details';
-    public static readonly CREATE_GROUP = 'create-group';
-    public static readonly GROUP_MEMBERS = 'group-members';
-    public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
-
     // Profile Routs
     public static readonly PROFILE = 'profile';
     public static readonly GUEST_EDIT = 'guest-edit';
@@ -483,12 +463,6 @@ export class RouterLinks {
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
-
-    // Reports Routs
-    public static readonly REPORTS_LIST = 'reports-list';
-    public static readonly REPORTS = 'reports';
-    public static readonly GROUP_REPORT = 'group-report';
-    public static readonly USER_REPORT = 'user-report';
 
     // Player Routs
     public static readonly PLAYER = 'player';
@@ -562,15 +536,13 @@ export class RouterLinks {
     public static readonly MY_GROUP_DETAILS = 'group-details';
     public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
     public static readonly ACTIVITY_DETAILS = 'activity-details';
+    public static readonly ACTIVITY_TOC = 'activity-toc';
+    public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
-}
-
-export class LibraryCardTypes {
-    public static readonly QRCODE_RESULT = 'qrcode_result';
 }
 
 export class ShareItemType {

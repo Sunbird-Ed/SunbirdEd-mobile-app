@@ -186,7 +186,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
-      });
+        console.log('AppName', this.appName);
+      }
+    );
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
@@ -370,23 +372,33 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
   }
 
+  extractPrepareFieldStr(field) {
+    if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory[field]) {
+      if (typeof this.formValues.children.subcategory[field] === 'object' && this.formValues.children.subcategory[field].length) {
+        return this.getStringFromArray(this.formValues.children.subcategory[field]);
+      } else if(this.formValues.children.subcategory[field].name) {
+        return this.formValues.children.subcategory[field].name
+      } else if (typeof this.formValues.children.subcategory[field] === 'string') {
+        return this.formValues.children.subcategory[field];
+      }
+      return undefined;
+    } else if (this.profile) {
+    }
+  }
+
   async openExploreBooksComponent() {
     // generate telemetry and send class, medium and subject data to next page
+    const props = {
+      boardList: this.extractPrepareFieldStr('borad'),
+      mediumList: this.extractPrepareFieldStr('medium'),
+      geadeList: this.extractPrepareFieldStr('grade'),
+      subjectList: this.extractPrepareFieldStr('subject'),
+      relevantTerms: this.relevantTerms,
+      curLang: this.translate.currentLang
+    }
     const sortOptionsModal = await this.modalCtrl.create({
       component: ExploreBooksSortComponent,
-      componentProps:
-      {
-        boardList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.board) ?
-          [this.formValues.children.subcategory.board.name] : undefined,
-        mediumList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.medium) ?
-          [this.formValues.children.subcategory.medium.name] : undefined,
-        geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
-          [this.formValues.children.subcategory.grade.name] : undefined,
-        subjectList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.subject) ?
-          [this.formValues.children.subcategory.subject.name] : undefined,
-        relevantTerms: this.relevantTerms,
-        curLang: this.translate.currentLang
-      }
+      componentProps: props
     });
     this.location.back();
     await sortOptionsModal.present();
@@ -421,12 +433,26 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
       window.parent.postMessage(this.value, '*');
     }
+    setTimeout(() => {
+      this.location.back();
+      this.location.back();
+    }, 3000);
   }
 
   async showContactBoard() {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
+    let boardCode: string;
+    if (this.formValues.children &&
+    this.formValues.children.subcategory &&
+    this.formValues.children.subcategory.board &&
+    this.formValues.children.subcategory.board.code) {
+      boardCode = this.formValues.children.subcategory.board.code;
+    } else if (this.profile && this.profile.board && this.profile.board.length) {
+      boardCode = this.profile.board[0];
+    }
+
     stateContactList.forEach(element => {
-      if (this.formValues.children.subcategory.board.code === element.id) {
+      if (boardCode === element.id) {
         if (this.isFormValid && element.contactinfo && element.contactinfo.number) {
           this.boardContact = element;
           this.showSupportContact = true;
@@ -434,21 +460,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
     });
     this.initiateEmailAction();
-  }
-
-  countChar(val) {
-    const maxLength = 1000;
-    this.len = val.length;
-    if (this.len === 0) {
-      this.charEntered = false;
-    }
-    if (this.len > 0 && this.len <= 1000) {
-      this.charEntered = true;
-      this.charsLeft = maxLength - this.len;
-    }
-    if (val.length > 1000) {
-      this.emailContent = this.emailContent.slice(0, 1000);
-    }
   }
 
   prepareTelemetryCorrelation(): Array<CorrelationData> {
@@ -462,20 +473,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
-      this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('board') || '', type: CorReleationDataType.BOARD });
       // Medium
-      this.formValues.children.subcategory.medium && this.formValues.children.subcategory.medium.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('medium') || '', type: CorReleationDataType.MEDIUM });
       // Grade
-      this.formValues.children.subcategory.grade && this.formValues.children.subcategory.grade.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('grade') || '', type: CorReleationDataType.CLASS });
       // Subject
-      this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
-        correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('subject') || '', type: CorReleationDataType.SUBJECT });
+      // Content Type
+      correlationlist.push({ id: this.extractPrepareFieldStr('contenttype') || '', type: CorReleationDataType.CONTENT_TYPE });
       // Content name
-      this.formValues.children.subcategory.contentname ?
-        correlationlist.push({ id: this.formValues.children.subcategory.contentname, type: CorReleationDataType.CONTENT_NAME }) : undefined;
+      correlationlist.push({ id: this.extractPrepareFieldStr('contentname') || '', type: CorReleationDataType.CONTENT_NAME });
     }
 
     return correlationlist ? correlationlist : undefined;
@@ -495,11 +503,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       that.zone.run(async () => {
         if (syncStat.error) {
           await loader.dismiss();
-          console.error('Telemetry Data Sync Error: ', syncStat);
           return;
         } else if (!syncStat.syncedEventCount) {
           await loader.dismiss();
-          console.error('Telemetry Data Sync Error: ', syncStat);
           return;
         }
 
@@ -824,10 +830,21 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }
   }
 
+  getStringFromArray(arr) {
+    return arr.reduce((acc, ele) => {
+      if(!acc) {
+        acc = ele.name ? ele.name : ele;
+      } else {
+        acc += ', ' + (ele.name ? ele.name : ele);
+      }
+      return acc;
+    }, '');
+  }
+
   prepareEmailContent(formValue) {
     this.bmgsString = undefined;
     this.categories = undefined;
-    const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname'];
+    const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname', 'contenttype'];
     const categorykeys = ['category', 'subcategory'];
     let fields = [];
     if (formValue.children.subcategory) {
@@ -838,9 +855,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     bmgskeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(fields, element)) {
         if (!this.bmgsString) {
-          this.bmgsString = fields[element].name;
+          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+            this.bmgsString = this.getStringFromArray(fields[element]);
+          } else {
+            this.bmgsString = fields[element].name ? fields[element].name : fields[element];
+          }
         } else {
-          this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
+          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+            this.bmgsString += ', ' + this.getStringFromArray(fields[element]);
+          } else {
+            this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
+          }
         }
       }
     });

@@ -42,13 +42,14 @@ import {
   ActivePageService,
   FormAndFrameworkUtilService,
   CanvasPlayerService,
-  SplashScreenService
+  SplashScreenService,
+  GroupHandlerService,
+  CollectionService
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
@@ -101,9 +102,6 @@ export const deviceRegisterService = () => {
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
-export const groupServiceDeprecated = () => {
-  return SunbirdSdk.instance.groupServiceDeprecated;
-}
 export const frameworkService = () => {
   return SunbirdSdk.instance.frameworkService;
 };
@@ -121,9 +119,6 @@ export const contentService = () => {
 };
 export const contentFeedbackService = () => {
   return SunbirdSdk.instance.contentFeedbackService;
-};
-export const summarizerService = () => {
-  return SunbirdSdk.instance.summarizerService;
 };
 export const eventsBusService = () => {
   return SunbirdSdk.instance.eventsBusService;
@@ -192,9 +187,6 @@ export function sdkDriverFactory(): any {
     provide: 'GROUP_SERVICE',
     useFactory: groupService
   }, {
-    provide: 'GROUP_SERVICE_DEPRECATED',
-    useFactory: groupServiceDeprecated
-  }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
   }, {
@@ -227,9 +219,6 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'CONTENT_FEEDBACK_SERVICE',
     useFactory: contentFeedbackService
-  }, {
-    provide: 'SUMMARIZER_SERVICE',
-    useFactory: summarizerService
   }, {
     provide: 'EVENTS_BUS_SERVICE',
     useFactory: eventsBusService
@@ -342,6 +331,7 @@ export const sunbirdSdkFactory =
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
           profileApiPath_V2: '/api/user/v2',
+          profileApiPath_V3: '/api/user/v3',
           profileApiPath_V4: '/api/user/v4',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
@@ -432,7 +422,6 @@ declare const sbutility;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    UserAndGroupsPageModule,
     TermsAndConditionsPageModule
   ],
   providers: [
@@ -460,6 +449,7 @@ declare const sbutility;
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
+    CollectionService,
     Device,
     Network,
     AndroidPermissionsService,
@@ -473,6 +463,7 @@ declare const sbutility;
     SplashScreenService,
     ExternalIdVerificationService,
     TextbookTocService,
+    GroupHandlerService,
     NativePageTransitions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),

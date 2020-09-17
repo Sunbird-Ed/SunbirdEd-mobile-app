@@ -11,7 +11,6 @@ import {
   SignInError,
   ServerProfileDetailsRequest,
   SharedPreferences,
-  GroupServiceDeprecated,
   TenantInfoRequest,
   WebviewLoginSessionProvider,
   WebviewSessionProviderConfig
@@ -50,7 +49,6 @@ export class SignInCardComponent implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,
@@ -184,11 +182,6 @@ export class SignInCardComponent implements OnInit {
                 this.profileService.createProfile(profile, ProfileSource.SERVER)
                   .toPromise()
                   .then(() => {
-                    that.groupService.removeActiveGroupSession()
-                    .subscribe(() => {
-                    },
-                      () => {
-                      });
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
                         /* Medatory for login flow

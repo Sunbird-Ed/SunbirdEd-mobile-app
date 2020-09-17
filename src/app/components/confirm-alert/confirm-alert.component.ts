@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 // migration-TODO
 // import { ViewController } from '@ionic/angular';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
@@ -8,7 +8,7 @@ import { Platform, NavParams, PopoverController } from '@ionic/angular';
   templateUrl: './confirm-alert.component.html',
   styleUrls: ['./confirm-alert.component.scss'],
 })
-export class ConfirmAlertComponent implements OnInit {
+export class ConfirmAlertComponent implements OnInit, OnDestroy {
   sbPopoverHeading: any;
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
@@ -44,7 +44,14 @@ export class ConfirmAlertComponent implements OnInit {
   selectOption(canDownload: boolean = false) {
     this.popOverCtrl.dismiss(canDownload);
   }
+
   closePopover() {
     this.popOverCtrl.dismiss();
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 }

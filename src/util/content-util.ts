@@ -147,7 +147,8 @@ export class ContentUtil {
         utmParams[chengeKeyUpperCase.join('')] = value;
       }
     });
-    if (Object.keys(utmParams)) {
+
+    if (Object.keys(utmParams).length) {
       Object.keys(utmParams).map((key) => {
         if (utmParams[key] && !Array.isArray(utmParams[key])) {
           cData.push({ id: utmParams[key], type: key });

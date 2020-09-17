@@ -73,23 +73,12 @@ export enum PageId {
     SETTINGS_DEVICE_TAGS = 'settings-device-tags',
     SETTINGS_SUPPORTS = 'settings-supports',
     SETTINGS_ABOUT_US = 'settings-about-us',
-    USERS_GROUPS = 'users-groups',
     CREATE_USER = 'create-profile',
     CREATE_GROUP = 'create-group',
-    CREATE_GROUP_SYLLABUS_CLASS = 'create-group-syllabusclass',
-    CREATE_GROUP_USER_SELECTION = 'create-group-userselection',
     GROUP_DETAIL = 'group-detail',
     GUEST_PROFILE = 'guest-profile',
     EDIT_USER = 'edit-user',
     EDIT_GROUP = 'edit-group',
-    ADD_GROUP_SYLLABUS_CLASS = 'add-group-syllabusclass',
-    ADD_GROUP_USER_SELECTION = 'add-group-userselection',
-    REMOVE_USERS_FROM_GROUP = 'remove-users-from-group',
-    SHARE_USER_GROUP = 'share-user-group',
-    REPORTS_USER_GROUP = 'reports-users-group',
-    REPORTS_ASSESMENT_CONTENT_LIST = 'assesment-content-list',
-    REPORTS_USER_ASSESMENT_DETAILS = 'user-assesment-details',
-    REPORTS_GROUP_ASSESMENT_DETAILS = 'group-assesment-details',
     ONBOARDING_LANGUAGE_SETTING = 'onboarding-language-setting',
     VIEW_MORE = 'view-more',
     DIAL_CODE_SCAN_RESULT = 'dial-code-scan-result',
@@ -157,7 +146,10 @@ export enum PageId {
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
-    TEXTBOOK_IMPORT = 'textbookimport'
+    TEXTBOOK_IMPORT = 'textbookimport',
+    ACTIVITY_TOC = 'activity-toc',
+    ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
+    PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner'
 }
 
 export enum LogType {
@@ -261,7 +253,6 @@ export enum InteractType {
     SELECT_CARD = 'select-card'
 }
 
-
 export enum InteractSubtype {
     PRINT_PDF_CLICKED = 'print-pdf-clicked',
     MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
@@ -286,7 +277,6 @@ export enum InteractSubtype {
     FILTER_BUTTON_CLICKED = 'filter-button-clicked',
     VIEWALL_CLICKED = 'view-all-clicked',
     BOOK_LIST_END_REACHED = 'book-list-end-reached',
-    RECENTLY_VIEWED_END_REACHED = 'recently-viewed-end-reached',
     SHARE_COURSE_INITIATED = 'share-course-initiated',
     SHARE_CONTENT_INITIATED = 'share-content-initiated',
     SHARE_COURSE_SUCCESS = 'share-course-success',
@@ -318,45 +308,19 @@ export enum InteractSubtype {
     DATA_SYNC_TYPE = 'data-sync-type-clicked',
     RATING_CLICKED = 'rating-clicked',
     RATING_SUBMITTED = 'rating-submitted',
-    CREATE_USER_CLICKED = 'create-user-clicked',
     CREATE_USER_INITIATED = 'create-user-initated',
     EDIT_USER_INITIATED = 'edit-user-initated',
     CREATE_USER_SUCCESS = 'create-user-success',
     EDIT_USER_SUCCESS = 'edit-user-success',
     CREATE_GROUP_CLICKED = 'create-group-clicked',
-    CREATE_GROUP_INITIATED = 'create-group-initated',
-    CREATE_GROUP_SUCCESS = 'create-group-success',
-    EDIT_GROUP_INITIATED = 'edit-group-initated',
     EDIT_GROUP_SUCCESS = 'edit-group-success',
-    SWITCH_USER_CLICKED = 'switch-user-clicked',
-    SWITCH_USER_INITIATE = 'switch-user-initiate',
-    SWITCH_USER_SUCCESS = 'switch-user-success',
-    DELETE_USER_INITIATE = 'delete-user-initiate',
-    DELETE_GROUP_INITIATE = 'delete-group-initiate',
-    DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
-    SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
-    SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
     MY_GROUPS_CLICKED = 'my-groups-clicked',
-    REPORTS_CLICKED = 'reports-clicked',
-    USERS_TAB_CLICKED = 'users-tab-clicked',
-    GROUPS_TAB_CLICKED = 'groups-tab-clicked',
     SUBMIT_CLICKED = 'submit-clicked',
     LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',
-    GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
     MEDIUM_CLICKED = 'medium-clicked',
     REFRESH_CLICKED = 'refresh-clicked',
-    REPORTS_BY_USER_CLICKED = 'byuser-tab-clicked',
-    REPORTS_BY_QUESTION_CLICKED = 'byquestion-tab-clicked',
-    REPORTS_SORTBY_QUESTION_CLICKED = 'sortby-question-clicked',
-    REPORTS_SORTBY_TIME_CLICKED = 'sortby-time-clicked',
-    REPORTS_SORTBY_RESULT_CLICKED = 'sortby-result-clicked',
-    REPORTS_SORTBY_USER_CLICKED = 'sortby-users-clicked',
-    REPORTS_SORTBY_SCORE_CLICKED = 'sortby-score-clicked',
-    REPORTS_SORTBY_MARKS_CLICKED = 'sortby-marks-clicked',
-    REPORTS_SORTBY_ACCURACY_CLICKED = 'sortby-accuracy-clicked',
-    QUESTION_CLICKED = 'question-clicked',
     INITIAL_CONFIG = 'initial-config',
     FILTER_CONFIG = 'filter-config',
     APPLY_FILTER_CLICKED = 'apply-filter-clicked',
@@ -381,7 +345,6 @@ export enum InteractSubtype {
     READ_MORE_CLICKED = 'read-more-clicked',
     READ_LESS_CLICKED = 'read-less-clicked',
     DOWNLOAD_PLAY_CLICKED = 'download-play-clicked',
-    DOWNLOAD_REPORT_CLICKED = 'download-report-clicked',
     PLAY_CLICKED = 'play-clicked',
     EXTRA_INFO = 'extra-info',
     PROFILE_ATTRIBUTE_POPULATION = 'profile-attribute-population',
@@ -583,7 +546,10 @@ export enum CorReleationDataType {
     SCAN = 'Scan',
     SOURCE = 'Source',
     NOTIFICATION_ID = 'NotificationID',
-    /* New Telemetry */
+    CONTENT_TYPE = 'ContentType',
+    /* New Telemetry for Telemetry Structure change
+    * for old telemetry structure please add in above
+    */
     BOARD_COUNT = 'CountBoard',
     MEDIUM_COUNT = 'CountMedium',
     CLASS_COUNT = 'CountClass',
@@ -626,4 +592,3 @@ export enum AuditType {
     TOAST_SEEN = 'toast-seen',
     TNC_DATA_SHARING = 'tnc-data-sharing'
 }
-

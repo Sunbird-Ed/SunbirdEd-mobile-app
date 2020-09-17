@@ -1,0 +1,69 @@
+@import "src/assets/styles/_variables.scss";
+
+.container {
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    background: map-get($colors , light_black );
+    position: fixed;
+    top: 0px;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.header {
+    background-color: $white;
+    width: 331px;
+    height: 279px;
+    margin: 0 auto;
+    border-radius: 10px;
+    text-align: center;
+    padding: 8px;
+}
+
+.h-6per {
+    height: 6%;
+}
+
+.close {
+    float: right;
+    font-weight: bold;
+    height: 30px;
+    width: 30px;
+    margin: 6px 6px 0px 0px;
+}
+
+.h-90cent {
+    height: 80%;
+    margin-top: 36px;
+}
+
+.message {
+    color: $green;
+    font-weight: bolder;    
+}
+
+.m-10 {
+    margin: 10px 0px;
+}
+
+.contact-no {
+    font-weight: 900;
+    color: map-get($colors, deep_blue);
+}
+
+.btn-call {
+    width: 95%;
+    height: 16%;
+    font-size: 16px;
+    color: $white;
+    background: $green;
+    margin-top: 24px;
+}

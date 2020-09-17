@@ -52,13 +52,13 @@
             </span>
         </p>
         <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
-        <div *ngIf="(organisationName !== profile.rootOrgName) && !(isDefaultChannelProfile$ | async) && orgDetails">
+        <div *ngIf="(organisationName !== profile.rootOrgName) && !isDefaultChannelProfile && orgDetails">
             <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
                 {{orgDetails?.district?.name}}</span></div>
             <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}: {{orgDetails?.state?.name}}</span></div>
     </div>
     </div>
-    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !(isDefaultChannelProfile$ | async)">
+    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !isDefaultChannelProfile">
         <div *ngIf="orgDetails">
             <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}: </span>
                 <span>{{orgDetails?.district?.name}}</span></div>
@@ -83,19 +83,14 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <!-- <ion-button shape="round" fill="outline" (click)="navigateToEditSubProfile()" class="short-btn custom-round ion-text-capitalize">
-                <span class="add-size">+</span> {{'ADD_USERS' | translate }}
-            </ion-button>
-            <ion-button shape="round" fill="outline" (click)="showSwitchUserPopup()" class="short-btn custom-round ion-text-capitalize">
-                {{'SWITCH_USER' | translate }}
-            </ion-button> -->
+
             <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
-            <div class="self-declare-teacher-btn" *ngIf = "!profile?.externalIds?.length">
-                <ion-button (click)="openSelfDeclareTeacherForm('add')">
-                    {{'IM_A_TEACHER' | translate}} <span class="question-badge">?</span>
+            <div class="self-declare-btn" *ngIf = "!profile?.declarations?.length">
+                <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
+                    {{'SUBMIT_MY_DETAILS' | translate}}
                 </ion-button>
             </div>
         </div>
@@ -179,47 +174,30 @@
         </div>
     </div>
 
-    <div class="self-declare-teacher-details" *ngIf="selfDeclaredTeacherDetails?.state || selfDeclaredTeacherDetails?.district || selfDeclaredTeacherDetails?.mobile || selfDeclaredTeacherDetails?.teacherId">
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.state">
-            <div>{{'STATE' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.state}}</div>
+    <div class="self-declare-teacher-details" *ngIf="isCustodianOrgId &&  profile?.declarations?.length">
+        <p class="declare-info">{{'MY_DETAILS' | translate | titlecase }}</p>
+
+        <div class="container" *ngIf = "personaTenantDeclaration">
+            <div>{{personaTenantDeclaration}}</div>
         </div>
 
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.district">
-            <div>{{'DISTRICT' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.district}}</div>
+        <div class="container" *ngFor="let details of selfDeclaredDetails">
+            <div>{{ details.name | translate }}:</div>
+            <div class="bolder">{{ details.value }}</div>
         </div>
 
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.mobile">
-            <div>{{'PHONE_PLACEHOLDER' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.mobile}}</div>
-        </div>
-
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.email">
-            <div>{{'EMAIL_ID_PLACEHOLDER' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.email}}</div>
-        </div>
-
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.schoolName">
-            <div>{{'SCHOOL_OR_ORG_NAME' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.schoolName}}</div>
-        </div>
-
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.udiseId">
-            <div>{{'SCHOOL_UDISE_ID_OR_ORG_ID' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.udiseId}}</div>
-        </div>
-
-        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.teacherId">
-            <div>{{'YOUR_ID_FROM_STATE_BOARD_ORG' | translate }}:</div>
-            <div class="bolder">{{selfDeclaredTeacherDetails?.teacherId}}</div>
+        <div *ngIf="selfDeclarationInfo && selfDeclarationInfo.errorType && selfDeclarationInfo.errorType.length">
+            <div class="declared-error-container">
+                <strong class="declared-status">{{selfDeclarationInfo.status}}</strong>
+                <div class="declared-message" *ngFor="let error of selfDeclarationInfo.errorType">
+                    {{error}}
+                </div>
+            </div>
         </div>
 
         <ion-button shape="round" (click)="openSelfDeclareTeacherForm('edit')" class="custom-round">
             {{'UPDATE' | translate }}
         </ion-button>
-
-        <p class="declare-info">{{'SELF_DECLARED_INFO' | translate }}</p>
     </div>
 
     <div class="badges ion-text-center ion-padding-horizontal" *ngIf="profile?.badgeAssertions?.length > 0">
@@ -262,9 +240,9 @@
                             <span *ngIf="certificate.status === 2" class="lighter"> {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
                     </div>
-                    <div class="training-2" *ngIf="certificate?.certificate">
+                    <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
-                            (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
+                            (click)="downloadTrainingCertificate(certificate)">
                             <ion-icon class="view-icon" name="md-eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
@@ -303,7 +281,7 @@
                                             [src]="commonUtilService.convertFileSrc(courseItem?.appIcon)" />
                                     </ion-col>
                                     <ion-col size="9"
-                                        style="margin-bottom: 5px; padding-left: 15px; padding: 0 0 0 15px;">
+                                        style="margin-bottom: 5px; padding: 0 0 0 15px;">
                                         <div style="margin-bottom: 5px;" *ngIf="courseItem.resourceType">
                                             <ion-button fill="outline" class="badge">
                                                 {{courseItem?.resourceType}}

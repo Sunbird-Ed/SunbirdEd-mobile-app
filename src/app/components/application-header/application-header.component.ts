@@ -1,15 +1,29 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy, NgZone } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, EventEmitter,
+  Inject, Input, OnInit, Output, OnDestroy, NgZone
+} from '@angular/core';
 import { Events, MenuController, Platform, PopoverController } from '@ionic/angular';
 import {
-  AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment, ActivePageService, ID, CorReleationDataType
+  AppGlobalService, UtilityService, CommonUtilService,
+  NotificationService, TelemetryGeneratorService,
+  InteractType, InteractSubtype, Environment,
+  ActivePageService, ID, CorReleationDataType
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile, CachedItemRequestSourceFrom, ServerProfile, CorrelationData } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants, RouterLinks } from '../../../app/app.constant';
+import {
+  DownloadService, SharedPreferences
+  , NotificationService as PushNotificationService, NotificationStatus,
+  EventNamespace, DownloadProgress, DownloadEventType, EventsBusService,
+  ProfileService, Profile, CachedItemRequestSourceFrom,
+  ServerProfile, CorrelationData
+} from 'sunbird-sdk';
+import {
+  GenericAppConfig, PreferenceKey,
+  EventTopics, ProfileConstants, RouterLinks
+} from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { NavigationExtras, Router, RouterLink } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
@@ -33,10 +47,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   decreaseZindex = false;
   isRtl: boolean;
   isLoggedIn = false;
-  isDownloadingActive: boolean = false;
-  showDownloadingIcon: boolean = false;
+  isDownloadingActive = false;
+  showDownloadingIcon = false;
   networkSubscription: Subscription;
-  isUnreadNotification: boolean = false;
+  isUnreadNotification = false;
   menuSide = 'left';
   profile: Profile;
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
@@ -332,8 +346,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: ToastNavigationComponent,
       componentProps: {
-        message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER',  { '%app': this.appName, '%user': name }),
-        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE'),
+        message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER', { '%app': this.appName, '%user': name }),
+        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE', { app_name: this.appName }),
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('GO_TO_PROFILE'),

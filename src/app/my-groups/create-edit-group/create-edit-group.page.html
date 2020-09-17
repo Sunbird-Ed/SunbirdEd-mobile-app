@@ -38,13 +38,13 @@
 <ion-footer>
     <div class="padding-16" *ngIf="!groupDetails">
       <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
-        <img src="assets/imgs/ic_group_add_white.svg">
+        <img src="assets/imgs/ic_group_add_white.svg" alt="">
         {{'CREATE_GROUP' | translate}}
       </button>
     </div>
     <div class="padding-16" *ngIf="groupDetails">
       <button class="sb-btn-large" expand="block" [class.inactive]="createGroupForm.invalid" (click)="onSubmit()">
-        <img src="assets/imgs/ic_group_add_white.svg">
+        <img src="assets/imgs/ic_group_add_white.svg" alt="">
         {{'EDIT_GROUP' | translate}}
       </button>
     </div>
