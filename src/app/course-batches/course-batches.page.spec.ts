@@ -189,6 +189,7 @@ describe('CourseBatchesPage', () => {
             });
             mockCommonUtilService.showToast = jest.fn();
             mockEvents.publish = jest.fn(() => []);
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
 
             // act
             courseBatchesPage.enrollIntoBatch(batch);
@@ -261,6 +262,7 @@ describe('CourseBatchesPage', () => {
                 dismiss: dismissFn,
             }));
             mockLocalCourseService.enrollIntoBatch = jest.fn(() => throwError({ error: 'error' }));
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
 
             // act
             courseBatchesPage.enrollIntoBatch(batch);
@@ -350,6 +352,7 @@ describe('CourseBatchesPage', () => {
             } as any)));
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
             mockLoginHandlerService.signIn = jest.fn();
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
 
             // act
             courseBatchesPage.enrollIntoBatch(batch);
@@ -439,6 +442,7 @@ describe('CourseBatchesPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({}))
             } as any)));
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
 
             // act
             courseBatchesPage.enrollIntoBatch(batch);
