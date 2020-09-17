@@ -51,6 +51,16 @@ html[data-theme="JOYFUL"]{
     --color: var(--joyful-primary) !important;
   }
 
+  button{
+    border-radius: 20px !important;
+    background-color: var(--joyful-primary) !important;
+    color: var(--joyful-white) !important;
+  }
+
+  input, textarea, ion-input, ion-textarea {
+    border-radius: 16px !important;
+  }
+
   ion-list{
     background: var(--joyful-secondary) !important;
   }
@@ -183,7 +193,7 @@ html[data-theme="JOYFUL"]{
   }
 
   // sb-course-card styles
-  sb-course-card {
+  sb-course-card, sb-my-course-card {
     .sb--card{
       box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
     }
@@ -192,7 +202,7 @@ html[data-theme="JOYFUL"]{
       margin: 0 0 1rem 0 !important;
     }
     .sb--card__img{
-      border-radius: 8px !important;
+      border-radius: 8px;
     }
     .sb--card__title{
       color: var(--joyful-gray) !important;
@@ -202,12 +212,10 @@ html[data-theme="JOYFUL"]{
   sb-library-card{
     .sb--card{
       box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
-    }
-    .sb--card{
       border-radius: 12px !important;
     }
     .sb--card__img{
-      border-radius: 8px !important;
+      border-radius: 8px;
     }
     .sb--card__title{
       color: var(--joyful-gray) !important;
@@ -253,14 +261,44 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // sb-group-card
+  sb-group-card{
+    .sb--card{
+      border-radius: 16px !important;
+      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+    }
+    .sb--card__img{
+      border-radius: 8px;
+    }
+    .sb-label-badge{
+      border-radius: 16px !important;
+      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+    }
+    .sb--card__title{
+      color: var(--joyful-gray) !important;
+    }
+  }
+
+  sb-member-card{
+    .sb-members-list-item{
+      .status{
+        border-radius: 16px !important;
+        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+      }
+    }
+  }
+
+  sb-course-curiculum-card{
+    .sb--card{
+      border-radius: 16px !important;
+      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+    }
+  }
+
   // application-header Component
   app-application-header{
     .sb-menu-list{
-      background-color: var(--joyful-secondary) !important;
-    }
-    .circle-badge{
-      background-color: var(--joyful-secondary) !important;
-      border-color: var(--joyful-secondary) !important;
+      background-color: var(--joyful-white) !important;
     }
     .sb-menu-item{
       color: var(--joyful-primary);
@@ -268,6 +306,30 @@ html[data-theme="JOYFUL"]{
     .sb-menu-item-language{
       color: var(--joyful-gray) !important;
     }
+    ion-content{
+      --background: var(--joyful-white) !important;
+    }
+    ion-item{
+      --background: var(--joyful-white) !important;
+    }
+    .menu-container{
+      --background: var(--joyful-secondary) !important;
+      background-color: var(--joyful-secondary) !important;
+      padding-bottom: 8px;
+      border-radius: 0 0 16px 16px;
+      .user-container{
+        background-color: var(--joyful-secondary) !important;
+      }
+      .another-user-title{
+        border-radius: 20px;
+        margin: 0 8px;
+        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+      }
+    }
+    .side-menu-footer{
+      border-radius: 16px 16px 0 0;
+    }
+
   }
 
   // language-settings page
@@ -561,9 +623,10 @@ html[data-theme="JOYFUL"]{
   sb-form{
     sb-multiple-dropdown{
       .multi-select-section{
-        .input-label{
-          font-weight: bold;
-          color: var(--joyful-light-gray);
+        .placeholder{
+          color: var(--joyful-light-gray) !important;
+          margin-left: 0 !important;
+          font-size: 16px !important;
         }
       }
       .multi-select-container{
@@ -615,7 +678,7 @@ html[data-theme="JOYFUL"]{
           background-color: transparent;
           border: none !important;
           border-bottom: 0.5px solid var(--joyful-gray) !important;
-          padding-left: 0 !important;
+          padding: 8px 16px 4px 0 !important;
         }
         input:focus{
           outline: none !important;
@@ -624,6 +687,15 @@ html[data-theme="JOYFUL"]{
         input:blur{
           outline: none !important;
           border-bottom: 0.5px solid var(--joyful-gray) !important;
+        }
+        input::placeholder {
+          color: var(--joyful-light-gray);
+          margin-left: 0 !important;
+          font-size: 16px !important;
+          font-weight: normal !important;
+        }
+        input{
+          font-size: 16px !important;
         }
         .async-text{
           border: none !important;
@@ -640,6 +712,11 @@ html[data-theme="JOYFUL"]{
       textarea{
         background: transparent;
         border-radius: 16px !important;
+      }
+      textarea::placeholder {
+        color: var(--joyful-light-gray);
+        font-size: 16px !important;
+        font-weight: normal !important;
       }
     }
   }
@@ -688,4 +765,86 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
+
+  // my-groups page
+  app-my-groups{
+    .my-cr-bg {
+      background: transparent !important;
+    }
+    .my-cr-title {
+      color: var(--joyful-primary) !important;
+    }
+    .my-cr-card{
+      border-radius: 16px;
+      background-color: var(--joyful-tertiary);
+      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+    }
+  }
+
+  // my-groups-popover component
+  app-my-groups-popover{
+    .mg-popup-btn{
+      border-radius: 30px !important;
+    }
+  }
+
+  .tutorial-popover .popover-wrapper .popover-content{
+    border-radius: 16px !important;
+  }
+
+  .group-option-popover .popover-content{
+    border-radius: 16px !important;
+    background-color: var(--joyful-secondary) !important;
+  }
+
+  app-group-details{
+    .gd-header{
+      padding: 0 8px 8px;
+      border-radius: 16px;
+      background-color: var(--joyful-tertiary) !important;
+      .gd-tab-header{
+        background-color: var(--joyful-white) !important;
+        border-radius: 24px;
+        .gd-tab:first-child{
+          border-radius: 24px 0 0 24px;
+        }
+        .gd-tab:last-child{
+          border-radius: 0 24px 24px 0;
+        }
+      }
+    }
+
+    .gd-tab-member-container{
+      border-radius: 16px;
+      background-color: var(--joyful-tertiary) !important;
+    }
+  }
+
+  app-add-member-to-group{
+    .sb-btn-large.inactive{
+      background-color: var(--joyful-light-gray) !important;
+    }
+  }
+
+  app-activity-details{
+    .ad-member-container{
+      border-radius: 16px;
+      background-color: var(--joyful-tertiary);
+      .activity-toc{
+        border-radius: 16px 16px 0 0;
+        background-color: var(--joyful-primary) !important;
+      }
+    }
+  }
+
+  add-activity-to-group{
+    .add-activity-container{
+      margin: 0 8px;
+      padding: 16px 0 8px;
+      border-radius: 16px;
+      background-color: var(--joyful-tertiary);
+      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+    }
+  }
+
 }
