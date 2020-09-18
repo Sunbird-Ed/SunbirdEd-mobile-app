@@ -615,8 +615,6 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-
-  // app-collection-child component
   app-collection-child{
     .etb-card-item-play-container{
       ion-button{
@@ -624,7 +622,42 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-  
+  // tab
+  ion-tab-bar{
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+  }
+  ion-tab-button {
+    --color-selected: #{$blue};
+    background: transparent;
+
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses1_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_joyful.svg);
+    }
+  }
+  ion-tab-button.tab-selected {
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_selected_joyful.svg);
+    }
+  }
   // header
   ion-header::after{
     background-image: none;
@@ -643,6 +676,13 @@ html[data-theme="JOYFUL"]{
   .ui-content{
     z-index: 2;
     position: relative;
+  }
+
+  .back-btn-container {
+    z-index: 2;
+  }
+  .qr-content {
+    z-index: 2;
   }
 
   .sb-slider-pills-container{
