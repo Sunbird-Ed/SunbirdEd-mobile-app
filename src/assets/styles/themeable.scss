@@ -531,6 +531,9 @@ html[data-theme="JOYFUL"]{
       border-radius: 0.5rem;
       padding: 0.5rem;
     }
+    .sb-course-complete-container, .sb-batch-end-container{
+      border-radius: 1rem;
+    }
   }
 
   // guest-profile page
@@ -963,6 +966,10 @@ html[data-theme="JOYFUL"]{
     background-color: var(--joyful-secondary) !important;
   }
 
+  .enrollement-popover .popover-content{
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+
   app-group-details{
     .gd-header{
       padding: 0 8px 8px;
@@ -1126,6 +1133,33 @@ html[data-theme="JOYFUL"]{
   app-create-edit-group{
     ion-input, ion-textarea{
       background-color: var(--joyful-white);
+    }
+  }
+
+  app-enrollment-details{
+    ion-item-group{
+      .subtitle{
+        background-color: var(--joyful-secondary) !important;
+      }
+      .subtitle.buttontext{
+        --background: var(--joyful-white) !important;
+        color: var(--joyful-primary) !important;
+      }
+    }
+
+    .sb-btn-outline-info{
+      background-color: var(--joyful-white) !important;
+      color: var(--joyful-primary) !important;
+      border-color: var(--joyful-primary) !important;
+      border-radius: 1rem !important;
+    }
+  }
+
+  app-content-details{
+    .sb-detail-card-info{
+      button{
+        box-shadow: none !important;
+      }
     }
   }
 

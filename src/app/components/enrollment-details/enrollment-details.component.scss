@@ -11,7 +11,6 @@
         }
         &.mytitle{
             color: map-get($colors, primary_black);
-            background-color:map-get($colors, light_gray) !important;
             font-size: 1.2em;
         }
         &.head{
@@ -28,12 +27,8 @@
     }
 
     .sb-btn-outline-info {
-        background-color: map-get($colors, primary) !important;
-        border-radius: 5px !important;
         font-weight: bold;
         font-size: 12px;
-        color: map-get($colors, white) !important;
-        border-color: map-get($colors, white) !important;
     }
 
     .background-gray{
