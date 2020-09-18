@@ -663,7 +663,6 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-
   // app-collection-child component
   app-collection-child{
     .etb-card-item-play-container{
@@ -672,7 +671,42 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-  
+  // tab
+  ion-tab-bar{
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+  }
+  ion-tab-button {
+    --color-selected: #{$blue};
+    background: transparent;
+
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses1_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_joyful.svg);
+    }
+  }
+  ion-tab-button.tab-selected {
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_selected_joyful.svg);
+    }
+  }
   // header
   ion-header::after{
     background-image: none;
@@ -687,10 +721,31 @@ html[data-theme="JOYFUL"]{
     top: 0;
     border-bottom-left-radius: 20px;
     background-color: var(--joyful-warning) !important;
+    background-image: url(/assets/imgs/header-background.svg);
+    background-repeat: no-repeat;
+    background-position: bottom center;
   }
   .ui-content{
     z-index: 2;
     position: relative;
+  }
+
+  .ps-container{
+    .back-btn-container {
+      z-index: 2;
+      &::after{
+        content: '';
+        background-color: var(--joyful-warning) !important;
+        width: 100vw;
+        height: 50px;
+        position: absolute;
+        z-index: -1;
+        border-bottom-left-radius: 20px;
+      }
+    }
+  }
+  .qr-content {
+    z-index: 2;
   }
 
   .sb-slider-pills-container{
