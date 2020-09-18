@@ -20,7 +20,7 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SbPopoverComponent } from '../components/popups';
-import { LocalCourseService } from '@app/services/local-course.service';
+import { LocalCourseService, ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
 import { AppGlobalService } from '@app/services';
 
@@ -29,7 +29,7 @@ import { AppGlobalService } from '@app/services';
   templateUrl: './course-batches.page.html',
   styleUrls: ['./course-batches.page.scss'],
 })
-export class CourseBatchesPage implements OnInit {
+export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate {
 
   public upcommingBatches: Array<Batch> = [];
   public ongoingBatches: Array<Batch> = [];
@@ -48,6 +48,7 @@ export class CourseBatchesPage implements OnInit {
   private objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
   private telemetryObject: TelemetryObject;
+  loader?: HTMLIonLoadingElement;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -139,8 +140,8 @@ export class CourseBatchesPage implements OnInit {
     if (this.isGuestUser) {
       this.joinTraining(batch);
     } else {
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch,
@@ -153,7 +154,7 @@ export class CourseBatchesPage implements OnInit {
         userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
@@ -161,12 +162,10 @@ export class CourseBatchesPage implements OnInit {
               batchId: batch.id,
               courseId: batch.courseId
             });
-            await loader.dismiss();
-          //  this.localCourseService.showConsentPopup(enrollCourse);
             this.location.back();
           });
         }, async (error) => {
-          await loader.dismiss();
+          await this.loader.dismiss();
         });
     }
   }
@@ -213,5 +212,14 @@ export class CourseBatchesPage implements OnInit {
       this.loginHandlerService.signIn();
     }
   }
+
+  onConsentPopoverShow() {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+  }
+
+  onConsentPopoverDismiss() {}
 
 }

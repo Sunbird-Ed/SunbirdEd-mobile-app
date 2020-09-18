@@ -1363,7 +1363,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    if (this.appGlobalService.isUserLoggedIn) {
+    if (this.isAlreadyEnrolled) {
       this.checkDataSharingStatus();
     }
   }

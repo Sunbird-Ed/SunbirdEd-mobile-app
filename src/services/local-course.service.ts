@@ -69,14 +69,14 @@ export class LocalCourseService {
           // const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) ?
           //   JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) : content;
           if (enrollCourse.userConsent === UserConsent.YES) {
-            if (consentPopoverActionsDelegate) {
-              consentPopoverActionsDelegate.onConsentPopoverShow();
-            }
-            await this.showConsentPopup(enrollCourse);
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverShow();
+          }
+          await this.showConsentPopup(enrollCourse);
 
-            if (consentPopoverActionsDelegate) {
-              consentPopoverActionsDelegate.onConsentPopoverDismiss();
-            }
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverDismiss();
+          }
           }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -317,21 +317,19 @@ export class LocalCourseService {
     });
     await popover.present();
     const dismissResponse = await popover.onDidDismiss();
-    if (dismissResponse.data) {
-      const request: Consent = {
-        status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
-        userId: dismissResponse.data.userId,
-        consumerId: course.channel ? course.channel : course.content.channel,
-        objectId: course.courseId,
-        objectType: 'Collection'
-      };
-      this.profileService.updateConsent(request).toPromise()
-        .then((data) => {
-          console.log('update consent', data);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
+    const request: Consent = {
+      status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
+      userId: dismissResponse.data.userId,
+      consumerId: course.channel ? course.channel : course.content.channel,
+      objectId: course.courseId,
+      objectType: 'Collection'
+    };
+    this.profileService.updateConsent(request).toPromise()
+      .then((data) => {
+        // this.commonUtilService.showToast(data.message);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 }

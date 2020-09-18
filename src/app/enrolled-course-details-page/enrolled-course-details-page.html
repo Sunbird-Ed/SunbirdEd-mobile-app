@@ -302,7 +302,7 @@
 				</ion-card-content>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
-				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled">
+				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">
 					<div>
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
