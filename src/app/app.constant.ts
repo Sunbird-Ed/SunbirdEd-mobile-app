@@ -571,3 +571,8 @@ export class GroupErrorCodes {
     public static readonly EXCEEDED_MEMBER_MAX_LIMIT = 'EXCEEDED_MEMBER_MAX_LIMIT';
     public static readonly EXCEEDED_ACTIVITY_MAX_LIMIT = 'EXCEEDED_ACTIVITY_MAX_LIMIT';
 }
+
+export class AppThemes {
+    public static readonly DEFAULT = 'DEFAULT';
+    public static readonly JOYFUL = 'JOYFUL';
+}

@@ -157,6 +157,18 @@
         </div>
       </ion-item>
 
+      <ion-item (click)="switchTheme()">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
@@ -265,6 +277,18 @@
           <img src="./assets/imgs/my_group.svg" class="tool-icon" alt="my group">
         </span>
         <span class="sb-menu-item" menuClose>{{'MY_GROUPS' | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item>
+
+      <ion-item (click)="switchTheme()">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>

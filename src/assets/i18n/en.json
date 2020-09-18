@@ -816,5 +816,7 @@
   "MEDIA_TYPE": "Media Type",
   "COLLECTION": "Collection",
   "ERROR_SPECIAL_CHARECTERS_NOT_ALLOWED": "Special characters are not allowed",
-  "NOTE": "Note"
+  "NOTE": "Note",
+  "SWITCH_TO_JOYFUL_THEME": "Switch to joyful theme",
+  "SWITCH_TO_CLASSIC_THEME": "Switch to classic theme"
 }
