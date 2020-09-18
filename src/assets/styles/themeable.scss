@@ -4,6 +4,8 @@ html[data-theme="JOYFUL"]{
   --joyful-secondary: #E9E8D9;
   --joyful-tertiary: #F2F2EA;
   --joyful-warning: #FFD954;
+  --joyful-light-yellow: #F9FFBE;
+  --joyful-light-blue: #DAECFF;
 
   --joyful-white: #FFFFFF;
   --joyful-black: #000000;
@@ -14,6 +16,9 @@ html[data-theme="JOYFUL"]{
   --joyful-green: #008840;
   --joyful-light-green: #BFE1CF;
 
+  --joyful-button-shadow: rgba(0,0,0,0.1);
+  --joyful-item-shadow: rgba(0,0,0,0.16);
+
   ion-toolbar {
     --background: var(--joyful-warning);
     border-bottom-left-radius: 20px;
@@ -21,9 +26,6 @@ html[data-theme="JOYFUL"]{
       ion-button{
         --background: var(--joyful-warning) !important;
         --color: var(--joyful-primary) !important;
-        box-shadow: none !important;
-      }
-      ion-back-button{
         box-shadow: none !important;
       }
     }
@@ -43,7 +45,7 @@ html[data-theme="JOYFUL"]{
     --border-radius: 20px !important;
     --border-color: var(--joyful-primary) !important;
     button{
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
     }
   }
 
@@ -76,6 +78,10 @@ html[data-theme="JOYFUL"]{
       border-bottom: 1px solid var(--joyful-light-gray) !important;
       color: var(--joyful-gray) !important;
       padding-left: 0 !important;
+      .select-text{
+        color: var(--joyful-white) !important;
+        --color: var(--joyful-white) !important;
+      }
     }
   }
 
@@ -84,7 +90,14 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-card, button{
-    box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+    box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+  }
+
+  ion-back-button{
+    box-shadow: none !important;
+    button{
+      box-shadow: none !important;
+    }
   }
 
   ion-alert{
@@ -103,7 +116,7 @@ html[data-theme="JOYFUL"]{
 
   ion-card{
     border-radius: 16px !important;
-    box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+    box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
     background-color: var(--joyful-white);
     &.selected {
       border:3px solid var(--joyful-primary) !important;
@@ -192,7 +205,7 @@ html[data-theme="JOYFUL"]{
   // sb-course-card styles
   sb-course-card, sb-my-course-card {
     .sb--card{
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
     }
     .sb--card--course{
       border-radius: 12px !important;
@@ -208,7 +221,7 @@ html[data-theme="JOYFUL"]{
 
   sb-library-card{
     .sb--card{
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
       border-radius: 12px !important;
     }
     .sb--card__img{
@@ -230,7 +243,7 @@ html[data-theme="JOYFUL"]{
     }
     .body{
       border-radius: 16px;
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
     }
     sb-library-card:first-child {
       .sb--card{
@@ -262,14 +275,14 @@ html[data-theme="JOYFUL"]{
   sb-group-card{
     .sb--card{
       border-radius: 16px !important;
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
     }
     .sb--card__img{
       border-radius: 8px;
     }
     .sb-label-badge{
       border-radius: 16px !important;
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
     }
     .sb--card__title{
       color: var(--joyful-gray) !important;
@@ -280,18 +293,18 @@ html[data-theme="JOYFUL"]{
     .sb-members-list-item{
       .status{
         border-radius: 16px !important;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
       }
     }
     .sb-member__img{
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
     }
   }
 
   sb-course-curiculum-card{
     .sb--card{
       border-radius: 16px !important;
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
     }
   }
 
@@ -325,7 +338,7 @@ html[data-theme="JOYFUL"]{
         .another-user-title{
           border-radius: 20px;
           margin: 0 8px;
-          box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+          box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
         }
       }
     }
@@ -418,7 +431,7 @@ html[data-theme="JOYFUL"]{
         .pill{
           border-color: var(--joyful-white) !important;
           color: var(--joyful-gray) !important;
-          box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+          box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
           margin-right: 1rem !important;
         }
         .pill.active{
@@ -500,6 +513,24 @@ html[data-theme="JOYFUL"]{
         color: var(--joyful-dark-gray) !important;
       }
     }
+    .sb-dt-card-actions{
+      .card-button{
+        box-shadow: none !important;
+      }
+      .sb-course-progress-container{
+        background-color: var(--joyful-light-yellow) !important;
+        border-radius: 1rem;
+      }
+    }
+    .enrolled-course-container{
+      ion-card{
+        background-color: var(--joyful-light-blue) !important;
+      }
+    }
+    .certificate-container{
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
   }
 
   // guest-profile page
@@ -576,6 +607,23 @@ html[data-theme="JOYFUL"]{
       ion-button{
         --color: var(--joyful-white) !important;
         --background: var(--joyful-primary) !important;
+      }
+    }
+
+    .bottom-block{
+      margin: 0.5rem;
+      border-radius: 1rem;
+      padding-bottom: 0.5rem;
+      .trainings{
+        .heading{
+          border-radius: 1rem;
+        }
+        .content{
+          border-radius: 1rem !important;
+          .heading{
+            border-radius: 1rem 1rem 0 0 !important;
+          }
+        }
       }
     }
   }
@@ -732,12 +780,11 @@ html[data-theme="JOYFUL"]{
   sb-toc-curriculum{
     .sb-curiculum__border{
       border-radius: 12px;
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
     }
     .sb-curiculum{
       border: none !important;
       border-radius: 12px !important;
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
     }
   }
 
@@ -777,20 +824,15 @@ html[data-theme="JOYFUL"]{
             border-radius: 20px !important;
           }
           .sb-btn-primary-outline{
-            color: var(--joyful-primary);
-            background-color: var(--joyful-white);
-            
+            color: var(--joyful-primary) !important;
+            background-color: var(--joyful-white) !important;
           }
           .sb-btn-primary{
-            color: var(--joyful-white);
-            background-color: var(--joyful-primary);
-          }
-        }
-        .container{
-          .checkmark{
+            color: var(--joyful-white) !important;
             background-color: var(--joyful-primary) !important;
           }
         }
+
       }
     }
 
@@ -864,14 +906,14 @@ html[data-theme="JOYFUL"]{
         background-color: var(--joyful-tertiary) !important;
         border-radius: 0 0 16px 16px;
         margin: 0 8px 8px;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
       }
     }
     .send-email{
       background-color: transparent !important;
       .report-button{
         border-radius: 20px !important;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
       }
     }
   }
@@ -883,7 +925,7 @@ html[data-theme="JOYFUL"]{
       .submit-button{
         border-radius: 20px !important;
         background-color: var(--joyful-primary) !important;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
       }
     }
   }
@@ -899,7 +941,7 @@ html[data-theme="JOYFUL"]{
     .my-cr-card{
       border-radius: 16px;
       background-color: var(--joyful-tertiary);
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
     }
   }
 
@@ -911,7 +953,7 @@ html[data-theme="JOYFUL"]{
   }
 
   // My groups tutorial popup
-  .tutorial-popover .popover-wrapper .popover-content{
+  .tutorial-popover .popover-wrapper .popover-content, .leave-training-popup .popover-content{
     border-radius: 16px !important;
   }
 
@@ -967,14 +1009,14 @@ html[data-theme="JOYFUL"]{
       padding: 16px 0 8px;
       border-radius: 16px;
       background-color: var(--joyful-tertiary);
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
     }
   }
 
   .sb-popover{
     .popover-content{
       border-radius: 16px 16px 0 0;
-      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
     }
 
     ion-content{
@@ -1023,7 +1065,7 @@ html[data-theme="JOYFUL"]{
       background-color: var(--joyful-tertiary);
       border-radius: 16px;
       padding: 16px 8px;
-      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16);
+      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow);
     }
     .manage-user-item{
       margin-bottom: 8px;
@@ -1036,7 +1078,7 @@ html[data-theme="JOYFUL"]{
       .sb-members-list-item{
         border-radius: 16px;
         background-color: var(--joyful-secondary);
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
       }
     }
 
@@ -1044,6 +1086,46 @@ html[data-theme="JOYFUL"]{
       .button-outline{
         --border-color: transparent !important;
       }
+    }
+  }
+
+  app-explore-books{
+    form{
+      .search-bar{
+        border-radius: 1rem !important;
+        button{
+          box-shadow: none !important;
+        }
+      }
+    }
+    .sb-slider-pills-container{
+      .pill{
+        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+      }
+    }
+    .sb-medium-pills-container{
+      .pill{
+        border: none !important;
+        color: var(--joyful-primary) !important;
+      }
+      .pill.active{
+        background-color: var(--joyful-primary) !important;
+        color: var(--joyful-white) !important;
+      }
+    }
+    .explore-results-section{
+      margin: 1rem;
+      border-radius: 1rem;
+    }
+
+    ion-button{
+      border-radius: 1rem 1rem 0 0 !important;
+    }
+  }
+
+  app-create-edit-group{
+    ion-input, ion-textarea{
+      background-color: var(--joyful-white);
     }
   }
 
