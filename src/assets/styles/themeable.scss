@@ -34,7 +34,7 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-footer {
-    background: var(--joyful-secondary);
+    background: var(--joyful-secondary) !important;
   }
 
   ion-button{
@@ -54,7 +54,6 @@ html[data-theme="JOYFUL"]{
 
   button{
     border-radius: 20px !important;
-    background-color: var(--joyful-primary) !important;
     color: var(--joyful-white) !important;
   }
 
@@ -69,17 +68,14 @@ html[data-theme="JOYFUL"]{
   ion-item {
     --background: var(--joyful-secondary);
     ion-label{
-      color: var(--joyful-primary) !important;
+      color: var(--joyful-light-gray) !important;
+      font-weight: bold !important;
     }
     ion-select{
-      border: 1px solid var(--joyful-primary) !important;
-      border-radius: 20px !important;
-      color: var(--joyful-primary) !important;
-    }
-
-    ion-select::part(placeholder) { 
-      color: red !important;
-      opacity: 1;
+      border: none !important;
+      border-bottom: 1px solid var(--joyful-light-gray) !important;
+      color: var(--joyful-gray) !important;
+      padding-left: 0 !important;
     }
   }
 
@@ -287,6 +283,9 @@ html[data-theme="JOYFUL"]{
         box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
       }
     }
+    .sb-member__img{
+      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+    }
   }
 
   sb-course-curiculum-card{
@@ -300,6 +299,7 @@ html[data-theme="JOYFUL"]{
   app-application-header{
     .sb-menu-list{
       background-color: var(--joyful-white) !important;
+      border-radius: 16px 16px 0 0;
     }
     .sb-menu-item{
       color: var(--joyful-primary);
@@ -313,18 +313,20 @@ html[data-theme="JOYFUL"]{
     ion-item{
       --background: var(--joyful-white) !important;
     }
-    .menu-container{
-      --background: var(--joyful-secondary) !important;
+    .menu-section{
       background-color: var(--joyful-secondary) !important;
-      padding-bottom: 8px;
-      border-radius: 0 0 16px 16px;
-      .user-container{
+      .menu-container{
+        --background: var(--joyful-secondary) !important;
         background-color: var(--joyful-secondary) !important;
-      }
-      .another-user-title{
-        border-radius: 20px;
-        margin: 0 8px;
-        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+        padding-bottom: 8px;
+        .user-container{
+          background-color: var(--joyful-secondary) !important;
+        }
+        .another-user-title{
+          border-radius: 20px;
+          margin: 0 8px;
+          box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1) !important;
+        }
       }
     }
     .side-menu-footer{
@@ -366,6 +368,21 @@ html[data-theme="JOYFUL"]{
       ion-item{
         --background: var(--joyful-white) !important;
       }
+      ion-select{
+        border: 1px solid var(--joyful-primary) !important;
+        border-radius: 20px !important;
+        background-color: var(--joyful-primary) !important;
+        .select-text, .select-placeholder{
+          --color: var(--joyful-white) !important;
+          color: var(--joyful-white) !important;
+        }
+      }
+
+      ion-select::part(placeholder) { 
+        --color: red !important;
+        color: red !important;
+        opacity: 1;
+      }
     }
   }
 
@@ -378,6 +395,15 @@ html[data-theme="JOYFUL"]{
     .block-button{
       background-color: var(--joyful-primary) !important;
       border-radius: 20px !important;
+    }
+
+    ion-item{
+      --border-width: 0 !important;
+    }
+
+    form{
+      padding-inline-start: 0 !important;
+      padding-inline-end: 0 !important;
     }
   }
 
@@ -590,6 +616,15 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // app-collection-child component
+  app-collection-child{
+    .etb-card-item-play-container{
+      ion-button{
+        --background: var(--joyful-white) !important;
+      }
+    }
+  }
+  
   // header
   ion-header::after{
     background-image: none;
@@ -820,10 +855,12 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // My groups tutorial popup
   .tutorial-popover .popover-wrapper .popover-content{
     border-radius: 16px !important;
   }
 
+  // Group edit delete popup
   .group-option-popover .popover-content{
     border-radius: 16px !important;
     background-color: var(--joyful-secondary) !important;
@@ -876,6 +913,82 @@ html[data-theme="JOYFUL"]{
       border-radius: 16px;
       background-color: var(--joyful-tertiary);
       box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16) !important;
+    }
+  }
+
+  .sb-popover{
+    .popover-content{
+      border-radius: 16px 16px 0 0;
+      box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+    }
+
+    ion-content{
+      --background: var(--joyful-tertiary) !important;
+    }
+
+    ion-header{
+      ion-toolbar{
+        --background: var(--joyful-tertiary) !important;
+        min-height: 60px !important;
+        max-height: 60px !important;
+      }
+    }
+
+    .sb-popover-title{
+      color: var(--joyful-dark-gray) !important;
+      padding: 0 16px !important;
+      font-size: 20px !important;
+      text-align: unset !important;
+      margin-top: 32px !important;
+      ion-icon{
+        height: 30px !important;
+        width: 60px !important;
+        top: -20px !important;
+      }
+    }
+
+    .sb-popover-footer{
+      background: var(--joyful-tertiary) !important;
+      align-items: normal !important;
+      justify-content: flex-end !important;
+
+      .sb-btn-outline-info{
+        background-color: var(--joyful-white) !important;
+        color: var(--joyful-primary) !important;
+      }
+
+      .sb-popover-action-btn{
+        height: 40px !important;
+      }
+    }
+  }
+
+  app-manage-user-profiles{
+    .manage-user-section{
+      background-color: var(--joyful-tertiary);
+      border-radius: 16px;
+      padding: 16px 8px;
+      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16);
+    }
+    .manage-user-item{
+      margin-bottom: 8px;
+    }
+    .mu-selected-user{
+      border-radius: 16px;
+    }
+    
+    sb-member-card{
+      .sb-members-list-item{
+        border-radius: 16px;
+        background-color: var(--joyful-secondary);
+        box-shadow: 5px 5px 2px 0 rgba(0,0,0,0.1);
+      }
+    }
+
+    .add-user{
+      .button-outline{
+        --border-color: transparent !important;
+      }
     }
   }
 

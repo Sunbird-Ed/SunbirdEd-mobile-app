@@ -95,6 +95,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
+    <div class="menu-section">
     <section *ngIf="isLoggedIn" class="menu-container">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
@@ -188,6 +189,7 @@
       </ion-item>
 
     </ion-list>
+    </div>
   </ion-content>
   <ion-footer class="side-menu-footer">
     {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
@@ -206,6 +208,7 @@
   </ion-header>
   <ion-content>
 
+    <div class="menu-section">
     <section *ngIf="isLoggedIn" class="menu-container">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
@@ -300,6 +303,7 @@
       </ion-item>
 
     </ion-list>
+    </div>
   </ion-content>
   <ion-footer class="side-menu-footer">
     {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
