@@ -18,7 +18,7 @@ import {
 } from 'sunbird-sdk';
 import {
   GenericAppConfig, PreferenceKey,
-  EventTopics, ProfileConstants, RouterLinks
+  EventTopics, ProfileConstants, RouterLinks, AppThemes
 } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
@@ -55,6 +55,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   profile: Profile;
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
+  appTheme = AppThemes.DEFAULT;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -122,6 +123,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();
     });
+    this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    console.log('appTheme', this.appTheme);
   }
 
   setAppVersion(): any {
@@ -367,6 +370,16 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     console.log(data);
     if (data) {
       this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
+    }
+  }
+
+  switchTheme() {
+    if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
+      document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
+      this.appTheme = AppThemes.JOYFUL;
+    } else {
+      document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
+      this.appTheme = AppThemes.DEFAULT;
     }
   }
 
