@@ -1,55 +1,57 @@
-<ion-content padding>
-    <div class="back-btn-container">
-        <ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
-                  class="top-back-button"></ion-icon>
-    </div>
-    <ion-title text-center class="title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</ion-title>
-    <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
+<ion-content class="ui-container" padding>
+    <div class="ui-content">
+        <div class="back-btn-container">
+            <ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
+                    class="top-back-button"></ion-icon>
+        </div>
+        <ion-title text-center class="title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</ion-title>
+        <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
-    <ion-grid>
-        <!--    Teacher Card-->
-        <ion-row class="ion-justify-content-start ion-align-items-stretch">
-            <ion-col size="6">
-                <ion-card (click)="selectTeacherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.TEACHER">
-                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.TEACHER" [src]="selectCardImageUri"/>
-                    <ion-grid>
-                        <ion-row class="ion-align-items-end" style="height: 100%">
-                            <ion-col>
-                                <img class="thumbnail" alt="" [src]="teacherImageUri"/>
-                                <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-card>
-            </ion-col>
-            <!-- Student card -->
-            <ion-col size="6">
-                <ion-card (click)="selectStudentCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.STUDENT">
-                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.STUDENT" [src]="selectCardImageUri"/>
-                    <ion-grid>
-                        <ion-row class="ion-align-items-end" style="height: 100%">
-                            <ion-col>
-                                <img class="thumbnail" alt="" [src]="studentImageUri"/>
-                                <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-card>
-            </ion-col>
-            <!-- Other card -->
-            <ion-col size="6">
-                <ion-card (click)="selectOtherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.OTHER">
-                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
-                    <ion-grid>
-                        <ion-row class="ion-align-items-end" style="height: 100%">
-                            <ion-col>
-                                <img class="thumbnail" alt="" [src]="otherImageUri"/>
-                                <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-card>
-            </ion-col>
-        </ion-row>
-    </ion-grid>
+        <ion-grid>
+            <!--    Teacher Card-->
+            <ion-row class="ion-justify-content-start ion-align-items-stretch">
+                <ion-col size="6">
+                    <ion-card (click)="selectTeacherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.TEACHER">
+                        <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.TEACHER" [src]="selectCardImageUri"/>
+                        <ion-grid>
+                            <ion-row class="ion-align-items-end" style="height: 100%">
+                                <ion-col>
+                                    <img class="thumbnail" alt="" [src]="teacherImageUri"/>
+                                    <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </ion-card>
+                </ion-col>
+                <!-- Student card -->
+                <ion-col size="6">
+                    <ion-card (click)="selectStudentCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.STUDENT">
+                        <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.STUDENT" [src]="selectCardImageUri"/>
+                        <ion-grid>
+                            <ion-row class="ion-align-items-end" style="height: 100%">
+                                <ion-col>
+                                    <img class="thumbnail" alt="" [src]="studentImageUri"/>
+                                    <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </ion-card>
+                </ion-col>
+                <!-- Other card -->
+                <ion-col size="6">
+                    <ion-card (click)="selectOtherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.OTHER">
+                        <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
+                        <ion-grid>
+                            <ion-row class="ion-align-items-end" style="height: 100%">
+                                <ion-col>
+                                    <img class="thumbnail" alt="" [src]="otherImageUri"/>
+                                    <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </ion-card>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
 </ion-content>

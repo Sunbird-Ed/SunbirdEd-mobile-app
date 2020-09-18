@@ -10,7 +10,10 @@
       </sb-library-card>
     </div>
     <div class="ad-member-container">
-      <div class="ad-note" *ngIf="activity.type !== 'Course'" [innerHTML]="'PROGRESS_CANNOT_BE_TRACKED' | translate"></div>
+      <div class="ad-note" *ngIf="activity.type !== 'Course'">
+        <span>{{'NOTE' | translate}} :</span>
+        {{'PROGRESS_CANNOT_BE_TRACKED' | translate: {'collectionType': activity.type } }}
+      </div>
       <div class="font-14" *ngIf="showCourseDropdownSection">
         <div class="activity-toc clearfix" (click)="openActivityToc()">
           <span class="pull-left">{{selectedCourse?.name || activity?.name}}</span>

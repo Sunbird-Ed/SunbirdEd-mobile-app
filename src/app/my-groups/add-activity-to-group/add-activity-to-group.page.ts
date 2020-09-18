@@ -29,6 +29,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
     supportedActivityList: Array<any>;
     groupId: string;
     activityList;
+    flattenedActivityList = [];
     private csGroupAddableBloc: CsGroupAddableBloc;
 
     constructor(
@@ -66,6 +67,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
             PageId.ADD_ACTIVITY_TO_GROUP,
             Environment.GROUP,
             undefined, undefined, undefined, undefined, this.corRelationList);
+        this.getflattenedActivityList();
     }
 
     ionViewWillLeave() {
@@ -99,12 +101,19 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
         }
     }
 
+    private getflattenedActivityList() {
+        this.flattenedActivityList = [];
+        this.activityList.forEach(e => {
+            this.flattenedActivityList = [...this.flattenedActivityList, ...e.items];
+        });
+    }
+
     async search(data) {
         this.csGroupAddableBloc.updateState({
             pageIds:  [],
             groupId: this.groupId,
             params: {
-                activityList: this.activityList,
+                activityList: this.flattenedActivityList,
                 corRelation: this.corRelationList
             }
         }
@@ -114,7 +123,7 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
                 activityTypeData: data,
                 source: PageId.GROUP_DETAIL,
                 groupId: this.groupId,
-                activityList: this.activityList,
+                activityList: this.flattenedActivityList,
                 corRelation: this.corRelationList
             }
         });

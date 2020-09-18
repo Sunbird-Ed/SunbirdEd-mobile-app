@@ -9,9 +9,8 @@ import {
   CorrelationData,
   TelemetryObject,
   TelemetryService,
-  SharedPreferences
 } from 'sunbird-sdk';
-import { ContentType, EventTopics, MimeType, RouterLinks, PreferenceKey } from '../app/app.constant';
+import { EventTopics, RouterLinks } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
 import {
@@ -158,14 +157,14 @@ export class QRScannerResultHandler {
     };
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
-        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
         const corRelationData: CorrelationData[] = [{
           id: CorReleationDataType.SCAN,
           type: CorReleationDataType.ACCESS_TYPE
         }];
         if (cData && cData.length) {
           this.telemetryService.updateCampaignParameters(cData);
-          this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject, corRelationData);
+          this.telemetryGeneratorService.generateUtmInfoTelemetry(params,
+            PageId.QRCodeScanner, ContentUtil.getTelemetryObject(content), corRelationData);
         }
 
         this.navigateToDetailsPage(content,
@@ -239,13 +238,6 @@ export class QRScannerResultHandler {
       content,
       navigationExtras.state
     );
-    // if (content.contentData.contentType === ContentType.COURSE) {
-    //   this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-    // } else if (content.mimeType === MimeType.COLLECTION) {
-    //   this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
-    // } else {
-    //   this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
-    // }
   }
 
   generateQRScanSuccessInteractEvent(scannedData, action, dialCode?, certificate?:

@@ -1,4 +1,4 @@
-import { MimeType, ContentType, RouterLinks, EventTopics } from '@app/app/app.constant';
+import { MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { ContentPlayerHandler } from './../../services/content/player/content-player-handler';
 import { RatingHandler } from './../../services/rating/rating-handler';
 import { QrcoderesultPage } from './qrcoderesult.page';
@@ -29,6 +29,7 @@ import { CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType
 import { File } from '@ionic-native/file/ngx';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('QrcoderesultPage', () => {
     let qrcoderesultPage: QrcoderesultPage;
@@ -487,7 +488,7 @@ describe('QrcoderesultPage', () => {
         it('should return a toast message if downloadUrl is undefined', () => {
             const content = {
                 contentData: {
-                    contentType: ContentType.COURSE,
+                    contentType: CsContentType.COURSE,
                     downloadUrl: ''
                 }
             };
@@ -502,15 +503,15 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
         });
 
         it('should navigate to enrolled course details page', () => {
             // arrange
             const content = {
+                contentType: CsContentType.COURSE,
                 contentData: {
-                    contentType: ContentType.COURSE,
+                    contentType: CsContentType.COURSE,
                     downloadUrl: 'sample-url'
                 }
             };
@@ -529,6 +530,7 @@ describe('QrcoderesultPage', () => {
             // arrange
             const content = {
                 mimeType: MimeType.COLLECTION,
+                contentType: CsContentType.COLLECTION,
                 contentData: {
                     downloadUrl: 'sample-url'
                 }
@@ -556,6 +558,7 @@ describe('QrcoderesultPage', () => {
             // arrange
             const content = {
                 identifier: 'id',
+                contentType: CsContentType.RESOURCE,
                 contentData: {
                     downloadUrl: 'sample-url'
                 }

@@ -28,7 +28,7 @@ import {
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInFromEvent } from '@app/app/animations/animation-grow-in-from-event';
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, GroupErrorCodes } from '@app/app/app.constant';
 import { RecaptchaComponent } from 'ng-recaptcha';
 
 @Component({
@@ -259,11 +259,13 @@ export class AddMemberToGroupPage {
     };
     this.groupService.addMembers(addMemberToGroupReq).toPromise()
       .then(async (res) => {
+        await loader.dismiss();
         if (res.error && res.error.members && res.error.members.length) {
-          throw res.error.members[0];
+          console.log('in err');
+          if (res.error.members[0].errorCode === GroupErrorCodes.EXCEEDED_MEMBER_MAX_LIMIT) {
+            this.commonUtilService.showToast('ERROR_MAXIMUM_MEMBER_COUNT_EXCEEDS');
+          }
         } else {
-          await loader.dismiss();
-
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',

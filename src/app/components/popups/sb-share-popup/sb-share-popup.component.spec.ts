@@ -16,7 +16,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
-import { ContentType, MimeType } from '../../../app.constant';
+import { MimeType } from '../../../app.constant';
+import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
@@ -33,9 +34,11 @@ describe('SbSharePopupComponent', () => {
                     value = {
                         identifier: 'do_123',
                         contentType: 'Resource',
+                        primaryCategory: 'learning resource',
                         contentData: {
                             contentType: 'Resource',
-                            pkgVersion: '1'
+                            pkgVersion: '1',
+                            primaryCategory: 'Learning Resource'
                         }
                     } as any;
                     break;
@@ -94,7 +97,8 @@ describe('SbSharePopupComponent', () => {
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('baseurl'));
         mockContentService.getContentDetails = jest.fn(() => of({
-            identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: ContentType.TEXTBOOK
+            identifier: 'do_1', mimeType: MimeType.COLLECTION, contentType: CsContentType.TEXTBOOK,
+            primaryCategory: CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase()
         }));
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, cb) => {
@@ -116,7 +120,7 @@ describe('SbSharePopupComponent', () => {
                 '',
                 Environment.HOME,
                 'content-detail',
-                { id: 'do_123', type: 'Resource', version: '1' },
+                { id: 'do_123', type: 'Learning Resource', version: '1' },
                 undefined,
                 { l1: 'do_1', l2: 'do_12' },
                 undefined,
@@ -126,7 +130,7 @@ describe('SbSharePopupComponent', () => {
                 PageId.SHARE_CONTENT_POPUP,
                 Environment.HOME,
                 'do_123',
-                'Resource',
+                'Learning Resource',
                 '1',
                 { l1: 'do_1', l2: 'do_12' },
                 undefined);
