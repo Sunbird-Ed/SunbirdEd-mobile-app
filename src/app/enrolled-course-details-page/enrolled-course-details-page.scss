@@ -556,13 +556,13 @@ ion-segment-button{
 }
 
 .save-changes{
-  border-radius: 20px !important;
+//  border-radius: 20px !important;
   color: white;
   background-color: #024F9D;
-  padding: 14px;
+  padding: 14px 30px;
   outline: none;
   border: none;
-  box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1);
+//  box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1);
   font-size: 16px;
   text-transform: uppercase;
   font-weight: bold;
@@ -585,5 +585,10 @@ ion-radio{
 .font-14-new{
   font-size: 16px !important;
   margin-top: 8px;
+}
+.data-share-info{
+  padding: 5px;
+  margin-left: -6px;
+  font-size: 15px
 }
 

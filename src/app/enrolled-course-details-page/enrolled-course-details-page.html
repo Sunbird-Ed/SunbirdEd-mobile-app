@@ -302,7 +302,7 @@
 				</ion-card-content>
 			</ion-card>
 			<ion-card *ngSwitchCase="'info'">
-				<ion-card-content class="ion-no-padding">
+				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled">
 					<div>
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
@@ -315,9 +315,11 @@
 								</span>
 							</div>
 							<div *ngIf="isDataShare" class="showLicensce">
-								<ion-card-title style="font-size: 15px">{{'DATA_SHARING_IS_ON' | translate}}</ion-card-title>
-								<p>{{'SHARE_WITH_ADMINISTRATOR' | translate}}</p>
-								<p>Last update on DD/MM/YY</p>
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'">{{'DATA_SHARING_IS_ON' | translate}}</ion-card-title>
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'DATA_SHARING_IS_OFF' | translate}}</ion-card-title>
+								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'SHARE_WITH_ADMINISTRATOR' | translate}}</p>
+								<p *ngIf="dataSharingStatus=='REVOKED'">{{'DONT_SHARE_WITH_ADMINISTRATOR' | translate}}</p>
+								<p>{{'LAST_UPDATE_ON' | translate:{'%s': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
 								<div class="edit-setting" (click)="editDataSettings()" *ngIf="!showShareData">{{'EDIT_SETTING' | translate}}</div>
 								<div class="edit-setting" (click)="editDataSettings()" *ngIf="showShareData">{{'CLOSE' | translate}}</div>
 							</div>
@@ -329,21 +331,21 @@
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom" style="padding-top: 10px;">
 										<strong>{{'UPDATE_SETTINGS' | translate}}</strong>
 									</ion-card-title>
-									<ion-list lines="none" (ionChange)="onSelected()">
-										<ion-radio-group [(ngModel)]="isShared" name="isShared">
+									<ion-list lines="none" style="margin-left: -4px;">
+										<ion-radio-group [(ngModel)]="dataSharingStatus">
 										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px;">
 											<ion-label class="ds-m0">{{'SHARE_PROFILE' | translate}}</ion-label>
-											<ion-radio class="ds-m0" [value]="yes" slot="start"></ion-radio>
+											<ion-radio class="ds-m0" value="REVOKED" slot="start" ></ion-radio>
 										  </ion-item>
 
 										  <ion-item class="ds-item">
 											<ion-label class="ds-m0">{{'NOT_SHARE_PROFILE' |translate}}</ion-label>
-											<ion-radio class="ds-m0" [value]="no" slot="start"></ion-radio>
+											<ion-radio class="ds-m0" value="ACTIVE" slot="start" ></ion-radio>
 										  </ion-item>
 										</ion-radio-group>
 									  </ion-list>
 									  <div class="ion-text-center">
-										<button class="save-changes">{{'SAVE_CHANGES' | translate}}</button>
+										<button class="save-changes" (click)="saveChanges()">{{'SAVE_CHANGES' | translate}}</button>
 									</div>
 								</div>
 							</div>

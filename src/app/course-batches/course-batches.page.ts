@@ -145,13 +145,15 @@ export class CourseBatchesPage implements OnInit {
         userId: this.userId,
         batch,
         pageId: PageId.COURSE_BATCHES,
-        courseId: undefined,
+        courseId: this.course.identifier,
         telemetryObject: this.telemetryObject,
         objRollup: this.objRollup,
-        corRelationList: this.corRelationList
+        corRelationList: this.corRelationList,
+        channel: this.course.channel,
+        userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this.course).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
@@ -160,6 +162,7 @@ export class CourseBatchesPage implements OnInit {
               courseId: batch.courseId
             });
             await loader.dismiss();
+          //  this.localCourseService.showConsentPopup(enrollCourse);
             this.location.back();
           });
         }, async (error) => {

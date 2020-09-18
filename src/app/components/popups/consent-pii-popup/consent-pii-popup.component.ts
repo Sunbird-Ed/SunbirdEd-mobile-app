@@ -39,10 +39,10 @@ export class ConsentPiiPopupComponent {
         this.popOverCtrl.dismiss(request);
     }
     dontShare() {
-        this.closePopover('No');
+        this.closePopover(false);
     }
     share() {
-        this.closePopover('Yes');
+        this.closePopover(true);
         this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
     }
 

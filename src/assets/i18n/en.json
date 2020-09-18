@@ -819,7 +819,9 @@
   "NOTE": "Note",
   "DATA_SETTINGS": "Data Settings",
   "DATA_SHARING_IS_ON": "DATA SHARING IS ON",
+  "DATA_SHARING_IS_OFF": "DATA SHARING IS OFF", 
   "SHARE_WITH_ADMINISTRATOR": "You have agreed to share your profile Information with the Administrator of this course",
+  "DONT_SHARE_WITH_ADMINISTRATOR": "You don't have agreed to share your profile Information with the Administrator of this course",
   "EDIT_SETTING": "Edit Setting",
   "CLOSE": "Close",
   "UPDATE_SETTINGS": "Update Settings",
@@ -831,5 +833,6 @@
   "EDIT_CONSENT_POPUP": "You can edit these details from your profile page",
   "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my my profile details with the course administrator in accordance with the",
   "INSTANCE_TERMS_OF_USE": " {instance} Terms of Use",
-  "DONT_SHARE": "Don't share"
+  "DONT_SHARE": "Don't share",
+  "LAST_UPDATE_ON": "Last update on {{%s}}"
 }

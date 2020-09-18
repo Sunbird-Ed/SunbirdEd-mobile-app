@@ -24,6 +24,11 @@ import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii
 import { forEach } from '@angular/router/src/utils/collection';
 import { UserConsent, Consent, ConsentStatus } from '@project-sunbird/client-services/models';
 
+export interface ConsentPopoverActionsDelegate {
+  onConsentPopoverShow(): void;
+  onConsentPopoverDismiss(): void;
+}
+
 @Injectable()
 export class LocalCourseService {
   private userId: string;
@@ -46,7 +51,7 @@ export class LocalCourseService {
   ) {
   }
 
-  enrollIntoBatch(enrollCourse: EnrollCourse, content?): Observable<any> {
+  enrollIntoBatch(enrollCourse: EnrollCourse, consentPopoverActionsDelegate?: ConsentPopoverActionsDelegate): Observable<any> {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
@@ -63,10 +68,15 @@ export class LocalCourseService {
           );
           // const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) ?
           //   JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) : content;
-          if (content.userConsent === UserConsent.YES) {
-            setTimeout(() => {
-              this.showConsentPopup(enrollCourse, content);
-            }, 1000);
+          if (enrollCourse.userConsent === UserConsent.YES) {
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverShow();
+            }
+            await this.showConsentPopup(enrollCourse);
+
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverDismiss();
+            }
           }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -298,7 +308,7 @@ export class LocalCourseService {
     return true;
   }
 
-  async showConsentPopup(course, content) {
+  private async showConsentPopup(course) {
     const popover = await this.popoverCtrl.create({
       component: ConsentPiiPopupComponent,
       componentProps: {
@@ -307,25 +317,17 @@ export class LocalCourseService {
     });
     await popover.present();
     const dismissResponse = await popover.onDidDismiss();
-    if (dismissResponse.data.data === 'Yes') {
+    if (dismissResponse.data) {
       const request: Consent = {
-        status: ConsentStatus.ACTIVE,
+        status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
         userId: dismissResponse.data.userId,
-        consumerId: dismissResponse.data.consumerId,
-        objectId: course.batch.courseId,
-        objectType: content.primaryCategory,
-        expiry: JSON.stringify(new Date())
+        consumerId: course.channel ? course.channel : course.content.channel,
+        objectId: course.courseId,
+        objectType: 'Collection'
       };
       this.profileService.updateConsent(request).toPromise()
         .then((data) => {
           console.log('update consent', data);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-      this.profileService.getConsent(request).toPromise()
-        .then((data) => {
-          console.log('get consent', data);
         })
         .catch((e) => {
           console.error(e);

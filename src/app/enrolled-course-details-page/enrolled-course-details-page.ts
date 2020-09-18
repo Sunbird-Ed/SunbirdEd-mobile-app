@@ -49,6 +49,7 @@ import {
   DownloadTracking,
   DownloadService,
   AuditState,
+  Consent,
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -90,6 +91,8 @@ import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 declare const cordova;
 
 @Component({
@@ -97,7 +100,7 @@ declare const cordova;
   templateUrl: './enrolled-course-details-page.html',
   styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
+export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 
   /**
    * Contains content details
@@ -242,6 +245,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   showShareData = false;
   isDataShare = false;
   isShared: any;
+  dataSharingStatus: any;
+  lastUpdateOn: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1358,6 +1363,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    if (this.appGlobalService.isUserLoggedIn) {
+      this.checkDataSharingStatus();
+    }
   }
 
   ionViewDidEnter() {
@@ -1857,16 +1865,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         userId: this.userId,
         batch: item,
         pageId: PageId.COURSE_BATCHES,
-        courseId: undefined,
+        courseId: this.course.identifier,
+        channel: this.course.channel,
         telemetryObject: this.telemetryObject,
         objRollup: this.objRollup,
-        corRelationList: this.corRelationList
+        corRelationList: this.corRelationList,
+        userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse, this.course).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
+           // this.localCourseService.showConsentPopup(enrollCourse);
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
@@ -2062,8 +2073,53 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
-  onSelected() {
-   console.log('enrolled data', this.isShared);
+  saveChanges() {
+      const request: Consent = {
+        status: this.dataSharingStatus,
+        userId: this.courseCardData.userId,
+        consumerId: this.course.channel,
+        objectId: this.courseCardData.courseId,
+        objectType: 'Collection',
+      };
+      this.profileService.updateConsent(request).toPromise()
+        .then((data) => {
+          console.log('update consent', data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
   }
 
+  checkDataSharingStatus() {
+    const request: Consent = {
+      userId: this.courseCardData.userId,
+      consumerId: this.course.channel,
+      objectId: this.courseCardData.courseId
+    };
+    this.profileService.getConsent(request).toPromise()
+    .then((data) => {
+      console.log('update consent', data);
+      if (data) {
+        this.dataSharingStatus = data.consents[0].status;
+        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+      }
+    })
+    .catch((e) => {
+      if (this.isAlreadyEnrolled && e.err === 'USER_CONSENT_NOT_FOUND' && this.courseCardData.content.userConsent) {
+        // this.localCourseService.showConsentPopup(this.courseCardData);
+      }
+    });
+    this.dataSharingStatus = ConsentStatus.ACTIVE;
+  }
+
+  onConsentPopoverShow() {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+  }
+
+  onConsentPopoverDismiss() {
+    this.checkDataSharingStatus();
+  }
 }
