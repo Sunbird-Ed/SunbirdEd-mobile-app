@@ -1,11 +1,9 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
-  class="main-container avoid-bottom-tabs-space ui-container" scrollEvents="true">
-
-  <div class="ui-content">
+  class="main-container avoid-bottom-tabs-space" scrollEvents="true">
     <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
       <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
     </ion-refresher>
-
+  <div class="">
     <div *ngIf="showSignInCard" class="enrolled-course-bg">
       <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
     </div>
