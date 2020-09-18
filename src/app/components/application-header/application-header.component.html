@@ -161,7 +161,8 @@
         <span class="sb-menu-icon">
           <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" alt="help">
         </span>
-        <span class="sb-menu-item" menuClose>{{appTheme === 'DEFAULT'? 'SWITCH_TO_JOYFUL_THEME' | translate: 'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>
@@ -286,7 +287,8 @@
         <span class="sb-menu-icon">
           <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
         </span>
-        <span class="sb-menu-item" menuClose>{{appTheme === 'DEFAULT'? 'SWITCH_TO_JOYFUL_THEME': 'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>
