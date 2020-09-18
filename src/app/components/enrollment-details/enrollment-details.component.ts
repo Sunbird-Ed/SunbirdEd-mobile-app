@@ -10,7 +10,7 @@ import {
 } from 'sunbird-sdk';
 import {
     PreferenceKey, EventTopics,
-    ContentType, RouterLinks
+    RouterLinks
 } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -24,6 +24,8 @@ import {
     AppGlobalService
 } from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
     selector: 'app-enrollment-details',
@@ -136,13 +138,12 @@ export class EnrollmentDetailsComponent implements OnInit {
 
     navigateToDetailPage(content: any, layoutName?: string): void {
         const identifier = content.contentId || content.identifier;
-        let type;
+        let telemetryObject;
         if (layoutName === this.layoutInProgress) {
-            type = ContentType.COURSE;
+            telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, '');
         } else {
-            type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+            telemetryObject = ContentUtil.getTelemetryObject(content);
         }
-        const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
 
         const values = new Map();
         values['sectionName'] = this.sectionName;

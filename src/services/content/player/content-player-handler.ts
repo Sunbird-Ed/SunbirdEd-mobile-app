@@ -6,7 +6,7 @@ import { File } from '@ionic-native/file/ngx';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentInfo } from '../content-info';
-import { RouterLinks, ContentType, ContentFilterConfig } from '@app/app/app.constant';
+import { RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
 import { Router, NavigationExtras } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Course, CourseService } from 'sunbird-sdk';
@@ -55,7 +55,7 @@ export class ContentPlayerHandler {
         if (isCourse && content.contentData['totalQuestions']) {
             const correlationData: CorrelationData = {
                 id: this.courseService.generateAssessmentAttemptId({
-                    courseId: contentInfo.course!.identifier,
+                    courseId: contentInfo.course.identifier,
                     batchId: contentInfo.course.batchId,
                     contentId: content.identifier,
                     userId: contentInfo.course.userId

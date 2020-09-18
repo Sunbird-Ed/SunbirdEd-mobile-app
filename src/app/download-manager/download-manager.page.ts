@@ -127,11 +127,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       sortAttribute: 'sizeOnDevice',
       sortOrder: SortOrder.DESC
     }];
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DOWNLOADS);
     const requestParams: ContentRequest = {
       uid: profile.uid,
-      contentTypes,
+      primaryCategories,
       audience: [],
       sortCriteria: this.sortCriteria || defaultSortCriteria
     };

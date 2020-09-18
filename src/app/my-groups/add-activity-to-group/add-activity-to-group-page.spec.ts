@@ -102,6 +102,11 @@ describe('AddActivityToGroupPage', () => {
         it('should handle device header and back-button', (done) => {
             // assert
             mockAppGlobalService.selectedActivityCourseId = '';
+            addActivityToGroupPage.activityList = [
+                {
+                    items: [{identifier: 'id1'}]
+                }
+            ];
             // act
             addActivityToGroupPage.ionViewWillEnter();
             // assert
@@ -144,6 +149,9 @@ describe('AddActivityToGroupPage', () => {
         it('should redirect to search page', () => {
             // arrange
             mockRouter.navigate = jest.fn();
+            addActivityToGroupPage.flattenedActivityList = [
+                {identifier: 'id1'}
+            ];
             // act
             addActivityToGroupPage.search('data');
             // assert
@@ -151,10 +159,9 @@ describe('AddActivityToGroupPage', () => {
                 [RouterLinks.SEARCH],
                 {
                     state: {
-                        activityList: {
-                            contentType: 'Course',
-                            identifier: 'id1'
-                        },
+                        activityList: [
+                            {identifier: 'id1'}
+                        ],
                         groupId: 'g1',
                         activityTypeData: 'data',
                         corRelation: addActivityToGroupPage.corRelationList,

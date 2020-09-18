@@ -10,6 +10,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { Location } from '@angular/common';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-textbook-view-more',
@@ -74,10 +75,6 @@ export class TextbookViewMorePage {
   }
 
   navigateToDetailPage(item, index, sectionName) {
-    const identifier = item.contentId || item.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, item.contentType, undefined);
-
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
@@ -85,7 +82,7 @@ export class TextbookViewMorePage {
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToCollection({

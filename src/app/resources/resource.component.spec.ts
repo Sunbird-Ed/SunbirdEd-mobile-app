@@ -1,4 +1,4 @@
-import { ResourcesComponent } from '@app/app/resources/resources.component';
+import {ResourcesComponent} from '@app/app/resources/resources.component';
 import {
     ContentEventType,
     ContentSearchCriteria,
@@ -16,33 +16,34 @@ import {
     SearchType,
     SharedPreferences,
 } from 'sunbird-sdk';
-import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
-import { ChangeDetectorRef, NgZone } from '@angular/core';
+import {EventsBusServiceImpl} from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
+import {ContentServiceImpl} from 'sunbird-sdk/content/impl/content-service-impl';
+import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,
     AppHeaderService,
-    CommonUtilService, Environment,
+    CommonUtilService,
+    Environment,
     FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
+    NotificationService,
     PageId,
     SunbirdQRScanner,
     TelemetryGeneratorService
 } from '@app/services';
-import { Events, MenuController, PopoverController, ToastController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Network } from '@ionic-native/network/ngx';
-import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
-import { NEVER, of, Subscription } from 'rxjs';
-import { NotificationService } from '@app/services';
-import { ContentFilterConfig, EventTopics, RouterLinks, PreferenceKey } from '../app.constant';
-import { ImpressionType } from '../../services/telemetry-constants';
-import { NavigationService } from '../../services/navigation-handler.service';
-import { FrameworkSelectionDelegateService, FrameworkSelectionActionsDelegate } from '../profile/framework-selection/framework-selection.page';
+import {Events, MenuController, PopoverController, ToastController} from '@ionic/angular';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {Network} from '@ionic-native/network/ngx';
+import {TranslateService} from '@ngx-translate/core';
+import {Router} from '@angular/router';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
+import {NEVER, of, Subscription} from 'rxjs';
+import {ContentFilterConfig, EventTopics, PreferenceKey, RouterLinks} from '../app.constant';
+import {ImpressionType} from '../../services/telemetry-constants';
+import {NavigationService} from '../../services/navigation-handler.service';
+import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -116,7 +117,7 @@ describe('ResourcesComponent', () => {
         delegate: {
             onFrameworkSelectionSubmit: jest.fn()
         }
-    }
+    };
 
 
     const constructComponent = () => {
@@ -1163,7 +1164,7 @@ describe('ResourcesComponent', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
+                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             expect(mockNavService.navigateToCollection).toHaveBeenCalled();
@@ -1184,7 +1185,7 @@ describe('ResourcesComponent', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: undefined },
+                Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
         });
@@ -1205,7 +1206,7 @@ describe('ResourcesComponent', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.LIBRARY,
-            { id: 'sample_doId', type: 'textbook', version: undefined });
+            { id: 'do_id1234', type: 'textbook', version: '' });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
         expect(mockRouter.navigate).toHaveBeenCalled();
     });
@@ -1224,7 +1225,7 @@ describe('ResourcesComponent', () => {
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.LIBRARY,
-            { id: 'do_id1234', type: 'textbook', version: undefined });
+            { id: 'do_id1234', type: 'textbook', version: '' });
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
     });
 
@@ -1490,7 +1491,27 @@ describe('ResourcesComponent', () => {
                 isNetworkAvailable: true
             };
             const formOutput = {
-                board: { name: 'STATE' }
+                board: {
+                    name: 'State (Karnataka)',
+                    code: 'ka_k-12_1'
+                },
+                medium: {
+                    name: 'English',
+                    code: 'english',
+                    frameworkCode: 'ka_k-12_1'
+                },
+                grade: {
+                    name: 'Class 9',
+                    code: 'class9',
+                    frameworkCode: 'ka_k-12_1'
+                },
+                subject: 'other',
+                contenttype: 'digitextbbok',
+                children: {
+                    subject: {
+                        other: 'Cdc'
+                    }
+                }
             };
             mockRouter.navigate = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();

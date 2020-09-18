@@ -12,7 +12,7 @@ import {
     InteractType, InteractSubtype,
     Environment, PageId
 } from '../telemetry-constants';
-import { ContentType } from '../../app/app.constant';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('ContentShareHandlerService', () => {
 
@@ -56,8 +56,10 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentType: 'contentType',
+                primaryCategory: 'primaryCategory',
                 contentData: {
-                    contentType: 'contentType'
+                    contentType: 'contentType',
+                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -74,7 +76,7 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showToast = jest.fn();
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' }, 'content-detail');
 
             // assert
             setTimeout(() => {
@@ -82,7 +84,7 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -105,7 +107,8 @@ describe('ContentShareHandlerService', () => {
                 identifier: 'do_id',
                 contentType: 'contentType',
                 contentData: {
-                    contentType: 'contentType'
+                    contentType: 'contentType',
+                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -133,7 +136,8 @@ describe('ContentShareHandlerService', () => {
             // mockCommonUtilService.showToast = jest.fn();
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+                PageId.CONTENT_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -141,14 +145,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -178,7 +182,8 @@ describe('ContentShareHandlerService', () => {
                 identifier: 'do_id',
                 contentType: 'contentType',
                 contentData: {
-                    contentType: 'contentType'
+                    contentType: 'contentType',
+                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -207,7 +212,7 @@ describe('ContentShareHandlerService', () => {
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content,
-                undefined, ['child_do_id'], [], { l1: 'textbook_do_id' });
+                undefined, ['child_do_id'], [], { l1: 'textbook_do_id' }, PageId.CONTENT_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -215,14 +220,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'textbook_do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'textbook_do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
@@ -253,7 +258,8 @@ describe('ContentShareHandlerService', () => {
                 identifier: 'do_id',
                 contentType: 'contentType',
                 contentData: {
-                    contentType: 'contentType'
+                    contentType: 'contentType',
+                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -269,7 +275,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+             PageId.CONTENT_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -277,14 +284,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -308,7 +315,8 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COURSE
+                    contentType: CsContentType.COURSE,
+                    primaryCategory: 'Course',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -324,7 +332,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.COURSE_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -332,14 +341,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: 'Course', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -363,7 +372,8 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COURSE
+                    contentType: CsContentType.COURSE,
+                    primaryCategory: 'Course',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -379,7 +389,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, 'module_do_id', [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, 'module_do_id', [], [], { l1: 'do_id' },
+            PageId.COURSE_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -387,14 +398,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: 'Course', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COURSE_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COURSE, version: undefined
+                        id: 'do_id', type: CsContentType.COURSE, version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -418,7 +429,8 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.TEXTBOOK
+                    contentType: CsContentType.TEXTBOOK,
+                    primaryCategory: 'Digital Textbook',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -434,7 +446,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.COLLECTION_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -442,14 +455,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.TEXTBOOK, version: undefined
+                        id: 'do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.TEXTBOOK, version: undefined
+                        id: 'do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -473,7 +486,8 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'content_do_id',
                 contentData: {
-                    contentType: ContentType.TEXTBOOK
+                    contentType: CsContentType.TEXTBOOK,
+                    primaryCategory: 'Digital Textbook',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -489,7 +503,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.COLLECTION_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -497,14 +512,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'content_do_id', type: ContentType.TEXTBOOK, version: undefined
+                        id: 'content_do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'content_do_id', type: ContentType.TEXTBOOK, version: undefined
+                        id: 'content_do_id', type: 'Digital Textbook', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -528,7 +543,8 @@ describe('ContentShareHandlerService', () => {
             const content: Partial<Content> = {
                 identifier: 'do_id',
                 contentData: {
-                    contentType: ContentType.COLLECTION
+                    contentType: CsContentType.COLLECTION,
+                    primaryCategory: 'Content Playlist',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -544,7 +560,8 @@ describe('ContentShareHandlerService', () => {
             values['ContentType'] = content.contentData.contentType;
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.COLLECTION_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -552,14 +569,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COLLECTION, version: undefined
+                        id: 'do_id', type: 'Content Playlist', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.COLLECTION_DETAIL,
                     {
-                        id: 'do_id', type: ContentType.COLLECTION, version: undefined
+                        id: 'do_id', type: 'Content Playlist', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
@@ -583,7 +600,8 @@ describe('ContentShareHandlerService', () => {
                 identifier: 'do_id',
                 contentType: 'contentType',
                 contentData: {
-                    contentType: 'contentType'
+                    contentType: 'contentType',
+                    primaryCategory: 'primaryCategory',
                 }
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -602,7 +620,8 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService.showToast = jest.fn();
 
             // act
-            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' });
+            contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
+            PageId.CONTENT_DETAIL);
 
             // assert
             setTimeout(() => {
@@ -610,14 +629,14 @@ describe('ContentShareHandlerService', () => {
                     InteractType.TOUCH, InteractSubtype.SHARE_CONTENT_INITIATED,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.OTHER, InteractSubtype.SHARE_CONTENT_SUCCESS,
                     Environment.HOME, PageId.CONTENT_DETAIL,
                     {
-                        id: 'do_id', type: 'contentType', version: undefined
+                        id: 'do_id', type: 'primaryCategory', version: ''
                     },
                     values, { l1: 'do_id' }, []);
                 expect(presentFn).toHaveBeenCalled();
