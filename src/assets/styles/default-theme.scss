@@ -1,0 +1,12 @@
+html[data-theme="DEFAULT"]{
+
+  app-profile{
+    .self-declare-btn{
+      ion-button{
+        --background: #{map-get($colors, dark_green)} !important;
+      }
+    }
+  }
+
+}
+

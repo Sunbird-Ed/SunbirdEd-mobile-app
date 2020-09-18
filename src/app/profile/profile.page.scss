@@ -339,7 +339,7 @@
     margin: 8px 0 16px;
     ion-button{
       text-transform: none;
-      --background: #{map-get($colors, dark_green)} !important;
+      --background: #{map-get($colors, dark_green)};
       --padding-start: 24px;
       --padding-end: 24px;
     }
