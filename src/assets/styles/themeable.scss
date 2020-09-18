@@ -673,14 +673,28 @@ html[data-theme="JOYFUL"]{
     top: 0;
     border-bottom-left-radius: 20px;
     background-color: var(--joyful-warning) !important;
+    background-image: url(/assets/imgs/header-background.svg);
+    background-repeat: no-repeat;
+    background-position: bottom center;
   }
   .ui-content{
     z-index: 2;
     position: relative;
   }
 
-  .back-btn-container {
-    z-index: 2;
+  .ps-container{
+    .back-btn-container {
+      z-index: 2;
+      &::after{
+        content: '';
+        background-color: var(--joyful-warning) !important;
+        width: 100vw;
+        height: 50px;
+        position: absolute;
+        z-index: -1;
+        border-bottom-left-radius: 20px;
+      }
+    }
   }
   .qr-content {
     z-index: 2;
