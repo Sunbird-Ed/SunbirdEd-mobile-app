@@ -107,7 +107,8 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockLocalCourseService: Partial<LocalCourseService> = {
         prepareEnrollCourseRequest: jest.fn(),
         enrollIntoBatch: jest.fn(),
-        prepareRequestValue: jest.fn()
+        prepareRequestValue: jest.fn(),
+        isEnrollable: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -1945,7 +1946,7 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('navigateToBatchListPage()', () => {
-        it('should', async (done) => {
+        it('should return false, not call navigate', async (done) => {
             // arrange
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
@@ -1968,7 +1969,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             await enrolledCourseDetailsPage.navigateToBatchListPage();
             // assert
-            expect(mockRouter.navigate).toBeCalled();
+            expect(mockRouter.navigate).not.toBeCalled();
             done();
         });
     });

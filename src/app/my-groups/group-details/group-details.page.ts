@@ -5,7 +5,7 @@ import {
   AppHeaderService,
   CommonUtilService, AppGlobalService, TelemetryGeneratorService
 } from '../../../services';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import {
   InteractType,
@@ -15,7 +15,7 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import { Platform, PopoverController, Events } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import {
   GroupService, GetByIdRequest, Group,
   GroupMember, GroupMemberRole, DeleteByIdRequest,
@@ -35,9 +35,11 @@ import {
   SbGenericPopoverComponent
 } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
-import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { ActivitiesGrouped } from '@project-sunbird/client-services/models';
-import { ViewMoreActivityDelegateService, ViewMoreActivityActionsDelegate } from '../view-more-activity/view-more-activity.page';
+import {
+  ViewMoreActivityDelegateService,
+  ViewMoreActivityActionsDelegate
+} from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
@@ -55,8 +57,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   groupDetails: Group;
   activeTab = 'activities';
   activityList: ActivitiesGrouped[] = [];
-  groupedActivityListMap: {[title: string]: GroupActivity[]};
-  filteredGroupedActivityListMap: {[title: string]: GroupActivity[]};
+  groupedActivityListMap: { [title: string]: GroupActivity[] };
+  filteredGroupedActivityListMap: { [title: string]: GroupActivity[] };
   memberList: GroupMember[] = [];
   filteredMemberList = [];
   memberSearchQuery: string;
@@ -142,14 +144,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL,
       undefined, undefined, undefined, this.corRelationList);
 
-    const navigationExtras: NavigationExtras = {
-      state: {
-        groupId: this.groupId,
-        memberList: this.memberList,
-        corRelation: this.corRelationList
-      }
-    };
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
+    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
+      groupId: this.groupId,
+      memberList: this.memberList,
+      corRelation: this.corRelationList
+    });
   }
 
   private async fetchGroupDetails() {
@@ -201,7 +200,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         });
         return acc;
       }, {});
-      this.filteredGroupedActivityListMap = {...this.groupedActivityListMap};
+      this.filteredGroupedActivityListMap = { ...this.groupedActivityListMap };
       this.isGroupLoading = false;
     } catch (e) {
       this.isGroupLoading = false;
@@ -264,15 +263,12 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           Environment.GROUP,
           PageId.GROUP_DETAIL,
           undefined, undefined, undefined, this.corRelationList);
-        this.router.navigate(
-          [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
+
+        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
-            state: {
-              groupDetails: this.groupDetails,
-              corRelation: this.corRelationList
-            }
-          },
-        );
+            groupDetails: this.groupDetails,
+            corRelation: this.corRelationList
+          });
       } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
       } else if (data.selectedItem === 'MENU_LEAVE_GROUP') {
@@ -828,8 +824,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     for (const property in this.groupedActivityListMap) {
       if (this.groupedActivityListMap[property].length) {
         this.filteredGroupedActivityListMap[property] = this.groupedActivityListMap[property].filter(
-            (activity) => activity['name'].toLowerCase().includes(query.toLowerCase())
-          );
+          (activity) => activity['name'].toLowerCase().includes(query.toLowerCase())
+        );
       }
     }
   }
@@ -843,30 +839,19 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   onActivityCardClick(event) {
     const activity = event.data;
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.navService.navigateToTrackableCollection(
-        {
-          content: activity.activityInfo,
-          corRelation: this.corRelationList
-        }
-      );
-      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-      //   {
-      //     state: {
-      //       content: activity.activityInfo
-      //     }
-      //   });
+      this.navService.navigateToTrackableCollection({
+        content: activity,
+        corRelation: this.corRelationList
+      });
     } else {
-      const navigationExtras: NavigationExtras = {
-        state: {
+      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],
+        {
           loggedinUser: this.loggedinUser,
           group: this.groupDetails,
           memberList: this.memberList,
           activity,
           corRelation: this.corRelationList
-        }
-      };
-      this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras.state);
-      // this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+        });
     }
   }
 
@@ -888,14 +873,12 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         supportedActivityList.forEach(activity => {
           activity.title = this.commonUtilService.translateMessage(activity.title);
         });
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
+        this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
           {
-            state: {
-              supportedActivityList,
-              groupId: this.groupId,
-              activityList: this.activityList,
-              corRelation: this.corRelationList
-            }
+            supportedActivityList,
+            groupId: this.groupId,
+            activityList: this.activityList,
+            corRelation: this.corRelationList
           });
       }
     } catch (e) {
@@ -904,15 +887,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   navigateToViewMorePage(activityGroup) {
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
-    {
-      state: {
+    this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ACTIVITY_VIEW_MORE}`],
+      {
         isMenu: this.loggedinUser.role === 'admin',
         activityGroup,
         groupId: this.groupId,
         previousPageId: PageId.GROUP_DETAIL
-      }
-    });
+      });
   }
 
   onViewMoreCardClick(event: Event, activity: GroupActivity) {

@@ -237,8 +237,7 @@ export class TelemetryGeneratorService {
         const values = new Map();
         values['isFirstTime'] = isFirstTime;
         values['size'] = content.size;
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId,
-            content.contentData ? content.contentData.contentType : content.contentType, content.contentData.pkgVersion);
+        const telemetryObject = ContentUtil.getTelemetryObject(content);
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.LOADING_SPINE,
@@ -251,13 +250,12 @@ export class TelemetryGeneratorService {
 
     generateCancelDownloadTelemetry(content: any) {
         const values = new Map();
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId, content.contentType, content.pkgVersion);
         this.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.CANCEL_CLICKED,
             Environment.HOME,
             PageId.DOWNLOAD_SPINE,
-            telemetryObject,
+            ContentUtil.getTelemetryObject(content),
             values);
     }
 
@@ -265,13 +263,12 @@ export class TelemetryGeneratorService {
         const values = new Map();
         values['downloadingIdentifers'] = downloadingIdentifier;
         values['childrenCount'] = childrenCount;
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId, content.contentType, content.pkgVersion);
         this.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.DOWNLOAD_ALL_CLICKED,
             Environment.HOME,
             pageId,
-            telemetryObject,
+            ContentUtil.getTelemetryObject(content),
             values,
             rollup, corelationList);
     }
@@ -360,13 +357,12 @@ export class TelemetryGeneratorService {
             const kbsofar = (content.size / 100) * Number(downloadProgress);
             values['downloadedSoFar'] = this.transform(kbsofar);
         }
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId, content.contentType, content.pkgVersion);
         this.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.CANCEL_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL,
-            telemetryObject,
+            ContentUtil.getTelemetryObject(content),
             values);
     }
 

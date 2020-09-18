@@ -25,8 +25,7 @@ import {
 import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
-  RouterLinks, AudienceFilter,
-  ContentType, MimeType, Search, ContentCard,
+  RouterLinks, AudienceFilter, MimeType, Search, ContentCard,
   ContentFilterConfig
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -52,6 +51,7 @@ import { applyProfileFilter, updateFilterInSearchQuery } from '@app/util/filter.
 import { GroupHandlerService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 declare const cordova;
 @Component({
@@ -65,7 +65,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   showLoading: boolean;
   downloadProgress: any;
   @ViewChild('searchInput') searchBar;
-  contentType: Array<string> = [];
+  primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
   activityTypeData: any = {};
@@ -154,7 +154,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (extras) {
       this.dialCode = extras.dialCode;
-      this.contentType = extras.contentType;
+      this.primaryCategories = extras.primaryCategories;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
       if (this.source === PageId.GROUP_DETAIL) {
@@ -340,17 +340,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openCollection(collection) {
-    const identifier = collection.identifier;
-    let telemetryObject: TelemetryObject;
-    const objectType = this.telemetryGeneratorService.isCollection(collection.mimeType) ? collection.contentType : ContentType.RESOURCE;
-    telemetryObject = new TelemetryObject(identifier, objectType, undefined);
     const values = new Map();
     values.root = true;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_SEARCH,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(collection),
       values,
       undefined,
       this.corRelationList);
@@ -465,10 +461,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       case 0:
         if (this.isDialCodeSearch && !isRootContent) {
           params.isCreateNavigationStack = true;
-  
+
           const corRelationList: Array<CorrelationData> = [];
           corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
-  
+
           const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SELECT_BOOK, '',
@@ -478,7 +474,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             undefined, undefined,
             corRelationList
           );
-  
+
           this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
             state: {
               content: params.content,
@@ -525,107 +521,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         });
         break;
     }
-
-    // if (content.contentType === ContentType.COURSE) {
-    //   if (!this.guestUser) {
-    //     this.enrolledCourses = await this.getEnrolledCourses(false, false);
-    //   } else {
-    //     this.enrolledCourses = [];
-    //   }
-    //   if (this.enrolledCourses && this.enrolledCourses.length) {
-    //     for (let i = 0; i < this.enrolledCourses.length; i++) {
-    //       if (content.identifier === this.enrolledCourses[i].courseId) {
-    //         params.content = this.enrolledCourses[i];
-    //       }
-    //     }
-    //   }
-    //   const correlationData: CorrelationData = new CorrelationData();
-    //   if (this.source === PageId.GROUP_DETAIL) {
-    //     correlationData.id = PageId.GROUP_DETAIL;
-    //     correlationData.type = CorReleationDataType.FROM_PAGE;
-    //     if (params && params.corRelation) {
-    //       params.corRelation.push(correlationData);
-    //     }
-    //   }
-    //   console.log('Content Data', content);
-    //   this.navService.navigateToTrackableOrETB(
-    //     content,
-    //     {
-    //       source: this.source,
-    //       groupId: this.groupId,
-    //       activityList: this.activityList,
-    //       content: params.content,
-    //       corRelation: params.corRelation,
-    //       isSingleContent: params.isSingleContent,
-    //       onboarding: params.onboarding,
-    //       parentContent: params.parentContent,
-    //       isQrCodeLinkToContent: params.isQrCodeLinkToContent,
-    //       isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
-    //     }
-    //   );
-    //   if (this.isSingleContent) {
-    //     this.isSingleContent = false;
-    //   }
-    // } else if (content.mimeType === MimeType.COLLECTION) {
-    //   if (this.isDialCodeSearch && !isRootContent) {
-    //     params.isCreateNavigationStack = true;
-
-    //     const corRelationList: Array<CorrelationData> = [];
-    //     corRelationList.push({ id: this.dialCode, type: CorReleationDataType.QR });
-
-    //     const telemetryObject = new TelemetryObject(content.identifier, ObjectType.TEXTBOOK, undefined);
-    //     this.telemetryGeneratorService.generateInteractTelemetry(
-    //       InteractType.SELECT_BOOK, '',
-    //       this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-    //       PageId.QR_BOOK_RESULT,
-    //       telemetryObject,
-    //       undefined, undefined,
-    //       corRelationList
-    //     );
-
-    //     this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
-    //       state: {
-    //         content: params.content,
-    //         corRelation: params.corRelation,
-    //         isSingleContent: params.isSingleContent,
-    //         onboarding: params.onboarding,
-    //         parentContent: params.parentContent,
-    //         isProfileUpdated: params.isProfileUpdated,
-    //         isQrCodeLinkToContent: params.isQrCodeLinkToContent,
-    //         isAvailableLocally: params.isAvailableLocally,
-    //         source: params.source,
-    //         dialCode: this.dialCode
-    //       }
-    //     });
-    //     if (this.isSingleContent) {
-    //       this.isSingleContent = false;
-    //     }
-    //   } else {
-    //     // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-    //     //   state: {
-    //     //     source: this.source,
-    //     //     groupId: this.groupId,
-    //     //     activityList: this.activityList,
-    //     //     content: params.content,
-    //     //     corRelation: params.corRelation,
-    //     //     isSingleContent: params.isSingleContent,
-    //     //     onboarding: params.onboarding,
-    //     //     parentContent: params.parentContent
-    //     //   }
-    //     // });
-
-    //   }
-    // } else {
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-    //     state: {
-    //       content: params.content,
-    //       corRelation: params.corRelation,
-    //       isSingleContent: params.isSingleContent,
-    //       onboarding: params.onboarding,
-    //       parentContent: params.parentContent
-    //     }
-    //   });
-    // }
   }
 
   setGrade(reset, grades) {
@@ -866,6 +761,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter() {
+    this.showAddToGroupButtons = false;
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
@@ -913,7 +809,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
       return;
     }
-
+    this.showAddToGroupButtons = false;
     this.addSearchHistoryEntry();
 
     this.showLoader = true;
@@ -923,7 +819,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentSearchRequest: ContentSearchCriteria = {
       searchType: SearchType.SEARCH,
       query: this.searchKeywords,
-      contentTypes: this.contentType,
+      primaryCategories: this.primaryCategories,
       facets: Search.FACETS,
       audience: this.audienceFilter,
       mode: 'soft',
@@ -1131,14 +1027,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.showLoader = true;
 
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
-    this.contentType = contentTypes;
+    this.primaryCategories = primaryCategories;
 
     // Page API START
     const pageAssemblefilter: PageAssembleFilter = {};
     pageAssemblefilter.dialcodes = this.dialCode;
-    pageAssemblefilter.contentType = this.contentType;
+    pageAssemblefilter.primaryCategory = this.primaryCategories;
 
     const pageAssembleCriteria: PageAssembleCriteria = {
       name: PageName.DIAL_CODE,
@@ -1149,7 +1045,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.profile && this.profile.board && this.profile.board.length) {
       pageAssembleCriteria.userProfile = { board: applyProfileFilter(this.appGlobalService, this.profile.board, [], 'board') };
     }
-    // pageAssembleCriteria.hardRefresh = true;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
       .then((res: any) => {
@@ -1158,7 +1053,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           if (sections && sections.length) {
             this.addCorRelation(sections[0].resmsgId, 'API');
             this.processDialCodeResult(sections);
-            // this.updateFilterIcon();  // TO DO
           }
           this.showLoader = false;
         });
@@ -1184,7 +1078,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.location.back();
         });
       });
-    // Page API END
   }
 
   generateInteractEvent(identifier, contentType, pkgVersion, index) {
@@ -1278,7 +1171,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         const dialCodeContentResult = [];
         const dialCodeContentCourseResult = []; // content type course
         contentArray.forEach((content) => {
-          if (content.contentType === ContentType.COURSE) {
+          if (content.contentType === CsContentType.COURSE) {
             dialCodeContentCourseResult.push(content);
           } else if (addedContent.indexOf(content.identifier) < 0) {
             dialCodeContentResult.push(content);

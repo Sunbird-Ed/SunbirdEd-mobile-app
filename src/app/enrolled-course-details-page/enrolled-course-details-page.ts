@@ -64,7 +64,7 @@ import {
   AuditType
 } from '../../services/telemetry-constants';
 import {
-  ProfileConstants, ContentType, EventTopics, MimeType,
+  ProfileConstants, EventTopics, MimeType,
   PreferenceKey, RouterLinks, ShareItemType
 } from '../app.constant';
 import { BatchConstants } from '../app.constant';
@@ -89,6 +89,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 declare const cordova;
 
 @Component({
@@ -1141,13 +1142,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
     const values = new Map();
     values['isCollapsed'] = isCollapsed;
-    const telemetryObject = new TelemetryObject(content.identifier, ContentType.COURSE_UNIT, content.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
       PageId.COURSE_DETAIL,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values,
       undefined,
       this.corRelationList
@@ -1567,6 +1567,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
+
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (this.batches.length) {
         if (this.batches.length === 1) {
@@ -1658,7 +1662,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateStartEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
       telemetryObject,
       this.objRollup,
@@ -1667,8 +1671,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateEndEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType || ContentType.COURSE,
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
+    this.telemetryGeneratorService.generateEndTelemetry(objectType || CsPrimaryCategory.COURSE,
       Mode.PLAY,
       PageId.COURSE_DETAIL,
       Environment.HOME,
@@ -1983,6 +1987,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     // if (this.csGroupAddableBloc.state) {
     //   return;
     // }
+
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
 
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(

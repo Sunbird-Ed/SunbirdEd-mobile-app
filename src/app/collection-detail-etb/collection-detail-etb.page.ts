@@ -1,30 +1,56 @@
-import { TextbookTocService } from './textbook-toc-service';
+import {TextbookTocService} from './textbook-toc-service';
 import {
-  Component, Inject, NgZone, OnInit, ViewChild, ViewEncapsulation, QueryList, ViewChildren,
-  ElementRef, ChangeDetectorRef
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Inject,
+  NgZone,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewEncapsulation
 } from '@angular/core';
 import isObject from 'lodash/isObject';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { IonContent as iContent } from '@ionic/angular';
+import {FileSizePipe} from '@app/pipes/file-size/file-size';
+import {Events, IonContent as iContent, Platform, PopoverController} from '@ionic/angular';
 import {
-  Events, Platform, PopoverController,
-} from '@ionic/angular';
-import {
-  Content, ContentAccess, ContentAccessStatus, ContentDetailRequest, ContentEventType,
-  ContentImport, ContentImportCompleted, ContentImportRequest,
-  ContentImportResponse, ContentImportStatus, ContentMarkerRequest, ContentService, ContentUpdate, CorrelationData,
-  DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, MarkerType, Profile, ProfileService,
-  Rollup, StorageService, TelemetryErrorCode, TelemetryObject, DownloadService, DownloadTracking
+  Content,
+  ContentAccess,
+  ContentAccessStatus,
+  ContentDetailRequest,
+  ContentEventType,
+  ContentImport,
+  ContentImportCompleted,
+  ContentImportRequest,
+  ContentImportResponse,
+  ContentImportStatus,
+  ContentMarkerRequest,
+  ContentService,
+  ContentUpdate,
+  CorrelationData,
+  DownloadEventType,
+  DownloadProgress,
+  DownloadService,
+  DownloadTracking,
+  EventsBusEvent,
+  EventsBusService,
+  MarkerType,
+  Profile,
+  ProfileService,
+  Rollup,
+  StorageService,
+  TelemetryErrorCode,
+  TelemetryObject
 } from 'sunbird-sdk';
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription, Observable } from 'rxjs';
-import { ContentType, EventTopics, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
+import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
-  TelemetryGeneratorService,
-  UtilityService
+  TelemetryGeneratorService
 } from '../../services';
 import { Location } from '@angular/common';
 
@@ -42,7 +68,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { TrackingEnabled } from '@project-sunbird/client-services/models';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -68,11 +94,11 @@ export class CollectionDetailEtbPage implements OnInit {
   mimeTypes = [
     { name: 'ALL', selected: true, value: ['all'], iconNormal: '', iconActive: '' },
     {
-      name: 'VIDEOS', value: ['video/mp4', 'video/x-youtube', 'video/webm'], iconNormal: './assets/imgs/play.svg',
+      name: 'VIDEO', value: ['video/mp4', 'video/x-youtube', 'video/webm'], iconNormal: './assets/imgs/play.svg',
       iconActive: './assets/imgs/play-active.svg'
     },
     {
-      name: 'DOCS', value: ['application/pdf', 'application/epub', 'application/msword'], iconNormal: './assets/imgs/doc.svg',
+      name: 'DOC', value: ['application/pdf', 'application/epub', 'application/msword'], iconNormal: './assets/imgs/doc.svg',
       iconActive: './assets/imgs/doc-active.svg'
     },
     {
@@ -418,12 +444,13 @@ export class CollectionDetailEtbPage implements OnInit {
       this.hiddenGroups.delete(group);
       setTimeout(() => {
         if (document.getElementById(content.identifier)) {
-          window['scrollWindow'].getScrollElement()
-            .scrollTo({
+          window['scrollWindow'].getScrollElement().then((e) => {
+            e.scrollTo({
               top: document.getElementById(content.identifier).offsetTop - 165,
               left: 0,
               behavior: 'smooth'
             });
+          });
         }
       }, 100);
     }
@@ -467,7 +494,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
     } else {
       this.location.back();
     }
@@ -804,7 +831,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   navigateToDetailsPage(content: any, depth) {
     this.zone.run(() => {
-      switch(ContentUtil.isTrackable(content)) {
+      switch (ContentUtil.isTrackable(content)) {
         case 1 || 0:
           this.navService.navigateToTrackableCollection({
             content,
@@ -823,26 +850,6 @@ export class CollectionDetailEtbPage implements OnInit {
             breadCrumb: this.breadCrumb
           });
       }
-      // if (content.contentType === ContentType.COURSE) { // TODO condition check needed
-      //   this.navService.navigateToTrackableCollection({
-      //     content,
-      //     depth,
-      //     contentState: this.stateData,
-      //     corRelation: this.corRelationList
-      //   });
-      // } else {
-      //   this.navService.navigateToContent({
-      //     isChildContent: true,
-      //     content,
-      //     depth,
-      //     contentState: this.stateData,
-      //     corRelation: this.corRelationList,
-      //     breadCrumb: this.breadCrumb,
-      //     source: this.source,
-      //     groupId: this.groupId,
-      //     activityList: this.activityList
-      //   });
-      // }
     });
   }
 
@@ -1029,7 +1036,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateEndTelemetry(
-      objectType ? objectType : ContentType.TEXTBOOK,
+      objectType ? objectType : CsPrimaryCategory.DIGITAL_TEXTBOOK,
       Mode.PLAY,
       PageId.COLLECTION_DETAIL,
       Environment.HOME,
@@ -1245,8 +1252,8 @@ export class CollectionDetailEtbPage implements OnInit {
   openTextbookToc() {
     this.hiddenGroups.clear();
     this.shownGroups = undefined;
-    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], 
-    { childrenData: this.childrenData, parentId: this.identifier })
+    this.navService.navigateTo([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+      { childrenData: this.childrenData, parentId: this.identifier })
     // this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`], // **** check needed ****
     //   { state: { childrenData: this.childrenData, parentId: this.identifier } });
     const values = new Map();
