@@ -830,8 +830,8 @@
   "SUBMITTING_DATA_SETTINGS": "Your data settings are submitted successfully",
   "PROFILE_DETAILS": "Profile details",
   "EDIT_CONSENT_POPUP": "You can edit these details from your profile page",
-  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my my profile details with the course administrator in accordance with the",
-  "INSTANCE_TERMS_OF_USE": " {instance} Terms of Use",
+  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the",
+  "INSTANCE_TERMS_OF_USE": " Terms of Use",
   "DONT_SHARE": "Don't share",
   "LAST_UPDATE_ON": "Last update on {{%s}}"
 }

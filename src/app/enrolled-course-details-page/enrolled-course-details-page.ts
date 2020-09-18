@@ -2077,13 +2077,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       const request: Consent = {
         status: this.dataSharingStatus,
         userId: this.courseCardData.userId,
-        consumerId: this.course.channel,
+        consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
         objectId: this.courseCardData.courseId,
         objectType: 'Collection',
       };
       this.profileService.updateConsent(request).toPromise()
         .then((data) => {
-          console.log('update consent', data);
+          this.commonUtilService.showToast(data.message);
         })
         .catch((e) => {
           console.error(e);
@@ -2093,7 +2093,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   checkDataSharingStatus() {
     const request: Consent = {
       userId: this.courseCardData.userId,
-      consumerId: this.course.channel,
+      consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
       objectId: this.courseCardData.courseId
     };
     this.profileService.getConsent(request).toPromise()

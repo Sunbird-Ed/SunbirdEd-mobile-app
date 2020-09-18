@@ -27,8 +27,7 @@
                 </div>
                 <div class="cr-input-primary" lines="none">
                     <span>
-                        <ion-checkbox class="cr-terms-checkbox" color="secondary" checked="false">
-                        </ion-checkbox>
+                        <ion-checkbox class="cr-terms-checkbox" [(ngModel)]="isAgreed"></ion-checkbox>
                     </span>
                     <span>
                         <p class="cr-terms-checkbox-label">
@@ -40,7 +39,7 @@
                 </div>
                 <div class="btn-info">
                     <button class="save-changes-not-agree" (click)="dontShare()">{{'DONT_SHARE' | translate}}</button>
-                    <button class="save-changes" (click)="share()">{{'SHARE' | translate}}</button>
+                    <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'download-disabled' : null">{{'SHARE' | translate}}</button>
                 </div>
             </div>
         </div>

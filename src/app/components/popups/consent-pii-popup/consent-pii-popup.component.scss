@@ -89,3 +89,8 @@
   display: grid;
   grid-template-columns: 110px 250px;
 }
+
+.download-disabled{
+  opacity: 0.5 !important;
+  cursor: default;
+}
