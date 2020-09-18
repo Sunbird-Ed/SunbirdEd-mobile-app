@@ -16,6 +16,7 @@ html[data-theme="JOYFUL"]{
 
   ion-toolbar {
     --background: var(--joyful-warning);
+    border-bottom-left-radius: 20px;
     ion-buttons{
       ion-button{
         --background: var(--joyful-warning) !important;
@@ -427,14 +428,16 @@ html[data-theme="JOYFUL"]{
       background-color: var(--joyful-tertiary) !important;
     }
     .enrolled-course-bg{
-      background: var(--joyful-secondary) !important;
+      // background: var(--joyful-secondary) !important;
+      background: transparent !important;
     }
   }
 
   // View-more-activity page
   app-view-more-activity{
     .view-more-course-bg{
-      background: var(--joyful-secondary) !important;
+      // background: var(--joyful-secondary) !important;
+      background: transparent !important;
     }
 
     .title, .count-text{
@@ -584,6 +587,35 @@ html[data-theme="JOYFUL"]{
       .sticky-header-title-box {
         --background: var(--joyful-tertiary) !important;
       }
+    }
+  }
+
+  // header
+  ion-header::after{
+    background-image: none;
+  }
+  .ui-container::after {
+    content: '';
+    width: 100%;
+    height: 172px;
+    display: block;
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    border-bottom-left-radius: 20px;
+    background-color: var(--joyful-warning) !important;
+  }
+  .ui-content{
+    z-index: 2;
+    position: relative;
+  }
+
+  .sb-slider-pills-container{
+    .sb-grade-pills-container {
+      background: transparent !important;
+    }
+    .sb-medium-pills-container{
+      background: transparent !important;
     }
   }
 
