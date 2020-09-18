@@ -169,7 +169,7 @@
   "COURSE_ENROLLED": "நீங்கள் பாடநெறியில் இணைந்துவிட்டீர்கள்",
   "COURSE_LAST_UPDATED_ON": "{{last_updated_on_date}}  அன்று பாடநெறி  கடைசியாக புதுப்பிக்கப்பட்டது",
   "COURSE_NOT_AVAILABLE": "இந்தப் பாடநெறி இனி செயலில் இல்லை ",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "இந்த பாடநெறிக்கு சான்றிதழ் இல்லை",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "தற்போது, ​​இந்த பாடநெறிக்கு சான்றிதழ் இல்லை. பாடநெறி உருவாக்கியவர் பின்னர் ஒரு சான்றிதழை இணைக்கலாம்.",
   "COURSE_PROGRESS_COMPLETED": "நிறைவு : {{%s}}%",
   "COURSE_UNENROLLED": "நீங்கள் பாடநெறியில் இருந்து வெற்றிகரமாக விளகிவிட்டிர்கள்.",
   "COURSE_WILL_BE_AVAILABLE": "{{%s}}தில் இருந்துத் தொகுதி ஆரம்பமாகும்",

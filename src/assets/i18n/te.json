@@ -169,7 +169,7 @@
   "COURSE_ENROLLED": "నమోదు కాబడిన కోర్సులు",
   "COURSE_LAST_UPDATED_ON": "కోర్సు చివరిగా నవీకరించబడింది {{last_updated_on_date}}",
   "COURSE_NOT_AVAILABLE": "ఈ కోర్సు ఇకపై అందుబాటులో లేదు",
-  "COURSE_NO_CERTIFICATE_MESSAGE": "ఈ కోర్సు ఒక సర్టిఫికేట్ కలిగి లేదు",
+  "COURSE_NO_CERTIFICATE_MESSAGE": "ప్రస్తుతం, ఈ కోర్సుకు సర్టిఫికేట్ లేదు. కోర్సు సృష్టికర్త తరువాత ప్రమాణపత్రాన్ని అటాచ్ చేయవచ్చు.",
   "COURSE_PROGRESS_COMPLETED": "{{%s}} % పూర్తయింది",
   "COURSE_UNENROLLED": "విజయవంతంగా కోర్సు నుండి తీసివేయబడింది",
   "COURSE_WILL_BE_AVAILABLE": "కోర్సు {{%s}} నుండి అందుబాటులోకి వస్తుంది",

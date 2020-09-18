@@ -274,7 +274,7 @@ export class LocalCourseService {
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
 
-    if (latestBatch.startDate && (new Date(latestBatch.startDate) > new Date())) {
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0,0,0,0) >= new Date().setHours(0,0,0,0))) {
       this.commonUtilService.showToast(
         'ENROLLMENT_STARTS_ON',
         null,
@@ -284,7 +284,7 @@ export class LocalCourseService {
         this.datePipe.transform(latestBatch.startDate)
       );
       return false;
-    } else if (latestBatch.enrollmentEndDate && (new Date(latestBatch.enrollmentEndDate) < new Date())) {
+    } else if (latestBatch.enrollmentEndDate && (new Date(latestBatch.enrollmentEndDate).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
         null,
