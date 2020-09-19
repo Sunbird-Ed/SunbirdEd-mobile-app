@@ -167,13 +167,13 @@
 						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 							<ion-icon name="information-circle"></ion-icon>
 							<span *ngIf="!course?.certificate && nextContent?.contentType !== 'SelfAssess'">
-								{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | categoryKeyTranslate : course && course.trackable  : course : {'%s': batchDetails?.endDate | date: 'dd/MM/yyyy'} }}
+								{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | categoryKeyTranslate : course : {'%s': batchDetails?.endDate | date: 'dd/MM/yyyy'} }}
 							</span>
 							<span *ngIf="!course?.certificate && nextContent?.contentType === 'SelfAssess'">
 								{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date: 'dd/MM/yyyy'} }}
 							</span>
 							<span *ngIf="course?.certificate">
-								{{'FRMELEMNTS_LBL_TO_EARN_CERTIFICATE' | categoryKeyTranslate : course && course.trackable  : course : {'%s': batchDetails?.endDate | date: 'dd/MM/yyyy'} }}
+								{{'FRMELEMNTS_LBL_TO_EARN_CERTIFICATE' | categoryKeyTranslate : course : {'%s': batchDetails?.endDate | date: 'dd/MM/yyyy'} }}
 							</span>
 						</div>
 					</ion-card-content>
