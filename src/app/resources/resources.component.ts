@@ -913,7 +913,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
+      this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }

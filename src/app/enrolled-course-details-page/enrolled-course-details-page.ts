@@ -1567,7 +1567,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
@@ -1988,7 +1988,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     //   return;
     // }
 
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
