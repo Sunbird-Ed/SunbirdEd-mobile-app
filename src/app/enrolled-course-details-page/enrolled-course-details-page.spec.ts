@@ -33,6 +33,7 @@ import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '.
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -113,6 +114,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockAppVersion: Partial<AppVersion> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -141,7 +145,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentDeleteHandler as ContentDeleteHandler,
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
-            mockContentPlayerHandler as ContentPlayerHandler
+            mockContentPlayerHandler as ContentPlayerHandler,
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 
@@ -1324,6 +1329,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
@@ -1370,10 +1376,8 @@ describe('EnrolledCourseDetailsPage', () => {
                         },
                         cssClass: 'sb-popover info',
                     });
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'TRAININGS_ONLY_REGISTERED_USERS');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'OVERLAY_SIGN_IN');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'OVERLAY_SIGN_IN');
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(1,
                     PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify({}));
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
@@ -1404,6 +1408,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
