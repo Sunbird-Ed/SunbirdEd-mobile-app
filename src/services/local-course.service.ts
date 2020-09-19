@@ -308,7 +308,7 @@ export class LocalCourseService {
     return true;
   }
 
-  private async showConsentPopup(course) {
+  async showConsentPopup(course) {
     const popover = await this.popoverCtrl.create({
       component: ConsentPiiPopupComponent,
       componentProps: {

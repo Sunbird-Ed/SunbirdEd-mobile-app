@@ -91,7 +91,7 @@ import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 declare const cordova;
 
@@ -2101,12 +2101,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       console.log('update consent', data);
       if (data) {
         this.dataSharingStatus = data.consents[0].status;
-        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+        this.lastUpdateOn = data.consents[0].expiry;
       }
     })
     .catch((e) => {
-      if (this.isAlreadyEnrolled && e.err === 'USER_CONSENT_NOT_FOUND' && this.courseCardData.content.userConsent) {
-        // this.localCourseService.showConsentPopup(this.courseCardData);
+      if (this.isAlreadyEnrolled && e.response.body.err === 'USER_CONSENT_NOT_FOUND' && (this.course.userConsent === UserConsent.YES)) {
+         this.localCourseService.showConsentPopup(this.courseCardData);
       }
     });
     this.dataSharingStatus = ConsentStatus.ACTIVE;

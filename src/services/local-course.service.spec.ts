@@ -6,7 +6,8 @@ import {
   Batch,
   NetworkError,
   HttpClientError,
-  HttpServerError
+  HttpServerError,
+  ProfileService
 } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { Events, PopoverController } from '@ionic/angular';
@@ -17,7 +18,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Location, DatePipe } from '@angular/common';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 
@@ -42,11 +43,14 @@ describe('LocalCourseService', () => {
     hide: jest.fn()
   };
   const mockPopoverCtrl: Partial<PopoverController> = {};
+  const mockProfileService: Partial<ProfileService> = {};
+  const mockDatePipe: Partial<DatePipe> = {};
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
       mockPreferences as SharedPreferences,
+      mockProfileService as ProfileService,
       mockAppGlobalService as AppGlobalService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockCommonUtilService as CommonUtilService,
@@ -57,6 +61,7 @@ describe('LocalCourseService', () => {
       mockLocation as Location,
       mockSbProgressLoader as SbProgressLoader,
       mockPopoverCtrl as PopoverController,
+      mockDatePipe as DatePipe
     );
   });
 
@@ -70,13 +75,13 @@ describe('LocalCourseService', () => {
   });
 
   describe('enrollIntoBatch', () => {
-    it('should Enrol into batch, and when the return is true', (done) => {
+    it('should Enrol into batch, and when the return is true', async (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
         batch: {
           id: '',
-          courseId: '',
+          courseId: 'sample-do-ID',
           status: 0
         },
         courseId: 'sample_courseid',
@@ -84,17 +89,72 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
+        channel: 'sample-channel',
+        userConsent: 'Yes'
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
       mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
-        present: jest.fn(() => Promise.resolve())
+        present: jest.fn(() => Promise.resolve()),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: { data: true, userId: 'sample-user-id' } }))
       }) as any);
-
+      mockProfileService.updateConsent = jest.fn(() => of({}));
       // act
-      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
         expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        // expect(mockProfileService.updateConsent).toHaveBeenCalledWith(
+        //   {
+        //     status: 'ACTIVE',
+        //     userId: 'sample-user-id',
+        //     consumerId: 'sample-channel',
+        //     objectId: 'sample_courseid',
+        //     objectType: 'Collection'
+        //   }
+        // );
+        done();
+      });
+    });
+
+    it('should Enrol into batch, and when the return is true for updateConsent catchPart', async (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: 'sample-do-ID',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+        channel: 'sample-channel',
+        userConsent: 'Yes'
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCourseService.enrollCourse = jest.fn(() => of(true));
+      mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+        present: jest.fn(() => Promise.resolve()),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: { data: true, userId: 'sample-user-id' } }))
+      }) as any);
+      mockProfileService.updateConsent = jest.fn(() => throwError({error: 'error'}));
+      // act
+      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+        expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        // expect(mockProfileService.updateConsent).toHaveBeenCalledWith(
+        //   {
+        //     status: 'ACTIVE',
+        //     userId: 'sample-user-id',
+        //     consumerId: 'sample-channel',
+        //     objectId: 'sample_courseid',
+        //     objectType: 'Collection'
+        //   }
+        // );
         done();
       });
     });
