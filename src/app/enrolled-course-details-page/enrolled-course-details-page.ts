@@ -461,17 +461,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
+        sbPopoverMainTitle: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_AN_ACTIVE_BATCH', this.course),
         metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
-        sbPopoverHeading: this.commonUtilService.translateMessage('JOIN_TRAINING') + '?',
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course) + '?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: this.commonUtilService.translateMessage('JOIN_TRAINING'),
+            btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course),
             btnClass: 'popover-color'
           },
         ],
-        // handler : this.handleEnrollCoursePopup.bind(this)
       },
       cssClass: 'sb-popover info',
     });
@@ -1890,10 +1889,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverMainTitle:
-        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course.trackable,
-        (this.course.primaryCategory ? this.course.primaryCategory : this.course.contentType)),
-        metaInfo: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_TRAININGS_ONLY_REGISTERED_USERS', this.course.trackable,
-        (this.course.primaryCategory ? this.course.primaryCategory : this.course.contentType)),
+        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course),
+        metaInfo: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_TRAININGS_ONLY_REGISTERED_USERS', this.course),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [

@@ -146,7 +146,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockCategoryKeyTranslator as CategoryKeyTranslator 
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 

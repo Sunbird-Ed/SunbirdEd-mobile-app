@@ -1,6 +1,6 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {DatePipe} from '@angular/common';
-import {CommonUtilService} from '@app/services';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { CommonUtilService } from '@app/services';
 import { Trackable } from '@project-sunbird/sunbird-sdk';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
@@ -17,10 +17,15 @@ export class CategoryKeyTranslator implements PipeTransform {
 
     transform(
         key: string,
-        trackable?: Trackable,
-        primaryCategory?: string,
-        fields?: string | any
-    ): string {
+        content: any,
+        fields?: string | any): string {
+
+        if (!content) {
+            return '';
+        }
+        content = !content.trackable ? (content.contentData.trackable ? content.contentData : content) : content;
+        const trackable = content.trackable;
+        const primaryCategory = content.primaryCategory ? content.primaryCategory : content.contentType;
         const translationKey = this.getTranslationKeyPrefix(trackable, primaryCategory).concat('_').concat(key);
         return this.commonUtilService.translateMessage(translationKey, fields);
     }
@@ -40,11 +45,11 @@ export class CategoryKeyTranslator implements PipeTransform {
 
     private getContetPrefix(primaryCategory: string) {
         let prefix = 'DFLT';
-        switch (primaryCategory) {
-            case CsPrimaryCategory.COURSE:
+        switch (primaryCategory.toLowerCase()) {
+            case CsPrimaryCategory.COURSE.toLowerCase():
                 prefix = 'CRS';
                 break;
-            case CsPrimaryCategory.DIGITAL_TEXTBOOK:
+            case CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase():
                 prefix = 'TBK';
                 break;
             default:
@@ -56,12 +61,12 @@ export class CategoryKeyTranslator implements PipeTransform {
 
     private getTrackablePrefix(primaryCategory: string): string {
         let prefix = '';
-        switch (primaryCategory) {
+        switch (primaryCategory.toLowerCase()) {
             case CsPrimaryCategory.COURSE:
                 prefix = 'TRK';
                 break;
-            case CsPrimaryCategory.DIGITAL_TEXTBOOK:
-            case CsContentType.TEXTBOOK:
+            case CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase():
+            case CsContentType.TEXTBOOK.toLowerCase():
                 prefix = 'NONTRK';
                 break;
         }
