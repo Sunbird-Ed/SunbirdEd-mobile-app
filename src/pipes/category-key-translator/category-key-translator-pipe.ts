@@ -62,7 +62,7 @@ export class CategoryKeyTranslator implements PipeTransform {
     private getTrackablePrefix(primaryCategory: string): string {
         let prefix = '';
         switch (primaryCategory.toLowerCase()) {
-            case CsPrimaryCategory.COURSE:
+            case CsPrimaryCategory.COURSE.toLowerCase():
                 prefix = 'TRK';
                 break;
             case CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase():
