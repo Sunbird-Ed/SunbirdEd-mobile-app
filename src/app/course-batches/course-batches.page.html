@@ -4,7 +4,7 @@
       <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
     </ion-buttons>
     <ion-title class="batches-header-text font-size-20">
-      <strong>{{ 'BATCHES_FOR_THIS_COURSE' | translate }}</strong>
+      <strong>{{'FRMELEMNTS_LBL_BATCHES_FOR_THIS_COURSE' | categoryKeyTranslate : course && course.trackable  : course && (course.primaryCategory ? course.primaryCategory : course.contentType)}}</strong>
     </ion-title>
   </ion-toolbar>
 </ion-header>
