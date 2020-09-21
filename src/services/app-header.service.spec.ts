@@ -1,17 +1,21 @@
 import {AppHeaderService} from './app-header.service';
 import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {SharedPreferences} from 'sunbird-sdk';
+import {of} from 'rxjs';
 
 describe('AppHeaderService', () => {
     let appHeaderService: AppHeaderService;
 
     const mockMenuCtrl: Partial<MenuController> = {};
-    const mockStatusBar: Partia<StatusBar> = {};
+    const mockStatusBar: Partial<StatusBar> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
 
     beforeAll(() => {
         appHeaderService = new AppHeaderService(
             mockMenuCtrl as MenuController,
-            mockStatusBar as StatusBar
+            mockStatusBar as StatusBar,
+            mockSharedPreferences as SharedPreferences
         );
     });
 
@@ -110,11 +114,24 @@ describe('AppHeaderService', () => {
         appHeaderService.updatePageConfig(mockConfig);
     });
 
-    it('should set background color of statusbar', () => {
+    it('should set background color of statusbar', (done) => {
         mockStatusBar.backgroundColorByHexString = jest.fn();
-        appHeaderService.showStatusBar();
+        mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
 
-        expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#FFD954');
+        appHeaderService.showStatusBar().then(() => {
+            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#FFD954');
+            done();
+        });
+
+    });
+
+    it('should theme is not joyful go to else part', () => {
+        mockStatusBar.backgroundColorByHexString = jest.fn();
+        mockSharedPreferences.getString = jest.fn(() => of('DEFAULT'));
+
+        appHeaderService.showStatusBar().then(() => {
+            expect(mockStatusBar.backgroundColorByHexString).not.toHaveBeenCalledWith('#FFD954');
+        });
     });
 
     it('should hide statusbar and set background color', () => {

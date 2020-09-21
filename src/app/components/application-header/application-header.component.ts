@@ -7,7 +7,7 @@ import {
   AppGlobalService, UtilityService, CommonUtilService,
   NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment,
-  ActivePageService, ID, CorReleationDataType
+  ActivePageService, ID, CorReleationDataType, AppHeaderService
 } from '../../../services';
 import {
   DownloadService, SharedPreferences
@@ -78,7 +78,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private activePageService: ActivePageService,
     private popoverCtrl: PopoverController,
-    private tncUpdateHandlerService: TncUpdateHandlerService
+    private tncUpdateHandlerService: TncUpdateHandlerService,
+    private appHeaderService: AppHeaderService
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -373,13 +374,17 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  switchTheme() {
+  async switchTheme() {
     if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
       document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
       this.appTheme = AppThemes.JOYFUL;
+      await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
+      this.appHeaderService.showStatusBar().then();
     } else {
       document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
       this.appTheme = AppThemes.DEFAULT;
+      await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
+      this.appHeaderService.hideStatusBar();
     }
   }
 

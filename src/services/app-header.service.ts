@@ -1,12 +1,17 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { MenuController } from '@ionic/angular';
+import {Inject, Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
+import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {SharedPreferences} from 'sunbird-sdk';
 
 @Injectable()
 export class AppHeaderService {
 
-    constructor(private menuCtrl: MenuController, private statusBar: StatusBar) { }
+    constructor(private menuCtrl: MenuController,
+                private statusBar: StatusBar,
+                @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences
+    ) {
+    }
 
     private headerEvent = new Subject<any>();
     headerEventEmitted$ = this.headerEvent.asObservable();
@@ -68,9 +73,13 @@ export class AppHeaderService {
         this.headerConfig.next(config);
     }
 
-    showStatusBar() {
-        this.statusBar.backgroundColorByHexString('#FFD954');
+    async showStatusBar() {
+        const theme = await this.preferences.getString('current_selected_theme').toPromise();
+        if (theme === 'JOYFUL') {
+            this.statusBar.backgroundColorByHexString('#FFD954');
+        }
     }
+
     hideStatusBar() {
         this.statusBar.backgroundColorByHexString('#BB000000');
     }
