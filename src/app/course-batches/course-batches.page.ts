@@ -41,7 +41,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     actionButtons: []
   };
 
-  private course: any;
+  public course: any;
   private userId: string;
   private isGuestUser = false;
   private backButtonFunc: Subscription;

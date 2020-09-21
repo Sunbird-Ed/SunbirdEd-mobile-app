@@ -17,6 +17,7 @@ import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
@@ -71,6 +72,9 @@ describe('ChapterDetailsPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
 
     beforeAll(() => {
         chapterDetailsPage = new ChapterDetailsPage(
@@ -96,7 +100,8 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
             mockPlatform as Platform,
-            mockContentPlayerHandler as ContentPlayerHandler
+            mockContentPlayerHandler as ContentPlayerHandler,
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 
@@ -433,7 +438,8 @@ describe('ChapterDetailsPage', () => {
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
                 mockPlatform as Platform,
-                mockContentPlayerHandler as ContentPlayerHandler
+                mockContentPlayerHandler as ContentPlayerHandler,
+                mockCategoryKeyTranslator as CategoryKeyTranslator
             );
         });
         it('should return all batches', (done) => {
@@ -1466,7 +1472,8 @@ describe('ChapterDetailsPage', () => {
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
                 mockPlatform as Platform,
-                mockContentPlayerHandler as ContentPlayerHandler
+                mockContentPlayerHandler as ContentPlayerHandler,
+                mockCategoryKeyTranslator as CategoryKeyTranslator
             );
         });
         beforeEach(() => {
@@ -1610,7 +1617,8 @@ describe('ChapterDetailsPage', () => {
                 mockTelemetryGeneratorService as TelemetryGeneratorService,
                 mockLocation as Location,
                 mockPlatform as Platform,
-                mockContentPlayerHandler as ContentPlayerHandler
+                mockContentPlayerHandler as ContentPlayerHandler,
+                mockCategoryKeyTranslator as CategoryKeyTranslator
             );
         });
         beforeEach(() => {
@@ -1648,8 +1656,8 @@ describe('ChapterDetailsPage', () => {
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
                     componentProps: expect.objectContaining({
-                        sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
-                        metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
+                        sbPopoverMainTitle: 'sample-message',
+                        metaInfo: 'sample-message',
                         sbPopoverHeading: 'OVERLAY_SIGN_IN',
                         isNotShowCloseIcon: true,
                         actionsButtons: expect.arrayContaining([
@@ -1700,8 +1708,8 @@ describe('ChapterDetailsPage', () => {
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
                     componentProps: expect.objectContaining({
-                        sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
-                        metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
+                        sbPopoverMainTitle: 'sample-message',
+                        metaInfo: 'sample-message',
                         sbPopoverHeading: 'OVERLAY_SIGN_IN',
                         isNotShowCloseIcon: true,
                         actionsButtons: expect.arrayContaining([
