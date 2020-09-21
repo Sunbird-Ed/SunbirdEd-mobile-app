@@ -111,7 +111,8 @@ describe('ResourcesComponent', () => {
     const mockChangeRef: Partial<ChangeDetectorRef> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockNavService: Partial<NavigationService> = {
-        navigateToCollection: jest.fn()
+        navigateToCollection: jest.fn(),
+        navigateToDetailPage: jest.fn()
     };
     const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {
         delegate: {
@@ -1167,7 +1168,7 @@ describe('ResourcesComponent', () => {
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
                 { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
-            expect(mockNavService.navigateToCollection).toHaveBeenCalled();
+            expect(mockNavService.navigateToDetailPage).toHaveBeenCalled();
         });
 
     it('should cover else part after interact event called and check network availability' +

@@ -88,8 +88,9 @@ import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 declare const cordova;
 
 @Component({
@@ -266,7 +267,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService,
     private sbProgressLoader: SbProgressLoader,
-    private contentPlayerHandler: ContentPlayerHandler
+    private contentPlayerHandler: ContentPlayerHandler,
+    private categoryKeyTranslator: CategoryKeyTranslator
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -459,17 +461,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
+        sbPopoverMainTitle: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_AN_ACTIVE_BATCH', this.course),
         metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
-        sbPopoverHeading: this.commonUtilService.translateMessage('JOIN_TRAINING') + '?',
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course) + '?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: this.commonUtilService.translateMessage('JOIN_TRAINING'),
+            btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course),
             btnClass: 'popover-color'
           },
         ],
-        // handler : this.handleEnrollCoursePopup.bind(this)
       },
       cssClass: 'sb-popover info',
     });
@@ -546,7 +547,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_TRAINING_HEADING'),
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_LEAVE_TRAINING_HEADING', this.course.trackable,
+        (this.course.primaryCategory ? this.course.primaryCategory : this.course.contentType)),
         sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
         actionsButtons: [
           {
@@ -1311,9 +1313,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   async ionViewWillEnter() {
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
-        .then((uid) => {
-          this.userId = uid;
-        });
+      .then((uid) => {
+        this.userId = uid;
+      });
     this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
@@ -1567,7 +1569,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
@@ -1886,8 +1888,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL'),
-        metaInfo: this.commonUtilService.translateMessage('TRAININGS_ONLY_REGISTERED_USERS'),
+        sbPopoverMainTitle:
+        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course),
+        metaInfo: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_TRAININGS_ONLY_REGISTERED_USERS', this.course),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -1988,7 +1991,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     //   return;
     // }
 
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
