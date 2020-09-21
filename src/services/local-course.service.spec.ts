@@ -18,9 +18,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
+<<<<<<< HEAD
 import { Location, DatePipe } from '@angular/common';
+=======
+import { DatePipe, Location } from '@angular/common';
+>>>>>>> eab702c9389632effcd43f144bf32a5458ff17c9
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
@@ -46,6 +50,10 @@ describe('LocalCourseService', () => {
   const mockProfileService: Partial<ProfileService> = {};
   const mockDatePipe: Partial<DatePipe> = {};
 
+  const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+    transform: jest.fn(() => 'sample-message')
+};
+
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
@@ -59,9 +67,11 @@ describe('LocalCourseService', () => {
       mockAppVersion as AppVersion,
       mockRouter as Router,
       mockLocation as Location,
+      new DatePipe('en'),
+      mockCategoryKeyTranslator as CategoryKeyTranslator,
       mockSbProgressLoader as SbProgressLoader,
       mockPopoverCtrl as PopoverController,
-      mockDatePipe as DatePipe
+      mockDatePipe as DatePipe,
     );
   });
 
@@ -426,7 +436,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
@@ -461,7 +471,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
@@ -495,7 +505,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);

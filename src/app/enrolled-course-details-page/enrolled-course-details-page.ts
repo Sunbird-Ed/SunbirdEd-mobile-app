@@ -1878,8 +1878,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
-           // this.localCourseService.showConsentPopup(enrollCourse);
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+            this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
               courseId: item.courseId

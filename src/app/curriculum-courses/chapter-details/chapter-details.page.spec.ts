@@ -1544,8 +1544,8 @@ describe('ChapterDetailsPage', () => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(chapterDetailsPage.courseContent.batchId).toBe(items.id);
-                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course enrolled');
+                expect(mockCategoryKeyTranslator.transform).toHaveBeenCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('sample-message');
                 expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.ENROL_COURSE_SUCCESS, {
                     batchId: items.id,
                     courseId: items.courseId

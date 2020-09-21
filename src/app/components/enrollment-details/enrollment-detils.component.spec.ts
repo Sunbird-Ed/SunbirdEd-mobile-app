@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
 import { of } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
-
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 describe('enrollmentdetailcomponent', () => {
 
     let enrollmentDetails: EnrollmentDetailsComponent;
@@ -51,6 +51,10 @@ describe('enrollmentdetailcomponent', () => {
         enrollIntoBatch: jest.fn()
     };
 
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
+
     beforeAll(() => {
         enrollmentDetails = new EnrollmentDetailsComponent(
             mockSharedPreferences as SharedPreferences,
@@ -63,7 +67,8 @@ describe('enrollmentdetailcomponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilServiceas as CommonUtilService,
             mockRouter as Router,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 
@@ -176,7 +181,7 @@ describe('enrollmentdetailcomponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockCommonUtilServiceas.showToast).toBeCalled();
-                expect(mockCommonUtilServiceas.translateMessage).toBeCalledWith('COURSE_ENROLLED');
+                expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockEvents.publish).toBeCalledWith(EventTopics.ENROL_COURSE_SUCCESS, {
                     batchId: content.id,
                     courseId: content.courseId

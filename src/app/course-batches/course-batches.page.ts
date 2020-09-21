@@ -23,6 +23,7 @@ import { SbPopoverComponent } from '../components/popups';
 import { LocalCourseService, ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
 import { AppGlobalService } from '@app/services';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 @Component({
   selector: 'app-course-batches',
@@ -63,7 +64,8 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     private location: Location,
     private router: Router,
     private platform: Platform,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private categoryKeyTranslator: CategoryKeyTranslator
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -157,7 +159,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
       this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+            this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: batch.id,
               courseId: batch.courseId
