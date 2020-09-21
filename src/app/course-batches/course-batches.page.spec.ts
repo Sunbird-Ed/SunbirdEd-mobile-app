@@ -17,6 +17,7 @@ import {
 } from 'sunbird-sdk';
 import { PreferenceKey, EventTopics } from '../app.constant';
 import { of, throwError } from 'rxjs';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('CourseBatchesPage', () => {
     let courseBatchesPage: CourseBatchesPage;
@@ -50,7 +51,9 @@ describe('CourseBatchesPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
-
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
     beforeAll(() => {
         courseBatchesPage = new CourseBatchesPage(
             mockSharedPreferences as SharedPreferences,
@@ -65,7 +68,8 @@ describe('CourseBatchesPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockPlatform as Platform,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 
@@ -226,8 +230,7 @@ describe('CourseBatchesPage', () => {
                     corRelationList: []
                 });
                 expect(mockZone.run).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENROLLED');
+                expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.ENROL_COURSE_SUCCESS, {
                     batchId: batch.id,
                     courseId: batch.courseId

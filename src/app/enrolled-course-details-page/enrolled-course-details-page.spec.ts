@@ -1519,7 +1519,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(presentFn).toBeCalled();
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
-                expect(mockCommonUtilService.translateMessage).toBeCalledWith('COURSE_ENROLLED');
+                expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled();
                 expect(mockEvents.publish).toBeCalled();
                 expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
