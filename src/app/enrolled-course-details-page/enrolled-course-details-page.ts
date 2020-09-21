@@ -1366,7 +1366,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
     if (this.isAlreadyEnrolled) {
-      this.checkDataSharingStatus();
+     await this.checkDataSharingStatus();
     }
   }
 
@@ -2093,13 +2093,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
   }
 
-  checkDataSharingStatus() {
+  async checkDataSharingStatus() {
     const request: Consent = {
       userId: this.courseCardData.userId,
       consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
       objectId: this.courseCardData.courseId
     };
-    this.profileService.getConsent(request).toPromise()
+    await this.profileService.getConsent(request).toPromise()
     .then((data) => {
       console.log('update consent', data);
       if (data) {
