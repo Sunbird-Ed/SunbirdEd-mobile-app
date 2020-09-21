@@ -39,7 +39,7 @@
                 </div>
                 <div class="btn-info">
                     <button class="save-changes-not-agree" (click)="dontShare()">{{'DONT_SHARE' | translate}}</button>
-                    <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'download-disabled' : null">{{'SHARE' | translate}}</button>
+                    <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'share-disabled' : null">{{'SHARE' | translate}}</button>
                 </div>
             </div>
         </div>

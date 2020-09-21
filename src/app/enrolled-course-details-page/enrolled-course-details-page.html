@@ -334,15 +334,15 @@
 										<strong>{{'UPDATE_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" style="margin-left: -4px;">
-										<ion-radio-group>
-										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
+										<ion-radio-group [(ngModel)]="dataSharingStatus">
+										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px;">
 											<ion-label class="ds-m0">{{'SHARE_PROFILE' | translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" value="REVOKED" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
-										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
+										  <ion-item class="ds-item">
 											<ion-label class="ds-m0">{{'NOT_SHARE_PROFILE' |translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" value="ACTIVE" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
 										</ion-radio-group>
 									  </ion-list>

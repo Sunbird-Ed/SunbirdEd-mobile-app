@@ -43,7 +43,6 @@ export class ConsentPiiPopupComponent {
     }
     share() {
         this.closePopover(true);
-        this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
     }
 
     converDataSrcToObject(ele) {

@@ -4,6 +4,14 @@
 .cr-terms-checkbox-label{
   padding-left: 5px;
 }
+
+.cr-terms-checkbox{
+  --background-checked: #024F9D;
+  --border-color: #024F9D;
+  --border-radius: 4px;
+  --border-width: 1px;
+  --border-color-checked: #024F9D;
+}
 .cr-input-primary {
   display: inline-flex;
 }
@@ -90,7 +98,7 @@
   grid-template-columns: 110px 250px;
 }
 
-.download-disabled{
+.share-disabled{
   opacity: 0.5 !important;
   cursor: default;
 }

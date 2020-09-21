@@ -68,7 +68,7 @@ export class LocalCourseService {
           );
           // const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) ?
           //   JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) : content;
-          if (enrollCourse.userConsent === UserConsent.YES) {
+         // if (enrollCourse.userConsent === UserConsent.YES) {
           if (consentPopoverActionsDelegate) {
             consentPopoverActionsDelegate.onConsentPopoverShow();
           }
@@ -77,7 +77,7 @@ export class LocalCourseService {
           if (consentPopoverActionsDelegate) {
             consentPopoverActionsDelegate.onConsentPopoverDismiss();
           }
-          }
+        //  }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -327,6 +327,7 @@ export class LocalCourseService {
     this.profileService.updateConsent(request).toPromise()
       .then((data) => {
         // this.commonUtilService.showToast(data.message);
+        this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
       })
       .catch((e) => {
         console.error(e);
