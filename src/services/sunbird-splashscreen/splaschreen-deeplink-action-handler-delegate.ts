@@ -752,6 +752,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
+              this.sbProgressLoader.hide({id: content.identifier});
               break;
           }
           break;
