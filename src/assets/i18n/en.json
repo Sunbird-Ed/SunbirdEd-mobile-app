@@ -1055,8 +1055,8 @@
   "MEDIA_TYPE": "Media Type",
   "COLLECTION": "Collection",
   "DATA_SETTINGS": "Data Settings",
-  "DATA_SHARING_IS_ON": "DATA SHARING IS ON",
-  "DATA_SHARING_IS_OFF": "DATA SHARING IS OFF", 
+  "DATA_SHARING_IS_ON": "Data sharing is on",
+  "DATA_SHARING_IS_OFF": "DATA sharing is off", 
   "SHARE_WITH_ADMINISTRATOR": "You have agreed to share your profile Information with the Administrator of this course",
   "DONT_SHARE_WITH_ADMINISTRATOR": "You don't have agreed to share your profile Information with the Administrator of this course",
   "EDIT_SETTING": "Edit Setting",
@@ -1067,8 +1067,8 @@
   "SUBMITTING_DATA_SETTINGS": "Your data settings are submitted successfully",
   "PROFILE_DETAILS": "Profile details",
   "EDIT_CONSENT_POPUP": "You can edit these details from your profile page",
-  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the",
+  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the ",
   "INSTANCE_TERMS_OF_USE": " Terms of Use",
-  "DONT_SHARE": "Don't share",
+  "DONT_SHARE": "Do not share",
   "LAST_UPDATE_ON": "Last update on {{%s}}"
 }

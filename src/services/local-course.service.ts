@@ -68,8 +68,6 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
-          // const contentData = JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) ?
-          //   JSON.parse(await this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()) : content;
           if (enrollCourse.userConsent === UserConsent.YES) {
           if (consentPopoverActionsDelegate) {
             consentPopoverActionsDelegate.onConsentPopoverShow();
@@ -316,6 +314,7 @@ export class LocalCourseService {
       componentProps: {
       },
       cssClass: 'sb-popover',
+      backdropDismiss: false
     });
     await popover.present();
     const dismissResponse = await popover.onDidDismiss();

@@ -661,6 +661,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         }
+        this.isConsentPopUp = true;
         this.showSheenAnimation = false;
         this.location.back();
       });
@@ -2108,7 +2109,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     })
     .catch(async (e) => {
       if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
-      && (this.course.userConsent === UserConsent.YES)) {
+     && this.course.userConsent === UserConsent.YES) {
          if (!this.isConsentPopUp) {
            this.isConsentPopUp = true;
            await this.localCourseService.showConsentPopup(this.courseCardData);

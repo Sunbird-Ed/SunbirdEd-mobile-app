@@ -316,7 +316,7 @@
 									<ion-icon name="ios-arrow-down"></ion-icon>
 								</span>
 							</div>
-							<div *ngIf="isDataShare" class="showLicensce">
+							<div *ngIf="isDataShare" class="showLicensce data-share-header">
 								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'">{{'DATA_SHARING_IS_ON' | translate}}</ion-card-title>
 								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'DATA_SHARING_IS_OFF' | translate}}</ion-card-title>
 								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'SHARE_WITH_ADMINISTRATOR' | translate}}</p>

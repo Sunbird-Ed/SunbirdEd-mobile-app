@@ -551,14 +551,14 @@ ion-segment-button{
 .edit-setting{
   float: right;
   padding: 12px;
-  color: #024f9d;
+  color: $blue;
   font-weight: bold;
 }
 
 .save-changes{
 //  border-radius: 20px !important;
-  color: white;
-  background-color: #024F9D;
+  color: map-get($colors, white);
+  background-color: $blue;
   padding: 12px 45px;
   outline: none;
   border: none;
@@ -569,7 +569,7 @@ ion-segment-button{
   font-size: 12px;
 }
 .ds-m0 {
-  color: #333333;
+  color: map-get($colors, primary_black);
   font-family: "Noto Sans";
   font-size: 12px;
   letter-spacing: 0;
@@ -589,6 +589,12 @@ ion-radio{
 .data-share-info{
   padding: 5px;
   margin-left: -6px;
-  font-size: 15px
+  font-size: 15px;
+  text-transform: uppercase;
 }
+
+.data-share-header{
+  margin-left: 2px;
+}
+
 

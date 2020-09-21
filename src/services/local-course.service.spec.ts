@@ -18,11 +18,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
-<<<<<<< HEAD
 import { Location, DatePipe } from '@angular/common';
-=======
-import { DatePipe, Location } from '@angular/common';
->>>>>>> eab702c9389632effcd43f144bf32a5458ff17c9
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
@@ -67,11 +63,10 @@ describe('LocalCourseService', () => {
       mockAppVersion as AppVersion,
       mockRouter as Router,
       mockLocation as Location,
+      mockSbProgressLoader as SbProgressLoader,
       new DatePipe('en'),
       mockCategoryKeyTranslator as CategoryKeyTranslator,
-      mockSbProgressLoader as SbProgressLoader,
-      mockPopoverCtrl as PopoverController,
-      mockDatePipe as DatePipe,
+      mockPopoverCtrl as PopoverController
     );
   });
 

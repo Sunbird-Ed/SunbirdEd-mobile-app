@@ -6,11 +6,11 @@
 }
 
 .cr-terms-checkbox{
-  --background-checked: #024F9D;
-  --border-color: #024F9D;
+  --background-checked: #{$blue};
+  --border-color: #{$blue};
   --border-radius: 4px;
   --border-width: 1px;
-  --border-color-checked: #024F9D;
+  --border-color-checked:#{$blue};
 }
 .cr-input-primary {
   display: inline-flex;
@@ -23,7 +23,7 @@
 
 #main-content {
   overflow-y: scroll;
-  background: white;
+  background: map-get($colors, white);
 }
 
 .consent-popover-info {  
@@ -66,19 +66,19 @@
 }
 .save-changes{
   color: white;
-  background-color: #024F9D;
+  background-color: $blue;
   font-size: 16px;
-  padding: 8px 51px;
+  padding: 8px 56px;
   margin-left: 18px;
-  border: 2px solid #024F9D
+  border: 2px solid $blue
 }
 .save-changes-not-agree{
-  color: #024F9D;
+  color: $blue;
   background-color: white;
   padding: 14px;
   font-size: 16px;
   padding: 8px 32px;
-  border: 2px solid #024F9D
+  border: 2px solid $blue
 }
 .btn-info{
   padding: 12px;
@@ -86,7 +86,7 @@
 }
 
 .profile-info{
-  color: #666666;
+  color: map-get($colors, granite_gray);
   font-family: "Noto Sans";
   font-size: 14px;
   letter-spacing: 0;
@@ -101,4 +101,8 @@
 .share-disabled{
   opacity: 0.5 !important;
   cursor: default;
+}
+
+.terms-info{
+  color: $blue
 }
