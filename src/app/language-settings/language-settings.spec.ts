@@ -43,7 +43,8 @@ describe('LanguageSettingsPage', () => {
 
     const mockAppHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn(),
-        showHeaderWithBackButton: jest.fn()
+        showHeaderWithBackButton: jest.fn(),
+        showStatusBar: jest.fn()
     };
 
     const mockNotificationService: Partial<NotificationService> = {};
@@ -558,6 +559,7 @@ describe('LanguageSettingsPage', () => {
             languageSettingsPage.ionViewDidEnter();
             // assert
             expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
+            expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
         });
 
         it('should show header with Back button  if isFromSettings is true', () => {
@@ -568,6 +570,7 @@ describe('LanguageSettingsPage', () => {
             languageSettingsPage.ionViewDidEnter();
             // assert
             expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
         });
     });
 

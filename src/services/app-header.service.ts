@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MenuController } from '@ionic/angular';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 @Injectable()
 export class AppHeaderService {
 
-    constructor(private menuCtrl: MenuController) { }
+    constructor(private menuCtrl: MenuController, private statusBar: StatusBar) { }
 
     private headerEvent = new Subject<any>();
     headerEventEmitted$ = this.headerEvent.asObservable();
@@ -65,5 +66,12 @@ export class AppHeaderService {
 
     updatePageConfig(config) {
         this.headerConfig.next(config);
+    }
+
+    showStatusBar() {
+        this.statusBar.backgroundColorByHexString('#FFD954');
+    }
+    hideStatusBar() {
+        this.statusBar.backgroundColorByHexString('#BB000000');
     }
 }

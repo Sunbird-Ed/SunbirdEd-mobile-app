@@ -1,14 +1,17 @@
-import { AppHeaderService } from './app-header.service';
-import { MenuController } from '@ionic/angular';
+import {AppHeaderService} from './app-header.service';
+import {MenuController} from '@ionic/angular';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 describe('AppHeaderService', () => {
     let appHeaderService: AppHeaderService;
 
     const mockMenuCtrl: Partial<MenuController> = {};
+    const mockStatusBar: Partia<StatusBar> = {};
 
     beforeAll(() => {
         appHeaderService = new AppHeaderService(
-            mockMenuCtrl as MenuController
+            mockMenuCtrl as MenuController,
+            mockStatusBar as StatusBar
         );
     });
 
@@ -105,5 +108,19 @@ describe('AppHeaderService', () => {
             actionButtons: ['search'],
         };
         appHeaderService.updatePageConfig(mockConfig);
+    });
+
+    it('should set background color of statusbar', () => {
+        mockStatusBar.backgroundColorByHexString = jest.fn();
+        appHeaderService.showStatusBar();
+
+        expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#FFD954');
+    });
+
+    it('should hide statusbar and set background color', () => {
+        mockStatusBar.backgroundColorByHexString = jest.fn();
+        appHeaderService.hideStatusBar();
+        expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#BB000000');
+
     });
 });

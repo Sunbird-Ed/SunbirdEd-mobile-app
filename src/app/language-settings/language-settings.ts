@@ -62,6 +62,7 @@ export class LanguageSettingsPage {
   ) { }
 
   ionViewDidEnter() {
+    this.headerService.showStatusBar();
     this.activatedRoute.params.subscribe(params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
