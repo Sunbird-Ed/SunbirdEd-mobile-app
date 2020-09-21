@@ -832,7 +832,8 @@ export class CollectionDetailEtbPage implements OnInit {
   navigateToDetailsPage(content: any, depth) {
     this.zone.run(() => {
       switch (ContentUtil.isTrackable(content)) {
-        case 1 || 0:
+        case 1:
+        case 0:
           this.navService.navigateToTrackableCollection({
             content,
             depth,

@@ -555,8 +555,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_LEAVE_TRAINING_HEADING', this.course.trackable,
-        (this.course.primaryCategory ? this.course.primaryCategory : this.course.contentType)),
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_LEAVE_TRAINING_HEADING', this.course),
         sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
         actionsButtons: [
           {
