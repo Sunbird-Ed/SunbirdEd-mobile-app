@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { CommonUtilService } from '@app/services';
 import { Trackable } from '@project-sunbird/sunbird-sdk';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
@@ -23,7 +22,7 @@ export class CategoryKeyTranslator implements PipeTransform {
         if (!content) {
             return '';
         }
-        content = !content.trackable ? (content.contentData.trackable ? content.contentData : content) : content;
+        content = !content.trackable ? ((content.contentData && content.contentData.trackable) ? content.contentData : content) : content;
         const trackable = content.trackable;
         const primaryCategory = content.primaryCategory ? content.primaryCategory : content.contentType;
         const translationKey = this.getTranslationKeyPrefix(trackable, primaryCategory).concat('_').concat(key);
