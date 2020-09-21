@@ -324,7 +324,7 @@ export class LocalCourseService {
       objectId: course.courseId,
       objectType: 'Collection'
     };
-    this.profileService.updateConsent(request).toPromise()
+    await this.profileService.updateConsent(request).toPromise()
       .then((data) => {
         // this.commonUtilService.showToast(data.message);
         this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');

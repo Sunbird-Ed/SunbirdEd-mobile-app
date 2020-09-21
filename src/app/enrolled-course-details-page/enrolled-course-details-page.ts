@@ -248,6 +248,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   isShared: any;
   dataSharingStatus: any;
   lastUpdateOn: string;
+  isConsentPopUp = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -932,7 +933,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
                 this.corRelationList
               );
             }
-
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
             }
@@ -2106,10 +2106,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.lastUpdateOn = data.consents[0].lastUpdatedOn;
       }
     })
-    .catch((e) => {
+    .catch(async (e) => {
       if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
-       && (this.course.userConsent === UserConsent.YES)) {
-         this.localCourseService.showConsentPopup(this.courseCardData);
+      && (this.course.userConsent === UserConsent.YES)) {
+         if (!this.isConsentPopUp) {
+           this.isConsentPopUp = true;
+           await this.localCourseService.showConsentPopup(this.courseCardData);
+           await this.checkDataSharingStatus();
+         }
       }
     });
   }
