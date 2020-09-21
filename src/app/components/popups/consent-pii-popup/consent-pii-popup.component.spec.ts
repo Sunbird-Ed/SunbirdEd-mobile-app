@@ -240,17 +240,17 @@ describe('ConsentPiiPopupComponent', () => {
         }, 0);
     });
 
-    it('should close the popUp for clicked on close icon', () => {
-        mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-        consentPiiPopupComponent.closePopover();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-    });
+    // it('should close the popUp for clicked on close icon', () => {
+    //     mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+    //     consentPiiPopupComponent.closePopover();
+    //     expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+    // });
 
-    it('should close the popUp for clicked on close icon', () => {
-        mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
-        consentPiiPopupComponent.closePopover();
-        expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-    });
+    // it('should close the popUp for clicked on close icon', () => {
+    //     mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
+    //     consentPiiPopupComponent.closePopover();
+    //     expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
+    // });
 
     it('should close the popUp for clicked on dont share button', () => {
         mockPopOverCtrl.dismiss = jest.fn(() => Promise.resolve(true));
@@ -263,7 +263,6 @@ describe('ConsentPiiPopupComponent', () => {
         mockCommonUtilService.showToast = jest.fn();
         consentPiiPopupComponent.share();
         expect(mockPopOverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SUBMITTING_DATA_SETTINGS');
     });
 
     it('should return to terms of use page', (done) => {

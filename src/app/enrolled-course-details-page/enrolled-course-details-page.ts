@@ -2077,7 +2077,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   saveChanges() {
       const request: Consent = {
-        status: this.dataSharingStatus,
+        status: (this.dataSharingStatus === ConsentStatus.ACTIVE) ? ConsentStatus.REVOKED : ConsentStatus.ACTIVE,
         userId: this.courseCardData.userId,
         consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
         objectId: this.courseCardData.courseId,
@@ -2086,6 +2086,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.profileService.updateConsent(request).toPromise()
         .then((data) => {
           this.commonUtilService.showToast(data.message);
+          this.checkDataSharingStatus();
         })
         .catch((e) => {
           console.error(e);
@@ -2100,18 +2101,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     };
     await this.profileService.getConsent(request).toPromise()
     .then((data) => {
-      console.log('update consent', data);
       if (data) {
         this.dataSharingStatus = data.consents[0].status;
-        this.lastUpdateOn = data.consents[0].expiry;
+        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
       }
     })
     .catch((e) => {
-      if (this.isAlreadyEnrolled && e.response.body.err === 'USER_CONSENT_NOT_FOUND' && (this.course.userConsent === UserConsent.YES)) {
+      if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
+       && (this.course.userConsent === UserConsent.YES)) {
          this.localCourseService.showConsentPopup(this.courseCardData);
       }
     });
-    this.dataSharingStatus = ConsentStatus.ACTIVE;
   }
 
   onConsentPopoverShow() {
