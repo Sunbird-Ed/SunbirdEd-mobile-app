@@ -21,6 +21,7 @@ import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { forEach } from '@angular/router/src/utils/collection';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 @Injectable()
 export class LocalCourseService {
@@ -38,7 +39,8 @@ export class LocalCourseService {
     private router: Router,
     private location: Location,
     private sbProgressLoader: SbProgressLoader,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private categoryKeyTranslator: CategoryKeyTranslator
   ) {
   }
 
@@ -159,7 +161,7 @@ export class LocalCourseService {
     this.enrollIntoBatch(enrollCourse).toPromise()
       .then(() => {
         this.zone.run(async () => {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+          this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', course));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: batch.id,
             courseId: batch.courseId

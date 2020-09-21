@@ -587,7 +587,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         .then(async (data: boolean) => {
           await loader.dismiss();
           this.courseContent.batchId = item.id;
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+          this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.courseContent));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: item.id,
             courseId: item.courseId
