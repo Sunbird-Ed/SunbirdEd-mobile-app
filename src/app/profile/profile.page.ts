@@ -1041,7 +1041,7 @@ export class ProfilePage implements OnInit {
       });
 
       if (this.selfDeclarationInfo.orgId) {
-        const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', this.selfDeclarationInfo.orgId);
+        const formConfig = await this.getFormApiData('user', 'selfDeclaration_v2', 'submit', this.selfDeclarationInfo.orgId);
         const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
         this.selfDeclaredDetails = [];
         (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {
