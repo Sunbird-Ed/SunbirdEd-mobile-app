@@ -22,5 +22,24 @@ html[data-theme="DEFAULT"]{
     }
   }
 
+  app-courses{
+    .enrolled-course-bg > sb-course-cards-hlist > .layout-course > .header > .title{
+      color: white !important;
+    }
+  }
+
+  app-course-batches{
+    .batch-list{
+      .flex-card-container{
+        .sb-btn-outline-info{
+          background-color: map-get($colors, thick_blue) !important;
+          border-radius: 5px !important;
+          color: white !important;
+          border-color: white !important;
+        }
+      }
+    }
+  }
+
 }
 
