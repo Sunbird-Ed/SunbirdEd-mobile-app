@@ -1,7 +1,6 @@
 <ion-header class="sb-popover-header">
     <ion-toolbar class="sb-popover-toolbar">
-        <ion-title class="sb-popover-title">{{'PROFILE_DETAILS' | translate}}
-            <!-- <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon> -->
+        <ion-title class="sb-popover-title">{{'PROFILE_DETAILS_TITLE' | translate}}
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -37,7 +36,7 @@
                     </span>
                 </div>
                 <div class="btn-info">
-                    <button class="save-changes-not-agree" (click)="dontShare()">{{'DONT_SHARE' | translate}}</button>
+                    <button class="save-changes-not-agree" (click)="dontShare()">{{'FRMELEMNTS_BTN_DONOT_SHARE' | translate}}</button>
                     <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'share-disabled' : null">{{'SHARE' | translate}}</button>
                 </div>
             </div>

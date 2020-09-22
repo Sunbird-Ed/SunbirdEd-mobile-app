@@ -33,7 +33,6 @@ export class ConsentPiiPopupComponent {
     closePopover(data) {
         const request = {
             data,
-            consumerId: this.profile.serverProfile.rootOrgId,
             userId: this.profile.serverProfile.id
         };
         this.popOverCtrl.dismiss(request);

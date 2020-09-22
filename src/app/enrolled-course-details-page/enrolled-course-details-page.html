@@ -308,7 +308,7 @@
 					<div>
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
-								<span><strong>{{'DATA_SETTINGS' | translate}}</strong></span>
+								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare">
 									<ion-icon name="ios-arrow-up"></ion-icon>
 								</span>
@@ -317,13 +317,13 @@
 								</span>
 							</div>
 							<div *ngIf="isDataShare" class="showLicensce data-share-header">
-								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'">{{'DATA_SHARING_IS_ON' | translate}}</ion-card-title>
-								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'DATA_SHARING_IS_OFF' | translate}}</ion-card-title>
-								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'SHARE_WITH_ADMINISTRATOR' | translate}}</p>
-								<p *ngIf="dataSharingStatus=='REVOKED'">{{'DONT_SHARE_WITH_ADMINISTRATOR' | translate}}</p>
-								<p>{{'LAST_UPDATE_ON' | translate:{'%s': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
-								<div class="edit-setting" (click)="editDataSettings()" *ngIf="!showShareData">{{'EDIT_SETTING' | translate}}</div>
-								<div class="edit-setting" (click)="editDataSettings()" *ngIf="showShareData">{{'CLOSE' | translate}}</div>
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'">{{'FRMELEMNTS_LBL_DATA_SHARING_ON' | translate}}</ion-card-title>
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF' | translate}}</ion-card-title>
+								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'FRMELEMNTS_LBL_DATA_SHARING_ON_INFO' | translate}}</p>
+								<p *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF_INFO' | translate}}</p>
+								<p>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
+								<div class="edit-setting" (click)="editDataSettings()" *ngIf="!showShareData">{{'FRMELEMNTS_BTN_EDIT_SETTING' | translate}}</div>
+								<div class="edit-setting" (click)="editDataSettings()" *ngIf="showShareData">{{'FRMELEMNTS_BTN_CLOSE' | translate}}</div>
 							</div>
 						</div>
 						<div *ngIf="isDataShare && showShareData" class="showLicensce">
@@ -331,17 +331,17 @@
 								<div class="hr-border-bottom-share"></div>
 								<div>
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom" style="padding-top: 10px;">
-										<strong>{{'UPDATE_SETTINGS' | translate}}</strong>
+										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" style="margin-left: -4px;">
 										<ion-radio-group>
 										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
-											<ion-label class="ds-m0">{{'SHARE_PROFILE' | translate}}</ion-label>
+											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
 											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
 										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
-											<ion-label class="ds-m0">{{'NOT_SHARE_PROFILE' |translate}}</ion-label>
+											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
 											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
 										</ion-radio-group>

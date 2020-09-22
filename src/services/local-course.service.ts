@@ -322,8 +322,7 @@ export class LocalCourseService {
     };
     await this.profileService.updateConsent(request).toPromise()
       .then((data) => {
-        // this.commonUtilService.showToast(data.message);
-        this.commonUtilService.showToast('SUBMITTING_DATA_SETTINGS');
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
       })
       .catch((e) => {
         console.error(e);
