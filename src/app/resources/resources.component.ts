@@ -45,7 +45,7 @@ import {
   RouterLinks,
   FormConfigCategories,
   PrimaryCategory,
-  Search
+  Search, ViewMore
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -1180,14 +1180,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   navigateToViewMoreContentsPage(section) {
-    const pageName = 'TV Programs';
     const params: NavigationExtras = {
       state: {
         requestParams: {
           request: section.searchCriteria
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        pageName : ViewMore.PAGE_TV_PROGRAMS
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);

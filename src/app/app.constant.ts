@@ -327,6 +327,7 @@ export class ContentCard {
 export class ViewMore {
     public static readonly PAGE_COURSE_ENROLLED = 'course.EnrolledCourses';
     public static readonly PAGE_COURSE_POPULAR = 'course.PopularContent';
+    public static readonly PAGE_TV_PROGRAMS = 'library.TvPrograms';
 }
 
 export class Location {
