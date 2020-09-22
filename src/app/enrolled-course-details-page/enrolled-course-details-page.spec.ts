@@ -107,7 +107,8 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockLocalCourseService: Partial<LocalCourseService> = {
         prepareEnrollCourseRequest: jest.fn(),
         enrollIntoBatch: jest.fn(),
-        prepareRequestValue: jest.fn()
+        prepareRequestValue: jest.fn(),
+        isEnrollable: jest.fn(() => true)
     };
     const mockAppVersion: Partial<AppVersion> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -1947,6 +1948,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('navigateToBatchListPage()', () => {
         it('should', async (done) => {
             // arrange
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
             const presentFn = jest.fn(() => Promise.resolve());
