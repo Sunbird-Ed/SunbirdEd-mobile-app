@@ -556,21 +556,18 @@ ion-segment-button{
 }
 
 .save-changes{
-//  border-radius: 20px !important;
   color: map-get($colors, white);
   background-color: $blue;
   padding: 12px 45px;
   outline: none;
   border: none;
-//  box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1);
-  font-size: 16px;
   text-transform: uppercase;
   font-weight: bold;
   font-size: 12px;
 }
 .ds-m0 {
   color: map-get($colors, primary_black);
-  font-family: "Noto Sans";
+  font-family: "Noto Sans", sans-serif;
   font-size: 12px;
   letter-spacing: 0;
   line-height: 20px;
