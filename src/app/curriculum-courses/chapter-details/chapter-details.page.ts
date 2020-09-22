@@ -549,6 +549,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
+
     const ongoingBatches = [];
     const upcommingBatches = [];
     const loader = await this.commonUtilService.getLoader();

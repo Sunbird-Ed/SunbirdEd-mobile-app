@@ -448,7 +448,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else if (
       this.batches.length === 1 &&
       this.batches[0].enrollmentEndDate &&
-      (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      (new Date().setHours(0,0,0,0) > new Date(this.batches[0].enrollmentEndDate).setHours(0,0,0,0))
     ) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
@@ -1572,6 +1572,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       PageId.COURSE_DETAIL, this.telemetryObject,
       reqvalues,
       this.objRollup);
+    
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (this.batches.length) {
@@ -1982,9 +1986,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   onTocCardClick(event) {
-    // If from group flow then should not go to next page.
+    // if from group flow then should not go to next page.
     if (this.isFromGroupFlow) {
       return;
+    }
+
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
     }
 
     if (event.item.mimeType === MimeType.COLLECTION) {

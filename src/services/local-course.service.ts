@@ -16,7 +16,7 @@ import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
@@ -37,7 +37,8 @@ export class LocalCourseService {
     private appVersion: AppVersion,
     private router: Router,
     private location: Location,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private datePipe: DatePipe
   ) {
   }
 
@@ -254,4 +255,39 @@ export class LocalCourseService {
     });
   }
 
+  isEnrollable(batches) {
+    let latestBatch = batches[0];
+    batches.forEach((batch) => {
+      if (batch.startDate &&
+        (new Date(batch.startDate) > new Date(latestBatch.startDate))) {
+        latestBatch = batch;
+      }
+    });
+    // start date is not passed, then check show message
+    // start date is passed, then check for enrollmentenddate
+    // enrollmentenddate is passed then show message
+
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0,0,0,0) >= new Date().setHours(0,0,0,0))) {
+      this.commonUtilService.showToast(
+        'CRS_TRK_FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(latestBatch.startDate)
+      );
+      return false;
+    } else if (latestBatch.enrollmentEndDate && (new Date(latestBatch.enrollmentEndDate).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))) {
+      this.commonUtilService.showToast(
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(latestBatch.enrollmentEndDate)
+      );
+      return false;
+    }
+    return true;
+  }
 }

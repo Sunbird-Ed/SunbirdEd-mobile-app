@@ -151,11 +151,15 @@ export class CourseBatchesPage implements OnInit {
   /**
    * Enroll logged-user into selected batch
    *
-   * @param {any} item contains details of select batch
+   * @param {any} batch contains details of select batch
    */
 
-  async enrollIntoBatch(item: Batch) {
-    const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
+  async enrollIntoBatch(batch: Batch) {
+    if (!this.localCourseService.isEnrollable([batch])) {
+      return false;
+    }
+
+    const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED,
       Environment.HOME,
@@ -166,13 +170,13 @@ export class CourseBatchesPage implements OnInit {
     );
 
     if (this.isGuestUser) {
-      this.joinTraining(item);
+      this.joinTraining(batch);
     } else {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
-        batch: item,
+        batch: batch,
         pageId: PageId.COURSE_BATCHES,
         courseId: undefined,
         telemetryObject: this.telemetryObject,
@@ -185,8 +189,8 @@ export class CourseBatchesPage implements OnInit {
           this.zone.run(async () => {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-              batchId: item.id,
-              courseId: item.courseId
+              batchId: batch.id,
+              courseId: batch.courseId
             });
             await loader.dismiss();
             this.location.back();
