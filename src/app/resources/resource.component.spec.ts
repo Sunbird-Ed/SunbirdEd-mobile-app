@@ -40,7 +40,7 @@ import {Router} from '@angular/router';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
 import {NEVER, of, Subscription} from 'rxjs';
-import {ContentFilterConfig, EventTopics, PreferenceKey, RouterLinks} from '../app.constant';
+import {ContentFilterConfig, EventTopics, PreferenceKey, RouterLinks, ViewMore} from '../app.constant';
 import {ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
@@ -1455,7 +1455,7 @@ describe('ResourcesComponent', () => {
                 request: request.searchCriteria
               },
               headerTitle: 'TV Programs',
-              pageName: 'TV Programs'
+              pageName: ViewMore.PAGE_TV_PROGRAMS
             }
           };
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
