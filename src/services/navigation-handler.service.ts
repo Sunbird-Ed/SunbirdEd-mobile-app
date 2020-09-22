@@ -60,7 +60,7 @@ export class NavigationService {
     navigateTo(path, navExtras) {
         this.router.navigate(path, {
             state: navExtras
-        })
+        });
     }
 
 }

@@ -126,7 +126,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
   }
 
   async enrollIntoBatch(batch: Batch) {
-    if (!this.localCourseService.isEnrollable([batch])) {
+    if (!this.localCourseService.isEnrollable([batch], this.course)) {
       return false;
     }
     const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch);

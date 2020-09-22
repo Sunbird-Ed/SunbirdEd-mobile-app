@@ -272,7 +272,7 @@ export class LocalCourseService {
     });
   }
 
-  isEnrollable(batches) {
+  isEnrollable(batches, course) {
     let latestBatch = batches[0];
     batches.forEach((batch) => {
       if (batch.startDate &&
@@ -284,17 +284,12 @@ export class LocalCourseService {
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
 
-    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0,0,0,0) >= new Date().setHours(0,0,0,0))) {
-      this.commonUtilService.showToast(
-        'ENROLLMENT_STARTS_ON',
-        null,
-        null,
-        null,
-        null,
-        this.datePipe.transform(latestBatch.startDate)
-      );
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
+      this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
+        this.datePipe.transform(latestBatch.startDate));
       return false;
-    } else if (latestBatch.enrollmentEndDate && (new Date(latestBatch.enrollmentEndDate).setHours(0,0,0,0) < new Date().setHours(0,0,0,0))) {
+    } else if (latestBatch.enrollmentEndDate &&
+      (new Date(latestBatch.enrollmentEndDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
         null,

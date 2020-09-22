@@ -11,6 +11,7 @@ export class CourseCompletionPopoverComponent {
   isCertified = false;
   isOnline = true;
   certificateDescription = '';
+  course;
 
   constructor(
     private popOverCtrl: PopoverController,
@@ -22,6 +23,7 @@ export class CourseCompletionPopoverComponent {
     this.isCertified = this.navParams.get('isCertified');
     this.certificateDescription = this.navParams.get('certificateDescription');
     this.isOnline = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.course = this.navParams.get('course');
   }
 
   close() {

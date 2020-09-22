@@ -651,7 +651,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     } else if (
       this.batches.length === 1 &&
       this.batches[0].enrollmentEndDate &&
-      (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      (new Date().setHours(0, 0, 0, 0) > new Date(this.batches[0].enrollmentEndDate).setHours(0, 0, 0, 0))
     ) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
