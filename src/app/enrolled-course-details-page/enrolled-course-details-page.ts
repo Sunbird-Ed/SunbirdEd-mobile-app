@@ -445,7 +445,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else if (
       this.batches.length === 1 &&
       this.batches[0].enrollmentEndDate &&
-      ((new Date().setHours(0,0,0,0)) > new Date(this.batches[0].enrollmentEndDate).setHours(0,0,0,0))
+      ((new Date().setHours(0, 0, 0, 0)) > new Date(this.batches[0].enrollmentEndDate).setHours(0, 0, 0, 0))
     ) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
@@ -1568,7 +1568,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
-    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
     }
 
@@ -1990,7 +1990,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     //   return;
     // }
 
-    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
     }
 
