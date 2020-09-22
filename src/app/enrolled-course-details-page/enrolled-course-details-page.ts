@@ -2076,7 +2076,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     return this.nextContent;
   }
 
-  saveChanges() {
+  async saveChanges() {
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
       const request: Consent = {
         status: (this.dataSharingStatus === ConsentStatus.ACTIVE) ? ConsentStatus.REVOKED : ConsentStatus.ACTIVE,
         userId: this.courseCardData.userId,
@@ -2085,11 +2087,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         objectType: 'Collection',
       };
       this.profileService.updateConsent(request).toPromise()
-        .then((data) => {
+        .then(async (data) => {
+          await loader.dismiss();
           this.commonUtilService.showToast(data.message);
           this.checkDataSharingStatus();
         })
-        .catch((e) => {
+        .catch(async (e) => {
+          await loader.dismiss();
           console.error(e);
         });
   }
