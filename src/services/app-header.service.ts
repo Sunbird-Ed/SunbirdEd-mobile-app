@@ -3,6 +3,7 @@ import {Subject} from 'rxjs';
 import {MenuController} from '@ionic/angular';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {SharedPreferences} from 'sunbird-sdk';
+import {StatusBarTheme} from '@app/app/app.constant';
 
 @Injectable()
 export class AppHeaderService {
@@ -76,11 +77,12 @@ export class AppHeaderService {
     async showStatusBar() {
         const theme = await this.preferences.getString('current_selected_theme').toPromise();
         if (theme === 'JOYFUL') {
-            this.statusBar.backgroundColorByHexString('#FFD954');
+            const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');
+            this.statusBar.backgroundColorByHexString(themeColor);
         }
     }
 
     hideStatusBar() {
-        this.statusBar.backgroundColorByHexString('#BB000000');
+        this.statusBar.backgroundColorByHexString(StatusBarTheme.SET_DEFAULT);
     }
 }

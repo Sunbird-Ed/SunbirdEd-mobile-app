@@ -117,9 +117,10 @@ describe('AppHeaderService', () => {
     it('should set background color of statusbar', (done) => {
         mockStatusBar.backgroundColorByHexString = jest.fn();
         mockSharedPreferences.getString = jest.fn(() => of('JOYFUL'));
+        const selectedTheme = getComputedStyle(document.querySelector('html')).getPropertyValue('--joyful-warning');
 
         appHeaderService.showStatusBar().then(() => {
-            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith('#FFD954');
+            expect(mockStatusBar.backgroundColorByHexString).toHaveBeenCalledWith(selectedTheme);
             done();
         });
 
