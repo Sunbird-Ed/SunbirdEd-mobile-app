@@ -70,7 +70,7 @@
 						<div>
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group"
-									*ngIf="!isFromGroupFlow">
+								    *ngIf="!isFromGroupFlow">
 									<div *ngIf="trackDownloads$ | async; let downloads">
 										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
@@ -301,20 +301,75 @@
 							<p>{{course?.description}}</p>
 						</div>
 					</div>
-					<!--credits and license info-->
-					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
-						<div class="hr-border-bottom"></div>
-						<div>
-							<div class="ion-padding-start">
-								<div class="font-14 view-credits" (click)="showLicensce()">
-									<span><strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong></span>
-									<span *ngIf="showCredits">
-										<ion-icon name="ios-arrow-up"></ion-icon>
-									</span>
-									<span *ngIf="!showCredits">
-										<ion-icon name="ios-arrow-down"></ion-icon>
-									</span>
+				</ion-card-content>
+			</ion-card>
+			<ion-card *ngSwitchCase="'info'">
+				<ion-card-content class="ion-no-padding" *ngIf="!isGuestUser && isAlreadyEnrolled && dataSharingStatus">
+					<div>
+						<div class="ion-padding">
+							<div class="font-14-new view-credits" (click)="expandDataSettings()">
+								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
+								<span *ngIf="isDataShare">
+									<ion-icon name="ios-arrow-up"></ion-icon>
+								</span>
+								<span *ngIf="!isDataShare">
+									<ion-icon name="ios-arrow-down"></ion-icon>
+								</span>
+							</div>
+							<div *ngIf="isDataShare" class="showLicensce data-share-header">
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='ACTIVE'">{{'FRMELEMNTS_LBL_DATA_SHARING_ON' | translate}}</ion-card-title>
+								<ion-card-title class="data-share-info" *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF' | translate}}</ion-card-title>
+								<p *ngIf="dataSharingStatus=='ACTIVE'">{{'FRMELEMNTS_LBL_DATA_SHARING_ON_INFO' | translate}}</p>
+								<p *ngIf="dataSharingStatus=='REVOKED'">{{'FRMELEMNTS_LBL_DATA_SHARING_OFF_INFO' | translate}}</p>
+								<p>{{'DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON' | translate:{'last_updated_on_date': lastUpdateOn | date: 'dd/MM/yyyy'} }}</p>
+								<div class="edit-setting" (click)="editDataSettings()" *ngIf="!showShareData">{{'FRMELEMNTS_BTN_EDIT_SETTING' | translate}}</div>
+								<div class="edit-setting" (click)="editDataSettings()" *ngIf="showShareData">{{'FRMELEMNTS_BTN_CLOSE' | translate}}</div>
+							</div>
+						</div>
+						<div *ngIf="isDataShare && showShareData" class="showLicensce">
+							<div class="ion-padding">
+								<div class="hr-border-bottom-share"></div>
+								<div>
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom" style="padding-top: 10px;">
+										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
+									</ion-card-title>
+									<ion-list lines="none" style="margin-left: -4px;">
+										<ion-radio-group>
+										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
+											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
+											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
+										  </ion-item>
+
+										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
+											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
+											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
+										  </ion-item>
+										</ion-radio-group>
+									  </ion-list>
+									  <div class="ion-text-center">
+										<button class="save-changes" (click)="saveChanges()">{{'SAVE' | translate}}</button>
+									</div>
 								</div>
+							</div>
+						</div>
+					</div>
+				</ion-card-content>
+			</ion-card>
+			<!--credits and license info-->
+			<ion-card *ngSwitchCase="'info'">
+				<ion-card-content class="ion-no-padding">
+					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
+						<div>
+							<div class="ion-padding">
+									<div class="font-14-new view-credits" (click)="showLicensce()">
+										<span><strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong></span>
+										<span *ngIf="showCredits">
+											<ion-icon name="ios-arrow-up"></ion-icon>
+										</span>
+										<span *ngIf="!showCredits">
+											<ion-icon name="ios-arrow-down"></ion-icon>
+										</span>
+									</div>
 							</div>
 							<div *ngIf="showCredits" class="showLicensce">
 								<div class="ion-padding">

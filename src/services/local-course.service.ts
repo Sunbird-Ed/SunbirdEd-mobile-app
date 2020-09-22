@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse
+  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData, ProfileService
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -14,14 +14,21 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { forEach } from '@angular/router/src/utils/collection';
+import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
+import { UserConsent, Consent, ConsentStatus } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+
+export interface ConsentPopoverActionsDelegate {
+  onConsentPopoverShow(): void;
+  onConsentPopoverDismiss(): void;
+}
+
 
 @Injectable()
 export class LocalCourseService {
@@ -30,6 +37,7 @@ export class LocalCourseService {
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
@@ -40,15 +48,16 @@ export class LocalCourseService {
     private location: Location,
     private sbProgressLoader: SbProgressLoader,
     private datePipe: DatePipe,
-    private categoryKeyTranslator: CategoryKeyTranslator
+    private categoryKeyTranslator: CategoryKeyTranslator,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
-  enrollIntoBatch(enrollCourse: EnrollCourse): Observable<any> {
+  enrollIntoBatch(enrollCourse: EnrollCourse, consentPopoverActionsDelegate?: ConsentPopoverActionsDelegate): Observable<any> {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
-      map((data: boolean) => {
+      map(async (data: boolean) => {
         if (data) {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -59,6 +68,16 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
+          if (enrollCourse.userConsent === UserConsent.YES) {
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverShow();
+          }
+          await this.showConsentPopup(enrollCourse);
+
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverDismiss();
+          }
+          }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -284,4 +303,29 @@ export class LocalCourseService {
     return true;
   }
 
+  async showConsentPopup(course) {
+    const popover = await this.popoverCtrl.create({
+      component: ConsentPiiPopupComponent,
+      componentProps: {
+      },
+      cssClass: 'sb-popover',
+      backdropDismiss: false
+    });
+    await popover.present();
+    const dismissResponse = await popover.onDidDismiss();
+    const request: Consent = {
+      status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
+      userId: dismissResponse.data.userId,
+      consumerId: course.channel ? course.channel : course.content.channel,
+      objectId: course.courseId,
+      objectType: 'Collection'
+    };
+    await this.profileService.updateConsent(request).toPromise()
+      .then((data) => {
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
 }

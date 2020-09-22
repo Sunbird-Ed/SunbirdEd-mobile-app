@@ -215,20 +215,7 @@ describe('CourseBatchesPage', () => {
                     {},
                     []);
                 expect(presentFn).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
-                expect(mockLocalCourseService.enrollIntoBatch).toHaveBeenCalledWith({
-                    userId: 'sample-uid',
-                    batch,
-                    pageId: PageId.COURSE_BATCHES,
-                    courseId: undefined,
-                    telemetryObject: {
-                        id: '',
-                        type: '',
-                        version: '',
-                    },
-                    objRollup: {},
-                    corRelationList: []
-                });
+                expect(mockLocalCourseService.enrollIntoBatch).toHaveBeenCalled();
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -288,19 +275,7 @@ describe('CourseBatchesPage', () => {
                     []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockLocalCourseService.enrollIntoBatch).toHaveBeenCalledWith({
-                    userId: 'sample-uid',
-                    batch,
-                    pageId: PageId.COURSE_BATCHES,
-                    courseId: undefined,
-                    telemetryObject: {
-                        id: '',
-                        type: '',
-                        version: '',
-                    },
-                    objRollup: {},
-                    corRelationList: []
-                });
+                expect(mockLocalCourseService.enrollIntoBatch).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -500,5 +475,20 @@ describe('CourseBatchesPage', () => {
         courseBatchesPage.goBack();
         // assert
         expect(mockLocation.back).toHaveBeenCalled();
+    });
+
+    it('should dismiss consentPii popup', () => {
+        // arrange
+        const dismissFn = jest.fn(() => Promise.resolve(true));
+        courseBatchesPage.loader = {data: '', dismiss: dismissFn} as any;
+        // act
+        courseBatchesPage.onConsentPopoverShow();
+        // assert
+        expect(courseBatchesPage.loader).toBeUndefined();
+        expect(dismissFn).toHaveBeenCalled();
+    });
+
+    it('shoule invoked after consentPii popup dismissed', () => {
+        courseBatchesPage.onConsentPopoverDismiss();
     });
 });

@@ -33,6 +33,7 @@ import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '.
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('EnrolledCourseDetailsPage', () => {
@@ -2317,6 +2318,52 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(isModified).toBe(true);
         });
+    });
+
+    it('should dismiss consentPii popup', () => {
+        // arrange
+        const dismissFn = jest.fn(() => Promise.resolve(true));
+        enrolledCourseDetailsPage.loader = {data: '', dismiss: dismissFn} as any;
+        // act
+        enrolledCourseDetailsPage.onConsentPopoverShow();
+        // assert
+        expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+        expect(dismissFn).toHaveBeenCalled();
+    });
+
+    it('shoule invoked after consentPii popup dismissed', () => {
+        jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+            return;
+        });
+        enrolledCourseDetailsPage.onConsentPopoverDismiss();
+    });
+
+    it('should fetch consent PII data', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: {channel: 'sample-channel'},
+            courseId: 'sample-do-id'
+        };
+        mockProfileService.getConsent = jest.fn(() => of([{
+            status: ConsentStatus.ACTIVE,
+            lastUpdatedOn: '02/02/2020'
+        }]));
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
+    });
+
+    it('should fetch consent PII data for catch part', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: {channel: 'sample-channel', userConsent: 'Yes'},
+            courseId: 'sample-do-id'
+        };
+        enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+        mockProfileService.getConsent = jest.fn(() => throwError({err: 'USER_CONSENT_NOT_FOUND'}));
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
     });
 
 });

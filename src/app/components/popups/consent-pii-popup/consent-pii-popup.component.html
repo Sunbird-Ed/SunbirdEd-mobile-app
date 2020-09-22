@@ -1,0 +1,45 @@
+<ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+        <ion-title class="sb-popover-title">{{'PROFILE_DETAILS_TITLE' | translate}}
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<div id="main-content">
+    <div class="consent-popover-info">
+        <div class="flex-container">
+            <div class="body" *ngIf="consentForm.length">
+                <div *ngFor="let element of consentForm">
+                    <p class="profile-info-section"><span>{{element.key}}</span><span
+                            class="profile-info">{{element.value}}</span></p>
+                </div>
+
+            </div>
+            <div class="footer">
+                <div>
+                    <p>
+                        <span style="position: absolute;">
+                            <ion-icon ios="ios-information-circle" md="md-information-circle" color="#333333">
+                            </ion-icon>
+                        </span>
+                        <span style="margin-left: 25px;">{{'EDIT_CONSENT_POPUP' | translate}}</span>
+                    </p>
+                </div>
+                <div class="cr-input-primary" lines="none">
+                    <span>
+                        <ion-checkbox class="cr-terms-checkbox" [(ngModel)]="isAgreed"></ion-checkbox>
+                    </span>
+                    <span>
+                        <p class="cr-terms-checkbox-label">
+                            <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | translate}}</span>
+                            <span (click)="openTermsOfUse()" class="terms-info">{{'TERMS_OF_USE' | translate}}</span>
+                        </p>
+                    </span>
+                </div>
+                <div class="btn-info">
+                    <button class="save-changes-not-agree" (click)="dontShare()">{{'FRMELEMNTS_BTN_DONOT_SHARE' | translate}}</button>
+                    <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'share-disabled' : null">{{'SHARE' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

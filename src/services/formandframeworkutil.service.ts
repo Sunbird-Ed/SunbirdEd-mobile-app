@@ -675,4 +675,14 @@ export class FormAndFrameworkUtilService {
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
+
+    async getConsentFormConfig() {
+        const req: FormRequest = {
+            type: 'dynamicForm',
+            subType: 'consentDeclaration',
+            action: 'submit',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
 }
