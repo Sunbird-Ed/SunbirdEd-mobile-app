@@ -132,7 +132,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
-    const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', rootOrgId);
+    const formConfig = await this.getFormApiData('user', 'selfDeclaration_v2', 'submit', rootOrgId);
     this.translateLabels(formConfig as any);
     if (formConfig.length) {
       this.initializeFormData(formConfig, isFormLoaded);
