@@ -175,7 +175,9 @@ export class LocalCourseService {
       pageId: PageId.COURSE_BATCHES,
       telemetryObject,
       objRollup: ContentUtil.generateRollUp(undefined, telemetryObject.id),
-      corRelationList: corRelationList ? JSON.parse(corRelationList) : []
+      corRelationList: corRelationList ? JSON.parse(corRelationList) : [],
+      channel: course.channel,
+      userConsent: course.userConsent
     };
     this.enrollIntoBatch(enrollCourse).toPromise()
       .then(() => {
