@@ -2085,11 +2085,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         .then(async (data) => {
           await loader.dismiss();
           this.commonUtilService.showToast(data.message);
+          this.isDataShare = false;
           this.checkDataSharingStatus();
         })
         .catch(async (e) => {
           await loader.dismiss();
-          console.error(e);
+          if (e.code === 'NETWORK_ERROR') {
+            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+          }
         });
   }
 
@@ -2114,7 +2117,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
            await this.localCourseService.showConsentPopup(this.courseCardData);
            await this.checkDataSharingStatus();
          }
-      }
+      } else if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
     });
   }
 
