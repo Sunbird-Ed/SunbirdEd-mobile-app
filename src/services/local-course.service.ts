@@ -284,7 +284,7 @@ export class LocalCourseService {
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
 
-    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0))) {
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0))) {
       this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
         this.datePipe.transform(latestBatch.startDate));
       return false;
