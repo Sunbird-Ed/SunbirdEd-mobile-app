@@ -26,7 +26,7 @@
                 </div>
                 <div class="cr-input-primary" lines="none">
                     <span>
-                        <ion-checkbox class="cr-terms-checkbox" [(ngModel)]="isAgreed"></ion-checkbox>
+                        <ion-checkbox class="cr-terms-checkbox" (ionChange)="changeEvent($event)"></ion-checkbox>
                     </span>
                     <span>
                         <p class="cr-terms-checkbox-label">
