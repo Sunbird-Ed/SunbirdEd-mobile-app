@@ -61,6 +61,12 @@ export class ConsentPiiPopupComponent {
                     });
                 }
                 return location;
+            case 'SERVER_PROFILE_DECLARED':
+                if (this.profile.serverProfile.declarations.length && this.profile.serverProfile.declarations[0].info) {
+                   return this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] ?
+                   this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] : '-';
+                }
+                return '-';
             default:
                 return '-';
         }

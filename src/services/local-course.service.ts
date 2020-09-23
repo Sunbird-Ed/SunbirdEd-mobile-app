@@ -175,7 +175,9 @@ export class LocalCourseService {
       pageId: PageId.COURSE_BATCHES,
       telemetryObject,
       objRollup: ContentUtil.generateRollUp(undefined, telemetryObject.id),
-      corRelationList: corRelationList ? JSON.parse(corRelationList) : []
+      corRelationList: corRelationList ? JSON.parse(corRelationList) : [],
+      channel: course.channel,
+      userConsent: course.userConsent
     };
     this.enrollIntoBatch(enrollCourse).toPromise()
       .then(() => {
@@ -320,12 +322,18 @@ export class LocalCourseService {
       objectId: course.courseId,
       objectType: 'Collection'
     };
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     await this.profileService.updateConsent(request).toPromise()
-      .then((data) => {
+      .then(async (data) => {
         this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+        await loader.dismiss();
       })
       .catch((e) => {
-        console.error(e);
+        loader.dismiss();
+        if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
       });
   }
 }

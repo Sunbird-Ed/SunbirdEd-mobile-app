@@ -2361,7 +2361,8 @@ describe('EnrolledCourseDetailsPage', () => {
             courseId: 'sample-do-id'
         };
         enrolledCourseDetailsPage.isAlreadyEnrolled = true;
-        mockProfileService.getConsent = jest.fn(() => throwError({err: 'USER_CONSENT_NOT_FOUND'}));
+        mockProfileService.getConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+        mockCommonUtilService.showToast = jest.fn();
         // act
         enrolledCourseDetailsPage.checkDataSharingStatus();
     });
