@@ -267,7 +267,7 @@ export class LocalCourseService {
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
 
-    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0,0,0,0) >= new Date().setHours(0,0,0,0))) {
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0,0,0,0) > new Date().setHours(0,0,0,0))) {
       this.commonUtilService.showToast(
         'CRS_TRK_FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE',
         null,
