@@ -264,4 +264,24 @@ describe('ConsentPiiPopupComponent', () => {
             done();
         }, 0);
     });
+
+    it('should return button disable and enable thing', () => {
+        const event = {
+            detail: {
+                checked: true
+            }
+        };
+        consentPiiPopupComponent.changeEvent(event);
+        expect(consentPiiPopupComponent.isAgreed).toBeTruthy();
+    });
+
+    it('should return button disable and enable thing', () => {
+        const event = {
+            detail: {
+                checked: false
+            }
+        };
+        consentPiiPopupComponent.changeEvent(event);
+        expect(consentPiiPopupComponent.isAgreed).toBeFalsy();
+    });
 });

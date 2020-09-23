@@ -13,6 +13,7 @@ import { RouterLinks } from '@app/app/app.constant';
 export class ConsentPiiPopupComponent {
     profile: any;
     consentForm = [];
+    isAgreed = false;
     constructor(
         private popOverCtrl: PopoverController,
         private commonUtilService: CommonUtilService,
@@ -72,5 +73,13 @@ export class ConsentPiiPopupComponent {
             = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
 
         (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+    }
+
+    changeEvent(event) {
+        if (event.detail.checked) {
+            this.isAgreed = true;
+        } else {
+            this.isAgreed = false;
+        }
     }
 }
