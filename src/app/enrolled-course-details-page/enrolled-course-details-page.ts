@@ -598,7 +598,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         .subscribe(() => {
           this.zone.run(async () => {
             await loader.dismiss();
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
+            this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_UNENROLLED', this.course));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.OTHER,
@@ -1960,13 +1960,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   // check wheather to show Unenroll button in overflow menu or not
   handleUnenrollButton() {
-    console.log('INside the show unenroll ');
     const batchDetails = this.batchDetails ? this.batchDetails.status : 2;
     const enrollmentType = this.batchDetails ? this.batchDetails.enrollmentType : '';
-    console.log('INside the show unenroll ', batchDetails, enrollmentType);
-    console.log('final condition --- ', (batchDetails !== 2 &&
-      (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
-      enrollmentType !== 'invite-only'));
 
     if (this.updatedCourseCardData) {
       this.showUnenrollButton = (batchDetails !== 2 &&
