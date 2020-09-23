@@ -282,6 +282,11 @@ export class ViewMoreActivityComponent implements OnInit {
         this.search();
         break;
 
+      case ViewMore.PAGE_TV_PROGRAMS:
+        this.pageType = 'tvPrograms';
+        this.search();
+        break;
+
       default:
         this.search();
     }

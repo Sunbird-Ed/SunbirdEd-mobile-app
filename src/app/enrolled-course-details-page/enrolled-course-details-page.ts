@@ -49,6 +49,7 @@ import {
   DownloadTracking,
   DownloadService,
   AuditState,
+  Consent,
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -90,6 +91,8 @@ import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
+import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 declare const cordova;
 
@@ -98,7 +101,7 @@ declare const cordova;
   templateUrl: './enrolled-course-details-page.html',
   styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
+export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 
   /**
    * Contains content details
@@ -240,6 +243,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
   pageId = PageId.COURSE_DETAIL;
+  showShareData = false;
+  isDataShare = false;
+  isShared: any;
+  dataSharingStatus: any;
+  lastUpdateOn: string;
+  isConsentPopUp = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -652,6 +661,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         }
+        this.isConsentPopUp = true;
         this.showSheenAnimation = false;
         this.location.back();
       });
@@ -924,7 +934,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.corRelationList
               );
             }
-
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
             }
@@ -1356,6 +1365,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    if (this.isAlreadyEnrolled) {
+     await this.checkDataSharingStatus();
+    }
   }
 
   ionViewDidEnter() {
@@ -1371,6 +1383,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       this.licenseSectionClicked('collapsed');
     }
+  }
+
+  editDataSettings() {
+    this.showShareData = !this.showShareData;
+  }
+
+  expandDataSettings() {
+    this.showShareData = false;
+    this.isDataShare = !this.isDataShare;
   }
 
   handleBackButton() {
@@ -1846,16 +1867,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         userId: this.userId,
         batch: item,
         pageId: PageId.COURSE_BATCHES,
-        courseId: undefined,
+        courseId: this.course.identifier,
+        channel: this.course.channel,
         telemetryObject: this.telemetryObject,
         objRollup: this.objRollup,
-        corRelationList: this.corRelationList
+        corRelationList: this.corRelationList,
+        userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
+            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
@@ -2052,4 +2076,61 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
+  async saveChanges() {
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      const request: Consent = {
+        status: (this.dataSharingStatus === ConsentStatus.ACTIVE) ? ConsentStatus.REVOKED : ConsentStatus.ACTIVE,
+        userId: this.courseCardData.userId,
+        consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+        objectId: this.courseCardData.courseId,
+        objectType: 'Collection',
+      };
+      this.profileService.updateConsent(request).toPromise()
+        .then(async (data) => {
+          await loader.dismiss();
+          this.commonUtilService.showToast(data.message);
+          this.checkDataSharingStatus();
+        })
+        .catch(async (e) => {
+          await loader.dismiss();
+          console.error(e);
+        });
+  }
+
+  async checkDataSharingStatus() {
+    const request: Consent = {
+      userId: this.courseCardData.userId,
+      consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+      objectId: this.courseCardData.courseId
+    };
+    await this.profileService.getConsent(request).toPromise()
+    .then((data) => {
+      if (data) {
+        this.dataSharingStatus = data.consents[0].status;
+        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+      }
+    })
+    .catch(async (e) => {
+      if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
+     && this.course.userConsent === UserConsent.YES) {
+         if (!this.isConsentPopUp) {
+           this.isConsentPopUp = true;
+           await this.localCourseService.showConsentPopup(this.courseCardData);
+           await this.checkDataSharingStatus();
+         }
+      }
+    });
+  }
+
+  onConsentPopoverShow() {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+  }
+
+  onConsentPopoverDismiss() {
+    this.checkDataSharingStatus();
+  }
 }

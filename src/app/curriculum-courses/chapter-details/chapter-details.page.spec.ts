@@ -1543,7 +1543,6 @@ describe('ChapterDetailsPage', () => {
                 );
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-                expect(dismissFn).toHaveBeenCalled();
                 expect(chapterDetailsPage.courseContent.batchId).toBe(items.id);
                 expect(mockCategoryKeyTranslator.transform).toHaveBeenCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('sample-message');
@@ -1744,5 +1743,20 @@ describe('ChapterDetailsPage', () => {
     });
 
     describe('joinTraining', () => {
+    });
+
+    it('should dismiss consentPii popup', () => {
+        // arrange
+        const dismissFn = jest.fn(() => Promise.resolve(true));
+        chapterDetailsPage.loader = {data: '', dismiss: dismissFn} as any;
+        // act
+        chapterDetailsPage.onConsentPopoverShow();
+        // assert
+        expect(chapterDetailsPage.loader).toBeUndefined();
+        expect(dismissFn).toHaveBeenCalled();
+    });
+
+    it('shoule invoked after consentPii popup dismissed', () => {
+        chapterDetailsPage.onConsentPopoverDismiss();
     });
 });

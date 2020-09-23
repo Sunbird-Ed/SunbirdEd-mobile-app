@@ -29,6 +29,7 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 @Component({
@@ -36,7 +37,7 @@ import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/catego
   templateUrl: './chapter-details.page.html',
   styleUrls: ['./chapter-details.page.scss', '../../enrolled-course-details-page/enrolled-course-details-page.scss'],
 })
-export class ChapterDetailsPage implements OnInit, OnDestroy {
+export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 
   chapter: any;
   cardType: TocCardType = TocCardType.COURSE;
@@ -88,6 +89,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   public objRollup: Rollup;
   private corRelationList: any;
+  loader?: HTMLIonLoadingElement;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -565,11 +567,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async enrollIntoBatch(item: Batch) {
-    const loader = await this.commonUtilService.getLoader();
+    this.loader = await this.commonUtilService.getLoader();
     if (this.guestUser) {
       this.promptToLogin(item);
     } else {
-      await loader.present();
+      await this.loader.present();
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
@@ -580,12 +582,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         userId: this.userId,
         batch: item,
         pageId: PageId.COURSE_BATCHES,
-        courseId: this.courseContent.identifier
+        courseId: this.courseContent.identifier,
+        channel: this.courseContent.contentData.channel,
+        userConsent: this.courseContent.contentData.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then(async (data: boolean) => {
-          await loader.dismiss();
+         // await this.loader.dismiss();
           this.courseContent.batchId = item.id;
           this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.courseContent));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -594,7 +598,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           });
           this.isAlreadyEnrolled = true;
         }, async (error) => {
-          await loader.dismiss();
+          await this.loader.dismiss();
         });
     }
   }
@@ -984,4 +988,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       // this.corRelationList
       );
   }
+
+  onConsentPopoverShow() {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+  }
+
+   onConsentPopoverDismiss() {}
 }
