@@ -2,8 +2,8 @@
   <h3 class="activity-toc-title">{{ 'SELECT_ACTIVITY' | translate}}</h3>
   <div class="add-activity-container">
     <div class="add-activity-content" *ngFor="let activity of supportedActivityList; let i = index;">
-      <sb-course-curiculum-card [isActivityTypeCard]="true" [cardData]="activity" [index]="i" (click)="search(activity)"></sb-course-curiculum-card>
+      <sb-course-curiculum-card [isActivityTypeCard]="true" [cardData]="activity" [index]="i"
+        (click)="search(activity)"></sb-course-curiculum-card>
     </div>
   </div>
 </ion-content>
-  
