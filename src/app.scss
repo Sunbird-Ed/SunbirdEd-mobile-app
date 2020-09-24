@@ -17,6 +17,7 @@
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
 @import "./assets/styles/themeable";
+@import "./assets/styles/default-theme";
 
 :root {
   --ion-default-font: "NotoSans";
@@ -1477,4 +1478,9 @@ body {
 
 .required-asterisk{
   color: map-get($colors, red);
+}
+
+ion-content {
+  --background: var(--app-primary-background);
+  background: var(--app-primary-background) !important;
 }

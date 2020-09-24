@@ -18,10 +18,6 @@
     padding-bottom: 80px;
   }
 
-  ion-content {
-    --background: #{map-get($colors, pale_blue_f0)};
-  }
-
   ion-list.list-md {
     margin-top: 0 !important;
     background: inherit;
