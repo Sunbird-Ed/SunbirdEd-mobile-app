@@ -1,6 +1,5 @@
 import {
-  Component, OnInit,
-  Inject, OnDestroy
+  Component, OnInit, Inject, OnDestroy
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -8,12 +7,11 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
   ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService
+  CollectionService, AppGlobalService, InteractSubtype, InteractType
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
-  GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, Content,
+  GroupMember, CachedItemRequestSourceFrom, Content,
   Group, MimeType, CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import {
@@ -203,11 +201,16 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   openActivityToc() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED, Environment.GROUP, PageId.ACTIVITY_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
       {
         state: {
           courseList: this.courseList,
-          mainCourseName: this.activity.name
+          mainCourseName: this.activity.name,
+          corRelation: this.corRelationList
         }
       });
   }

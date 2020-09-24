@@ -5,7 +5,7 @@ import { TelemetryGeneratorService } from '@app/services';
 import { AppHeaderService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { InteractType } from '@project-sunbird/sunbird-sdk';
 
 describe('ActivityTocPage', () => {
@@ -21,7 +21,7 @@ describe('ActivityTocPage', () => {
                     courseList: {
                         children: [{
                             contentType: 'collection',
-                            children : [
+                            children: [
                                 {
                                     contentType: 'Course',
                                     identifier: 'id1'
@@ -40,6 +40,7 @@ describe('ActivityTocPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         selectedActivityCourseId: ''
     };
+
     beforeAll(() => {
         activityTocPage = new ActivityTocPage(
             mockRouter as Router,
@@ -66,8 +67,8 @@ describe('ActivityTocPage', () => {
         // act
         activityTocPage.handleBackButton(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-        .toHaveBeenCalledWith(PageId.ACTIVITY_TOC, Environment.GROUP, true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.ACTIVITY_TOC, Environment.GROUP, true, undefined, activityTocPage.corRelationList);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -84,7 +85,7 @@ describe('ActivityTocPage', () => {
 
     it('should invoked handleDeviceBackButton', () => {
         mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({event: {}}))) as any
+            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({ event: {} }))) as any
         } as any;
         jest.spyOn(activityTocPage, 'handleBackButton').mockImplementation();
         // act
@@ -112,15 +113,11 @@ describe('ActivityTocPage', () => {
                 expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
                 expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.VIEW,
-                    '',
-                    PageId.ACTIVITY_TOC,
-                    Environment.GROUP
-                );
+                    ImpressionType.VIEW, '', PageId.ACTIVITY_TOC, Environment.GROUP,
+                    undefined, undefined, undefined, undefined, activityTocPage.corRelationList);
                 done();
             }, 0);
         });
-
     });
 
     describe('ionViewWillLeave', () => {
@@ -155,13 +152,9 @@ describe('ActivityTocPage', () => {
             expect(mockAppGlobalService.selectedActivityCourseId).toEqual('id1');
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.GROUP,
-                PageId.ACTIVITY_TOC,
-                expect.anything(),
-                undefined,
-                expect.anything()
+                InteractType.TOUCH, InteractSubtype.CONTENT_CLICKED, Environment.GROUP,
+                PageId.ACTIVITY_TOC, { id: 'id1', type: undefined, version: '' },
+                undefined, { l1: 'id1' }, activityTocPage.corRelationList
             );
         });
         it('should not set selectedActivityCourseId', () => {
@@ -172,6 +165,5 @@ describe('ActivityTocPage', () => {
             expect(mockLocation.back).toHaveBeenCalled();
         });
     });
-
 
 });

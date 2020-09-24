@@ -6,10 +6,10 @@ import {
     PageId, TelemetryGeneratorService
 } from '@app/services';
 import { GroupService, GroupMemberRole, MimeType } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService, CollectionService, AppGlobalService } from '../../../services';
+import { AppHeaderService, CollectionService, AppGlobalService, InteractType, InteractSubtype } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { RouterLinks } from '../../app.constant';
 
@@ -694,9 +694,14 @@ describe('ActivityDetailsPage', () => {
                 name: 'course1'
             }
         } as any;
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         activityDetailsPage.openActivityToc();
         // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH, InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED,
+            Environment.GROUP, PageId.ACTIVITY_DETAIL,
+            undefined, undefined, undefined, activityDetailsPage.corRelationList);
         expect(mockRouter.navigate).toHaveBeenCalledWith(
             [`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
             expect.anything()

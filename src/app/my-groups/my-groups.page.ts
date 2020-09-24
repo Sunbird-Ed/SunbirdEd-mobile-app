@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { RouterLinks, PreferenceKey, EventTopics } from '../app.constant';
+import { RouterLinks, PreferenceKey } from '../app.constant';
 import {
   AuthService, SharedPreferences, GroupService, Group,
-  GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder
+  GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder,
+  ObjectType, TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -34,7 +35,7 @@ interface GroupData extends Group {
 export class MyGroupsPage implements OnInit, OnDestroy {
   isGuestUser: boolean;
   groupList: GroupData[] = [];
-  themeColors: string[] = ['#FFDFC7', '#C2ECE6', '#FFE59B', '#DAD4FF',  '#80CBC4', '#E6EE9C', '#FFE082'];
+  themeColors: string[] = ['#FFDFC7', '#C2ECE6', '#FFE59B', '#DAD4FF', '#80CBC4', '#E6EE9C', '#FFE082'];
   fontColor: string[] = ['#AD632D', '#149D88', '#8D6A00', '#635CDC', '#00695C', '#9E9D24', '#FF8F00'];
   groupListLoader = false;
   headerObservable: any;
@@ -128,7 +129,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     switch ($event.name) {
       case 'groupInfo':
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
+          InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
         this.openinfopopup();
         break;
       case 'back':
@@ -189,7 +190,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         }
       };
       this.groupList = (await this.groupService.search(groupSearchCriteria).toPromise())
-        .map<GroupData>((group , index) => {
+        .map<GroupData>((group, index) => {
           return {
             ...group,
             initial: this.commonUtilService.extractInitial(group.name),
@@ -206,6 +207,10 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   navigateToGroupdetailsPage(event) {
+    const telemetryObject = new TelemetryObject(event.data.id, ObjectType.GROUP, undefined);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP, telemetryObject);
+
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: event.data.id
