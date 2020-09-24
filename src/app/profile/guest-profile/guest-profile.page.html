@@ -1,130 +1,135 @@
-<ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space">
-  <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
-  <div class="profile-info padding-top-10 padding-bottom-10 ion-text-center">
-    <p class="profile-name">
-      <span class="user">{{profile?.handle | titlecase}}</span>
-      <span>
-        <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
-        </ion-icon>
-      </span>
-    </p>
-
-    <p class="change-role ion-text-uppercase" (click)="editGuestProfile(true,'change-role')">
-      {{'CHANGE_ROLE' | translate }}
-    </p>
-    <p *ngIf="profile?.profileType === ProfileType.TEACHER" class="user-type">{{'USER_TYPE_1' | translate }}</p>
-    <p *ngIf="profile?.profileType === ProfileType.STUDENT" class="user-type">{{'USER_TYPE_2' | translate }}</p>
-    <p *ngIf="profile?.profileType === ProfileType.OTHER" class="user-type">{{'USER_TYPE_3' | translate }}</p>
-  </div>
-
-  <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-    <h2 class="section-title padding-left-10 ion-no-padding">
-      {{'PROFILE_DETAILS_TITLE' | translate}}
-    </h2>
-
-    <div class="grid-container">
-      <!-- Syllabus -->
-      <div [hidden]="true" class="grid-item info-title text-align-start ion-text-uppercase">
-        {{'SYLLABUS' | translate}}
+<ion-content overflow-scroll="true" class="ui-container main-container avoid-bottom-tabs-space">
+  <div class="ui-content">
+    <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
+    <div class="profile-info padding-top-10 padding-bottom-10 ion-text-center">
+      <div class="profile-icon">
+        <ion-icon name="md-contact"></ion-icon>
       </div>
-      <div [hidden]="true" class="grid-item text-align-end" (click)="editGuestProfile(false,'syllabus')">
-        <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
-          <div class="ellipsis text-align width-100">{{syllabus}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+      <p class="profile-name">
+        <span class="user">{{profile?.handle | titlecase}}</span>
+        <span>
+          <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
           </ion-icon>
-        </div>
-        <div *ngIf="!profile?.syllabus?.length" class="vertical-align">
-          {{'ADD' | translate}}
-        </div>
-      </div>
+        </span>
+      </p>
 
-      <!-- Board -->
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
-        <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
-          <div class="ellipsis text-align width-100">{{boards}}&lrm;</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary">
-          </ion-icon>
-        </div>
-        <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" class="vertical-align">{{'ADD' | translate}}
-        </div>
-
-      </div>
-      <!-- Medium -->
-
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="editGuestProfile(false,'medium')">
-        <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
-          class="align-content">
-          <div class="ellipsis text-align width-100">{{medium}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary">
-          </ion-icon>
-        </div>
-        <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
-          class="vertical-align">{{'ADD' | translate}}</div>
-      </div>
-
-
-      <!-- Class -->
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="editGuestProfile(false,'class')">
-        <div
-          *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
-          class="align-content">
-          <div class="ellipsis text-align width-100">{{grade}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary">
-          </ion-icon>
-        </div>
-        <div
-          *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length"
-          class="vertical-align">{{'ADD' | translate}}</div>
-      </div>
-
-
-      <!-- Subject -->
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="editGuestProfile(false,'subjects')">
-        <div
-          *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
-          class="align-content">
-          <div class="ellipsis text-align width-100">{{subjects}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary">
-          </ion-icon>
-        </div>
-        <div
-          *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length || !profile?.subject?.length"
-          class="vertical-align">{{'ADD' | translate}}</div>
-      </div>
+      <p class="change-role ion-text-uppercase" (click)="editGuestProfile(true,'change-role')">
+        {{'CHANGE_ROLE' | translate }}
+      </p>
+      <p *ngIf="profile?.profileType === ProfileType.TEACHER" class="user-type">{{'USER_TYPE_1' | translate }}</p>
+      <p *ngIf="profile?.profileType === ProfileType.STUDENT" class="user-type">{{'USER_TYPE_2' | translate }}</p>
+      <p *ngIf="profile?.profileType === ProfileType.OTHER" class="user-type">{{'USER_TYPE_3' | translate }}</p>
     </div>
 
-    <h2 class="section-title padding-left-10 ion-no-padding">
-      {{'DEVICE_LOCATION' | translate}}
-    </h2>
+    <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+      <h2 class="section-title padding-left-10 ion-no-padding">
+        {{'PROFILE_DETAILS_TITLE' | translate}}
+      </h2>
 
-    <div class="grid-container">
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'STATE' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
-        <div *ngIf="deviceLocation" class="align-content">
-          <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+      <div class="grid-container">
+        <!-- Syllabus -->
+        <div [hidden]="true" class="grid-item info-title text-align-start ion-text-uppercase">
+          {{'SYLLABUS' | translate}}
         </div>
-        <div *ngIf="!deviceLocation?.state" class="vertical-align">{{'ADD' | translate}}</div>
+        <div [hidden]="true" class="grid-item text-align-end" (click)="editGuestProfile(false,'syllabus')">
+          <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
+            <div class="ellipsis text-align width-100">{{syllabus}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+          <div *ngIf="!profile?.syllabus?.length" class="vertical-align">
+            {{'ADD' | translate}}
+          </div>
+        </div>
+
+        <!-- Board -->
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
+          <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
+            <div class="ellipsis text-align width-100">{{boards}}&lrm;</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+          <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" class="vertical-align">{{'ADD' | translate}}
+          </div>
+
+        </div>
+        <!-- Medium -->
+
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'medium')">
+          <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
+            class="align-content">
+            <div class="ellipsis text-align width-100">{{medium}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+          <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
+            class="vertical-align">{{'ADD' | translate}}</div>
+        </div>
+
+
+        <!-- Class -->
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'class')">
+          <div
+            *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
+            class="align-content">
+            <div class="ellipsis text-align width-100">{{grade}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+          <div
+            *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length"
+            class="vertical-align">{{'ADD' | translate}}</div>
+        </div>
+
+
+        <!-- Subject -->
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'subjects')">
+          <div
+            *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
+            class="align-content">
+            <div class="ellipsis text-align width-100">{{subjects}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+          <div
+            *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length || !profile?.grade?.length || !profile?.subject?.length"
+            class="vertical-align">{{'ADD' | translate}}</div>
+        </div>
       </div>
 
-      <div class="grid-item info-title text-align-start ion-text-uppercase">{{'DISTRICT' | translate}}</div>
-      <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
-        <div *ngIf="deviceLocation" class="align-content">
-          <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
-          <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+      <h2 class="section-title padding-left-10 ion-no-padding">
+        {{'DEVICE_LOCATION' | translate}}
+      </h2>
+
+      <div class="grid-container">
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'STATE' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
+          <div *ngIf="deviceLocation" class="align-content">
+            <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+          </div>
+          <div *ngIf="!deviceLocation?.state" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
-        <div *ngIf="!deviceLocation?.district" class="vertical-align">{{'ADD' | translate}}</div>
+
+        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'DISTRICT' | translate}}</div>
+        <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
+          <div *ngIf="deviceLocation" class="align-content">
+            <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+          </div>
+          <div *ngIf="!deviceLocation?.district" class="vertical-align">{{'ADD' | translate}}</div>
+        </div>
+
       </div>
 
     </div>
 
-  </div>
-
-  <div *ngIf="showSignInCard" class="signin-card-bg">
-    <app-sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></app-sign-in-card>
+    <div *ngIf="showSignInCard" class="signin-card-bg">
+      <app-sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></app-sign-in-card>
+    </div>
   </div>
 </ion-content>

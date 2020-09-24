@@ -1,26 +1,28 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
   class="main-container avoid-bottom-tabs-space" scrollEvents="true">
+  <div class="ui-container backgrond-div"></div>  
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
+    
+  <div *ngIf="showSignInCard" class="enrolled-course-bg ui-content">
+    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
+  </div>
+
+  <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
+    <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
+      <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate"
+        [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="enrolledCourses"
+        [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(true)"
+        (cardClick)="openEnrolledCourseDetails($event)" [hideProgress]="true"></sb-course-cards-hlist>
+    </ng-container>
+    <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
+      <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
+      </sb-course-cards-hlist>
+    </ng-container>
+  </div>
+
   <div class="">
-    <div *ngIf="showSignInCard" class="enrolled-course-bg">
-      <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
-    </div>
-
-    <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
-      <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
-        <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate"
-          [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="enrolledCourses"
-          [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(true)"
-          (cardClick)="openEnrolledCourseDetails($event)" [hideProgress]="true"></sb-course-cards-hlist>
-      </ng-container>
-      <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
-        <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
-        </sb-course-cards-hlist>
-      </ng-container>
-    </div>
-
     <div *ngFor="let section of popularAndLatestCourses; let i=index;">
       <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
         <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID"
