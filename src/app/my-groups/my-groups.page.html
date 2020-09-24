@@ -5,7 +5,6 @@
       <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="">
     </p>
 
-
     <div *ngIf="isGuestUser" class="my-cr-card">
       <div></div>
       <div>
@@ -37,7 +36,8 @@
 
     <div *ngFor="let group of groupList" class="mg-list-card-container">
       <sb-group-card [isMobile]="true" [isAdmin]="group.memberRole === 'admin'" [group]="group"
-       [cardTitleColor]="group.cardTitleColor" [cardBgColor]="group.cardBgColor" (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+        [cardTitleColor]="group.cardTitleColor" [cardBgColor]="group.cardBgColor"
+        (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
     </div>
     <div *ngIf="!isGuestUser && !groupList.length && groupListLoader">
       <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10]">
