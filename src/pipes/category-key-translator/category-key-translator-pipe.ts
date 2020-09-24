@@ -65,6 +65,7 @@ export class CategoryKeyTranslator implements PipeTransform {
                 prefix = 'TRK';
                 break;
             case CsPrimaryCategory.DIGITAL_TEXTBOOK.toLowerCase():
+            case CsContentType.COLLECTION.toLowerCase():
             case CsContentType.TEXTBOOK.toLowerCase():
                 prefix = 'NONTRK';
                 break;

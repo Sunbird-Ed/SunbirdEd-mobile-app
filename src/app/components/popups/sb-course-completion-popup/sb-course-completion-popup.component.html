@@ -10,7 +10,7 @@
             <div class="course-completion-title">{{'CONGRATULATIONS' | translate}}</div>
             <div class="course-completion-info">{{'FRMELEMNTS_MSG_TRAINING_COMPLETED_SUCCESSFULLY' | categoryKeyTranslate : course }}</div>
             <div class="course-completion-cert" *ngIf="isCertified && certificateDescription">
-                <p>{{'COURSE_COMPLETION_POPUP_DESC' | translate}}</p>
+                <p>{{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_DESC' | categoryKeyTranslate : course }}</p>
                 <p>{{certificateDescription}}</p>
             </div>
             <div class="course-completion-cert" *ngIf="isOnline && !isCertified">
