@@ -350,6 +350,7 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.headerService.showStatusBar();
     this.registerDeviceBackButton();
     this.zone.run(() => {
       this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
