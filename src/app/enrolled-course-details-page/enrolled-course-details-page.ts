@@ -2074,26 +2074,33 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   async saveChanges() {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      const request: Consent = {
-        status: (this.dataSharingStatus === ConsentStatus.ACTIVE) ? ConsentStatus.REVOKED : ConsentStatus.ACTIVE,
-        userId: this.courseCardData.userId,
-        consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
-        objectId: this.courseCardData.courseId,
-        objectType: 'Collection',
-      };
-      this.profileService.updateConsent(request).toPromise()
-        .then(async (data) => {
-          await loader.dismiss();
-          this.commonUtilService.showToast(data.message);
-          this.isDataShare = false;
-          this.checkDataSharingStatus();
-        })
-        .catch(async (e) => {
-          await loader.dismiss();
-          if (e.code === 'NETWORK_ERROR') {
-            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-          }
-        });
+      if (this.dataSharingStatus === ConsentStatus.ACTIVE) {
+        const request: Consent = {
+          status: ConsentStatus.REVOKED,
+          userId: this.courseCardData.userId,
+          consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+          objectId: this.courseCardData.courseId,
+          objectType: 'Collection',
+        };
+        this.profileService.updateConsent(request).toPromise()
+          .then(async (data) => {
+            await loader.dismiss();
+            this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+            this.showShareData = false;
+            this.checkDataSharingStatus();
+          })
+          .catch(async (e) => {
+            await loader.dismiss();
+            if (e.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+            }
+          });
+      } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
+        await loader.dismiss();
+        await this.localCourseService.showConsentPopup(this.courseCardData);
+        this.showShareData = false;
+        this.checkDataSharingStatus();
+      }
   }
 
   async checkDataSharingStatus() {
