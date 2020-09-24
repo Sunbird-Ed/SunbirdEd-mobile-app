@@ -1,5 +1,7 @@
 html[data-theme="DEFAULT"]{
 
+  --app-primary-background:#EDF4F9;
+
   app-profile{
     .self-declare-btn{
       ion-button{
@@ -10,12 +12,12 @@ html[data-theme="DEFAULT"]{
 
   app-enrollment-details{
     ion-item-group{
-      .subtitle{
+      ion-item-divider{
         background-color:map-get($colors, light_gray) !important;
       }
     }
     .sb-btn-outline-info{
-      background-color: rgb(165, 165, 165) !important;
+      background-color: map-get($colors, primary) !important;
       border-radius: 5px !important;
       color: map-get($colors, white) !important;
       border-color: map-get($colors, white) !important;

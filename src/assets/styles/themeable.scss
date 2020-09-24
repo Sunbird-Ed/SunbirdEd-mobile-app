@@ -1,38 +1,36 @@
 html[data-theme="JOYFUL"]{
 
-  --joyful-primary: #024f9d;
-  --joyful-secondary: #E9E8D9;
-  --joyful-tertiary: #F2F2EA;
-  --joyful-warning: #FFD954;
-  --joyful-light-yellow: #F9FFBE;
-  --joyful-light-blue: #DAECFF;
+  --app-primary:#024f9d;
+  --app-primary-background:#E9E8D9;
+  --app-secondary-background:#F2F2EA;
+  --app-primary-header:#FFD954;
+  --joyful-light-yellow:#F9FFBE; // take it out
+  --joyful-light-blue:#DAECFF; // take it out
 
-  --joyful-white: #FFFFFF;
-  --joyful-black: #000000;
-  --joyful-dark-gray: #222222;
-  --joyful-gray: #333333;
-  --joyful-light-gray: #999999;
+  --app-white:#FFFFFF;
+  --app-black:#000000; // remove
+  --app-dark-gray:#222222;
+  --app-gray:#333333;
+  --app-light-gray:#999999;
 
-  --joyful-green: #008840;
-  --joyful-light-green: #BFE1CF;
+  --app-green:#008840;
+  --joyful-light-green:#BFE1CF; // take it out
 
-  --joyful-button-shadow: rgba(0,0,0,0.1);
-  --joyful-item-shadow: rgba(0,0,0,0.16);
+  --app-shadow:rgba(0,0,0,0.1);
+
+  --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
   ion-toolbar {
-    --background: var(--joyful-warning);
+    --background: var(--app-primary-header);
     border-bottom-left-radius: 20px;
     ion-buttons{
       ion-button{
-        --background: var(--joyful-warning) !important;
-        --color: var(--joyful-primary) !important;
+        --background: var(--app-primary-header) !important;
+        --color: var(--app-primary) !important;
         box-shadow: none !important;
       }
     }
-  }
-
-  ion-content {
-    --background: var(--joyful-secondary);
   }
 
   ion-footer {
@@ -40,23 +38,23 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-button{
-    --background: var(--joyful-primary) !important;
-    --color: var(--joyful-white) !important;
+    --background: var(--app-primary) !important;
+    --color: var(--app-white) !important;
     --border-radius: 20px !important;
-    --border-color: var(--joyful-primary) !important;
+    --border-color: var(--app-primary) !important;
     button{
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+      box-shadow: var(--button-style-shadow) !important;
     }
   }
 
   ion-button.button-clear{
     --background: transparent !important;
-    --color: var(--joyful-primary) !important;
+    --color: var(--app-primary) !important;
   }
 
   button{
     border-radius: 20px !important;
-    color: var(--joyful-white) !important;
+    color: var(--app-white) !important;
   }
 
   input, textarea, ion-input, ion-textarea {
@@ -64,33 +62,33 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-list{
-    background: var(--joyful-secondary) !important;
+    background: var(--app-primary-background) !important;
   }
 
   ion-item {
-    --background: var(--joyful-secondary);
+    --background: var(--app-primary-background);
     ion-label{
-      color: var(--joyful-light-gray) !important;
+      color: var(--app-light-gray) !important;
       font-weight: bold !important;
     }
     ion-select{
       border: none !important;
-      border-bottom: 1px solid var(--joyful-light-gray) !important;
-      color: var(--joyful-gray) !important;
+      border-bottom: 1px solid var(--app-light-gray) !important;
+      color: var(--app-gray) !important;
       padding-left: 0 !important;
       .select-text{
-        color: var(--joyful-white) !important;
-        --color: var(--joyful-white) !important;
+        color: var(--app-white) !important;
+        --color: var(--app-white) !important;
       }
     }
   }
 
   ion-radio {
-    --color-checked: var(--joyful-primary) !important;
+    --color-checked: var(--app-primary) !important;
   }
 
   ion-card, button{
-    box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+    box-shadow: var(--button-style-shadow) !important;
   }
 
   ion-back-button{
@@ -100,164 +98,131 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  ion-alert{
+  ion-alert{ // EXCEPTION
     [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md{
-      border-color: var(--joyful-primary) !important;
-      background-color: var(--joyful-primary) !important;
+      border-color: var(--app-primary) !important;
+      background-color: var(--app-primary) !important;
     }
 
     [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md{
-      border-color: var(--joyful-primary) !important;
+      border-color: var(--app-primary) !important;
       .alert-radio-inner.sc-ion-alert-md{
-        background-color: var(--joyful-primary) !important;
+        background-color: var(--app-primary) !important;
       }
     }
   }
 
   ion-card{
     border-radius: 16px !important;
-    box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
-    background-color: var(--joyful-white);
+    box-shadow: var(--button-style-shadow) !important;
+    background-color: var(--app-white);
     &.selected {
-      border:3px solid var(--joyful-primary) !important;
+      border:3px solid var(--app-primary) !important;
     }
   }
 
   ion-title{
-    color: var(--joyful-primary) !important;
+    color: var(--app-primary) !important;
   }
 
   // SelectBox popup multi select styles
-  .select-box.select-alert .alert-button-group {
+  .select-box.select-alert, .ftue-changes.select-alert {
     .alert-button {
-      border-color: var(--joyful-primary) !important;
+      border-color: var(--app-primary) !important;
       border-radius: 20px !important;
     }
-  }
-  .select-box.select-alert .alert-button:first-child:not(:only-child) {
-    background: transparent !important;
-    color: var(--joyful-primary) !important;
-  }
-  .select-box.select-alert .alert-button:last-child:not(:only-child) {
-    background: var(--joyful-primary) !important;
-    color: var(--joyful-white) !important;
-  }
-  .select-box .alert-wrapper{
-    background-color: var(--joyful-tertiary);
-    border-radius: 16px 16px 0 0;
-  }
-  .select-box .alert-tappable.sc-ion-alert-md {
-    box-shadow: none !important;
-  }
-
-  // SelectBox popup Radio button styles
-  .ftue-changes .alert-button-group .alert-button{
-    border-color: var(--joyful-primary) !important;
-    border-radius: 20px !important;
-    background: transparent !important;
-    color: var(--joyful-primary) !important;
-  }
-  .ftue-changes.select-alert .alert-button:last-child:not(:only-child){
-    background: var(--joyful-primary) !important;
-    color: var(--joyful-white) !important;
-  }
-  .ftue-changes .alert-wrapper{
-    background-color: var(--joyful-tertiary);
-    border-radius: 16px 16px 0 0;
-  }
-  .ftue-changes .alert-tappable.sc-ion-alert-md{
-    box-shadow: none !important;
+    .alert-button:first-child:not(:only-child) {
+      background: transparent !important;
+      color: var(--app-primary) !important;
+    }
+    .alert-button:last-child:not(:only-child) {
+      background: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
+    .alert-wrapper{
+      background-color: var(--app-secondary-background);
+      border-radius: 1rem 1rem 0 0;
+    }
+    .alert-tappable {
+      box-shadow: none !important;
+    }
   }
 
   // Courses Filter
   .resource-filter{
     .popover-content{
       border-radius: 16px 16px 0 0;
-      background-color: var(--joyful-tertiary) !important;
+      background-color: var(--app-secondary-background) !important;
     }
   }
 
   // SB- button styles
   .sb-btn {
     border-radius: 20px !important;
-    background-color: var(--joyful-primary) !important;
-    color: var(--joyful-white) !important;
+    background-color: var(--app-primary) !important;
+    color: var(--app-white) !important;
 
   }
 
   .sb-btn-outline-secondary{  
-    background-color: var(--joyful-white) !important;
-    color: var(--joyful-primary) !important;
+    background-color: var(--app-white) !important;
+    color: var(--app-primary) !important;
+  }
+
+  .sb--card{
+    box-shadow: var(--block-style-shadow) !important;
+    border-radius: 1rem !important;
+  }
+
+  .sb--card__title{
+    color: var(--app-gray) !important;
+  }
+
+  .sb--card__img{
+    border-radius: 0.5rem;
+  }
+
+  .sb--card--course{
+    margin: 0 0 1rem 0 !important;
+  }
+
+  sb-course-cards-hlist, sb-library-cards-stack{
+    .title{
+      color: var(--app-gray) !important;
+    }
   }
 
   sb-course-cards-hlist{
     .sb-btn-outline-secondary{
       border: none !important;
     }
-    .title{
-      color: var(--joyful-gray) !important;
-    }
     .sb--card--container{
       margin: 0 1rem 0 0 !important;
     }
   }
 
-  // sb-course-card styles
-  sb-course-card, sb-my-course-card {
-    .sb--card{
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
-    }
-    .sb--card--course{
-      border-radius: 12px !important;
-      margin: 0 0 1rem 0 !important;
-    }
-    .sb--card__img{
-      border-radius: 8px;
-    }
-    .sb--card__title{
-      color: var(--joyful-gray) !important;
-    }
-  }
-
-  sb-library-card{
-    .sb--card{
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
-      border-radius: 12px !important;
-    }
-    .sb--card__img{
-      border-radius: 8px;
-    }
-    .sb--card__title{
-      color: var(--joyful-gray) !important;
-    }
-  }
-
   sb-library-cards-stack{
     .header{
-      .title{
-        color: var(--joyful-dark-gray) !important;
-        i{
-          display: none;
-        }
+      i{
+        display: none;
       }
     }
     .body{
-      border-radius: 16px;
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
+      box-shadow: none !important;
     }
     sb-library-card:first-child {
       .sb--card{
-        border-radius: 12px 12px 0 0 !important;
+        border-radius: 1rem 1rem 0 0 !important;
       }
     }
     sb-library-card:last-child {
       .sb--card{
-        border-radius: 0 0 12px 12px !important;
+        border-radius: 0 0 1rem 1rem !important;
       }
     }
     sb-library-card:first-child:last-child {
       .sb--card{
-        border-radius: 12px !important;
+        border-radius: 1rem !important;
       }
     }
     sb-library-card:not(:first-child):not(:last-child){
@@ -267,26 +232,16 @@ html[data-theme="JOYFUL"]{
     }
     .sbbtn{
       border-radius: 0 0 16px 16px !important;
-      background-color: var(--joyful-tertiary) !important;
-      color: var(--joyful-gray) !important;
+      background-color: var(--app-secondary-background) !important;
+      color: var(--app-gray) !important;
     }
   }
 
   // sb-group-card
   sb-group-card{
-    .sb--card{
-      border-radius: 16px !important;
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
-    }
-    .sb--card__img{
-      border-radius: 8px;
-    }
     .sb-label-badge{
       border-radius: 16px !important;
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
-    }
-    .sb--card__title{
-      color: var(--joyful-gray) !important;
+      box-shadow: var(--button-style-shadow) !important;
     }
   }
 
@@ -294,52 +249,45 @@ html[data-theme="JOYFUL"]{
     .sb-members-list-item{
       .status{
         border-radius: 16px !important;
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+        box-shadow: var(--button-style-shadow);
       }
     }
     .sb-member__img{
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
-    }
-  }
-
-  sb-course-curiculum-card{
-    .sb--card{
-      border-radius: 16px !important;
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+      box-shadow: var(--button-style-shadow) !important;
     }
   }
 
   // application-header Component
   app-application-header{
     .sb-menu-list{
-      background-color: var(--joyful-white) !important;
+      background-color: var(--app-white) !important;
       border-radius: 16px 16px 0 0;
     }
     .sb-menu-item{
-      color: var(--joyful-primary);
+      color: var(--app-primary);
     }
     .sb-menu-item-language{
-      color: var(--joyful-gray) !important;
+      color: var(--app-gray) !important;
     }
     ion-content{
-      --background: var(--joyful-white) !important;
+      --background: var(--app-white) !important;
     }
     ion-item{
-      --background: var(--joyful-white) !important;
+      --background: var(--app-white) !important;
     }
     .menu-section{
-      background-color: var(--joyful-secondary) !important;
+      background-color: var(--app-primary-background) !important;
       .menu-container{
-        --background: var(--joyful-secondary) !important;
-        background-color: var(--joyful-secondary) !important;
+        --background: var(--app-primary-background) !important;
+        background-color: var(--app-primary-background) !important;
         padding-bottom: 8px;
         .user-container{
-          background-color: var(--joyful-secondary) !important;
+          background-color: var(--app-primary-background) !important;
         }
         .another-user-title{
           border-radius: 20px;
           margin: 0 8px;
-          box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+          box-shadow: var(--button-style-shadow) !important;
         }
       }
     }
@@ -353,7 +301,7 @@ html[data-theme="JOYFUL"]{
   page-language-settings{
     .language-card {
       &.selected {
-        background-color: var(--joyful-primary) !important;
+        background-color: var(--app-primary) !important;
       }
     }
   }
@@ -361,34 +309,34 @@ html[data-theme="JOYFUL"]{
   // user-type-selection page
   app-profile-settings{
     .title{
-      color: var(--joyful-primary) !important;
+      color: var(--app-primary) !important;
     }
 
     .qr-btn{
-      background-color: var(--joyful-primary) !important;
+      background-color: var(--app-primary) !important;
     }
 
     .board-btn-text{
-      color: var(--joyful-primary) !important;
+      color: var(--app-primary) !important;
     }
 
     .ps-container {
       .qr-container {
-        background-color: var(--joyful-secondary) !important;
+        background-color: var(--app-primary-background) !important;
       }
     }
 
     .board-select-dummy{
       ion-item{
-        --background: var(--joyful-white) !important;
+        --background: var(--app-white) !important;
       }
       ion-select{
-        border: 1px solid var(--joyful-primary) !important;
+        border: 1px solid var(--app-primary) !important;
         border-radius: 20px !important;
-        background-color: var(--joyful-primary) !important;
+        background-color: var(--app-primary) !important;
         .select-text, .select-placeholder{
-          --color: var(--joyful-white) !important;
-          color: var(--joyful-white) !important;
+          --color: var(--app-white) !important;
+          color: var(--app-white) !important;
         }
       }
 
@@ -403,11 +351,11 @@ html[data-theme="JOYFUL"]{
   // District mapping
   app-district-mapping{
     .heading{
-      color: var(--joyful-primary) !important;
+      color: var(--app-primary) !important;
     }
 
     .block-button{
-      background-color: var(--joyful-primary) !important;
+      background-color: var(--app-primary) !important;
       border-radius: 20px !important;
     }
 
@@ -428,7 +376,7 @@ html[data-theme="JOYFUL"]{
       }
       .label{
         padding-left: 0 !important;
-        color: var(--joyful-light-gray);
+        color: var(--app-light-gray);
         font-weight: bold;
       }
     }
@@ -443,15 +391,15 @@ html[data-theme="JOYFUL"]{
 
       .sb-medium-pills-container, .sb-grade-pills-container {
         .pill{
-          border-color: var(--joyful-white) !important;
-          color: var(--joyful-gray) !important;
-          box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+          border-color: var(--app-white) !important;
+          color: var(--app-gray) !important;
+          box-shadow: var(--button-style-shadow) !important;
           margin-right: 1rem !important;
         }
         .pill.active{
-          color: var(--joyful-white) !important;
-          background-color: var(--joyful-primary) !important;
-          border-color: var(--joyful-primary) !important;
+          color: var(--app-white) !important;
+          background-color: var(--app-primary) !important;
+          border-color: var(--app-primary) !important;
         }
       }
 
@@ -468,9 +416,9 @@ html[data-theme="JOYFUL"]{
 
     .sb-recenlty-viewed-title{
       .sb-btn{
-        background-color: var(--joyful-white) !important;
-        color: var(--joyful-primary) !important;
-        border-color: var(--joyful-white) !important;
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        border-color: var(--app-white) !important;
       }
     }
   }
@@ -478,12 +426,12 @@ html[data-theme="JOYFUL"]{
   // Courses page
   app-courses{
     .course-grid-bg{
-      background-color: var(--joyful-tertiary) !important;
+      background-color: var(--app-secondary-background) !important;
     }
     .enrolled-course-bg{
       background: transparent !important;
       sb-course-cards-hlist > .layout-course > .header > .title{
-        color: var(--joyful-gray) !important;
+        color: var(--app-gray) !important;
       }
     }
   }
@@ -491,19 +439,19 @@ html[data-theme="JOYFUL"]{
   // View-more-activity page
   app-view-more-activity{
     .view-more-course-bg{
-      // background: var(--joyful-secondary) !important;
+      // background: var(--app-primary-background) !important;
       background: transparent !important;
     }
 
     .title, .count-text{
-      color: var(--joyful-gray) !important;
+      color: var(--app-gray) !important;
     }
   }
 
   // Sign-in-card page
   app-sign-in-card{
     .sign-in-card-title{
-      color: var(--joyful-gray) !important;
+      color: var(--app-gray) !important;
     }
     .sign-in-block{
       box-shadow: 0 20px 40px -10px #D8D8D8 !important;
@@ -521,12 +469,12 @@ html[data-theme="JOYFUL"]{
   // enrolled-course-details page
   app-enrolled-course-details-page{
     .enrolled-course-card-button{
-      background-color: var(--joyful-primary) !important;
+      background-color: var(--app-primary) !important;
       border-radius: 50px !important;
     }
     .view-credits{
       strong{
-        color: var(--joyful-dark-gray) !important;
+        color: var(--app-dark-gray) !important;
       }
     }
     .sb-dt-card-actions{
@@ -555,12 +503,12 @@ html[data-theme="JOYFUL"]{
   // guest-profile page
   app-guest-profile{
     .profile-info{
-      background-color: var(--joyful-tertiary);
+      background-color: var(--app-secondary-background);
       border-radius: 0 0 0 16px;
     }
     .details-container{
       margin: 8px;
-      background-color: var(--joyful-white);
+      background-color: var(--app-white);
       border-radius: 16px;
     }
     .signin-card-bg{
@@ -571,14 +519,14 @@ html[data-theme="JOYFUL"]{
   // profile-page
   app-profile{
     .basic-profile-details{
-      background-color: var(--joyful-tertiary);
+      background-color: var(--app-secondary-background);
     }
     .roles-container{
       .roles{
         margin-bottom: 4px !important;
-        color: var(--joyful-primary) !important;
-        border: 1px solid var(--joyful-primary) !important;
-        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+        color: var(--app-primary) !important;
+        border: 1px solid var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
       }
     }
     .self-declare-btn{
@@ -587,45 +535,45 @@ html[data-theme="JOYFUL"]{
       background-color: var(--joyful-light-green);
       border-radius: 16px;
       ion-button{
-        --background: var(--joyful-green) !important;
+        --background: var(--app-green) !important;
       }
     }
     .contacts{
       margin: 8px;
-      background-color: var(--joyful-white) !important;
+      background-color: var(--app-white) !important;
       border-radius: 16px;
       .email ,.phone{
-        border: 1px solid var(--joyful-primary) !important;
-        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
         .icon{
-          color: var(--joyful-primary);
+          color: var(--app-primary);
         }
         .value{
-          color: var(--joyful-gray);
+          color: var(--app-gray);
         }
       }
       .email.light ,.phone.light{
         .icon{
-          color: var(--joyful-light-gray);
+          color: var(--app-light-gray);
         }
         .value{
-          color: var(--joyful-light-gray);
+          color: var(--app-light-gray);
         }
       }
     }
     .school-details{
       margin: 8px;
       border-radius: 16px;
-      background-color: var(--joyful-white) !important;
+      background-color: var(--app-white) !important;
     }
     .self-declare-teacher-details{
       margin: 8px;
       border-radius: 16px;
-      background-color: var(--joyful-white) !important;
-      color: var(--joyful-gray) !important;
+      background-color: var(--app-white) !important;
+      color: var(--app-gray) !important;
       ion-button{
-        --color: var(--joyful-white) !important;
-        --background: var(--joyful-primary) !important;
+        --color: var(--app-white) !important;
+        --background: var(--app-primary) !important;
       }
     }
 
@@ -651,9 +599,9 @@ html[data-theme="JOYFUL"]{
   app-collection-detail-etb{
     .sb-dt-card{
       margin: 0 0 8px;
-      background-color: var(--joyful-white);
+      background-color: var(--app-white);
       border-radius: 16px;
-      box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+      box-shadow: var(--button-style-shadow) !important;
       .sb-btn-tile{
         box-shadow: none !important;
       }
@@ -666,19 +614,19 @@ html[data-theme="JOYFUL"]{
       .sb-chapter-dd {
         border-radius: 16px;
         margin-bottom: 8px;
-        box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+        box-shadow: var(--button-style-shadow) !important;
       }
       .sb-slider-pills-container {
         .sb-pills-container{
           border-radius: 16px;
           margin-bottom: 8px;
           .pill{
-            box-shadow: 5px 5px 2px 0 rgba(0, 0, 0, 0.1) !important;
+            box-shadow: var(--button-style-shadow) !important;
           }
         }
       }
       .sticky-header-title-box {
-        --background: var(--joyful-tertiary) !important;
+        --background: var(--app-secondary-background) !important;
       }
     }
   }
@@ -686,7 +634,7 @@ html[data-theme="JOYFUL"]{
   app-collection-child{
     .etb-card-item-play-container{
       ion-button{
-        --background: var(--joyful-white) !important;
+        --background: var(--app-white) !important;
       }
     }
   }
@@ -739,7 +687,7 @@ html[data-theme="JOYFUL"]{
     z-index: 0;
     top: 0;
     border-bottom-left-radius: 20px;
-    background-color: var(--joyful-warning) !important;
+    background-color: var(--app-primary-header) !important;
     background-image: url(/assets/imgs/header-background.svg);
     background-repeat: no-repeat;
     background-position: bottom center;
@@ -754,7 +702,7 @@ html[data-theme="JOYFUL"]{
       z-index: 2;
       &::after{
         content: '';
-        background-color: var(--joyful-warning) !important;
+        background-color: var(--app-primary-header) !important;
         width: 100vw;
         height: 50px;
         position: absolute;
@@ -789,9 +737,9 @@ html[data-theme="JOYFUL"]{
   // page-fileter component
   app-page-filter {
     .filter-item {
-      border: 0.5px solid var(--joyful-light-gray);
+      border: 0.5px solid var(--app-light-gray);
       border-radius: 30px;
-      color: var(--joyful-gray) !important;
+      color: var(--app-gray) !important;
       font-weight: normal !important;
     }
   }
@@ -799,7 +747,7 @@ html[data-theme="JOYFUL"]{
   sb-toc-curriculum{
     .sb-curiculum__border{
       border-radius: 12px;
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+      box-shadow: var(--button-style-shadow);
     }
     .sb-curiculum{
       border: none !important;
@@ -812,7 +760,7 @@ html[data-theme="JOYFUL"]{
     sb-multiple-dropdown{
       .multi-select-section{
         .placeholder{
-          color: var(--joyful-light-gray) !important;
+          color: var(--app-light-gray) !important;
           margin-left: 0 !important;
           font-size: 16px !important;
         }
@@ -830,25 +778,25 @@ html[data-theme="JOYFUL"]{
         }
         .list-border{
           border: none !important;
-          border-bottom: 0.5px solid var(--joyful-gray) !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
         }
       }
 
       .sb-modal{
-        background-color: var(--joyful-tertiary) !important;
+        background-color: var(--app-secondary-background) !important;
         border-radius: 16px 16px 0 0;
         .sb-form-button{
           button{
-            border: 1px solid var(--joyful-primary) !important;
+            border: 1px solid var(--app-primary) !important;
             border-radius: 20px !important;
           }
           .sb-btn-primary-outline{
-            color: var(--joyful-primary) !important;
-            background-color: var(--joyful-white) !important;
+            color: var(--app-primary) !important;
+            background-color: var(--app-white) !important;
           }
           .sb-btn-primary{
-            color: var(--joyful-white) !important;
-            background-color: var(--joyful-primary) !important;
+            color: var(--app-white) !important;
+            background-color: var(--app-primary) !important;
           }
         }
 
@@ -860,19 +808,19 @@ html[data-theme="JOYFUL"]{
         input {
           background-color: transparent;
           border: none !important;
-          border-bottom: 0.5px solid var(--joyful-gray) !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
           padding: 8px 16px 4px 0 !important;
         }
         input:focus{
           outline: none !important;
-          border-bottom: 0.5px solid var(--joyful-green) !important;
+          border-bottom: 0.5px solid var(--app-green) !important;
         }
         input:blur{
           outline: none !important;
-          border-bottom: 0.5px solid var(--joyful-gray) !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
         }
         input::placeholder {
-          color: var(--joyful-light-gray);
+          color: var(--app-light-gray);
           margin-left: 0 !important;
           font-size: 16px !important;
           font-weight: normal !important;
@@ -882,7 +830,7 @@ html[data-theme="JOYFUL"]{
         }
         .async-text{
           border: none !important;
-          border-bottom: 0.5px solid var(--joyful-gray) !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
           input {
             border: none !important;
             padding-left: 0 !important;
@@ -896,7 +844,7 @@ html[data-theme="JOYFUL"]{
         border-radius: 16px !important;
       }
       textarea::placeholder {
-        color: var(--joyful-light-gray);
+        color: var(--app-light-gray);
         font-size: 16px !important;
         font-weight: normal !important;
       }
@@ -920,24 +868,24 @@ html[data-theme="JOYFUL"]{
         border-radius: 16px !important;
       }
       .btn{
-        color: var(--joyful-primary) !important;
+        color: var(--app-primary) !important;
       }
       .yesBtn{
-        color: var(--joyful-green) !important;
+        color: var(--app-green) !important;
       }
       
       .panel-collapse{
-        background-color: var(--joyful-tertiary) !important;
+        background-color: var(--app-secondary-background) !important;
         border-radius: 0 0 16px 16px;
         margin: 0 8px 8px;
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+        box-shadow: var(--button-style-shadow);
       }
     }
     .send-email{
       background-color: transparent !important;
       .report-button{
         border-radius: 20px !important;
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+        box-shadow: var(--button-style-shadow) !important;
       }
     }
   }
@@ -948,8 +896,8 @@ html[data-theme="JOYFUL"]{
       background-color: transparent !important;
       .submit-button{
         border-radius: 20px !important;
-        background-color: var(--joyful-primary) !important;
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow) !important;
+        background-color: var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
       }
     }
   }
@@ -960,12 +908,12 @@ html[data-theme="JOYFUL"]{
       background: transparent !important;
     }
     .my-cr-title {
-      color: var(--joyful-primary) !important;
+      color: var(--app-primary) !important;
     }
     .my-cr-card{
       border-radius: 16px;
-      background-color: var(--joyful-tertiary);
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
+      background-color: var(--app-secondary-background);
+      box-shadow: var(--block-style-shadow) !important;
     }
   }
 
@@ -976,18 +924,19 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  // My groups tutorial popup
-  .tutorial-popover .popover-wrapper .popover-content, .leave-training-popup .popover-content{
-    border-radius: 16px !important;
+  .tutorial-popover, .download-popover, .leave-training-popup {
+    .popover-content{
+      border-radius: 1rem !important;
+    }
   }
 
   // Group edit delete popup
   .group-option-popover .popover-content{
-    border-radius: 16px !important;
-    background-color: var(--joyful-secondary) !important;
+    border-radius: 1rem !important;
+    background-color: var(--app-primary-background) !important;
   }
 
-  .enrollement-popover .popover-content{
+  .enrollement-popover.popover-content{
     border-radius: 1rem 1rem 0 0 !important;
   }
 
@@ -995,9 +944,9 @@ html[data-theme="JOYFUL"]{
     .gd-header{
       padding: 0 8px 8px;
       border-radius: 16px;
-      background-color: var(--joyful-tertiary) !important;
+      background-color: var(--app-secondary-background) !important;
       .gd-tab-header{
-        background-color: var(--joyful-white) !important;
+        background-color: var(--app-white) !important;
         border-radius: 24px;
         .gd-tab:first-child{
           border-radius: 24px 0 0 24px;
@@ -1010,23 +959,23 @@ html[data-theme="JOYFUL"]{
 
     .gd-tab-member-container{
       border-radius: 16px;
-      background-color: var(--joyful-tertiary) !important;
+      background-color: var(--app-secondary-background) !important;
     }
   }
 
   app-add-member-to-group{
     .sb-btn-large.inactive{
-      background-color: var(--joyful-light-gray) !important;
+      background-color: var(--app-light-gray) !important;
     }
   }
 
   app-activity-details{
     .ad-member-container{
       border-radius: 16px;
-      background-color: var(--joyful-tertiary);
+      background-color: var(--app-secondary-background);
       .activity-toc{
         border-radius: 16px 16px 0 0;
-        background-color: var(--joyful-primary) !important;
+        background-color: var(--app-primary) !important;
       }
     }
   }
@@ -1036,31 +985,31 @@ html[data-theme="JOYFUL"]{
       margin: 0 8px;
       padding: 16px 0 8px;
       border-radius: 16px;
-      background-color: var(--joyful-tertiary);
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow) !important;
+      background-color: var(--app-secondary-background);
+      box-shadow: var(--block-style-shadow) !important;
     }
   }
 
   .sb-popover{
     .popover-content{
       border-radius: 16px 16px 0 0;
-      box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+      box-shadow: var(--button-style-shadow);
     }
 
     ion-content{
-      --background: var(--joyful-tertiary) !important;
+      --background: var(--app-secondary-background) !important;
     }
 
     ion-header{
       ion-toolbar{
-        --background: var(--joyful-tertiary) !important;
+        --background: var(--app-secondary-background) !important;
         min-height: 60px !important;
         max-height: 60px !important;
       }
     }
 
     .sb-popover-title{
-      color: var(--joyful-dark-gray) !important;
+      color: var(--app-dark-gray) !important;
       padding: 0 16px !important;
       font-size: 20px !important;
       text-align: unset !important;
@@ -1073,13 +1022,13 @@ html[data-theme="JOYFUL"]{
     }
 
     .sb-popover-footer{
-      background: var(--joyful-tertiary) !important;
+      background: var(--app-secondary-background) !important;
       align-items: normal !important;
       justify-content: flex-end !important;
 
       .sb-btn-outline-info{
-        background-color: var(--joyful-white) !important;
-        color: var(--joyful-primary) !important;
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
       }
 
       .sb-popover-action-btn{
@@ -1090,10 +1039,10 @@ html[data-theme="JOYFUL"]{
 
   app-manage-user-profiles{
     .manage-user-section{
-      background-color: var(--joyful-tertiary);
+      background-color: var(--app-secondary-background);
       border-radius: 16px;
       padding: 16px 8px;
-      box-shadow: 0 2px 7px 0 var(--joyful-item-shadow);
+      box-shadow: var(--block-style-shadow);
     }
     .manage-user-item{
       margin-bottom: 8px;
@@ -1105,8 +1054,8 @@ html[data-theme="JOYFUL"]{
     sb-member-card{
       .sb-members-list-item{
         border-radius: 16px;
-        background-color: var(--joyful-secondary);
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+        background-color: var(--app-primary-background);
+        box-shadow: var(--button-style-shadow);
       }
     }
 
@@ -1128,17 +1077,17 @@ html[data-theme="JOYFUL"]{
     }
     .sb-slider-pills-container{
       .pill{
-        box-shadow: 5px 5px 2px 0 var(--joyful-button-shadow);
+        box-shadow: var(--button-style-shadow);
       }
     }
     .sb-medium-pills-container{
       .pill{
         border: none !important;
-        color: var(--joyful-primary) !important;
+        color: var(--app-primary) !important;
       }
       .pill.active{
-        background-color: var(--joyful-primary) !important;
-        color: var(--joyful-white) !important;
+        background-color: var(--app-primary) !important;
+        color: var(--app-white) !important;
       }
     }
     .explore-results-section{
@@ -1153,26 +1102,21 @@ html[data-theme="JOYFUL"]{
 
   app-create-edit-group{
     ion-input, ion-textarea{
-      background-color: var(--joyful-white);
+      background-color: var(--app-white);
     }
   }
 
   app-enrollment-details{
     ion-item-group{
       .subtitle{
-        background-color: var(--joyful-secondary) !important;
+        background-color: var(--app-primary-background) !important;
       }
       .subtitle.buttontext{
-        --background: var(--joyful-white) !important;
-        color: var(--joyful-primary) !important;
+        --background: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow);
+        border-radius: 1rem !important;
       }
-    }
-
-    .sb-btn-outline-info{
-      background-color: var(--joyful-white) !important;
-      color: var(--joyful-primary) !important;
-      border-color: var(--joyful-primary) !important;
-      border-radius: 1rem !important;
     }
   }
 
@@ -1191,28 +1135,45 @@ html[data-theme="JOYFUL"]{
     }
 
     .background-gray{
-      background: var(--joyful-secondary) !important;
+      background: var(--app-primary-background) !important;
     }
 
     .batch-list{
-      padding: 1rem 0.5rem !important;
       margin: 0.5rem !important;
-      background-color: var(--joyful-tertiary);
-      border-radius: 1rem;
-
       .flex-card-container{
-        background-color: var(--joyful-white);
+        background-color: var(--app-white);
         border-radius: 1rem;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 7px 0 var(--joyful-item-shadow);
-        .card-icon{
-          .sb-btn-outline-info{
-            background-color: var(--joyful-primary) !important;
-            border-radius: 1rem !important;
-            color: var(--joyful-white) !important;
-            border-color: var(--joyful-primary) !important;
-          }
-        }
+        box-shadow: var(--block-style-shadow);
+      }
+    }
+  }
+
+  app-content-details{
+    .sb-dt-card{
+      border-radius: 0 0 1rem 1rem;
+      background-color: var(--app-white);
+      box-shadow: var(--button-style-shadow);
+    }
+    ion-card{
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background-color: transparent;
+    }
+  }
+
+  app-download-manager{
+    .sb-view-all-items{
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    .sb-card-download-container{
+      border-radius: 1rem;
+      overflow: hidden;
+      .img-container{
+        border-radius: 0.5rem;
+      }
+      .check-container{
+        background-color: var(--app-secondary-background);
       }
     }
   }
