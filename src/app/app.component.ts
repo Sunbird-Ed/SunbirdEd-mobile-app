@@ -900,10 +900,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async checkForTheme() {
     const selectedTheme = await this.preferences.getString(PreferenceKey.CURRENT_SELECTED_THEME).toPromise();
     if (selectedTheme === AppThemes.JOYFUL) {
-      document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
-      this.headerService.showStatusBar();
+      await this.headerService.showStatusBar();
     } else {
-      document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
       this.headerService.hideStatusBar();
     }
   }

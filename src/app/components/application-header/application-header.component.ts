@@ -376,7 +376,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   async switchTheme() {
     if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
-      document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
       this.appTheme = AppThemes.JOYFUL;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
       this.appHeaderService.showStatusBar().then();
