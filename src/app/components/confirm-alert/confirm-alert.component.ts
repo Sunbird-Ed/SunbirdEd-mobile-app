@@ -8,7 +8,7 @@ import { Platform, NavParams, PopoverController } from '@ionic/angular';
   templateUrl: './confirm-alert.component.html',
   styleUrls: ['./confirm-alert.component.scss'],
 })
-export class ConfirmAlertComponent implements OnInit, OnDestroy {
+export class ConfirmAlertComponent implements OnDestroy {
   sbPopoverHeading: any;
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
@@ -19,7 +19,6 @@ export class ConfirmAlertComponent implements OnInit, OnDestroy {
   contentSize: any;
   backButtonFunc: any;
   constructor(
-    // public viewCtrl: ViewController,
     public platform: Platform,
     public navParams: NavParams,
     public popOverCtrl: PopoverController) {
@@ -33,12 +32,8 @@ export class ConfirmAlertComponent implements OnInit, OnDestroy {
     this.contentSize = this.navParams.get('contentSize');
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
     this.popOverCtrl.dismiss();
-    this.backButtonFunc.unsubscribe();
+    // this.backButtonFunc.unsubscribe();
     });
-  }
-
-  ngOnInit() {
-
   }
 
   selectOption(canDownload: boolean = false) {
