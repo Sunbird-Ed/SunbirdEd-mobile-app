@@ -184,7 +184,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           content: content ? content : this.config['metadata'],
           corRelation: this.corRelationList,
           shouldNavigateBack: true,
-          isCourse: this.isCourse
+          isCourse: this.isCourse,
+          course: this.course
         },
         replaceUrl: true
       });
