@@ -2085,7 +2085,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.profileService.updateConsent(request).toPromise()
           .then(async (data) => {
             await loader.dismiss();
-            this.commonUtilService.showToast(data.message);
+            this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
             this.showShareData = false;
             this.checkDataSharingStatus();
           })
@@ -2098,8 +2098,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
         await loader.dismiss();
         await this.localCourseService.showConsentPopup(this.courseCardData);
-        await this.checkDataSharingStatus();
         this.showShareData = false;
+        this.checkDataSharingStatus();
       }
   }
 
