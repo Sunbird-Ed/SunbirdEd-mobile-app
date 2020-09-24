@@ -3,11 +3,6 @@
 @import "src/assets/styles/fonts";
 
 :host {
-  .profile-info{
-    .profile-icon{
-      display: none;
-    }
-  }
   .profile-name {
     color: map-get($colors, dark);
     margin: 0;

@@ -506,15 +506,6 @@ html[data-theme="JOYFUL"]{
       // background-color: var(--joyful-tertiary);
       background-color: transparent;
       border-radius: 0 0 0 16px;
-      margin-top: 50px;
-      .profile-icon{
-        display: block !important;
-        ion-icon{
-          width: 100px;
-          height: 100px;
-          color: var(--joyful-light-gray);
-        }
-      }
     }
     .details-container{
       margin: 8px;
