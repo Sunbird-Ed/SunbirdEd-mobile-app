@@ -73,11 +73,15 @@
     padding-bottom: 80px !important;
   }
   .board-select-dummy{
+    button{
+      display: none;
+    }
     width: 100vw;
     margin: 0 auto;
     ion-item{
       // z-index: -1;
       pointer-events: none;
+      display: block;
     }
   }
   .ps-container{

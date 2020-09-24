@@ -327,23 +327,30 @@ html[data-theme="JOYFUL"]{
     }
 
     .board-select-dummy{
-      ion-item{
-        --background: var(--app-white) !important;
-      }
-      ion-select{
-        border: 1px solid var(--app-primary) !important;
-        border-radius: 20px !important;
-        background-color: var(--app-primary) !important;
-        .select-text, .select-placeholder{
-          --color: var(--app-white) !important;
-          color: var(--app-white) !important;
-        }
-      }
+      padding: 16px;
+      // ion-item{
+      //   --background: var(--app-white) !important;
+      // }
+      // ion-select{
+      //   border: 1px solid var(--app-primary) !important;
+      //   border-radius: 20px !important;
+      //   background-color: var(--app-primary) !important;
+      //   .select-text, .select-placeholder{
+      //     --color: var(--app-white) !important;
+      //     color: var(--app-white) !important;
+      //   }
+      // }
 
-      ion-select::part(placeholder) { 
-        --color: red !important;
-        color: red !important;
-        opacity: 1;
+      // ion-select::part(placeholder) { 
+      //   --color: red !important;
+      //   color: red !important;
+      //   opacity: 1;
+      // }
+      ion-item{
+        display: none !important;
+      }
+      button{
+        display: block !important;
       }
     }
   }
