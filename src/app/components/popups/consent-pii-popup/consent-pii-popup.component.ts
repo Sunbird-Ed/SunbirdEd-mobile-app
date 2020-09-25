@@ -14,6 +14,7 @@ export class ConsentPiiPopupComponent {
     profile: any;
     consentForm = [];
     isAgreed = false;
+    appName: string;
     constructor(
         private popOverCtrl: PopoverController,
         private commonUtilService: CommonUtilService,
@@ -30,6 +31,7 @@ export class ConsentPiiPopupComponent {
                 value: this.converDataSrcToObject(element)
             });
         });
+        this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     }
     closePopover(data) {
         const request = {

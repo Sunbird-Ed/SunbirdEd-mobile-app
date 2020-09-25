@@ -1589,7 +1589,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       reqvalues,
       this.objRollup);
 
-    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
     }
 
@@ -2009,7 +2009,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     //   return;
     // }
 
-    if (this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
     }
 

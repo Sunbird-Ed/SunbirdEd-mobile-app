@@ -5,7 +5,9 @@ import { CommonUtilService, FormAndFrameworkUtilService, AppGlobalService, Utili
 describe('ConsentPiiPopupComponent', () => {
     let consentPiiPopupComponent: ConsentPiiPopupComponent;
     const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getAppName: jest.fn(() => Promise.resolve('sunbird'))
+    };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockPopOverCtrl: Partial<PopoverController> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -22,7 +24,6 @@ describe('ConsentPiiPopupComponent', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.resetAllMocks();
     });
 
     it('should be create a instance of consentPiiPopupComponent', () => {
