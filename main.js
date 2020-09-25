@@ -72,6 +72,12 @@ var formRequestArray = [{
         'subType': 'boardContactInfo',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'notification',
+        'action': 'get',
+        'component': 'app'
     }
 ];
 
