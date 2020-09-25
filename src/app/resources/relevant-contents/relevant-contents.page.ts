@@ -1,15 +1,17 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '@app/services';
-import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
 import {
   ContentSearchCriteria,
   ContentSearchResult,
   ContentService,
-  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService, CorrelationData
+  SearchType,
+  GetSuggestedFrameworksRequest,
+  CachedItemRequestSourceFrom,
+  FrameworkCategoryCodesGroup,
+  FrameworkUtilService,
+  CorrelationData
 } from 'sunbird-sdk';
 import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
 import { Router } from '@angular/router';
@@ -120,10 +122,10 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       }
       similarContentRequest.mode = 'soft';
 
-      similarContentRequest.contentTypes = this.getContentTypeList();
+      similarContentRequest.primaryCategories = this.getPrimaryCategoryList();
       const contentList = await this.fetchContentResult(similarContentRequest);
       contentList.sort((a) => {
-        const val = (a['contentType'] !== this.searchRequest.contentTypes[0]) ? 1 : -1;
+        const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
         return val;
       });
       this.similarContentList = contentList;
@@ -159,7 +161,6 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: item.name, type: CorReleationDataType.SUBJECT }];
     const values = {};
     values['sectionName'] = item.subject;
@@ -168,7 +169,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
@@ -205,17 +206,18 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
       state: {
         corRelation: this.corRelation
-    }});
+      }
+    });
   }
 
-  private getContentTypeList() {
-    const contentTypeConfig: any = this.formInput.find(e => e.code === 'contenttype');
-    const contentTypeList = []
-    const list = (contentTypeConfig && contentTypeConfig.templateOptions && contentTypeConfig.templateOptions.options) || [];
+  private getPrimaryCategoryList() {
+    const primaryCategoryConfig: any = this.formInput.find(e => e.code === 'primaryCategory');
+    const primaryCategoryList = [];
+    const list = (primaryCategoryConfig && primaryCategoryConfig.templateOptions && primaryCategoryConfig.templateOptions.options) || [];
     list.forEach(element => {
-      contentTypeList.push(element.value);
+      primaryCategoryList.push(element.value);
     });
-    return contentTypeList;
+    return primaryCategoryList;
   }
 
   private getDefaultBoard() {

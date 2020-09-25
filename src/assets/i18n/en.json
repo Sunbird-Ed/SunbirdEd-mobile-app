@@ -1073,5 +1073,10 @@
   "MEDIA_TYPE": "Media Type",
   "COLLECTION": "Collection",
   "EDIT_CONSENT_POPUP": "You can edit these details from your profile page",
-  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the "
+  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the ",
+  "CRS_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this module"	,																							
+  "DFLT_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this learning activity",																								
+  "TBK_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY":	"You have finished this chapter",																								
+  "TVC_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY":	"You have finished this program",
+  "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use"
 }
