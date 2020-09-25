@@ -328,23 +328,30 @@ html[data-theme="JOYFUL"]{
     }
 
     .board-select-dummy{
-      ion-item{
-        --background: var(--app-white) !important;
-      }
-      ion-select{
-        border: 1px solid var(--app-primary) !important;
-        border-radius: 20px !important;
-        background-color: var(--app-primary) !important;
-        .select-text, .select-placeholder{
-          --color: var(--app-white) !important;
-          color: var(--app-white) !important;
-        }
-      }
+      padding: 16px;
+      // ion-item{
+      //   --background: var(--app-white) !important;
+      // }
+      // ion-select{
+      //   border: 1px solid var(--app-primary) !important;
+      //   border-radius: 20px !important;
+      //   background-color: var(--app-primary) !important;
+      //   .select-text, .select-placeholder{
+      //     --color: var(--app-white) !important;
+      //     color: var(--app-white) !important;
+      //   }
+      // }
 
-      ion-select::part(placeholder) { 
-        --color: red !important;
-        color: red !important;
-        opacity: 1;
+      // ion-select::part(placeholder) { 
+      //   --color: red !important;
+      //   color: red !important;
+      //   opacity: 1;
+      // }
+      ion-item{
+        display: none !important;
+      }
+      button{
+        display: block !important;
       }
     }
   }
@@ -504,7 +511,8 @@ html[data-theme="JOYFUL"]{
   // guest-profile page
   app-guest-profile{
     .profile-info{
-      background-color: var(--app-secondary-background);
+      // background-color: var(--joyful-tertiary);
+      background-color: transparent;
       border-radius: 0 0 0 16px;
     }
     .details-container{
@@ -520,7 +528,13 @@ html[data-theme="JOYFUL"]{
   // profile-page
   app-profile{
     .basic-profile-details{
-      background-color: var(--app-secondary-background);
+      // background-color: var(--joyful-tertiary);
+      background-color: transparent;
+      position: relative;
+      top: 55px;
+      .profile-avatar{
+        background-color: var(--joyful-white);
+      }  
     }
     .roles-container{
       .roles{
@@ -732,7 +746,7 @@ html[data-theme="JOYFUL"]{
     width: 100%;
     height: 172px;
     display: block;
-    position: fixed;
+    position: absolute;
     z-index: 0;
     top: 0;
     border-bottom-left-radius: 20px;
@@ -740,6 +754,9 @@ html[data-theme="JOYFUL"]{
     background-image: url(/assets/imgs/header-background.svg);
     background-repeat: no-repeat;
     background-position: bottom center;
+  }
+  .backgrond-div::after{
+    top: -56px;
   }
   .ui-content{
     z-index: 2;
@@ -759,6 +776,10 @@ html[data-theme="JOYFUL"]{
         border-bottom-left-radius: 20px;
       }
     }
+  }
+  .dm-header{
+    background-color: var(--joyful-warning);
+    border-bottom-left-radius: 20px;
   }
   .qr-content {
     z-index: 2;
