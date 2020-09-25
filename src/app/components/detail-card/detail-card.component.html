@@ -44,7 +44,7 @@
       <ng-container *ngIf="trackDownloads | async; let downloads">
         <button class="sb-btn-tile" *ngIf="showDownloadBtn && !isDepthChild" [disabled]="downloads.queued.length"
           (click)="downloadAllContents()">
-          <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
+          <img src="assets/imgs/outline_download.svg" alt="download content" class="mb-4">
           <span *ngIf="!downloads.queued.length" class="sb-btn-footer-text">{{ 'DOWNLOAD' | translate }}</span>
           <span *ngIf="downloads.queued.length" class="btn-popover-progress-container">
             <span class="btn-progress-highlight" [ngStyle]="{'width': (downloads.completed.length/(downloads.queued.length+downloads.completed.length))*100 + '%'}">
@@ -52,11 +52,11 @@
           </span>
         </button>
         <button class="sb-btn-tile" *ngIf="contentDetail?.isAvailableLocally" [disabled]="downloads.queued.length" (click)="showOverflowMenu($event)">
-          <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
+          <img src="assets/imgs/outline_delete.svg" alt="delete content" class="mb-4">
           <span class="sb-btn-footer-text">{{ 'REMOVE' | translate }}</span>
         </button>
         <button class="sb-btn-tile" (click)="share()">
-          <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
+          <img src="assets/imgs/outline_share.svg" alt="share content" class="mb-4">
           <span class="sb-btn-footer-text">{{ 'SHARE' | translate }}</span>
         </button>
       </ng-container>

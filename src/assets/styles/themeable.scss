@@ -12,6 +12,7 @@ html[data-theme="JOYFUL"]{
   --app-dark-gray:#222222;
   --app-gray:#333333;
   --app-light-gray:#999999;
+  --app-brown:#4F2C0D;
 
   --app-green:#008840;
   --joyful-light-green:#BFE1CF; // take it out
@@ -617,11 +618,20 @@ html[data-theme="JOYFUL"]{
         box-shadow: var(--button-style-shadow) !important;
       }
       .sb-slider-pills-container {
+        border-radius: 1.5rem;
+        overflow: hidden !important;
+        margin-bottom: 8px;
+        background: var(--app-secondary-background) !important;
         .sb-pills-container{
-          border-radius: 16px;
-          margin-bottom: 8px;
           .pill{
             box-shadow: var(--button-style-shadow) !important;
+            color: var(--app-dark-gray) !important;
+            .img-align{
+              margin-top: 0 !important;
+            }
+          }
+          .pill.active{
+            color: var(--app-white) !important;
           }
         }
       }
@@ -629,12 +639,51 @@ html[data-theme="JOYFUL"]{
         --background: var(--app-secondary-background) !important;
       }
     }
+
+    .textbook-accordian{
+      ion-card{
+        border-radius: 1.5rem !important;
+        background-color: var(--app-secondary-background) !important;
+        .sb-hidden-content{
+          padding: 0.5rem;
+          background-color: var(--app-white) !important;
+          border-radius: 2rem;
+        }
+      }
+    }
+
+    .credit-label-padding{
+      background-color: var(--app-secondary-background) !important;
+    }
+
+    .drop-arrow{
+      box-shadow: var(--button-style-shadow);
+    }
+    .sb-topic-text{
+      color: var(--app-brown) !important;
+    }
   }
   // app-collection-child component
   app-collection-child{
     .etb-card-item-play-container{
       ion-button{
         --background: var(--app-white) !important;
+        height: 2.5rem;
+      }
+    }
+    .sticky-header-title-box{
+      .sb-ftue-design{
+        margin-bottom: 0.5rem !important;
+      }
+    }
+    .etb-card-item{
+      padding: 0 0 0 0.5rem !important;
+      border-radius: 2rem;
+      border-color: var(--app-secondary-background);
+      .image-position{
+        .content-icon{
+          border-radius: 0.5rem;
+        }
       }
     }
   }
@@ -1175,6 +1224,44 @@ html[data-theme="JOYFUL"]{
       .check-container{
         background-color: var(--app-secondary-background);
       }
+    }
+  }
+
+  app-sb-share-popup{
+    ion-list{
+      background: var(--app-secondary-background) !important;
+    }
+    ion-item{
+      --background: var(--app-secondary-background) !important;
+    }
+  }
+
+  textbook-toc{
+    ion-card{
+      background-color: var(--app-secondary-background) !important;
+      margin: 8px !important;
+      width: auto !important;
+      box-shadow: var(--block-style-shadow);
+    }
+  }
+
+  app-rating-alert{
+    .sb-popover-items{
+      background-color: var(--app-secondary-background) !important;
+    }
+    .app-rate-btn{
+      background-color: transparent !important;
+      box-shadow: var(--button-style-shadow) !important;
+    }
+    .app-rate-btn-outline{
+      --background: var(--app-white) !important;
+      box-shadow: var(--button-style-shadow) !important;
+    }
+  }
+
+  app-content-rating-alert{
+    .popover-ratings{
+      padding: 0 1rem !important;
     }
   }
 

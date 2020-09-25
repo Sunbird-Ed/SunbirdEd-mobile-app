@@ -593,3 +593,14 @@ ion-card .card .card-md {
     margin-left: 8px;
   }
 }
+
+.drop-arrow{
+  border-radius: 50%;
+  background-color: map-get($colors, white);
+  height: 24px;
+  width: 24px;
+  padding-top: 8px;
+  img{
+    height: 8px;
+  }
+}
