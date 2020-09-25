@@ -849,7 +849,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       pageName: 'course',
       course: event.data,
       guestUser: this.guestUser,
-      layoutName: this.layoutInProgress
+      layoutName: this.layoutInProgress,
+      enrolledCourses: this.enrolledCourses
     };
     this.checkRetiredOpenBatch(params.course, params);
   }
