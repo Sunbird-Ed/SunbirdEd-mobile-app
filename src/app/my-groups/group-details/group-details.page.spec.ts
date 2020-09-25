@@ -47,7 +47,8 @@ describe('GroupDetailsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockNavigationService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
-        navigateTo: jest.fn()
+        navigateTo: jest.fn(),
+        navigateToDetailPage: jest.fn()
     };
     const mockViewMoreActivityDelegateService: Partial<ViewMoreActivityDelegateService> = {};
 
@@ -2087,7 +2088,9 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.onActivityCardClick({ data: { type: 'course' } });
 
         // assert
-        expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalledWith({
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalledWith({
+            type: 'course'
+        }, {
             content: {
                 type: 'course'
             },

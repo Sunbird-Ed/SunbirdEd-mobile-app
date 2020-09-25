@@ -839,7 +839,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   onActivityCardClick(event) {
     const activity = event.data;
     if (this.loggedinUser.role !== GroupMemberRole.ADMIN) {
-      this.navService.navigateToTrackableCollection({
+      this.navService.navigateToDetailPage(activity, {
         content: activity,
         corRelation: this.corRelationList
       });
