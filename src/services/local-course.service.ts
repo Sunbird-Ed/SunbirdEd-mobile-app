@@ -91,7 +91,7 @@ export class LocalCourseService {
         }
         return data;
       }),
-      catchError(err => {
+      catchError(async (err) => {
         const requestValue = this.prepareRequestValue(enrollCourseRequest);
         if (NetworkError.isInstance(err)) {
           requestValue.error = err.code;
@@ -100,6 +100,9 @@ export class LocalCourseService {
           if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+            if (enrollCourse.userConsent === UserConsent.YES) {
+              await this.checkedUserConsent(enrollCourse);
+            }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
           }
@@ -332,6 +335,23 @@ export class LocalCourseService {
       .catch((e) => {
         loader.dismiss();
         if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
+  }
+  private async checkedUserConsent(course) {
+    const request: Consent = {
+      userId: this.userId,
+      consumerId: course.channel,
+      objectId: course.courseId ? course.courseId : course.batch.courseId
+    };
+    await this.profileService.getConsent(request).toPromise()
+      .then((data) => {
+      })
+      .catch(async (e) => {
+        if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND') {
+          await this.showConsentPopup(course);
+        } else if (e.code === 'NETWORK_ERROR') {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
         }
       });

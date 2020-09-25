@@ -214,7 +214,20 @@ describe('LocalCourseService', () => {
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
 
-      mockCourseService.enrollCourse = jest.fn(() => throwError(''));
+      mockCourseService.enrollCourse = jest.fn(() => throwError({
+        response: {
+          body: {
+            params: {
+              status: 'USER_ALREADY_ENROLLED_COURSE'
+            }
+          }
+        }
+      }));
+      const map = new Map();
+      map.set('data', 'sample-data');
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return map;
+      });
 
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
