@@ -12,7 +12,7 @@
         <div class="enrollment-info"
           *ngIf="batches && courseContentData?.contentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
           <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
-            {{'FRMELEMNTS_LBL_JOIN_TRAINING' | categoryKeyTranslate : courseContent }}
+            {{'FRMELEMNTS_LBL_JOIN_TRAINING' | categoryKeyTranslate : courseContentData }}
           </button>
         </div>
       </div>
@@ -21,14 +21,14 @@
         <p class="main-heading">
           <strong>{{'NO_BATCHES_AVAILABLE'  | translate}}</strong>
         </p>
-        <p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : courseContent }}</p>
+        <p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : courseContentData }}</p>
       </div>
       <div class="sb-course-end-container"
          *ngIf="batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate)">
         <p class="main-heading">
           <strong>{{'ENROLLMENT_ENDED_ON'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date: 'dd/MM/yyyy') : ''} }}</strong>
         </p>
-        <p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : courseContent }}</p>
+        <p class="sub-heading">{{'FRMELEMNTS_MSG_THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | categoryKeyTranslate : courseContentData }}</p>
       </div>
     </div>
     <ion-card-content class="ion-no-padding">
@@ -48,7 +48,7 @@
                 alt="completed">
             </div>
             <div class="text-container">
-              <p><strong>{{'CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY' | categoryKeyTranslate : courseContent }}</strong></p>
+              <p><strong>{{'CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY' | categoryKeyTranslate : courseContentData }}</strong></p>
             </div>
           </div>
         </div>
