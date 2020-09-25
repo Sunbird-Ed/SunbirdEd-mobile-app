@@ -349,8 +349,12 @@ html[data-theme="JOYFUL"]{
       ion-item{
         display: none !important;
       }
-      button{
+      .ps-board{
         display: block !important;
+        .ps-board-label{
+          color: var(--app-primary);
+          padding: 0.5rem;
+        }
       }
     }
   }
