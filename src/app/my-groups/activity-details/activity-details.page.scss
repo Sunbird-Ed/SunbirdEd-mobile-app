@@ -78,3 +78,9 @@
         line-height: 15px;
     }
 }
+.ad-note{
+    padding: 8px 8px 0 8px;
+    span{
+        color: map-get($colors, vivid_red);
+    }
+}

@@ -19,8 +19,7 @@ import {
   ContentService
 } from 'sunbird-sdk';
 import {
-  ShareUrl, ShareMode,
-  ContentType, MimeType
+  ShareUrl, ShareMode, MimeType
 } from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import {
@@ -28,6 +27,7 @@ import {
   AndroidPermissionsStatus
 } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -123,7 +123,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     }
 
     let endPoint = '';
-    if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) {
       endPoint = ShareUrl.COURSE;
     } else if (content.mimeType === MimeType.COLLECTION) {
       endPoint = ShareUrl.COLLECTION;
@@ -180,7 +180,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       link: this.shareUrl
     };
     this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-      this.corRelationList, this.objRollup);
+      this.corRelationList, this.objRollup,  this.pageId);
     this.popoverCtrl.dismiss();
   }
 
@@ -193,7 +193,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           link: this.shareUrl
         };
         this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup);
+          this.corRelationList, this.objRollup, this.pageId);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
@@ -209,7 +209,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           saveFile: true,
         };
         this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup);
+          this.corRelationList, this.objRollup, this.pageId);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);

@@ -15,6 +15,7 @@ describe('ViewCreditsComponent', () => {
                         identifier: 'do_123',
                         pkgVersion: '1',
                         contentType: 'Resource',
+                        primaryCategory: 'Learning Resource',
                         creator: 'SAMPLE_CREATOR',
                         creators: 'SAMPLE_CREATORS'
                     };
@@ -86,7 +87,7 @@ describe('ViewCreditsComponent', () => {
             InteractSubtype.CREDITS_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL,
-            { id: 'do_123', type: 'Resource', version: '1'},
+            { id: 'do_123', type: 'Learning Resource', version: '1'},
             undefined,
             {l1: 'do_1', l2: 'do_2'},
             undefined);

@@ -34,7 +34,8 @@ describe('ContentRatingAlertComponent', () => {
         identifier: 'do_12345',
         contentData: {
             contentType: 'Resource',
-            pkgVersion: '1'
+            pkgVersion: '1',
+            primaryCategory: 'Learning Resource'
         },
         versionKey: '1234'
     };
@@ -132,7 +133,7 @@ describe('ContentRatingAlertComponent', () => {
             ImpressionSubtype.RATING_POPUP,
             'content-detail',
             Environment.HOME, 'do_12345',
-            'Resource',
+            'Learning Resource',
             '1');
     });
 
@@ -170,7 +171,7 @@ describe('ContentRatingAlertComponent', () => {
             InteractSubtype.RATING_SUBMITTED,
             Environment.HOME,
             'content-detail',
-            {id: 'do_12345', version: '1', type: 'Resource'},
+            {id: 'do_12345', version: '1', type: 'Learning Resource'},
             paramsMap);
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
         expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
@@ -216,7 +217,7 @@ describe('ContentRatingAlertComponent', () => {
             InteractSubtype.RATING_SUBMITTED,
             Environment.HOME,
             'content-detail',
-            {id: 'do_12345', version: '1', type: 'Resource'},
+            {id: 'do_12345', version: '1', type: 'Learning Resource'},
             paramsMap);
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
         expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
@@ -309,7 +310,7 @@ describe('ContentRatingAlertComponent', () => {
             ImpressionSubtype.RATING_POPUP,
             'content-detail',
             Environment.HOME, 'do_12345',
-            'Resource',
+            'Learning Resource',
             '1');
     });
 

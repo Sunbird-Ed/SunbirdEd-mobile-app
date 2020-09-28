@@ -576,16 +576,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
     this.courseData.appIcon = this.commonUtilService.convertFileSrc(appIcon);
   }
 
-  //// collection-acions START
   async showDownloadConfirmationAlert() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.DOWNLOAD_CLICKED,
-    //   Environment.HOME,
-    //   PageId.CURRICULUM_COURSE_DETAIL,
-    //   this.telemetryObject,
-    //   undefined,
-    //   this.objRollup,
-    //   this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       const contentTypeCount = this.downloadIdentifiers.size ? this.downloadIdentifiers.size : '';
       const popover = await this.popoverCtrl.create({
@@ -606,37 +597,11 @@ export class CurriculumCourseDetailsPage implements OnInit {
         cssClass: 'sb-popover info',
       });
       await popover.present();
-      // this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-      //   PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
-      //   Environment.HOME,
-      //   this.course.identifier,
-      //   this.course.contentData.contentType,
-      //   this.course.contentData.pkgVersion,
-      //   this.objRollup,
-      //   this.corRelationList);
 
       const response = await popover.onDidDismiss();
       if (response && response.data) {
-        // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        //   InteractSubtype.DOWNLOAD_ALL_CLICKED,
-        //   Environment.HOME,
-        //   PageId.CURRICULUM_COURSE_DETAIL,
-        //   this.telemetryObject,
-        //   undefined,
-        //   this.objRollup,
-        //   this.corRelationList);
         this.downloadAllContent();
         this.events.publish('header:decreasezIndex');
-      } else {
-        // const values = new Map();
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.TOUCH,
-        //   InteractSubtype.CLOSE_CLICKED,
-        //   Environment.HOME,
-        //   PageId.CURRICULUM_COURSE_DETAIL,
-        //   this.telemetryObject,
-        //   values, this.objRollup,
-        //   this.corRelationList);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -644,10 +609,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
   }
 
   private downloadAllContent(): void {
-    // this.downloadProgress = 0;
-    // this.showLoading = true;
     this.isDownloadStarted = true;
-    // this.downloadPercentage = 0;
     this.showDownload = true;
     this.showCollapsedPopup = false;
     this.importContent(Array.from(this.downloadIdentifiers), true, true);
@@ -681,7 +643,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
     });
     await popover.present();
   }
-  //// collection-acions END
 
   navigateToCourseDetails() {
     const isUserLoggedIn = this.appGlobalService.isUserLoggedIn();

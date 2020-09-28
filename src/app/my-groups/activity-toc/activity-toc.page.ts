@@ -1,21 +1,17 @@
 import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { Platform} from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-    Environment,
-    ImpressionSubtype,
-    ImpressionType,
-    InteractSubtype,
-    InteractType,
-    PageId
+    Environment, ImpressionType, InteractSubtype,
+    InteractType, PageId
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { AppGlobalService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { ContentUtil } from '@app/util/content-util';
-
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 @Component({
     selector: 'activity-toc',
@@ -25,6 +21,7 @@ import { ContentUtil } from '@app/util/content-util';
 })
 export class ActivityTocPage {
 
+    corRelationList: Array<CorrelationData>;
     unregisterBackButton: Subscription;
     headerObservable: any;
     backButtonFunc = undefined;
@@ -44,6 +41,7 @@ export class ActivityTocPage {
         if (extras) {
             this.courseList = extras.courseList;
             this.mainCourseName = extras.mainCourseName;
+            this.corRelationList = extras.corRelation;
         }
     }
 
@@ -54,12 +52,9 @@ export class ActivityTocPage {
         this.headerService.showHeaderWithBackButton();
         this.handleDeviceBackButton();
         this.selectedId = this.appGlobalService.selectedActivityCourseId;
-        this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW,
-            '',
-            PageId.ACTIVITY_TOC,
-            Environment.GROUP
-        );
+        this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
+            '', PageId.ACTIVITY_TOC, Environment.GROUP,
+            undefined, undefined, undefined, undefined, this.corRelationList);
     }
 
     ionViewWillLeave() {
@@ -70,15 +65,16 @@ export class ActivityTocPage {
     }
 
     handleBackButton(isNavBack: boolean) {
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC, Environment.GROUP, isNavBack);
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_TOC,
+            Environment.GROUP, isNavBack, undefined, this.corRelationList);
         this.location.back();
     }
 
     handleDeviceBackButton() {
         this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-          this.handleBackButton(false);
+            this.handleBackButton(false);
         });
-      }
+    }
 
     handleHeaderEvents($event) {
         switch ($event.name) {
@@ -90,15 +86,12 @@ export class ActivityTocPage {
 
     onCourseChange(course?) {
         if (course) {
-            this.telemetryGeneratorService.generateInteractTelemetry(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.GROUP,
-                PageId.ACTIVITY_TOC,
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED, Environment.GROUP, PageId.ACTIVITY_TOC,
                 ContentUtil.getTelemetryObject(course),
                 undefined,
-                ContentUtil.generateRollUp(undefined, course.identifier)
-            );
+                ContentUtil.generateRollUp(undefined, course.identifier),
+                this.corRelationList);
         }
         this.appGlobalService.selectedActivityCourseId = course ? course.identifier : '';
         this.location.back();

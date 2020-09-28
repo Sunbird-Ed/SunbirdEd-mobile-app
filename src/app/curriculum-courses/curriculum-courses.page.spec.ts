@@ -190,7 +190,7 @@ describe('CurriculumCoursesPage', () => {
         mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList);
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-        const telemetryObject = new TelemetryObject(undefined, undefined, undefined);
+        const telemetryObject = new TelemetryObject(undefined, undefined, '');
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         // act
         curriculumCoursesPage.openCourseDetails(course);

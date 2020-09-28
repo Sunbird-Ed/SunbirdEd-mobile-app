@@ -49,6 +49,7 @@ import {
   DownloadTracking,
   DownloadService,
   AuditState,
+  Consent,
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -64,7 +65,7 @@ import {
   AuditType
 } from '../../services/telemetry-constants';
 import {
-  ProfileConstants, ContentType, EventTopics, MimeType,
+  ProfileConstants, EventTopics, MimeType,
   PreferenceKey, RouterLinks, ShareItemType
 } from '../app.constant';
 import { BatchConstants } from '../app.constant';
@@ -88,7 +89,11 @@ import { share } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
+import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 declare const cordova;
 
 @Component({
@@ -96,7 +101,7 @@ declare const cordova;
   templateUrl: './enrolled-course-details-page.html',
   styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
+export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopoverActionsDelegate {
 
   /**
    * Contains content details
@@ -238,6 +243,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   certificateDescription = '';
   private csGroupAddableBloc: CsGroupAddableBloc;
   pageId = PageId.COURSE_DETAIL;
+  showShareData = false;
+  isDataShare = false;
+  isShared: any;
+  dataSharingStatus: any;
+  lastUpdateOn: string;
+  isConsentPopUp = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -265,7 +276,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService,
     private sbProgressLoader: SbProgressLoader,
-    private contentPlayerHandler: ContentPlayerHandler
+    private contentPlayerHandler: ContentPlayerHandler,
+    private categoryKeyTranslator: CategoryKeyTranslator
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -442,7 +454,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else if (
       this.batches.length === 1 &&
       this.batches[0].enrollmentEndDate &&
-      (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      ((new Date().setHours(0, 0, 0, 0)) > new Date(this.batches[0].enrollmentEndDate).setHours(0, 0, 0, 0))
     ) {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
@@ -458,17 +470,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
+        sbPopoverMainTitle: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_AN_ACTIVE_BATCH', this.course),
         metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
-        sbPopoverHeading: this.commonUtilService.translateMessage('JOIN_TRAINING') + '?',
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course) + '?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: this.commonUtilService.translateMessage('JOIN_TRAINING'),
+            btntext: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_JOIN_TRAINING', this.course),
             btnClass: 'popover-color'
           },
         ],
-        // handler : this.handleEnrollCoursePopup.bind(this)
       },
       cssClass: 'sb-popover info',
     });
@@ -545,7 +556,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_TRAINING_HEADING'),
+        sbPopoverHeading: this.categoryKeyTranslator.transform('FRMELEMNTS_LBL_LEAVE_TRAINING_HEADING', this.course),
         sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
         actionsButtons: [
           {
@@ -587,7 +598,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         .subscribe(() => {
           this.zone.run(async () => {
             await loader.dismiss();
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
+            this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_UNENROLLED', this.course));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
             this.telemetryGeneratorService.generateInteractTelemetry(
               InteractType.OTHER,
@@ -650,6 +661,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         }
+        this.isConsentPopUp = true;
         this.showSheenAnimation = false;
         this.location.back();
       });
@@ -772,9 +784,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.batchDetails = data;
           // console.log('this.batchDetails', this.batchDetails);
           this.handleUnenrollButton();
-          if (data.cert_templates) {
+          if (data.cert_templates && Object.keys(data.cert_templates).length) {
             this.isCertifiedCourse = true;
-            if (Object.keys(data.cert_templates).length && data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
+            if (data.cert_templates[Object.keys(data.cert_templates)[0]].description) {
               this.certificateDescription = data.cert_templates[Object.keys(data.cert_templates)[0]].description;
             }
           } else {
@@ -922,7 +934,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.corRelationList
               );
             }
-
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
             }
@@ -1141,13 +1152,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
     const values = new Map();
     values['isCollapsed'] = isCollapsed;
-    const telemetryObject = new TelemetryObject(content.identifier, ContentType.COURSE_UNIT, content.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
       PageId.COURSE_DETAIL,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values,
       undefined,
       this.corRelationList
@@ -1311,9 +1321,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   async ionViewWillEnter() {
     this.checkUserLoggedIn();
     await this.appGlobalService.getActiveProfileUid()
-        .then((uid) => {
-          this.userId = uid;
-        });
+      .then((uid) => {
+        this.userId = uid;
+      });
     this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
@@ -1355,6 +1365,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    if (this.isAlreadyEnrolled) {
+     await this.checkDataSharingStatus();
+    }
   }
 
   ionViewDidEnter() {
@@ -1370,6 +1383,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       this.licenseSectionClicked('collapsed');
     }
+  }
+
+  editDataSettings() {
+    this.showShareData = !this.showShareData;
+  }
+
+  expandDataSettings() {
+    this.showShareData = false;
+    this.isDataShare = !this.isDataShare;
   }
 
   handleBackButton() {
@@ -1567,6 +1589,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       reqvalues,
       this.objRollup);
 
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+      return false;
+    }
+
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (this.batches.length) {
         if (this.batches.length === 1) {
@@ -1658,7 +1684,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateStartEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
       telemetryObject,
       this.objRollup,
@@ -1667,8 +1693,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   generateEndEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType || ContentType.COURSE, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType || ContentType.COURSE,
+    const telemetryObject = new TelemetryObject(objectId, objectType || CsPrimaryCategory.COURSE, objectVersion);
+    this.telemetryGeneratorService.generateEndTelemetry(objectType || CsPrimaryCategory.COURSE,
       Mode.PLAY,
       PageId.COURSE_DETAIL,
       Environment.HOME,
@@ -1841,17 +1867,20 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         userId: this.userId,
         batch: item,
         pageId: PageId.COURSE_BATCHES,
-        courseId: undefined,
+        courseId: this.course.identifier,
+        channel: this.course.channel,
         telemetryObject: this.telemetryObject,
         objRollup: this.objRollup,
-        corRelationList: this.corRelationList
+        corRelationList: this.corRelationList,
+        userConsent: this.course.userConsent
       };
 
-      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
+      this.localCourseService.enrollIntoBatch(enrollCourse, this).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             this.courseCardData.batchId = item.id;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+            this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.course));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
               courseId: item.courseId
@@ -1882,8 +1911,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL'),
-        metaInfo: this.commonUtilService.translateMessage('TRAININGS_ONLY_REGISTERED_USERS'),
+        sbPopoverMainTitle:
+        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course),
+        metaInfo: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_TRAININGS_ONLY_REGISTERED_USERS', this.course),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -1930,13 +1960,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   // check wheather to show Unenroll button in overflow menu or not
   handleUnenrollButton() {
-    console.log('INside the show unenroll ');
     const batchDetails = this.batchDetails ? this.batchDetails.status : 2;
     const enrollmentType = this.batchDetails ? this.batchDetails.enrollmentType : '';
-    console.log('INside the show unenroll ', batchDetails, enrollmentType);
-    console.log('final condition --- ', (batchDetails !== 2 &&
-      (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
-      enrollmentType !== 'invite-only'));
 
     if (this.updatedCourseCardData) {
       this.showUnenrollButton = (batchDetails !== 2 &&
@@ -1983,6 +2008,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     // if (this.csGroupAddableBloc.state) {
     //   return;
     // }
+
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+      return false;
+    }
 
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -2042,4 +2071,73 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.nextContent;
   }
 
+  async saveChanges() {
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      if (this.dataSharingStatus === ConsentStatus.ACTIVE) {
+        const request: Consent = {
+          status: ConsentStatus.REVOKED,
+          userId: this.courseCardData.userId,
+          consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+          objectId: this.courseCardData.courseId,
+          objectType: 'Collection',
+        };
+        this.profileService.updateConsent(request).toPromise()
+          .then(async (data) => {
+            await loader.dismiss();
+            this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+            this.showShareData = false;
+            this.checkDataSharingStatus();
+          })
+          .catch(async (e) => {
+            await loader.dismiss();
+            if (e.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+            }
+          });
+      } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
+        await loader.dismiss();
+        await this.localCourseService.showConsentPopup(this.courseCardData);
+        this.showShareData = false;
+        this.checkDataSharingStatus();
+      }
+  }
+
+  async checkDataSharingStatus() {
+    const request: Consent = {
+      userId: this.courseCardData.userId,
+      consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+      objectId: this.courseCardData.courseId
+    };
+    await this.profileService.getConsent(request).toPromise()
+    .then((data) => {
+      if (data) {
+        this.dataSharingStatus = data.consents[0].status;
+        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+      }
+    })
+    .catch(async (e) => {
+      if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
+     && this.course.userConsent === UserConsent.YES) {
+         if (!this.isConsentPopUp) {
+           this.isConsentPopUp = true;
+           await this.localCourseService.showConsentPopup(this.courseCardData);
+           await this.checkDataSharingStatus();
+         }
+      } else if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+    });
+  }
+
+  onConsentPopoverShow() {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+  }
+
+  onConsentPopoverDismiss() {
+    this.checkDataSharingStatus();
+  }
 }

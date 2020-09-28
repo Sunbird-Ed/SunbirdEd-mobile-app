@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, NgZone, OnInit } from '@angular/core';
-import { ContentType, MimeType, MenuOverflow, RouterLinks } from '@app/app/app.constant';
+import { MenuOverflow } from '@app/app/app.constant';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -292,38 +292,20 @@ export class DownloadsTabComponent implements OnInit {
   }
 
   navigateToDetailsPage(content) {
-    const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentData.contentType
-      : ContentType.RESOURCE;
     const corRelationList: Array<CorrelationData> = [{
         id: CorReleationDataType.DOWNLOADS,
         type: CorReleationDataType.SECTION
       }];
-    const telemetryObject: TelemetryObject = new TelemetryObject(content.identifier, objectType, content.contentData.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       undefined,
       ContentUtil.generateRollUp(undefined, content.identifier),
       corRelationList);
     this.navService.navigateToDetailPage(
-      content,
-      { content }
+      content, { content }
     );
-    
-    // if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
-    //     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-    //       state: { content }
-    //     });
-    // } else if (content.mimeType === MimeType.COLLECTION) {
-    //     this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-    //       state: { content }
-    //     });
-    // } else {
-    //     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-    //       state: { content }
-    //     });
-    // }
   }
 }
