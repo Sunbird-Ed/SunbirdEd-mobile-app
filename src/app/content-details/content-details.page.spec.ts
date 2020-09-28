@@ -1672,6 +1672,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
             mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -1679,6 +1680,7 @@ describe('ContentDetailsPage', () => {
                 expect(contentDetailsPage.isResumedCourse).toBeTruthy();
                 expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
                 expect(contentDetailsPage.isUsrGrpAlrtOpen).toBeFalsy();
+                expect(mockHeaderService.hideStatusBar).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1698,6 +1700,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
             mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -1705,6 +1708,7 @@ describe('ContentDetailsPage', () => {
                 expect(contentDetailsPage.isResumedCourse).toBeTruthy();
                 expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
                 expect(contentDetailsPage.isUsrGrpAlrtOpen).toBeFalsy();
+                expect(mockHeaderService.hideStatusBar).toHaveBeenCalled();
                 done();
             }, 0);
         });
