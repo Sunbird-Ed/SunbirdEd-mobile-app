@@ -1,12 +1,10 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
 import { ActionType } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { config } from 'process';
-import { notificationConfigDemo } from '@app/localNotfication_Config';
 
 declare const cordova;
 
@@ -41,8 +39,6 @@ export class NotificationService {
                 this.configData.forEach(element => {
                     this.localNotifications.getScheduledIds().then((ids) => {
                         if (ids.length) {
-                            console.log('Configuration: ', element);
-                            
                             if (!element.isEnabled && ids.findIndex(ele => ele === element.id) !== -1) {
                                 this.localNotifications.cancel(element.id).then(resp => {
                                     console.log('Local Notification Disabled for:' + element.id, resp);
