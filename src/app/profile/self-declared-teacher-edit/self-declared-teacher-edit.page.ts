@@ -1,4 +1,4 @@
-import {Component, Inject, ViewChild} from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import {
   LocationSearchCriteria,
   ProfileService,
@@ -132,7 +132,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
-    const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', rootOrgId);
+    const formConfig = await this.getFormApiData('user', 'selfDeclaration_v2', 'submit', rootOrgId);
     this.translateLabels(formConfig as any);
     if (formConfig.length) {
       this.initializeFormData(formConfig, isFormLoaded);
@@ -142,8 +142,10 @@ export class SelfDeclaredTeacherEditPage {
   private translateLabels(fieldConfig: FieldConfig<any>[]) {
     fieldConfig.forEach((config) => {
       if (config.templateOptions) {
-        config.templateOptions.label = config.templateOptions.label ? this.commonUtilService.translateMessage(config.templateOptions.label) : '';
-        config.templateOptions.placeHolder = config.templateOptions.placeHolder ? this.commonUtilService.translateMessage(config.templateOptions.placeHolder) : '';
+        config.templateOptions.label = config.templateOptions.label
+          ? this.commonUtilService.translateMessage(config.templateOptions.label) : '';
+        config.templateOptions.placeHolder = config.templateOptions.placeHolder
+          ? this.commonUtilService.translateMessage(config.templateOptions.placeHolder) : '';
       }
 
       if (config.validations && config.validations.length) {
@@ -199,7 +201,7 @@ export class SelfDeclaredTeacherEditPage {
                 stateCode = this.selectedStateCode;
               } else {
                 let stateDetails;
-                if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+                if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
                   this.profile.declarations[0].info[childConfig.code]) {
                   stateDetails = this.profile.declarations[0].info[childConfig.code]
                 }
@@ -208,9 +210,9 @@ export class SelfDeclaredTeacherEditPage {
               childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
             } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
               let districtDetails;
-              if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+              if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
                 this.profile.declarations[0].info[childConfig.code]) {
-                  districtDetails = this.profile.declarations[0].info[childConfig.code]
+                districtDetails = this.profile.declarations[0].info[childConfig.code]
               }
               childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
             }
@@ -265,7 +267,7 @@ export class SelfDeclaredTeacherEditPage {
           this.availableLocationState || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
       } else if (config.code === 'district') {
         config.templateOptions.labelHtml.values['$1'] =
-        this.availableLocationDistrict || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
+          this.availableLocationDistrict || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
       }
 
       return config;
@@ -330,7 +332,7 @@ export class SelfDeclaredTeacherEditPage {
 
   ionViewWillLeave(): void {
     if (this.backButtonFunc) {
-    this.backButtonFunc.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     }
   }
 

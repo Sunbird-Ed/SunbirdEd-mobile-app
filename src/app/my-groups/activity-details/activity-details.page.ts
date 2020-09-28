@@ -1,6 +1,5 @@
 import {
-  Component, OnInit,
-  Inject, OnDestroy
+  Component, OnInit, Inject, OnDestroy
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -8,12 +7,11 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
   ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService
+  CollectionService, AppGlobalService, InteractSubtype, InteractType
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
-  GroupActivity, GroupMember,
-  CachedItemRequestSourceFrom, Content,
+  GroupMember, CachedItemRequestSourceFrom, Content,
   Group, MimeType, CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import {
@@ -22,7 +20,8 @@ import {
 } from '@project-sunbird/client-services/services/group/activity';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ContentType, RouterLinks } from './../../app.constant';
+import { RouterLinks } from './../../app.constant';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-activity-details',
@@ -114,10 +113,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
-    if (this.selectedCourse) {
-      req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
-    } else {
-      req.leafNodesCount = this.courseData.contentData.leafNodes.length;
+    if (this.activity.type.toLowerCase() === 'course') {
+      if (this.selectedCourse) {
+        req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
+      } else {
+        req.leafNodesCount = this.courseData.contentData.leafNodes.length;
+      }
     }
     try {
       this.isActivityLoading = true;
@@ -190,7 +191,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   private getNestedCourses(courseData) {
     courseData.forEach(c => {
-      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === ContentType.COURSE.toLowerCase())) {
+      if ((c.mimeType === MimeType.COLLECTION) && (c.contentType.toLowerCase() === CsContentType.COURSE.toLowerCase())) {
         this.courseList.push(c);
       }
       if (c.children && c.children.length) {
@@ -200,11 +201,16 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   openActivityToc() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED, Environment.GROUP, PageId.ACTIVITY_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
+
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
       {
         state: {
           courseList: this.courseList,
-          mainCourseName: this.activity.name
+          mainCourseName: this.activity.name,
+          corRelation: this.corRelationList
         }
       });
   }

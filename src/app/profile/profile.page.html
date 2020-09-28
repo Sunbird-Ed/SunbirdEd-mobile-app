@@ -230,14 +230,11 @@
     <div class="bottom-block">
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
-                <span>{{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
+                <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
                 <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="refresh-icon"
                     (click)="getEnrolledCourses(true, true)"></ion-icon>
             </div>
             <div class="content">
-                <div class="bolder heading f16">
-                    {{'COURSES' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
-                </div>
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
@@ -271,6 +268,48 @@
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="trainingsLimit >= mappedTrainingCertificates?.length" (click)="showLessTrainings()">
+                        {{'SHOW_LESS' | translate }}
+                        <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+                    </ion-button>
+                </div>
+            </div>
+        </div>
+        <div class="trainings" *ngIf="learnerPassbook?.length > 0">
+            <div class="bolder heading f16">
+                <span>{{'LEARNER_PASSBOOK' | translate}} ({{learnerPassbook?.length}})&lrm;</span>
+            </div>
+            <div class="content">
+                <div class="flex-nowrap"
+                    *ngFor="let certificate of (learnerPassbook | slice : startLimit:trainingsLimit) |sortBy: 'status' : 'asc';">
+                    <div class="training-1">
+                        <div class="fw" (click)="openEnrolledCourse(certificate)">
+                            {{certificate.courseName}}
+                        </div>
+                        <div>
+                            <span *ngIf="certificate.status === 1 || certificate.status === 0"
+                                class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
+                            <span *ngIf="certificate.status === 2" class="lighter">
+                                {{certificate.dateTime | date:'MMMM yyyy'}} </span>
+                        </div>
+                    </div>
+                    <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
+                        <button class="sb-btn-tile ion-activatable ripple-parent"
+                            (click)="downloadTrainingCertificate(certificate)">
+                            <ion-icon class="view-icon" name="md-eye"></ion-icon>
+                            <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
+                            <ion-ripple-effect type="unbounded"></ion-ripple-effect>
+                        </button>
+                    </div>
+                </div>
+                <div class="ion-text-center"
+                    *ngIf="mapTrainingsToCertificates(learnerPassbook).length >= trainingsLimit">
+                    <ion-button shape="round" class="txt-capitalize custom-round"
+                        *ngIf="trainingsLimit < learnerPassbook?.length" (click)="showMoreTrainings()">
+                        + {{learnerPassbook?.length - trainingsLimit}} {{'MORE' | translate}}
+                        <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+                    </ion-button>
+                    <ion-button shape="round" class="txt-capitalize custom-round"
+                        *ngIf="trainingsLimit >= learnerPassbook?.length" (click)="showLessTrainings()">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>

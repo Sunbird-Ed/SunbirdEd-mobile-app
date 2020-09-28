@@ -47,7 +47,8 @@ describe('GroupDetailsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockNavigationService: Partial<NavigationService> = {
         navigateToTrackableCollection: jest.fn(),
-        navigateTo: jest.fn()
+        navigateTo: jest.fn(),
+        navigateToDetailPage: jest.fn()
     };
     const mockViewMoreActivityDelegateService: Partial<ViewMoreActivityDelegateService> = {};
 
@@ -450,25 +451,23 @@ describe('GroupDetailsPage', () => {
         groupDetailsPage.navigateToAddUserPage();
 
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`],
+        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`],
             {
-                state: {
-                    groupId: 'sample-group-id',
-                    memberList: [{
-                        groupId: '',
-                        role: '',
-                        status: GroupEntityStatus.ACTIVE,
-                        userId: 'sample-uid',
-                        name: 'SOME_NAME'
-                    }, {
-                        groupId: '',
-                        role: '',
-                        status: GroupEntityStatus.ACTIVE,
-                        userId: 'sample-uid',
-                        name: 'SOME_NAME'
-                    }],
-                    corRelation: groupDetailsPage.corRelationList
-                }
+                groupId: 'sample-group-id',
+                memberList: [{
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }, {
+                    groupId: '',
+                    role: '',
+                    status: GroupEntityStatus.ACTIVE,
+                    userId: 'sample-uid',
+                    name: 'SOME_NAME'
+                }],
+                corRelation: groupDetailsPage.corRelationList
             });
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
@@ -564,15 +563,12 @@ describe('GroupDetailsPage', () => {
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList);
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
                     [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
                     {
-                        state: {
-                            groupDetails: groupDetailsPage.groupDetails,
-                            corRelation: groupDetailsPage.corRelationList
-                        }
-                    }
-                );
+                        groupDetails: groupDetailsPage.groupDetails,
+                        corRelation: groupDetailsPage.corRelationList
+                    });
                 done();
             }, 0);
         });
@@ -2071,10 +2067,10 @@ describe('GroupDetailsPage', () => {
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
 
         // act
-        groupDetailsPage.onActivityCardClick({ data: {type: 'course'} });
+        groupDetailsPage.onActivityCardClick({ data: { type: 'course' } });
 
         // assert
-        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`],{
+        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], {
             loggedinUser: groupDetailsPage.loggedinUser,
             group: groupDetailsPage.groupDetails,
             memberList: groupDetailsPage.memberList,
@@ -2083,17 +2079,21 @@ describe('GroupDetailsPage', () => {
         });
     });
 
-    xit('should not navigate To course page if loggeding user is not a admin', () => {
+    it('should not navigate To course page if loggeding user is not a admin', () => {
         // arrange
         groupDetailsPage.loggedinUser = { role: GroupMemberRole.MEMBER } as any;
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
 
         // act
-        groupDetailsPage.onActivityCardClick({ data: {type: 'course'} });
+        groupDetailsPage.onActivityCardClick({ data: { type: 'course' } });
 
         // assert
-        expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalledWith({
-            content: {},
+        expect(mockNavigationService.navigateToDetailPage).toHaveBeenCalledWith({
+            type: 'course'
+        }, {
+            content: {
+                type: 'course'
+            },
             corRelation: groupDetailsPage.corRelationList
         });
     });
@@ -2135,28 +2135,26 @@ describe('GroupDetailsPage', () => {
                     undefined, undefined, undefined, groupDetailsPage.corRelationList);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'ACTIVITY_COURSE_TITLE');
-                expect(mockRouter.navigate)
+                expect(mockNavigationService.navigateTo)
                     .toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
                         {
-                            state: {
-                                supportedActivityList: [
-                                    {
-                                        index: 0,
-                                        title: 'ACTIVITY_COURSE_TITLE',
-                                        desc: 'ACTIVITY_COURSE_DESC',
-                                        activityType: 'Content',
-                                        isEnabled: true,
-                                        filters: {
-                                            contentTypes: [
-                                                'Course'
-                                            ]
-                                        }
+                            supportedActivityList: [
+                                {
+                                    index: 0,
+                                    title: 'ACTIVITY_COURSE_TITLE',
+                                    desc: 'ACTIVITY_COURSE_DESC',
+                                    activityType: 'Content',
+                                    isEnabled: true,
+                                    filters: {
+                                        contentTypes: [
+                                            'Course'
+                                        ]
                                     }
-                                ],
-                                activityList: [],
-                                groupId: 'sample-group-id',
-                                corRelation: groupDetailsPage.corRelationList
-                            }
+                                }
+                            ],
+                            activityList: [],
+                            groupId: 'sample-group-id',
+                            corRelation: groupDetailsPage.corRelationList
                         });
                 done();
             });
@@ -2237,10 +2235,32 @@ describe('GroupDetailsPage', () => {
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
                     [`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
-                    expect.anything()
-                );
+                    {
+                        activityList: [],
+                        corRelation: [
+                            {
+                                id: 'sample-group-id',
+                                type: 'GroupId',
+                            },
+                        ],
+                        groupId: 'sample-group-id',
+                        supportedActivityList: [
+                            {
+                                activityType: 'Content',
+                                desc: 'ACTIVITY_COURSE_DESC',
+                                filters: {
+                                    contentTypes: [
+                                        'Course',
+                                    ],
+                                },
+                                index: 0,
+                                isEnabled: true,
+                                title: 'Next',
+                            },
+                        ],
+                    });
                 done();
             });
         });
@@ -2315,16 +2335,19 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.onMemberSearch('');
             expect(mockFilterPipe.transform).toHaveBeenCalled();
         });
-        xit('should return filtered activityList', () => {
+        it('should return filtered activityList', () => {
             // assert
-            groupDetailsPage.activityList = [
-                { activityInfo: { name: 'name1' } },
-                { activityInfo: { name: 'name2' } }
-            ] as any;
+            groupDetailsPage.groupedActivityListMap = {
+                course: [
+                    { name: 'name1' },
+                    { name: 'name2' }
+                ]
+            } as any;
+            groupDetailsPage.filteredGroupedActivityListMap = {};
             // act
             groupDetailsPage.onActivitySearch('name1');
             // assert
-            expect(groupDetailsPage.filteredActivityList).toEqual([{ activityInfo: { name: 'name1' } }]);
+            expect(groupDetailsPage.filteredGroupedActivityListMap).toEqual({ course: [{ name: 'name1' }] });
         });
     });
 

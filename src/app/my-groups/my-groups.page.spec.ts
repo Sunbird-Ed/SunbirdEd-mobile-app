@@ -1,24 +1,19 @@
 import { MyGroupsPage } from './my-groups.page';
-import {AuthService, GroupMemberRole, SharedPreferences, GroupService} from '@project-sunbird/sunbird-sdk';
+import {
+    AuthService, GroupMemberRole, SharedPreferences, GroupService
+} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
-import {Platform, PopoverController} from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
-    CommonUtilService,
-    AppGlobalService,
-    TelemetryGeneratorService,
-    InteractType,
-    InteractSubtype,
-    Environment,
-    PageId,
-    ImpressionType
+    CommonUtilService, AppGlobalService, TelemetryGeneratorService,
+    InteractType, InteractSubtype, Environment, PageId, ImpressionType
 } from '@app/services';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {Location} from '@angular/common';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { Location } from '@angular/common';
 
 describe('MyGroupsPage', () => {
     let myGroupsPage: MyGroupsPage;
@@ -162,20 +157,20 @@ describe('MyGroupsPage', () => {
             expect(data.name).toBe('groupInfo');
         });
         it('should return popup for groupInfo', () => {
-        const data = {
-            name: 'groupInfo'
-        };
-        jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
-            return Promise.resolve();
+            const data = {
+                name: 'groupInfo'
+            };
+            jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            myGroupsPage.handleHeaderEvents(data);
+            expect(data.name).toBe('groupInfo');
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+            );
         });
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        myGroupsPage.handleHeaderEvents(data);
-        expect(data.name).toBe('groupInfo');
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
-        );
-    });
 
         it('should return back telemetry for back clicked', () => {
             const data = {
@@ -196,7 +191,7 @@ describe('MyGroupsPage', () => {
     describe('fetchGroupList', () => {
         it('should return groupList', (done) => {
             myGroupsPage.groupListLoader = true;
-            mockGroupService.search = jest.fn(() => of([{memberRole: GroupMemberRole.ADMIN}])) as any;
+            mockGroupService.search = jest.fn(() => of([{ memberRole: GroupMemberRole.ADMIN }])) as any;
             mockCommonUtilService.extractInitial = jest.fn(() => 'extract');
             myGroupsPage.fetchGroupList();
             setTimeout(() => {
@@ -360,7 +355,7 @@ describe('MyGroupsPage', () => {
         });
 
         it('should unsubscribe unregisterBackButton', () => {
-            myGroupsPage.unregisterBackButton = {unsubscribe: jest.fn()} as any;
+            myGroupsPage.unregisterBackButton = { unsubscribe: jest.fn() } as any;
             myGroupsPage.ionViewWillLeave();
             expect(myGroupsPage.unregisterBackButton).toBeDefined();
         });
@@ -382,7 +377,7 @@ describe('MyGroupsPage', () => {
         });
 
         it('should unsubscribe unregisterBackButton', () => {
-            myGroupsPage.unregisterBackButton = {unsubscribe: jest.fn()} as any;
+            myGroupsPage.unregisterBackButton = { unsubscribe: jest.fn() } as any;
             myGroupsPage.ngOnDestroy();
             expect(myGroupsPage.unregisterBackButton).toBeDefined();
         });
@@ -423,11 +418,21 @@ describe('MyGroupsPage', () => {
                 id: 'sample-id'
             }
         };
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+
+        // act
         myGroupsPage.navigateToGroupdetailsPage(data);
+
+        // assert
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`],
             { state: { groupId: data.data.id } });
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+            { id: 'sample-id', type: 'Group', version: undefined }
+        );
     });
+
     describe('goback', () => {
         it('should go to tabs page', () => {
             // arrange

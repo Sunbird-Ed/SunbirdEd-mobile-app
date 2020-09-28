@@ -1,12 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
-import {
-  Component, OnInit, AfterViewInit, Inject, NgZone,
-  ViewChild, OnDestroy, ChangeDetectorRef
-} from '@angular/core';
-import {
-  IonContent as ContentView, Events, ToastController,
-  MenuController, PopoverController, IonRefresher
-} from '@ionic/angular';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,13 +11,18 @@ import { Network } from '@ionic-native/network/ngx';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
+  ContentAggregatorRequest,
+  ContentAggregatorResponse,
   ContentEventType,
+  ContentRequest,
   ContentSearchCriteria,
   ContentService,
+  CorrelationData,
   EventsBusEvent,
   EventsBusService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
+  FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
   Profile,
@@ -31,30 +30,22 @@ import {
   ProfileType,
   SearchType,
   SharedPreferences,
-  TelemetryObject,
-  ContentRequest,
-  FrameworkService,
   SortOrder,
-  CorrelationData,
-  ContentsGroupedByPageSection,
-  ContentAggregatorRequest,
-  CachedItemRequestSourceFrom,
-  ContentAggregatorResponse
+  TelemetryObject
 } from 'sunbird-sdk';
 
 import {
   AudienceFilter,
   ContentCard,
-  ContentType,
-  PreferenceKey,
-  Search,
-  ProfileConstants,
-  RouterLinks,
   ContentFilterConfig,
   EventTopics,
   ExploreConstants,
-  FormConfigSubcategories,
-  FormConfigCategories
+  PreferenceKey,
+  ProfileConstants,
+  RouterLinks,
+  FormConfigCategories,
+  PrimaryCategory,
+  Search, ViewMore
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -63,7 +54,13 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType
+  CorReleationDataType,
+  Environment,
+  ID,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -75,7 +72,11 @@ import { animationGrowInTopRight } from '../animations/animation-grow-in-top-rig
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
-import { FrameworkSelectionDelegateService } from '../profile/framework-selection/framework-selection.page';
+import {
+  FrameworkSelectionDelegateService,
+  FrameworkSelectionActionsDelegate
+} from '../profile/framework-selection/framework-selection.page';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-resources',
@@ -119,7 +120,7 @@ import { FrameworkSelectionDelegateService } from '../profile/framework-selectio
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
   @ViewChild('libraryRefresher') refresher: IonRefresher;
 
   pageLoadedSuccess = false;
@@ -442,7 +443,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
-    this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
   }
@@ -705,11 +706,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: contentTypes,
+        primaryCategories,
         source: PageId.LIBRARY
       }
     });
@@ -899,7 +900,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
     const values = {};
     values['sectionName'] = item.subject;
@@ -908,27 +908,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
-      // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+      this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
   navigateToTextbookPage(items, subject) {
-    const identifier = items.contentId || items.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, items.contentType, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject);
+      ContentUtil.getTelemetryObject(items));
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
@@ -1021,7 +1017,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
-        contentType: ContentType.FOR_LIBRARY_TAB,
+        primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.getGroupByPageReq.grade,
         selectedMedium: this.getGroupByPageReq.medium
       }
@@ -1048,7 +1044,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
+      primaryCategories: [],
       audience: this.audienceFilter,
       recentlyViewed: false,
     };
@@ -1184,14 +1180,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToViewMoreContentsPage(section) {
-    const pageName = 'TV Programs';
     const params: NavigationExtras = {
       state: {
         requestParams: {
           request: section.searchCriteria
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        pageName : ViewMore.PAGE_TV_PROGRAMS
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
@@ -1207,33 +1202,44 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
     this.appGlobalService.formConfig = formConfig;
-    this.frameworkSelectionDelegateService.delegate = { onFrameworkSelectionSubmit: this.onFrameworkSelectionSubmit };
+    this.frameworkSelectionDelegateService.delegate = this;
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
-    {
-      state: {
-        showHeader: true,
-        corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-        title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-        subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
-        formConfig,
-        submitDetails: {
-          label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+      {
+        state: {
+          showHeader: true,
+          corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
+          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
+          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          formConfig,
+          submitDetails: {
+            label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+          }
         }
-      }
-    });
+      });
   }
 
   async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService,
-                                   telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
+    telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
     if (!commonUtilService.networkInfo.isNetworkAvailable) {
       await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
       return;
     }
     const selectedCorRelation: Array<CorrelationData> = [];
+
+    if (formOutput['children']) {
+      for (const key in formOutput['children']) {
+        if (formOutput[key] && formOutput['children'][key]['other']) {
+          formOutput[key] = formOutput['children'][key]['other'];
+        }
+      }
+
+      delete formOutput['children'];
+    }
+
     for (const key in formOutput) {
       if (typeof formOutput[key] === 'string') {
         selectedCorRelation.push({ id: formOutput[key], type: key });
-      } else if (typeof formOutput[key] === 'object' && formOutput[key].name ) {
+      } else if (typeof formOutput[key] === 'object' && formOutput[key].name) {
         selectedCorRelation.push({ id: formOutput[key].name, type: key });
       }
     }
@@ -1253,5 +1259,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
-
 }

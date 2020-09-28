@@ -40,7 +40,7 @@ import {
   CorReleationDataType
 } from '@app/services/telemetry-constants';
 import {
-  ContentType, ViewMore, MimeType, RouterLinks,
+  ViewMore, MimeType, RouterLinks,
   ContentCard, BatchConstants, PreferenceKey
 } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
@@ -282,6 +282,11 @@ export class ViewMoreActivityComponent implements OnInit {
         this.search();
         break;
 
+      case ViewMore.PAGE_TV_PROGRAMS:
+        this.pageType = 'tvPrograms';
+        this.search();
+        break;
+
       default:
         this.search();
     }
@@ -464,9 +469,6 @@ export class ViewMoreActivityComponent implements OnInit {
     if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       return false;
     }
-    const identifier = content.contentId || content.identifier;
-    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
 
     const values = new Map();
     values['sectionName'] = this.sectionName;
@@ -476,18 +478,9 @@ export class ViewMoreActivityComponent implements OnInit {
       InteractSubtype.CONTENT_CLICKED,
       this.env,
       this.pageName ? this.pageName : this.layoutName,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values);
     this.navService.navigateToDetailPage(content, { content });
-    // if (content.mimeType === MimeType.COLLECTION) {
-    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-    //     state: { content }
-    //   });
-    // } else {
-    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-    //     state: { content }
-    //   });
-    // }
   }
 
   getContentImg(content) {
@@ -606,9 +599,6 @@ export class ViewMoreActivityComponent implements OnInit {
 
   private async navigateToDetailsPage(content: any, layoutName) {
     const identifier = content.contentId || content.identifier;
-    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
-
     const corRelationList: Array<CorrelationData> = [{
       id: this.sectionName,
       type: CorReleationDataType.SECTION
@@ -625,7 +615,7 @@ export class ViewMoreActivityComponent implements OnInit {
       InteractSubtype.CONTENT_CLICKED,
       this.env,
       PageId.VIEW_MORE,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
@@ -639,21 +629,6 @@ export class ViewMoreActivityComponent implements OnInit {
           { content }
         );
       }
-      // } else if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
-      //   console.log('Content Data', content);
-      //   this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-      //     state: { content }
-      //   });
-      // } else if (content.mimeType === MimeType.COLLECTION) {
-      //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-      //     state: { content }
-      //   });
-
-      // } else {
-      //   this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-      //     state: { content }
-      //   });
-      // }
     });
   }
 

@@ -8,7 +8,6 @@ import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { ContentType } from '../../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
@@ -33,12 +32,13 @@ export class ContentShareHandlerService {
 
   public async shareContent(
     shareParams: any, content: Content, moduleId: string,
-    subContentIds: Array<string>, corRelationList?: CorrelationData[], rollup?: Rollup
+    subContentIds: Array<string>, corRelationList?: CorrelationData[], rollup?: Rollup, pageId?: string
   ) {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_CONTENT_INITIATED,
-      content.contentData.contentType, corRelationList, rollup);
+      this.getPrimaryCategory(content),
+      corRelationList, rollup, pageId);
 
     let contentId;
     if (rollup && rollup.l1 && rollup.l1 !== content.identifier) {
@@ -56,11 +56,11 @@ export class ContentShareHandlerService {
         subContentIds,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
       };
-      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup);
+      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     } else if (shareParams && shareParams.byLink && shareParams.link) {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
-        content.contentData.contentType, corRelationList, rollup);
+        this.getPrimaryCategory(content), corRelationList, rollup, pageId);
 
       let contentLink = this.getContentUtm(shareParams.link);
       if (moduleId) {
@@ -83,12 +83,13 @@ export class ContentShareHandlerService {
         destinationFolder: cordova.file.externalRootDirectory + 'Download/',
         saveLocally: true
       };
-      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup);
+      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
     }
   }
 
   private async exportContent(
-    exportContentRequest: ContentExportRequest, shareParams, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup
+    exportContentRequest: ContentExportRequest, shareParams, content: Content,
+    corRelationList?: CorrelationData[], rollup?: Rollup, pageId?: string
   ) {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -106,7 +107,7 @@ export class ContentShareHandlerService {
           this.social.share(shareLink, '', '' + response.exportedFilePath, '');
         }
         this.generateShareInteractEvents(InteractType.OTHER,
-          InteractSubtype.SHARE_CONTENT_SUCCESS, content.contentData.contentType, corRelationList, rollup);
+          InteractSubtype.SHARE_CONTENT_SUCCESS, this.getPrimaryCategory(content), corRelationList, rollup, pageId);
       }).catch(async (err) => {
         console.error('ContentShareHandlerService - exportContent', err);
 
@@ -127,32 +128,20 @@ export class ContentShareHandlerService {
     return contentLink + '?' + contentUTM;
   }
 
-  private generateShareInteractEvents(interactType, subType, contentType, corRelationList, rollup) {
+  private generateShareInteractEvents(interactType, subType, primaryCategory, corRelationList, rollup, pageId) {
     const values = new Map();
-    values['ContentType'] = contentType;
+    values['category'] = primaryCategory;
     this.telemetryGeneratorService.generateInteractTelemetry(interactType,
       subType,
       Environment.HOME,
-      this.getPageId(contentType),
+      pageId,
       this.telemetryObject,
       values,
       rollup,
       corRelationList);
   }
 
-  private getPageId(contentType): string {
-    let pageId = PageId.CONTENT_DETAIL;
-    switch (contentType) {
-      case ContentType.COURSE:
-        pageId = PageId.COURSE_DETAIL;
-        break;
-      case ContentType.TEXTBOOK:
-        pageId = PageId.COLLECTION_DETAIL;
-        break;
-      case ContentType.COLLECTION:
-        pageId = PageId.COLLECTION_DETAIL;
-        break;
-    }
-    return pageId;
+  private getPrimaryCategory(content: Content) {
+    return content.contentData.primaryCategory ? content.contentData.primaryCategory : content.contentData.contentType;
   }
 }

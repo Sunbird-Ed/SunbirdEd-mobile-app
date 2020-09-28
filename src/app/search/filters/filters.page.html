@@ -13,9 +13,11 @@
           <ion-label *ngIf="facet?.name === 'subject'" text-capitalize>{{ 'SUBJECT' | translate }}</ion-label>
           <ion-label *ngIf="facet?.name === 'medium'" text-capitalize>{{ 'MEDIUM' | translate }}</ion-label>
           <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
-          <ion-label *ngIf="facet?.name === 'contentType'" text-capitalize>{{ 'CONTENT_TYPE' | translate }}
+          <ion-label *ngIf="facet?.name === 'primaryCategory'" text-capitalize>{{ 'CONTENT_TYPE' | translate }}
           </ion-label>
           <ion-label *ngIf="facet?.name === 'publisher'" text-capitalize>{{ 'PUBLISHER' | translate }}
+          </ion-label>
+          <ion-label *ngIf="facet?.name === 'mimeType'" text-capitalize>{{ 'MEDIA_TYPE' | translate }}
           </ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>

@@ -25,7 +25,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'content',
+        'subType': 'content_v2',
         'action': 'filter'
     },
     {

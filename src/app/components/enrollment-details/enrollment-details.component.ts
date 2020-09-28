@@ -10,7 +10,7 @@ import {
 } from 'sunbird-sdk';
 import {
     PreferenceKey, EventTopics,
-    ContentType, RouterLinks
+    RouterLinks
 } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -24,6 +24,9 @@ import {
     AppGlobalService
 } from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentUtil } from '@app/util/content-util';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 @Component({
     selector: 'app-enrollment-details',
@@ -56,7 +59,8 @@ export class EnrollmentDetailsComponent implements OnInit {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private commonUtilService: CommonUtilService,
         private router: Router,
-        private localCourseService: LocalCourseService
+        private localCourseService: LocalCourseService,
+        private categoryKeyTranslator: CategoryKeyTranslator
     ) {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
@@ -120,7 +124,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
             .then((data: any) => {
                 this.zone.run(() => {
-                    this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+                    this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', content));
                     this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
                         batchId: content.id,
                         courseId: content.courseId
@@ -136,13 +140,12 @@ export class EnrollmentDetailsComponent implements OnInit {
 
     navigateToDetailPage(content: any, layoutName?: string): void {
         const identifier = content.contentId || content.identifier;
-        let type;
+        let telemetryObject;
         if (layoutName === this.layoutInProgress) {
-            type = ContentType.COURSE;
+            telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, '');
         } else {
-            type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+            telemetryObject = ContentUtil.getTelemetryObject(content);
         }
-        const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
 
         const values = new Map();
         values['sectionName'] = this.sectionName;

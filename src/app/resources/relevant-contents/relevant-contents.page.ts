@@ -1,20 +1,23 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId, ImpressionType } from '@app/services';
-import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
 import {
   ContentSearchCriteria,
   ContentSearchResult,
   ContentService,
-  SearchType, TelemetryObject, GetSuggestedFrameworksRequest, CachedItemRequestSourceFrom, FrameworkCategoryCodesGroup, FrameworkUtilService, CorrelationData
+  SearchType,
+  GetSuggestedFrameworksRequest,
+  CachedItemRequestSourceFrom,
+  FrameworkCategoryCodesGroup,
+  FrameworkUtilService,
+  CorrelationData
 } from 'sunbird-sdk';
 import { ExploreConstants, RouterLinks, Search } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { TranslateService } from '@ngx-translate/core';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 enum ContentOrder {
   RELEVANT = 'RELEVANT',
@@ -38,7 +41,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     medium: [],
     grade: [],
     subject: [],
-    contentType: [],
+    primaryCategory: [],
   };
   private paramsData: any;
   private defaultBoard = [];
@@ -54,12 +57,11 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
   constructor(
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private platform: Platform,
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private location: Location,
     private translate: TranslateService,
     private router: Router,
+    private navService: NavigationService
   ) {
     this.getNavParam();
   }
@@ -87,7 +89,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       this.selectedFramework.medium = this.paramsData.medium && this.paramsData.medium.name ? [this.paramsData.medium.name] : [];
       this.selectedFramework.grade = this.paramsData.grade && this.paramsData.grade.name ? [this.paramsData.grade.name] : [];
       this.selectedFramework.subject = this.paramsData.subject && this.paramsData.subject.name ? [this.paramsData.subject.name] : [];
-      this.selectedFramework.contentType = [this.paramsData.contenttype];
+      this.selectedFramework.primaryCategory = [this.paramsData.primaryCategory];
     }
     this.getDefaultBoard();
     this.prepareContentRequest();
@@ -101,7 +103,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.searchRequest.medium = this.selectedFramework.medium;
     this.searchRequest.grade = this.selectedFramework.grade;
     this.searchRequest.subject = this.selectedFramework.subject;
-    this.searchRequest.contentTypes = this.selectedFramework.contentType;
+    this.searchRequest.primaryCategories = this.selectedFramework.primaryCategory;
     this.searchRequest.mode = 'hard';
   }
 
@@ -120,10 +122,10 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       }
       similarContentRequest.mode = 'soft';
 
-      similarContentRequest.contentTypes = this.getContentTypeList();
+      similarContentRequest.primaryCategories = this.getPrimaryCategoryList();
       const contentList = await this.fetchContentResult(similarContentRequest);
       contentList.sort((a) => {
-        const val = (a['contentType'] !== this.searchRequest.contentTypes[0]) ? 1 : -1;
+        const val = (a['primaryCategory'] !== this.searchRequest.primaryCategories[0]) ? 1 : -1;
         return val;
       });
       this.similarContentList = contentList;
@@ -159,7 +161,6 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: item.name, type: CorReleationDataType.SUBJECT }];
     const values = {};
     values['sectionName'] = item.subject;
@@ -168,12 +169,15 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+      this.navService.navigateToDetailPage(
+        item,
+        { content: item, corRelation: corRelationList }
+      );
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
@@ -202,17 +206,18 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
     this.router.navigate([`/${RouterLinks.FAQ_HELP}`], {
       state: {
         corRelation: this.corRelation
-    }});
+      }
+    });
   }
 
-  private getContentTypeList() {
-    const contentTypeConfig: any = this.formInput.find(e => e.code === 'contenttype');
-    const contentTypeList = []
-    const list = (contentTypeConfig && contentTypeConfig.templateOptions && contentTypeConfig.templateOptions.options) || [];
+  private getPrimaryCategoryList() {
+    const primaryCategoryConfig: any = this.formInput.find(e => e.code === 'primaryCategory');
+    const primaryCategoryList = [];
+    const list = (primaryCategoryConfig && primaryCategoryConfig.templateOptions && primaryCategoryConfig.templateOptions.options) || [];
     list.forEach(element => {
-      contentTypeList.push(element.value);
+      primaryCategoryList.push(element.value);
     });
-    return contentTypeList;
+    return primaryCategoryList;
   }
 
   private getDefaultBoard() {

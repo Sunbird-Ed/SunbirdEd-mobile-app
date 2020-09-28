@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse
+  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData, ProfileService
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -14,12 +14,21 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
+import { UserConsent, Consent, ConsentStatus } from '@project-sunbird/client-services/models';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+
+export interface ConsentPopoverActionsDelegate {
+  onConsentPopoverShow(): void;
+  onConsentPopoverDismiss(): void;
+}
+
 
 @Injectable()
 export class LocalCourseService {
@@ -28,6 +37,7 @@ export class LocalCourseService {
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
@@ -36,15 +46,18 @@ export class LocalCourseService {
     private appVersion: AppVersion,
     private router: Router,
     private location: Location,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private datePipe: DatePipe,
+    private categoryKeyTranslator: CategoryKeyTranslator,
+    private popoverCtrl: PopoverController,
   ) {
   }
 
-  enrollIntoBatch(enrollCourse: EnrollCourse): Observable<any> {
+  enrollIntoBatch(enrollCourse: EnrollCourse, consentPopoverActionsDelegate?: ConsentPopoverActionsDelegate): Observable<any> {
     const enrollCourseRequest: EnrollCourseRequest = this.prepareEnrollCourseRequest(
       enrollCourse.userId, enrollCourse.batch, enrollCourse.courseId);
     return this.courseService.enrollCourse(enrollCourseRequest).pipe(
-      map((data: boolean) => {
+      map(async (data: boolean) => {
         if (data) {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -55,6 +68,16 @@ export class LocalCourseService {
             enrollCourse.objRollup,
             enrollCourse.corRelationList
           );
+          if (enrollCourse.userConsent === UserConsent.YES) {
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverShow();
+          }
+          await this.showConsentPopup(enrollCourse);
+
+          if (consentPopoverActionsDelegate) {
+            consentPopoverActionsDelegate.onConsentPopoverDismiss();
+          }
+          }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -68,7 +91,7 @@ export class LocalCourseService {
         }
         return data;
       }),
-      catchError(err => {
+      catchError(async (err) => {
         const requestValue = this.prepareRequestValue(enrollCourseRequest);
         if (NetworkError.isInstance(err)) {
           requestValue.error = err.code;
@@ -77,6 +100,9 @@ export class LocalCourseService {
           if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+            if (enrollCourse.userConsent === UserConsent.YES) {
+              await this.checkedUserConsent(enrollCourse);
+            }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
           }
@@ -152,12 +178,14 @@ export class LocalCourseService {
       pageId: PageId.COURSE_BATCHES,
       telemetryObject,
       objRollup: ContentUtil.generateRollUp(undefined, telemetryObject.id),
-      corRelationList: corRelationList ? JSON.parse(corRelationList) : []
+      corRelationList: corRelationList ? JSON.parse(corRelationList) : [],
+      channel: course.channel,
+      userConsent: course.userConsent
     };
     this.enrollIntoBatch(enrollCourse).toPromise()
       .then(() => {
         this.zone.run(async () => {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+          this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', course));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: batch.id,
             courseId: batch.courseId
@@ -249,4 +277,83 @@ export class LocalCourseService {
     });
   }
 
+  isEnrollable(batches, course) {
+    let latestBatch = batches[0];
+    batches.forEach((batch) => {
+      if (batch.startDate &&
+        (new Date(batch.startDate) > new Date(latestBatch.startDate))) {
+        latestBatch = batch;
+      }
+    });
+    // start date is not passed, then check show message
+    // start date is passed, then check for enrollmentenddate
+    // enrollmentenddate is passed then show message
+
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0))) {
+      this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
+        this.datePipe.transform(latestBatch.startDate));
+      return false;
+    } else if (latestBatch.enrollmentEndDate &&
+      (new Date(latestBatch.enrollmentEndDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))) {
+      this.commonUtilService.showToast(
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(latestBatch.enrollmentEndDate)
+      );
+      return false;
+    }
+    return true;
+  }
+
+  async showConsentPopup(course) {
+    const popover = await this.popoverCtrl.create({
+      component: ConsentPiiPopupComponent,
+      componentProps: {
+      },
+      cssClass: 'sb-popover',
+      backdropDismiss: false
+    });
+    await popover.present();
+    const dismissResponse = await popover.onDidDismiss();
+    const request: Consent = {
+      status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
+      userId: dismissResponse.data.userId,
+      consumerId: course.channel ? course.channel : course.content.channel,
+      objectId: course.courseId,
+      objectType: 'Collection'
+    };
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    await this.profileService.updateConsent(request).toPromise()
+      .then(async (data) => {
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+        await loader.dismiss();
+      })
+      .catch((e) => {
+        loader.dismiss();
+        if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
+  }
+  private async checkedUserConsent(course) {
+    const request: Consent = {
+      userId: this.userId,
+      consumerId: course.channel,
+      objectId: course.courseId ? course.courseId : course.batch.courseId
+    };
+    await this.profileService.getConsent(request).toPromise()
+      .then((data) => {
+      })
+      .catch(async (e) => {
+        if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND') {
+          await this.showConsentPopup(course);
+        } else if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
+  }
 }
