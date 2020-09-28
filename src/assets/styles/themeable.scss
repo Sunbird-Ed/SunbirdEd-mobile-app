@@ -533,10 +533,9 @@ html[data-theme="JOYFUL"]{
     .basic-profile-details{
       // background-color: var(--joyful-tertiary);
       background-color: transparent;
-      position: relative;
-      top: 55px;
+      margin-top: 55px;
       .profile-avatar{
-        background-color: var(--joyful-white);
+        background-color: var(--app-white);
       }  
     }
     .roles-container{
