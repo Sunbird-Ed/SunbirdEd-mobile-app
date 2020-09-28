@@ -1,0 +1,109 @@
+<ion-card *ngIf="content">
+    <ion-card-content class="ion-no-padding">
+        <div *ngIf="content.author || content.organisation || content.license || content.copyright">
+            <div>
+                <div class="ion-padding">
+                    <div class="font-14-new view-credits" (click)="showLicensce()">
+                        <span>
+                            <strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong>
+                        </span>
+                        <span *ngIf="showCredits">
+                            <ion-icon name="ios-arrow-up"></ion-icon>
+                        </span>
+                        <span *ngIf="!showCredits">
+                            <ion-icon name="ios-arrow-down"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="showCredits" class="showLicensce">
+                    <div class="ion-padding">
+                        <div *ngIf="content.author">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{'AUTHOR' | translate}}</strong>:
+                            </ion-card-title>
+                            <p>{{content.author}}</p>
+                        </div>
+                        <div *ngIf="content.creator">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'CREATORS' | translate:{'%s': appName} }}</strong>:
+                            </ion-card-title>
+                            <p>{{content.creator}} </p>
+                        </div>
+                        <div *ngIf="content.organisation">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
+                            </ion-card-title>
+                            <p>{{content.organisation}} </p>
+                        </div>
+                        <div *ngIf="content.contributors || content.creators || content.attributions">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'ATTRIBUTIONS' | translate }}</strong>:
+                            </ion-card-title>
+                            <p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
+                        </div>
+                        <div *ngIf="content.license && !content.licenseDetails">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'LICENSE' | translate }}</strong>:
+                            </ion-card-title>
+                            <p>{{content.license}}</p>
+                        </div>
+                        <div *ngIf="licenseDetails" class="ion-padding-bottom">
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'LICENSE' | translate }}</strong>:
+                            </ion-card-title>
+                            <div>{{licenseDetails.name}}</div>
+                            <div>{{licenseDetails.description}}</div>
+                            <span (click)="openBrowser(licenseDetails.url)"
+                                  class="sb-legal-url">{{licenseDetails.url}}</span>
+                        </div>
+                        <div *ngIf="content.copyright">
+
+                            <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                <strong>{{ 'COPYRIGHT' | translate }}</strong>:
+                            </ion-card-title>
+                            <p>{{content.copyright}}{{content.copyrightYear ? ", " + content.copyrightYear : ""}}
+                            </p>
+                        </div>
+                    </div>
+                    <!--training derived from section starts-->
+                    <div class="origin-data" *ngIf="content.originData">
+                        <div class="font-14 traning-derived-label-background ion-padding-bottom">
+                            <span><strong>{{'CONTENT_DERIVED_FROM' | translate}}</strong></span>
+                        </div>
+                        <div class="ion-padding">
+                            <div *ngIf="content.originData.name">
+                                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                    <strong> {{'ORIGINAL_CONTENT' | translate}}</strong>:
+                                </ion-card-title>
+                                <p>{{content.originData.name}}</p>
+                            </div>
+                            <div *ngIf="content.originData.author">
+
+                                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                    <strong>{{ 'ORIGINAL_AUTHOR' | translate }}</strong>:
+                                </ion-card-title>
+                                <p>{{content.originData.author}}</p>
+                            </div>
+
+                            <div *ngIf="content.originData.license">
+                                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                    <strong>{{ 'LICENSE' | translate }}</strong>:
+                                </ion-card-title>
+                                <p>{{content.originData.license}}</p>
+                            </div>
+
+                            <div *ngIf="content.originData.organisation">
+                                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                                    <strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
+                                </ion-card-title>
+                                <p>{{content.originData.organisation[0]}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / training derived from section ends -->
+                </div>
+            </div>
+        </div>
+        <!--/credits and license info-->
+    </ion-card-content>
+</ion-card>

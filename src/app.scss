@@ -1483,3 +1483,9 @@ body {
 .required-asterisk{
   color: map-get($colors, red);
 }
+
+.cd-license-card {
+  ion-card {
+    margin-left: 0;
+  }
+}

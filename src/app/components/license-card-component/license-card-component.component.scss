@@ -1,0 +1,23 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
+
+.view-credits{
+  margin-bottom: 8px;
+  margin-left: 0;
+  span{
+    color: $blue;
+    ion-icon{
+      padding: 0 0 4px 8px;
+      vertical-align: middle;
+      font-size: 18px;
+      margin-right: 2%;
+      float: right;
+    }
+  }
+
+}
+.showLicensce{
+  p{
+    margin-bottom: 16px;
+  }
+}
