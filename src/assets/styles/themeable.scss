@@ -15,7 +15,7 @@ html[data-theme="JOYFUL"]{
   --app-brown:#4F2C0D;
 
   --app-green:#008840;
-  --joyful-light-green:#BFE1CF; // take it out
+  --app-light-green:#BFE1CF; // take it out
 
   --app-shadow:rgba(0,0,0,0.1);
 
@@ -547,7 +547,7 @@ html[data-theme="JOYFUL"]{
     .self-declare-btn{
       margin: 8px !important;
       padding: 8px;
-      background-color: var(--joyful-light-green);
+      background-color: var(--app-light-green);
       border-radius: 16px;
       ion-button{
         --background: var(--app-green) !important;
@@ -822,6 +822,40 @@ html[data-theme="JOYFUL"]{
     .sb-curiculum{
       border: none !important;
       border-radius: 12px !important;
+      .title{
+        color: var(--app-primary) !important;
+        font-weight: bold;
+      }
+      .sb-curiculum__chapter{
+        padding-top: 0.5rem !important;
+      }
+    }
+
+    sb-accordion-item{
+      .sbaccordion{
+        border-radius: 1rem !important;
+        overflow: hidden;
+        box-shadow: var(--block-style-shadow) !important;
+        .sbaccordion__panel{
+          margin-bottom: 0 !important;
+        }
+      }
+      .sbaccordion__panel-content{
+        background-color: var(--app-secondary-background) !important;
+        border-color: transparent !important;
+      }
+      .sbaccordion__panel-header{
+        border-color: transparent !important;
+      }
+    }
+    .sb-content__bar{
+      border-radius: 1rem;
+    }
+    .sbchapter__item{
+      border-radius: 1rem;
+      border-color: transparent !important;
+      background: var(--app-white) !important;
+      box-shadow: var(--button-style-shadow);
     }
   }
 
@@ -994,7 +1028,7 @@ html[data-theme="JOYFUL"]{
     }
   }
 
-  .tutorial-popover, .download-popover, .leave-training-popup {
+  .tutorial-popover, .download-popover, .leave-training-popup, .cd-leave-training-popup {
     .popover-content{
       border-radius: 1rem !important;
     }
@@ -1283,6 +1317,44 @@ html[data-theme="JOYFUL"]{
   app-content-rating-alert{
     .popover-ratings{
       padding: 0 1rem !important;
+    }
+  }
+
+  app-chapter-details{
+    .cd-header-container{
+      border-radius: 1rem;
+      background-color: var(--app-white);
+      padding: 0 !important;
+      .cd-title-container{
+        padding: 16px 16px 0 !important;
+      }
+      .new-div{
+        padding-left: 16px;
+        padding-right: 16px;
+        .enrolled-course-card-button{
+          border-radius: 2rem !important;
+          background-color: var(--app-primary) !important;
+        }
+      }
+      ion-card-content{
+        margin: 0 16px;
+        .sb-course-complete-container{
+          border-radius: 16px;
+        }
+        .sb-course-progress-container{
+          background-color: var(--joyful-light-yellow) !important;
+          border-radius: 1rem;
+        }
+      }
+      .cd-flex-container{
+        padding: 16px;
+        background-color: var(--joyful-light-blue);
+        border-radius: 1rem;
+        .cd-chapter-card-button{
+          border-radius: 2rem !important;
+          background-color: var(--app-primary) !important;
+        }
+      }
     }
   }
 
