@@ -41,11 +41,14 @@
 									{{eachSyllabus.name}}&lrm;</ion-select-option>
 							</ion-select>
 						</ion-item>
-						<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
-							[style.background-color]="btnColor">
-							{{ 'BOARD_OPTION_TEXT' | translate }}
-							<ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
-						</button>
+						<div class="ps-board">
+							<div class="ps-board-label">{{'BOARD' | translate}}</div>
+							<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block"
+								[style.background-color]="btnColor">
+								{{ 'BOARD_OPTION_TEXT' | translate }}
+								<ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

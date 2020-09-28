@@ -2,6 +2,9 @@
   <div class="ui-content">
     <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
     <div class="profile-info padding-top-10 padding-bottom-10 ion-text-center">
+      <div class="profile-icon">
+        <img src="./assets/imgs/guest_profile.svg" alt="guest-profile">
+      </div>
       <p class="profile-name">
         <span class="user">{{profile?.handle | titlecase}}</span>
         <span>
