@@ -1991,7 +1991,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
