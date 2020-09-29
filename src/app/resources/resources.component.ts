@@ -45,7 +45,7 @@ import {
   RouterLinks,
   FormConfigCategories,
   PrimaryCategory,
-  Search
+  Search, ViewMore
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -913,7 +913,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToCollection({ content: item, corRelation: corRelationList });
+      this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
@@ -1180,14 +1180,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   navigateToViewMoreContentsPage(section) {
-    const pageName = 'TV Programs';
     const params: NavigationExtras = {
       state: {
         requestParams: {
           request: section.searchCriteria
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        pageName : ViewMore.PAGE_TV_PROGRAMS
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);

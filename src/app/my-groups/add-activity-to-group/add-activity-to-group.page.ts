@@ -1,12 +1,13 @@
 import { Location } from '@angular/common';
 import { AppHeaderService } from './../../../services/app-header.service';
-import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import {
+    Component, ViewEncapsulation, OnInit, OnDestroy
+} from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-    Environment,
-    ImpressionType,
-    PageId
+    Environment, ImpressionType, InteractSubtype, InteractType,
+    PageId, CorReleationDataType
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -109,15 +110,30 @@ export class AddActivityToGroupPage implements OnInit, OnDestroy {
     }
 
     async search(data) {
+        // Which activity type
+        if (!this.corRelationList) {
+            this.corRelationList = [];
+        }
+        const activityTypeCData = this.corRelationList.find(cData => (cData.type === CorReleationDataType.ACTIVITY_TYPE));
+        if (activityTypeCData) {
+            activityTypeCData.id = data.activityType;
+        } else {
+            this.corRelationList.push({ id: data.activityType, type: CorReleationDataType.ACTIVITY_TYPE });
+        }
+
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
+            undefined, undefined, undefined, this.corRelationList);
+
         this.csGroupAddableBloc.updateState({
-            pageIds:  [],
+            pageIds: [],
             groupId: this.groupId,
             params: {
                 activityList: this.flattenedActivityList,
                 corRelation: this.corRelationList
             }
-        }
-        );
+        });
+
         this.router.navigate([RouterLinks.SEARCH], {
             state: {
                 activityTypeData: data,

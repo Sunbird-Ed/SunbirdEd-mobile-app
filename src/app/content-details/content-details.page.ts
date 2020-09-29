@@ -1408,7 +1408,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       component: CourseCompletionPopoverComponent,
       componentProps: {
         isCertified: this.courseContext['isCertified'],
-        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId)
+        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId),
+        course: this.course ? this.course.content : undefined
       },
       cssClass: 'sb-course-completion-popover',
     });

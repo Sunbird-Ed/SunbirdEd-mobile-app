@@ -33,6 +33,8 @@ import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '.
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -113,6 +115,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockAppVersion: Partial<AppVersion> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -141,7 +146,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentDeleteHandler as ContentDeleteHandler,
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
-            mockContentPlayerHandler as ContentPlayerHandler
+            mockContentPlayerHandler as ContentPlayerHandler,
+            mockCategoryKeyTranslator as CategoryKeyTranslator
         );
     });
 
@@ -1324,6 +1330,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
@@ -1370,10 +1377,8 @@ describe('EnrolledCourseDetailsPage', () => {
                         },
                         cssClass: 'sb-popover info',
                     });
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'TRAININGS_ONLY_REGISTERED_USERS');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'OVERLAY_SIGN_IN');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'OVERLAY_SIGN_IN');
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(1,
                     PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify({}));
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
@@ -1404,6 +1409,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
@@ -1514,7 +1520,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(presentFn).toBeCalled();
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
-                expect(mockCommonUtilService.translateMessage).toBeCalledWith('COURSE_ENROLLED');
+                expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled();
                 expect(mockEvents.publish).toBeCalled();
                 expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
@@ -1948,6 +1954,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('navigateToBatchListPage()', () => {
         it('should return false, not call navigate', async (done) => {
             // arrange
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
             const presentFn = jest.fn(() => Promise.resolve());
@@ -1969,7 +1976,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             await enrolledCourseDetailsPage.navigateToBatchListPage();
             // assert
-            expect(mockRouter.navigate).not.toBeCalled();
+            expect(mockRouter.navigate).toBeCalled();
             done();
         });
     });
@@ -2312,6 +2319,53 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(isModified).toBe(true);
         });
+    });
+
+    it('should dismiss consentPii popup', () => {
+        // arrange
+        const dismissFn = jest.fn(() => Promise.resolve(true));
+        enrolledCourseDetailsPage.loader = {data: '', dismiss: dismissFn} as any;
+        // act
+        enrolledCourseDetailsPage.onConsentPopoverShow();
+        // assert
+        expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+        expect(dismissFn).toHaveBeenCalled();
+    });
+
+    it('shoule invoked after consentPii popup dismissed', () => {
+        jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+            return;
+        });
+        enrolledCourseDetailsPage.onConsentPopoverDismiss();
+    });
+
+    it('should fetch consent PII data', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: {channel: 'sample-channel'},
+            courseId: 'sample-do-id'
+        };
+        mockProfileService.getConsent = jest.fn(() => of([{
+            status: ConsentStatus.ACTIVE,
+            lastUpdatedOn: '02/02/2020'
+        }]));
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
+    });
+
+    it('should fetch consent PII data for catch part', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: {channel: 'sample-channel', userConsent: 'Yes'},
+            courseId: 'sample-do-id'
+        };
+        enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+        mockProfileService.getConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
     });
 
 });

@@ -85,13 +85,8 @@ export class TextbookViewMorePage {
       ContentUtil.getTelemetryObject(item),
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToCollection({
+      this.navService.navigateToDetailPage(item , {
         content: item
-      });
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state: {
-          content: item
-        }
       });
     } else {
       this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI_1', false, 'toastHeader', 3000, 'top');
