@@ -1976,7 +1976,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             await enrolledCourseDetailsPage.navigateToBatchListPage();
             // assert
-            expect(mockRouter.navigate).not.toBeCalled();
+            expect(mockRouter.navigate).toBeCalled();
             done();
         });
     });
