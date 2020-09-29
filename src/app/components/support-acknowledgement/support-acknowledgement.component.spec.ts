@@ -1,5 +1,5 @@
-import { SupportAcknowledgement } from './support-acknowledgement.component';
-import { TranslateService } from '@ngx-translate/core';
+import {SupportAcknowledgement} from './support-acknowledgement.component';
+import {TranslateService} from '@ngx-translate/core';
 
 describe('SupportAcknowledgement', () => {
     let supportAcknowledgement: SupportAcknowledgement;
@@ -32,5 +32,15 @@ describe('SupportAcknowledgement', () => {
             expect(window.open).toBeCalled();
         });
     });
-    
+
+    describe('close popup', () => {
+        it('should emit an event to close popup', () => {
+            supportAcknowledgement.closeEvents = {emit : jest.fn()};
+            // act
+            supportAcknowledgement.close();
+
+            // assert
+            expect(supportAcknowledgement.closeEvents.emit).toHaveBeenCalledWith(true);
+        });
+    });
 });

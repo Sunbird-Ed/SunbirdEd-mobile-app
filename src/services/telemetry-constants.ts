@@ -464,8 +464,11 @@ export enum InteractSubtype {
     CLOSE_ICON = 'close-icon',
     OUTSIDE = 'outside',
     QR_NOT_LINKED = 'qr-not-linked',
+    GROUP_CLICKED = 'group-clicked',
     ADD_MEMBER_CLICKED = 'add-member-clicked',
     ADD_ACTIVITY_CLICKED = 'add-activity-clicked',
+    ACTIVITY_TYPE_CLICKED = 'activity-type-clicked',
+    SELECT_NESTED_ACTIVITY_CLICKED = 'select-nested-activity-clicked',
     DELETE_GROUP_CLICKED = 'delete-group-clicked',
     LEAVE_GROUP_CLICKED = 'leave-group-clicked',
     MAKE_GROUP_ADMIN_CLICKED = 'make-group-admin-clicked',
@@ -550,6 +553,7 @@ export enum CorReleationDataType {
     NOTIFICATION_ID = 'NotificationID',
     GROUP_ID = 'GroupId',
     CONTENT_TYPE = 'ContentType',
+    ACTIVITY_TYPE = 'ActivityType',
     /* New Telemetry for Telemetry Structure change
     * for old telemetry structure please add in above
     */

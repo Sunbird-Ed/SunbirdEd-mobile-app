@@ -1,5 +1,5 @@
 <ion-list lines="none" *ngIf="!showChapterActions">
-  <ion-item (click)="unenroll()">{{ 'UNENROLL_FROM_COURSE' | translate }}</ion-item>
+  <ion-item (click)="unenroll()">{{'FRMELEMNTS_LBL_UNENROLL_FROM_COURSE' | categoryKeyTranslate : content}}</ion-item>
 </ion-list>
 <ion-list lines="none" *ngIf="showChapterActions">
   <ion-item (click)="download()" *ngIf="downloadIdentifiers.size">{{ 'DOWNLOAD' | translate }}</ion-item>

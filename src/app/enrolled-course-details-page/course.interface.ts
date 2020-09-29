@@ -9,4 +9,6 @@ export interface EnrollCourse {
     telemetryObject?: TelemetryObject;
     objRollup?: Rollup;
     corRelationList?: Array<CorrelationData>;
+    channel?: string;
+    userConsent?: string;
 }

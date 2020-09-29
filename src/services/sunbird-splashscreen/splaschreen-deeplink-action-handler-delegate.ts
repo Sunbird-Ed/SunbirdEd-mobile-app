@@ -699,7 +699,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               break;
           }
           break;
-        case -1 || 1:
+        case -1:
+        case 1:
           switch (ContentUtil.isTrackable(content)) {
             case 1:
               if (this.appGlobalServices.isGuestUser) { // guest user
@@ -740,7 +741,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 }
               }
               break;
-            case -1 || 0:
+            case -1:
+            case 0:
               this.setTabsRoot();
               this.navService.navigateToContent({
                 content: this.childContent,
@@ -750,6 +752,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
+              this.sbProgressLoader.hide({id: content.identifier});
               break;
           }
           break;
