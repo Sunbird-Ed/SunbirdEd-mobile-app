@@ -531,7 +531,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
-    if (!this.localCourseService.isEnrollable(this.batches)) {
+    if (!this.localCourseService.isEnrollable(this.batches, this.courseContentData)) {
       return false;
     }
 
