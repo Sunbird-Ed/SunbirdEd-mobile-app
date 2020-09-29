@@ -60,7 +60,9 @@ describe('ChapterDetailsPage', () => {
     const mockEvents: Partial<Events> = {};
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockFileSizePipe: Partial<FileService> = {};
-    const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockLocalCourseService: Partial<LocalCourseService> = {
+        isEnrollable: jest.fn(() => true)
+    };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockPreferences: Partial<SharedPreferences> = {

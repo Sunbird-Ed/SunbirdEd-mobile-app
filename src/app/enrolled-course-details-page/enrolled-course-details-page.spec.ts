@@ -1954,6 +1954,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('navigateToBatchListPage()', () => {
         it('should return false, not call navigate', async (done) => {
             // arrange
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
             const presentFn = jest.fn(() => Promise.resolve());
