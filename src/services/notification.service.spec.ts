@@ -3,11 +3,13 @@ import { UtilityService } from './utility-service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
 
   const mockUtilityService: Partial<UtilityService> = {};
+  const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockAppVersion: Partial<AppVersion> = {};
   const mockLocalNotifications: Partial<LocalNotifications> = {};
   const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -15,9 +17,10 @@ describe('LocalCourseService', () => {
   beforeAll(() => {
     notificationService = new NotificationService(
       mockUtilityService as UtilityService,
+      mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
       mockLocalNotifications as LocalNotifications,
-      mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+      mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
     );
   });
 

@@ -1588,6 +1588,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       PageId.COURSE_DETAIL, this.telemetryObject,
       reqvalues,
       this.objRollup);
+    
+    if (!this.localCourseService.isEnrollable(this.batches)) {
+      return false;
+    }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
@@ -2001,7 +2005,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   onTocCardClick(event) {
-    // If from group flow then should not go to next page.
+    // if from group flow then should not go to next page.
     if (this.isFromGroupFlow) {
       return;
     }
@@ -2010,6 +2014,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     // }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+      return false;
+    }
+
+    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
