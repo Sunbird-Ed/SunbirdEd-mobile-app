@@ -1375,16 +1375,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.sbProgressLoader.hide({ id: this.identifier });
   }
 
-  showLicensce() {
-    this.showCredits = !this.showCredits;
-
-    if (this.showCredits) {
-      this.licenseSectionClicked('expanded');
-    } else {
-      this.licenseSectionClicked('collapsed');
-    }
-  }
-
   editDataSettings() {
     this.showShareData = !this.showShareData;
   }
@@ -1708,20 +1698,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    */
   viewCredits() {
     this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
-  }
-  licenseSectionClicked(params) {
-    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
-      '',
-      undefined,
-      PageId.COURSE_DETAIL,
-      telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList,
-      ID.LICENSE_CARD_CLICKED
-    );
   }
 
   getContentState(returnRefresh: boolean) {

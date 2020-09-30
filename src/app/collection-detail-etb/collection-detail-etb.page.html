@@ -117,107 +117,11 @@
   <div *ngIf="contentDetail?.contentData?.author || contentDetail?.contentData?.organisation 
         ||contentDetail?.contentData?.license || licenseDetails || contentDetail?.contentData?.copyright">
     <div class="ion-padding-end">
-      <ion-card>
-        <div class="credit-label-padding">
-          <div class="font-14 view-credits" (click)="showLicensce()">
-            <span><strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong></span>
-            <span *ngIf="showCredits">
-              <ion-icon name="ios-arrow-up"></ion-icon>
-            </span>
-            <span *ngIf="!showCredits">
-              <ion-icon name="ios-arrow-down"></ion-icon>
-            </span>
-          </div>
-        </div>
-        <div *ngIf="showCredits" class="showLicensce">
-          <div class="ion-padding">
-            <div *ngIf="contentDetail?.contentData?.author">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{'AUTHOR' | translate}}</strong>:
-              </ion-card-title>
-              <p>{{contentDetail?.contentData?.author}}</p>
-            </div>
-            <div *ngIf="contentDetail?.contentData?.creator">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'CREATORS' | translate:{'%s': appName} }}</strong>:
-              </ion-card-title>
-              <p>{{contentDetail?.contentData?.creator}} </p>
-            </div>
-            <div *ngIf="contentDetail?.contentData?.organisation">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
-              </ion-card-title>
-              <p>{{contentDetail?.contentData?.organisation}} </p>
-            </div>
-            <div
-              *ngIf="contentDetail?.contentData?.contributors || contentDetail?.contentData?.creators || contentDetail?.contentData?.attributions">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'ATTRIBUTIONS' | translate }}</strong>:
-              </ion-card-title>
-              <p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
-            </div>
-            <div *ngIf="contentDetail?.contentData?.license && !licenseDetails">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'LICENSE' | translate }}</strong>:
-              </ion-card-title>
-              <p>{{contentDetail?.contentData?.license}}</p>
-            </div>
-            <div *ngIf="licenseDetails" class="ion-padding-bottom">
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'LICENSE' | translate }}</strong>:
-              </ion-card-title>
-              <div>{{licenseDetails.name}}</div>
-              <div>{{licenseDetails.description}}</div>
-              <span (click)="openBrowser(licenseDetails.url)" class="sb-legal-url">{{licenseDetails.url}}</span>
-            </div>
-            <div *ngIf="contentDetail?.contentData?.copyright">
-
-              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                <strong>{{ 'COPYRIGHT' | translate }}</strong>:
-              </ion-card-title>
-              <p>
-                {{contentDetail?.contentData?.copyright}}{{contentDetail?.contentData?.copyrightYear ? ", " + contentDetail?.contentData?.copyrightYear : ""}}
-              </p>
-            </div>
-          </div>
-          <!--training derived from section starts-->
-          <div class="origin-data" *ngIf="contentDetail?.contentData?.originData">
-            <div class="font-14 traning-derived-label-background ion-padding-bottom">
-              <span><strong>{{'CONTENT_DERIVED_FROM' | translate}}</strong></span>
-            </div>
-            <div class="ion-padding">
-              <div *ngIf="contentDetail?.contentData?.originData.name">
-                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                  <strong> {{'ORIGINAL_CONTENT' | translate}}</strong>:
-                </ion-card-title>
-                <p>{{contentDetail?.contentData?.originData.name}}</p>
-              </div>
-              <div *ngIf="contentDetail?.contentData?.originData.author">
-
-                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                  <strong>{{ 'ORIGINAL_AUTHOR' | translate }}</strong>:
-                </ion-card-title>
-                <p>{{contentDetail?.contentData?.originData.author}}</p>
-              </div>
-
-              <div *ngIf="contentDetail?.contentData?.originData.license">
-                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                  <strong>{{ 'LICENSE' | translate }}</strong>:
-                </ion-card-title>
-                <p>{{contentDetail?.contentData?.originData.license}}</p>
-              </div>
-
-              <div *ngIf="contentDetail?.contentData?.originData.organisation">
-                <ion-card-title class="font-12 subtitle-color label-margin-bottom">
-                  <strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
-                </ion-card-title>
-                <p>{{contentDetail?.contentData?.originData.organisation[0]}}</p>
-              </div>
-            </div>
-          </div>
-          <!-- / training derived from section ends -->
-        </div>
-      </ion-card>
+      <app-license-card-component [content]="contentDetail?.contentData"
+                                  [licenseDetails]="licenseDetails"
+                                  [appName]="appName" [objRollup]="objRollup"
+                                  [corRelationList]="corRelationList"
+                                  [pageId]="pageId"></app-license-card-component>
     </div>
   </div>
 </ion-content>
