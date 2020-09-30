@@ -83,7 +83,6 @@
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
         <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center">
-          {{activitySearchQuery}}
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
             <img src="assets/imgs/no_activity.svg" alt="">
           </div>
