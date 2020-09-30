@@ -566,15 +566,6 @@ export class CollectionDetailEtbPage implements OnInit {
       });
   }
 
-  showLicensce() {
-    this.showCredits = !this.showCredits;
-    if (this.showCredits) {
-      this.licenseSectionClicked('expanded');
-    } else {
-      this.licenseSectionClicked('collapsed');
-    }
-  }
-
   /**
    * Function to extract api response.
    */
@@ -1143,21 +1134,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.telemetryObject,
       values, this.objRollup,
       this.corRelationList);
-  }
-
-  licenseSectionClicked(params) {
-    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
-      '',
-      undefined,
-      PageId.COLLECTION_DETAIL,
-      telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList,
-      ID.LICENSE_CARD_CLICKED
-    );
   }
 
   /**
