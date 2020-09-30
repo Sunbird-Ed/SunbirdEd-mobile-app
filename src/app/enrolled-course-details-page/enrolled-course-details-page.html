@@ -356,107 +356,14 @@
 				</ion-card-content>
 			</ion-card>
 			<!--credits and license info-->
-			<ion-card *ngSwitchCase="'info'">
-				<ion-card-content class="ion-no-padding">
-					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
-						<div>
-							<div class="ion-padding">
-									<div class="font-14-new view-credits" (click)="showLicensce()">
-										<span><strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong></span>
-										<span *ngIf="showCredits">
-											<ion-icon name="ios-arrow-up"></ion-icon>
-										</span>
-										<span *ngIf="!showCredits">
-											<ion-icon name="ios-arrow-down"></ion-icon>
-										</span>
-									</div>
-							</div>
-							<div *ngIf="showCredits" class="showLicensce">
-								<div class="ion-padding">
-									<div *ngIf="course?.author">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{'AUTHOR' | translate}}</strong>:
-										</ion-card-title>
-										<p>{{course?.author}}</p>
-									</div>
-									<div *ngIf="course?.organisation">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
-										</ion-card-title>
-										<p>{{course?.organisation}} </p>
-									</div>
-									<div *ngIf="course?.contributors || course?.creators || course?.attributions">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{ 'ATTRIBUTIONS' | translate }}</strong>:
-										</ion-card-title>
-										<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
-									</div>
-									<div *ngIf="course?.license && !licenseDetails">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{ 'LICENSE' | translate }}</strong>:
-										</ion-card-title>
-										<p>{{course?.license}}</p>
-									</div>
-									<div *ngIf="licenseDetails" class="ion-padding-bottom">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{ 'LICENSE' | translate }}</strong>:
-										</ion-card-title>
-										<div>{{licenseDetails.name}}</div>
-										<div>{{licenseDetails.description}}</div>
-										<span (click)="openBrowser(licenseDetails.url)"
-											class="sb-url">{{licenseDetails.url}}</span>
-									</div>
-									<div *ngIf="course?.copyright">
-
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<strong>{{ 'COPYRIGHT' | translate }}</strong>:
-										</ion-card-title>
-										<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}
-										</p>
-									</div>
-								</div>
-								<!--training derived from section starts-->
-								<div class="origin-data" *ngIf="course?.originData">
-									<div class="font-14 traning-derived-label-background ion-padding-bottom">
-										<span><strong>{{'CONTENT_DERIVED_FROM' | translate}}</strong></span>
-									</div>
-									<div class="ion-padding">
-										<div *ngIf="course?.originData.name">
-											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong> {{'ORIGINAL_CONTENT' | translate}}</strong>:
-											</ion-card-title>
-											<p>{{course?.originData.name}}</p>
-										</div>
-										<div *ngIf="course?.originData.author">
-
-											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong>{{ 'ORIGINAL_AUTHOR' | translate }}</strong>:
-											</ion-card-title>
-											<p>{{course?.originData.author}}</p>
-										</div>
-
-										<div *ngIf="course?.originData.license">
-											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong>{{ 'LICENSE' | translate }}</strong>:
-											</ion-card-title>
-											<p>{{course?.originData.license}}</p>
-										</div>
-
-										<div *ngIf="course?.originData.organisation">
-											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
-											</ion-card-title>
-											<p>{{course?.originData.organisation[0]}}</p>
-										</div>
-									</div>
-								</div>
-								<!-- / training derived from section ends -->
-							</div>
-						</div>
-					</div>
-					<!--/credits and license info-->
-				</ion-card-content>
-			</ion-card>
+			<div class="cd-license-card" *ngSwitchCase="'info'">
+				<app-license-card-component [content]="course"
+											[licenseDetails]="licenseDetails"
+											[appName]="appName"
+											[objRollup]="objRollup"
+											[corRelationList]="corRelationList"
+											[pageId]="pageId"></app-license-card-component>
+			</div>
 			<div *ngSwitchCase="'modules'">
 				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy"
 					(tocCardClick)="onTocCardClick($event)" shadowColor="#d2eadd" progressColor="#008840">
