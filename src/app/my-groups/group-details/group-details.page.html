@@ -82,7 +82,8 @@
           <input type="text" [(ngModel)]="searchActivity" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}"
             (ngModelChange)="onActivitySearch(searchActivity)">
         </div>
-        <div *ngIf="!isGroupLoading && (!activityList || !activityList.length)" class="text-center">
+        <div *ngIf="!isGroupLoading && (!flattenedActivityList || !flattenedActivityList.length)" class="text-center">
+          {{activitySearchQuery}}
           <div class="gd-empty-result" *ngIf="!activitySearchQuery">
             <img src="assets/imgs/no_activity.svg" alt="">
           </div>
@@ -96,7 +97,7 @@
             <sb-course-card [isLoading]="true"></sb-course-card>
           </div>
         </div>
-        <div *ngIf="!isGroupLoading">
+        <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length">
           <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8">
             <div class="gd-card-head" *ngIf="activityGroup.items?.length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>

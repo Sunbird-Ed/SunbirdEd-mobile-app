@@ -66,6 +66,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   private unregisterBackButton: Subscription;
   loggedinUser: GroupMember;
   groupCreator: GroupMember;
+  flattenedActivityList = [];
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -202,6 +203,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }, {});
       this.filteredGroupedActivityListMap = { ...this.groupedActivityListMap };
       this.isGroupLoading = false;
+      this.setflattenedActivityList();
     } catch (e) {
       this.isGroupLoading = false;
       console.error(e);
@@ -821,6 +823,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   onActivitySearch(query) {
+    this.activitySearchQuery = query;
     for (const property in this.groupedActivityListMap) {
       if (this.groupedActivityListMap[property].length) {
         this.filteredGroupedActivityListMap[property] = this.groupedActivityListMap[property].filter(
@@ -828,6 +831,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         );
       }
     }
+    this.setflattenedActivityList();
   }
 
   extractInitial(name) {
@@ -908,6 +912,15 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   onViewMoreCardMenuClick(event, activity) {
     return this.activityMenuClick(event);
+  }
+
+  private setflattenedActivityList() {
+    this.flattenedActivityList = [];
+    for (const key in this.filteredGroupedActivityListMap) {
+      if (this.filteredGroupedActivityListMap[key]) {
+        this.flattenedActivityList = [...this.flattenedActivityList , ...this.filteredGroupedActivityListMap[key]];
+      }
+    }
   }
 
 }
