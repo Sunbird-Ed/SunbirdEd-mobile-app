@@ -551,6 +551,7 @@ export enum CorReleationDataType {
     SCAN = 'Scan',
     SOURCE = 'Source',
     NOTIFICATION_ID = 'NotificationID',
+    NOTIFICATION_RECEIVED_AT = 'notification_received_at',
     GROUP_ID = 'GroupId',
     CONTENT_TYPE = 'ContentType',
     ACTIVITY_TYPE = 'ActivityType',
