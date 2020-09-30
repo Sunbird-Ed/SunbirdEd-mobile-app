@@ -203,7 +203,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }, {});
       this.filteredGroupedActivityListMap = { ...this.groupedActivityListMap };
       this.isGroupLoading = false;
-      this.setflattenedActivityList();
+      this.setFlattenedActivityList();
     } catch (e) {
       this.isGroupLoading = false;
       console.error(e);
@@ -831,7 +831,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         );
       }
     }
-    this.setflattenedActivityList();
+    this.setFlattenedActivityList();
   }
 
   extractInitial(name) {
@@ -914,7 +914,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     return this.activityMenuClick(event);
   }
 
-  private setflattenedActivityList() {
+  private setFlattenedActivityList() {
     this.flattenedActivityList = [];
     for (const key in this.filteredGroupedActivityListMap) {
       if (this.filteredGroupedActivityListMap[key]) {
