@@ -537,9 +537,9 @@ describe('Profile.page', () => {
 
     it('should set default trainings limit when called upon', () => {
         // act
-        profilePage.showLessTrainings();
+        profilePage.showLessTrainings('myLearning');
         // assert
-        expect(profilePage.trainingsLimit).toBe(3);
+        expect(profilePage.myLearningLimit).toBe(3);
     });
 
     it('should go to catch part and called showToast message', (done) => {
