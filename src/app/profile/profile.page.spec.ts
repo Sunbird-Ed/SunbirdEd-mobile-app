@@ -523,7 +523,7 @@ describe('Profile.page', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
-        profilePage.showMoreTrainings();
+        profilePage.showMoreTrainings('myLearning');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
