@@ -8,6 +8,12 @@ html[data-theme="DEFAULT"]{
         --background: #{map-get($colors, dark_green)} !important;
       }
     }
+
+    .self-declare-teacher-details{
+      ion-button{
+        --background: #FFFFFF !important;
+      }
+    }
   }
 
   app-enrollment-details{

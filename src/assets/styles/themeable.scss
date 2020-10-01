@@ -593,6 +593,8 @@ html[data-theme="JOYFUL"]{
       ion-button{
         --color: var(--app-white) !important;
         --background: var(--app-primary) !important;
+        border-radius: 1rem;
+        box-shadow: var(--button-style-shadow) !important;
       }
     }
 
