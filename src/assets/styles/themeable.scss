@@ -1369,4 +1369,13 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-sb-progress-loader{
+    ion-content{
+      --background: var(--app-primary-header) !important;
+    }
+    ion-progress-bar{
+      --ion-color-base: var(--app-primary) !important;
+    }
+  }
+
 }
