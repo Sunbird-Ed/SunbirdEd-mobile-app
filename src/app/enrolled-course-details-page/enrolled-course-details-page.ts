@@ -1588,10 +1588,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       PageId.COURSE_DETAIL, this.telemetryObject,
       reqvalues,
       this.objRollup);
-    
-    if (!this.localCourseService.isEnrollable(this.batches)) {
-      return false;
-    }
+
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
@@ -2014,10 +2011,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     // }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
-      return false;
-    }
-
-    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches)) {
       return false;
     }
 
