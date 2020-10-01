@@ -1027,19 +1027,12 @@ describe('QrcoderesultPage', () => {
             };
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
             mockContentService.setContentMarker = jest.fn(() => of(true));
-            mockPlayerService.getPlayerConfig = jest.fn(() => of(mockData));
-            mockEvents.subscribe = jest.fn((topic, fn) => {
-                if (topic === EventTopics.PLAYER_CLOSED) {
-                    fn();
-                }
-            });
-            jest.spyOn(qrcoderesultPage, 'setContentDetails').mockImplementation();
-            mockRouter.navigate = jest.fn();
+            mockContentPlayerHandler.launchContentPlayer = jest.fn();
             // act
             qrcoderesultPage.playContent(mockContentData);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PLAYER}`], {state: {config: mockData}});
+                expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1070,19 +1063,12 @@ describe('QrcoderesultPage', () => {
             };
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
             mockContentService.setContentMarker = jest.fn(() => of(true));
-            mockPlayerService.getPlayerConfig = jest.fn(() => of(mockData));
-            mockEvents.subscribe = jest.fn((topic, fn) => {
-                if (topic === EventTopics.PLAYER_CLOSED) {
-                    fn();
-                }
-            });
-            jest.spyOn(qrcoderesultPage, 'setContentDetails').mockImplementation();
-            mockRouter.navigate = jest.fn();
+            mockContentPlayerHandler.launchContentPlayer = jest.fn();
             // act
             qrcoderesultPage.playContent(mockContentData);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PLAYER}`], {state: {config: mockData}});
+                expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
                 done();
             }, 0);
         });
