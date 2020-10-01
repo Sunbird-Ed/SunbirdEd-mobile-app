@@ -456,6 +456,7 @@
   "FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO": "Do not share my profile details",
   "FRMELEMNTS_LBL_MY_LEARNINGS": "My Learnings",
   "FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION": "Share my profile details",
+  "FRMELEMNTS_LBL_LEARNER_PASSBOOK": "Learner Passbook",
   "FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS": "Update settings",
   "FRMELEMNTS_MSG_BATCH_ALREADY_CLOSED": "Enrolments for this batch closed on {endDate}",
   "FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY": "Your data settings are submitted successfully",
