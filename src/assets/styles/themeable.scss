@@ -1121,7 +1121,7 @@ html[data-theme="JOYFUL"]{
       padding: 0 16px !important;
       font-size: 20px !important;
       text-align: unset !important;
-      margin-top: 32px !important;
+      margin-top: 28px !important;
       ion-icon{
         height: 30px !important;
         width: 60px !important;
@@ -1358,6 +1358,25 @@ html[data-theme="JOYFUL"]{
           border-radius: 2rem !important;
           background-color: var(--app-primary) !important;
         }
+      }
+    }
+  }
+
+  app-consent-pii-popup{
+    .consent-popover-info{
+      background: var(--app-secondary-background) !important;
+    }
+    .sb-popover-toolbar{
+      margin-left: -3px !important;
+    }
+    .save-changes-not-agree{
+      color: var(--app-primary) !important;
+    }
+    .btn-info{
+      text-align: right !important;
+      button{
+        padding: 11px 16px;
+        border: none !important;
       }
     }
   }
