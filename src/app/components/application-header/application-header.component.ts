@@ -385,6 +385,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
       this.appHeaderService.hideStatusBar();
     }
+    this.menuCtrl.close();
   }
 
 }

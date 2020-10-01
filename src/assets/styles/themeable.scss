@@ -35,7 +35,7 @@ html[data-theme="JOYFUL"]{
   }
 
   ion-footer {
-    background: var(--joyful-secondary) !important;
+    background: var(--app-primary-background) !important;
   }
 
   ion-button{
@@ -515,7 +515,6 @@ html[data-theme="JOYFUL"]{
   // guest-profile page
   app-guest-profile{
     .profile-info{
-      // background-color: var(--joyful-tertiary);
       background-color: transparent;
       border-radius: 0 0 0 16px;
       margin-top: 55px !important;
@@ -533,7 +532,6 @@ html[data-theme="JOYFUL"]{
   // profile-page
   app-profile{
     .basic-profile-details{
-      // background-color: var(--joyful-tertiary);
       background-color: transparent;
       margin-top: 55px;
       .profile-avatar{
@@ -593,6 +591,8 @@ html[data-theme="JOYFUL"]{
       ion-button{
         --color: var(--app-white) !important;
         --background: var(--app-primary) !important;
+        border-radius: 1rem;
+        box-shadow: var(--button-style-shadow) !important;
       }
     }
 
@@ -782,7 +782,7 @@ html[data-theme="JOYFUL"]{
     }
   }
   .dm-header{
-    background-color: var(--joyful-warning);
+    background-color: var(--app-primary-header);
     border-bottom-left-radius: 20px;
   }
   .qr-content {
@@ -918,6 +918,7 @@ html[data-theme="JOYFUL"]{
           border: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
           padding: 8px 16px 4px 0 !important;
+          border-radius: 0 !important;
         }
         input:focus{
           outline: none !important;
@@ -1378,6 +1379,12 @@ html[data-theme="JOYFUL"]{
         padding: 11px 16px;
         border: none !important;
       }
+    }
+  }
+  
+  app-toast-navigation{
+    div{
+      color: var(--app-gray);
     }
   }
 
