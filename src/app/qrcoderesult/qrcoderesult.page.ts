@@ -58,6 +58,7 @@ import { map } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
 import { UtilityService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import {ContentInfo} from '@app/services/content/content-info';
 declare const cordova;
 
 @Component({
@@ -454,7 +455,7 @@ export class QrcoderesultPage implements OnDestroy {
   /**
    * Play content
    */
-  playContent(content: Content) {
+  playContent(content: Content, isStreaming: boolean, contentInfo?: ContentInfo) {
     const extraInfoMap = { hierarchyInfo: [] };
     if (this.cardData && this.cardData.hierarchyInfo) {
       extraInfoMap.hierarchyInfo = this.cardData.hierarchyInfo;
@@ -471,12 +472,16 @@ export class QrcoderesultPage implements OnDestroy {
       .then(() => {
       }).catch(() => {
       });
-    const request: any = {};
-    request.streaming = true;
     AppGlobalService.isPlayerLaunched = true;
     const values = new Map();
-    values['isStreaming'] = request.streaming;
-    this.openPlayer(content, request);
+    values['isStreaming'] = isStreaming;
+    const localContentInfo: ContentInfo = {
+      telemetryObject: ContentUtil.getTelemetryObject(content),
+      rollUp: ContentUtil.generateRollUp(content.hierarchyInfo, content.identifier),
+      correlationList: this.corRelationList,
+      hierachyInfo: content.hierarchyInfo,
+      course: undefined
+    };
     this.interactEventForPlayAndDownload(content, true);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -487,9 +492,15 @@ export class QrcoderesultPage implements OnDestroy {
       undefined,
       undefined,
       this.corRelationList);
+    this.contentPlayerHandler.launchContentPlayer(content,
+        isStreaming,
+        false,
+        contentInfo ? contentInfo : localContentInfo,
+        false,
+        false);
   }
 
-  playOnline(content) {
+  playOnline(content, isStreaming: boolean) {
     const telemetryObject = ContentUtil.getTelemetryObject(content);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
@@ -507,7 +518,14 @@ export class QrcoderesultPage implements OnDestroy {
         rollup,
         this.corRelationList
       );
-      this.playContent(content);
+      const contentInfo: ContentInfo = {
+        telemetryObject,
+        rollUp: rollup,
+        correlationList: this.corRelationList,
+        hierachyInfo: content.hierarchyInfo,
+        course: undefined
+      };
+      this.playContent(content, isStreaming, contentInfo);
     } else {
       this.navigateToDetailsPage(content);
     }
@@ -616,8 +634,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   /**
-   * @param categoryList
-   * @param data
+   * categoryList
+   * data
    * @param categoryType
    * return the code of board,medium and subject based on Name
    */
@@ -628,12 +646,6 @@ export class QrcoderesultPage implements OnDestroy {
       return undefined;
     }
   }
-
-  /**
-   * comparing current profile data with qr result data, If not matching then reset current profile data
-   * @param {object} data
-   * @param {object} profile
-   */
   /**
    * Subscribe genie event to get content download progress
    */
@@ -821,46 +833,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
 
     return false;
-  }
-
-  private openPlayer(playingContent, request) {
-    this.playerService.getPlayerConfig(playingContent, request).subscribe((data) => {
-      data['data'] = {};
-      this.events.subscribe(EventTopics.PLAYER_CLOSED, () => {
-        this.setContentDetails(playingContent.identifier, true);
-        this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-      });
-      this.generateNewImpressionEvent();
-      if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
-        if (!request.streaming) {
-          this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-            this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
-              data['data'] = json;
-              const navigationExtras: NavigationExtras = { state: { config: data } };
-              this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
-            }).catch((error) => {
-              console.error('error1', error);
-            });
-          }).catch((err) => {
-            console.error('err', err);
-            this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
-              data['data'] = json;
-              const navigationExtras: NavigationExtras = { state: { config: data } };
-              this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
-            }).catch((e) => {
-              console.error('readJSON error', e);
-            });
-          });
-        } else {
-          const navigationExtras: NavigationExtras = { state: { config: data } };
-          this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
-        }
-
-      } else {
-        const navigationExtras: NavigationExtras = { state: { config: data } };
-        this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
-      }
-    });
   }
 
   handleHeaderEvents($event) {

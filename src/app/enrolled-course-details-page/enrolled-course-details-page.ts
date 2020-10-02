@@ -626,7 +626,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
               // this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('UNENROL_FALIURE'));
+              this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UNABLE_TO_ENROLL'));
             }
           });
         });
@@ -1588,9 +1588,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       PageId.COURSE_DETAIL, this.telemetryObject,
       reqvalues,
       this.objRollup);
-    if (!this.localCourseService.isEnrollable(this.batches, this.course)) {
-      return false;
-    }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
@@ -2011,10 +2008,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     // if (this.csGroupAddableBloc.state) {
     //   return;
     // }
-
-    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
-      return false;
-    }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;
