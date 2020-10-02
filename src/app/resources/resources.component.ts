@@ -1208,8 +1208,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         state: {
           showHeader: true,
           corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          title: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_REQUEST_CONTENT'),
+          subTitle: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_RELEVANT_CONTENT_SUB_HEADING'),
           formConfig,
           submitDetails: {
             label: this.commonUtilService.translateMessage('BTN_SUBMIT')
