@@ -896,7 +896,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('UNENROL_FALIURE'));
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_MSG_UNABLE_TO_ENROLL'));
                 done();
             }, 0);
         });
