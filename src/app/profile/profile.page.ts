@@ -98,7 +98,8 @@ export class ProfilePage implements OnInit {
   readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
   rolesLimit = 2;
   badgesLimit = 2;
-  trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
@@ -373,8 +374,15 @@ export class ProfilePage implements OnInit {
     this.badgesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
 
-  showMoreTrainings(): void {
-    this.trainingsLimit = this.mappedTrainingCertificates.length;
+  showMoreTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.mappedTrainingCertificates.length;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.learnerPassbook.length;
+        break;
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
@@ -384,8 +392,16 @@ export class ProfilePage implements OnInit {
       undefined);
   }
 
-  showLessTrainings(): void {
-    this.trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  showLessTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+    }
+    
   }
 
   /**
