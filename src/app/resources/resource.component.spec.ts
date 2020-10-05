@@ -44,6 +44,7 @@ import {ContentFilterConfig, EventTopics, PreferenceKey, RouterLinks, ViewMore} 
 import {ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
+import { FormService } from '@project-sunbird/sunbird-sdk';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -119,6 +120,7 @@ describe('ResourcesComponent', () => {
             onFrameworkSelectionSubmit: jest.fn()
         }
     };
+    const mockFormService: Partial<FormService> = {};
 
 
     const constructComponent = () => {
@@ -129,6 +131,7 @@ describe('ResourcesComponent', () => {
             mockframeworkService as FrameworkService,
             mockContentService as ContentServiceImpl,
             mockSharedPreference as SharedPreferences,
+            mockFormService as FormService,
             mockSplashScreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockNgZone as NgZone,
             mockQRScanner as SunbirdQRScanner,
@@ -303,26 +306,28 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
-            mockContentService.aggregateContent = jest.fn(() => of({
-                title: JSON.stringify({en: 'TV Programs'}),
-                orientation: 'horizontal',
-                section: {
-                    sections: [
-                        {
-                            contents: [
-                                {
-                                    appIcon: 'https:',
-                                }
-                            ],
-                            name: 'mathematics',
-                            display: {
-                                name: {
-                                    en: 'Mathematics'
-                                }
+            mockContentService.buildContentAggregator = jest.fn(() => ({
+                handle: jest.fn(() => of({
+                    title: JSON.stringify({en: 'TV Programs'}),
+                    orientation: 'horizontal',
+                    section: {
+                        sections: [
+                            {
+                                contents: [
+                                    {
+                                        appIcon: 'https:',
+                                    }
+                                ],
+                                name: 'mathematics',
+                                display: {
+                                    name: {
+                                        en: 'Mathematics'
+                                    }
+                                },
                             },
-                        },
-                    ]
-                }
+                        ]
+                    }
+                }))
             }));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
@@ -334,7 +339,7 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.aggregateContent).toHaveBeenCalled();
+                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -354,7 +359,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
-            mockContentService.aggregateContent = jest.fn(() => of({
+            mockContentService.buildContentAggregator = jest.fn(() => ({
+               handle: jest.fn(() => of({
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
                 section: {
@@ -377,6 +383,7 @@ describe('ResourcesComponent', () => {
                         gradeLevel: ['class 1', 'class 2']
                     }
                 }
+               }))
             }));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
@@ -389,7 +396,7 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.aggregateContent).toHaveBeenCalled();
+                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -409,7 +416,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockContentService.aggregateContent = jest.fn(() => of({
+            mockContentService.buildContentAggregator = jest.fn(() => ({
+               handle: jest.fn(() => of({
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
                 section: {
@@ -429,6 +437,7 @@ describe('ResourcesComponent', () => {
                         },
                     ]
                 }
+               }))
             } as ContentsGroupedByPageSection));
             mockCommonUtilService.networkInfo.isNetworkAvailable = false;
             mockNgZone.run = jest.fn((fn) => fn());
@@ -439,7 +448,7 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.aggregateContent).toHaveBeenCalled();
+                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -471,7 +480,6 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.aggregateContent).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 // expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('http://sample.path');
                 done();
@@ -1445,7 +1453,7 @@ describe('ResourcesComponent', () => {
 
     it('should navigate To ViewMoreContentsPage for horizontal section', () => {
         const request = {
-            searchCriteria: {},
+            searchCriteria: undefined,
             title: JSON.stringify({en: 'TV Programs'})
         };
         mockCommonUtilService.getTranslatedValue = jest.fn(() => 'TV Programs');

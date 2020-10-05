@@ -20,6 +20,7 @@ import {
   CorrelationData,
   EventsBusEvent,
   EventsBusService,
+  FormService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
@@ -243,6 +244,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -486,7 +488,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.aggregateContent(request).toPromise()
+    this.contentService.buildContentAggregator(this.formService).handle(request).toPromise()
       .then((response: ContentAggregatorResponse) => {
         this.ngZone.run(() => {
           this.dynamicResponse = response.result;
@@ -1183,7 +1185,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const params: NavigationExtras = {
       state: {
         requestParams: {
-          request: section.searchCriteria
+          request: section.searchRequest
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         pageName : ViewMore.PAGE_TV_PROGRAMS
