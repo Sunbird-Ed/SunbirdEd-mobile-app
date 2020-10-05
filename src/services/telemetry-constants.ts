@@ -326,7 +326,7 @@ export enum InteractSubtype {
     INITIAL_CONFIG = 'initial-config',
     FILTER_CONFIG = 'filter-config',
     APPLY_FILTER_CLICKED = 'apply-filter-clicked',
-    PROFILE_ATTRIBUTE_CHANGED = 'profile-attribute-changed',
+    PROFILE_ATTRIBUTE_CHANGED = 'profile_attribute_changed',
     SAVE_CLICKED = 'save-clicked',
     FINISH_CLICKED = 'finish-clicked',
     DEVICE_BACK_CLICKED = 'device-back-clicked',
