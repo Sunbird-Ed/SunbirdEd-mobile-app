@@ -111,6 +111,11 @@ html[data-theme="JOYFUL"]{
         background-color: var(--app-primary) !important;
       }
     }
+
+    .alert-button-inner.sc-ion-alert-md{
+      background-color: var(--app-white) !important;
+      color: var(--app-primary) !important;
+    }
   }
 
   ion-card{
