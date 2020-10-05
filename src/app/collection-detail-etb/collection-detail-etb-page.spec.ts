@@ -246,30 +246,6 @@ describe('collectionDetailEtbPage', () => {
         }, 0);
     });
 
-    it('should generate license section telemetry', () => {
-        const params = 'expanded';
-        collectionDetailEtbPage.objId = 'sampleId';
-        collectionDetailEtbPage.objType = undefined;
-        collectionDetailEtbPage.objVer = 2;
-        mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        collectionDetailEtbPage.licenseSectionClicked(params);
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.LICENSE_CARD_EXPANDED,
-            '',
-            undefined,
-            PageId.COLLECTION_DETAIL,
-            {
-                id: collectionDetailEtbPage.objId,
-                type: collectionDetailEtbPage.objType,
-                version: collectionDetailEtbPage.objVer
-            },
-            undefined,
-            {},
-            undefined,
-            ID.LICENSE_CARD_CLICKED
-        );
-    });
-
     describe('IonViewWillEnter', () => {
 
         it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
@@ -357,25 +333,6 @@ describe('collectionDetailEtbPage', () => {
             expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
             expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
         });
-    });
-    it('should show license true when user clicked on credits and license', () => {
-        // arrange
-        collectionDetailEtbPage.showCredits = false;
-        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
-        // act
-        collectionDetailEtbPage.showLicensce();
-        // assert
-        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
-    });
-
-    it('should not show license when user clicked on license and credits', () => {
-        // arrange
-        collectionDetailEtbPage.showCredits = true;
-        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
-        // act
-        collectionDetailEtbPage.showLicensce();
-        // assert
-        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
     });
 
     it('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
