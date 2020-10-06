@@ -1078,5 +1078,6 @@
   "DFLT_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this learning activity",																								
   "TBK_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY":	"You have finished this chapter",																								
   "TVC_TRK_CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY":	"You have finished this program",
-  "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use"
+  "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use",
+  "AGREE_TO_CONTINUE_GLOBAL_CONSENT": "I agree to share these details with the Administrators of the State/Institution mentioned above to track my activities on {{app_name}}, as per the "
 }

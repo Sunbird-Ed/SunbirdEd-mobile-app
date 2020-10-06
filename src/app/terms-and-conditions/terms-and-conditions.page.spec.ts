@@ -275,6 +275,7 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
+            mockTncUpdateHandlerService.showGlobalConsentPii = jest.fn(() => Promise.resolve());
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
@@ -282,6 +283,7 @@ describe('TermsAndConditionsPage', () => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
                 setTimeout(() => {
+                    expect(mockTncUpdateHandlerService.showGlobalConsentPii).toHaveBeenCalled();
                     expect(mockRouter.navigate).toHaveBeenCalledWith(['/', RouterLinks.TABS]);
                     expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                     done();

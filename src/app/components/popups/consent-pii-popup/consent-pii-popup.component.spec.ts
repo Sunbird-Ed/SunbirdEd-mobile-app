@@ -1,5 +1,5 @@
 import { ConsentPiiPopupComponent } from './consent-pii-popup.component';
-import { PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService, FormAndFrameworkUtilService, AppGlobalService, UtilityService } from '../../../../services';
 
 describe('ConsentPiiPopupComponent', () => {
@@ -11,6 +11,9 @@ describe('ConsentPiiPopupComponent', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockPopOverCtrl: Partial<PopoverController> = {};
     const mockUtilityService: Partial<UtilityService> = {};
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn()
+    };
 
     beforeAll(() => {
         consentPiiPopupComponent = new ConsentPiiPopupComponent(
@@ -19,6 +22,7 @@ describe('ConsentPiiPopupComponent', () => {
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppGlobalService as AppGlobalService,
             mockUtilityService as UtilityService,
+            mockNavParams as NavParams
         );
     });
 

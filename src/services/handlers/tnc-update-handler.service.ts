@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import {
   AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, UserFeed
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, UserFeed, Consent
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -11,6 +11,8 @@ import { CommonUtilService } from '../common-util.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { AppGlobalService } from '../app-global-service.service';
+import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
+import { ConsentStatus } from '@project-sunbird/client-services/models';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +30,7 @@ export class TncUpdateHandlerService {
     private router: Router,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
+    private popoverCtrl: PopoverController
   ) { }
 
   public async checkForTncUpdate() {
@@ -74,6 +77,9 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    if (await this.isSSOUser(userDetails)) {
+      await this.showGlobalConsentPii(userDetails);
+    }
     if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
       !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
       this.preRequirementToBmcNavigation(profile.userId);
@@ -144,6 +150,53 @@ export class TncUpdateHandlerService {
       }
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+  }
+
+  async showGlobalConsentPii(profile) {
+    const request: Consent = {
+      userId: profile.uid,
+      consumerId: profile.serverProfile.rootOrg.rootOrgId,
+      objectId: profile.uid,
+    };
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    await this.profileService.getConsent(request).toPromise()
+    .then(async (data) => {
+      await loader.dismiss();
+    })
+    .catch(async (error) => {
+      await loader.dismiss();
+      if (error.response.responseCode === 404) {
+        const popover = await this.popoverCtrl.create({
+          component: ConsentPiiPopupComponent,
+          componentProps: {
+            isSSOUser: true
+          },
+          cssClass: 'sb-popover',
+          backdropDismiss: false
+        });
+        await popover.present();
+        const dismissResponse = await popover.onDidDismiss();
+        loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        const req: Consent = {
+          status: ConsentStatus.ACTIVE,
+          userId: profile.uid,
+          consumerId: profile.serverProfile.rootOrg.rootOrgId,
+          objectId: profile.uid,
+        };
+        await this.profileService.updateConsent(req).toPromise()
+          .then(async (data) => {
+            await loader.dismiss();
+          })
+          .catch((err) => {
+            loader.dismiss();
+            if (err.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+            }
+          });
+      }
+    });
   }
 
 }
