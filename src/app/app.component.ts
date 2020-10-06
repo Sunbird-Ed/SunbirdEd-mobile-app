@@ -336,24 +336,23 @@ export class AppComponent implements OnInit, AfterViewInit {
   /* Notification data will be received in data variable
    * can take action on data variable
    */
-  private receiveNotification() {
-    this.preferences.getString('notification_received_at').subscribe(val => {
-      if (val) {
-        const corRelationList: Array<CorrelationData> = [];
-        corRelationList.push({ id: val, type: CorReleationDataType.NOTIFICATION_RECEIVED_AT });
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.FCM,
-          '',
-          Environment.HOME,
-          this.activePageService.computePageId(this.router.url),
-          undefined,
-          undefined,
-          undefined,
-          corRelationList
-        );
-        this.preferences.putString('notification_received_at', null);
-      }
-    });
+  private async receiveNotification() {
+    const val = await this.preferences.getString('notification_received_at').toPromise();
+    if (val) {
+      const corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: val, type: CorReleationDataType.NOTIFICATION_RECEIVED_AT });
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.FCM,
+        '',
+        Environment.HOME,
+        this.activePageService.computePageId(this.router.url),
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
+      );
+      this.preferences.putString('notification_received_at', null).toPromise();
+    }
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
