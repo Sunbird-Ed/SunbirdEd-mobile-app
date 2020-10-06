@@ -503,6 +503,7 @@ export enum ID {
     BACKDROP_CLICKED = 'backdrop-clicked',
     CANCEL_CLICKED = 'cancel-clicked',
     NOTIFICATION_CLICKED = 'notification-clicked',
+    NOTIFICATION_RECEIVED = 'notification-received',
     SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked',
     BTN_CANCEL = 'btn-cancel',
     BTN_ADD = 'btn-add',

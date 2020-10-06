@@ -337,7 +337,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * can take action on data variable
    */
   private async receiveNotification() {
-    const val = await this.preferences.getString('notification_received_at').toPromise();
+    const val = await this.preferences.getString(PreferenceKey.NOTIFICAITON_RECEIVED_AT).toPromise();
     if (val) {
       const corRelationList: Array<CorrelationData> = [];
       corRelationList.push({ id: val, type: CorReleationDataType.NOTIFICATION_RECEIVED_AT });
@@ -349,9 +349,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         undefined,
         undefined,
         undefined,
-        corRelationList
+        corRelationList,
+        ID.NOTIFICATION_RECEIVED
       );
-      this.preferences.putString('notification_received_at', null).toPromise();
+      await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, null).toPromise();
     }
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
