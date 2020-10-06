@@ -214,6 +214,7 @@ export class PreferenceKey {
     public static readonly CAMPAIGN_PARAMETERS = 'campaign_parameters';
     public static readonly CREATE_GROUP_INFO_POPUP = 'create_group_info_popup';
     public static readonly ADD_MEMBER_TO_GROUP_INFO_POPUP = 'add_member_to_group_info_popup';
+    public static readonly NOTIFICAITON_RECEIVED_AT = 'notification_received_at';
 }
 
 export class GenericAppConfig {
