@@ -52,6 +52,7 @@ import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { AddActivityToGroupComponent } from './add-activity-to-group/add-activity-to-group.component';
 import {ConsentPiiPopupComponent} from './popups/consent-pii-popup/consent-pii-popup.component';
+import {LicenseCardComponentComponent} from '@app/app/components/license-card-component/license-card-component.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,9 @@ import {ConsentPiiPopupComponent} from './popups/consent-pii-popup/consent-pii-p
     AcknowledgeResponseComponent,
     ExploreBooksSortComponent,
     AddActivityToGroupComponent,
-    ConsentPiiPopupComponent
+    ConsentPiiPopupComponent,
+    LicenseCardComponentComponent
+
   ],
   imports: [
     CommonModule,
@@ -188,7 +191,8 @@ import {ConsentPiiPopupComponent} from './popups/consent-pii-popup/consent-pii-p
     AcknowledgeResponseComponent,
     ExploreBooksSortComponent,
     AddActivityToGroupComponent,
-    ConsentPiiPopupComponent
+    ConsentPiiPopupComponent,
+    LicenseCardComponentComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

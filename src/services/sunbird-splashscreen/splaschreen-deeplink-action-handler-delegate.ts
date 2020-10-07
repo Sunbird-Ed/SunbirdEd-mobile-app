@@ -48,7 +48,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
-import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
@@ -96,7 +95,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private utilityService: UtilityService,
     private loginHandlerService: LoginHandlerService,
     public translateService: TranslateService,
-    private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
     private sbProgressLoader: SbProgressLoader,
     private location: Location,
@@ -525,7 +523,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   /////////////////////////////////////////////////
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string) {
+  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>) {
     try {
       // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
@@ -539,20 +537,20 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       if (content && content.contentData &&
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
+        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl, coreRelationList);
       } else if (content) {
         if (!route) {
           route = this.getRouterPath(content);
         }
         if (content.mimeType === MimeType.COLLECTION) {
-          this.navigateToCollection(identifier, content, payloadUrl, route);
+          this.navigateToCollection(identifier, content, payloadUrl, route, false, false, coreRelationList);
         } else {
           this.setTabsRoot();
           await this.router.navigate([route],
             {
               state: {
                 content,
-                corRelation: this.getCorrelationList(payloadUrl)
+                corRelation: this.getCorrelationList(payloadUrl, coreRelationList)
               }
             });
         }
@@ -582,7 +580,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return route;
   }
 
-  private async navigateQuizContent(identifier, content, isFromLink, payloadUrl) {
+  private async navigateQuizContent(identifier, content, isFromLink, payloadUrl, corRelationList) {
     this.appGlobalServices.limitedShareQuizContent = identifier;
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
@@ -597,7 +595,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         state: {
           content, autoPlayQuizContent: true,
-          corRelation: this.getCorrelationList(payloadUrl)
+          corRelation: this.getCorrelationList(payloadUrl, corRelationList)
         }
       });
   }
@@ -647,7 +645,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   async navigateToCollection(
     identifier, content: Content | null, payloadUrl: string, route?: string,
-    isOnboardingSkipped = false, isFromChannelDeeplink = false
+    isOnboardingSkipped = false, isFromChannelDeeplink = false, corRelationList?: Array<CorrelationData>
   ) {
     let childContentId;
     if (payloadUrl) {
@@ -683,7 +681,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   courseContent: content,
                   chapterData: this.childContent,
                   isOnboardingSkipped,
-                  isFromDeeplink: true,
+                  isFromDeeplink: true
                 }
               };
               this.closeProgressLoader();
@@ -694,7 +692,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             case 0:
               this.navService.navigateToCollection({
                 content,
-                corRelation: this.getCorrelationList(payloadUrl)
+                corRelation: this.getCorrelationList(payloadUrl, corRelationList)
               });
               break;
           }
@@ -708,7 +706,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 this.navService.navigateToTrackableCollection({
                   content,
                   isFromChannelDeeplink,
-                  corRelation: this.getCorrelationList(payloadUrl)
+                  corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                 });
               } else {
                 const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
@@ -727,16 +725,16 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                     content: this.childContent,
                     depth: 1,
                     isChildContent: true,
-                    corRelation: undefined,
                     isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
-                    isOnboardingSkipped
+                    isOnboardingSkipped,
+                    corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                   });
                 } else { // not enrolled in batch
                   this.setTabsRoot();
                   this.navService.navigateToTrackableCollection({
                     content,
                     isFromChannelDeeplink,
-                    corRelation: this.getCorrelationList(payloadUrl)
+                    corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                   });
                 }
               }
@@ -748,7 +746,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 content: this.childContent,
                 depth: 1,
                 isChildContent: true,
-                corRelation: this.getCorrelationList(payloadUrl),
+                corRelation: this.getCorrelationList(payloadUrl, corRelationList),
                 isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
@@ -765,25 +763,27 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             content,
             isOnboardingSkipped,
             isFromChannelDeeplink,
-            corRelation: this.getCorrelationList(payloadUrl)
+            corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
           break;
         case 0:
           this.navService.navigateToCollection({
             content,
-            corRelation: this.getCorrelationList(payloadUrl)
+            corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
           break;
       }
     }
   }
 
-  private getCorrelationList(payloadUrl): Array<CorrelationData> {
-    const corRelationList: Array<CorrelationData> = [{
-      id: ContentUtil.extractBaseUrl(payloadUrl),
-      type: CorReleationDataType.SOURCE
-    }];
-    return corRelationList;
+  private getCorrelationList(payloadUrl, corRelation?: Array<CorrelationData>) {
+    if (payloadUrl) {
+      corRelation.push({
+        id: ContentUtil.extractBaseUrl(payloadUrl),
+        type: CorReleationDataType.SOURCE
+      });
+    }
+    return corRelation;
   }
 
   async getChildContents(identifier) {
