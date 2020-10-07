@@ -216,15 +216,33 @@ describe('ProfileSettingsPage', () => {
     });
 
     describe('onSubjectChanged', () => {
-        it('should change subject in telemetry', () => {
-            // arrange
-            guestEditPage.profileForTelemetry = { subject: 'subject' };
+        it('should return newValue and oldValue for category changed', () => {
+            const event = {
+                detail: {
+                    value: ['math']
+                }
+            };
+            guestEditPage.profileForTelemetry = {
+                subject: ['english']
+            };
             mockAppGlobalService.generateAttributeChangeTelemetry = jest.fn();
             // act
-            guestEditPage.onSubjectChanged('subject1');
-            // assert
-            expect(guestEditPage.profileForTelemetry.subject).toEqual('subject1');
+            guestEditPage.onCategoryChanged('subject', event);
             expect(mockAppGlobalService.generateAttributeChangeTelemetry).toHaveBeenCalled();
+        });
+    
+        it('should return newValue and oldValue if category is not changed', () => {
+            const event = {
+                detail: {
+                    value: ['math']
+                }
+            };
+            guestEditPage.profileForTelemetry = {
+                subject: ['math']
+            };
+            mockAppGlobalService.generateAttributeChangeTelemetry = jest.fn();
+            // act
+            guestEditPage.onCategoryChanged('subject', event);
         });
     });
 

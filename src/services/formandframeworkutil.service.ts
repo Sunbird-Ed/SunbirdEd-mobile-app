@@ -685,4 +685,14 @@ export class FormAndFrameworkUtilService {
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
+
+    async getNotificationFormConfig() {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'notification',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
 }

@@ -896,7 +896,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('UNENROL_FALIURE'));
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_MSG_UNABLE_TO_ENROLL'));
                 done();
             }, 0);
         });
@@ -1954,6 +1954,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('navigateToBatchListPage()', () => {
         it('should return false, not call navigate', async (done) => {
             // arrange
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
             const presentFn = jest.fn(() => Promise.resolve());
@@ -1975,7 +1976,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             await enrolledCourseDetailsPage.navigateToBatchListPage();
             // assert
-            expect(mockRouter.navigate).not.toBeCalled();
+            expect(mockRouter.navigate).toBeCalled();
             done();
         });
     });

@@ -47,7 +47,7 @@
         </ion-text>
       </ion-label>
       <ion-select [disabled]="!syllabusList.length" multiple="false" formControlName="syllabus"
-        [interfaceOptions]="syllabusOptions" class="ion-text-capitalize"
+        [interfaceOptions]="syllabusOptions" class="ion-text-capitalize" (ionChange)="onCategoryChanged('board',$event)"
         placeholder="{{ (syllabusList.length ? 'BOARD_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
@@ -66,7 +66,7 @@
       </ion-label>
       <ion-select multiple="true" class="ion-text-capitalize"
         [disabled]="(!mediumList.length || !(guestEditForm.value.boards != ''))" [interfaceOptions]="mediumOptions"
-        formControlName="medium"
+        formControlName="medium" (ionChange)="onCategoryChanged('medium', $event)"
         placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize" value="{{medium?.code}}">
@@ -83,7 +83,7 @@
       </ion-label>
       <ion-select multiple="true" class="ion-text-capitalize"
         [disabled]="(!gradeList.length || !(guestEditForm.value.medium != ''))" [interfaceOptions]="classOptions"
-        formControlName="grades"
+        formControlName="grades" (ionChange)="onCategoryChanged('grade',$event)"
         placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
@@ -98,7 +98,7 @@
       </ion-label>
       <ion-select multiple="true" [interfaceOptions]="subjectsOptions" class="ion-text-capitalize"
         [disabled]="(!subjectList.length || !(guestEditForm.value.grades != ''))" formControlName="subjects"
-        (ionChange)="onSubjectChanged($event)"
+        (ionChange)="onCategoryChanged('subject', $event)"
         placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let subject of subjectList" class="ion-text-capitalize" value="{{subject?.code}}">
