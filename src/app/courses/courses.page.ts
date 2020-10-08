@@ -21,7 +21,7 @@ import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
   PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
-  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject, SortOrder
+  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject, SortOrder, FormRequest, ContentAggregatorResponse, FormService, ProfileService, ContentAggregatorRequest, ContentSearchCriteria
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -32,6 +32,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/Content-aggregator-handler.service';
 
 @Component({
   selector: 'app-courses',
@@ -45,7 +46,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   /**
    * Contains enrolled course
    */
-  enrolledCourses: Array<Course> = [];
+  enrolledCourses: Array<any> = [];
 
   /**
    * Contains popular and latest courses ist
@@ -103,6 +104,8 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   courseCardType = CourseCardGridTypes;
   loader: any;
+  dynamicCourses: any;
+  searchGroupingContents: any;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -126,7 +129,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     private toastController: ToastController,
     private headerService: AppHeaderService,
     private sbProgressLoader: SbProgressLoader,
-    private navService: NavigationService
+    private navService: NavigationService,
+    private contentAggregatorHandler: ContentAggregatorHandler
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -152,7 +156,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.getCourseTabData();
 
     this.events.subscribe('event:update_course_data', () => {
-      this.getEnrolledCourses();
+      this.getAggregatorResult();
     });
   }
 
@@ -190,6 +194,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.refresher.disabled = false;
     this.isVisible = true;
+    this.getAggregatorResult();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
     });
@@ -314,34 +319,34 @@ export class CoursesPage implements OnInit, OnDestroy {
    *
    * It internally calls course handler of genie sdk
    */
-  getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false): void {
-    this.spinner(true);
-    const option: FetchEnrolledCourseRequest = {
-      userId: this.userId,
-      returnFreshCourses: returnRefreshedCourses
-    };
-    this.courseService.getEnrolledCourses(option).toPromise()
-      .then((enrolledCourses) => {
-        if (enrolledCourses) {
-          this.ngZone.run(() => {
-            this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
-            if (this.enrolledCourses.length > 0) {
-              const courseList: Array<Course> = [];
-              for (let count = 0; count < this.enrolledCourses.length; count++) {
-                courseList.push(this.enrolledCourses[count]);
-                this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
-                this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
-              }
+  async getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false) {
+    // this.spinner(true);
+    // const option: FetchEnrolledCourseRequest = {
+    //   userId: this.userId,
+    //   returnFreshCourses: returnRefreshedCourses
+    // };
+    // this.courseService.getEnrolledCourses(option).toPromise()
+    //   .then((enrolledCourses) => {
+    //     if (enrolledCourses) {
+    //       this.ngZone.run(() => {
+    //         this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
+    //         if (this.enrolledCourses.length > 0) {
+    //           const courseList: Array<Course> = [];
+    //           for (let count = 0; count < this.enrolledCourses.length; count++) {
+    //             courseList.push(this.enrolledCourses[count]);
+    //             this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
+    //             this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
+    //           }
 
-              this.appGlobalService.setEnrolledCourseList(courseList);
-            }
+    //           this.appGlobalService.setEnrolledCourseList(courseList);
+    //         }
 
-            this.spinner(false);
-          });
-        }
-      }, (err) => {
-        this.spinner(false);
-      });
+    //         this.spinner(false);
+    //       });
+    //     }
+    //   }, (err) => {
+    //     this.spinner(false);
+    //   });
   }
 
   /**
@@ -465,6 +470,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   getCourseTabData(refresher?) {
     setTimeout(() => {
       if (refresher) {
+        this.getAggregatorResult();
         refresher.target.complete();
         this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.COURSES, Environment.HOME);
       }
@@ -1015,6 +1021,72 @@ export class CoursesPage implements OnInit, OnDestroy {
   private getContentIndexOf(contentList, content) {
     const contentIndex = contentList.findIndex(val => val.identifier === content.identifier);
     return contentIndex;
+  }
+
+  navigateToTextbookPage(items, subject) {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.VIEW_MORE_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY,
+      ContentUtil.getTelemetryObject(items));
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
+
+      this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
+        state: {
+          contentList: items,
+          subjectName: subject
+        }
+      });
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
+  }
+
+  async getAggregatorResult() {
+    this.spinner(true);
+    const request: ContentAggregatorRequest = {
+      applyFirstAvailableCombination: {
+      },
+      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+        return contentSearchCriteria;
+      }
+    };
+    const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
+    if (this.appGlobalService.isUserLoggedIn()) {
+      dataSrc.push('TRACKABLE_COURSE_CONTENTS');
+    }
+    const formRequest: FormRequest = {
+      type: 'config',
+      subType: 'course',
+      action: 'get',
+      component: 'app',
+    };
+    const aggregateResult = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+    if (aggregateResult && aggregateResult.result) {
+      this.dynamicCourses = aggregateResult.result;
+      this.dynamicCourses.forEach((val) => {
+        if (val.orientation === 'horizontal') {
+          this.enrolledCourses = val.section.sections[0].contents;
+          for (let count = 0; count < this.enrolledCourses.length; count++) {
+            this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
+            this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
+          }
+        }
+        if (val.orientation === 'vertical') {
+          this.searchGroupingContents = val.section.sections;
+          for (let i = 0; i < this.searchGroupingContents.length; i++) {
+            for (let count = 0; count < this.searchGroupingContents[i].contents.length; count++) {
+              this.searchGroupingContents[i].contents[count]['cardImg'] =
+               this.commonUtilService.getContentImg(this.searchGroupingContents[i].contents[count]);
+            }
+          }
+        }
+        console.log('data is', this.searchGroupingContents);
+        val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
+      });
+      this.appGlobalService.setEnrolledCourseList(this.enrolledCourses);
+    }
+    this.spinner(false);
   }
 
 }
