@@ -1074,5 +1074,6 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use",
-  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the "
+  "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the ",
+  "CONTENT_TYPE": "Content Type"
 }

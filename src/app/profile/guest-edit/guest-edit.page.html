@@ -51,7 +51,7 @@
         placeholder="{{ (syllabusList.length ? 'BOARD_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
-          {{eachSyllabus?.name}}&lrm;
+          {{eachSyllabus.name | aliased}}&lrm;
         </ion-select-option>
       </ion-select>
     </ion-item>

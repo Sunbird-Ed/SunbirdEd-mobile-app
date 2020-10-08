@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { GuestEditPage } from './guest-edit.page';
 import { TranslateModule } from '@ngx-translate/core';
+import {PipesModule} from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -16,14 +17,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    TranslateModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        TranslateModule,
+        PipesModule
+    ],
   declarations: [GuestEditPage]
 })
 export class GuestEditPageModule {}
