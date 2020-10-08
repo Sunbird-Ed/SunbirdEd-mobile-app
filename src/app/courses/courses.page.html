@@ -10,20 +10,20 @@
   </div>
   <div *ngFor="let result of dynamicCourses">
     <div *ngIf="!guestUser && result.orientation === 'horizontal'" class="pt-8 enrolled-course-bg">
-      <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
+      <ng-container *ngIf="result?.section.sections[0].contents && result?.section.sections[0].contents.length">
         <sb-course-cards-hlist [title]="result?.name"
-          [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="enrolledCourses"
+          [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="result?.section.sections[0].contents"
           [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(true)"
           (cardClick)="openEnrolledCourseDetails($event)" [hideProgress]="true"></sb-course-cards-hlist>
       </ng-container>
-      <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
+      <ng-container *ngIf="showLoader && result?.section.sections[0].contents && result?.section.sections[0].contents.length === 0">
         <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
         </sb-course-cards-hlist>
       </ng-container>
     </div>
     <div *ngIf="result.orientation === 'vertical'">
       <div class="section-header-style" *ngIf="result.section.sections.length">{{result.name}}</div>
-      <div *ngFor="let section of searchGroupingContents; let i=index">
+      <div *ngFor="let section of result.section.sections; let i=index">
       <div *ngIf="section?.contents?.length" class="sb-textbook-container">
         <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
         [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"

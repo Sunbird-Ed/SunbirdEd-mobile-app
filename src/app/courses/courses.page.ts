@@ -349,7 +349,6 @@ export class CoursesPage implements OnInit, OnDestroy {
       } else {
         const sessionObj = this.appGlobalService.getSessionData();
         this.userId = sessionObj[ProfileConstants.USER_TOKEN];
-        this.getAggregatorResult();
         resolve();
       }
     });
@@ -369,10 +368,10 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.getUserId()
       .then(() => {
-        this.getAggregatorResult();
+       // this.getAggregatorResult();
       })
       .catch(() => {
-        this.getAggregatorResult();
+       // this.getAggregatorResult();
       });
   }
 
@@ -949,32 +948,12 @@ export class CoursesPage implements OnInit, OnDestroy {
       action: 'get',
       component: 'app',
     };
-    const aggregateResult = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
-    if (aggregateResult && aggregateResult.result) {
-      this.dynamicCourses = aggregateResult.result;
-      this.dynamicCourses.forEach((val) => {
-        if (val.orientation === 'horizontal') {
-          this.enrolledCourses = val.section.sections[0].contents;
-          for (let count = 0; count < this.enrolledCourses.length; count++) {
-            this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
-            this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
-          }
-        }
-        if (val.orientation === 'vertical') {
-          this.searchGroupingContents = val.section.sections;
-          for (let i = 0; i < this.searchGroupingContents.length; i++) {
-            for (let count = 0; count < this.searchGroupingContents[i].contents.length; count++) {
-              this.searchGroupingContents[i].contents[count]['cardImg'] =
-               this.commonUtilService.getContentImg(this.searchGroupingContents[i].contents[count]);
-            }
-          }
-        }
-        console.log('data is', this.searchGroupingContents);
-        val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
-      });
-      this.appGlobalService.setEnrolledCourseList(this.enrolledCourses);
+    try {
+      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      this.spinner(false);
+    } catch (e) {
+      this.spinner(false);
     }
-    this.spinner(false);
   }
 
 }

@@ -500,26 +500,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
     try {
-      const aggregateResult = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
-      if (aggregateResult && aggregateResult.result) {
-        this.dynamicResponse = aggregateResult.result;
-        this.courseList = [];
-        aggregateResult.result.forEach((val) => {
-          val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
-          if (val.orientation === 'horizontal') {
-            for (let count = 0; count < val.section.sections[0].contents.length; count++) {
-              val.section.sections[0].contents[count]['cardImg'] =
-                this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
-            }
-          }
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      if (this.dynamicResponse) {
+        this.dynamicResponse.forEach((val) => {
           if (val.orientation === 'vertical') {
             this.searchGroupingContents = val.section;
-            for (let i = 0; i < this.searchGroupingContents.sections.length; i++) {
-              for (let count = 0; count < this.searchGroupingContents.sections[i].contents.length; count++) {
-                this.searchGroupingContents.sections[i].contents[count]['cardImg'] =
-                  this.commonUtilService.getContentImg(this.searchGroupingContents.sections[i].contents[count]);
-              }
-            }
           }
         });
       }
