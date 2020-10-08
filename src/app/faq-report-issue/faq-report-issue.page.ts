@@ -40,6 +40,7 @@ import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '@app/pipes/aliasBoardName/aliasBoardName';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -119,7 +120,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     public zone: NgZone,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private frameworkCommonFormConfigBuilder: FrameworkCommonFormConfigBuilder
+    private frameworkCommonFormConfigBuilder: FrameworkCommonFormConfigBuilder,
+    private aliasBoardName: AliasBoardName
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
@@ -395,7 +397,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       subjectList: this.extractPrepareFieldStr('subject'),
       relevantTerms: this.relevantTerms,
       curLang: this.translate.currentLang
-    }
+    };
     const sortOptionsModal = await this.modalCtrl.create({
       component: ExploreBooksSortComponent,
       componentProps: props
@@ -631,13 +633,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     bmgskeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(fields, element)) {
         if (!this.bmgsString) {
-          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+          if (fields[element] && typeof fields[element] === 'object' && fields[element].length) {
             this.bmgsString = this.getStringFromArray(fields[element]);
           } else {
-            this.bmgsString = fields[element].name ? fields[element].name : fields[element];
+            this.bmgsString = fields[element].name ? this.aliasBoardName.transform(fields[element].name) : fields[element];
           }
         } else {
-          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+          if (fields[element] && typeof fields[element] === 'object' && fields[element].length) {
             this.bmgsString += ', ' + this.getStringFromArray(fields[element]);
           } else {
             this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);

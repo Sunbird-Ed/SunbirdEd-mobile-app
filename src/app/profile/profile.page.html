@@ -162,7 +162,7 @@
     <div class="school-details" *ngIf="profile?.framework">
         <div class="container" *ngIf="profile?.framework?.board">
             <div>{{'BOARD' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.board.join(', ')}} &lrm;</div>
+            <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
         </div>
         <div class="container" *ngIf="profile?.framework?.medium">
             <div>{{'MEDIUM' | translate }}: </div>

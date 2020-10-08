@@ -14,6 +14,7 @@ import {
   GetSuggestedFrameworksRequest,
   Profile
 } from '@project-sunbird/sunbird-sdk';
+import {AliasBoardName} from '@app/pipes/aliasBoardName/aliasBoardName';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class FrameworkCommonFormConfigBuilder {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private translate: TranslateService,
+    private alisaBoard: AliasBoardName
   ) { }
 
   getBoardConfigOptionsBuilder(profile?: Profile): FieldConfigOptionsBuilder<{ name: string, code: string, deafult?: any }> {
@@ -40,7 +42,7 @@ export class FrameworkCommonFormConfigBuilder {
         const options: FieldConfigOption<{ name: string, code: string }>[] = [];
         list.forEach(element => {
           const value: FieldConfigOption<{ name: string, code: string }> = {
-            label: element.name,
+            label: this.alisaBoard.transform(element.name),
             value: {
               name: element.name,
               code: element.identifier
