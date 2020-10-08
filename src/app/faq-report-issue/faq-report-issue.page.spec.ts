@@ -30,6 +30,7 @@ import {
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '@app/pipes/aliasBoardName/aliasBoardName';
 
 window['supportfile'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
@@ -111,6 +112,9 @@ describe('FaqReportIssuePage', () => {
         getGradeConfigOptionsBuilder: jest.fn(),
         getSubjectConfigOptionsBuilder: jest.fn(),
     };
+    const mockAliasBoardName: Partia<AliasBoardName> = {
+        transform: jest.fn()
+    };
 
     beforeAll(() => {
         faqReportIssuePage = new FaqReportIssuePage(
@@ -133,7 +137,8 @@ describe('FaqReportIssuePage', () => {
             mockModalController as ModalController,
             mockNgZone as NgZone,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockFrameworkCommonFormConfigBuilder as FrameworkCommonFormConfigBuilder
+            mockFrameworkCommonFormConfigBuilder as FrameworkCommonFormConfigBuilder,
+            mockAliasBoardName as AliasBoardName
         );
     });
 
