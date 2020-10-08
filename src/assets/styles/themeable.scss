@@ -111,11 +111,6 @@ html[data-theme="JOYFUL"]{
         background-color: var(--app-primary) !important;
       }
     }
-
-    .alert-button-inner.sc-ion-alert-md{
-      background-color: var(--app-white) !important;
-      color: var(--app-primary) !important;
-    }
   }
 
   ion-card{
@@ -1316,11 +1311,11 @@ html[data-theme="JOYFUL"]{
     }
     .app-rate-btn{
       background-color: transparent !important;
-      box-shadow: var(--button-style-shadow) !important;
+      --box-shadow: var(--button-style-shadow) !important;
     }
     .app-rate-btn-outline{
       --background: var(--app-white) !important;
-      box-shadow: var(--button-style-shadow) !important;
+      --box-shadow: var(--button-style-shadow) !important;
     }
   }
 
@@ -1399,6 +1394,25 @@ html[data-theme="JOYFUL"]{
     }
     ion-progress-bar{
       --ion-color-base: var(--app-primary) !important;
+    }
+  }
+
+  .player-exit-popup{
+    .alert-wrapper{
+      background-color: var(--app-secondary-background);
+      border-radius: 1rem;
+    }
+    .alert-button {
+      border: 1px solid var(--app-primary) !important;
+      border-radius: 2rem !important;
+    }
+    .alert-button:first-child:not(:only-child) {
+      background: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
+    .alert-button:last-child:not(:only-child) {
+      background: var(--app-white) !important;
+      color: var(--app-primary) !important;
     }
   }
 

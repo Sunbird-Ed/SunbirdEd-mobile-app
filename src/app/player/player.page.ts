@@ -228,7 +228,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
             this.closeIframe();
           }
         }
-      ]
+      ],
+      cssClass: 'player-exit-popup'
     });
     await alert.present();
   }
