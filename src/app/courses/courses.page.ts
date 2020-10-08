@@ -20,8 +20,9 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
-  PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
-  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject, SortOrder, FormRequest, ContentAggregatorResponse, FormService, ProfileService, ContentAggregatorRequest, ContentSearchCriteria
+  PageAssembleCriteria, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
+  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus,
+  CourseBatchesRequest, TelemetryObject, SortOrder, FormRequest, ContentAggregatorRequest, ContentSearchCriteria
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -109,7 +110,6 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
-    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -260,7 +260,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.events.subscribe(EventTopics.COURSE_STATUS_UPDATED_SUCCESSFULLY, (data) => {
       if (data.update) {
-        this.getEnrolledCourses(false, true);
+        this.getAggregatorResult();
       }
     });
 
@@ -275,20 +275,20 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
       if (res && res.batchId) {
-        this.getEnrolledCourses(false, true);
+        this.getAggregatorResult();
       }
     });
 
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
       if (res && res.selectedLanguage) {
         this.selectedLanguage = res.selectedLanguage;
-        this.getPopularAndLatestCourses();
+        this.getAggregatorResult();
       }
     });
 
     this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, () => {
       this.ngZone.run(() => {
-        this.getPopularAndLatestCourses();
+        this.getAggregatorResult();
       });
     });
 
@@ -300,130 +300,18 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.courseFilter = undefined;
             this.appliedFilter = undefined;
             this.isFilterApplied = false;
-            this.getPopularAndLatestCourses();
+            this.getAggregatorResult();
           }
         }
       });
     });
     this.events.subscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST, () => {
-      this.getEnrolledCourses(false, true);
+      this.getAggregatorResult();
     });
 
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       this.showSignInCard = false;
     });
-  }
-
-  /**
-   * To get enrolled course(s) of logged-in user.
-   *
-   * It internally calls course handler of genie sdk
-   */
-  async getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false) {
-    // this.spinner(true);
-    // const option: FetchEnrolledCourseRequest = {
-    //   userId: this.userId,
-    //   returnFreshCourses: returnRefreshedCourses
-    // };
-    // this.courseService.getEnrolledCourses(option).toPromise()
-    //   .then((enrolledCourses) => {
-    //     if (enrolledCourses) {
-    //       this.ngZone.run(() => {
-    //         this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
-    //         if (this.enrolledCourses.length > 0) {
-    //           const courseList: Array<Course> = [];
-    //           for (let count = 0; count < this.enrolledCourses.length; count++) {
-    //             courseList.push(this.enrolledCourses[count]);
-    //             this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
-    //             this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
-    //           }
-
-    //           this.appGlobalService.setEnrolledCourseList(courseList);
-    //         }
-
-    //         this.spinner(false);
-    //       });
-    //     }
-    //   }, (err) => {
-    //     this.spinner(false);
-    //   });
-  }
-
-  /**
-   * To get popular course.
-   *
-   * It internally calls course handler of genie sdk
-   */
-  getPopularAndLatestCourses(hardRefresh = false, pageAssembleCriteria?: PageAssembleCriteria): void {
-    this.pageApiLoader = true;
-    if (pageAssembleCriteria === undefined) {
-      const criteria: PageAssembleCriteria = {
-        name: PageName.COURSE,
-        filters: {},
-        source: 'app'
-      };
-
-      if (this.appliedFilter) {
-        let filterApplied = false;
-        Object.keys(this.appliedFilter).forEach(key => {
-          if (this.appliedFilter[key].length > 0) {
-            filterApplied = true;
-          }
-        });
-
-        criteria.filters = this.appliedFilter;
-      }
-      pageAssembleCriteria = criteria;
-    }
-
-    // pageAssembleCriteria.hardRefresh = hardRefresh;
-
-    this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
-      .then((res: PageAssemble) => {
-        this.ssoSectionId = res.ssoSectionId;
-
-        this.ngZone.run(() => {
-          const sections = res.sections;
-          const newSections = [];
-          sections.forEach(element => {
-            const display = JSON.parse(element.display);
-            if (display.name) {
-              if (has(display.name, this.selectedLanguage)) {
-                const langs = [];
-                forEach(display.name, (value, key) => {
-                  langs[key] = value;
-                });
-                element.name = langs[this.selectedLanguage];
-              }
-            }
-            newSections.push(element);
-          });
-
-          if (newSections.length) {
-            for (let i = 0; i < newSections.length; i++) {
-              if (newSections[i].contents) {
-                for (let j = 0; j < newSections[i].contents.length; j++) {
-                  newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
-                }
-              }
-            }
-          }
-
-          this.popularAndLatestCourses = newSections;
-          this.pageApiLoader = !this.pageApiLoader;
-          this.generateExtraInfoTelemetry(newSections.length);
-          this.checkEmptySearchResult();
-        });
-      }).catch((error: string) => {
-        this.ngZone.run(() => {
-          this.pageApiLoader = false;
-          if (error === 'CONNECTION_ERROR') {
-            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-          } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          }
-        });
-      });
   }
 
   generateExtraInfoTelemetry(sectionsCount) {
@@ -461,7 +349,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       } else {
         const sessionObj = this.appGlobalService.getSessionData();
         this.userId = sessionObj[ProfileConstants.USER_TOKEN];
-        this.getEnrolledCourses(false, true);
+        this.getAggregatorResult();
         resolve();
       }
     });
@@ -481,10 +369,10 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.getUserId()
       .then(() => {
-        this.getPopularAndLatestCourses(true);
+        this.getAggregatorResult();
       })
       .catch(() => {
-        this.getPopularAndLatestCourses(true);
+        this.getAggregatorResult();
       });
   }
 
@@ -564,7 +452,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
           if (isChecked) {
-            that.getPopularAndLatestCourses(false, criteria);
+            that.getAggregatorResult();
           }
         });
       }

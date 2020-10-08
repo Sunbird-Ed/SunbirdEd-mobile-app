@@ -18,11 +18,9 @@ import {
   ContentSearchCriteria,
   ContentService,
   CorrelationData,
-  CourseService,
   EventsBusEvent,
   EventsBusService,
   FormRequest,
-  FormService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
@@ -247,8 +245,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('FORM_SERVICE') private formService: FormService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -508,14 +504,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       if (aggregateResult && aggregateResult.result) {
         this.dynamicResponse = aggregateResult.result;
         this.courseList = [];
-        this.dynamicResponse.forEach((val) => {
+        aggregateResult.result.forEach((val) => {
           val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
           if (val.orientation === 'horizontal') {
             for (let count = 0; count < val.section.sections[0].contents.length; count++) {
               val.section.sections[0].contents[count]['cardImg'] =
-              this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
-              val.section.sections[0].contents[count].completionPercentage =
-              val.section.sections[0].contents[count].completionPercentage || 0;
+                this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
             }
           }
           if (val.orientation === 'vertical') {
@@ -548,6 +542,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       } else {
         this.storyAndWorksheets = newSections;
       }
+      this.pageLoadedSuccess = true;
+      this.refresh = false;
+      this.searchApiLoader = false;
+      this.generateExtraInfoTelemetry(newSections.length);
     } catch (error) {
       this.ngZone.run(() => {
         this.refresh = false;
@@ -566,111 +564,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           errValues);
       });
     }
-    // this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
-    // .aggregate(request, dataSrc, formRequest).toPromise()
-    //   .then((response: ContentAggregatorResponse) => {
-    //     this.ngZone.run(() => {
-    //       console.log('response for aggregator', response);
-    //      // this.dynamicResponse = response.result;
-    //       this.courseList = [];
-    //       response.result.forEach((val) => {
-    //         val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
-    //         if (val.orientation === 'vertical') {
-    //           this.searchGroupingContents = val.section;
-    //         }
-    //       });
-    //       const newSections = [];
-    //       this.getCategoryData();
-    //       this.searchGroupingContents.sections.forEach(section => {
-    //         if (section.name) {
-    //           if (has(section.name, this.selectedLanguage)) {
-    //             const langs = [];
-    //             forEach(section.name, (value, key) => {
-    //               langs[key] = value;
-    //             });
-    //             section.name = langs[this.selectedLanguage];
-    //           }
-    //         }
-    //         newSections.push(section);
-    //       });
-    //       // END OF TEMPORARY CODE
-    //       if (this.profile.subject && this.profile.subject.length) {
-    //         this.storyAndWorksheets = this.orderBySubject([...newSections]);
-    //       } else {
-    //         this.storyAndWorksheets = newSections;
-    //       }
-    //       const sectionInfo = {};
-    //       for (let i = 0; i < this.storyAndWorksheets.length; i++) {
-    //         const sectionName = this.storyAndWorksheets[i].name,
-    //           count = this.storyAndWorksheets[i].contents.length;
-    //         // check if locally available
-    //         this.markLocallyAvailableTextBook();
-    //         for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
-    //           const content = this.storyAndWorksheets[i].contents[k];
-    //           if (content.appIcon) {
-    //             if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-    //               if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-    //                 content.appIcon = content.appIcon;
-    //               } else {
-    //                 this.imageSrcMap.set(content.identifier, content.appIcon);
-    //                 content.appIcon = this.defaultImg;
-    //               }
-    //             } else if (content.basePath) {
-    //               content.appIcon = content.basePath + '/' + content.appIcon;
-    //             }
-    //           }
-    //           // add custom attribute('cardImg') for common consumption
-    //           if (!(!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable)) {
-    //             if (this.commonUtilService.convertFileSrc(content.courseLogoUrl)) {
-    //               this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.courseLogoUrl);
-    //             } else if (this.commonUtilService.convertFileSrc(content.appIcon)) {
-    //               this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.appIcon);
-    //             } else {
-    //               this.storyAndWorksheets[i].contents[k].cardImg = this.defaultImg;
-    //             }
-    //           } else {
-    //             this.storyAndWorksheets[i].contents[k].cardImg = 'assets/imgs/ic_offline_white_sm.png';
-    //           }
-    //         }
-
-    //         sectionInfo[sectionName] = count;
-    //         sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-    //           && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
-    //         sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
-    //         sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
-    //       }
-
-    //       const resValues = {};
-    //       resValues['pageRes'] = sectionInfo;
-    //       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-    //         InteractSubtype.RESOURCE_PAGE_LOADED,
-    //         Environment.HOME,
-    //         this.source, undefined,
-    //         resValues);
-    //       this.pageLoadedSuccess = true;
-    //       this.refresh = false;
-    //       this.searchApiLoader = false;
-    //       this.generateExtraInfoTelemetry(newSections.length);
-    //     });
-    //   })
-    //   .catch(error => {
-    //     this.ngZone.run(() => {
-    //       this.refresh = false;
-    //       this.searchApiLoader = false;
-    //       if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-    //         if (!isAfterLanguageChange) {
-    //           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-    //         }
-    //       }
-    //       const errValues = {};
-    //       errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
-    //       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-    //         InteractSubtype.RESOURCE_PAGE_ERROR,
-    //         Environment.HOME,
-    //         this.source, undefined,
-    //         errValues);
-    //     });
-    //   });
   }
 
   orderBySubject(searchResults: any[]) {

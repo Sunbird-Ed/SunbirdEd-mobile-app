@@ -25,18 +25,20 @@
     </ion-list> -->
     <div *ngFor="let result of dynamicResponse; let i=index;">
       <div *ngIf="result.orientation === 'horizontal'">
-        <div *ngFor="let section of result.section?.sections[0].contents">
-          <ng-container *ngIf="result.section.sections[0].contents && result.section?.sections[0].contents.length">
-            <sb-course-cards-hlist [title]="result?.name"
-              [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="result.section?.sections[0].contents"
-              [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(result)"
-              (cardClick)="navigateToDetailPage($event)" [hideProgress]="true"></sb-course-cards-hlist>
-          </ng-container>
-          <ng-container *ngIf="showLoader && result.section?.sections[0].contents && result.section?.sections[0].contents.length === 0">
-            <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
-            </sb-course-cards-hlist>
-          </ng-container>
-          <!-- <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length">
+        <div *ngFor="let section of result.section?.sections">
+          <div *ngIf="result.name === 'My Learnings'" style="padding-top: 5px;">
+            <ng-container *ngIf="section.contents && section.contents.length">
+              <sb-course-cards-hlist [title]="result?.name"
+                [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="section.contents"
+                [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+                (cardClick)="navigateToDetailPage($event)" [hideProgress]="true"></sb-course-cards-hlist>
+            </ng-container>
+            <ng-container *ngIf="showLoader && section.contents && section.contents.length === 0">
+              <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
+              </sb-course-cards-hlist>
+            </ng-container>
+          </div>
+          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && result.name !== 'My Learnings'">
             <div class="sb-recently-viewed-items">
               <div class="sb-recenlty-viewed-title">{{result.name}}
                 <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
@@ -57,7 +59,7 @@
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
       <div *ngIf="result.orientation === 'vertical'">

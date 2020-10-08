@@ -36,37 +36,6 @@
     </div>
   </div>
 
-  <!-- <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
-    <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
-      <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate"
-        [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="enrolledCourses"
-        [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(true)"
-        (cardClick)="openEnrolledCourseDetails($event)" [hideProgress]="true"></sb-course-cards-hlist>
-    </ng-container>
-    <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
-      <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
-      </sb-course-cards-hlist>
-    </ng-container>
-  </div> -->
-
-  <!-- <div *ngFor="let section of popularAndLatestCourses; let i=index;">
-    <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
-      <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID"
-        [viewMoreButtonText]="'VIEW_ALL' | translate" [contentList]="section?.contents"
-        (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
-        [maxCardCount]="9" (cardClick)="openCourseDetails($event,section, i)" [multiRow]="section?.contents?.length > 3">
-      </sb-course-cards-hlist>
-    </div>
-  </div> -->
-  <!-- <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
-    <div *ngFor="let section of [1,2,3,4]; let i=index;">
-      <div class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
-        <sb-course-cards-hlist [multiRow]="true" [type]="courseCardType.COURSE_CARD_GRID" [isLoading]="pageApiLoader">
-        </sb-course-cards-hlist>
-      </div>
-    </div>
-  </div> -->
-
   <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
     <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
     <ion-text>
