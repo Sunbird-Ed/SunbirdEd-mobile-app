@@ -670,9 +670,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toEqual(['Resource', 'Collection', 'TextBook', 'LessonPlan', 'Course']);
         done();
       });
     });

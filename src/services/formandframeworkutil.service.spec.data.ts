@@ -313,6 +313,10 @@ export const mockContentConfigResponse =
           name :  'course' ,
           code :  'contentType' ,
           values : [
+            'Resource' ,
+            'Collection' ,
+            'TextBook' ,
+            'LessonPlan' ,
             'Course'
          ]
        },

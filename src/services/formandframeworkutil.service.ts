@@ -403,11 +403,7 @@ export class FormAndFrameworkUtilService {
         } else {
             for (const field of contentFilterConfig) {
                 if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
-                    if (field.name === ContentFilterConfig.NAME_LIBRARY || field.name === ContentFilterConfig.NAME_COURSE) {
-                        libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
-                    } else {
-                        libraryTabContentTypes = field.values;
-                    }
+                    libraryTabContentTypes = field.values;
                     break;
                 }
             }
