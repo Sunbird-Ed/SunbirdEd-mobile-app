@@ -98,7 +98,7 @@
         </div>
         <div *ngIf="!isGroupLoading && flattenedActivityList && flattenedActivityList.length">
           <div *ngFor="let activityGroup of activityList; let i = index" class="mb-8">
-            <div class="gd-card-head" *ngIf="activityGroup.items?.length">
+            <div class="gd-card-head" *ngIf="filteredGroupedActivityListMap[activityGroup?.title].length">
               <span class="gd-card-title-icon"><img src="assets/imgs/book.png" alt=""></span>
               <span class="gd-card-titile">{{activityGroup.title | translate}}</span>
             </div>
