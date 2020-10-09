@@ -939,18 +939,8 @@ export class CoursesPage implements OnInit, OnDestroy {
         return contentSearchCriteria;
       }
     };
-    const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
-    if (this.appGlobalService.isUserLoggedIn()) {
-      dataSrc.push('TRACKABLE_COURSE_CONTENTS');
-    }
-    const formRequest: FormRequest = {
-      type: 'config',
-      subType: 'course',
-      action: 'get',
-      component: 'app',
-    };
     try {
-      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, 'course');
       if (this.dynamicCourses) {
         this.dynamicCourses.forEach((val) => {
           if (val.orientation === 'horizontal') {

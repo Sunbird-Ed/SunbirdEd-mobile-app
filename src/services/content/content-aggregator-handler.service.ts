@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { ContentAggregatorResponse, ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import {
+    ContentAggregatorResponse, ContentService, CourseService, FormRequest,
+    FormService, ProfileService
+} from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
 
 @Injectable()
@@ -12,9 +16,20 @@ export class ContentAggregatorHandler {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
         public commonUtilService: CommonUtilService,
+        private appGlobalService: AppGlobalService,
     ) { }
 
-    async aggregate(request, dataSrc, formRequest): Promise<any> {
+    async aggregate(request, pageName): Promise<any> {
+        const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
+        if (this.appGlobalService.isUserLoggedIn()) {
+            pageName === 'course' ? dataSrc.push('TRACKABLE_COURSE_CONTENTS') : dataSrc.push('TRACKABLE_CONTENTS');
+        }
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: pageName === 'course' ? 'course' : 'library_v2',
+            action: 'get',
+            component: 'app',
+        };
         try {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
