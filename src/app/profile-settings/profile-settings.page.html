@@ -37,7 +37,7 @@
 							okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 							placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 							<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
-								{{eachSyllabus.name}}&lrm;</ion-select-option>
+								{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 						</ion-select>
 					</ion-item>
 				</div>
@@ -52,7 +52,7 @@
 					okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 					 placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 					<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
-						{{eachSyllabus.name}}&lrm;</ion-select-option>
+						{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 				</ion-select>
 			</ion-item>
 
