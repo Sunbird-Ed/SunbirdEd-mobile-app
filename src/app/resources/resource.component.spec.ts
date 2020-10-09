@@ -45,7 +45,7 @@ import {ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
 import { FormService } from '@project-sunbird/sunbird-sdk';
-import { ContentAggregatorHandler } from '../../services/content/Content-aggregator-handler.service';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;

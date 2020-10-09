@@ -79,7 +79,7 @@ import {
   FrameworkSelectionActionsDelegate
 } from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ContentAggregatorHandler } from '@app/services/content/Content-aggregator-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 
 @Component({
   selector: 'app-resources',

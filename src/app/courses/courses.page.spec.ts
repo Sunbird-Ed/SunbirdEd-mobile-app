@@ -32,7 +32,7 @@ import {LocalCourseService} from '../../services/local-course.service';
 import {SbProgressLoader} from '../../services/sb-progress-loader.service';
 import {CsNetworkError} from '@project-sunbird/client-services/core/http-service';
 import { NavigationService } from '../../services/navigation-handler.service';
-import { ContentAggregatorHandler } from '../../services/content/Content-aggregator-handler.service';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
