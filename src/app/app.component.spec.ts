@@ -388,7 +388,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenCalledTimes(7);
+                expect(mockPreferences.getString).toHaveBeenCalledTimes(8);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -493,6 +493,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -607,6 +609,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -713,6 +717,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
