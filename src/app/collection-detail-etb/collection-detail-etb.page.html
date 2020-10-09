@@ -51,7 +51,7 @@
     <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
 
     <!-- Looping Inside Children Data Textbook -->
-    <section *ngIf="!showSheenAnimation && childrenData">
+    <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <div *ngIf="childrenData.length && !(filteredItemsQueryList?.changes | async)?.length">
         <div class="heading">{{'NO_CONTENTS' | translate:{'%s': currentFilter } }}</div>
         <div class="sub-heading">{{'NO_CONTENTS_MESSAGE' | translate}}</div>
@@ -67,13 +67,13 @@
                   <div class="sb-topic-text"> {{item?.contentData?.name}} </div>
                 </ion-col>
                 <ion-col size="1" *ngIf="!isGroupShown(i)">
-                  <div>
-                    <ion-icon class="sb-accordian-arrow" name="ios-arrow-down"></ion-icon>
+                  <div class="drop-arrow">
+                    <img src="assets/imgs/arrow_down.svg" alt="arrow down">
                   </div>
                 </ion-col>
                 <ion-col size="1" *ngIf="isGroupShown(i)">
-                  <div>
-                    <ion-icon class="sb-accordian-arrow" name="ios-arrow-up"></ion-icon>
+                  <div class="drop-arrow">
+                    <img src="assets/imgs/arrow_up.svg" alt="arrow up">
                   </div>
                 </ion-col>
               </ion-row>

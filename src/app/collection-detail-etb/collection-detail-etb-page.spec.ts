@@ -211,6 +211,7 @@ describe('collectionDetailEtbPage', () => {
         mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
             fn({});
         });
+        mockHeaderService.showStatusBar = jest.fn();
         jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
             showHeader: false,
             showBurgerMenu: false,
@@ -227,6 +228,7 @@ describe('collectionDetailEtbPage', () => {
             expect(collectionDetailEtbPage.isUpdateAvailable).toBeFalsy();
             expect(collectionDetailEtbPage.setChildContents).toHaveBeenCalled();
             expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();
+            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -280,6 +282,7 @@ describe('collectionDetailEtbPage', () => {
             });
 
             jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+            mockHeaderService.showStatusBar = jest.fn();
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
@@ -289,6 +292,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
             expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
             expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
         });
 
         it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', () => {
@@ -323,6 +327,7 @@ describe('collectionDetailEtbPage', () => {
             });
 
             jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+            mockHeaderService.showStatusBar = jest.fn();
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
@@ -332,6 +337,7 @@ describe('collectionDetailEtbPage', () => {
             expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
             expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
             expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+            expect(mockHeaderService.showStatusBar).toHaveBeenCalled();
         });
     });
 

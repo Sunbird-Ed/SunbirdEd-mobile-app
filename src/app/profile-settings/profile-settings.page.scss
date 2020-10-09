@@ -58,6 +58,9 @@
       font-size: 16px;
       margin-bottom: 8px;
     }
+    .fill-in-content{
+      font-size: 14px;
+    }
   }
   .item-select-disabled {
     .label-md {
@@ -70,11 +73,15 @@
     padding-bottom: 80px !important;
   }
   .board-select-dummy{
+    .ps-board{
+      display: none;
+    }
     width: 100vw;
     margin: 0 auto;
     ion-item{
       // z-index: -1;
       pointer-events: none;
+      display: block;
     }
   }
   .ps-container{
@@ -88,6 +95,7 @@
       flex-direction: column;
       flex-grow: 1;
       flex-shrink: 1;
+      height: 100vh;
     }
     .form-position{
       flex-grow: 1;
@@ -187,7 +195,7 @@
       }
       .sub-title {
         padding: 8px 10% 0 10%;
-        font-size: 12px;
+        font-size: 14px;
       }
     }
     .qr-btn-container {

@@ -3,9 +3,6 @@
 @import "src/assets/styles/fonts";
 @import "src/assets/styles/_variables.scss";
 
-ion-content {
-  --ion-background-color: #{$light-blue};
-}
 :host {
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
 

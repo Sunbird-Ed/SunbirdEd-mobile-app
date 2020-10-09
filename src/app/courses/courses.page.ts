@@ -33,7 +33,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { ContentAggregatorHandler } from '@app/services/content/Content-aggregator-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 
 @Component({
   selector: 'app-courses',

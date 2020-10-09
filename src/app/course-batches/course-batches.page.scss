@@ -132,12 +132,8 @@
         }
       }
       .sb-btn-outline-info {
-        background-color: map-get($colors, thick_blue) !important;
-        border-radius: 5px !important;
         font-weight: bold;
         font-size: 12px;
-        color: white !important;
-        border-color: white !important;
     }
     .enroll-msg-ended {
         color: $orange;

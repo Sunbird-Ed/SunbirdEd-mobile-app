@@ -20,6 +20,7 @@ import {
   CorrelationData,
   EventsBusEvent,
   EventsBusService,
+  FormService,
   FormRequest,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
@@ -78,7 +79,7 @@ import {
   FrameworkSelectionActionsDelegate
 } from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ContentAggregatorHandler } from '@app/services/content/Content-aggregator-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 
 @Component({
   selector: 'app-resources',
@@ -245,6 +246,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -1169,8 +1171,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         state: {
           showHeader: true,
           corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          title: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_REQUEST_CONTENT'),
+          subTitle: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_RELEVANT_CONTENT_SUB_HEADING'),
           formConfig,
           submitDetails: {
             label: this.commonUtilService.translateMessage('BTN_SUBMIT')

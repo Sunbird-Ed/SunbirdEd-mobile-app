@@ -44,7 +44,8 @@ import {ContentFilterConfig, EventTopics, PreferenceKey, RouterLinks, ViewMore} 
 import {ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
-import { ContentAggregatorHandler } from '../../services/content/Content-aggregator-handler.service';
+import { FormService } from '@project-sunbird/sunbird-sdk';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -120,6 +121,7 @@ describe('ResourcesComponent', () => {
             onFrameworkSelectionSubmit: jest.fn()
         }
     };
+    const mockFormService: Partial<FormService> = {};
     const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
 
 
@@ -131,6 +133,7 @@ describe('ResourcesComponent', () => {
             mockframeworkService as FrameworkService,
             mockContentService as ContentServiceImpl,
             mockSharedPreference as SharedPreferences,
+            mockFormService as FormService,
             mockSplashScreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockNgZone as NgZone,
             mockQRScanner as SunbirdQRScanner,
@@ -306,6 +309,29 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
+            mockContentService.buildContentAggregator = jest.fn(() => ({
+                handle: jest.fn(() => of({
+                    title: JSON.stringify({en: 'TV Programs'}),
+                    orientation: 'horizontal',
+                    section: {
+                        sections: [
+                            {
+                                contents: [
+                                    {
+                                        appIcon: 'https:',
+                                    }
+                                ],
+                                name: 'mathematics',
+                                display: {
+                                    name: {
+                                        en: 'Mathematics'
+                                    }
+                                },
+                            },
+                        ]
+                    }
+                }))
+            }));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'TV Programs'}),
@@ -338,6 +364,7 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();

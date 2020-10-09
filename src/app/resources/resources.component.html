@@ -1,4 +1,4 @@
-<ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)"
+<ion-content hide-header-footer class="main-container avoid-bottom-tabs-space ui-container" (ionScrollEnd)="logScrollEnd($event)"
   scrollEvents="true" #contentView>
   <div slot="fixed" class="fixed-container">
     <sb-library-filters [list]="categoryMediumNamesArray" [selectedItems]="mediumsSelected"
@@ -78,7 +78,7 @@
     </ion-list>
     <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">
       <div class="text-center" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
-        <p class="information">{{'COULD_NOT_FIND_CONTENT' | translate }}</p>
+        <p class="information">{{'FRMELEMNTS_LBL_COULD_NOT_FIND_CONTENT' | translate }}</p>
         <ion-button class="explore-more-books" expand="block" (click)="requestMoreContent()">
           {{'REQUEST_CONTENT' | translate}} </ion-button>
         <ion-button class="explore-more-content" expand="block" fill="outline" (click)="exploreOtherContents()">
@@ -91,7 +91,7 @@
           <img style="width: 30%;" src="./assets/imgs/group.svg" alt="">
         </div>
         <div class="text-center">
-          <p class="sub-heading">{{'COULD_NOT_FIND_CONTENT' | translate }}</p>
+          <p class="sub-heading">{{'FRMELEMNTS_LBL_COULD_NOT_FIND_CONTENT' | translate }}</p>
           <ion-button class="explore-more-books" expand="block" (click)="requestMoreContent()">
             {{'REQUEST_CONTENT' | translate}} </ion-button>
           <ion-button class="explore-more-content" expand="block" fill="outline" (click)="exploreOtherContents()">

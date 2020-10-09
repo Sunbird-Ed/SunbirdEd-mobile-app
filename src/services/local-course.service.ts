@@ -320,7 +320,7 @@ export class LocalCourseService {
     const dismissResponse = await popover.onDidDismiss();
     const request: Consent = {
       status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
-      userId: dismissResponse.data.userId,
+      userId: course.userId ? course.userId : dismissResponse.data.userId,
       consumerId: course.channel ? course.channel : course.content.channel,
       objectId: course.courseId,
       objectType: 'Collection'
