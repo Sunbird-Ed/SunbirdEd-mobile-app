@@ -999,7 +999,7 @@ export class ProfilePage implements OnInit {
 
     if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selfDeclarationInfo = this.profile.declarations[0];
-      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo_v2', 'get');
       const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
         tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
