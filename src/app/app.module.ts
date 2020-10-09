@@ -70,7 +70,7 @@ import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
-import {AliasBoardName} from '@app/pipes/aliasBoardName/aliasBoardName';
+import {AliasBoardName} from '../pipes/aliasBoardName/alias-board-name';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {

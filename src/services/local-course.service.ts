@@ -309,6 +309,7 @@ export class LocalCourseService {
   }
 
   async showConsentPopup(course) {
+    await this.sbProgressLoader.hide({id: 'login'});
     const popover = await this.popoverCtrl.create({
       component: ConsentPiiPopupComponent,
       componentProps: {

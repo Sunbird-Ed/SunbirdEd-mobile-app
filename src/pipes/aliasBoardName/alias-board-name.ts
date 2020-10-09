@@ -1,5 +1,6 @@
 import {Inject, Pipe, PipeTransform} from '@angular/core';
-import {FormRequest, FormService} from 'sunbird-sdk';
+import {FormService} from 'sunbird-sdk';
+import {FormAndFrameworkUtilService} from '@app/services';
 
 @Pipe({
     name: 'aliased',
@@ -9,18 +10,13 @@ export class AliasBoardName implements PipeTransform {
     private static cachedAliases: { name: string, code: string, alias: string }[];
     constructor(
         @Inject('FORM_SERVICE') private formService: FormService,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) {
         if (AliasBoardName.cachedAliases) {
             return;
         }
-        const formRequest: FormRequest = {
-            type: 'config',
-            subType: 'boardAlias',
-            action: 'get',
-            component: 'app'
-        };
-        this.formService.getForm(formRequest).toPromise().then((r) => {
-            AliasBoardName.cachedAliases = r.form.data.fields;
+        this.formAndFrameworkUtilService.getBoardAliasName().then((fields) => {
+            AliasBoardName.cachedAliases = fields;
         });
     }
     transform(val: string): string {
