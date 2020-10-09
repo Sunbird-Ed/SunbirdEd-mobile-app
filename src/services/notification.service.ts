@@ -4,6 +4,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
 import { ActionType } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { CorReleationDataType } from '.';
 
 declare const cordova;
 
@@ -16,6 +18,7 @@ export class NotificationService {
     private identifier: any;
     private externalUrl: any;
     private appId: any;
+    private _notificationId: string;
 
     constructor(
         private utilityService: UtilityService,
@@ -24,6 +27,14 @@ export class NotificationService {
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
     ) {
         this.getAppName();
+    }
+
+    get notificationId(): string {
+        return this._notificationId;
+    }
+
+    set notificationId(id) {
+        this._notificationId = id;
     }
 
     setupLocalNotification(language?: string): any {
@@ -110,8 +121,15 @@ export class NotificationService {
     }
 
     async handleNotification() {
+        let corRelationList: Array<CorrelationData> = [];
+        if (this.notificationId) {
+            corRelationList.push({
+                id: this.notificationId,
+                type: CorReleationDataType.NOTIFICATION_ID
+            });
+        }
         if (this.identifier) {
-            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier);
+            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier, false, null, null, null, corRelationList);
             this.identifier = null;
         } else if (this.appId) {
             await this.utilityService.openPlayStore(this.appId);
@@ -120,6 +138,7 @@ export class NotificationService {
             open(this.externalUrl);
             this.externalUrl = null;
         }
+        this.notificationId = undefined;
     }
 
 

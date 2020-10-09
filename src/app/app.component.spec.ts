@@ -227,6 +227,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -339,6 +341,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -378,7 +382,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenCalledTimes(7);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -481,8 +485,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
-                    default:
-                        return of('');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -593,8 +597,10 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    default:
-                        return of('');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -697,8 +703,10 @@ describe('AppComponent', () => {
                         return of('some_deployment_key');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    default:
-                        return of('');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -791,6 +799,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             FCMPlugin.getToken = jest.fn((callback) => callback('some_token'));
@@ -835,6 +845,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             FCMPlugin.onTokenRefresh = jest.fn((callback) => callback('some_token'));
@@ -882,6 +894,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
 
@@ -932,13 +946,13 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
                     [{ id: 'some_id', type: 'NotificationID' }]
                 );
-                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toBeCalledWith(
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
@@ -970,6 +984,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
 
@@ -1202,6 +1218,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
 
@@ -1782,6 +1800,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -1834,7 +1854,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -1959,6 +1979,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -2013,7 +2035,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2082,7 +2104,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2151,7 +2173,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2236,6 +2258,8 @@ describe('AppComponent', () => {
                         return of('some_config');
                     case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case 'notification_received_at':
+                        return of('sample');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -2298,7 +2322,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2381,7 +2405,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2460,7 +2484,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2539,7 +2563,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2617,7 +2641,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(5, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
