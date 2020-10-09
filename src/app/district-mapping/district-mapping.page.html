@@ -1,19 +1,21 @@
-<ion-content class="ion-padding">
-  <div>
+<ion-content>
+  <div class="dm-header ion-padding">
     <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack(true)"
       class="top-back-button"></ion-icon>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
-  <div *ngIf="!profile" class="heading"><strong>{{'YOUR_LOCATION'| translate}}</strong></div>
-  <div *ngIf="!profile" class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
-  <div class="name" *ngIf="profile" [ngClass]="(profile) ? 'margin-top-6' : ''">
-    <div><span class="label">{{'NAME' | translate}}</span><span class="error">*</span></div>
-    <input type="text" class="name-feild" [ngClass]="(validateName()) ? 'error-input' : ''" [(ngModel)]="name"
-      placeholder="{{ 'NAME_HINT' | translate }}" (ngModelChange)="validateName()">
-    <span class="error font-size-13" *ngIf="validateName()">{{'ERROR_NAME_INVALID' | translate}}</span>
+  <div class="ion-padding">
+    <div *ngIf="!profile" class="heading"><strong>{{'YOUR_LOCATION'| translate}}</strong></div>
+    <div *ngIf="!profile" class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
+    <div class="name" *ngIf="profile" [ngClass]="(profile) ? 'margin-top-6' : ''">
+      <div><span class="label">{{'NAME' | translate}}</span><span class="error">*</span></div>
+      <input type="text" class="name-feild" [ngClass]="(validateName()) ? 'error-input' : ''" [(ngModel)]="name"
+        placeholder="{{ 'NAME_HINT' | translate }}" (ngModelChange)="validateName()">
+      <span class="error font-size-13" *ngIf="validateName()">{{'ERROR_NAME_INVALID' | translate}}</span>
+    </div>
   </div>
-  <form>
+  <form class="ion-padding-start ion-padding-end">
     <ion-item (click)="onCategoryCliked('state')">
       <ion-label position="stacked" class="label-font">{{'STATE' | translate}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>

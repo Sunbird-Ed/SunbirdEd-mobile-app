@@ -1,11 +1,11 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
   class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-
+  <div class="ui-container backgrond-div"></div>  
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
-
-  <div *ngIf="showSignInCard" class="enrolled-course-bg">
+    
+  <div *ngIf="showSignInCard" class="enrolled-course-bg ui-content">
     <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
 
@@ -22,36 +22,38 @@
     </ng-container>
   </div>
 
-  <div *ngFor="let section of popularAndLatestCourses; let i=index;">
-    <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
-      <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID"
-        [viewMoreButtonText]="'VIEW_ALL' | translate" [contentList]="section?.contents"
-        (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
-        [maxCardCount]="9" (cardClick)="openCourseDetails($event,section, i)" [multiRow]="section?.contents?.length > 3">
-      </sb-course-cards-hlist>
-    </div>
-  </div>
-  <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
-    <div *ngFor="let section of [1,2,3,4]; let i=index;">
-      <div class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
-        <sb-course-cards-hlist [multiRow]="true" [type]="courseCardType.COURSE_CARD_GRID" [isLoading]="pageApiLoader">
+  <div class="">
+    <div *ngFor="let section of popularAndLatestCourses; let i=index;">
+      <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
+        <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID"
+          [viewMoreButtonText]="'VIEW_ALL' | translate" [contentList]="section?.contents"
+          (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
+          [maxCardCount]="9" (cardClick)="openCourseDetails($event,section, i)" [multiRow]="section?.contents?.length > 3">
         </sb-course-cards-hlist>
       </div>
     </div>
-  </div>
+    <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
+      <div *ngFor="let section of [1,2,3,4]; let i=index;">
+        <div class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
+          <sb-course-cards-hlist [multiRow]="true" [type]="courseCardType.COURSE_CARD_GRID" [isLoading]="pageApiLoader">
+          </sb-course-cards-hlist>
+        </div>
+      </div>
+    </div>
 
-  <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-    <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
-    <ion-text>
-      <h6 color="secondary_black">
-        <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
-      </h6>
-    </ion-text>
-    <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
-    <ion-text>
-      <strong class="ion-text-uppercase" color="primary"
-        (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
-    </ion-text>
+    <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+      <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
+      <ion-text>
+        <h6 color="secondary_black">
+          <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
+        </h6>
+      </ion-text>
+      <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
+      <ion-text>
+        <strong class="ion-text-uppercase" color="primary"
+          (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
+      </ion-text>
+    </div>
   </div>
 </ion-content>
 <ion-backdrop class="loading-backdrop ion-text-center" *ngIf="showOverlay">

@@ -1,0 +1,53 @@
+html[data-theme="DEFAULT"]{
+
+  --app-primary-background:#EDF4F9;
+
+  app-profile{
+    .self-declare-btn{
+      ion-button{
+        --background: #{map-get($colors, dark_green)} !important;
+      }
+    }
+
+    .self-declare-teacher-details{
+      ion-button{
+        --background: #FFFFFF !important;
+      }
+    }
+  }
+
+  app-enrollment-details{
+    ion-item-group{
+      ion-item-divider{
+        background-color:map-get($colors, light_gray) !important;
+      }
+    }
+    .sb-btn-outline-info{
+      background-color: map-get($colors, primary) !important;
+      border-radius: 5px !important;
+      color: map-get($colors, white) !important;
+      border-color: map-get($colors, white) !important;
+    }
+  }
+
+  app-courses{
+    .enrolled-course-bg > sb-course-cards-hlist > .layout-course > .header > .title{
+      color: white !important;
+    }
+  }
+
+  app-course-batches{
+    .batch-list{
+      .flex-card-container{
+        .sb-btn-outline-info{
+          background-color: map-get($colors, thick_blue) !important;
+          border-radius: 5px !important;
+          color: white !important;
+          border-color: white !important;
+        }
+      }
+    }
+  }
+
+}
+
