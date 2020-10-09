@@ -117,7 +117,7 @@ describe('LocalCourseService', () => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
           expect(mockCourseService.enrollCourse).toHaveBeenCalled();
           expect(mockPopoverCtrl.create).toHaveBeenCalled();
-        }, 100);
+        }, 200);
         done();
       });
     });

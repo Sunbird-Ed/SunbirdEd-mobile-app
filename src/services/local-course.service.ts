@@ -279,12 +279,15 @@ export class LocalCourseService {
 
   isEnrollable(batches, course) {
     let latestBatch = batches[0];
-    batches.forEach((batch) => {
-      if (batch.startDate &&
-        (new Date(batch.startDate) > new Date(latestBatch.startDate))) {
-        latestBatch = batch;
+    for (let i = 0; i < batches.length; i++) {
+      if (!batches[i].enrollmentEndDate) {
+        return true;
       }
-    });
+      if (batches[i].startDate &&
+          (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
+        latestBatch = batches[i];
+      }
+    }
     // start date is not passed, then check show message
     // start date is passed, then check for enrollmentenddate
     // enrollmentenddate is passed then show message
