@@ -1125,6 +1125,10 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
 sb-course-cards-hlist > .layout-course > .header{
   padding: 0 8px !important;
 }
+sb-course-cards-hlist > .layout-course > .header > .title{
+  color: black !important;
+  font-size: 18px !important;
+}
 
 app-courses{
   sb-course-card{

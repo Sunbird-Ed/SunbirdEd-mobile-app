@@ -45,6 +45,7 @@ import {ImpressionType} from '../../services/telemetry-constants';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {FrameworkSelectionDelegateService} from '../profile/framework-selection/framework-selection.page';
 import { FormService } from '@project-sunbird/sunbird-sdk';
+import { ContentAggregatorHandler } from '../../services/content/Content-aggregator-handler.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -121,6 +122,7 @@ describe('ResourcesComponent', () => {
         }
     };
     const mockFormService: Partial<FormService> = {};
+    const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
 
 
     const constructComponent = () => {
@@ -151,7 +153,8 @@ describe('ResourcesComponent', () => {
             mockChangeRef as ChangeDetectorRef,
             mockAppNotificationService as NotificationService,
             mockPopoverCtrl as PopoverController,
-            mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService
+            mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
+            mockContentAggregatorHandler as ContentAggregatorHandler
         );
     };
     beforeAll(() => {
@@ -329,6 +332,28 @@ describe('ResourcesComponent', () => {
                     }
                 }))
             }));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
+                title: JSON.stringify({en: 'TV Programs'}),
+                orientation: 'horizontal',
+                section: {
+                    sections: [
+                        {
+                            contents: [
+                                {
+                                    appIcon: 'https:',
+                                }
+                            ],
+                            name: 'mathematics',
+                            display: {
+                                name: {
+                                    en: 'Mathematics'
+                                }
+                            },
+                        },
+                    ]
+                }
+            }]));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
             mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
@@ -341,6 +366,8 @@ describe('ResourcesComponent', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -359,8 +386,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
-            mockContentService.buildContentAggregator = jest.fn(() => ({
-               handle: jest.fn(() => of({
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
                 section: {
@@ -383,8 +410,7 @@ describe('ResourcesComponent', () => {
                         gradeLevel: ['class 1', 'class 2']
                     }
                 }
-               }))
-            }));
+            }]));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
             const fileSrcStack = [undefined, 'appIcon'];
@@ -396,8 +422,8 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -416,8 +442,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockContentService.buildContentAggregator = jest.fn(() => ({
-               handle: jest.fn(() => of({
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
                 section: {
@@ -437,8 +463,7 @@ describe('ResourcesComponent', () => {
                         },
                     ]
                 }
-               }))
-            } as ContentsGroupedByPageSection));
+            }] as ContentsGroupedByPageSection));
             mockCommonUtilService.networkInfo.isNetworkAvailable = false;
             mockNgZone.run = jest.fn((fn) => fn());
             // act
@@ -448,8 +473,8 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -465,9 +490,8 @@ describe('ResourcesComponent', () => {
             };
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
-            mockContentService.searchAndGroupContent = jest.fn(() => {
-                return of(Promise.reject('SERVER_ERROR'));
-            });
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => undefined);
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockNgZone.run = jest.fn((fn) => fn());
             mockCommonUtilService.showToast = jest.fn(() => {
@@ -480,7 +504,8 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 // expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('http://sample.path');
                 done();
             }, 0);

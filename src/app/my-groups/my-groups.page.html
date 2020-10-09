@@ -37,7 +37,7 @@
     <div *ngFor="let group of groupList" class="mg-list-card-container">
       <sb-group-card [isMobile]="true" [isAdmin]="group.memberRole === 'admin'" [group]="group"
         [cardTitleColor]="group.cardTitleColor" [cardBgColor]="group.cardBgColor"
-        (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+        (cardClick)="navigateToGroupdetailsPage($event)" [isSuspended]="group.status === 'suspended'" [suspendBadgeText]="'Deactivated'"></sb-group-card>
     </div>
     <div *ngIf="!isGuestUser && !groupList.length && groupListLoader">
       <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10]">
