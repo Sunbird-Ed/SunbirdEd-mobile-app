@@ -5,7 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { 
+import {
     SharedPreferences,
     ProfileService,
     ContentService,
@@ -30,7 +30,7 @@ import {
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/aliasBoardName/alias-board-name';
+import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
 window['supportfile'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())
@@ -323,7 +323,7 @@ describe('FaqReportIssuePage', () => {
             faqReportIssuePage.submit();
             // assert
             expect(faqReportIssuePage.callToAction).toBeDefined();
-            expect(faqReportIssuePage.takeAction).toHaveBeenCalledWith('initiateEmail');       
+            expect(faqReportIssuePage.takeAction).toHaveBeenCalledWith('initiateEmail');
         });
 
         it('should other issue selected', () => {

@@ -14,7 +14,7 @@ import {
   GetSuggestedFrameworksRequest,
   Profile
 } from '@project-sunbird/sunbird-sdk';
-import {AliasBoardName} from '@app/pipes/aliasBoardName/alias-board-name';
+import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
 @Injectable({
   providedIn: 'root'

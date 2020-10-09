@@ -40,7 +40,7 @@ import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from '@app/pipes/aliasBoardName/alias-board-name';
+import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
