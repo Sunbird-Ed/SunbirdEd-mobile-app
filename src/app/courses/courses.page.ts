@@ -47,7 +47,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   /**
    * Contains enrolled course
    */
-  enrolledCourses: Array<any> = [];
+  enrolledCourses: Array<Course> = [];
 
   /**
    * Contains popular and latest courses ist
@@ -357,7 +357,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   getCourseTabData(refresher?) {
     setTimeout(() => {
       if (refresher) {
-        this.getAggregatorResult();
         refresher.target.complete();
         this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.COURSES, Environment.HOME);
       }
@@ -368,10 +367,10 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.getUserId()
       .then(() => {
-       // this.getAggregatorResult();
+       this.getAggregatorResult();
       })
       .catch(() => {
-       // this.getAggregatorResult();
+       this.getAggregatorResult();
       });
   }
 
@@ -950,6 +949,15 @@ export class CoursesPage implements OnInit, OnDestroy {
     };
     try {
       this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      if (this.dynamicCourses) {
+        this.dynamicCourses.forEach((val) => {
+          if (val.orientation === 'horizontal') {
+            this.enrolledCourses = val.section.sections[0].contents;
+          } else if (val.orientation === 'vertical') {
+            this.popularAndLatestCourses = val.section.sections;
+          }
+        });
+      }
       this.spinner(false);
     } catch (e) {
       this.spinner(false);
