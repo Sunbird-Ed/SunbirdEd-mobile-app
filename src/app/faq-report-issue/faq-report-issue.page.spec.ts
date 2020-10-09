@@ -30,7 +30,7 @@ import {
 } from './faq-report-issue.page.spec.data';
 import { of } from 'rxjs';
 import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
-import {AliasBoardName} from 'alias-board-name.ts';
+import {AliasBoardName} from '@app/pipes/aliasBoardName/alias-board-name';
 
 window['supportfile'] = {
     shareSunbirdConfigurations: jest.fn((_, __, fn) => fn())

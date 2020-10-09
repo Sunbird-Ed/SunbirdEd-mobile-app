@@ -97,6 +97,7 @@ describe('LocalCourseService', () => {
         channel: 'sample-channel',
         userConsent: 'Yes'
       };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
       mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
@@ -117,6 +118,7 @@ describe('LocalCourseService', () => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
           expect(mockCourseService.enrollCourse).toHaveBeenCalled();
           expect(mockPopoverCtrl.create).toHaveBeenCalled();
+          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         }, 200);
         done();
       });
@@ -139,6 +141,7 @@ describe('LocalCourseService', () => {
         channel: 'sample-channel',
         userConsent: 'Yes'
       };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
       mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
@@ -157,17 +160,7 @@ describe('LocalCourseService', () => {
       await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockCourseService.enrollCourse).toHaveBeenCalled();
-        expect(mockPopoverCtrl.create).toHaveBeenCalled();
-        // expect(mockProfileService.updateConsent).toHaveBeenCalledWith(
-        //   {
-        //     status: 'ACTIVE',
-        //     userId: 'sample-user-id',
-        //     consumerId: 'sample-channel',
-        //     objectId: 'sample_courseid',
-        //     objectType: 'Collection'
-        //   }
-        // );
-      //  expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         done();
       });
     });
