@@ -450,7 +450,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
           if (isChecked) {
-            that.getAggregatorResult();
+            that.getAggregatorResult(filter);
           }
         });
       }
@@ -928,12 +928,14 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  async getAggregatorResult() {
+  async getAggregatorResult(filter?: ContentSearchCriteria) {
     this.spinner(true);
     const request: ContentAggregatorRequest = {
-      applyFirstAvailableCombination: {
-      },
+      applyFirstAvailableCombination: {},
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+        if (filter) {
+          contentSearchCriteria = this.concatFilter(filter, contentSearchCriteria);
+        }
         return contentSearchCriteria;
       }
     };
@@ -962,6 +964,14 @@ export class CoursesPage implements OnInit, OnDestroy {
     } catch (e) {
       this.spinner(false);
     }
+  }
+
+  concatFilter(filter, searchCriteria) {
+    if (filter.gradeLevel) {
+      filter.grade = filter.gradeLevel;
+      delete filter.gradeLevel;
+    }
+    return { ...filter, ...searchCriteria };
   }
 
 }
