@@ -10,23 +10,22 @@
   </div>
   <div class="scrollable-container">
     <ion-refresher #libraryRefresher slot="fixed" (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
-
-    <ion-list class="m-n" *ngIf="showLoader || refresh" style="padding-top: 100px;">
-      <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
-      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
-        <ion-avatar item-start>
-          <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
-        </ion-avatar>
-        <ion-label style="padding-left: 40px;">
-          <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
-          <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
-        </ion-label>
-      </ion-item>
-    </ion-list>
     <div *ngFor="let result of dynamicResponse; let i=index;">
       <div *ngIf="result.orientation === 'horizontal'">
         <div *ngFor="let section of result.section?.sections">
-          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length">
+          <div *ngIf="result.name === 'My Learnings'" style="padding-top: 5px;">
+            <ng-container *ngIf="section.contents && section.contents.length">
+              <sb-course-cards-hlist [title]="result?.name"
+                [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="section.contents"
+                [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+                (cardClick)="navigateToDetailPage($event)" [hideProgress]="true"></sb-course-cards-hlist>
+            </ng-container>
+            <ng-container *ngIf="showLoader && section.contents && section.contents.length === 0">
+              <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
+              </sb-course-cards-hlist>
+            </ng-container>
+          </div>
+          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && result.name !== 'My Learnings'">
             <div class="sb-recently-viewed-items">
               <div class="sb-recenlty-viewed-title">{{result.name}}
                 <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
@@ -51,14 +50,14 @@
         </div>
       </div>
       <div *ngIf="result.orientation === 'vertical'">
-        <div class="section-header-style" *ngIf="storyAndWorksheets.length">{{result.name}}</div>
-        <div *ngFor="let items of storyAndWorksheets">
-          <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
-            <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
+        <div class="section-header-style" *ngIf="result.section.sections.length">{{result.name}}</div>
+        <div *ngFor="let section of result.section.sections">
+          <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">
+            <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
               [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
               [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
-              (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)"
-              (cardClick)="navigateToDetailPage($event, items.name)">
+              (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"
+              (cardClick)="navigateToDetailPage($event, section.name)">
             </sb-library-cards-stack>
           </div>
         </div>
