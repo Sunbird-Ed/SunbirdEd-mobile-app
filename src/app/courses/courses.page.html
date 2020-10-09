@@ -1,11 +1,11 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
   class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-  <div class="ui-container backgrond-div"></div>  
+
   <ion-refresher #courseRefresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
-    
-  <div *ngIf="showSignInCard" class="enrolled-course-bg ui-content">
+
+  <div *ngIf="showSignInCard" class="enrolled-course-bg">
     <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
   <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
@@ -40,14 +40,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
-      <div *ngFor="let section of [1,2,3,4]; let i=index;">
-        <div class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
-          <sb-course-cards-hlist [multiRow]="true" [type]="courseCardType.COURSE_CARD_GRID" [isLoading]="pageApiLoader">
-          </sb-course-cards-hlist>
-        </div>
-      </div>
-    </div>
+  </div>
 
   <ion-list class="m-n" *ngIf="showLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
     <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
