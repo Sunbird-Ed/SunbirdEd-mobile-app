@@ -364,7 +364,6 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.buildContentAggregator).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
