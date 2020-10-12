@@ -34,6 +34,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
 
 @Component({
   selector: 'app-courses',
@@ -940,12 +941,12 @@ export class CoursesPage implements OnInit, OnDestroy {
       }
     };
     try {
-      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, 'course');
+      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
       if (this.dynamicCourses) {
         this.dynamicCourses.forEach((val) => {
-          if (val.orientation === 'horizontal') {
+          if (val.orientation === Orientation.HORIZONTAL) {
             this.enrolledCourses = val.section.sections[0].contents;
-          } else if (val.orientation === 'vertical') {
+          } else if (val.orientation === Orientation.VERTICAL) {
             this.popularAndLatestCourses = val.section.sections;
           }
         });

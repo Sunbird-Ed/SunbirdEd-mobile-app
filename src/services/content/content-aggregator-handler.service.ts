@@ -5,6 +5,7 @@ import {
 } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
+import { AggregatorPageType, Orientation } from './content-aggregator-namespaces';
 
 @Injectable()
 
@@ -22,11 +23,11 @@ export class ContentAggregatorHandler {
     async aggregate(request, pageName): Promise<any> {
         const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
         if (this.appGlobalService.isUserLoggedIn()) {
-            pageName === 'course' ? dataSrc.push('TRACKABLE_COURSE_CONTENTS') : dataSrc.push('TRACKABLE_CONTENTS');
+            pageName === AggregatorPageType.COURSE ? dataSrc.push('TRACKABLE_COURSE_CONTENTS') : dataSrc.push('TRACKABLE_CONTENTS');
         }
         const formRequest: FormRequest = {
             type: 'config',
-            subType: pageName === 'course' ? 'course' : 'library_v2',
+            subType: pageName === AggregatorPageType.COURSE ? AggregatorPageType.COURSE : AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };
@@ -35,12 +36,12 @@ export class ContentAggregatorHandler {
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
                     val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
-                    if (val.orientation === 'horizontal') {
+                    if (val.orientation === Orientation.HORIZONTAL) {
                         for (let count = 0; count < val.section.sections[0].contents.length; count++) {
                             val.section.sections[0].contents[count]['cardImg'] =
                                 this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
                         }
-                    } else if (val.orientation === 'vertical') {
+                    } else if (val.orientation === Orientation.VERTICAL) {
                         for (let i = 0; i < val.section.sections.length; i++) {
                             for (let count = 0; count < val.section.sections[i].contents.length; count++) {
                                 val.section.sections[i].contents[count]['cardImg'] =

@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 import { AppGlobalService } from '../app-global-service.service';
 import { CommonUtilService } from '../common-util.service';
 import { ContentAggregatorHandler } from './content-aggregator-handler.service';
+import { AggregatorPageType } from './content-aggregator-namespaces';
 
 describe('ContentAggregatorHandler', () => {
     let contentAggregatorHandler: ContentAggregatorHandler;
@@ -50,7 +51,7 @@ describe('ContentAggregatorHandler', () => {
         const dataSrc = ['CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: pageName === 'course' ? 'course' : 'library_v2',
+            subType: AggregatorPageType.COURSE,
             action: 'get',
             component: 'app',
         };
@@ -114,7 +115,7 @@ describe('ContentAggregatorHandler', () => {
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: pageName === 'course' ? 'course' : 'library_v2',
+            subType: AggregatorPageType.COURSE,
             action: 'get',
             component: 'app',
         };
@@ -161,11 +162,11 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'library';
+        const pageName = AggregatorPageType.LIBRARY;
         const dataSrc = ['CONTENTS', 'TRACKABLE_CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: 'library_v2',
+            subType: AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };
@@ -225,11 +226,11 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'library';
+        const pageName = AggregatorPageType.LIBRARY;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: 'library_v2',
+            subType: AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };
@@ -289,11 +290,11 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'library';
+        const pageName = AggregatorPageType.LIBRARY;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: 'library_v2',
+            subType: AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };
@@ -335,11 +336,11 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'library';
+        const pageName = AggregatorPageType.LIBRARY;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: 'library_v2',
+            subType: AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };
@@ -368,11 +369,11 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'library';
+        const pageName = AggregatorPageType.LIBRARY;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
-            subType: 'library_v2',
+            subType: AggregatorPageType.LIBRARY,
             action: 'get',
             component: 'app',
         };

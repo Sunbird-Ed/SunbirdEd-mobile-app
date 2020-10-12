@@ -80,6 +80,7 @@ import {
 } from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
 
 @Component({
   selector: 'app-resources',
@@ -489,10 +490,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     // Get the book data
     try {
-      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, 'library');
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
-          if (val.orientation === 'vertical') {
+          if (val.orientation === Orientation.VERTICAL) {
             this.searchGroupingContents = val.section;
           }
         });
