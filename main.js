@@ -73,11 +73,18 @@ var formRequestArray = [{
         'component': 'app'
     },
     {
-        'type': 'dynamicForm',
-        'subType': 'contentRequest',
-        'action': 'submit',
+        'type': 'config',
+        'subType': 'notification',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'notification',
+        'action': 'get',
         'component': 'app'
     }
+
 ];
 
 var state_list_request_body = {

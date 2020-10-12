@@ -3,6 +3,23 @@
 @import "src/assets/styles/fonts";
 
 :host {
+  .profile-info{
+    background-color: transparent;
+    border-radius: 0 0 0 16px;
+    .profile-icon{
+      width: 90px;
+      height: 90px;
+      border-radius: 60px;
+      background-color: map-get($colors, white);
+      box-shadow: 0 5px 2px 0 rgba(0,0,0,0.1);
+      margin: auto;
+      img{
+        position: relative;
+        top: 5px;
+        width: 75px;
+      }
+    }
+  }
   .profile-name {
     color: map-get($colors, dark);
     margin: 0;

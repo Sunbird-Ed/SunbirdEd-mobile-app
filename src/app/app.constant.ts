@@ -214,6 +214,8 @@ export class PreferenceKey {
     public static readonly CAMPAIGN_PARAMETERS = 'campaign_parameters';
     public static readonly CREATE_GROUP_INFO_POPUP = 'create_group_info_popup';
     public static readonly ADD_MEMBER_TO_GROUP_INFO_POPUP = 'add_member_to_group_info_popup';
+    public static readonly NOTIFICAITON_RECEIVED_AT = 'notification_received_at';
+    public static readonly CURRENT_SELECTED_THEME = 'current_selected_theme';
 }
 
 export class GenericAppConfig {
@@ -571,4 +573,13 @@ export class GroupErrorCodes {
     public static readonly EXCEEDED_GROUP_MAX_LIMIT = 'EXCEEDED_GROUP_MAX_LIMIT';
     public static readonly EXCEEDED_MEMBER_MAX_LIMIT = 'EXCEEDED_MEMBER_MAX_LIMIT';
     public static readonly EXCEEDED_ACTIVITY_MAX_LIMIT = 'EXCEEDED_ACTIVITY_MAX_LIMIT';
+}
+
+export class AppThemes {
+    public static readonly DEFAULT = 'DEFAULT';
+    public static readonly JOYFUL = 'JOYFUL';
+}
+
+export class StatusBarTheme {
+    public static readonly SET_DEFAULT = '#BB000000';
 }

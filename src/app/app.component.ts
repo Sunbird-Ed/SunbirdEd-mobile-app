@@ -21,7 +21,7 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
+import {PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants, AppThemes} from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -152,6 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
+      await this.checkForTheme();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -336,7 +337,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   /* Notification data will be received in data variable
    * can take action on data variable
    */
-  private receiveNotification() {
+  private async receiveNotification() {
+    const val = await this.preferences.getString(PreferenceKey.NOTIFICAITON_RECEIVED_AT).toPromise();
+    if (val) {
+      const corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: val, type: CorReleationDataType.NOTIFICATION_RECEIVED_AT });
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.FCM,
+        '',
+        Environment.HOME,
+        this.activePageService.computePageId(this.router.url),
+        undefined,
+        undefined,
+        undefined,
+        corRelationList,
+        ID.NOTIFICATION_RECEIVED
+      );
+      await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, null).toPromise();
+    }
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
@@ -360,6 +378,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.events.publish('notification-status:update', { isUnreadNotifications: true });
         });
         this.notificationSrc.setNotificationDetails(data);
+        this.notificationSrc.notificationId = data.id;
         if (this.isForeground) {
           this.notificationSrc.handleNotification();
         }
@@ -894,5 +913,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   closePlannedMaintenanceBanner() {
     this.isPlannedMaintenanceStarted = false;
+  }
+
+  private async checkForTheme() {
+    const selectedTheme = await this.preferences.getString(PreferenceKey.CURRENT_SELECTED_THEME).toPromise();
+    if (selectedTheme === AppThemes.JOYFUL) {
+      await this.headerService.showStatusBar();
+    } else {
+      this.headerService.hideStatusBar();
+    }
   }
 }

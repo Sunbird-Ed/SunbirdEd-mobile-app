@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="83px" height="82px" viewBox="0 0 83 82" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>25A79762-0D33-442C-B45D-A461A3EFBE39</title>
+    <defs>
+        <circle id="path-1" cx="41" cy="41" r="41"></circle>
+    </defs>
+    <g id="Profile" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Profile_interim_design-01" transform="translate(-139.000000, -121.000000)">
+            <g id="Group-6-Copy" transform="translate(131.000000, 113.000000)">
+                <g id="Profile" transform="translate(8.500000, 8.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Mask"></g>
+                    <g id="Group-6" mask="url(#mask-2)" fill="#AEB2B6">
+                        <g transform="translate(-7.500000, 5.000000)">
+                            <circle id="Oval" cx="48" cy="19" r="19"></circle>
+                            <circle id="Oval-Copy" cx="48" cy="91" r="48"></circle>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

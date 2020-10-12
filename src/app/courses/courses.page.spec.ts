@@ -32,6 +32,7 @@ import {LocalCourseService} from '../../services/local-course.service';
 import {SbProgressLoader} from '../../services/sb-progress-loader.service';
 import {CsNetworkError} from '@project-sunbird/client-services/core/http-service';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -73,11 +74,11 @@ describe('CoursesPage', () => {
         navigateToCollection: jest.fn(),
         navigateToContent: jest.fn()
     };
+    const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
 
     beforeAll(() => {
         coursesPage = new CoursesPage(
             mockEventBusService as EventsBusService,
-            mockPageService as PageAssembleService,
             mockPreferences as SharedPreferences,
             mockCourseService as CourseService,
             mockContentService as ContentService,
@@ -97,7 +98,8 @@ describe('CoursesPage', () => {
             mockToastController as ToastController,
             mockHeaderService as AppHeaderService,
             mockSbProgressLoader as SbProgressLoader,
-            mockNavService as NavigationService
+            mockNavService as NavigationService,
+            mockContentAggregatorHandler as ContentAggregatorHandler
         );
     });
 
@@ -109,27 +111,63 @@ describe('CoursesPage', () => {
         expect(coursesPage).toBeTruthy();
     });
 
+    describe('getAggregatorResult', () => {
+        it('should return course for loggedIn user', (done) => {
+            jest.spyOn(coursesPage, 'spinner').mockImplementation();
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => {
+                Promise.resolve([{
+                        orientation: 'horaizontal',
+                        section: {
+                            sections: [{name: 'sample-name'}]
+                    }
+                }]);
+            }) as any;
+            // act
+            coursesPage.getAggregatorResult();
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return course for guest user', (done) => {
+            jest.spyOn(coursesPage, 'spinner').mockImplementation();
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockContentAggregatorHandler.aggregate = jest.fn(() => {
+                Promise.resolve([{
+                        orientation: 'horaizontal',
+                        section: {
+                            sections: [{name: 'sample-name'}]
+                    }
+                }]);
+            }) as any;
+            // act
+            coursesPage.getAggregatorResult();
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
     describe('ngOnInit', () => {
         it('should return enrolledCourse data and course tab data by invoked ngOnIt', (done) => {
             // arrange
             jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
             const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
-            mockAppGlobalService.setEnrolledCourseList = jest.fn();
-            const course: Course[] = [{
-                identifier: 'do_0123'
-            }];
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(course));
-            mockCommonUtilService.getContentImg = jest.fn();
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({returnFreshCourses: false, userId: undefined});
                 done();
             }, 0);
         });
@@ -139,14 +177,15 @@ describe('CoursesPage', () => {
             jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
             const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(undefined));
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({returnFreshCourses: false, userId: undefined});
                 done();
             }, 0);
         });
@@ -157,35 +196,15 @@ describe('CoursesPage', () => {
             const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
             mockEvents.subscribe = jest.fn((_, fn) => fn(param));
             const course: Course[] = [];
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(course));
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({returnFreshCourses: false, userId: undefined});
-                done();
-            }, 0);
-        });
-
-        it('should return error enrolledCourse data by invoked ngOnIt', (done) => {
-            // arrange
-            jest.spyOn(coursesPage, 'getCourseTabData').mockReturnValue();
-            const param = {isOnBoardingCardCompleted: true, contentId: 'do_123'};
-            mockEvents.subscribe = jest.fn((_, fn) => fn(param));
-            mockAppGlobalService.setEnrolledCourseList = jest.fn();
-            const course: Course[] = [{
-                identifier: 'do_0123'
-            }];
-            mockCourseService.getEnrolledCourses = jest.fn(() => throwError(course));
-            // act
-            coursesPage.ngOnInit();
-            // assert
-            setTimeout(() => {
-                expect(coursesPage.getCourseTabData).toHaveBeenCalled();
-                expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({returnFreshCourses: false, userId: undefined});
                 done();
             }, 0);
         });
@@ -265,6 +284,9 @@ describe('CoursesPage', () => {
             subscribe: data
         } as any;
         jest.spyOn(coursesPage, 'handleHeaderEvents').mockReturnValue();
+        jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+            return Promise.resolve();
+        });
         // act
         coursesPage.ionViewWillEnter();
         // assert
@@ -349,236 +371,6 @@ describe('CoursesPage', () => {
         coursesPage.generateNetworkType();
         // assert
         expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalledWith(values, PageId.LIBRARY);
-    });
-
-    describe('getPopularAndLatestCourses', () => {
-        it('should return pageAssemble data when PageAssembleCriteria is undefined', (done) => {
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = '';
-            mockPageService.getPageAssemble = jest.fn(() => throwError('NOT_FOUND'));
-            coursesPage.selectedLanguage = 'en';
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(false);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should return pageAssemble data when PageAssembleCriteria is not undefined', (done) => {
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = {board: 'cbsc', medium: 'english'};
-            mockPageService.getPageAssemble = jest.fn(() => of({
-                sections: [{
-                    display: '{"name": {"en": "example"}}',
-                    contents: [{identifier: 'sample_id'}]
-                }]
-            }));
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            coursesPage.selectedLanguage = 'en';
-            const values = new Map();
-            values['pageSectionCount'] = 1;
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
-            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
-            mockCommonUtilService.getContentImg = jest.fn();
-            // mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            // act
-            coursesPage.getPopularAndLatestCourses(false);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should applied filter for latest course data', (done) => {
-            const requestPageFilter: PageAssembleCriteria = {
-                name: PageName.COURSE,
-                source: 'app',
-                filters: {
-                    board: ['cbsc', 'assam'],
-                    medium: ['english', 'hindi'],
-                    grade: ['class 1', 'class 2'],
-                    subject: ['math', 'phy']
-                },
-                mode: 'soft'
-            };
-            coursesPage.profile = {
-                board: ['cbsc', 'assam'],
-                medium: ['english', 'hindi'],
-                grade: ['class 1', 'class 2'],
-                subject: ['math', 'phy']
-            };
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = {board: 'cbsc', medium: 'english'};
-            mockPageService.getPageAssemble = jest.fn(() => of({
-                sections: [{
-                    display: '{"name": {"en": "example"}}',
-                    contents: [{identifier: 'sample_id'}]
-                }]
-            }));
-            coursesPage.selectedLanguage = 'hindi';
-            const values = new Map();
-            values['pageSectionCount'] = 1;
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
-            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            mockAppGlobalService.getNameForCodeInFramework = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(true, requestPageFilter);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should applied filter for latest course data if board medium and grade are undefined', (done) => {
-            const requestPageFilter: PageAssembleCriteria = {
-                name: PageName.COURSE,
-                source: 'app',
-                filters: {
-                    board: ['cbsc', 'assam'],
-                    medium: ['english', 'hindi'],
-                    grade: ['class 1', 'class 2'],
-                    subject: ['math', 'phy']
-                },
-                mode: 'soft'
-            };
-            coursesPage.profile = {
-                board: [],
-                medium: [],
-                grade: [],
-                subject: []
-            };
-            coursesPage.appliedFilter = undefined;
-            mockPageService.getPageAssemble = jest.fn(() => of({
-                sections: [{display: '{}'}]
-            }));
-            coursesPage.selectedLanguage = 'hindi';
-            jest.spyOn(coursesPage, 'generateExtraInfoTelemetry').mockReturnValue();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            mockAppGlobalService.getNameForCodeInFramework = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(true, requestPageFilter);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should applied filter for latest course data for pageService error part of connection-error', (done) => {
-            const requestPageFilter: PageAssembleCriteria = {
-                name: PageName.COURSE,
-                source: 'app',
-                filters: {
-                    board: ['cbsc', 'assam'],
-                    medium: ['english', 'hindi'],
-                    grade: ['class 1', 'class 2'],
-                    subject: ['math', 'phy']
-                },
-                mode: 'soft'
-            };
-            coursesPage.profile = {
-                board: [],
-                medium: [],
-                grade: [],
-                subject: []
-            };
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = undefined;
-            mockPageService.getPageAssemble = jest.fn(() => throwError('CONNECTION_ERROR'));
-            coursesPage.selectedLanguage = 'hindi';
-            jest.spyOn(coursesPage, 'generateExtraInfoTelemetry').mockReturnValue();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(true, requestPageFilter);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
-                done();
-            }, 0);
-        });
-
-        it('should applied filter for latest course data for pageService error part of SERVER_ERROR', (done) => {
-            const requestPageFilter: PageAssembleCriteria = {
-                name: PageName.COURSE,
-                source: 'app',
-                filters: {
-                    board: ['cbsc', 'assam'],
-                    medium: ['english', 'hindi'],
-                    grade: ['class 1', 'class 2'],
-                    subject: ['math', 'phy']
-                },
-                mode: 'soft'
-            };
-            coursesPage.profile = {
-                board: [],
-                medium: [],
-                grade: [],
-                subject: []
-            };
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = undefined;
-            mockPageService.getPageAssemble = jest.fn(() => throwError('SERVER_ERROR'));
-            coursesPage.selectedLanguage = 'hindi';
-            jest.spyOn(coursesPage, 'generateExtraInfoTelemetry').mockReturnValue();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(true, requestPageFilter);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_FETCHING_DATA');
-                done();
-            }, 0);
-        });
-
-
-        it('should applied filter for latest course data for pageService error part of SERVER_AUTH_ERROR', (done) => {
-            const requestPageFilter: PageAssembleCriteria = {
-                name: PageName.COURSE,
-                source: 'app',
-                filters: {
-                    board: ['cbsc', 'assam'],
-                    medium: ['english', 'hindi'],
-                    grade: ['class 1', 'class 2'],
-                    subject: ['math', 'phy']
-                },
-                mode: 'soft'
-            };
-            coursesPage.profile = {
-                board: [],
-                medium: [],
-                grade: [],
-                subject: []
-            };
-            const rqst = {filters: {}, mode: 'soft', name: 'Course', source: 'app'};
-            coursesPage.appliedFilter = '';
-            mockPageService.getPageAssemble = jest.fn(() => throwError('SERVER_AUTH_ERROR'));
-            coursesPage.selectedLanguage = 'hindi';
-            jest.spyOn(coursesPage, 'generateExtraInfoTelemetry').mockReturnValue();
-            jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            coursesPage.getPopularAndLatestCourses(true, requestPageFilter);
-            // assert
-            setTimeout(() => {
-                expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_FETCHING_DATA');
-                done();
-            }, 0);
-        });
     });
 
     describe('getContentDetails', () => {
@@ -797,11 +589,11 @@ describe('CoursesPage', () => {
             coursesPage.isUpgradePopoverShown = false;
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
-            jest.spyOn(coursesPage, 'getEnrolledCourses').mockReturnValue();
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             jest.spyOn(coursesPage, 'getContentDetails').mockReturnValue();
             coursesPage.appliedFilter = true;
-            jest.spyOn(coursesPage, 'getPopularAndLatestCourses').mockImplementation(() => {
-            });
             // act
             coursesPage.subscribeUtilityEvents();
             // assert
@@ -821,7 +613,9 @@ describe('CoursesPage', () => {
             mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
             jest.spyOn(coursesPage, 'getContentDetails').mockReturnValue();
             coursesPage.appliedFilter = false;
-            jest.spyOn(coursesPage, 'getPopularAndLatestCourses').mockReturnValue();
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             coursesPage.subscribeUtilityEvents();
             // assert
@@ -1259,12 +1053,13 @@ describe('CoursesPage', () => {
             };
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockAppGlobalService.getSessionData = jest.fn(() => sessionObj);
-            jest.spyOn(coursesPage, 'getEnrolledCourses').mockImplementation();
+            jest.spyOn(coursesPage, 'getAggregatorResult').mockImplementation(() => {
+                return Promise.resolve();
+            });
             // act
             setTimeout(() => {
                 coursesPage.getUserId();
                 expect(coursesPage.userId).toBe('sample_token');
-                expect(coursesPage.getEnrolledCourses).toHaveBeenCalledWith(false, true);
                 done();
             }, 0);
         });

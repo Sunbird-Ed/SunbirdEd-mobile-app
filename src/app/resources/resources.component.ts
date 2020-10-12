@@ -20,6 +20,8 @@ import {
   CorrelationData,
   EventsBusEvent,
   EventsBusService,
+  FormService,
+  FormRequest,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
@@ -77,6 +79,7 @@ import {
   FrameworkSelectionActionsDelegate
 } from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 
 @Component({
   selector: 'app-resources',
@@ -243,6 +246,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -262,7 +266,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
     private popoverCtrl: PopoverController,
-    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService
+    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
+    private contentAggregatorHandler: ContentAggregatorHandler
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -483,112 +488,69 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         return contentSearchCriteria;
       }
     };
+    const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
+    if (this.appGlobalService.isUserLoggedIn()) {
+      dataSrc.push('TRACKABLE_CONTENTS');
+    }
+    const formRequest: FormRequest = {
+      type: 'config',
+      subType: 'library_v2',
+      action: 'get',
+      component: 'app',
+    };
 
     const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.aggregateContent(request).toPromise()
-      .then((response: ContentAggregatorResponse) => {
-        this.ngZone.run(() => {
-          this.dynamicResponse = response.result;
-          this.courseList = [];
-          response.result.forEach((val) => {
-            val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
-            if (val.orientation === 'vertical') {
-              this.searchGroupingContents = val.section;
-            }
-          });
-          const newSections = [];
-          this.getCategoryData();
-          this.searchGroupingContents.sections.forEach(section => {
-            if (section.name) {
-              if (has(section.name, this.selectedLanguage)) {
-                const langs = [];
-                forEach(section.name, (value, key) => {
-                  langs[key] = value;
-                });
-                section.name = langs[this.selectedLanguage];
-              }
-            }
-            newSections.push(section);
-          });
-          // END OF TEMPORARY CODE
-          if (this.profile.subject && this.profile.subject.length) {
-            this.storyAndWorksheets = this.orderBySubject([...newSections]);
-          } else {
-            this.storyAndWorksheets = newSections;
+    try {
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      if (this.dynamicResponse) {
+        this.dynamicResponse.forEach((val) => {
+          if (val.orientation === 'vertical') {
+            this.searchGroupingContents = val.section;
           }
-          const sectionInfo = {};
-          for (let i = 0; i < this.storyAndWorksheets.length; i++) {
-            const sectionName = this.storyAndWorksheets[i].name,
-              count = this.storyAndWorksheets[i].contents.length;
-            // check if locally available
-            this.markLocallyAvailableTextBook();
-            for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
-              const content = this.storyAndWorksheets[i].contents[k];
-              if (content.appIcon) {
-                if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-                  if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                    content.appIcon = content.appIcon;
-                  } else {
-                    this.imageSrcMap.set(content.identifier, content.appIcon);
-                    content.appIcon = this.defaultImg;
-                  }
-                } else if (content.basePath) {
-                  content.appIcon = content.basePath + '/' + content.appIcon;
-                }
-              }
-              // add custom attribute('cardImg') for common consumption
-              if (!(!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable)) {
-                if (this.commonUtilService.convertFileSrc(content.courseLogoUrl)) {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.courseLogoUrl);
-                } else if (this.commonUtilService.convertFileSrc(content.appIcon)) {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.appIcon);
-                } else {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.defaultImg;
-                }
-              } else {
-                this.storyAndWorksheets[i].contents[k].cardImg = 'assets/imgs/ic_offline_white_sm.png';
-              }
-            }
-
-            sectionInfo[sectionName] = count;
-            sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-              && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
-            sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
-            sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
-          }
-
-          const resValues = {};
-          resValues['pageRes'] = sectionInfo;
-          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.RESOURCE_PAGE_LOADED,
-            Environment.HOME,
-            this.source, undefined,
-            resValues);
-          this.pageLoadedSuccess = true;
-          this.refresh = false;
-          this.searchApiLoader = false;
-          this.generateExtraInfoTelemetry(newSections.length);
         });
-      })
-      .catch(error => {
-        this.ngZone.run(() => {
-          this.refresh = false;
-          this.searchApiLoader = false;
-          if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-            if (!isAfterLanguageChange) {
-              this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-            }
+      }
+      const newSections = [];
+      this.getCategoryData();
+      this.searchGroupingContents.sections.forEach(section => {
+        if (section.name) {
+          if (has(section.name, this.selectedLanguage)) {
+            const langs = [];
+            forEach(section.name, (value, key) => {
+              langs[key] = value;
+            });
+            section.name = langs[this.selectedLanguage];
           }
-          const errValues = {};
-          errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
-          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.RESOURCE_PAGE_ERROR,
-            Environment.HOME,
-            this.source, undefined,
-            errValues);
-        });
+        }
+        newSections.push(section);
       });
+      if (this.profile.subject && this.profile.subject.length) {
+        this.storyAndWorksheets = this.orderBySubject([...newSections]);
+      } else {
+        this.storyAndWorksheets = newSections;
+      }
+      this.pageLoadedSuccess = true;
+      this.refresh = false;
+      this.searchApiLoader = false;
+      this.generateExtraInfoTelemetry(newSections.length);
+    } catch (error) {
+      this.ngZone.run(() => {
+        this.refresh = false;
+        this.searchApiLoader = false;
+        if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+          if (!isAfterLanguageChange) {
+            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+          }
+        }
+        const errValues = {};
+        errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+          InteractSubtype.RESOURCE_PAGE_ERROR,
+          Environment.HOME,
+          this.source, undefined,
+          errValues);
+      });
+    }
   }
 
   orderBySubject(searchResults: any[]) {
@@ -897,6 +859,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   navigateToDetailPage(event, sectionName) {
+    event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
@@ -1183,10 +1146,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const params: NavigationExtras = {
       state: {
         requestParams: {
-          request: section.searchCriteria
+          request: section.searchRequest
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName : ViewMore.PAGE_TV_PROGRAMS
+        pageName: ViewMore.PAGE_TV_PROGRAMS
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
@@ -1208,8 +1171,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         state: {
           showHeader: true,
           corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
-          title: this.commonUtilService.translateMessage('CONTENT_REQUEST'),
-          subTitle: this.commonUtilService.translateMessage('FILL_DETAILS_FOR_SPECIFIC_CONTENT'),
+          title: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_REQUEST_CONTENT'),
+          subTitle: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_RELEVANT_CONTENT_SUB_HEADING'),
           formConfig,
           submitDetails: {
             label: this.commonUtilService.translateMessage('BTN_SUBMIT')

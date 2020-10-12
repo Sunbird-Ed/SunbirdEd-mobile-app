@@ -175,7 +175,7 @@ export class SubProfileEditPage {
     } catch (err) {
       this.generateTelemetryInteract(InteractType.CREATE_FAILURE, ID.MUA_USER_CREATION);
       if (err.response.body && err.response.body.params && err.response.body.params.status === 'MANAGED_USER_LIMIT_EXCEEDED') {
-        this.commonUtilService.showToast('USER_CREATION_LIMIT_EXCEEDED');
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_USER_CREATION_LIMIT_EXCEEDED');
       } else {
         this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');
       }

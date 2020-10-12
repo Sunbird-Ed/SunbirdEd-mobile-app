@@ -318,6 +318,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    this.headerService.hideStatusBar();
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
