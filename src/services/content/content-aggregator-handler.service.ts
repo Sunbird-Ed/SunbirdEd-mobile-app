@@ -40,8 +40,7 @@ export class ContentAggregatorHandler {
                             val.section.sections[0].contents[count]['cardImg'] =
                                 this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
                         }
-                    }
-                    if (val.orientation === 'vertical') {
+                    } else if (val.orientation === 'vertical') {
                         for (let i = 0; i < val.section.sections.length; i++) {
                             for (let count = 0; count < val.section.sections[i].contents.length; count++) {
                                 val.section.sections[i].contents[count]['cardImg'] =
