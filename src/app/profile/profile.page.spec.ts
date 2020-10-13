@@ -539,7 +539,7 @@ describe('Profile.page', () => {
         // act
         profilePage.showLessTrainings();
         // assert
-        expect(profilePage.trainingsLimit).toBe(3);
+        expect(profilePage.myLearningLimit).toBe(3);
     });
 
     it('should go to catch part and called showToast message', (done) => {
