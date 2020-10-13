@@ -236,7 +236,7 @@
             </div>
             <div class="content">
                 <div class="flex-nowrap"
-                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit) |sortBy: 'status' : 'asc';">
+                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
                         <div class="fw" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
@@ -260,14 +260,14 @@
                     </div>
                 </div>
                 <div class="ion-text-center"
-                    *ngIf="mapTrainingsToCertificates(mappedTrainingCertificates).length >= trainingsLimit">
+                    *ngIf="mapTrainingsToCertificates(mappedTrainingCertificates).length >= myLearningLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
-                        + {{mappedTrainingCertificates?.length - trainingsLimit}} {{'MORE' | translate}}
+                        *ngIf="myLearningLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings('myLearning')">
+                        + {{mappedTrainingCertificates?.length - myLearningLimit}} {{'MORE' | translate}}
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit >= mappedTrainingCertificates?.length" (click)="showLessTrainings()">
+                        *ngIf="myLearningLimit >= mappedTrainingCertificates?.length" (click)="showLessTrainings('myLearning')">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>
@@ -276,11 +276,11 @@
         </div>
         <div class="trainings" *ngIf="learnerPassbook?.length > 0">
             <div class="bolder heading f16">
-                <span>{{'LEARNER_PASSBOOK' | translate}} ({{learnerPassbook?.length}})&lrm;</span>
+                <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbook?.length}})&lrm;</span>
             </div>
             <div class="content">
                 <div class="flex-nowrap"
-                    *ngFor="let certificate of (learnerPassbook | slice : startLimit:trainingsLimit) |sortBy: 'status' : 'asc';">
+                    *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
                         <div class="fw" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
@@ -302,14 +302,14 @@
                     </div>
                 </div>
                 <div class="ion-text-center"
-                    *ngIf="mapTrainingsToCertificates(learnerPassbook).length >= trainingsLimit">
+                    *ngIf="mapTrainingsToCertificates(learnerPassbook).length >= learnerPassbookLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit < learnerPassbook?.length" (click)="showMoreTrainings()">
-                        + {{learnerPassbook?.length - trainingsLimit}} {{'MORE' | translate}}
+                        *ngIf="learnerPassbookLimit < learnerPassbook?.length" (click)="showMoreTrainings('learnerPassbook')">
+                        + {{learnerPassbook?.length - learnerPassbookLimit}} {{'MORE' | translate}}
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit >= learnerPassbook?.length" (click)="showLessTrainings()">
+                        *ngIf="learnerPassbookLimit >= learnerPassbook?.length" (click)="showLessTrainings('learnerPassbook')">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>
