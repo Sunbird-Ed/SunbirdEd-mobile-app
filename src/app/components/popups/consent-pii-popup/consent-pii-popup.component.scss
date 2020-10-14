@@ -70,14 +70,22 @@
   font-size: 16px;
   padding: 8px 16%;
   margin-left: 18px;
-  border: 2px solid $blue
+  border: 2px solid $blue;
+  width: 45%;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
 }
 .save-changes-not-agree{
   color: $blue;
   background-color: white;
   font-size: 16px;
   padding: 8px 9%;
-  border: 2px solid $blue
+  border: 2px solid $blue;
+  width: 45%;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
 }
 .btn-info{
   padding: 12px;
