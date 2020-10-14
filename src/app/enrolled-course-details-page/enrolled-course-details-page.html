@@ -92,6 +92,10 @@
 											<ion-icon ios="ios-share" md="md-share" class="card-icons"></ion-icon>
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
+										<button slot="icon-only" *ngIf="course?.forumId" (click)="openDiscussionForum(course?.forumId)" class="card-button">
+											<ion-icon src="assets/imgs/ic_chat.svg" class="card-icons"></ion-icon>
+											<p class="card-text">{{'FORUM' | translate}}</p>
+										</button>
 										<div *ngIf="showUnenrollButton" class="PR16 pull-right">
 											<img class="menu-icon" (click)="showOverflowMenu($event)"
 												src="assets/imgs/menu.svg" alt="menu-icon">
