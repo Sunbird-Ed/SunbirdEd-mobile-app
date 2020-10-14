@@ -44,7 +44,8 @@ import {
   CanvasPlayerService,
   SplashScreenService,
   GroupHandlerService,
-  CollectionService
+  CollectionService,
+  ContentAggregatorHandler
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -467,6 +468,7 @@ declare const sbutility;
     GroupHandlerService,
     NativePageTransitions,
     NavigationService,
+    ContentAggregatorHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

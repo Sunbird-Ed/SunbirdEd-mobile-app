@@ -21,7 +21,7 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
+import {PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants, AppThemes} from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -152,6 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
+      await this.checkForTheme();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -912,5 +913,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   closePlannedMaintenanceBanner() {
     this.isPlannedMaintenanceStarted = false;
+  }
+
+  private async checkForTheme() {
+    const selectedTheme = await this.preferences.getString(PreferenceKey.CURRENT_SELECTED_THEME).toPromise();
+    if (selectedTheme === AppThemes.JOYFUL) {
+      await this.headerService.showStatusBar();
+    } else {
+      this.headerService.hideStatusBar();
+    }
   }
 }

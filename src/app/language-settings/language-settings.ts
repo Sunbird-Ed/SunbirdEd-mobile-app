@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SharedPreferences, AuditState, CorrelationData } from 'sunbird-sdk';
 
-import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import {appLanguages, AppThemes, PreferenceKey, RouterLinks} from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -62,9 +62,11 @@ export class LanguageSettingsPage {
   ) { }
 
   ionViewDidEnter() {
-    this.activatedRoute.params.subscribe(params => {
+    this.activatedRoute.params.subscribe(async params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
+        await this.preferences.putString(PreferenceKey.CURRENT_SELECTED_THEME, AppThemes.JOYFUL).toPromise();
+        await this.headerService.showStatusBar();
         this.headerService.hideHeader();
       } else {
         this.headerService.showHeaderWithBackButton();

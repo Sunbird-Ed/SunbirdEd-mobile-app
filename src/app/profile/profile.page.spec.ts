@@ -523,7 +523,23 @@ describe('Profile.page', () => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
-        profilePage.showMoreTrainings();
+        profilePage.showMoreTrainings('myLearning');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.VIEW_MORE_CLICKED,
+            Environment.HOME,
+            PageId.PROFILE, null,
+            undefined,
+            undefined
+        );
+    });
+
+    it('should set trainings limit and generate interact telemetry', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        profilePage.showMoreTrainings('learnerPassbook');
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
@@ -537,9 +553,16 @@ describe('Profile.page', () => {
 
     it('should set default trainings limit when called upon', () => {
         // act
-        profilePage.showLessTrainings();
+        profilePage.showLessTrainings('myLearning');
         // assert
-        expect(profilePage.trainingsLimit).toBe(3);
+        expect(profilePage.myLearningLimit).toBe(3);
+    });
+
+    it('should set default trainings limit when called upon', () => {
+        // act
+        profilePage.showLessTrainings('learnerPassbook');
+        // assert
+        expect(profilePage.myLearningLimit).toBe(3);
     });
 
     it('should go to catch part and called showToast message', (done) => {

@@ -113,7 +113,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async getTenantPersonaForm() {
-    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo_v2', 'get');
 
     this.selectedTenant = (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].orgId) || '';
 
