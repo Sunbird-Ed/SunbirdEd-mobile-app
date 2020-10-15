@@ -1418,11 +1418,13 @@ export class CollectionDetailEtbPage implements OnInit {
       contentClicked: event.data && event.data.identifier
     };
 
+    const telemetryObj = ContentUtil.getTelemetryObject(event.data);
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       telemetrySubType,
       Environment.HOME,
-      PageId.TEXTBOOK_TOC, this.telemetryObject,
+      PageId.TEXTBOOK_TOC, telemetryObj,
       values,
       this.objRollup, corRelationList
     );
