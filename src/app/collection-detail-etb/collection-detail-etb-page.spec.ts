@@ -341,9 +341,10 @@ describe('collectionDetailEtbPage', () => {
         });
     });
 
-    it('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
+    fit('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
         // arrange
         mockContentPlayerHandler.playContent = jest.fn();
+        collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
         // act
         collectionDetailEtbPage.playContent(mockContentData);
         // assert
@@ -1009,7 +1010,8 @@ describe('collectionDetailEtbPage', () => {
             mocktextbookTocService.textbookIds = {
                 contentId: 'sample-content-id',
                 rootUnitId: 'sample-id',
-                unit: undefined
+                unit: undefined,
+                content: undefined
             };
             mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['some'];
@@ -1019,11 +1021,6 @@ describe('collectionDetailEtbPage', () => {
             mockchangeDetectionRef.detectChanges = jest.fn();
             collectionDetailEtbPage.isDepthChild = false;
             jest.spyOn(collectionDetailEtbPage, 'getContentsSize').mockReturnValue();
-            collectionDetailEtbPage.filteredItemsQueryList = [{
-                nativeElement: {
-                    id: 'sample-id'
-                }
-            }] as any;
             const clases = new Set();
             jest.spyOn(collectionDetailEtbPage, 'toggleGroup').mockReturnValue();
             collectionDetailEtbPage.stickyPillsRef = {
@@ -1062,17 +1059,13 @@ describe('collectionDetailEtbPage', () => {
             mocktextbookTocService.textbookIds = {
                 contentId: undefined,
                 rootUnitId: undefined,
-                unit: undefined
+                unit: undefined,
+                content: undefined
             };
             mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['all'];
             mockchangeDetectionRef.detectChanges = jest.fn();
             collectionDetailEtbPage.isDepthChild = true;
-            collectionDetailEtbPage.filteredItemsQueryList = [{
-                nativeElement: {
-                    id: 'sample-id'
-                }
-            }] as any;
             jest.spyOn(collectionDetailEtbPage, 'toggleGroup').mockReturnValue();
             // act
             collectionDetailEtbPage.setChildContents();
@@ -1095,18 +1088,14 @@ describe('collectionDetailEtbPage', () => {
             mocktextbookTocService.textbookIds = {
                 contentId: undefined,
                 rootUnitId: undefined,
-                unit: undefined
+                unit: undefined,
+                content: undefined
             };
             mockContentService.getChildContents = jest.fn(() => of(content));
             collectionDetailEtbPage.activeMimeTypeFilter = ['all'];
             mockchangeDetectionRef.detectChanges = jest.fn();
             collectionDetailEtbPage.isDepthChild = false;
             jest.spyOn(collectionDetailEtbPage, 'getContentsSize').mockReturnValue();
-            collectionDetailEtbPage.filteredItemsQueryList = [{
-                nativeElement: {
-                    id: 'sample-id'
-                }
-            }] as any;
             jest.spyOn(collectionDetailEtbPage, 'toggleGroup').mockReturnValue();
             // act
             collectionDetailEtbPage.setChildContents();
@@ -1170,8 +1159,10 @@ describe('collectionDetailEtbPage', () => {
             const content = { identifier: 'do-123', contentType: CsContentType.COURSE }, depth = 2;
             mockzone.run = jest.fn((fn) => fn());
             mockrouter.navigate = jest.fn(() => Promise.resolve(true));
+            collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
+            const corRelationData = { id: 'do_id', type: 'OrgId' };
             // act
-            collectionDetailEtbPage.navigateToDetailsPage(content, depth);
+            collectionDetailEtbPage.navigateToDetailsPage(content, depth, corRelationData);
             // assert
             expect(mockzone.run).toHaveBeenCalled();
             expect(mockNavigationService.navigateToTrackableCollection).toHaveBeenCalled();
@@ -1183,8 +1174,10 @@ describe('collectionDetailEtbPage', () => {
             const content = { identifier: 'do-123', contentType: 'learning resource' }, depth = 2;
             mockzone.run = jest.fn((fn) => fn());
             mockrouter.navigate = jest.fn(() => Promise.resolve(true));
+            collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
+            const corRelationData = { id: 'do_id', type: 'OrgId' };
             // act
-            collectionDetailEtbPage.navigateToDetailsPage(content, depth);
+            collectionDetailEtbPage.navigateToDetailsPage(content, depth, corRelationData);
             // assert
             expect(mockzone.run).toHaveBeenCalled();
             expect(mockNavigationService.navigateToContent).toHaveBeenCalled();
@@ -1663,6 +1656,66 @@ describe('collectionDetailEtbPage', () => {
         collectionDetailEtbPage.ionViewDidEnter();
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
+    });
+
+    describe('tocCardClick', () => {
+        it('should not go to details page if the click event is not trigered', () => {
+            // arrange
+            const event = {
+                event: {},
+                rollup: ['id_1', 'id_2']
+            };
+            collectionDetailEtbPage.navigateToDetailsPage = jest.fn();
+            // act
+            collectionDetailEtbPage.tocCardClick(event);
+            // assert
+            expect(collectionDetailEtbPage.navigateToDetailsPage).not.toHaveBeenCalled();
+        });
+
+
+        it('should navigate to content details page or course details page', () => {
+            // arrange
+            const event = {
+                event: new Event('click'),
+                data: {
+                    identifier: 'sample_identifier'
+                },
+                rollup: ['id_1', 'id_2']
+            };
+            collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
+            mocktextbookTocService.setTextbookIds = jest.fn();
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.navigateToDetailsPage = jest.fn();
+            // act
+            collectionDetailEtbPage.tocCardClick(event);
+            // assert
+            expect(mocktextbookTocService.setTextbookIds).toHaveBeenCalled();
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.navigateToDetailsPage).toHaveBeenCalled();
+        });
+    });
+
+    describe('playButtonClick', () => {
+        it('should navigate to player page', () => {
+            // arrange
+            const event = {
+                event: new Event('click'),
+                data: {
+                    identifier: 'sample_identifier'
+                },
+                rollup: ['id_1', 'id_2'],
+            };
+            mocktextbookTocService.setTextbookIds = jest.fn();
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.playContent = jest.fn();
+            collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
+            // act
+            collectionDetailEtbPage.playButtonClick(event);
+            // assert
+            expect(mocktextbookTocService.setTextbookIds).toHaveBeenCalled();
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.playContent).toHaveBeenCalled();
+        });
     });
 
 });

@@ -533,24 +533,31 @@ export class QrcoderesultPage implements OnDestroy {
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
     this.interactEventForPlayAndDownload(content, false);
-    if (!(content.contentData.downloadUrl) && !paths) {
+    if (!(content.contentData.downloadUrl) && !paths && ContentUtil.isTrackable(content.contentData) === -1) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
+    }
+    const corRelationList = [...this.corRelationList];
+    if (paths && paths.length) {
+      corRelationList.push({
+        id: paths[0],
+        type: CorReleationDataType.ROOT_ID
+      });
     }
     switch (ContentUtil.isTrackable(content)) {
       case 1:
         this.navService.navigateToTrackableCollection({
           content,
-          corRelation: this.corRelationList
+          corRelation: corRelationList
         });
         break;
       case 0:
-        if (paths.length && paths.length >= 2) {
+        if (paths && paths.length && paths.length >= 2) {
           this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
         }
         this.navService.navigateToCollection({
           content,
-          corRelation: this.corRelationList
+          corRelation: corRelationList
         });
         break;
       case -1:
@@ -564,7 +571,7 @@ export class QrcoderesultPage implements OnDestroy {
           depth: '1',
           isChildContent: true,
           downloadAndPlay: true,
-          corRelation: this.corRelationList,
+          corRelation: corRelationList,
           onboarding: this.onboarding,
           source: this.source
         });
@@ -779,8 +786,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
   private showAllChild(content: any) {
     this.zone.run(() => {
-      if (content.children === undefined || !content.children.length) {
-        if (content.mimeType !== MimeType.COLLECTION) {
+      if (content.children === undefined || !content.children.length || ContentUtil.isTrackable(content.contentData) === 1) {
+        if (ContentUtil.isTrackable(content.contentData) !== 0) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {

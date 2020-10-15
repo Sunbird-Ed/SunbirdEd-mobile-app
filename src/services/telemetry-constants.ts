@@ -584,7 +584,7 @@ export enum CorReleationDataType {
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
     COUNT_NODE = 'CountNode',
-    CONTENT_NAME = 'ContentName',
+    CONTENT_NAME = 'ContentName'
 }
 
 export enum AuditProps {
