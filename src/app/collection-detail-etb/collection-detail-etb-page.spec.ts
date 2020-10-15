@@ -341,7 +341,7 @@ describe('collectionDetailEtbPage', () => {
         });
     });
 
-    fit('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
+    it('should prepare the telemetry details and NavigationExtras then call playContent()', () => {
         // arrange
         mockContentPlayerHandler.playContent = jest.fn();
         collectionDetailEtbPage.corRelationList = [{ id: 'sample_id', type: 'sample_type' }];
