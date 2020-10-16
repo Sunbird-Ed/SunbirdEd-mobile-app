@@ -234,7 +234,7 @@ describe('ContentShareHandlerService', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
-                    { contentIds: ['do_id'], destinationFolder: 'dirpath', subContentIds: ['child_do_id'] }
+                    { contentIds: ['textbook_do_id'], destinationFolder: 'dirpath', subContentIds: ['child_do_id'] }
                 );
                 expect(mockAppVersion.getPackageName).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SHARE_CONTENT_FILE', {
