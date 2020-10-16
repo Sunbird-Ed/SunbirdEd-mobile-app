@@ -1053,4 +1053,86 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
+  it('should get formConfig and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getFormConfig().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form getStateContactList and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getStateContactList().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form for getConsentFormConfig and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getConsentFormConfig().then(() => {
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form for notificationConfig and return data with fields', (done) => {
+      // arrange
+      mockFormService.getForm = jest.fn(() => of({
+          form: {
+              data: {
+                  fields: []
+              }
+          }
+      }));
+      // act
+      formAndFrameworkUtilService.getNotificationFormConfig().then(() => {
+          expect(mockFormService.getForm).toHaveBeenCalled();
+          done();
+      });
+  });
+
+  it('should get form with board alias and return data with fields', (done) => {
+        // arrange
+        mockFormService.getForm = jest.fn(() => of({
+            form: {
+                data: {
+                    fields: []
+                }
+            }
+        }));
+        // act
+        formAndFrameworkUtilService.getBoardAliasName().then(() => {
+            // assert
+            expect(mockFormService.getForm).toHaveBeenCalled();
+            done();
+        });
+    });
 });
