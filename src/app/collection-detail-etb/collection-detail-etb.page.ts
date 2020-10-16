@@ -6,9 +6,7 @@ import {
   Inject,
   NgZone,
   OnInit,
-  QueryList,
   ViewChild,
-  ViewChildren,
   ViewEncapsulation
 } from '@angular/core';
 import isObject from 'lodash/isObject';
@@ -59,17 +57,16 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import {
   ConfirmAlertComponent, CollectionChildComponent
 } from '../components';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { tap, share } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { AddActivityToGroup } from '../my-groups/group.interface';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { TocCardType } from '@project-sunbird/common-consumption';
+import { IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -234,7 +231,6 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
-  addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   hiddenGroups = new Set();
   shownGroups = undefined;
@@ -285,6 +281,10 @@ export class CollectionDetailEtbPage implements OnInit {
   collectionTocData: Content;
   TocCardType = TocCardType;
   activeContent;
+  playBtnConfig: IButtonConfig = {
+    label: this.commonUtilService.translateMessage('PLAY'),
+    show: true
+  };
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -1403,7 +1403,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.setActiveContentData(event, InteractSubtype.PLAY_CLICKED, corRelationData);
 
-    this.playContent(event.data, corRelationData);
+    this.playContent({content: event.data}, corRelationData);
   }
 
   private setActiveContentData(event, telemetrySubType, corRelationData) {

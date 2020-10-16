@@ -1466,4 +1466,18 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-search{
+    .search-bg{
+      --background: var(--app-primary-background) !important;
+    }
+    .sb-card-textbook-container{
+      box-shadow: none !important;
+    }
+    .add-to-group-btn-container{
+      .open-btn{
+        color: var(--app-primary) !important;
+      }
+    }
+  }
+
 }

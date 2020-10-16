@@ -53,10 +53,9 @@
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
-        [type]="TocCardType.TEXTBOOK_TRACKABLE"
+        [type]="TocCardType.TRACKABLE"
         [tocData]="collectionTocData"
-        [playBtnText]="'PLAY' | translate"
-        [checkTrackable]="true"
+        [playBtnConfig]="playBtnConfig"
         (tocCardClick)="tocCardClick($event)"
         [activeMimeTypeFilter]="activeMimeTypeFilter"
         [activeContent]="activeContent"

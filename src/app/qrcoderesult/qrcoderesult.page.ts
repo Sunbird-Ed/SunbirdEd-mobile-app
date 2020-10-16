@@ -787,7 +787,7 @@ export class QrcoderesultPage implements OnDestroy {
   private showAllChild(content: any) {
     this.zone.run(() => {
       if (content.children === undefined || !content.children.length || ContentUtil.isTrackable(content.contentData) === 1) {
-        if (ContentUtil.isTrackable(content.contentData) !== 0) {
+        if (content.mimeType !== MimeType.COLLECTION) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {
