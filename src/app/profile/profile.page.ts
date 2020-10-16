@@ -98,7 +98,8 @@ export class ProfilePage implements OnInit {
   readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
   rolesLimit = 2;
   badgesLimit = 2;
-  trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
@@ -373,8 +374,15 @@ export class ProfilePage implements OnInit {
     this.badgesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
 
-  showMoreTrainings(): void {
-    this.trainingsLimit = this.mappedTrainingCertificates.length;
+  showMoreTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.mappedTrainingCertificates.length;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.learnerPassbook.length;
+        break;
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
@@ -384,8 +392,16 @@ export class ProfilePage implements OnInit {
       undefined);
   }
 
-  showLessTrainings(): void {
-    this.trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  showLessTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+    }
+    
   }
 
   /**
@@ -983,7 +999,7 @@ export class ProfilePage implements OnInit {
 
     if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selfDeclarationInfo = this.profile.declarations[0];
-      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo_v2', 'get');
       const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
         tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
@@ -994,7 +1010,7 @@ export class ProfilePage implements OnInit {
       });
 
       if (this.selfDeclarationInfo.orgId) {
-        const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', this.selfDeclarationInfo.orgId);
+        const formConfig = await this.getFormApiData('user', 'selfDeclaration_v2', 'submit', this.selfDeclarationInfo.orgId);
         const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
         this.selfDeclaredDetails = [];
         (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {

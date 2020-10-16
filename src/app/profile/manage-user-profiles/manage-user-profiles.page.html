@@ -11,8 +11,8 @@
       </ion-button>
     </div>
 
-    <div class="mx-8">
-      <div [ngClass]="{'mu-selected-user':selectedUserIndex===i, '':selectedUserIndex!==i}" *ngFor="let user of (manageProfileList$ | async); let i = index">
+    <div class="mx-8 manage-user-section">
+      <div class="manage-user-item" [ngClass]="{'mu-selected-user':selectedUserIndex===i, '':selectedUserIndex!==i}" *ngFor="let user of (manageProfileList$ | async); let i = index">
         <sb-member-card 
           [title]="user.firstName"
           [identifier]="user.id"

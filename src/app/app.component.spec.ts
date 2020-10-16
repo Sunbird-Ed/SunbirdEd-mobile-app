@@ -229,8 +229,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
+            mockHeaderService.showStatusBar = jest.fn();
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -343,8 +346,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('DEFAULT');
                 }
             });
+            mockHeaderService.hideStatusBar = jest.fn();
             mockPreferences.putString = jest.fn(() => EMPTY);
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
@@ -382,7 +388,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationID' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenCalledTimes(7);
+                expect(mockPreferences.getString).toHaveBeenCalledTimes(8);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -487,6 +493,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -601,6 +609,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -707,6 +717,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -801,8 +813,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('DEFAULT');
                 }
             });
+            mockHeaderService.hideStatusBar = jest.fn();
             FCMPlugin.getToken = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
@@ -847,8 +862,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('DEFAULT');
                 }
             });
+            mockHeaderService.hideStatusBar = jest.fn();
             FCMPlugin.onTokenRefresh = jest.fn((callback) => callback('some_token'));
             mockPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(SunbirdSdk.instance, 'updateDeviceRegisterConfig').mockImplementation();
@@ -896,9 +914,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOFYUL');
                 }
             });
-
+            mockHeaderService.showStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
@@ -986,9 +1006,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('DEFAULT');
                 }
             });
-
+            mockHeaderService.hideStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
@@ -1220,9 +1242,11 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('DEFAULT');
                 }
             });
-
+            mockHeaderService.hideStatusBar = jest.fn();
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
@@ -2689,5 +2713,53 @@ describe('AppComponent', () => {
         appComponent.closePlannedMaintenanceBanner();
         // assert
         expect(appComponent.isPlannedMaintenanceStarted).toBeFalsy();
+    });
+
+    describe('checkTheme', () => {
+        beforeEach(() => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    resolve('ready');
+                });
+            });
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockEventsBusService.events = jest.fn(() => EMPTY);
+            mockNotificationSrc.setupLocalNotification = jest.fn();
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => EMPTY);
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
+            mockTelemetryAutoSyncService.start = jest.fn(() => EMPTY);
+            mockEvents.subscribe = jest.fn();
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.SELECTED_LANGUAGE_CODE:
+                        return of('');
+                    case PreferenceKey.FCM_TOKEN:
+                        return of('some_token');
+                    case PreferenceKey.DEPLOYMENT_KEY:
+                        return of('');
+                    case PreferenceKey.SYNC_CONFIG:
+                        return of('some_config');
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
+                        return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
+                    case PreferenceKey.CURRENT_SELECTED_THEME:
+                        return of('JOYFUL');
+                }
+            });
+            mockPreferences.putString = jest.fn(() => EMPTY);
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        });
+        afterEach(() => {
+            jest.resetAllMocks();
+        });
+
+        it('should check for theme at start of application', () => {
+            expect(appComponent).toBeTruthy();
+        });
     });
 });

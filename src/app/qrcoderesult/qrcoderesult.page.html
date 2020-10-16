@@ -51,7 +51,7 @@
     <ion-card [id]="content.identifier">
       <ion-row [attr.data-sticky-unit]="content.contentData.name" [attr.data-index]="i">
         <ion-col size="12">
-          <ion-card-content (click)="playOnline(content)">
+          <ion-card-content (click)="playOnline(content, true)">
             <ion-row class="top">
               <ion-col size="3" class="img-container">
                 <img class="app-icon" alt="app-icon"
@@ -88,7 +88,7 @@
           </ion-col>
           <ion-col class="ion-no-padding"
             *ngIf="content.contentData?.streamingUrl && !(content.mimeType === 'application/vnd.ekstep.h5p-archive')">
-            <button class="custom-btn play qr-result-btn ion-no-padding" expand="block" (click)="playContent(content)">
+            <button class="custom-btn play qr-result-btn ion-no-padding" expand="block" (click)="playContent(content, true)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </button>
           </ion-col>
