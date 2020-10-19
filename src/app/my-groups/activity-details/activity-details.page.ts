@@ -12,7 +12,7 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupMember, CachedItemRequestSourceFrom, Content,
-  Group, MimeType, CorrelationData
+  Group, MimeType, CorrelationData, TrackingEnabled
 } from '@project-sunbird/sunbird-sdk';
 import {
   CsGroupActivityDataAggregation,
@@ -65,7 +65,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.group = extras.group;
     this.activity = extras.activity;
     this.corRelationList = extras.corRelation;
-    this.isTrackable = this.activity.trackable && this.activity.trackable.enabled;
+    this.isTrackable = this.activity.trackable && (this.activity.trackable.enabled === TrackingEnabled.YES) ;
   }
 
   async ngOnInit() {
