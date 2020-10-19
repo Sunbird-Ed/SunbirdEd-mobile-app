@@ -6,9 +6,7 @@ import {
   Inject,
   NgZone,
   OnInit,
-  QueryList,
   ViewChild,
-  ViewChildren,
   ViewEncapsulation
 } from '@angular/core';
 import isObject from 'lodash/isObject';
@@ -44,7 +42,7 @@ import {
   TelemetryObject
 } from 'sunbird-sdk';
 import {
-  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
+  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID, CorReleationDataType
 } from '../../services/telemetry-constants';
 import { Subscription, Observable } from 'rxjs';
 import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
@@ -59,16 +57,16 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import {
   ConfirmAlertComponent, CollectionChildComponent
 } from '../components';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { tap, share } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { AddActivityToGroup } from '../my-groups/group.interface';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -77,8 +75,6 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
   encapsulation: ViewEncapsulation.None,
 })
 export class CollectionDetailEtbPage implements OnInit {
-
-  @ViewChildren('filteredItems') public filteredItemsQueryList: QueryList<any>;
 
   facets: any;
   selected: boolean;
@@ -235,7 +231,6 @@ export class CollectionDetailEtbPage implements OnInit {
   public corRelationList: Array<CorrelationData>;
   public shouldGenerateEndTelemetry = false;
   public source = '';
-  addActivityToGroupData: AddActivityToGroup;
   isChildClickable = false;
   hiddenGroups = new Set();
   shownGroups = undefined;
@@ -283,6 +278,13 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
   pageId = PageId.COLLECTION_DETAIL;
+  collectionTocData: Content;
+  TocCardType = TocCardType;
+  activeContent;
+  playBtnConfig: IButtonConfig = {
+    label: this.commonUtilService.translateMessage('PLAY'),
+    show: true
+  };
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -539,7 +541,7 @@ export class CollectionDetailEtbPage implements OnInit {
             );
             this.contentService.getContentHeirarchy(option).toPromise()
               .then((content: Content) => {
-                this.childrenData = content.children;
+                this.setTocData(content);
                 this.showSheenAnimation = false;
                 this.toggleGroup(0, this.content);
                 this.telemetryGeneratorService.generatefastLoadingTelemetry(
@@ -704,6 +706,7 @@ export class CollectionDetailEtbPage implements OnInit {
             this.refreshHeader();
             this.showChildrenLoader = false;
             this.childrenData.length = 0;
+            this.collectionTocData.children.length = 0;
           }
         });
       })
@@ -744,7 +747,10 @@ export class CollectionDetailEtbPage implements OnInit {
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
               this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
             }
-            this.childrenData = data.children;
+            if (this.textbookTocService.textbookIds.content) {
+              this.activeContent = this.textbookTocService.textbookIds.content;
+            }
+            this.setTocData(data);
             this.changeDetectionRef.detectChanges();
           }
 
@@ -754,16 +760,6 @@ export class CollectionDetailEtbPage implements OnInit {
             this.getContentsSize(data.children || []);
           }
           this.showChildrenLoader = false;
-          const divElement = this.filteredItemsQueryList.find((f) => f.nativeElement.id);
-          let carouselIndex = this.childrenData
-            .findIndex((d: Content) => {
-              return divElement.nativeElement.id === d.identifier;
-            });
-          if (this.textbookTocService.textbookIds.rootUnitId) {
-            carouselIndex = this.childrenData.findIndex((content) => this.textbookTocService.textbookIds.rootUnitId === content.identifier);
-            // carouselIndex = carouselIndex > 0 ? carouselIndex : 0;
-          }
-          this.toggleGroup(carouselIndex, this.content, true);
           if (this.textbookTocService.textbookIds.contentId) {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
@@ -794,6 +790,11 @@ export class CollectionDetailEtbPage implements OnInit {
     // this.ionContent.scrollTo(0, this.scrollPosition);
   }
 
+  private setTocData(content) {
+    this.childrenData = content.children;
+    this.collectionTocData = content;
+  }
+
   getContentsSize(data) {
     data.forEach((value) => {
       this.breadCrumb.set(value.identifier, value.contentData.name);
@@ -821,7 +822,11 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
 
-  navigateToDetailsPage(content: any, depth) {
+  navigateToDetailsPage(content: any, depth, corRelationData?) {
+    const corRelationList = [...this.corRelationList];
+    if (corRelationData) {
+      corRelationList.push(corRelationData);
+    }
     this.zone.run(() => {
       switch (ContentUtil.isTrackable(content)) {
         case 1:
@@ -830,7 +835,7 @@ export class CollectionDetailEtbPage implements OnInit {
             content,
             depth,
             contentState: this.stateData,
-            corRelation: this.corRelationList
+            corRelation: corRelationList
           });
           break;
         case -1:
@@ -839,7 +844,7 @@ export class CollectionDetailEtbPage implements OnInit {
             content,
             depth,
             contentState: this.stateData,
-            corRelation: this.corRelationList,
+            corRelation: corRelationList,
             breadCrumb: this.breadCrumb
           });
       }
@@ -1210,12 +1215,6 @@ export class CollectionDetailEtbPage implements OnInit {
       type.selected = false;
     });
     this.mimeTypes[idx].selected = true;
-    this.filteredItemsQueryList.changes.pipe(
-      tap((v) => {
-        this.changeDetectionRef.detectChanges();
-        values['contentLength'] = v.length;
-      })
-    ).subscribe();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
@@ -1355,10 +1354,15 @@ export class CollectionDetailEtbPage implements OnInit {
       });
   }
 
-  playContent(event) {
+  playContent(event, corRelationData?) {
+    const corRelationList = [...this.corRelationList];
+    if (corRelationData) {
+      corRelationList.push(corRelationData);
+    }
+
     const telemetryDetails = {
       pageId: PageId.COLLECTION_DETAIL,
-      corRelationList: this.corRelationList
+      corRelationList
     };
 
     const navExtras = {
@@ -1367,13 +1371,63 @@ export class CollectionDetailEtbPage implements OnInit {
         content: event.content,
         depth: 1,
         contentState: this.stateData,
-        corRelation: this.corRelationList,
+        corRelation: corRelationList,
         breadCrumb: this.breadCrumb
       }
     };
 
     this.contentPlayerHandler.playContent(event.content, navExtras, telemetryDetails, false);
 
+  }
+
+  tocCardClick(event) {
+    if (!(event.event instanceof Event)) {
+      return;
+    }
+
+    const corRelationData = {
+      id: event.rollup[0],
+      type: CorReleationDataType.ROOT_ID
+    };
+
+    this.setActiveContentData(event, InteractSubtype.CONTENT_CLICKED, corRelationData);
+
+    this.navigateToDetailsPage(event.data, 1, corRelationData);
+  }
+
+  playButtonClick(event) {
+    const corRelationData = {
+      id: event.rollup[0],
+      type: CorReleationDataType.ROOT_ID
+    };
+
+    this.setActiveContentData(event, InteractSubtype.PLAY_CLICKED, corRelationData);
+
+    this.playContent({content: event.data}, corRelationData);
+  }
+
+  private setActiveContentData(event, telemetrySubType, corRelationData) {
+    this.activeContent = event.data;
+    this.textbookTocService.setTextbookIds({ contentId: event.data.identifier, rootUnitId: undefined });
+
+    const corRelationList = [...this.corRelationList];
+    if (corRelationData) {
+      corRelationList.push(corRelationData);
+    }
+    const values = {
+      contentClicked: event.data && event.data.identifier
+    };
+
+    const telemetryObj = ContentUtil.getTelemetryObject(event.data);
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      telemetrySubType,
+      Environment.HOME,
+      PageId.TEXTBOOK_TOC, telemetryObj,
+      values,
+      this.objRollup, corRelationList
+    );
   }
 
 }

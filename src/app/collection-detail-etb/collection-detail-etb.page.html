@@ -52,66 +52,17 @@
 
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
-      <div *ngIf="childrenData.length && !(filteredItemsQueryList?.changes | async)?.length">
-        <div class="heading">{{'NO_CONTENTS' | translate:{'%s': currentFilter } }}</div>
-        <div class="sub-heading">{{'NO_CONTENTS_MESSAGE' | translate}}</div>
-      </div>
-      <ng-container *ngFor="let item of childrenData;  let i = index;">
-        <ion-card class="sb-accordian-card" *ngIf="item | hasMimeType: activeMimeTypeFilter">
-          <div class="sticky-header-title-box" [attr.data-text]="item.contentData.name" [attr.data-render-level]="0"
-            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''" #filteredItems>
-            <!-- new -->
-            <ion-grid class="sb-accordian-header">
-              <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children">
-                <ion-col size="11">
-                  <div class="sb-topic-text"> {{item?.contentData?.name}} </div>
-                </ion-col>
-                <ion-col size="1" *ngIf="!isGroupShown(i)">
-                  <div class="drop-arrow">
-                    <img src="assets/imgs/arrow_down.svg" alt="arrow down">
-                  </div>
-                </ion-col>
-                <ion-col size="1" *ngIf="isGroupShown(i)">
-                  <div class="drop-arrow">
-                    <img src="assets/imgs/arrow_up.svg" alt="arrow up">
-                  </div>
-                </ion-col>
-              </ion-row>
-              <ion-row
-                *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children"
-                (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))">
-                <ion-col size="1">
-                  <div>
-                    <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
-                      [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || item?.isAvailableLocally}">
-                    </ion-icon>
-                  </div>
-                </ion-col>
-                <ion-col size="11">
-                  <div [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally,
-                  'sb-play-selected':item?.isAvailableLocally,'sb-play-unselected':!item?.isAvailableLocally}">
-                    {{item?.contentData?.name}}
-                    <span>
-                      <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle" *ngIf="item?.isAvailableLocally">
-                      </ion-icon>
-                    </span>
-                  </div>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            <div class="sb-hidden-content" *ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
-              <div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
-                <div class="sb-topics-container  sb-topics-container-ftue">
-                  <app-collection-child [renderLevel]="1" [childData]="firstChildren" [index]="j" [depth]="depth"
-                    [activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
-                    [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"
-                    [rootUnitId]="item.identifier" [bookID]="identifier" [addActivityToGroupData]="addActivityToGroupData" #collectionChildComp></app-collection-child>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ion-card>
-      </ng-container>
+      <sb-toc-item
+        [type]="TocCardType.TRACKABLE"
+        [tocData]="collectionTocData"
+        [playBtnConfig]="playBtnConfig"
+        (tocCardClick)="tocCardClick($event)"
+        [activeMimeTypeFilter]="activeMimeTypeFilter"
+        [activeContent]="activeContent"
+        (playButtonClick)="playButtonClick($event)"
+        [trackableDefaultImage]="'assets/imgs/ic_courses_selected_joyful.svg'">
+      </sb-toc-item>
+
     </section>
   </div>
   <div *ngIf="contentDetail?.contentData?.author || contentDetail?.contentData?.organisation 
