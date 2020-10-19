@@ -1,4 +1,12 @@
 <ion-content>
+  <div class="gd-deactivated" *ngIf="isSuspended">
+    <div class="gd-deactivated-info pull-left">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
+    <div class="gd-deactivated-btn pull-left text-center" *ngIf="isGroupCreatorOrAdmin">
+      <button class="sb-btn-large sb-btn-small" (click)="showReactivateGroupPopup()">
+        {{'FRMELEMENTS_BTN_ACTIVATEGRP' | translate}}
+      </button>
+    </div>
+  </div>
   <div class="gd-page">
     <div class="gd-header">
       <div *ngIf="!isGroupLoading">
@@ -40,7 +48,7 @@
         </div>
         <div class="gd-tab-member-container">
           <div class="gd-add-member-container">
-            <div *ngIf="loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
+            <div *ngIf="!isSuspended && loggedinUser?.role === 'admin'" class="gd-add-member" (click)="navigateToAddUserPage()">
               <span class="gd-add-member-icon">
                 <img src="assets/imgs/ic_person_add_white.svg" alt="">
               </span>
@@ -59,7 +67,7 @@
             <div *ngFor="let member of filteredMemberList; let i = index">
               <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
                 [identifier]="member.userId" [indexOfMember]="i" [initial]="commonUtilService.extractInitial(member.name)"
-                [title]="getMemberName(member)" [isMenu]="showMemberMenu(member)" [isAdmin]="member.role === 'admin'"
+                [title]="getMemberName(member)" [isMenu]="!isSuspended && showMemberMenu(member)" [isAdmin]="member.role === 'admin'"
                 (menuClick)="memberMenuClick($event, member)">
               </sb-member-card>
             </div>
@@ -106,8 +114,8 @@
               <sb-library-cards-stack [title]="activityGroup?.name" [contentList]="filteredGroupedActivityListMap[activityGroup?.title]"
                   [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [viewMoreButtonText]="'VIEW_MORE' | translate"
                   [cardType]="activityGroup.title === 'ACTIVITY_COURSE_TITLE' ? 'course' : 'textbook' " 
-                  [maxCardCount]="3" (viewMoreClick)="navigateToViewMorePage(activityGroup)" [isMenu]="loggedinUser.role === 'admin'"
-                  (cardClick)="onActivityCardClick($event)" (menuClick)="activityMenuClick($event)">
+                  [maxCardCount]="3" (viewMoreClick)="!isSuspended && navigateToViewMorePage(activityGroup)" [isMenu]="!isSuspended && loggedinUser.role === 'admin'"
+                  (cardClick)="!isSuspended && onActivityCardClick($event)" (menuClick)="!isSuspended && activityMenuClick($event)">
                 </sb-library-cards-stack>
             </div>
           </div>
@@ -119,7 +127,7 @@
 </ion-content>
 
 <ion-footer *ngIf="activeTab=='activities' && loggedinUser?.role === 'admin'">
-  <div class="cd-btn">
+  <div class="cd-btn" *ngIf="!isSuspended">
     <button class="sb-btn-large" (click)="navigateToAddActivityPage()">
       + {{'ADD_ACTIVITY' | translate}}
     </button>
