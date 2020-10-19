@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
 
 .cr-terms-checkbox-label{
   padding-left: 5px;
@@ -48,6 +49,13 @@
   letter-spacing: 0;
   font-weight: bold;
   margin-bottom: 16px;
+  @include ltr() {
+    text-align: right
+  }
+
+  @include rtl() {
+    text-align:left;
+  }
 }
 
 .body {
@@ -56,7 +64,7 @@
   
   flex-grow: 1;
   flex-shrink: 1;
-  
+  height: 38vh;
   overflow-y: scroll;
 }
 
@@ -68,16 +76,19 @@
   color: white;
   background-color: $blue;
   font-size: 16px;
-  padding: 8px 16%;
+  padding: 8px 0;
   margin-left: 18px;
-  border: 2px solid $blue
+  border: 2px solid $blue;
+  width: 45%;
 }
 .save-changes-not-agree{
   color: $blue;
   background-color: white;
   font-size: 16px;
-  padding: 8px 9%;
-  border: 2px solid $blue
+  padding: 8px 0;
+  border: 2px solid $blue;
+  width: 45%;
+  margin-left: 10px;
 }
 .btn-info{
   padding: 12px;
@@ -94,7 +105,7 @@
 
 .profile-info-section{
   display: grid;
-  grid-template-columns: 110px 250px;
+  grid-template-columns: 100px 227px;
 }
 
 .share-disabled{
@@ -104,4 +115,13 @@
 
 .terms-info{
   color: $blue
+}
+
+ion-icon {
+  @include ltr {
+    float: right !important;
+  }
+  @include rtl {
+    float: left !important;
+  }
 }

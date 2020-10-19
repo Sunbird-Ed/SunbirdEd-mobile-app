@@ -180,13 +180,13 @@ describe('GroupDetailsPage', () => {
                     groupId: '',
                     role: GroupMemberRole.MEMBER,
                     status: GroupEntityStatus.ACTIVE,
-                    userId: 'sample-uid-2',
+                    userId: 'sample-uid-1',
                     name: 'SOME_NAME'
                 }, {
                     groupId: '',
                     role: GroupMemberRole.MEMBER,
                     status: GroupEntityStatus.ACTIVE,
-                    userId: 'sample-uid-1',
+                    userId: 'sample-uid-2',
                     name: 'SOME_NAME'
                 }]);
                 done();
@@ -286,19 +286,20 @@ describe('GroupDetailsPage', () => {
             expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
             setTimeout(() => {
                 expect(mockGroupService.getById).toHaveBeenCalled();
-                expect(groupDetailsPage.memberList).toStrictEqual([{
-                    groupId: '',
-                    role: GroupMemberRole.ADMIN,
-                    status: GroupEntityStatus.ACTIVE,
-                    userId: 'sample-uid-1',
-                    name: 'SOME_NAME'
-                }, {
-                    groupId: '',
-                    role: GroupMemberRole.MEMBER,
-                    status: GroupEntityStatus.ACTIVE,
-                    userId: 'sample-uid-2',
-                    name: 'SOME_NAME'
-                }]);
+                expect(groupDetailsPage.memberList).toEqual([
+                    {
+                        groupId: '',
+                        role: GroupMemberRole.MEMBER,
+                        status: GroupEntityStatus.ACTIVE,
+                        userId: 'sample-uid-2',
+                        name: 'SOME_NAME'
+                    }, {
+                        groupId: '',
+                        role: GroupMemberRole.ADMIN,
+                        status: GroupEntityStatus.ACTIVE,
+                        userId: 'sample-uid-1',
+                        name: 'SOME_NAME'}
+                    ]);
                 done();
             }, 0);
         });
@@ -2134,7 +2135,6 @@ describe('GroupDetailsPage', () => {
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'ACTIVITY_COURSE_TITLE');
                 expect(mockNavigationService.navigateTo)
                     .toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
                         {
@@ -2257,7 +2257,7 @@ describe('GroupDetailsPage', () => {
                                 },
                                 index: 0,
                                 isEnabled: true,
-                                title: 'Next',
+                                title: 'ACTIVITY_COURSE_TITLE',
                             },
                         ],
                     });

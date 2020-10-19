@@ -71,6 +71,7 @@ import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
+import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -469,6 +470,7 @@ declare const sbutility;
     NativePageTransitions,
     NavigationService,
     ContentAggregatorHandler,
+    AliasBoardName,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
