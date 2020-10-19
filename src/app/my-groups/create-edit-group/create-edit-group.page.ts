@@ -145,6 +145,12 @@ export class CreateEditGroupPage {
   }
 
   private async createGroup(formVal) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.CREATE_GROUP_CLICKED,
+      Environment.GROUP, PageId.CREATE_GROUP,
+      undefined, undefined, undefined, this.corRelationList
+    );
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
@@ -166,21 +172,26 @@ export class CreateEditGroupPage {
         '',
         Environment.GROUP,
         PageId.CREATE_GROUP,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
+        undefined, undefined, undefined, this.corRelationList,
         ID.CREATE_GROUP
       );
       this.location.back();
     }).catch(async (err) => {
       console.error(err);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.FAILURE,
+        '',
+        Environment.GROUP,
+        PageId.CREATE_GROUP,
+        undefined, undefined, undefined, this.corRelationList,
+        ID.CREATE_GROUP
+      );
       await loader.dismiss();
       if (err.response && err.response.body && err.response.body.params
         && err.response.body.params.status === GroupErrorCodes.EXCEEDED_GROUP_MAX_LIMIT) {
         this.commonUtilService.showToast('ERROR_MAXIMUM_GROUP_COUNT_EXCEEDS');
       } else {
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       }
     });
   }

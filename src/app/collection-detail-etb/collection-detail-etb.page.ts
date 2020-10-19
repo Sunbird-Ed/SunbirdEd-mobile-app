@@ -443,17 +443,6 @@ export class CollectionDetailEtbPage implements OnInit {
       isCollapsed = false;
       this.shownGroups = group;
       this.hiddenGroups.delete(group);
-      setTimeout(() => {
-        if (document.getElementById(content.identifier)) {
-          window['scrollWindow'].getScrollElement().then((e) => {
-            e.scrollTo({
-              top: document.getElementById(content.identifier).offsetTop - 165,
-              left: 0,
-              behavior: 'smooth'
-            });
-          });
-        }
-      }, 100);
     }
     const values = new Map();
     values['isCollapsed'] = isCollapsed;

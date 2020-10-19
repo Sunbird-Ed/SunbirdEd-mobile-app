@@ -33,7 +33,7 @@ import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '.
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 
 describe('EnrolledCourseDetailsPage', () => {
@@ -225,7 +225,7 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'getLocalCourseAndUnitProgress').mockImplementation();
             enrolledCourseDetailsPage.courseHeirarchy = {
                 children: [{ identifier: 'do-123' }],
-                contentData: {leafNodes: ['do_1', 'do_12', 'do_123']}
+                contentData: { leafNodes: ['do_1', 'do_12', 'do_123'] }
             };
             enrolledCourseDetailsPage.resumeCourseFlag = true;
             jest.spyOn(enrolledCourseDetailsPage, 'resumeContent').mockImplementation();
@@ -2199,6 +2199,116 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('checkDataSharingStatus', () => {
+        it('should return conset details', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId
+              };
+            mockProfileService.getConsent = jest.fn(() => of({
+                consents: [{
+                    status: ConsentStatus.ACTIVE,
+                    lastUpdatedOn: 'dd/mm/yy'
+                }]
+            }));
+            // act
+            enrolledCourseDetailsPage.checkDataSharingStatus();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                expect(enrolledCourseDetailsPage.dataSharingStatus).toBe(ConsentStatus.ACTIVE);
+                expect(enrolledCourseDetailsPage.lastUpdateOn).toBe('dd/mm/yy');
+                done();
+            }, 0);
+        });
+
+        it('should return conset popup if consent data not found for catch part', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId
+              };
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            enrolledCourseDetailsPage.course = {
+                userConsent: UserConsent.YES
+            };
+            enrolledCourseDetailsPage.isConsentPopUp = false;
+            mockProfileService.getConsent = jest.fn(() => throwError({
+                response: {
+                    body: {
+                        params: {
+                            err: 'USER_CONSENT_NOT_FOUND'
+                        }
+                    }
+                }
+            }));
+            mockLocalCourseService.showConsentPopup = jest.fn(() => Promise.resolve());
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            await enrolledCourseDetailsPage.checkDataSharingStatus().catch();
+            // assert
+            setTimeout(() => {
+                // expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                // expect(enrolledCourseDetailsPage.isConsentPopUp).toBeTruthy();
+                // expect(mockLocalCourseService.showConsentPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return conset popup if consent data not found for catch part', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+              };
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            enrolledCourseDetailsPage.course = {
+                userConsent: UserConsent.YES
+            };
+            enrolledCourseDetailsPage.isConsentPopUp = false;
+            mockProfileService.getConsent = jest.fn(() => throwError({
+                code: 'NETWORK_ERROR'
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            enrolledCourseDetailsPage.checkDataSharingStatus();
+            // assert
+            setTimeout(() => {
+                // expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                // expect(enrolledCourseDetailsPage.isConsentPopUp).toBeFalsy();
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                done();
+            }, 0);
+        });
+    });
+
     describe('ionViewWillEnter()', () => {
         it('should be a guest user, ', (done) => {
             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
@@ -2324,7 +2434,7 @@ describe('EnrolledCourseDetailsPage', () => {
     it('should dismiss consentPii popup', () => {
         // arrange
         const dismissFn = jest.fn(() => Promise.resolve(true));
-        enrolledCourseDetailsPage.loader = {data: '', dismiss: dismissFn} as any;
+        enrolledCourseDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
         // act
         enrolledCourseDetailsPage.onConsentPopoverShow();
         // assert
@@ -2343,7 +2453,7 @@ describe('EnrolledCourseDetailsPage', () => {
         // arrange
         enrolledCourseDetailsPage.courseCardData = {
             userId: 'sample-user-id',
-            content: {channel: 'sample-channel'},
+            content: { channel: 'sample-channel' },
             courseId: 'sample-do-id'
         };
         mockProfileService.getConsent = jest.fn(() => of([{
@@ -2358,14 +2468,144 @@ describe('EnrolledCourseDetailsPage', () => {
         // arrange
         enrolledCourseDetailsPage.courseCardData = {
             userId: 'sample-user-id',
-            content: {channel: 'sample-channel', userConsent: 'Yes'},
+            content: { channel: 'sample-channel', userConsent: 'Yes' },
             courseId: 'sample-do-id'
         };
         enrolledCourseDetailsPage.isAlreadyEnrolled = true;
-        mockProfileService.getConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+        mockProfileService.getConsent = jest.fn(() => throwError({ code: 'NETWORK_ERROR' }));
         mockCommonUtilService.showToast = jest.fn();
         // act
         enrolledCourseDetailsPage.checkDataSharingStatus();
     });
 
+    it('should retrun checked for shareData', () => {
+        // arrange
+        enrolledCourseDetailsPage.showShareData = false;
+        // act
+        enrolledCourseDetailsPage.editDataSettings();
+        // assert
+        expect(enrolledCourseDetailsPage.showShareData).toBeTruthy();
+    });
+
+    it('should extend data settings for user click', () => {
+        // arrange
+        enrolledCourseDetailsPage.isDataShare = false;
+        // act
+        enrolledCourseDetailsPage.expandDataSettings();
+        // assert
+        expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+        expect(enrolledCourseDetailsPage.isDataShare).toBeTruthy();
+    });
+
+    describe('saveChanges', () => {
+        it('should update userConsent for active status', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.ACTIVE;
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                status: ConsentStatus.REVOKED,
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+                objectType: 'Collection',
+              };
+            mockProfileService.updateConsent = jest.fn(() => of({message: 'successfull'}));
+            mockCommonUtilService.showToast = jest.fn();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should not update userConsent for active status catch part', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.ACTIVE;
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                status: ConsentStatus.REVOKED,
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+                objectType: 'Collection',
+              };
+            mockProfileService.updateConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+            mockCommonUtilService.showToast = jest.fn();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should return consent popup for revoked status', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.REVOKED;
+            mockLocalCourseService.showConsentPopup = jest.fn(() => Promise.resolve());
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockLocalCourseService.showConsentPopup).toHaveBeenCalled();
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+    });
 });

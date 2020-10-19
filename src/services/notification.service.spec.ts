@@ -10,7 +10,9 @@ describe('LocalCourseService', () => {
 
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
-  const mockAppVersion: Partial<AppVersion> = {};
+  const mockAppVersion: Partial<AppVersion> = {
+    getAppName: jest.fn(() => Promise.resolve('sunbird'))
+  };
   const mockLocalNotifications: Partial<LocalNotifications> = {};
   const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
 
@@ -30,6 +32,89 @@ describe('LocalCourseService', () => {
 
   it('should create an instance of NotificationService', () => {
     expect(notificationService).toBeTruthy();
+  });
+
+  describe('setupLocalNotification', () => {
+    it('should disabled localNotification', (done) => {
+      // arrange
+      const language = 'en';
+      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
+        code: 'localNotification',
+        config: [{
+          isEnabled: false,
+          id: 1
+        }]
+      }]));
+      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([1, 2, 3]));
+      mockLocalNotifications.cancel = jest.fn(() => Promise.resolve({id: 1}));
+      // act
+      notificationService.setupLocalNotification(language);
+      // assert
+      setTimeout(() => {
+        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
+        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        expect(mockLocalNotifications.cancel).toHaveBeenCalledWith(1);
+        done();
+      }, 0);
+    });
+
+    it('should invoked setLocalNotification() for ids', (done) => {
+      // arrange
+      const language = 'en';
+      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
+        code: 'localNotification',
+        config: [{
+          isEnabled: true,
+          id: 2,
+          title: JSON.stringify('hindi'),
+          msg: JSON.stringify('hindi'),
+          start: 'sample start'
+        }]
+      }]));
+      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([3]));
+      mockLocalNotifications.schedule = jest.fn();
+      // act
+      notificationService.setupLocalNotification(language);
+      // assert
+      setTimeout(() => {
+        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
+        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        expect(mockLocalNotifications.schedule).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should invoked setLocalNotification() for ids is empty', (done) => {
+      // arrange
+      const language = 'en';
+      mockLocalNotifications.cancelAll = jest.fn(() => Promise.resolve({}));
+      mockFormnFrameworkUtilService.getNotificationFormConfig = jest.fn(() => Promise.resolve([{
+        code: 'localNotification',
+        config: [{
+          isEnabled: true,
+          id: 2,
+          title: JSON.stringify('hindi'),
+          msg: JSON.stringify('hindi'),
+          start: 'dd/mm/yy 19:42:28 GMT+0530'
+        }]
+      }]));
+      mockLocalNotifications.getScheduledIds = jest.fn(() => Promise.resolve([]));
+      mockLocalNotifications.schedule = jest.fn();
+      // act
+      notificationService.setupLocalNotification(language);
+      // assert
+      setTimeout(() => {
+        expect(mockLocalNotifications.cancelAll).toHaveBeenCalled();
+        expect(mockFormnFrameworkUtilService.getNotificationFormConfig).toHaveBeenCalled();
+        expect(mockLocalNotifications.getScheduledIds).toHaveBeenCalled();
+        expect(mockLocalNotifications.schedule).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
   });
 
   describe('setNotificationDetails', () => {

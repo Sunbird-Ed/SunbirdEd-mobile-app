@@ -14,7 +14,6 @@ export class NavigationService {
     ) { }
 
     navigateToDetailPage(content, navExtras) {
-        console.log('Navigation Service', content);
         content = !content.trackable ? ((content.contentData && content.contentData.trackable) ? content.contentData : content) : content;
         if (content.trackable && content.trackable.enabled) {
             if (content.trackable.enabled === TrackingEnabled.YES) {

@@ -2,7 +2,15 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 export class PrimaryCategory {
 
     public static readonly FOR_COURSE_TAB = [
-        CsPrimaryCategory.COURSE
+        CsPrimaryCategory.COURSE,
+        CsPrimaryCategory.TEACHER_RESOURCE,
+        CsPrimaryCategory.LEARNING_RESOURCE,
+        CsPrimaryCategory.EXPLANATION_CONTENT,
+        CsPrimaryCategory.CONTENT_PLAYLIST,
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.PRACTICE_QUESTION_SET,
+        CsPrimaryCategory.E_TEXTBOOK,
+        CsPrimaryCategory.COURSE_ASSESSMENT
     ];
     public static readonly FOR_LIBRARY_TAB = [
         CsPrimaryCategory.COURSE,

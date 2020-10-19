@@ -9,6 +9,9 @@
     flex-direction: row;
     flex-wrap: wrap;
     .add-activity-content{
+        &.disabled-activity{
+            opacity: .5;
+        }
         &:nth-child(odd){
             padding: 0 4px 4px 16px;
         }
