@@ -46,7 +46,7 @@
         <div class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
         <div class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
-            <div class="ellipsis text-align width-100">{{boards}}&lrm;</div>
+            <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary">
             </ion-icon>
           </div>

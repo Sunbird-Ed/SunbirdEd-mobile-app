@@ -2116,4 +2116,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   onConsentPopoverDismiss() {
     this.checkDataSharingStatus();
   }
+
+  openDiscussionForum(forumId: string) {
+    this.courseService.displayDiscussionForum({
+      forumId
+    }).subscribe();
+  }
 }

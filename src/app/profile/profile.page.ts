@@ -401,7 +401,6 @@ export class ProfilePage implements OnInit {
         this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
         break;
     }
-    
   }
 
   /**

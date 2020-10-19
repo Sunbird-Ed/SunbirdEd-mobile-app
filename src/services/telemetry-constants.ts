@@ -250,6 +250,7 @@ export enum InteractType {
     POPUP_LOADED = 'popup-loaded',
     INITIATED = 'initiated',
     SUCCESS = 'success',
+    FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
     SELECT_CARD = 'select-card'

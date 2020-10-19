@@ -71,7 +71,7 @@ describe('GroupHandlerService', () => {
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -140,7 +140,7 @@ describe('GroupHandlerService', () => {
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -200,7 +200,7 @@ describe('GroupHandlerService', () => {
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -256,7 +256,7 @@ describe('GroupHandlerService', () => {
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
