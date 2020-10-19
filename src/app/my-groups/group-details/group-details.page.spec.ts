@@ -996,6 +996,291 @@ describe('GroupDetailsPage', () => {
                 done();
             }, 0);
         });
+
+        it('should invoke showDeactivateGroupPopup', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'admin',
+            } as any;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_DEACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+            mockGroupService.suspendById = jest.fn(() => of({})) as any;
+            mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+
+            // assert
+            setTimeout(() => {
+                // expect(presentFn).toHaveBeenCalled();
+                // expect(dismissFn).toHaveBeenCalled();
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_DEACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_DEACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_DEACTIVATEGRPMSG');
+                // expect(mockGroupService.suspendById).toHaveBeenCalled();
+
+                done();
+            }, 0);
+        });
+
+        it('should invoked showDeactivateGroupPopup for offline scenario', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'admin',
+            } as any;
+            mockCommonUtilService.showToast = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_DEACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_DEACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_DEACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_DEACTIVATEGRPMSG',
+                    // { group_name: groupDetailsPage.groupDetails.name });
+            }, 0);
+            done();
+        });
+
+        it('should invoked showDeactivateGroupPopup for catch part', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'creator',
+            } as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_DEACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+            mockGroupService.suspendById = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockLocation.back = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+            // assert
+            setTimeout(() => {
+                // expect(presentFn).toHaveBeenCalled();
+                // expect(dismissFn).toHaveBeenCalled();
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_DEACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_DEACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_DEACTIVATEGRPMSG',
+                    // { group_name: groupDetailsPage.groupDetails.name });
+                expect(mockGroupService.suspendById).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should invoke showReactivateGroupPopup', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'admin',
+            } as any;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_ACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+            mockGroupService.reactivateById = jest.fn(() => of({})) as any;
+            mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_ACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_ACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_ACTIVATEGRPMSG');
+                expect(mockGroupService.reactivateById).toHaveBeenCalled();
+
+                done();
+            }, 0);
+        });
+
+        it('should invoked showReactivateGroupPopup for offline scenario', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'admin',
+            } as any;
+            mockCommonUtilService.showToast = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_ACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_ACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_ACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_ACTIVATEGRPMSG',
+                    // { group_name: groupDetailsPage.groupDetails.name });
+            }, 0);
+            done();
+        });
+
+        it('should invoked showReactivateGroupPopup for catch part', (done) => {
+            // arrange
+            groupDetailsPage.groupCreator = {
+                userId: 'some-userId',
+                name: 'some-name',
+                groupId: 'some-groupId',
+                role: GroupMemberRole.ADMIN,
+                status: GroupEntityStatus.ACTIVE
+            };
+            groupDetailsPage.userId = 'some-user-Id';
+            groupDetailsPage.loggedinUser = {
+                role: 'creator',
+            } as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { selectedItem: 'FRMELEMENTS_LBL_ACTIVATEGRP', isLeftButtonClicked: true } }))
+            } as any)));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
+            groupDetailsPage.groupDetails = {
+                name: 'sample-group',
+                status: 'sample-status'
+            } as any;
+            mockGroupService.reactivateById = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockLocation.back = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+
+            // act
+            groupDetailsPage.groupMenuClick({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'FRMELEMENTS_LBL_ACTIVATEGRPQUES');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'FRMELEMENTS_BTN_ACTIVATEGRP');
+                // expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'FRMELEMENTS_MSG_ACTIVATEGRPMSG');
+                expect(mockGroupService.reactivateById).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 
     describe('activityMenuClick', () => {
