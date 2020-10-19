@@ -5,7 +5,7 @@
             <ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
             <ion-select multiple="true" #boardSelect text-capitalize formControlName="board" [interfaceOptions]="boardOptions"
                         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-                <ion-select-option *ngFor="let board of boardList" value="{{board?.name}}">{{board?.name}}&lrm;</ion-select-option>
+                <ion-select-option *ngFor="let board of boardList" value="{{board?.name}}">{{board?.name | aliased}}&lrm;</ion-select-option>
             </ion-select>
         </ion-item>
 

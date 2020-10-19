@@ -1,229 +1,220 @@
 <ion-content hide-header-footer overflow-scroll="true" (click)="toggleTooltips($event,'')"
     class="main-container avoid-bottom-tabs-space" #contentView scrollEvents="true">
-    <div class="ui-container backgrond-div"></div>
     <!-- Pull to Refresh -->
-    <div class="ui-content">
-        <div class="spinner-div" *ngIf="refresh">
-            <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
-        </div>
-        <ion-refresher #refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-            <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
-        </ion-refresher>
-        <div class="basic-profile-details">
-            <div class="PT16 ion-text-center ion-padding-horizontal" *ngIf="profile?.firstName">
-                <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
-                <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified"
-                    class="avatar-tickmark">
-                <app-profile-avatar [username]="profile?.firstName" [isStateUser]="isStateValidated"
-                    class="profileAvatar" *ngIf="isStateValidated"></app-profile-avatar>
-            </div>
-            <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
-                <p class="profile-head">
-                    <span
-                        class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
-                    <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right
-                        text-left (click)="toggleTooltips($event, 'name')">
-                        <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
-                        <span class="asPerStateRecord"
-                            *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
-                    </span>
-                </p>
-                <p class="MT0 MB30">
-                    <span class="app-name"> {{appName}} </span>
-                    <span class="txt-uppercase"> {{'ID' | translate }}: </span>
-                    <span>{{profile?.userName}}</span>
-                    <span class="profile-share-icon" (click)="shareUsername()">
-                        <ion-icon md="md-share" class="share-icon"></ion-icon>
-                    </span>
-                </p>
-            </div>
-            <div class="roles-container ion-text-center ion-padding-horizontal">
-                <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
-                    <div class="roles">
-                        {{role}}
-                    </div>
-                </div>
-                <div class="ion-text-center">
-                    <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
-                        class="txt-capitalize">
-                        + {{roles?.length - 2}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
-                    </ion-button>
-                    <ion-button fill="clear" *ngIf="rolesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessItems()"
-                        class="txt-capitalize">
-                        {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
-                    </ion-button>
-                </div>
-            </div>
-            <div class="school-recent" *ngIf="organisationName">
-                <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-                    <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
-                        (click)="toggleTooltips($event, 'org')">
-                        <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
-                        <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
-                    </span>
-                </p>
-                <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block:
-                    {{orgDetails?.block?.name}}</div>
-                <div *ngIf="(organisationName !== profile.rootOrgName) && !isDefaultChannelProfile && orgDetails">
-                    <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
-                            {{orgDetails?.district?.name}}</span></div>
-                    <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}:
-                            {{orgDetails?.state?.name}}</span></div>
-                </div>
-            </div>
-            <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !isDefaultChannelProfile">
-                <div *ngIf="orgDetails">
-                    <div><span *ngIf="orgDetails && orgDetails?.district?.name"
-                            class="bolder">{{'DISTRICT' | translate}}:
-                        </span>
-                        <span>{{orgDetails?.district?.name}}</span></div>
-                    <div><span *ngIf="orgDetails && orgDetails?.state?.name" class="bolder">{{'STATE' | translate}}:
-                        </span>
-                        <span>{{orgDetails?.state?.name}}</span></div>
-                </div>
-            </div>
-            <div class="location text-center" *ngIf="isCustodianOrgId">
-                <div>
-                    <span class="bolder">{{'DISTRICT' | translate}}: </span>
-                    <span
-                        *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">{{userLocation.district.name}}</span>
-                    <span
-                        *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
-                        class="lighter">{{'ADD_DISTRICT' | translate}}</span>
-                </div>
-                <div>
-                    <span class="bolder">{{'STATE' | translate}}: </span>
-                    <span
-                        *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">{{userLocation.state.name}}</span>
-                    <span
-                        *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
-                        class="lighter">{{'ADD_STATE' | translate}}</span>
-                </div>
-
-            </div>
-
-            <div class="text-center" *ngIf="isCustodianOrgId">
-                <div class="container MT10 MB10 edit-options">
-                    <ion-button shape="round" (click)="navigateToEditPersonalDetails()"
-                        class="custom-round ion-text-capitalize">
-                        {{'EDIT' | translate }}
-                    </ion-button>
-                </div>
+    <div class="spinner-div" *ngIf="refresh">
+        <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
+    </div>
+    <ion-refresher #refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+    </ion-refresher>
+    <div class="MT15 ion-text-center ion-padding-horizontal" *ngIf="profile?.firstName">
+        <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
+        <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
+        <app-profile-avatar [username]="profile?.firstName" [isStateUser]="isStateValidated" class="profileAvatar"
+            *ngIf="isStateValidated"></app-profile-avatar>
+    </div>
+    <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
+        <p class="profile-head">
+            <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
+                (click)="toggleTooltips($event, 'name')">
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
+                <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
+            </span>
+        </p>
+        <p class="MT0 MB30">
+            <span class="app-name"> {{appName}} </span>
+            <span class="txt-uppercase"> {{'ID' | translate }}: </span>
+            <span>{{profile?.userName}}</span>
+            <span class="profile-share-icon" (click)="shareUsername()">
+                <ion-icon md="md-share" class="share-icon"></ion-icon>
+            </span>
+        </p>
+    </div>
+    <div class="roles-container ion-text-center ion-padding-horizontal">
+        <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
+            <div class="roles">
+                {{role}}
             </div>
         </div>
+        <div class="ion-text-center">
+            <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
+                class="txt-capitalize">
+                + {{roles?.length - 2}} {{'MORE' | translate}}
+                <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" *ngIf="rolesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessItems()"
+                class="txt-capitalize">
+                {{'SHOW_LESS' | translate }}
+                <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+            </ion-button>
+        </div>
+    </div>
+    <div class="school-recent" *ngIf="organisationName">
+        <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
+            <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
+                (click)="toggleTooltips($event, 'org')">
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
+                <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
+            </span>
+        </p>
+        <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
+        <div *ngIf="(organisationName !== profile.rootOrgName) && !isDefaultChannelProfile && orgDetails">
+            <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
+                    {{orgDetails?.district?.name}}</span></div>
+            <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}: {{orgDetails?.state?.name}}</span></div>
+        </div>
+    </div>
+    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !isDefaultChannelProfile">
+        <div *ngIf="orgDetails">
+            <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}:
+                </span>
+                <span>{{orgDetails?.district?.name}}</span></div>
+            <div><span *ngIf="orgDetails && orgDetails?.state?.name" class="bolder">{{'STATE' | translate}}: </span>
+                <span>{{orgDetails?.state?.name}}</span></div>
+        </div>
+    </div>
+    <div class="location text-center" *ngIf="isCustodianOrgId">
+        <div>
+            <span class="bolder">{{'DISTRICT' | translate}}: </span>
+            <span
+                *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">{{userLocation.district.name}}</span>
+            <span
+                *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
+                class="lighter">{{'ADD_DISTRICT' | translate}}</span>
+        </div>
+        <div>
+            <span class="bolder">{{'STATE' | translate}}: </span>
+            <span
+                *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">{{userLocation.state.name}}</span>
+            <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
+                class="lighter">{{'ADD_STATE' | translate}}</span>
+        </div>
+        <div class="container MT10 MB10 edit-options">
 
-        <div class="text-center" *ngIf="isCustodianOrgId && !profile?.declarations?.length">
-            <div class="container MT10 MB10 self-declare-btn">
+            <ion-button shape="round" (click)="navigateToEditPersonalDetails()"
+                class="custom-round ion-text-capitalize">
+                {{'EDIT' | translate }}
+            </ion-button>
+
+            <div class="self-declare-btn" *ngIf="!profile?.declarations?.length">
                 <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
                     {{'SUBMIT_MY_DETAILS' | translate}}
                 </ion-button>
             </div>
         </div>
-
-        <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
-            <div *ngIf="profile?.phone">
-                <div class="phone" (click)="editMobileNumber();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon name="md-call"></ion-icon>
-                    </span>
-                    <span class="value align-middle">+91 {{ profile?.phone }}</span>
-                </div>
-            </div>
-            <div *ngIf="!profile?.phone">
-                <div class="phone light" (click)="editMobileNumber();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon name="md-call"></ion-icon>
-                    </span>
-                    <span class="value align-middle">{{'ADD_PHONE' | translate}}</span>
-                </div>
-            </div>
-            <div *ngIf="profile?.email">
-                <div class="email " (click)="editEmail();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon name="md-mail"></ion-icon>
-                    </span>
-                    <span class="value align-middle">{{ profile?.email }}</span>
-                </div>
-            </div>
-            <div *ngIf="!profile?.email">
-                <div class="email light" (click)="editEmail();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon name="md-mail"></ion-icon>
-                    </span>
-                    <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
-                </div>
-            </div>
-            <div class="MT10" *ngIf=" ( profile?.recoveryEmail?.length > 0 ) || ( profile?.recoveryPhone?.length > 0 )">
-                <div class="email" (click)="editRecoveryId();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
-                    </span>
-                    <span class="value align-middle"
-                        *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
-                    <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">
-                        +91 {{ profile?.recoveryPhone }}
-                    </span>
-                </div>
-            </div>
-            <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
-            ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
-                <div class="email light" (click)="editRecoveryId();">
-                    <span class="icon MR10 align-middle">
-                        <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
-                    </span>
-                    <span class="value align-middle">{{'ADD_RECOVERY_ACCOUNT' | translate}}</span>
-                </div>
+    </div>
+    <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
+        <div *ngIf="profile?.phone">
+            <div class="phone" (click)="editMobileNumber();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon name="md-call"></ion-icon>
+                </span>
+                <span class="value align-middle">+91 {{ profile?.phone }}</span>
             </div>
         </div>
-        <div class="school-details" *ngIf="profile?.framework">
-            <div class="container" *ngIf="profile?.framework?.board">
-                <div>{{'BOARD' | translate }}: </div>
-                <div class="bolder">{{profile?.framework?.board.join(', ')}} &lrm;</div>
-            </div>
-            <div class="container" *ngIf="profile?.framework?.medium">
-                <div>{{'MEDIUM' | translate }}: </div>
-                <div class="bolder">{{profile?.framework?.medium.join(', ')}}</div>
-            </div>
-            <div class="container" *ngIf="profile?.framework?.gradeLevel">
-                <div>{{'CLASSES' | translate }}: </div>
-                <div class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</div>
-            </div>
-            <div class="container" *ngIf="profile?.framework?.subject">
-                <div>{{'SUBJECTS' | translate }}: </div>
-                <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
-            </div>
-            <div class="container">
-                <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
-                    {{'EDIT' | translate }}
-                </ion-button>
+        <div *ngIf="!profile?.phone">
+            <div class="phone light" (click)="editMobileNumber();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon name="md-call"></ion-icon>
+                </span>
+                <span class="value align-middle">{{'ADD_PHONE' | translate}}</span>
             </div>
         </div>
-
-        <div class="self-declare-teacher-details" *ngIf="isCustodianOrgId &&  profile?.declarations?.length">
-            <p class="declare-info">{{'MY_DETAILS' | translate | titlecase }}</p>
-
-            <div class="container" *ngIf="personaTenantDeclaration">
-                <div>{{personaTenantDeclaration}}</div>
+        <div *ngIf="profile?.email">
+            <div class="email " (click)="editEmail();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon name="md-mail"></ion-icon>
+                </span>
+                <span class="value align-middle">{{ profile?.email }}</span>
             </div>
-
-            <div class="container" *ngFor="let details of selfDeclaredDetails">
-                <div>{{ details.name | translate }}:</div>
-                <div class="bolder">{{ details.value }}</div>
+        </div>
+        <div *ngIf="!profile?.email">
+            <div class="email light" (click)="editEmail();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon name="md-mail"></ion-icon>
+                </span>
+                <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
             </div>
-
-            <div *ngIf="selfDeclarationInfo && selfDeclarationInfo.errorType && selfDeclarationInfo.errorType.length">
-                <div class="declared-error-container">
-                    <strong class="declared-status">{{selfDeclarationInfo.status}}</strong>
-                    <div class="declared-message" *ngFor="let error of selfDeclarationInfo.errorType">
-                        {{error}}
-                    </div>
-                </div>
+        </div>
+        <div class="MT10" *ngIf=" ( profile?.recoveryEmail?.length > 0 ) || ( profile?.recoveryPhone?.length > 0 )">
+            <div class="email" (click)="editRecoveryId();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
+                </span>
+                <span class="value align-middle"
+                    *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
+                <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">
+                    +91 {{ profile?.recoveryPhone }}
+                </span>
             </div>
+        </div>
+        <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
+        ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
+            <div class="email light" (click)="editRecoveryId();">
+                <span class="icon MR10 align-middle">
+                    <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
+                </span>
+                <span class="value align-middle">{{'ADD_RECOVERY_ACCOUNT' | translate}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="school-details" *ngIf="profile?.framework">
+        <div class="container" *ngIf="profile?.framework?.board">
+            <div>{{'BOARD' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.medium">
+            <div>{{'MEDIUM' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.medium.join(', ')}}</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.gradeLevel">
+            <div>{{'CLASSES' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.subject">
+            <div>{{'SUBJECTS' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
+        </div>
+        <div class="container">
+            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
+                {{'EDIT' | translate }}
+            </ion-button>
+        </div>
+    </div>
 
-            <ion-button shape="round" (click)="openSelfDeclareTeacherForm('edit')">
-                {{'UPDATE' | translate }}
+    <div class="self-declare-teacher-details" *ngIf="isCustodianOrgId &&  profile?.declarations?.length">
+        <p class="declare-info">{{'MY_DETAILS' | translate | titlecase }}</p>
+
+        <div class="container" *ngIf="personaTenantDeclaration">
+            <div>{{personaTenantDeclaration}}</div>
+        </div>
+
+        <div class="container" *ngFor="let details of selfDeclaredDetails">
+            <div>{{ details.name | translate }}:</div>
+            <div class="bolder">{{ details.value }}</div>
+        </div>
+
+        <ion-button shape="round" (click)="openSelfDeclareTeacherForm('edit')" class="custom-round">
+            {{'UPDATE' | translate }}
+        </ion-button>
+    </div>
+
+    <div class="badges ion-text-center ion-padding-horizontal" *ngIf="profile?.badgeAssertions?.length > 0">
+        <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
+        <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">
+            <img height="80px" width="auto" alt="badge" [src]="commonUtilService.convertFileSrc(batch.badgeClassImage)">
+        </ion-avatar>
+        <div class="ion-text-center">
+            <ion-button shape="round" *ngIf="badgesLimit < profile?.badgeAssertions?.length" (click)="showMoreBadges()"
+                class="txt-capitalize custom-round">
+                + {{profile?.badgeAssertions?.length - 2}} {{'MORE' | translate}}
+                <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+            </ion-button>
+            <ion-button shape="round" *ngIf="badgesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessBadges()"
+                class="txt-capitalize custom-round">
+                {{'SHOW_LESS' | translate }}
+                <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
             </ion-button>
         </div>
     </div>
@@ -288,8 +279,6 @@
                         <div>
                             <span *ngIf="certificate.status === 1 || certificate.status === 0"
                                 class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="completed-status-text">
-                                {{ 'COMPLETED' | translate }}</span>
                             <span *ngIf="certificate.status === 2" class="lighter">
                                 {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>

@@ -2132,7 +2132,6 @@ describe('GroupDetailsPage', () => {
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'ACTIVITY_COURSE_TITLE');
                 expect(mockNavigationService.navigateTo)
                     .toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
                         {
@@ -2255,7 +2254,7 @@ describe('GroupDetailsPage', () => {
                                 },
                                 index: 0,
                                 isEnabled: true,
-                                title: 'Next',
+                                title: 'ACTIVITY_COURSE_TITLE',
                             },
                         ],
                     });

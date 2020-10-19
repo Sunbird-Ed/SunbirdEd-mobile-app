@@ -659,14 +659,50 @@ html[data-theme="JOYFUL"]{
     }
 
     .textbook-accordian{
-      ion-card{
-        border-radius: 1.5rem !important;
-        background-color: var(--app-secondary-background) !important;
-        .sb-hidden-content{
-          padding: 0.5rem;
-          background-color: var(--app-white) !important;
-          border-radius: 2rem;
+      background-color: transparent;
+      sb-accordion-header{
+        .sbaccordion__panel-header{
+          background-color: var(--app-secondary-background) !important;
+          box-shadow: var(--block-style-shadow) !important;
         }
+      }
+      .accordion-item-header-expanded{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem 1.5rem 0 0 !important;
+        }
+      }
+      .accordion-item-header-collapsed{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem !important;
+        }
+      }
+      sb-accordion-body{
+        .sbaccordion__panel-content{
+          background-color: var(--app-secondary-background) !important;
+          border-radius: 0 0 1rem 1rem;
+        }
+      }
+      sb-toc-card{
+        .sbchapter__item{
+          border-radius: 1rem;
+          border-color: var(--app-white);
+          box-shadow: var(--block-style-shadow);
+          .d-inline-flex{
+            align-items: center;
+          }
+        }
+        .sbchapter__img{
+          border-radius: 0.5rem;
+          overflow: auto;
+        }
+      }
+      sb-accordion-item{
+        .sbaccordion{
+          box-shadow: none !important;
+        }
+      }
+      .sbchapter__play__btn{
+        color: var(--app-primary) !important;
       }
     }
 
@@ -679,6 +715,9 @@ html[data-theme="JOYFUL"]{
     }
     .sb-topic-text{
       color: var(--app-brown) !important;
+    }
+    .sb-chapter-dd{
+      margin-top: 0.5rem;
     }
   }
   // app-collection-child component
@@ -1413,6 +1452,31 @@ html[data-theme="JOYFUL"]{
     .alert-button:last-child:not(:only-child) {
       background: var(--app-white) !important;
       color: var(--app-primary) !important;
+    }
+  }
+
+  app-qrcoderesult{
+    .qr-result-btn{
+      border-radius: 2rem !important;
+    }
+    .card-container{
+      ion-card{
+        padding-bottom: 0.5rem;;
+      }
+    }
+  }
+
+  app-search{
+    .search-bg{
+      --background: var(--app-primary-background) !important;
+    }
+    .sb-card-textbook-container{
+      box-shadow: none !important;
+    }
+    .add-to-group-btn-container{
+      .open-btn{
+        color: var(--app-primary) !important;
+      }
     }
   }
 

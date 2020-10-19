@@ -1498,3 +1498,25 @@ ion-content {
   --background: var(--app-primary-background);
   background: var(--app-primary-background) !important;
 }
+
+app-collection-detail-etb{
+  sb-toc-item{
+    .sbchapter__play__btn{
+      padding: 0.75rem 0.5rem !important;
+      border-radius: 2rem !important;
+      max-width: 5.5rem;
+      width: 100%;
+    }
+    sb-toc-card{
+      .sbchapter__item__title{
+        padding-top: 0.3rem;
+        font-size: 1rem!important;
+      }
+      .sbchapter__img{
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        flex: 0 0 2.5rem !important;
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 <div>
   <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
     <div [ngClass]="{'unit-hierachy sb-topic-item': !isTextbookTocPage, 'sub-unit': !isTextbookTocPage}"
-      (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
+      (click)="!fromCourseToc && setContentId(childData.identifier, childData)" [id]="childData.identifier"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && !isTextbookTocPage">
       {{childData?.contentData?.name}}
     </div>
@@ -95,15 +95,17 @@
     <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
   </div>
 
-  <div *ngFor="let firstChildren of childData?.children; let j = index;"
-    [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
-    <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
-      [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc"
-      [isBatchNotStarted]="isBatchNotStarted" [stckyUnitTitle]="stckyUnitTitle" [stckyindex]="stckyindex"
-      [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"
-      [contentStatusData]="contentStatusData" [updatedCourseCardData]="updatedCourseCardData" [batch]="batch" 
-      [addActivityToGroupData]="addActivityToGroupData">
-    </app-collection-child>
-  </div>
+  <ng-container *ngIf="!(childData?.contentData?.trackable?.enabled === 'Yes')">
+    <div *ngFor="let firstChildren of childData?.children; let j = index;"
+      [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
+      <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
+        [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
+        [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc"
+        [isBatchNotStarted]="isBatchNotStarted" [stckyUnitTitle]="stckyUnitTitle" [stckyindex]="stckyindex"
+        [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"
+        [contentStatusData]="contentStatusData" [updatedCourseCardData]="updatedCourseCardData" [batch]="batch" 
+        [addActivityToGroupData]="addActivityToGroupData">
+      </app-collection-child>
+    </div>
+  </ng-container>
 </div>

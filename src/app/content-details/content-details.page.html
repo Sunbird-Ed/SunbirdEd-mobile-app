@@ -242,7 +242,7 @@
           {{content?.description}}</div>
         <div class="sb-info" *ngIf="content?.contentData?.board">
           <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
-          <div class="sb-content-title-data">{{content?.contentData?.board}}</div>
+          <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
         </div>
         <div *ngIf="showMoreFlag">
           <div class="sb-info" *ngIf="content?.contentData?.medium">

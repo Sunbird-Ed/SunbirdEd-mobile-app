@@ -172,6 +172,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       console.log(' this.isSuspended',  this.isSuspended);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
+      this.activityList.forEach((a) => {
+        if (a.translations) {
+          a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
+        }
+      });
 
       if (this.memberList) {
         this.memberList.sort((a, b) => {
@@ -1044,8 +1049,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         = await this.groupService.getSupportedActivities().toPromise();
       if (supportedActivityResponse && supportedActivityResponse.data && supportedActivityResponse.data.fields) {
         const supportedActivityList = supportedActivityResponse.data.fields;
-        supportedActivityList.forEach(activity => {
-          activity.title = this.commonUtilService.translateMessage(activity.title);
+        supportedActivityList.forEach(a => {
+          if (a.translations) {
+            a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
+          }
         });
         this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
           {
