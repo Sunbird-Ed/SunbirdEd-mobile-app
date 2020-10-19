@@ -35,7 +35,6 @@ import {
 } from './collection-detail-etb-page.spec.data';
 import { of, Subscription, throwError } from 'rxjs';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType} from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
@@ -153,7 +152,7 @@ describe('collectionDetailEtbPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.restoreAllMocks();
+        // jest.resetAllMocks();
     });
 
     it('should create a instance of collectionDetailEtbPage', () => {
@@ -164,11 +163,13 @@ describe('collectionDetailEtbPage', () => {
         // arrange
         mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
         mockDownloadService.trackDownloads = jest.fn(() => of());
+        mockCommonUtilService.translateMessage = jest.fn(() => 'play');
         // act
         collectionDetailEtbPage.ngOnInit();
         // assert
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
+        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PLAY');
     });
 
     it('should extract content data', () => {

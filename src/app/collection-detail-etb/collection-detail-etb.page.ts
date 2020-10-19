@@ -1,4 +1,4 @@
-import {TextbookTocService} from './textbook-toc-service';
+import { TextbookTocService } from './textbook-toc-service';
 import {
   ChangeDetectorRef,
   Component,
@@ -10,8 +10,8 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import isObject from 'lodash/isObject';
-import {FileSizePipe} from '@app/pipes/file-size/file-size';
-import {Events, IonContent as iContent, Platform, PopoverController} from '@ionic/angular';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { Events, IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
 import {
   Content,
   ContentAccess,
@@ -281,10 +281,7 @@ export class CollectionDetailEtbPage implements OnInit {
   collectionTocData: Content;
   TocCardType = TocCardType;
   activeContent;
-  playBtnConfig: IButtonConfig = {
-    label: this.commonUtilService.translateMessage('PLAY'),
-    show: true
-  };
+  playBtnConfig: IButtonConfig;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -345,6 +342,11 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   ngOnInit() {
+    this.playBtnConfig = {
+      label: this.commonUtilService.translateMessage('PLAY'),
+      show: true
+    };
+
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
     this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
@@ -1403,7 +1405,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
     this.setActiveContentData(event, InteractSubtype.PLAY_CLICKED, corRelationData);
 
-    this.playContent({content: event.data}, corRelationData);
+    this.playContent({ content: event.data }, corRelationData);
   }
 
   private setActiveContentData(event, telemetrySubType, corRelationData) {
