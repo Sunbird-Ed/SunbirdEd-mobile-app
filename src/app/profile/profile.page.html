@@ -195,15 +195,6 @@
             <div class="bolder">{{ details.value }}</div>
         </div>
 
-        <div *ngIf="selfDeclarationInfo && selfDeclarationInfo.errorType && selfDeclarationInfo.errorType.length">
-            <div class="declared-error-container">
-                <strong class="declared-status">{{selfDeclarationInfo.status}}</strong>
-                <div class="declared-message" *ngFor="let error of selfDeclarationInfo.errorType">
-                    {{error}}
-                </div>
-            </div>
-        </div>
-
         <ion-button shape="round" (click)="openSelfDeclareTeacherForm('edit')" class="custom-round">
             {{'UPDATE' | translate }}
         </ion-button>
