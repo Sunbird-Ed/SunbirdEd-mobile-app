@@ -1024,7 +1024,7 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'delete group popup title');
             groupDetailsPage.groupDetails = {
                 name: 'sample-group',
-                status: 'sample-status'
+                status: 'suspended'
             } as any;
             mockGroupService.suspendById = jest.fn(() => of({})) as any;
             mockLocation.back = jest.fn();
