@@ -279,22 +279,7 @@ export class LocalCourseService {
 
   isEnrollable(batches, course) {
     let latestBatch = batches[0];
-    batches.forEach((batch) => {
-      if (batch.startDate &&
-        (new Date(batch.startDate) > new Date(latestBatch.startDate))) {
-        latestBatch = batch;
-      }
-    });
-    // start date is not passed, then check show message
-    // start date is passed, then check for enrollmentenddate
-    // enrollmentenddate is passed then show message
-
-    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0))) {
-      this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
-        this.datePipe.transform(latestBatch.startDate));
-      return false;
-    } else if (latestBatch.enrollmentEndDate &&
-      (new Date(latestBatch.enrollmentEndDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))) {
+    const showEnrollmentEndedMessage = () => {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
         null,
@@ -303,12 +288,41 @@ export class LocalCourseService {
         null,
         this.datePipe.transform(latestBatch.enrollmentEndDate)
       );
+    };
+    const showFutureBatchMessage = () => {
+      this.commonUtilService.showToast(
+        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
+        {'batch_start_date': this.datePipe.transform(latestBatch.startDate)}
+        )
+      );
+    };
+    for (let i = 0; i < batches.length; i++) {
+      if (batches.length > 1 && !batches[i].enrollmentEndDate &&
+        batches[i].startDate && (new Date(batches[i].startDate).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0))) {
+        return true;
+      }
+      if (batches[i].startDate &&
+          (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
+        latestBatch = batches[i];
+      }
+    }
+    // start date is not passed, then check show message
+    // start date is passed, then check for enrollmentenddate
+    // enrollmentenddate is passed then show message
+
+    if (latestBatch.startDate && (new Date(latestBatch.startDate).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0))) {
+      showFutureBatchMessage();
+      return false;
+    } else if (latestBatch.enrollmentEndDate &&
+      (new Date(latestBatch.enrollmentEndDate).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))) {
+      showEnrollmentEndedMessage();
       return false;
     }
     return true;
   }
 
   async showConsentPopup(course) {
+    await this.sbProgressLoader.hide({id: 'login'});
     const popover = await this.popoverCtrl.create({
       component: ConsentPiiPopupComponent,
       componentProps: {

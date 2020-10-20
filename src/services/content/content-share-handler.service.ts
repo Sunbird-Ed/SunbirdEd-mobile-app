@@ -5,7 +5,7 @@ import {
   CorrelationData, TelemetryObject,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
-import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
+import { InteractSubtype, InteractType, Environment } from '../telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
@@ -49,10 +49,15 @@ export class ContentShareHandlerService {
       }
     }
 
+    let rootContentIdentifier = content.identifier;
+    if (rollup && rollup.l1 && rollup.l1 !== content.identifier) {
+      rootContentIdentifier = rollup.l1;
+    }
+
     let exportContentRequest: ContentExportRequest;
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {
-        contentIds: [content.identifier],
+        contentIds: [rootContentIdentifier],
         subContentIds,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
       };
@@ -78,7 +83,7 @@ export class ContentShareHandlerService {
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
-        contentIds: [content.identifier],
+        contentIds: [rootContentIdentifier],
         subContentIds,
         destinationFolder: cordova.file.externalRootDirectory + 'Download/',
         saveLocally: true

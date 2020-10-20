@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { Location, DatePipe } from '@angular/common';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
@@ -79,6 +80,104 @@ describe('LocalCourseService', () => {
     expect(localCourseService).toBeTruthy();
   });
 
+  it('should return reqestMap Value', () => {
+    const course = {
+      courseId: 'courseId',
+      channel: 'sample-channelId',
+      userId: 'sample-userId'
+    };
+    const data = localCourseService.prepareRequestValue(course);
+    expect(data).toBeTruthy();
+  });
+
+  describe('showConsentPopup', () => {
+    it('should update user consent', (done) => {
+      // arrange
+      const course = {
+        courseId: 'courseId',
+        channel: 'sample-channelId',
+        userId: 'sample-userId'
+      };
+      const request: Consent = {
+        status: ConsentStatus.REVOKED,
+        userId: course.userId,
+        consumerId: course.channel,
+        objectId: course.courseId,
+        objectType: 'Collection'
+      };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+      }) as any);
+      const dismissFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+          present: presentFn,
+          dismiss: dismissFn,
+      }));
+      mockProfileService.updateConsent = jest.fn(() => of({
+        message: 'success'
+      }));
+      mockCommonUtilService.showToast = jest.fn();
+      // act
+      localCourseService.showConsentPopup(course);
+      // assert
+      setTimeout(() => {
+        expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+        expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should not update user consent for catch part', (done) => {
+      // arrange
+      const course = {
+        courseId: 'courseId',
+        channel: 'sample-channelId',
+        userId: 'sample-userId'
+      };
+      const request: Consent = {
+        status: ConsentStatus.REVOKED,
+        userId: course.userId,
+        consumerId: course.channel,
+        objectId: course.courseId,
+        objectType: 'Collection'
+      };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
+        present: presentFn,
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+      }) as any);
+      const dismissFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+          present: presentFn,
+          dismiss: dismissFn,
+      }));
+      mockProfileService.updateConsent = jest.fn(() => throwError({
+        code: 'NETWORK_ERROR'
+      }));
+      mockCommonUtilService.showToast = jest.fn();
+      // act
+      localCourseService.showConsentPopup(course);
+      // assert
+      setTimeout(() => {
+        expect(mockSbProgressLoader.hide).toHaveBeenCalled();
+        expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        expect(presentFn).toHaveBeenCalled();
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+        expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+  });
+
   describe('enrollIntoBatch', () => {
     it('should Enrol into batch, and when the return is true', async (done) => {
       // arrange
@@ -97,6 +196,7 @@ describe('LocalCourseService', () => {
         channel: 'sample-channel',
         userConsent: 'Yes'
       };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
       mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
@@ -117,7 +217,8 @@ describe('LocalCourseService', () => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
           expect(mockCourseService.enrollCourse).toHaveBeenCalled();
           expect(mockPopoverCtrl.create).toHaveBeenCalled();
-        }, 100);
+          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
+        }, 200);
         done();
       });
     });
@@ -139,6 +240,7 @@ describe('LocalCourseService', () => {
         channel: 'sample-channel',
         userConsent: 'Yes'
       };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
       mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
@@ -157,17 +259,7 @@ describe('LocalCourseService', () => {
       await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockCourseService.enrollCourse).toHaveBeenCalled();
-        expect(mockPopoverCtrl.create).toHaveBeenCalled();
-        // expect(mockProfileService.updateConsent).toHaveBeenCalledWith(
-        //   {
-        //     status: 'ACTIVE',
-        //     userId: 'sample-user-id',
-        //     consumerId: 'sample-channel',
-        //     objectId: 'sample_courseid',
-        //     objectType: 'Collection'
-        //   }
-        // );
-      //  expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       });
     });
@@ -213,22 +305,12 @@ describe('LocalCourseService', () => {
         corRelationList: [],
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-
-      mockCourseService.enrollCourse = jest.fn(() => throwError({
-        response: {
-          body: {
-            params: {
-              status: 'USER_ALREADY_ENROLLED_COURSE'
-            }
-          }
-        }
-      }));
       const map = new Map();
       map.set('data', 'sample-data');
       jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
         return map;
       });
-
+      mockCourseService.enrollCourse = jest.fn(() => throwError({}));
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
@@ -256,13 +338,13 @@ describe('LocalCourseService', () => {
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       const networkError = new NetworkError({ code: 'samp' });
       mockCourseService.enrollCourse = jest.fn(() => throwError(networkError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
 
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
-       // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         done();
       });
 
@@ -282,22 +364,87 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
+        userConsent: UserConsent.YES
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
-
+      mockProfileService.getConsent = jest.fn(() => throwError({
+        response: {
+          body: {
+            params: {
+              err: 'USER_CONSENT_NOT_FOUND'
+            }
+          }
+        }
+      }));
+      jest.spyOn(localCourseService, 'showConsentPopup').mockImplementation(() => {
+        return Promise.resolve();
+      });
+      const value = new Map();
+      value.set('error', {});
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return value;
+      });
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
-        // expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-        // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockProfileService.getConsent).toHaveBeenCalled();
         done();
       });
+    });
 
+
+    it('should raise a telemetry event when HttpClient error is thrown and already enrolled and network error', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+        userConsent: UserConsent.YES
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
+
+      mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
+      mockCommonUtilService.showToast = jest.fn();
+      mockProfileService.getConsent = jest.fn(() => throwError({
+        response: {
+          body: {
+            params: {
+              err: 'USER_FOUND'
+            }
+          }
+        },
+        code: 'NETWORK_ERROR'
+      }));
+      const value = new Map();
+      value.set('error', {});
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return value;
+      });
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockProfileService.getConsent).toHaveBeenCalled();
+        done();
+      });
     });
 
     it('should raise a telemetry event when Httpclient error is thrown but not already enrolled', (done) => {
@@ -319,7 +466,7 @@ describe('LocalCourseService', () => {
       const httpClientError = new HttpClientError('http_clicnt_error', { body: {} });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
 
       // act
@@ -329,7 +476,6 @@ describe('LocalCourseService', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         done();
       });
-
     });
 
   });
@@ -758,4 +904,53 @@ describe('LocalCourseService', () => {
     });
   });
 
+  describe('isEnrollable', () => {
+    it('should return unEnrolled and invoked showFutureBatchMessage', () => {
+      const batches = [{
+        enrollmentEndDate: '01/01/01',
+        startDate: '01/01/01'
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // assert
+      expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+      expect(data).toBeFalsy();
+    });
+
+    it('should return is enrolled', () => {
+      const batches = [{
+        enrollmentEndDate: undefined,
+        startDate: '01/01/01'
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // arrange
+      expect(data).toBeTruthy();
+    });
+
+    it('should return is enrolled', () => {
+      const batches = [{
+        enrollmentEndDate: undefined,
+        startDate: 1800863414000
+      }, {
+        enrollmentEndDate: undefined,
+        startDate: '02/02/02'
+      }, {
+        startDate: 1800863614000
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // assert
+      expect(data).toBeTruthy();
+    });
+  });
 });
