@@ -1229,6 +1229,10 @@ app-resources{
   width: 100%;
   padding: 16px 0px 16px 0px;
 }
+.sb-btn-small{
+  padding: 8px;
+  width: auto;
+}
 
 .popover-my-groups {
   .mg-popup-container{
@@ -1368,7 +1372,7 @@ ion-modal.sb-progress-loader {
   ion-item:nth-child(1) {
     color: map-get($colors, primary_black);
   }
-  ion-item:nth-child(2) {
+  ion-item:last-child {
     color: $red;
   }
 }
