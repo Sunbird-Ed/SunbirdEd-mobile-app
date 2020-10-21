@@ -22,10 +22,6 @@
           (viewMoreClick)="navigateToViewMoreContentsPage(true)" (cardClick)="openEnrolledCourseDetails($event)"
           [hideProgress]="true"></sb-course-cards-hlist>
       </ng-container>
-      <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
-        <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
-        </sb-course-cards-hlist>
-      </ng-container>
     </div>
     <div *ngIf="result.orientation === 'vertical'">
       <div class="section-header-style" *ngIf="popularAndLatestCourses.length">{{result.name}}</div>
