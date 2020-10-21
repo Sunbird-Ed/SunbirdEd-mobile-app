@@ -599,9 +599,11 @@ describe('MyGroupsPage', () => {
                     }
                 }
             }
-           const systemSetings = {
-            latestversion: '3.4.0'
-           }
+            const systemSetings = {
+                value : JSON.stringify({
+                    latestversion: '3.4.0'
+                })
+            }
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
             jest.spyOn(myGroupsPage, 'openAcceptGuidelinesPopup').mockImplementation();
             mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any
@@ -625,7 +627,9 @@ describe('MyGroupsPage', () => {
                 }
             }
             const systemSetings = {
-                latestversion: '3.4.0'
+                value : JSON.stringify({
+                    latestversion: '3.4.0'
+                })
             }
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
