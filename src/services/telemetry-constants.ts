@@ -121,6 +121,7 @@ export enum PageId {
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
     PERMISSION_POPUP = 'permission-popup',
+    PLAYER_PAGE = 'player-page',
     /* New Telemetry */
     LANGUAGE = 'language',
     USER_TYPE = 'usertype',

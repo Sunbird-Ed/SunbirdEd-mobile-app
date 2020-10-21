@@ -42,6 +42,11 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/common-consumption/assets",
                 "output": "./assets/common-consumption"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-pdf-player/lib/assets/",
+                "output": "/assets/"
               }
             ],
 

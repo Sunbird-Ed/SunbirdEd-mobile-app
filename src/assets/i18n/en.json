@@ -105,6 +105,8 @@
   "CANCEL_DOWNLOAD_TITLE": "Cancel Download?",
   "CERTIFICATE_ALREADY_DOWNLOADED": "The certificate is already downloaded, please check your Download folder",
   "CERTIFICATE_DOWNLOADED": "The certificate has been downloaded",
+  "PDF_DOWNLOADED": "pdf downloaded",
+  "DEVICE_NEEDS_PERMISSION": "permission denied for downloading pdf",
   "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
   "CERTIFIED_TRAINING": "Earn a certificate",
   "CHANGE": "Change",
