@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { RouterLinks, PreferenceKey } from '../app.constant';
+import { RouterLinks, PreferenceKey, SystemSettingsIds, ProfileConstants } from '../app.constant';
 import {
   AuthService, SharedPreferences, GroupService, Group,
   GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder,
-  ObjectType, TelemetryObject
+  ObjectType, TelemetryObject, UpdateMembersRequest, GroupUpdateMembersResponse, SystemSettingsService, GetSystemSettingsRequest, SystemSettings, ProfileService, ServerProfileDetailsRequest
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -23,7 +23,7 @@ import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-t
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-
+import { GroupGuideLinesPopoverComponent } from '../components/popups/group-guidelines-popup/group-guidelines-popup.component';
 interface GroupData extends Group {
   initial: string;
 }
@@ -42,11 +42,13 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   userId: string;
   unregisterBackButton: Subscription;
   fromRegistrationFlow = false;
-
+  groupTncVersion: string;
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
@@ -65,14 +67,13 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       }
     }
   }
-
-  ngOnInit() {
+  async ngOnInit() {
+    this.userId = await this.appGlobalService.getActiveProfileUid();
+    this.checkUserAcceptedGuidelines();
   }
-
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
-
   async ionViewWillEnter() {
     this.checkUserLoggedIn();
     if (!this.isGuestUser) {
@@ -96,7 +97,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.fetchGroupList();
     }
   }
-
   async ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -106,7 +106,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       Environment.GROUP
     );
   }
-
   ionViewWillLeave() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
@@ -115,7 +114,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.unregisterBackButton.unsubscribe();
     }
   }
-
   ngOnDestroy() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
@@ -124,7 +122,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.unregisterBackButton.unsubscribe();
     }
   }
-
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
@@ -138,7 +135,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         break;
     }
   }
-
   private handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
@@ -148,7 +144,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.goback();
     });
   }
-
   goback() {
     if (this.fromRegistrationFlow) {
       this.router.navigate([RouterLinks.TABS]);
@@ -205,20 +200,25 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.groupListLoader = false;
     }
   }
-
+  
   navigateToGroupdetailsPage(event) {
     const telemetryObject = new TelemetryObject(event.data.id, ObjectType.GROUP, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP, telemetryObject);
-
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: event.data.id
       }
     };
-    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+    console.log('-------',event)
+    if(event.data && !event.data.visited){
+      console.log('openAcceptGuidelinesPopup');
+      this.openAcceptGuidelinesPopup(false, navigationExtras);
+    } else {
+      this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+    }
+    
   }
-
   async openinfopopup() {
     const popover = await this.popoverCtrl.create({
       component: MyGroupsPopoverComponent,
@@ -240,5 +240,91 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } else if (data.canDelete) {
     }
   }
-
+  async openAcceptGuidelinesPopup(isGroupTncVersionUpdated, navigationExtras?, event?) {
+    const confirm = await this.popoverCtrl.create({
+      component: GroupGuideLinesPopoverComponent,
+      componentProps: {
+        icon: null
+      },
+      cssClass: 'sb-popover info',
+    });
+    await confirm.present();
+    const { data } = await confirm.onDidDismiss();
+    if (data == null) {
+      return;
+    }
+    if (data && data.isLeftButtonClicked) {
+      if(!isGroupTncVersionUpdated) {
+        const updateMembersRequest: UpdateMembersRequest = {
+          groupId: navigationExtras.state.groupId,
+          updateMembersRequest: {
+            members: [{
+              userId: this.userId,
+              visited: true
+            }]
+          }
+        }
+        try {
+          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
+          console.log('updateMemberResponse', updateMemberResponse);
+          this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
+          // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
+        } catch (err){
+          this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+        }
+      } else{
+        this.updateGroupTnc(this.groupTncVersion);
+      }
+      
+    }
+  }
+  checkUserAcceptedGuidelines(){
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: SystemSettingsIds.GROUPS_TNC
+    };
+    this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+      .then((res: SystemSettings) => {
+        if (res && res.value) {
+          const value = JSON.parse(res.value);
+          console.log('value', value)
+          this.groupTncVersion = value.latestVersion;
+          const req: ServerProfileDetailsRequest = {
+            userId: this.userId,
+            requiredFields: ProfileConstants.REQUIRED_FIELDS
+          };
+          this.profileService.getServerProfilesDetails(req).toPromise()
+            .then((profileDetails) => {
+              console.log('profileDetails', profileDetails)
+              if (profileDetails.allTncAccepted && profileDetails.allTncAccepted.groupsTnc && profileDetails.allTncAccepted.groupsTnc.version) {
+                if (profileDetails.allTncAccepted.groupsTnc.version === this.groupTncVersion){
+                  console.log('version matching');
+                } else {
+                  console.log('version not maching');
+                  this.updateGroupTnc(this.groupTncVersion);
+                }
+              } else {
+                console.log('version not maching ---');
+                this.openAcceptGuidelinesPopup(true);
+              }
+            })
+          
+        }
+      }).catch(err => {
+        console.log('error :', err);
+      });
+  }
+  private async updateGroupTnc(latestVersion){
+    try {
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
+        userId: this.userId,
+        version: latestVersion,
+        // version: "35",
+        tncType: 'groupsTnc'
+      }).toPromise()
+      console.log('isTCAccepted', isTCAccepted);
+    } catch(err){
+      console.log('acceptTermsAndConditions err', err)
+    }
+    
+  }
 }

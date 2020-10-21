@@ -377,6 +377,7 @@ export class SystemSettingsIds {
     public static readonly CONTENT_COMING_SOON_MSG = 'contentComingSoonMsg';
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
+    public static readonly GROUPS_TNC = 'groupsTnc';
 }
 
 export class StoreRating {
