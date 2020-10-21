@@ -750,7 +750,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
-              this.sbProgressLoader.hide({id: content.identifier});
+              this.sbProgressLoader.hide({ id: content.identifier });
               break;
           }
           break;
@@ -778,6 +778,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private getCorrelationList(payloadUrl, corRelation?: Array<CorrelationData>) {
     if (payloadUrl) {
+      if (!corRelation) {
+        corRelation = [];
+      }
       corRelation.push({
         id: ContentUtil.extractBaseUrl(payloadUrl),
         type: CorReleationDataType.SOURCE
