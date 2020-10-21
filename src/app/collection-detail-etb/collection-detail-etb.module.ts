@@ -9,12 +9,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '../../directives/directives.module';
 import { PipesModule } from '../../pipes/pipes.module';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import { RouterLinks } from '../app.constant';
-
-
-
 
 const routes: Routes = [
   {
@@ -35,6 +33,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
     ComponentsModule,
+    CommonConsumptionModule,
     DirectivesModule,
     PipesModule
   ],

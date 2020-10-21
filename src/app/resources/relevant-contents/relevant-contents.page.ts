@@ -142,7 +142,7 @@ export class RelevantContentsPage implements OnInit, OnDestroy {
       const contentList = result.contentDataList;
       if (contentList && contentList.length) {
         for (let i = 0; i < contentList.length; i++) {
-          contentList[i].appIcon = ContentUtil.getAppIcon(contentList[i].appIcon,
+          contentList[i]['cardImg'] = ContentUtil.getAppIcon(contentList[i].appIcon,
             contentList[i]['basePath'], this.commonUtilService.networkInfo.isNetworkAvailable);
         }
       }

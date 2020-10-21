@@ -9,7 +9,7 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <preference name="ScrollEnabled" value="false" />
-    <preference name="android-minSdkVersion" value="19" />
+    <preference name="android-minSdkVersion" value="22" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreenDelay" value="5000" />
     <preference name="Orientation" value="portrait" />
@@ -43,6 +43,7 @@
         <preference name="android-manifest/application/@android:allowBackup" value="false" />
         <preference name="loadUrlTimeoutValue" value="700000" />
         <preference name="CodePushDeploymentKey" value="agojO-OZt4dZlt_pu9r9j2Ipy_jY90dbb065-3633-45a5-9c55-c0405eafaebb" />
+        <preference name="AndroidXEnabled" value="true" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -111,7 +112,8 @@
     <plugin name="cordova-plugin-whitelist" spec="^1.3.4" />
     <plugin name="cordova-plugin-ionic-webview" spec="^4.2.1" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="^5.6.5" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="^6.0.2" />
+    <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.1" />
     <plugin name="cordova-plugin-device" spec="^2.0.3" />
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
@@ -123,35 +125,32 @@
     <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="26.+" />
     </plugin>
-    <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git">
+    <plugin name="cordova-plugin-fcm-with-dependecy-updated" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0">
         <variable name="FCM_CORE_VERSION" value="16.0.9" />
         <variable name="FCM_VERSION" value="18.0.0" />
         <variable name="GRADLE_TOOLS_VERSION" value="3.5.0" />
         <variable name="GOOGLE_SERVICES_VERSION" value="4.2.0" />
         <variable name="ANDROID_DEFAULT_NOTIFICATION_ICON" value="@mipmap/ic_launcher" />
     </plugin>
-    <plugin name="cordova-plugin-advanced-http" spec="^2.4.1" />
-    <plugin name="cordova-plugin-android-permissions" spec="^1.0.2" />
+    <plugin name="cordova-plugin-advanced-http" spec="^2.5.1" />
+    <plugin name="cordova-plugin-android-permissions" spec="^1.1.0" />
     <plugin name="cordova-plugin-media" spec="^5.0.3" />
     <plugin name="cordova.plugins.diagnostic" spec="^5.0.2">
         <variable name="ANDROID_SUPPORT_VERSION" value="28.+" />
     </plugin>
     <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
-    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git" />
+    <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
+    <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git" />
-    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git" />
-    <plugin name="cordova-android-support-gradle-release" spec="^3.0.1">
-        <variable name="ANDROID_SUPPORT_VERSION" value="28.0.0" />
-    </plugin>
+    <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0" />
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />
     </plugin>
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
-    <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git" />
-    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git" />
+    <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0" />
+    <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.3.0" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
-    <plugin name="cordova-plugin-proguard" spec="https://github.com/greybax/cordova-plugin-proguard.git" />
-    <engine name="android" spec="^8.1.0" />
+    <engine name="android" spec="^9.0.0" />
 </widget>

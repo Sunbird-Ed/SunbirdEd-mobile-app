@@ -2,7 +2,15 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 export class PrimaryCategory {
 
     public static readonly FOR_COURSE_TAB = [
-        CsPrimaryCategory.COURSE
+        CsPrimaryCategory.COURSE,
+        CsPrimaryCategory.TEACHER_RESOURCE,
+        CsPrimaryCategory.LEARNING_RESOURCE,
+        CsPrimaryCategory.EXPLANATION_CONTENT,
+        CsPrimaryCategory.CONTENT_PLAYLIST,
+        CsPrimaryCategory.DIGITAL_TEXTBOOK,
+        CsPrimaryCategory.PRACTICE_QUESTION_SET,
+        CsPrimaryCategory.E_TEXTBOOK,
+        CsPrimaryCategory.COURSE_ASSESSMENT
     ];
     public static readonly FOR_LIBRARY_TAB = [
         CsPrimaryCategory.COURSE,
@@ -166,8 +174,10 @@ export class ShareUrl {
 
 export class MenuOverflow {
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
-    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'MENU_DELETE_GROUP'];
-    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR_SUSPENDED = [ 'FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN__SUSPENDED = [ 'FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];

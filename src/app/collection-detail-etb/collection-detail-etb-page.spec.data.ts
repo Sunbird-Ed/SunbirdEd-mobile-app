@@ -1,4 +1,4 @@
-import { Content, Rollup, TelemetryObject } from 'sunbird-sdk';
+import { Content } from 'sunbird-sdk';
 import { Navigation } from '@angular/router';
 import { PageId } from '../../services';
 

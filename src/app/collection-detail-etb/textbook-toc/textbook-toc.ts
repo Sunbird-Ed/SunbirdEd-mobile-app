@@ -134,7 +134,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     }
 
     // set textbook unit and contentids for scrolling to particular unit in etb page
-    setContentId(id: string) {
+    setContentId(id: string, content) {
         const values = new Map();
         values['unitClicked'] = id;
         values['parentId'] = this.parentId;
@@ -147,7 +147,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
             values
         );
 
-        this.textbookTocService.setTextbookIds({ rootUnitId: id, contentId: id });
+        this.textbookTocService.setTextbookIds({ rootUnitId: id, contentId: id, content });
         // this.navCtrl.pop();
         this.location.back();
     }

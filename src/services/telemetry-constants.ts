@@ -251,6 +251,7 @@ export enum InteractType {
     POPUP_LOADED = 'popup-loaded',
     INITIATED = 'initiated',
     SUCCESS = 'success',
+    FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
     SELECT_CARD = 'select-card'
@@ -585,7 +586,7 @@ export enum CorReleationDataType {
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
     COUNT_NODE = 'CountNode',
-    CONTENT_NAME = 'ContentName',
+    CONTENT_NAME = 'ContentName'
 }
 
 export enum AuditProps {

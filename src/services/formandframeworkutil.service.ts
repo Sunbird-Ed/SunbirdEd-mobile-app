@@ -695,4 +695,14 @@ export class FormAndFrameworkUtilService {
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
     }
+
+    async getBoardAliasName() {
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'boardAlias',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
 }

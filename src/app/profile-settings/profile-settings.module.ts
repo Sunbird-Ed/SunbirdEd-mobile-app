@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfileSettingsPage } from './profile-settings.page';
 import { TranslateModule } from '@ngx-translate/core';
+import {PipesModule} from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -17,15 +18,16 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    DirectivesModule,
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    TranslateModule,
-    ReactiveFormsModule,
-    RouterModule.forChild(routes)
-  ],
+    imports: [
+        DirectivesModule,
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        TranslateModule,
+        ReactiveFormsModule,
+        RouterModule.forChild(routes),
+        PipesModule
+    ],
   declarations: [ProfileSettingsPage]
 })
 export class ProfileSettingsPageModule {}
