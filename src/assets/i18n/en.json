@@ -1089,5 +1089,6 @@
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use",
   "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the",
-  "FORUM": "Forum"
+  "FORUM": "Forum",
+  "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile if you need to"
 }
