@@ -40,14 +40,7 @@ describe('MyGroupsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockPlatform: Platform<Platform> = {};
     const mockLocation: Partial<Location> = {};
-    const mockSystemSettingService: Partial<SystemSettingsService> = {
-        getSystemSettings: jest.fn(() => of({
-            value: JSON.stringify({
-                isEnabled: true,
-                key: 'e344ijewjee43'
-            })
-        })) as any
-    };
+    const mockSystemSettingService: Partial<SystemSettingsService> = {};
     const mockProfileService: Partial<ProfileService> = {};
 
     beforeAll(() => {
@@ -592,6 +585,58 @@ describe('MyGroupsPage', () => {
             // assert
             expect(mockLocation.back).toHaveBeenCalled();
         });
+    });
+
+    describe('checkIfUserAcceptedGuidelines', () => {
+        it('should open openAcceptGuidelinesPopup if grouplist is empty', () => {
+            // arrange
+            myGroupsPage.groupList = ['group1'] as any;
+            myGroupsPage.userId = 'sampleuserid'
+            const profile = {
+                allTncAccepted: {
+                    groupsTnc: {
+                        version: '3.4.0'
+                    }
+                }
+            }
+           const systemSetings = {
+            latestversion: '3.4.0'
+           }
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
+            jest.spyOn(myGroupsPage, 'openAcceptGuidelinesPopup').mockImplementation();
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any
+            // act
+            myGroupsPage.checkIfUserAcceptedGuidelines()
+            //assert
+            setTimeout(() => {
+                expect(myGroupsPage.openAcceptGuidelinesPopup).toHaveBeenCalled();
+            });
+        })
+
+        it('should directly call  updateGroupTnc if grouplist is empty', () => {
+            // arrange
+            myGroupsPage.groupList = [];
+            myGroupsPage.userId = 'sampleuserid'
+            const profile = {
+                allTncAccepted: {
+                    groupsTnc: {
+                        version: '3.4.0'
+                    }
+                }
+            }
+            const systemSetings = {
+                latestversion: '3.4.0'
+            }
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any
+            // act
+            myGroupsPage.checkIfUserAcceptedGuidelines()
+            //assert
+            setTimeout(() => {
+                expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalled();
+            });
+        })
     });
 
     

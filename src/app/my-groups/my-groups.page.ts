@@ -68,8 +68,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     }
   }
   async ngOnInit() {
-    this.userId = await this.appGlobalService.getActiveProfileUid();
-    this.checkUserAcceptedGuidelines();
   }
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
@@ -195,6 +193,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         });
       this.groupListLoader = false;
       console.log('this.groupList', this.groupList);
+      this.checkIfUserAcceptedGuidelines();
     } catch (e) {
       console.error(e);
       this.groupListLoader = false;
@@ -211,8 +210,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       }
     };
     console.log('-------',event)
-    if(event.data && !event.data.visited){
-      console.log('openAcceptGuidelinesPopup');
+    if(event.data && event.data.hasOwnProperty('visited') && event.data.visited === false){
+      console.log('event.data && event.data.hasOwnProperty');
       this.openAcceptGuidelinesPopup(false, navigationExtras);
     } else {
       this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
@@ -278,7 +277,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       
     }
   }
-  checkUserAcceptedGuidelines(){
+  checkIfUserAcceptedGuidelines(){
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
       id: SystemSettingsIds.GROUPS_TNC
     };
@@ -286,7 +285,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       .then((res: SystemSettings) => {
         if (res && res.value) {
           const value = JSON.parse(res.value);
-          console.log('value', value)
+          console.log('value.latestversion', value.latestVersion)
           this.groupTncVersion = value.latestVersion;
           const req: ServerProfileDetailsRequest = {
             userId: this.userId,
@@ -296,15 +295,24 @@ export class MyGroupsPage implements OnInit, OnDestroy {
             .then((profileDetails) => {
               console.log('profileDetails', profileDetails)
               if (profileDetails.allTncAccepted && profileDetails.allTncAccepted.groupsTnc && profileDetails.allTncAccepted.groupsTnc.version) {
-                if (profileDetails.allTncAccepted.groupsTnc.version === this.groupTncVersion){
-                  console.log('version matching');
-                } else {
+                if (profileDetails.allTncAccepted.groupsTnc.version !== this.groupTncVersion){
                   console.log('version not maching');
-                  this.updateGroupTnc(this.groupTncVersion);
+                  console.log('grouplist.length', this.groupList.length)
+                  if(this.groupList.length){
+                    // this.updateGroupTnc(this.groupTncVersion);
+                    this.openAcceptGuidelinesPopup(true);
+                  } else {
+                    this.updateGroupTnc(this.groupTncVersion)
+                  }
                 }
               } else {
-                console.log('version not maching ---');
-                this.openAcceptGuidelinesPopup(true);
+                console.log('profile does not have tnc version');
+                console.log('grouplist.length', this.groupList.length)
+                if(this.groupList.length){
+                  this.openAcceptGuidelinesPopup(true);
+                } else {
+                  this.updateGroupTnc(this.groupTncVersion)
+                }
               }
             })
           
