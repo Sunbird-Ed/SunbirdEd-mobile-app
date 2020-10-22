@@ -80,7 +80,7 @@
         <ion-row class="ion-no-padding">
           <ion-col class="ion-no-padding" style="z-index: 100;" *ngIf="!content?.downloadable"
             (click)="navigateToDetailsPage(content)">
-            <button class="qr-result-btn ion-no-padding ion-text-uppercase" expand="block" color="light"
+            <button class="qr-result-btn download-info ion-no-padding ion-text-uppercase" expand="block" color="light"
               style="color:#0D7DFC; z-index: 100;" [ngClass]="!(content.contentData?.downloadUrl) ? 'download-disabled' : null">
               <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;
               {{'DOWNLOAD'| translate}}
@@ -104,7 +104,7 @@
 
       <!-- Download content if not available locally  -->
       <div class="ion-no-padding" *ngIf="!content.contentData?.streamingUrl && !content.isAvailableLocally">
-        <button class="qr-result-btn ion-no-padding ion-text-uppercase" expand="block" color="light"
+        <button class="qr-result-btn download-info ion-no-padding ion-text-uppercase" expand="block" color="light"
           style="color:#0D7DFC" (click)="navigateToDetailsPage(content)">
           <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{'DOWNLOAD'| translate}}
         </button>
