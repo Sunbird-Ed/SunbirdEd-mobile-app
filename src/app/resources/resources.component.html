@@ -10,6 +10,12 @@
   </div>
   <div class="scrollable-container">
     <ion-refresher #libraryRefresher slot="fixed" (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
+    <div *ngIf="!guestUser" style="padding-top: 5px;">
+      <ng-container *ngIf="searchApiLoader && dynamicResponse && dynamicResponse.length === 0">
+        <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="searchApiLoader">
+        </sb-course-cards-hlist>
+      </ng-container>
+    </div>
     <div *ngFor="let result of dynamicResponse; let i=index;">
       <div *ngIf="result.orientation === 'horizontal'">
         <div *ngFor="let section of result.section?.sections">
@@ -19,10 +25,6 @@
                 [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="section.contents"
                 [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(result)"
                 (cardClick)="navigateToDetailPage($event)" [hideProgress]="true"></sb-course-cards-hlist>
-            </ng-container>
-            <ng-container *ngIf="showLoader && section.contents && section.contents.length === 0">
-              <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader">
-              </sb-course-cards-hlist>
             </ng-container>
           </div>
           <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && result.name !== 'My Learnings'">

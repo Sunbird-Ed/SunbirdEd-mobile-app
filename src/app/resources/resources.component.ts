@@ -80,6 +80,7 @@ import {
 } from '../profile/framework-selection/framework-selection.page';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
 
 @Component({
   selector: 'app-resources',
@@ -132,7 +133,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   guestUser = false;
   showSignInCard = false;
   userId: string;
-  showLoader = false;
 
   /**
    * Common consumption
@@ -488,24 +488,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         return contentSearchCriteria;
       }
     };
-    const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
-    if (this.appGlobalService.isUserLoggedIn()) {
-      dataSrc.push('TRACKABLE_CONTENTS');
-    }
-    const formRequest: FormRequest = {
-      type: 'config',
-      subType: 'library_v2',
-      action: 'get',
-      component: 'app',
-    };
-
-    const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
     try {
-      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, dataSrc, formRequest);
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
-          if (val.orientation === 'vertical') {
+          if (val.orientation === Orientation.VERTICAL) {
             this.searchGroupingContents = val.section;
           }
         });
@@ -806,6 +794,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
+      this.dynamicResponse = [];
       this.getGroupByPage(false, !isClassClicked);
     }
 
@@ -842,6 +831,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }
     this.getGroupByPageReq.medium = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
+      this.dynamicResponse = [];
       this.getGroupByPage(false, !isMediumClicked);
     }
     for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {

@@ -114,7 +114,6 @@ describe('CoursesPage', () => {
     describe('getAggregatorResult', () => {
         it('should return course for loggedIn user', (done) => {
             jest.spyOn(coursesPage, 'spinner').mockImplementation();
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockContentAggregatorHandler.aggregate = jest.fn(() => {
                 Promise.resolve([{
                         orientation: 'horaizontal',
@@ -126,7 +125,6 @@ describe('CoursesPage', () => {
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);
@@ -134,7 +132,6 @@ describe('CoursesPage', () => {
 
         it('should return course for guest user', (done) => {
             jest.spyOn(coursesPage, 'spinner').mockImplementation();
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockContentAggregatorHandler.aggregate = jest.fn(() => {
                 Promise.resolve([{
                         orientation: 'horaizontal',
@@ -146,7 +143,6 @@ describe('CoursesPage', () => {
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
                 done();
             }, 0);

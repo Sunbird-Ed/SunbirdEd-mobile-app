@@ -370,7 +370,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -386,7 +386,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenCalledTimes(8);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -428,7 +428,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
                     InteractType.OTHER,
@@ -455,7 +455,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 done();
             }, 0);
@@ -834,7 +834,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
@@ -882,7 +882,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
@@ -959,7 +959,7 @@ describe('AppComponent', () => {
             });
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
-            mockNotificationSrc.setNotificationDetails = jest.fn();
+            mockNotificationSrc.setNotificationParams = jest.fn();
 
             // act
             appComponent.ngOnInit();
@@ -970,13 +970,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{ id: 'some_id', type: 'NotificationID' }]
+                    [{ id: 'some_id', type: 'NotificationId' }]
                 );
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toBeCalledWith(
                     InteractType.LOCAL,
                     'some_page_id',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 done();
             });
@@ -1425,7 +1425,7 @@ describe('AppComponent', () => {
                     grade: ['some_grade']
                 } as any;
                 mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
-                mockPreferences.getString = jest.fn(() => of('mock_channel_id'));
+                mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
                 const corRelationList: Array<CorrelationData> = [];
                 corRelationList.push({ id: 'mock_channel_id', type: CorReleationDataType.SOURCE });
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
@@ -1876,7 +1876,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2057,7 +2057,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2095,7 +2095,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2126,7 +2126,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2164,7 +2164,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2195,7 +2195,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2305,7 +2305,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2344,7 +2344,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2387,7 +2387,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2427,7 +2427,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2467,7 +2467,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2506,7 +2506,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2546,7 +2546,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2585,7 +2585,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -2626,7 +2626,7 @@ describe('AppComponent', () => {
             mockPreferences.getString = jest.fn(() => of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]'));
             mockTranslate.use = jest.fn(() => of({}));
             mockEvents.subscribe = jest.fn((_, fn) => fn({ skipRootNavigation: false }));
-            mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
+            // mockPreferences.getString = jest.fn(() => of('sample-batch-details'));
             mockAppGlobalService.limitedShareQuizContent = false;
             mockZone.run = jest.fn();
             mockEvents.publish = jest.fn(() => []);
@@ -2663,7 +2663,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{ id: '', type: 'NotificationID' }]
+                    [{ id: '', type: 'NotificationId' }]
                 );
                 expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();

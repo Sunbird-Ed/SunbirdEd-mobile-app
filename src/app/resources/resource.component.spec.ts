@@ -332,7 +332,6 @@ describe('ResourcesComponent', () => {
                     }
                 }))
             }));
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'TV Programs'}),
                 orientation: 'horizontal',
@@ -366,7 +365,6 @@ describe('ResourcesComponent', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -385,7 +383,6 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
@@ -422,7 +419,6 @@ describe('ResourcesComponent', () => {
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -441,7 +437,6 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockContentAggregatorHandler.aggregate = jest.fn(() => Promise.resolve([{
                 title: JSON.stringify({en: 'Digital Books'}),
                 orientation: 'vertical',
@@ -473,7 +468,6 @@ describe('ResourcesComponent', () => {
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -489,7 +483,6 @@ describe('ResourcesComponent', () => {
             };
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockContentAggregatorHandler.aggregate = jest.fn(() => undefined);
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockNgZone.run = jest.fn((fn) => fn());
@@ -504,8 +497,6 @@ describe('ResourcesComponent', () => {
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                // expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('http://sample.path');
                 done();
             }, 0);
         });
