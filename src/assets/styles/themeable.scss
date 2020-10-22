@@ -1416,4 +1416,19 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-qrcoderesult{
+    .download-info{
+      color: #0D7DFC !important;
+    }
+    .btn-space{
+      padding-right: 5px !important;
+    }
+    button{
+      box-shadow: none !important;
+    }
+    ion-card{
+      padding: 7px !important;
+    }
+  }
+
 }
