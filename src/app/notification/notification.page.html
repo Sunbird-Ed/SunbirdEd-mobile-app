@@ -1,6 +1,6 @@
 <ion-content overflow-scroll="true">
   <!-- Shows Notification Count with Clear Button -->
-  <div class="sb-view-all-container" *ngIf="notificationList?.length">
+  <div class="sb-view-all-container">
     <div class="sb-view-all-items">
       <div class="sb-view-all-title">
         <span class="page-heading">{{ 'NOTIFICATION' | translate }}</span>
@@ -11,6 +11,7 @@
   </div>
 
   <!-- Shows various types of notifications with sliding delete buttons-->
+  <div>
   <ion-list lines="none" *ngIf="notificationList?.length && commonUtilService?.networkInfo?.isNetworkAvailable">
     <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList;let index = index" #slidingItem>
       <ion-item>
@@ -18,23 +19,33 @@
           (generateNotification)="handleTelemetry($event)" [itemData]="item"></app-notification-item>
       </ion-item>
       <ion-item-options side="start">
-        <ion-button color="danger" class="delete-button" (click)="removeNotification(index, 'left')">
+        <ion-button color="danger" class="delete-button-left" (click)="removeNotification(index, 'left')">
           <img src="./assets/imgs/noun_delete.svg" alt="delete" />
         </ion-button>
       </ion-item-options>
       <ion-item-options side="end">
-        <ion-button color="danger" class="delete-button" (click)="removeNotification(index, 'right')">
+        <ion-button color="danger" class="delete-button-right" (click)="removeNotification(index, 'right')">
           <img src="./assets/imgs/noun_delete.svg" alt="delete" />
         </ion-button>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
+  </div>
 
   <div class="oval-wrapper" *ngIf="!notificationList.length">
     <div class="oval">
       <img src="./assets/imgs/no_notification.svg" alt="delete" />
     </div>
     <h4>{{'MSG_NO_NEW_NOTIFICATION' | translate}}</h4>
+  </div>
+  <div class="oval-wrapper" *ngIf="notificationList.length && !commonUtilService?.networkInfo?.isNetworkAvailable">
+    <div class="oval"><img src="assets/imgs/outline-cloud_off.svg" alt="offline" /></div>
+    <ion-text>
+      <h6 class="offline-header">
+        <strong style="font-size: 16px;">{{ 'NO_INTERNET_TITLE' | translate }}</strong>
+      </h6>
+    </ion-text>
+    <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
   </div>
 
 </ion-content>

@@ -3,22 +3,26 @@
     <img *ngIf="!itemData?.isRead" src="./assets/imgs/oval.svg" class="mr-6"
       alt="oval">{{ itemData?.displayTime * 1000 | date:'E, d MMMM h:mm'}}
   </p>
-
-  <div class="title" (click)="toggleExpand()"
-    [ngClass]="{'sb-accordian-header':itemData?.actionData?.actionType === 'updateApp' && itemData?.actionData?.richText}"
-    [style.color]=" itemData?.actionData?.richText === '' ? '#666666' : '#024f9d'">
-    {{itemData?.actionData?.title}}
-    <span class="expand-button" *ngIf="itemData?.actionData?.actionType === 'updateApp'">
+  <div class="ni-flex">
+    <div class="img-info ni-flex-grow">
+      <img src="assets/imgs/book.png">
+    </div>
+    <div class="richText-info ni-flex-grow">
+      <div class="title"
+        [ngClass]="{'sb-accordian-header':itemData?.actionData?.actionType === 'updateApp' && itemData?.actionData?.richText}">
+        <p class="title-info" [style.color]="itemData?.isRead ? '#666666' : '#024f9d'">
+          {{itemData?.actionData?.title}}</p>
+        <div class="description" *ngIf="itemData?.actionData?.richText">
+          {{itemData?.actionData?.richText}}</div>
+        <!-- <div class="update-container" *ngIf="itemData?.actionData?.actionType === 'updateApp'"
+          [innerHTML]="itemData?.actionData?.richText"></div> -->
+      </div>
+    </div>
+    <!-- <div class="expand-button ni-flex-grow" *ngIf="itemData?.actionData?.actionType === 'updateApp'">
       <img *ngIf="!isExpanded" src="./assets/imgs/arrow-down.svg" class="sb-accordian-arrow" alt="arrow-down">
       <img *ngIf="isExpanded" src="./assets/imgs/arrow-down.svg" class="sb-accordian-arrow arrow-up" alt="arrow-up">
-    </span>
+    </div> -->
   </div>
-
-  <div class="description" *ngIf="itemData?.actionData?.actionType !== 'updateApp' && itemData?.actionData?.richText">
-    {{itemData?.actionData?.richText}}</div>
-
-  <div class="update-container pl-16" *ngIf="itemData?.actionData?.actionType === 'updateApp'&& isExpanded"
-    [innerHTML]="itemData?.actionData?.richText"></div>
 
   <hr *ngIf="itemData?.actionData?.ctaText">
   <div *ngIf="itemData?.actionData?.ctaText" (click)="handleDeepLink()" class="update-now-btn">
