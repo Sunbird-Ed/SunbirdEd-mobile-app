@@ -18,7 +18,7 @@
 
   </ion-toolbar>
 </ion-header>
-<div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="results.length>1">
+<div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="(results.length>1 || (results.length===1 && results[0].contentData.trackable.enabled === 'Yes'))">
   <span class="pull-left">{{stckyParent || ('SELECT_CHAPTER' | translate)}}</span>
   <span class="pull-right">
     <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
@@ -37,7 +37,7 @@
     </div>
   </div>
 </div>
-<ion-content *ngIf="results.length>1" class="ion-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content *ngIf="(results.length>1 || (results.length===1 && results[0].contentData.trackable.enabled === 'Yes'))" class="ion-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="card-container" *ngFor="let content of results; let i = index"
   [ngClass]="{'offline': !content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
     <ion-row class="P010">
