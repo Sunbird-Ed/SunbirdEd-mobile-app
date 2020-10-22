@@ -300,11 +300,16 @@ html[data-theme="JOYFUL"]{
 
   // language-settings page
   page-language-settings{
-    .language-card {
-      &.selected {
-        background-color: var(--app-primary) !important;
+      .language-card {
+        &.selected {
+          .language-selection {
+            background-color: var(--app-primary) !important;
+          }
+          .label-text {
+            color: var(--app-white) !important;
+          }
+        }
       }
-    }
   }
 
   // user-type-selection page
