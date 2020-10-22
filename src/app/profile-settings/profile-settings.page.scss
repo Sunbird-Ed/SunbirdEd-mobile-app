@@ -159,6 +159,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     .top-back-button{
+      position: absolute;
       width: 30px;
       @include ltr() {
         left: 16px;
