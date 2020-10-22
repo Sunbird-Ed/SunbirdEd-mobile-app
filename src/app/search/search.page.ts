@@ -855,6 +855,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
       searchQuery.request.mode = contentSearchRequest.mode;
+      searchQuery.request.searchType = SearchType.FILTER;
+      const profileFilters = {
+        board: contentSearchRequest.board || [],
+        medium: contentSearchRequest.medium || [],
+        gradeLevel: contentSearchRequest.grade || []
+      };
+      searchQuery.request.filters = {...searchQuery.request.filters, ...profileFilters}
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
