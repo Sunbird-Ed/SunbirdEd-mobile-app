@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
 import { ActionType } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { CorrelationData } from '@project-sunbird/sunbird-sdk';
 import { CorReleationDataType } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { CorrelationData, TelemetryService } from '@project-sunbird/sunbird-sdk';
 
 declare const cordova;
 
@@ -20,8 +20,11 @@ export class NotificationService {
     private externalUrl: any;
     private appId: any;
     private _notificationId: string;
+    private contentUrl: string;
+    private _notificationPaylod: string;
 
     constructor(
+        @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
@@ -37,6 +40,14 @@ export class NotificationService {
 
     set notificationId(id) {
         this._notificationId = id;
+    }
+    
+    get notificationPayload() {
+      return this._notificationPaylod;
+    }
+
+    set notificationPayload(payload) {
+      this._notificationPaylod = payload;
     }
 
     setupLocalNotification(language?: string): any {
@@ -118,7 +129,8 @@ export class NotificationService {
         this.appName = await this.appVersion.getAppName();
     }
 
-    setNotificationDetails(data) {
+    setNotificationParams(data) {
+        this.notificationPayload = data;
         switch (data.actionData.actionType) {
             case ActionType.EXT_URL:
                 this.externalUrl = data.actionData.deepLink;
@@ -133,6 +145,10 @@ export class NotificationService {
             case ActionType.CONTENT_UPDATE:
             case ActionType.BOOK_UPDATE:
                 this.identifier = data.actionData.identifier;
+                break;
+            case ActionType.CONTENT_URL:
+                this.contentUrl = data.actionData.contentURL;
+                this.telemetryService.updateCampaignParameters([{ type: CorReleationDataType.NOTIFICATION_ID, id: this.notificationId }] as Array<CorrelationData>);
                 break;
         }
     }
@@ -154,6 +170,9 @@ export class NotificationService {
         } else if (this.externalUrl) {
             open(this.externalUrl);
             this.externalUrl = null;
+        } else if (this.contentUrl) {
+            this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: this.contentUrl }, this);
+            this.contentUrl = null;
         }
         this.notificationId = undefined;
     }

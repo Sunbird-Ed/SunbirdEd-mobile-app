@@ -353,7 +353,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         corRelationList,
         ID.NOTIFICATION_RECEIVED
       );
-      await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, null).toPromise();
+      await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
@@ -377,8 +377,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.events.publish('notification:received');
           this.events.publish('notification-status:update', { isUnreadNotifications: true });
         });
-        this.notificationSrc.setNotificationDetails(data);
-        this.notificationSrc.notificationId = data.id;
+        this.notificationSrc.notificationId = data.id || '';
+        this.notificationSrc.setNotificationParams(data);
         if (this.isForeground) {
           this.notificationSrc.handleNotification();
         }
