@@ -1,19 +1,22 @@
-import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Events, Platform, PopoverController} from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { UtilityService } from '@app/services/utility-service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { DatePipe } from '@angular/common';
-import { LoginHandlerService } from '@app/services/login-handler.service';
+import {FileSizePipe} from '@app/pipes/file-size/file-size';
+import {AppGlobalService} from '@app/services/app-global-service.service';
+import {CommonUtilService} from '@app/services/common-util.service';
+import {CourseUtilService} from '@app/services/course-util.service';
+import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
+import {UtilityService} from '@app/services/utility-service';
+import {AppHeaderService} from '@app/services/app-header.service';
+import {DatePipe, Location} from '@angular/common';
+import {LoginHandlerService} from '@app/services/login-handler.service';
 import {
+  AuditState,
+  AuthService,
   Batch,
   ChildContentRequest,
+  Consent,
   Content,
   ContentDetailRequest,
   ContentEventType,
@@ -26,74 +29,63 @@ import {
   ContentState,
   ContentStateResponse,
   ContentUpdate,
-  CorrelationData, Course,
+  CorrelationData,
+  Course,
   CourseBatchesRequest,
   CourseBatchStatus,
   CourseEnrollmentType,
   CourseService,
   DownloadEventType,
   DownloadProgress,
+  DownloadService,
+  DownloadTracking,
   EventsBusEvent,
   EventsBusService,
   FetchEnrolledCourseRequest,
-  GetContentStateRequest, NetworkError,
+  GetContentStateRequest,
+  NetworkError,
   ProfileService,
+  Rollup,
   ServerProfileDetailsRequest,
   SharedPreferences,
+  SortOrder,
   TelemetryErrorCode,
   TelemetryObject,
   UnenrollCourseRequest,
-  Rollup,
-  SortOrder,
-  AuthService,
-  DownloadTracking,
-  DownloadService,
-  AuditState,
-  Consent,
 } from 'sunbird-sdk';
-import { Subscription, Observable } from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {
+  AuditType,
+  CorReleationDataType,
   Environment,
   ErrorType,
+  ID,
   ImpressionType,
   InteractSubtype,
   InteractType,
   Mode,
-  PageId,
-  CorReleationDataType,
-  ID,
-  AuditType
+  PageId
 } from '../../services/telemetry-constants';
-import {
-  ProfileConstants, EventTopics, MimeType,
-  PreferenceKey, RouterLinks, ShareItemType
-} from '../app.constant';
-import { BatchConstants } from '../app.constant';
-import {
-  SbGenericPopoverComponent
-} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
-import {
-  ContentActionsComponent, ContentRatingAlertComponent,
-  ConfirmAlertComponent
-} from '../components';
-import { Location } from '@angular/common';
-import { Router, NavigationExtras } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
-import { SbPopoverComponent } from '../components/popups';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { LocalCourseService } from '@app/services';
-import { EnrollCourse } from './course.interface';
-import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { share } from 'rxjs/operators';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { AddActivityToGroup } from '../my-groups/group.interface';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
-import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import {BatchConstants, EventTopics, MimeType, PreferenceKey, ProfileConstants, RouterLinks, ShareItemType} from '../app.constant';
+import {SbGenericPopoverComponent} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
+import {ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent} from '../components';
+import {NavigationExtras, Router} from '@angular/router';
+import {ContentUtil} from '@app/util/content-util';
+import {SbPopoverComponent} from '../components/popups';
+import {ContentInfo} from '@app/services/content/content-info';
+import {ContentDeleteHandler} from '@app/services/content/content-delete-handler';
+import {LocalCourseService} from '@app/services';
+import {EnrollCourse} from './course.interface';
+import {SbSharePopupComponent} from '../components/popups/sb-share-popup/sb-share-popup.component';
+import {share} from 'rxjs/operators';
+import {SbProgressLoader} from '../../services/sb-progress-loader.service';
+import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
+import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
+import {CsPrimaryCategory} from '@project-sunbird/client-services/services/content';
+import {ConsentStatus, UserConsent} from '@project-sunbird/client-services/models';
+import {ConsentPopoverActionsDelegate} from '@app/services/local-course.service';
+import {CategoryKeyTranslator} from '@app/pipes/category-key-translator/category-key-translator-pipe';
+
 declare const cordova;
 
 @Component({
@@ -216,6 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   courseBatchesRequest: CourseBatchesRequest;
   showUnenrollButton = false;
   licenseDetails;
+  forumId?: string;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   public objRollup: Rollup;
@@ -706,6 +699,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   async extractApiResponse(data: Content) {
     if (data.contentData) {
       this.course = data.contentData;
+      this.forumId = this.course.forumId || this.forumId;
       this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
       this.content = data;
       this.objId = this.course.identifier;
@@ -1497,6 +1491,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+            this.forumId = (event.payload.serverContentData && event.payload.serverContentData.forumId) || this.forumId;
             this.licenseDetails = event.payload.licenseDetails;
             if (event.payload.size) {
               this.content.contentData.size = event.payload.size;

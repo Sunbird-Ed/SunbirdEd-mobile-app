@@ -420,7 +420,7 @@ export class SelfDeclaredTeacherEditPage {
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS'),
-        sbPopoverInfo: this.commonUtilService.translateMessage('YOU_CAN_EDIT_TEACHER_INFO'),
+        sbPopoverInfo: this.commonUtilService.translateMessage('FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO'),
         showCloseBtn: false,
         actionsButtons: [
           {

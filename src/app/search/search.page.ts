@@ -854,6 +854,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
+      searchQuery.request.mode = contentSearchRequest.mode;
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
