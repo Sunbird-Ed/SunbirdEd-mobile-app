@@ -4,10 +4,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { TelemetryService } from '@project-sunbird/sunbird-sdk';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
-
+  const mockTelemetryService: Partial<TelemetryService> = {
+    updateCampaignParameters: jest.fn()
+  };
   const mockUtilityService: Partial<UtilityService> = {};
   const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockAppVersion: Partial<AppVersion> = {
@@ -18,6 +21,7 @@ describe('LocalCourseService', () => {
 
   beforeAll(() => {
     notificationService = new NotificationService(
+      mockTelemetryService as TelemetryService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
@@ -117,12 +121,12 @@ describe('LocalCourseService', () => {
     });
   });
 
-  describe('setNotificationDetails', () => {
+  describe('setNotificationParams', () => {
     it('should set the External Url when notification type is ExternalId', (done) => {
       // arrange
       const data = { actionData: { actionType: 'extURL', deepLink: 'someLink' } };
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       // asset
       done();
     });
@@ -132,7 +136,7 @@ describe('LocalCourseService', () => {
       const data = { actionData: { actionType: 'updateApp' } };
       mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('app_id'));
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       // asset
       done();
     });
@@ -141,7 +145,7 @@ describe('LocalCourseService', () => {
       // arrange
       const data = { actionData: { actionType: 'courseUpdate', identifier: 'courseId' } };
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       // asset
       done();
     });
@@ -150,7 +154,7 @@ describe('LocalCourseService', () => {
       // arrange
       const data = { actionData: { actionType: 'contentUpdate', identifier: 'contentId' } };
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       // asset
       done();
     });
@@ -159,7 +163,7 @@ describe('LocalCourseService', () => {
       // arrange
       const data = { actionData: { actionType: 'bookUpdate', identifier: 'bookId' } };
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       // asset
       done();
     });
@@ -171,7 +175,7 @@ describe('LocalCourseService', () => {
       const data = { actionData: { actionType: 'contentUpdate', identifier: 'contentId' } };
       mockSplaschreenDeeplinkActionHandlerDelegate.navigateContent = jest.fn();
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       notificationService.handleNotification();
       // assert
       expect(mockSplaschreenDeeplinkActionHandlerDelegate.navigateContent).toHaveBeenCalled();
@@ -182,7 +186,7 @@ describe('LocalCourseService', () => {
       const data = { actionData: { actionType: 'updateApp' } };
       mockUtilityService.openPlayStore = jest.fn(() => Promise.resolve(undefined));
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       notificationService.handleNotification();
       // assert
       expect(mockUtilityService.openPlayStore).toHaveBeenCalled();
@@ -193,7 +197,7 @@ describe('LocalCourseService', () => {
       const data = { actionData: { actionType: 'extURL', deepLink: 'someLink' } };
       spyOn(window, 'open').and.stub();
       // act
-      notificationService.setNotificationDetails(data);
+      notificationService.setNotificationParams(data);
       notificationService.handleNotification();
       // assert
       expect(window.open).toHaveBeenCalledWith('someLink');
