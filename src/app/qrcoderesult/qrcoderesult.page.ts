@@ -38,7 +38,8 @@ import {
   Profile,
   ProfileService,
   TelemetryObject,
-  AuditState
+  AuditState,
+  TrackingEnabled
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
@@ -252,7 +253,7 @@ export class QrcoderesultPage implements OnDestroy {
               this.corRelationList
             );
             if (this.results && this.results.length === 1 &&
-              !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === 'Yes')) {
+              !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
               this.backToPreviusPage = false;
               this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
               this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -410,7 +411,7 @@ export class QrcoderesultPage implements OnDestroy {
             window.history.go(-2);
           }
         } else if (this.results && this.results.length === 1 &&
-          !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === 'Yes')) {
+          !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
           this.backToPreviusPage = false;
           this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
