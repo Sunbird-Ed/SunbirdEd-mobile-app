@@ -11,6 +11,7 @@
           <span class="label-text">
             {{lang?.label | translate}}
           </span>
+          <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
         </label>
         <input (change)="language = lang.code; onLanguageSelected();" [id]="'language-selection' + lang.code" [value]="languages" type="radio" name="language-selection">
       </div>

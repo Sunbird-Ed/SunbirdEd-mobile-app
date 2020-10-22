@@ -146,23 +146,33 @@
         }
       }
   }
+
   .back-btn-container{
+    @include ltr() {
+      top: 0;
+      left: 0;
+    }
+    @include rtl() {
+      top: 0;
+      right: 0;
+    }
     flex-grow: 0;
     flex-shrink: 0;
-    position: absolute;
+    top: 16px;
     .top-back-button{
-      position: relative;
-      font-size: 22px;
+      position: absolute;
+      width: 30px;
       @include ltr() {
-        top: 20px;
-        left: 20px;
+        left: 16px;
+        transform: rotate(180deg);
       }
       @include rtl() {
-        top: 20px;
-        right: 20px;
+        right: 16px;
+        transform: rotate(0deg);
       }
     }
   }
+
   .qr-content {
     display: flex;
     flex-direction: column;
@@ -172,7 +182,7 @@
     padding: 0 32px;
 
     padding-top: 50px;
-    
+
     .qr-img{
       object-fit: contain;
       min-width: 0;
@@ -275,7 +285,7 @@
   }
 
   .item-label-stacked.item-has-value {
-    ion-label {
+    label {
       color: #{$gray-800};
     }
     ion-select {
@@ -293,14 +303,21 @@
       }
     }
   }
-  .arrow-icon {
-    right: 15px;
-    top: 50%;
+  img.arrow-icon {
+    display: inline-block;
     width: 22px;
+    margin-top: -3px;
+    float: right;
+
     &.animate {
       position: relative;
-      animation: upDownAnimate 5s linear infinite;
+      animation: dropDown 5s linear infinite;
       animation-duration: 0.9s;
+    }
+
+    @include rtl {
+      transform: rotate(180deg);
+      float: left !important;
     }
   }
 
@@ -337,4 +354,8 @@
   0% {right: 0;}
   50% {right: 10px;}
   100% {right: 0;}
+}
+
+.framework-item {
+  padding: 14px;
 }
