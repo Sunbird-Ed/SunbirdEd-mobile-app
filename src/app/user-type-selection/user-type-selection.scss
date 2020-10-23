@@ -3,22 +3,6 @@
 @import "src/assets/styles/_variables.scss";
 
 :host {
-  .card-related-style {
-    text-align: center;
-    position: relative;
-    box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
-    background-color: map-get($colors, white);
-    border-radius: 4px;
-  }
-
-  .description {
-    color: map-get($colors, title);
-    font-size: 1rem;
-    line-height: 2rem;
-    font-weight: 500 !important;
-    @include padding(null, null, null, 35px !important);
-  }
-
   .card-title {
     font-weight: 700 !important;
     font-size: 1.4rem;
@@ -30,13 +14,12 @@
     width: 100%;
     height: auto;
   }
+
   .icon-check {
     visibility: hidden;
     width: auto;
     height: auto;
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+    margin-left: 124px;
     &.selected {
      visibility: visible;
     }
@@ -46,39 +29,6 @@
     @include padding(null, null, null, 0 !important);
   }
 
-  ion-card {
-    background-color: map-get($colors, white_f7) !important;
-    @include margin(20px, 0, 0, 0 !important);
-    height: calc(100% - 20px);
-    width: 100% !important;
-    &.selected {
-      border:3px solid map-get($colors, vived_blue_fe);
-    }
-    > ion-grid {
-      height: 100%;
-    }
-  }
-
-  ion-icon {
-    @include ltr {
-      float: right !important;
-    }
-    @include rtl {
-      float: left !important;
-    }
-  }
-
-  .arrow-icon {
-    right: 15px;
-    //position: absolute;
-    top: 50%;
-    //transform: translateY(-50%);
-    width: 22px;
-  }
-
-  .black-color {
-    color : black;
-  }
   .gray-color {
     color: map-get($colors, primary_black);
     padding: 0;
@@ -88,6 +38,7 @@
     font-weight: bold;
     font-size: 24px;
   }
+
   .title-class {
     font-size: 24px;
     font-weight: bold;
@@ -109,15 +60,41 @@
     position: absolute;
     .top-back-button{
       position: relative;
-      font-size: 22px;
+      width: 22px;
       @include ltr() {
-        top: 20px;
-        left: 20px;
+        left: 16px;
+        transform: rotate(180deg);
       }
       @include rtl() {
-        top: 20px;
-        right: 20px;
+        right: 16px;
+        transform: rotate(0deg);
       }
+    }
+  }
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .card {
+    width: 50%;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-radius: 15px;
+    background-color: map-get($colors, white);
+    justify-content: center;
+    align-items: center;
+    &.selected {
+      border:3px solid map-get($colors, vived_blue_fe);
     }
   }
 }

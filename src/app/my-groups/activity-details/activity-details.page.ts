@@ -12,7 +12,7 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupMember, CachedItemRequestSourceFrom, Content,
-  Group, MimeType, CorrelationData
+  Group, MimeType, CorrelationData, TrackingEnabled
 } from '@project-sunbird/sunbird-sdk';
 import {
   CsGroupActivityDataAggregation,
@@ -46,6 +46,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   showCourseDropdownSection = false;
   selectedCourse;
   courseData: Content;
+  isTrackable = false;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -64,6 +65,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.group = extras.group;
     this.activity = extras.activity;
     this.corRelationList = extras.corRelation;
+    this.isTrackable = this.activity.trackable && (this.activity.trackable.enabled === TrackingEnabled.YES) ;
   }
 
   async ngOnInit() {
@@ -113,7 +115,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       },
       mergeGroup: this.group
     };
-    if (this.activity.type.toLowerCase() === 'course') {
+    if (this.isTrackable) {
       if (this.selectedCourse) {
         req.leafNodesCount = this.selectedCourse.contentData.leafNodes.length;
       } else {
