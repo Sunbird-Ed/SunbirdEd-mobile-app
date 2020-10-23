@@ -1619,7 +1619,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
-      content.contentType,
+      this.activityTypeData.activityType,
       PageId.SEARCH,
       this.corRelationList,
       -2);
@@ -1646,7 +1646,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           ...CsGroupAddableBloc.instance.state.params,
           corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
-          activityType: params.content.contentType ? params.content.contentType : params.content.contentData.contentType
+          activityType: this.activityTypeData.activityType
         }
       }
     );
