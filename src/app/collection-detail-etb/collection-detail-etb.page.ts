@@ -323,7 +323,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.batchDetails = extras.batchDetails;
     this.pageName = extras.pageName;
     this.depth = extras.depth;
-    this.corRelationList = extras.corRelation;
+    this.corRelationList = extras.corRelation || [];
     this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
     this.source = extras.source;
     this.fromCoursesPage = extras.fromCoursesPage;

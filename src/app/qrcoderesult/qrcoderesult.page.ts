@@ -38,7 +38,8 @@ import {
   Profile,
   ProfileService,
   TelemetryObject,
-  AuditState
+  AuditState,
+  TrackingEnabled
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
@@ -251,7 +252,8 @@ export class QrcoderesultPage implements OnDestroy {
               undefined,
               this.corRelationList
             );
-            if (this.results && this.results.length === 1) {
+            if (this.results && this.results.length === 1 &&
+              !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
               this.backToPreviusPage = false;
               this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
               this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -408,7 +410,8 @@ export class QrcoderesultPage implements OnDestroy {
             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
             window.history.go(-2);
           }
-        } else if (this.results && this.results.length === 1) {
+        } else if (this.results && this.results.length === 1 &&
+          !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
           this.backToPreviusPage = false;
           this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -787,7 +790,7 @@ export class QrcoderesultPage implements OnDestroy {
   private showAllChild(content: any) {
     this.zone.run(() => {
       if (content.children === undefined || !content.children.length || ContentUtil.isTrackable(content.contentData) === 1) {
-        if (content.mimeType !== MimeType.COLLECTION) {
+        if (content.mimeType !== MimeType.COLLECTION || ContentUtil.isTrackable(content.contentData) === 1) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {

@@ -1017,16 +1017,8 @@ export class ProfilePage implements OnInit {
             this.selfDeclaredDetails.push({ name: config.fieldName, value: this.profile.declarations[0].info[config.code] });
           }
         });
-
-      }
-
-      this.selfDeclaredDetails.push({ name: 'Status', value: this.profile.declarations[0].status || 'PENDING' });
-
-      if (this.selfDeclarationInfo.errorType) {
-        this.selfDeclarationInfo.errorType = this.selfDeclarationInfo.errorType.split(',');
       }
     }
-
   }
 
   private async fetchFormApi(req) {
