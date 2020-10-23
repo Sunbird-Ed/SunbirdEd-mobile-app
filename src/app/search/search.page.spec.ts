@@ -1622,13 +1622,16 @@ describe('SearchPage', () => {
             searchPage.searchContentResult = [
                 { identifier: 'some_id', selected: true, contentType: 'contentType' }
             ];
+            searchPage.activityTypeData = {
+                activityType: 'some_activity_type'
+            }
             // act
             searchPage.addActivityToGroup();
             // assert
             expect(mockgroupHandlerService.addActivityToGroup).toHaveBeenCalledWith(
                 'id1',
                 'some_id',
-                'contentType',
+                'some_activity_type',
                 PageId.SEARCH,
                 expect.anything(),
                 -2
