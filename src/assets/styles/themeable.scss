@@ -1461,27 +1461,17 @@ html[data-theme="JOYFUL"]{
   }
 
   app-qrcoderesult{
-    .qr-result-btn{
-      border-radius: 2rem !important;
+    .download-info{
+      color: #0D7DFC !important;
     }
-    .card-container{
-      ion-card{
-        padding-bottom: 0.5rem;;
-      }
+    .btn-space{
+      padding-right: 5px !important;
     }
-  }
-
-  app-search{
-    .search-bg{
-      --background: var(--app-primary-background) !important;
-    }
-    .sb-card-textbook-container{
+    button{
       box-shadow: none !important;
     }
-    .add-to-group-btn-container{
-      .open-btn{
-        color: var(--app-primary) !important;
-      }
+    ion-card{
+      padding: 7px !important;
     }
   }
 
