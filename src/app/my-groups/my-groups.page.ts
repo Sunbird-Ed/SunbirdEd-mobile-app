@@ -24,6 +24,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { GroupGuideLinesPopoverComponent } from '../components/popups/group-guidelines-popup/group-guidelines-popup.component';
+import { CsGroupUpdateGroupGuidelinesRequest } from '@project-sunbird/client-services/services/group/interface';
 interface GroupData extends Group {
   initial: string;
 }
@@ -43,6 +44,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   unregisterBackButton: Subscription;
   fromRegistrationFlow = false;
   groupTncVersion: string;
+  isGroupTncAcceptenceChecked: boolean;
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -68,6 +70,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     }
   }
   async ngOnInit() {
+    this.isGroupTncAcceptenceChecked = false;
   }
   private checkUserLoggedIn() {
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
@@ -192,8 +195,10 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           };
         });
       this.groupListLoader = false;
-      console.log('this.groupList', this.groupList);
-      this.checkIfUserAcceptedGuidelines();
+      if(!this.isGroupTncAcceptenceChecked){
+        this.checkIfUserAcceptedGuidelines();
+      }
+      
     } catch (e) {
       console.error(e);
       this.groupListLoader = false;
@@ -209,9 +214,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         groupId: event.data.id
       }
     };
-    console.log('-------',event)
     if(event.data && event.data.hasOwnProperty('visited') && event.data.visited === false){
-      console.log('event.data && event.data.hasOwnProperty');
       this.openAcceptGuidelinesPopup(false, navigationExtras);
     } else {
       this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
@@ -265,7 +268,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         }
         try {
           const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
-          console.log('updateMemberResponse', updateMemberResponse);
           this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err){
@@ -285,19 +287,16 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       .then((res: SystemSettings) => {
         if (res && res.value) {
           const value = JSON.parse(res.value);
-          console.log('value.latestversion', value.latestVersion)
           this.groupTncVersion = value.latestVersion;
           const req: ServerProfileDetailsRequest = {
             userId: this.userId,
-            requiredFields: ProfileConstants.REQUIRED_FIELDS
+            requiredFields: ProfileConstants.REQUIRED_FIELDS,
+            from: CachedItemRequestSourceFrom.SERVER
           };
           this.profileService.getServerProfilesDetails(req).toPromise()
             .then((profileDetails) => {
-              console.log('profileDetails', profileDetails)
               if (profileDetails.allTncAccepted && profileDetails.allTncAccepted.groupsTnc && profileDetails.allTncAccepted.groupsTnc.version) {
                 if (profileDetails.allTncAccepted.groupsTnc.version !== this.groupTncVersion){
-                  console.log('version not maching');
-                  console.log('grouplist.length', this.groupList.length)
                   if(this.groupList.length){
                     // this.updateGroupTnc(this.groupTncVersion);
                     this.openAcceptGuidelinesPopup(true);
@@ -306,8 +305,6 @@ export class MyGroupsPage implements OnInit, OnDestroy {
                   }
                 }
               } else {
-                console.log('profile does not have tnc version');
-                console.log('grouplist.length', this.groupList.length)
                 if(this.groupList.length){
                   this.openAcceptGuidelinesPopup(true);
                 } else {
@@ -322,17 +319,35 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       });
   }
   private async updateGroupTnc(latestVersion){
+    this.isGroupTncAcceptenceChecked = true;
     try {
       const isTCAccepted = await this.profileService.acceptTermsAndConditions({
-        userId: this.userId,
+        // userId: this.userId,
         version: latestVersion,
-        // version: "35",
         tncType: 'groupsTnc'
       }).toPromise()
-      console.log('isTCAccepted', isTCAccepted);
     } catch(err){
       console.log('acceptTermsAndConditions err', err)
     }
-    
+    if(this.groupList.length){
+      try{
+        const groupsData = [];
+        this.groupList.forEach((g) => {
+          const gdata= {
+            groupId: g.id,
+            visited: true
+          }
+          groupsData.push(gdata)
+        })
+        const request: CsGroupUpdateGroupGuidelinesRequest = {
+          userId: this.userId,
+          groups: groupsData 
+        }
+        const groupsUpdateResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
+        this.fetchGroupList();
+      } catch(err) {
+        console.log('groupsUpdateResponse err', err)
+      }
+    }
   }
 }

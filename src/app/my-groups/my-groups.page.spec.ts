@@ -90,7 +90,6 @@ describe('MyGroupsPage', () => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
                     {
                         tncType: 'groupsTnc',
-                        userId: 'sample-uid',
                         version: '3.4.0'
                     }
                     );
@@ -117,7 +116,6 @@ describe('MyGroupsPage', () => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
                     {
                         tncType: 'groupsTnc',
-                        userId: 'sample-uid',
                         version: '3.4.0'
                     }
                     );
