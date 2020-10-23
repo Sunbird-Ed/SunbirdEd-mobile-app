@@ -28,7 +28,8 @@ import {
   mockLocationConfigResponse,
   mockContentConfigResponse,
   mockforceUpgradeFormAPIResponse,
-  mockCategoryTermsResponse
+  mockCategoryTermsResponse,
+  mockPdfPlayerConfigurationResponse
 } from './formandframeworkutil.service.spec.data';
 
 
@@ -579,6 +580,16 @@ describe('FormAndFrameworkUtilService', () => {
           code: 'skip',
           values: []
         }]);
+        done();
+      });
+    });
+  });
+
+  describe('invokePdfPlayerConfiguration()', () => {
+    it('should invoke form api to get pdf player configuration' , (done) => {
+      mockFormService.getForm = jest.fn(() => of(mockPdfPlayerConfigurationResponse));
+      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration');
+      formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
         done();
       });
     });

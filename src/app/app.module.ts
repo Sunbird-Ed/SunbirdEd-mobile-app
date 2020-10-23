@@ -72,6 +72,7 @@ import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
+import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -452,6 +453,7 @@ declare const sbutility;
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
+    DownloadPdfService,
     CollectionService,
     Device,
     Network,

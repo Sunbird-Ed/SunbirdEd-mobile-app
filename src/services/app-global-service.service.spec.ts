@@ -721,6 +721,29 @@ describe('AppGlobalService', () => {
         });
     });
 
+    describe('setpdfPlayerConfiguration()' , () => {
+        it('should set pdf player Config', () => {
+            appGlobalService.setpdfPlayerconfiguration(true);
+            expect(appGlobalService.pdfPlayerConfiguratiion).toEqual(true);
+        });
+    });
+
+    describe('getPdfPlayerConfiguration()', () => {
+        it('should return pdf player config', () => {
+            expect(appGlobalService.pdfPlayerConfiguratiion).toBeTruthy();
+        });
+    });
+
+    describe('RootOrganizations()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setRootOrganizations([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedRootOrganizations()).toEqual([]);
+        });
+    });
+
     describe('getGuestUserInfo()', () => {
         it('should return  profileType STUDENT', (done) => {
             // arrange

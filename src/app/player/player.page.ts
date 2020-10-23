@@ -10,10 +10,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { CourseService, Course, Content, InteractType, TelemetryObject, Rollup } from 'sunbird-sdk';
-import { AndroidPermissionsService, PageId } from '@app/services';
+import { CourseService, Course, Content, Rollup } from 'sunbird-sdk';
+import { FormAndFrameworkUtilService, PageId } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { AndroidPermission } from '@app/services/android-permissions/android-permission';
+import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 
 @Component({
   selector: 'app-player',
@@ -33,9 +33,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
-
-
-
+  pdfPlayerConfig;
 
 
   @ViewChild('preview') previewElement: ElementRef;
@@ -53,7 +51,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private router: Router,
     private location: Location,
     private popoverCtrl: PopoverController,
-    private permissionService: AndroidPermissionsService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private downloadPdfService: DownloadPdfService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -70,23 +69,21 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
       this.isChildContent = this.router.getCurrentNavigation().extras.state.childContent;
     }
+    this.initializePdfPlayerConfiguration();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
-    if (this.config['metadata']['mimeType'] === 'application/pdf') {
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
-      this.playerConfig = {
-        context: this.config['context'],
-        metadata: this.config['metadata'].contentData,
-        data: {},
-        config: {
-          sideMenu: {
-            showShare: true,
-            showDownload: true,
-            showReplay: false,
-            showExit: true,
-          }
+      this.config['metadata'] = this.config['metadata'].contentData;
+      this.config['data'] = {};
+      this.config['config'] = {
+        sideMenu: {
+          showShare: true,
+          showDownload: true,
+          showReplay: false,
+          showExit: true,
         }
       };
     }
@@ -97,7 +94,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       }
     });
   }
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (!this.loadPdfPlayer) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
@@ -166,6 +163,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
+  async initializePdfPlayerConfiguration() {
+    this.pdfPlayerConfig = await this.appGlobalService.getPdfPlayerConfiguration();
+    if (this.pdfPlayerConfig === undefined) {
+      this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
+            this.playerConfig = res;
+      });
+    }
+  }
+
   async pdfPlayerEvents(event) {
     if (event.edata['type'] === 'EXIT') {
       this.loadPdfPlayer = false;
@@ -185,39 +191,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       await popover.present();
     } else if (event.edata['type']['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
-        const checkedStatus = await this.permissionService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise();
-        if (checkedStatus.isPermissionAlwaysDenied) {
-          this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-          return;
-        }
-        if (!checkedStatus.hasPermission) {
-          const requestedStatus = await this.permissionService.requestPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise();
-          if (requestedStatus.hasPermission) {
-            // download
-            const fileUri = this.content.contentData.downloadUrl;
-            const fileName = this.content.name;
-            const displayDescription = this.content.contentData.description;
-            const downloadRequest: EnqueueRequest = {
-              uri: fileUri,
-              title: '',
-              description: displayDescription,
-              mimeType: 'application/pdf',
-              visibleInDownloadsUi: true,
-              notificationVisibility: 1,
-              destinationInExternalPublicDir: {
-                dirType: 'Download',
-                subPath: `/${fileName}.pdf`
-              },
-              headers: []
-            };
-            downloadManager.enqueue(downloadRequest, (err, id: string) => {
-              if (err) {
-                this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-              }
-              this.commonUtilService.showToast('PDF_DOWNLOADED');
-            });
+        this.downloadPdfService.downloadPdf(this.content).then((res) => {
+          this.commonUtilService.showToast('PDF_DOWNLOADED');
+        }).catch((error) => {
+          if (error.reason === 'device-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'download-failed') {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
-        }
+        });
       } else {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       }
