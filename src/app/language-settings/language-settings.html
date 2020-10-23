@@ -1,36 +1,26 @@
 <ion-content class="ion-padding ui-container">
   <div class="ui-content">
-    <ion-title *ngIf="!isFromSettings" text-center class="app-title">{{'APP_TITLE' | translate:{'%s': appName } }}</ion-title>
+    <p *ngIf="!isFromSettings" text-center class="app-title">{{'APP_TITLE' | translate:{'%s': appName } }}</p>
     <div class="font-size-17" text-center padding text-wrap style="padding: 0">
       <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>
     </div>
 
-    <ion-radio-group [value]="language">
-      <ion-grid style="margin-bottom: 64px;">
-        <ion-row class="ion-align-self-left">
-          <ion-col size="6" *ngFor="let lang of languages">
-            <ion-card class="language-card" [class.selected]="lang.code === language" (click)="language = lang.code; onLanguageSelected();">
-              <ion-label class="gray-color">{{ lang?.label | translate }}</ion-label>
-              <ion-radio slot="end" mode="ios" [value]="lang?.code"></ion-radio>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-radio-group>
+    <div class="language-container">
+      <div class="language-card" *ngFor="let lang of languages" [class.selected]="lang.code === language">
+        <label class="language-selection" [for]="'language-selection' + lang.code">
+          <span class="label-text">
+            {{lang?.label | translate}}
+          </span>
+          <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
+        </label>
+        <input (change)="language = lang.code; onLanguageSelected();" [id]="'language-selection' + lang.code" [value]="languages" type="radio" name="language-selection">
+      </div>
+    </div>
 
     <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
             [style.background-color]="btnColor" [hidden]="!isLanguageSelected" (click)="continue()">
-      <ion-grid class="ion-no-padding">
-        <ion-row class="ion-justify-content-between">
-          <ion-col class="ion-no-padding">
-            <img class="arrow-icon" src="assets/imgs/ic_back.svg" style="visibility: hidden" [class.animate]="isLanguageSelected"  alt="">
-          </ion-col>
-          <ion-col class="ion-no-padding">{{ 'CONTINUE' | translate }}</ion-col>
-          <ion-col class="ion-no-padding text-align-end ion-align-self-center">
-            <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected" alt="">
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <span>{{ 'CONTINUE' | translate }}</span>
+      <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected" alt="">
     </button>
   </div>
 </ion-content>

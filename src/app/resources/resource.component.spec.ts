@@ -1313,11 +1313,11 @@ describe('ResourcesComponent', () => {
 
         it('should call notification method when event name is equal notification', () => {
             // arrange
-            jest.spyOn(resourcesComponent, 'appTutorialScreen').mockImplementation();
+            jest.spyOn(resourcesComponent, 'redirectToNotifications').mockImplementation();
             // act
-            resourcesComponent.handleHeaderEvents({ name: 'information' });
+            resourcesComponent.handleHeaderEvents({ name: 'notification' });
             // assert
-            expect(resourcesComponent.appTutorialScreen).toHaveBeenCalled();
+            expect(resourcesComponent.redirectToNotifications).toHaveBeenCalled();
         });
 
         it('should call appTutorialScreen method', (done) => {

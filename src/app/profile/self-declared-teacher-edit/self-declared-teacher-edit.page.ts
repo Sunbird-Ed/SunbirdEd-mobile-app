@@ -394,7 +394,7 @@ export class SelfDeclaredTeacherEditPage {
         this.generateTncAudit();
         this.showAddedSuccessfullPopup();
       } else {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('UPDATED_SUCCESSFULLY'));
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
     } catch (err) {
       console.error(err);

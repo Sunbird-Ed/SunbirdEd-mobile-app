@@ -514,7 +514,7 @@ describe('collectionDetailEtbPage', () => {
                 mockTelemetryObject,
                 values,
                 {},
-                undefined
+                []
             );
         });
 
@@ -547,7 +547,7 @@ describe('collectionDetailEtbPage', () => {
                 mockTelemetryObject,
                 values,
                 {},
-                undefined
+                []
             );
         });
     });
@@ -603,7 +603,7 @@ describe('collectionDetailEtbPage', () => {
                 Environment.HOME,
                 mockTelemetryObject,
                 {},
-                undefined
+                []
             );
             expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
                 'qr',
@@ -612,7 +612,7 @@ describe('collectionDetailEtbPage', () => {
                 Environment.HOME,
                 { id: 'do-123', type: 'qr', version: '' },
                 undefined,
-                undefined
+                []
             );
         });
 
@@ -637,7 +637,7 @@ describe('collectionDetailEtbPage', () => {
                 Environment.HOME,
                 { id: 'do_12345', type: undefined, version: '1' },
                 {},
-                undefined
+                []
             );
         });
 
@@ -659,7 +659,7 @@ describe('collectionDetailEtbPage', () => {
                 Environment.HOME,
                 mockTelemetryObject,
                 {},
-                undefined
+                []
             );
         });
     });
@@ -680,7 +680,7 @@ describe('collectionDetailEtbPage', () => {
             Environment.HOME,
             false,
             'do_212911645382959104165',
-            undefined
+            []
         );
     });
 

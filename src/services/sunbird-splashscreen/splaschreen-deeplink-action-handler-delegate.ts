@@ -814,12 +814,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private getCorrelationList(payloadUrl, corRelation?: Array<CorrelationData>) {
     if (!corRelation) {
-      corRelation = new Array<CorrelationData>();
+      corRelation = [];
     }
     if (payloadUrl) {
-      if (!corRelation) {
-        corRelation = [];
-      }
       corRelation.push({
         id: ContentUtil.extractBaseUrl(payloadUrl),
         type: CorReleationDataType.SOURCE
