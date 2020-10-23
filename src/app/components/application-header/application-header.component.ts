@@ -21,7 +21,7 @@ import {
   EventTopics, ProfileConstants, RouterLinks, AppThemes
 } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
+import { Subscription, combineLatest, Observable, EMPTY, interval } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
@@ -56,6 +56,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
+  unreadNotificationsCount = 0;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -121,6 +122,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.decreaseZindex = false;
     });
     this.listenDownloads();
+    this.listenNotifications();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();
     });
@@ -176,6 +178,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
 
       this.changeDetectionRef.detectChanges();
+    });
+  }
+
+  listenNotifications() {
+    this.pushNotificationService.notifications$.subscribe((notifications) => {
+      this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
   }
 

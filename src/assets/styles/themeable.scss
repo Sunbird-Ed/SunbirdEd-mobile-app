@@ -1475,4 +1475,36 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-notification{
+    .sb-view-all-container{
+      .sb-view-all-items{
+        background: var(--app-secondary-background) !important;
+        border-radius: 20px !important;
+        width: 94% !important;
+        height: 55px !important;
+        left: 3% !important;
+        padding: 10px !important;
+        margin-bottom: 10px !important;
+        top: 8px !important;
+        .sb-view-all-title{
+          color: unset !important;
+          margin-left: 8px !important;
+        }
+      }
+    }
+    ion-item{
+      --background: var(--app-white) !important;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius: 0.5rem !important;
+    }
+    ion-item-sliding{
+      box-shadow: var(--block-style-shadow) !important;
+    }
+    .oval-wrapper{
+      h4{
+        color: unset !important;
+      }
+    }
+  }
 }

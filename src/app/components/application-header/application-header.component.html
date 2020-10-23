@@ -45,6 +45,11 @@
         (click)="emitEvent($event, 'settings');">
         <ion-icon name="settings"></ion-icon>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
+        (click)="emitEvent($event, 'notification');" class="active-download-icon">
+        <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>
+        <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
+      </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
         <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">

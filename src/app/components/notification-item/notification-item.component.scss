@@ -11,23 +11,37 @@
       font-family: "Noto Sans", sans-serif;
       font-size: 12px;
       line-height: 20px;
+      margin-bottom: 4px;
+      padding: 2px;
+      margin-top: 10px;
     }
     .title {
       width: 100%;
       color: $blue;
       font-family: "Noto Sans", sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: bold;
       letter-spacing: -0.4px;
       line-height: 20px;
     }
+    .title-info{
+      white-space: nowrap; 
+      overflow: hidden;
+      text-overflow: ellipsis; 
+      margin: 0;
+      font-size: 16px;
+    }
     .description {
-      color: $gray-400;
+      color: $gray-300;
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px;
-      letter-spacing: -0.34px;
+      font-size: 13px;
+       letter-spacing: -0.1px;
       line-height: 20px;
       margin: 0;
+      white-space: nowrap; 
+      overflow: hidden;
+      text-overflow: ellipsis; 
+      margin-top: 2px;
     }
 
     .sb-accordian-arrow {
@@ -41,11 +55,24 @@
     .update-container {
       white-space: normal;
       border-radius: 2px;
-      background-color: map-get($colors, white_f1);
+     // background-color: map-get($colors, white_f1);
       font-family: "Noto Sans", sans-serif;
-      font-size: 12px;
+      font-size: 13px;
       line-height: 20px;
-      margin-top: 8px;
+      margin-top: 2px;
+      color: $gray-300;
+      white-space: nowrap; 
+      overflow: hidden;
+      text-overflow: ellipsis; 
+    }
+    .img-info{
+     width: 10%;
+     float:left;
+    }
+    .richText-info{
+      width: 90%;
+      margin-bottom: 8px;
+      padding-left: 4px;
     }
 
     .expand-button {
@@ -78,13 +105,21 @@
         margin-left: 6px;
       }
     }
-    .pl-16 {
-      @include ltr() {
-        padding-left: 16px;
-      }
-      @include rtl() {
-        padding-right: 16px;
-      }
-    }
+    // .pl-16 {
+    //   @include ltr() {
+    //     padding-left: 16px;
+    //   }
+    //   @include rtl() {
+    //     padding-right: 16px;
+    //   }
+    // }
+  }
+
+  .ni-flex{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .ni-flex-grow{
+    flex-grow: 1;
   }
 }
