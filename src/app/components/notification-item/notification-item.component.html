@@ -4,8 +4,8 @@
       alt="oval">{{ itemData?.displayTime * 1000 | date:'E, d MMMM h:mm'}}
   </p>
   <div class="ni-flex">
-    <div class="img-info ni-flex-grow">
-      <img src="assets/imgs/book.png">
+    <div class="img-info ni-flex-grow" *ngIf="itemData?.actionData?.appIcon">
+      <img [src]="itemData?.actionData?.appIcon">
     </div>
     <div class="richText-info ni-flex-grow">
       <div class="title"
@@ -14,17 +14,10 @@
           {{itemData?.actionData?.title}}</p>
         <div class="description" *ngIf="itemData?.actionData?.richText">
           {{itemData?.actionData?.richText}}</div>
-        <!-- <div class="update-container" *ngIf="itemData?.actionData?.actionType === 'updateApp'"
-          [innerHTML]="itemData?.actionData?.richText"></div> -->
+        <hr *ngIf="itemData?.actionData?.ctaText">
+          <div *ngIf="itemData?.actionData?.ctaText" (click)="handleDeepLink()" class="update-now-btn">
+            {{itemData?.actionData?.ctaText}}</div>
       </div>
     </div>
-    <!-- <div class="expand-button ni-flex-grow" *ngIf="itemData?.actionData?.actionType === 'updateApp'">
-      <img *ngIf="!isExpanded" src="./assets/imgs/arrow-down.svg" class="sb-accordian-arrow" alt="arrow-down">
-      <img *ngIf="isExpanded" src="./assets/imgs/arrow-down.svg" class="sb-accordian-arrow arrow-up" alt="arrow-up">
-    </div> -->
   </div>
-
-  <hr *ngIf="itemData?.actionData?.ctaText">
-  <div *ngIf="itemData?.actionData?.ctaText" (click)="handleDeepLink()" class="update-now-btn">
-    {{itemData?.actionData?.ctaText}}</div>
 </div>

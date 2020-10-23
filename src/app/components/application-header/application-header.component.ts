@@ -56,7 +56,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
-  notificationCount = 0;
+  unreadNotificationsCount = 0;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -182,8 +182,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   listenNotifications() {
-    interval(10000).subscribe((count) => {
-      this.notificationCount = count;
+    this.pushNotificationService.notifications$.subscribe((notifications) => {
+      this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
   }
 
