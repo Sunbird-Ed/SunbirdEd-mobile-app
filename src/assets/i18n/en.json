@@ -1090,5 +1090,6 @@
   "INSTANCE_TERMS_OF_USE": "{{app_name}} Terms of Use",
   "AGREE_TO_SHARE_PROFILE_DETAILS": "I agree to share my profile details with the course administrator in accordance with the",
   "FORUM": "Forum",
-  "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile if you need to"
+  "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile if you need to",
+  "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully"
 }
