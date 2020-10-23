@@ -1092,5 +1092,6 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access course details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
-  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
+  "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully"
 }
