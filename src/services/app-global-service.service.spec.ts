@@ -730,6 +730,7 @@ describe('AppGlobalService', () => {
 
     describe('getPdfPlayerConfiguration()', () => {
         it('should return pdf player config', () => {
+            appGlobalService.getPdfPlayerConfiguration();
             expect(appGlobalService.pdfPlayerConfiguratiion).toBeTruthy();
         });
     });
