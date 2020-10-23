@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
@@ -1418,7 +1419,7 @@ html[data-theme="JOYFUL"]{
 
   app-qrcoderesult{
     .download-info{
-      color: #0D7DFC !important;
+      color:map-get($colors, dark_blue) !important;
     }
     .btn-space{
       padding-right: 5px !important;
@@ -1428,6 +1429,23 @@ html[data-theme="JOYFUL"]{
     }
     ion-card{
       padding: 7px !important;
+    }
+  }
+
+  app-sb-download-popup{
+    .sb-modal-close{
+      color: var(--app-primary) !important;
+    }
+    .progress-highlight{
+      background: var(--app-white) !important;
+    }
+    .popover-progress-container{
+      background-color: var(--app-primary) !important;
+    }
+    .collapsed {
+      .sb-popover-title{
+        margin-top: 0 !important;
+      }
     }
   }
 
