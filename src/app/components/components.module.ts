@@ -53,7 +53,7 @@ import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explo
 import { AddActivityToGroupComponent } from './add-activity-to-group/add-activity-to-group.component';
 import {ConsentPiiPopupComponent} from './popups/consent-pii-popup/consent-pii-popup.component';
 import {LicenseCardComponentComponent} from '@app/app/components/license-card-component/license-card-component.component';
-
+import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup/group-guidelines-popup.component';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -99,8 +99,8 @@ import {LicenseCardComponentComponent} from '@app/app/components/license-card-co
     ExploreBooksSortComponent,
     AddActivityToGroupComponent,
     ConsentPiiPopupComponent,
-    LicenseCardComponentComponent
-
+    LicenseCardComponentComponent,
+    GroupGuideLinesPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -147,7 +147,8 @@ import {LicenseCardComponentComponent} from '@app/app/components/license-card-co
     SupportAcknowledgement,
     AcknowledgeResponseComponent,
     ExploreBooksSortComponent,
-    ConsentPiiPopupComponent
+    ConsentPiiPopupComponent,
+    GroupGuideLinesPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -192,7 +193,8 @@ import {LicenseCardComponentComponent} from '@app/app/components/license-card-co
     ExploreBooksSortComponent,
     AddActivityToGroupComponent,
     ConsentPiiPopupComponent,
-    LicenseCardComponentComponent
+    LicenseCardComponentComponent,
+    GroupGuideLinesPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
