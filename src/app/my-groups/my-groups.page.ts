@@ -242,13 +242,15 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } else if (data.canDelete) {
     }
   }
-  async openAcceptGuidelinesPopup(isGroupTncVersionUpdated, navigationExtras?, event?) {
+  async openAcceptGuidelinesPopup(shouldUpdateUserLevelGroupTnc, navigationExtras?, event?) {
     const confirm = await this.popoverCtrl.create({
       component: GroupGuideLinesPopoverComponent,
       componentProps: {
-        icon: null
+        icon: null,
+        shouldUpdateUserLevelGroupTnc: shouldUpdateUserLevelGroupTnc
       },
       cssClass: 'sb-popover info',
+      backdropDismiss: !shouldUpdateUserLevelGroupTnc
     });
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
@@ -256,7 +258,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       return;
     }
     if (data && data.isLeftButtonClicked) {
-      if(!isGroupTncVersionUpdated) {
+      if(!shouldUpdateUserLevelGroupTnc) {
         const updateMembersRequest: UpdateMembersRequest = {
           groupId: navigationExtras.state.groupId,
           updateMembersRequest: {
