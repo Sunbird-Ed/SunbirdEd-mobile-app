@@ -1,6 +1,6 @@
 import { MyGroupsPage } from './my-groups.page';
 import {
-    AuthService, GroupMemberRole, SharedPreferences, GroupService
+    AuthService, GroupMemberRole, SharedPreferences, GroupService, SystemSettingsService, ProfileService
 } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
@@ -19,7 +19,9 @@ describe('MyGroupsPage', () => {
     let myGroupsPage: MyGroupsPage;
     const mockAuthService: Partial<AuthService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
@@ -38,12 +40,16 @@ describe('MyGroupsPage', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockPlatform: Platform<Platform> = {};
     const mockLocation: Partial<Location> = {};
+    const mockSystemSettingService: Partial<SystemSettingsService> = {};
+    const mockProfileService: Partial<ProfileService> = {};
 
     beforeAll(() => {
         myGroupsPage = new MyGroupsPage(
             mockAuthService as AuthService,
             mockGroupService as GroupService,
             mockPreferences as SharedPreferences,
+            mockSystemSettingService as SystemSettingsService,
+            mockProfileService as ProfileService,
             mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -65,6 +71,107 @@ describe('MyGroupsPage', () => {
     it('should create a instance for myGroupesPage', () => {
         expect(myGroupsPage).toBeTruthy();
     });
+    describe('openAcceptGuidelinesPopup', () => {
+        it('should acceptTermsAndConditions popup', (done) => {
+            // arrange
+            myGroupsPage.groupTncVersion = '3.4.0'
+            myGroupsPage.userId = 'sample-uid';
+            mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
+            // mockGroupService.updateMembers = jest.fn(() => of('success') as any);
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+            } as any)));
+            // act
+            myGroupsPage.openAcceptGuidelinesPopup(true);
+            // expect
+            setTimeout(() => {
+                expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
+                    {
+                        tncType: 'groupsTnc',
+                        version: '3.4.0'
+                    }
+                    );
+                done();
+            }, 0);
+        })
+
+        it('should fail while acceptTermsAndConditions popup', (done) => {
+            // arrange
+            myGroupsPage.groupTncVersion = '3.4.0'
+            myGroupsPage.userId = 'sample-uid';
+            mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
+            // mockGroupService.updateMembers = jest.fn(() => of('success') as any);
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => throwError('error') as any);
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+            } as any)));
+            
+            // act
+            myGroupsPage.openAcceptGuidelinesPopup(true);
+            // expect
+            setTimeout(() => {
+                expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
+                    {
+                        tncType: 'groupsTnc',
+                        version: '3.4.0'
+                    }
+                    );
+                done();
+            }, 0);
+        })
+
+        it('should navigate to groupdetails after accepting guidelines', (done) => {
+            // arrange
+            myGroupsPage.groupTncVersion = '3.4.0'
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
+            mockGroupService.updateMembers = jest.fn(() => of('success') as any);
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+            } as any)));
+            const navigationExtras = {
+                state: {
+                    groupId: 'sample_group_id'
+                  }
+            }
+            
+            // act
+            myGroupsPage.openAcceptGuidelinesPopup(false, navigationExtras);
+            // expect
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`],
+                navigationExtras);
+                done();
+            }, 0);
+        })
+
+        it('should not navigate to groupdetails after failure in accepting guidelines', () => {
+            // arrange
+            myGroupsPage.groupTncVersion = '3.4.0'
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
+            mockGroupService.updateMembers = jest.fn(() => throwError('error') as any);
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+            } as any)));
+            const navigationExtras = {
+                state: {
+                    groupId: 'sample_group_id'
+                  }
+            }
+            
+            // act
+            myGroupsPage.openAcceptGuidelinesPopup(false, navigationExtras);
+            // expect
+        })
+    })
 
     describe('openinfopopup', () => {
         it('should return undefined for backDrop clicked', (done) => {
@@ -415,7 +522,8 @@ describe('MyGroupsPage', () => {
         // arrange
         const data = {
             data: {
-                id: 'sample-id'
+                id: 'sample-id',
+                visited: true
             }
         };
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -431,6 +539,29 @@ describe('MyGroupsPage', () => {
             InteractType.TOUCH, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
             { id: 'sample-id', type: 'Group', version: undefined }
         );
+    });
+
+    it('should open groupguidelines popup', () => {
+        // arrange
+        const data = {
+            data: {
+                id: 'sample-id',
+                visited: false
+            }
+        };
+        jest.spyOn(myGroupsPage, 'openAcceptGuidelinesPopup').mockImplementation()
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+
+        // act
+        myGroupsPage.navigateToGroupdetailsPage(data);
+
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH, InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+            { id: 'sample-id', type: 'Group', version: undefined }
+        );
+        expect(myGroupsPage.openAcceptGuidelinesPopup).toHaveBeenCalled();
     });
 
     describe('goback', () => {
@@ -453,4 +584,62 @@ describe('MyGroupsPage', () => {
             expect(mockLocation.back).toHaveBeenCalled();
         });
     });
+
+    describe('checkIfUserAcceptedGuidelines', () => {
+        it('should open openAcceptGuidelinesPopup if grouplist is empty', () => {
+            // arrange
+            myGroupsPage.groupList = ['group1'] as any;
+            myGroupsPage.userId = 'sampleuserid'
+            const profile = {
+                allTncAccepted: {
+                    groupsTnc: {
+                        version: '3.4.0'
+                    }
+                }
+            }
+            const systemSetings = {
+                value : JSON.stringify({
+                    latestversion: '3.4.0'
+                })
+            }
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
+            jest.spyOn(myGroupsPage, 'openAcceptGuidelinesPopup').mockImplementation();
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any
+            // act
+            myGroupsPage.checkIfUserAcceptedGuidelines()
+            //assert
+            setTimeout(() => {
+                expect(myGroupsPage.openAcceptGuidelinesPopup).toHaveBeenCalled();
+            });
+        })
+
+        it('should directly call  updateGroupTnc if grouplist is empty', () => {
+            // arrange
+            myGroupsPage.groupList = [];
+            myGroupsPage.userId = 'sampleuserid'
+            const profile = {
+                allTncAccepted: {
+                    groupsTnc: {
+                        version: '3.4.0'
+                    }
+                }
+            }
+            const systemSetings = {
+                value : JSON.stringify({
+                    latestversion: '3.4.0'
+                })
+            }
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any
+            // act
+            myGroupsPage.checkIfUserAcceptedGuidelines()
+            //assert
+            setTimeout(() => {
+                expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalled();
+            });
+        })
+    });
+
+    
 });
