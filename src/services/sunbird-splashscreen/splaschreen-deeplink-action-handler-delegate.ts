@@ -538,8 +538,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   /////////////////////////////////////////////////
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>) {
-    console.log('Notification Payload', this.context.notificationPayload);
+  async navigateContent(
+    identifier, isFromLink = false, content?: Content | null,
+    payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>
+  ) {
     try {
       // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
