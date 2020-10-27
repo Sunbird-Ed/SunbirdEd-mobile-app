@@ -33,7 +33,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
-  pdfPlayerConfig;
 
 
   @ViewChild('preview') previewElement: ElementRef;
@@ -69,11 +68,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
       this.isChildContent = this.router.getCurrentNavigation().extras.state.childContent;
     }
-    this.initializePdfPlayerConfiguration();
   }
 
   async ngOnInit() {
-
+    await this.initializePdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
       this.config['metadata'] = this.config['metadata'].contentData;
@@ -163,13 +161,19 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-  async initializePdfPlayerConfiguration() {
-    this.pdfPlayerConfig = await this.appGlobalService.getPdfPlayerConfiguration();
-    if (this.pdfPlayerConfig === undefined) {
-      this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
-            this.playerConfig = res;
-      });
-    }
+   initializePdfPlayerConfiguration() {
+    return new Promise((resolve) => {
+      if (this.appGlobalService.getPdfPlayerConfiguration() !== undefined) {
+      this.playerConfig = this.appGlobalService.getPdfPlayerConfiguration();
+      resolve();
+      }
+      if (this.playerConfig === undefined) {
+        this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
+          this.playerConfig = res;
+          resolve();
+        });
+      }
+    });
   }
 
   async pdfPlayerEvents(event) {
