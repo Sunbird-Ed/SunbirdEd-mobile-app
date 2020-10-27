@@ -394,13 +394,12 @@ describe('Profile.page', () => {
         it('checks if isCustodianOrgId is true and look for declarations and fetch form data from api', (done) => {
             // arrange
             profilePage.isCustodianOrgId = true;
-            mockFormService.getForm = jest.fn(() => of(mockFormData));
+            mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockFormData));
             mockCommonUtilService.translateMessage = jest.fn(v => v);
             // act
             profilePage.getSelfDeclaredDetails();
             // assert
             setTimeout(() => {
-                expect(mockFormService.getForm).toHaveBeenCalled();
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('I_AM_A_PERSONA_WITH_TENANT', {
                     '%persona': 'sample_persona',
                     '%tenant': 'sample_label'

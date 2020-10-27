@@ -55,6 +55,8 @@ import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-prog
 import { Location } from '@angular/common';
 import { NavigationService } from '../navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentInfo } from '../content/content-info';
+import { ContentPlayerHandler } from '../content/player/content-player-handler';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -66,6 +68,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private childContent;
   private isChildContentFound;
   private enableRootNavigation = false;
+  private _context: any;
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -98,12 +101,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private qrScannerResultHandler: QRScannerResultHandler,
     private sbProgressLoader: SbProgressLoader,
     private location: Location,
-    private navService: NavigationService
+    private navService: NavigationService,
+    private contentPlayerHandler: ContentPlayerHandler
   ) {
     this.eventToSetDefaultOnboardingData();
   }
 
-  onAction(payload: any): Observable<undefined> {
+  set context(context) {
+    this._context = context;
+  }
+
+  get context() {
+    return this._context;
+  }
+
+  onAction(payload: any, context?): Observable<undefined> {
+    if (context) {
+      this.context = context;
+    }
     if (payload && payload.url) {
       this.handleDeeplink(payload.url);
     }
@@ -523,7 +538,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   /////////////////////////////////////////////////
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>) {
+  async navigateContent(
+    identifier, isFromLink = false, content?: Content | null,
+    payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>
+  ) {
     try {
       // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
@@ -546,13 +564,33 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.navigateToCollection(identifier, content, payloadUrl, route, false, false, coreRelationList);
         } else {
           this.setTabsRoot();
-          await this.router.navigate([route],
-            {
+          if (this.context && this.context.notificationPayload && this.context.notificationPayload.actionData.openPlayer) {
+            const contentInfo: ContentInfo = {
+              telemetryObject: undefined,
+              rollUp: undefined,
+              correlationList: coreRelationList,
+              hierachyInfo: undefined,
+              course: undefined
+            };
+            const navExtras = {
               state: {
-                content,
-                corRelation: this.getCorrelationList(payloadUrl, coreRelationList)
+                content: content,
               }
-            });
+            };
+            const telemetryObject = {
+              corRelationList: []
+            };
+            this.contentPlayerHandler.playContent(content, navExtras, telemetryObject, false, false);
+            this.closeProgressLoader();
+          } else {
+            await this.router.navigate([route],
+              {
+                state: {
+                  content,
+                  corRelation: this.getCorrelationList(payloadUrl)
+                }
+              });
+          }
         }
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -750,7 +788,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
                 isOnboardingSkipped
               });
-              this.sbProgressLoader.hide({id: content.identifier});
+              this.sbProgressLoader.hide({ id: content.identifier });
               break;
           }
           break;
@@ -777,6 +815,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private getCorrelationList(payloadUrl, corRelation?: Array<CorrelationData>) {
+    if (!corRelation) {
+      corRelation = [];
+    }
     if (payloadUrl) {
       corRelation.push({
         id: ContentUtil.extractBaseUrl(payloadUrl),

@@ -1,6 +1,8 @@
 html[data-theme="DEFAULT"]{
 
   --app-primary-background:#EDF4F9;
+  --app-primary:#006DE5;
+  --app-white:#FFFFFF;
 
   app-profile{
     .self-declare-btn{
@@ -49,5 +51,11 @@ html[data-theme="DEFAULT"]{
     }
   }
 
+  app-qrcoderesult{
+    .qr-result-btn{
+      border-top-left-radius: 0px !important;
+      border-top-right-radius: 0px !important;
+    }
+  }
 }
 

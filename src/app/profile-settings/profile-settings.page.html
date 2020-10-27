@@ -2,8 +2,9 @@
 	<div class="">
 		<form [formGroup]="profileSettingsForm" class="ps-container">
 			<div class="back-btn-container">
-				<ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
-					class="top-back-button"></ion-icon>
+				<img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton"
+					 (click)="handleBackButton(true)"
+					 class="top-back-button" alt="back">
 			</div>
 			<div class="qr-container ui-container" *ngIf="showQRScanner">
 				<div class="qr-content">
@@ -30,23 +31,12 @@
 						<div class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</div>
 					</div>
 					<div class="board-select-dummy" (click)="boardClicked($event)">
-						<ion-item appCustomIonSelect>
-							<ion-label position="stacked" class="label-font text-uppercase align-text">
-								{{'BOARD' | translate }}</ion-label>
-							<ion-select multiple="false" class="ion-text-capitalize" formControlName="syllabus"
-								[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()"
-								okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-								placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-								<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
-									{{eachSyllabus.name}}&lrm;</ion-select-option>
-							</ion-select>
-						</ion-item>
 						<div class="ps-board">
 							<div class="ps-board-label">{{'BOARD' | translate}}</div>
 							<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block"
 								[style.background-color]="btnColor">
 								{{ 'BOARD_OPTION_TEXT' | translate }}
-								<ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
+								<img class="arrow-icon" src="assets/imgs/ic_back.svg" alt="">
 							</button>
 						</div>
 					</div>
@@ -61,7 +51,7 @@
 						okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 						placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 						<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
-							{{eachSyllabus.name}}&lrm;</ion-select-option>
+							{{eachSyllabus.name | aliased}}&lrm;</ion-select-option>
 					</ion-select>
 				</ion-item>
 
@@ -96,10 +86,10 @@
 	</div>
 </ion-content>
 
-<ion-footer class="ion-padding" no-border style="background: white;" *ngIf="!showQRScanner">
+<div class="ion-padding" no-border style="background: white;" *ngIf="!showQRScanner">
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
 		[style.background-color]="btnColor" (click)="onSubmitAttempt()">
 		{{ 'CONTINUE' | translate }}
-		<ion-icon class="arrow-icon" [class.animate]="profileSettingsForm.valid" name="arrow-round-forward"></ion-icon>
+		<img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="profileSettingsForm.valid" name="arrow-round-forward" alt="">
 	</button>
-</ion-footer>
+</div>

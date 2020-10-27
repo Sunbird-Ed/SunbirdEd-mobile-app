@@ -167,6 +167,7 @@ export class ContentUtil {
   }
 
   public static isTrackable(content) {
+    content = !content.trackable ? ((content.contentData && content.contentData.trackable) ? content.contentData : content) : content;
     // -1 - content, 0 - collection, 1 - enrolled (Trackable)
     if (content.trackable && content.trackable.enabled) {
       if (content.trackable.enabled === TrackingEnabled.YES) {

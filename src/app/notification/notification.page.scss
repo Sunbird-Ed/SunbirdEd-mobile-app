@@ -10,6 +10,7 @@
       float: right !important;
     }
     padding-top: 10px;
+    color: #e0005a
   }
   .sb-view-all-title {
     width: inherit;
@@ -70,8 +71,16 @@
       width: 80vw;
     }
   }
-  .delete-button {
-    height: 100%;
-    --border-radius: none;
+
+  .delete-button-left {
+    height: auto;
+    margin: 0 !important;
+    --border-radius: 0 0.5rem 0.5rem 0 !important;
+  }
+
+  .delete-button-right {
+    height: auto;
+    margin: 0 !important;
+    --border-radius: 0.5rem 0 0 0.5rem !important;
   }
 }

@@ -31,7 +31,8 @@ export class ConsentPiiPopupComponent {
         const profileKeys = await this.formAndFrameworkUtilService.getConsentFormConfig();
         profileKeys.forEach(element => {
             this.consentForm.push({
-                key: this.commonUtilService.getTranslatedValue(element.templateOptions.placeHolder, ''),
+                key: this.commonUtilService.getTranslatedValue(element.templateOptions.placeHolder,
+                    JSON.parse(element.templateOptions.placeHolder)['en']),
                 value: this.converDataSrcToObject(element)
             });
         });

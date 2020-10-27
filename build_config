@@ -25,10 +25,9 @@ cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0
-cordova-plugin=cordova-android-support-gradle-release --variable ANDROID_SUPPORT_VERSION=28.0.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0
-sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.3.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.4.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0

@@ -38,7 +38,8 @@ import {
   Profile,
   ProfileService,
   TelemetryObject,
-  AuditState
+  AuditState,
+  TrackingEnabled
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
@@ -251,7 +252,8 @@ export class QrcoderesultPage implements OnDestroy {
               undefined,
               this.corRelationList
             );
-            if (this.results && this.results.length === 1) {
+            if (this.results && this.results.length === 1 &&
+              !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
               this.backToPreviusPage = false;
               this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
               this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -408,7 +410,8 @@ export class QrcoderesultPage implements OnDestroy {
             this.commonUtilService.showContentComingSoonAlert(this.source, data, this.dialCode);
             window.history.go(-2);
           }
-        } else if (this.results && this.results.length === 1) {
+        } else if (this.results && this.results.length === 1 &&
+          !(this.results[0].contentData.trackable && this.results[0].contentData.trackable.enabled === TrackingEnabled.YES)) {
           this.backToPreviusPage = false;
           this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -533,24 +536,31 @@ export class QrcoderesultPage implements OnDestroy {
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
     this.interactEventForPlayAndDownload(content, false);
-    if (!(content.contentData.downloadUrl) && !paths) {
+    if (!(content.contentData.downloadUrl) && !paths && ContentUtil.isTrackable(content.contentData) === -1) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
+    }
+    const corRelationList = [...this.corRelationList];
+    if (paths && paths.length) {
+      corRelationList.push({
+        id: paths[0],
+        type: CorReleationDataType.ROOT_ID
+      });
     }
     switch (ContentUtil.isTrackable(content)) {
       case 1:
         this.navService.navigateToTrackableCollection({
           content,
-          corRelation: this.corRelationList
+          corRelation: corRelationList
         });
         break;
       case 0:
-        if (paths.length && paths.length >= 2) {
+        if (paths && paths.length && paths.length >= 2) {
           this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
         }
         this.navService.navigateToCollection({
           content,
-          corRelation: this.corRelationList
+          corRelation: corRelationList
         });
         break;
       case -1:
@@ -564,7 +574,7 @@ export class QrcoderesultPage implements OnDestroy {
           depth: '1',
           isChildContent: true,
           downloadAndPlay: true,
-          corRelation: this.corRelationList,
+          corRelation: corRelationList,
           onboarding: this.onboarding,
           source: this.source
         });
@@ -779,8 +789,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
   private showAllChild(content: any) {
     this.zone.run(() => {
-      if (content.children === undefined || !content.children.length) {
-        if (content.mimeType !== MimeType.COLLECTION) {
+      if (content.children === undefined || !content.children.length || ContentUtil.isTrackable(content.contentData) === 1) {
+        if (content.mimeType !== MimeType.COLLECTION || ContentUtil.isTrackable(content.contentData) === 1) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {

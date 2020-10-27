@@ -9,6 +9,7 @@ import { DateAgoPipe } from '@app/pipes/date-ago/date-ago.pipe';
 import { CommonModule, DatePipe } from '@angular/common';
 import { InitialPipe } from '@app/pipes/initial/initial';
 import { CategoryKeyTranslator } from './category-key-translator/category-key-translator-pipe';
+import {AliasBoardName} from './alias-board-name/alias-board-name';
 @NgModule({
   declarations: [FileSizePipe,
     CSAPipe,
@@ -18,7 +19,8 @@ import { CategoryKeyTranslator } from './category-key-translator/category-key-tr
     TranslateHtmlPipe,
     DateAgoPipe,
     InitialPipe,
-    CategoryKeyTranslator
+    CategoryKeyTranslator,
+    AliasBoardName
   ],
   imports: [CommonModule],
   exports: [FileSizePipe,
@@ -29,7 +31,8 @@ import { CategoryKeyTranslator } from './category-key-translator/category-key-tr
     TranslateHtmlPipe,
     DateAgoPipe,
     InitialPipe,
-    CategoryKeyTranslator
+    CategoryKeyTranslator,
+    AliasBoardName
   ],
   providers: [DatePipe, CategoryKeyTranslator]
 })

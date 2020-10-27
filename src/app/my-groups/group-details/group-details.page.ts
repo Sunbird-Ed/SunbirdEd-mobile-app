@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData
+  CorrelationData, ActivateAndDeactivateByIdRequest
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -67,6 +67,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   loggedinUser: GroupMember;
   groupCreator: GroupMember;
   flattenedActivityList = [];
+  isSuspended = false;
+  isGroupCreatorOrAdmin = false;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -166,8 +168,15 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
+      this.isSuspended = this.groupDetails.status.toLowerCase() === 'suspended';
+      console.log(' this.isSuspended',  this.isSuspended);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
+      this.activityList.forEach((a) => {
+        if (a.translations) {
+          a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
+        }
+      });
 
       if (this.memberList) {
         this.memberList.sort((a, b) => {
@@ -203,6 +212,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }, {});
       this.filteredGroupedActivityListMap = { ...this.groupedActivityListMap };
       this.isGroupLoading = false;
+      if (this.groupCreator.userId === this.userId || this.loggedinUser.role === GroupMemberRole.ADMIN) {
+        this.isGroupCreatorOrAdmin = true;
+      }
       this.setFlattenedActivityList();
     } catch (e) {
       this.isGroupLoading = false;
@@ -240,10 +252,20 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   async groupMenuClick(event) {
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
-    if (this.groupCreator.userId === this.userId) {
-      menuList = MenuOverflow.MENU_GROUP_CREATOR;
-    } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
-      menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    if (this.groupDetails.status.toLowerCase() === 'suspended') {
+      if (this.groupCreator.userId === this.userId) {
+        menuList = MenuOverflow.MENU_GROUP_CREATOR_SUSPENDED;
+        this.isGroupCreatorOrAdmin = true;
+      } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
+        menuList = MenuOverflow.MENU_GROUP_ADMIN__SUSPENDED;
+        this.isGroupCreatorOrAdmin = true;
+      }
+    } else {
+      if (this.groupCreator.userId === this.userId) {
+        menuList = MenuOverflow.MENU_GROUP_CREATOR;
+      } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
+        menuList = MenuOverflow.MENU_GROUP_ADMIN;
+      }
     }
 
     const groupOptions = await this.popoverCtrl.create({
@@ -275,6 +297,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.showDeleteGroupPopup();
       } else if (data.selectedItem === 'MENU_LEAVE_GROUP') {
         this.showLeaveGroupPopup();
+      } else if (data.selectedItem === 'FRMELEMENTS_LBL_DEACTIVATEGRP') {
+        this.showDeactivateGroupPopup();
+      } else if (data.selectedItem === 'FRMELEMENTS_LBL_ACTIVATEGRP') {
+        this.showReactivateGroupPopup();
       }
     }
   }
@@ -323,6 +349,155 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.showRemoveMemberPopup(selectedMember);
       } else if (data.selectedItem === 'DISMISS_AS_GROUP_ADMIN') {
         this.showDismissAsGroupAdminPopup(selectedMember);
+      }
+    }
+  }
+
+  private async showDeactivateGroupPopup() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.DELETE_GROUP_CLICKED,
+    //   Environment.GROUP,
+    //   PageId.GROUP_DETAIL,
+    //   undefined, undefined, undefined, this.corRelationList);
+
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_DEACTIVATEGRPQUES'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('FRMELEMENTS_BTN_DEACTIVATEGRP'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_DEACTIVATEGRPMSG', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
+      // this.telemetryGeneratorService.generateInteractTelemetry(
+      //   InteractType.INITIATED,
+      //   '',
+      //   Environment.GROUP,
+      //   PageId.GROUP_DETAIL,
+      //   undefined,
+      //   undefined,
+      //   undefined,
+      //   this.corRelationList,
+      //   ID.DELETE_GROUP);
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+        id: this.groupId
+      };
+      try {
+        const resp = await this.groupService.suspendById(deactivateByIdRequest).toPromise();
+        console.log('suspendById', resp);
+        // await loader.dismiss();
+        this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
+        await loader.dismiss();
+        // this.location.back();
+        // this.telemetryGeneratorService.generateInteractTelemetry(
+        //   InteractType.SUCCESS,
+        //   '',
+        //   Environment.GROUP,
+        //   PageId.GROUP_DETAIL,
+        //   undefined,
+        //   undefined,
+        //   undefined,
+        //   this.corRelationList,
+        //   ID.DELETE_GROUP
+        // );
+        this.fetchGroupDetails();
+      } catch (e) {
+        await loader.dismiss();
+        console.error(e);
+        this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPFAILED');
+      }
+    }
+  }
+
+  private async showReactivateGroupPopup() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.MAKE_GROUP_ADMIN_CLICKED,
+    //   Environment.GROUP,
+    //   PageId.GROUP_DETAIL,
+    //   undefined, undefined, undefined, this.corRelationList);
+
+    const makeGroupAdminConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_ACTIVATEGRPQUES'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('FRMELEMENTS_BTN_ACTIVATEGRP'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('FRMELEMENTS_MSG_ACTIVATEGRPMSG')
+      },
+      cssClass: 'sb-popover',
+    });
+    await makeGroupAdminConfirm.present();
+
+    const { data } = await makeGroupAdminConfirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+
+      // this.telemetryGeneratorService.generateInteractTelemetry(
+      //   InteractType.INITIATED,
+      //   '',
+      //   Environment.GROUP,
+      //   PageId.GROUP_DETAIL,
+      //   undefined,
+      //   undefined,
+      //   undefined,
+      //   this.corRelationList,
+      //   ID.MAKE_GROUP_ADMIN);
+
+      this.isGroupLoading = true;
+      const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
+        id: this.groupId
+      };
+      try {
+        // const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
+        const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
+        console.log('reactivateById', resp);
+        // await loader.dismiss();
+        this.isGroupLoading = false;
+        // if (updateMemberResponse) {
+        this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
+          // this.telemetryGeneratorService.generateInteractTelemetry(
+          //   InteractType.SUCCESS,
+          //   '',
+          //   Environment.GROUP,
+          //   PageId.GROUP_DETAIL,
+          //   undefined,
+          //   undefined,
+          //   undefined,
+          //   this.corRelationList,
+          //   ID.MAKE_GROUP_ADMIN);
+
+        this.fetchGroupDetails();
+        // }
+      } catch (e) {
+        this.isGroupLoading = false;
+        this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPFAILED');
       }
     }
   }
@@ -874,8 +1049,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         = await this.groupService.getSupportedActivities().toPromise();
       if (supportedActivityResponse && supportedActivityResponse.data && supportedActivityResponse.data.fields) {
         const supportedActivityList = supportedActivityResponse.data.fields;
-        supportedActivityList.forEach(activity => {
-          activity.title = this.commonUtilService.translateMessage(activity.title);
+        supportedActivityList.forEach(a => {
+          if (a.translations) {
+            a.title = this.commonUtilService.getTranslatedValue(a.translations, a.title);
+          }
         });
         this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
           {

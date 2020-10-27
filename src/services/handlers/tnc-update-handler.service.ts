@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import {
   AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, UserFeed, Consent
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';

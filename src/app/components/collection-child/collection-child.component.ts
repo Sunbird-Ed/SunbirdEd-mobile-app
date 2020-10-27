@@ -125,7 +125,7 @@ export class CollectionChildComponent implements OnInit {
         this.objRollup,
         this.corRelationList
       );
-      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id, unit: collection });
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id, unit: collection, content: collection });
       this.location.back();
     }
   }

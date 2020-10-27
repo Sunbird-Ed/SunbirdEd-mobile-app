@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
@@ -300,11 +301,16 @@ html[data-theme="JOYFUL"]{
 
   // language-settings page
   page-language-settings{
-    .language-card {
-      &.selected {
-        background-color: var(--app-primary) !important;
+      .language-card {
+        &.selected {
+          .language-selection {
+            background-color: var(--app-primary) !important;
+          }
+          .label-text {
+            color: var(--app-white) !important;
+          }
+        }
       }
-    }
   }
 
   // user-type-selection page
@@ -659,14 +665,50 @@ html[data-theme="JOYFUL"]{
     }
 
     .textbook-accordian{
-      ion-card{
-        border-radius: 1.5rem !important;
-        background-color: var(--app-secondary-background) !important;
-        .sb-hidden-content{
-          padding: 0.5rem;
-          background-color: var(--app-white) !important;
-          border-radius: 2rem;
+      background-color: transparent;
+      sb-accordion-header{
+        .sbaccordion__panel-header{
+          background-color: var(--app-secondary-background) !important;
+          box-shadow: var(--block-style-shadow) !important;
         }
+      }
+      .accordion-item-header-expanded{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem 1.5rem 0 0 !important;
+        }
+      }
+      .accordion-item-header-collapsed{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem !important;
+        }
+      }
+      sb-accordion-body{
+        .sbaccordion__panel-content{
+          background-color: var(--app-secondary-background) !important;
+          border-radius: 0 0 1rem 1rem;
+        }
+      }
+      sb-toc-card{
+        .sbchapter__item{
+          border-radius: 1rem;
+          border-color: var(--app-white);
+          box-shadow: var(--block-style-shadow);
+          .d-inline-flex{
+            align-items: center;
+          }
+        }
+        .sbchapter__img{
+          border-radius: 0.5rem;
+          overflow: auto;
+        }
+      }
+      sb-accordion-item{
+        .sbaccordion{
+          box-shadow: none !important;
+        }
+      }
+      .sbchapter__play__btn{
+        color: var(--app-primary) !important;
       }
     }
 
@@ -679,6 +721,9 @@ html[data-theme="JOYFUL"]{
     }
     .sb-topic-text{
       color: var(--app-brown) !important;
+    }
+    .sb-chapter-dd{
+      margin-top: 0.5rem;
     }
   }
   // app-collection-child component
@@ -1413,6 +1458,71 @@ html[data-theme="JOYFUL"]{
     .alert-button:last-child:not(:only-child) {
       background: var(--app-white) !important;
       color: var(--app-primary) !important;
+    }
+  }
+
+  app-qrcoderesult{
+    .download-info{
+      color:map-get($colors, dark_blue) !important;
+    }
+    .btn-space{
+      padding-right: 5px !important;
+    }
+    button{
+      box-shadow: none !important;
+    }
+    ion-card{
+      padding: 7px !important;
+    }
+  }
+
+  app-sb-download-popup{
+    .sb-modal-close{
+      color: var(--app-primary) !important;
+    }
+    .progress-highlight{
+      background: var(--app-white) !important;
+    }
+    .popover-progress-container{
+      background-color: var(--app-primary) !important;
+    }
+    .collapsed {
+      .sb-popover-title{
+        margin-top: 0 !important;
+      }
+    }
+  }
+
+  app-notification{
+    .sb-view-all-container{
+      .sb-view-all-items{
+        background: var(--app-secondary-background) !important;
+        border-radius: 20px !important;
+        width: 94% !important;
+        height: 55px !important;
+        left: 3% !important;
+        padding: 10px !important;
+        margin-bottom: 10px !important;
+        top: 8px !important;
+        .sb-view-all-title{
+          color: unset !important;
+          margin-left: 8px !important;
+        }
+      }
+    }
+    ion-item{
+      --background: var(--app-white) !important;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius: 0.5rem !important;
+    }
+    ion-item-sliding{
+      box-shadow: var(--block-style-shadow) !important;
+    }
+    .oval-wrapper{
+      h4{
+        color: unset !important;
+      }
     }
   }
 

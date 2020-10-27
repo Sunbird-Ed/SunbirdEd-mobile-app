@@ -40,7 +40,7 @@ export class GroupHandlerService {
       InteractSubtype.ADD_TO_GROUP_CLICKED,
       Environment.GROUP,
       pageId,
-      undefined, undefined, undefined, undefined, corRelationList);
+      undefined, undefined, undefined, corRelationList);
 
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
