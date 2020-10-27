@@ -249,6 +249,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         icon: null
       },
       cssClass: 'sb-popover info',
+      backdropDismiss: false
     });
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
