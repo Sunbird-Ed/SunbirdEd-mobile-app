@@ -24,7 +24,7 @@ import {
     FrameworkCategoryCode
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
@@ -704,5 +704,11 @@ export class FormAndFrameworkUtilService {
             component: 'app'
         };
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
+
+    async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
+        formRequest.rootOrgId = rootOrgId || '*' ;
+        const formData  = await this.formService.getForm(formRequest).toPromise() as any;
+        return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
     }
 }
