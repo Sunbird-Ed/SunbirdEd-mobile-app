@@ -25,7 +25,6 @@ describe('PlayerPage', () => {
     const mockPlatform: Partial<Platform> = {};
     const mockScreenOrientation: Partial<ScreenOrientation> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getPdfPlayerConfiguration: jest.fn(() => Promise.resolve(undefined))
     };
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
@@ -53,7 +52,7 @@ describe('PlayerPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-        invokePdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
+        // invokePdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
     };
     const mockDownloadPdfService: Partial<DownloadPdfService> = {};
     beforeAll(() => {
@@ -78,10 +77,35 @@ describe('PlayerPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should be data instance of player page', () => {
         expect(playerPage).toBeTruthy();
+    });
+
+    describe('initializePdfPlayerConfiguration', () => {
+        it('should call form api for configuration', (done) => {
+            mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => undefined) as any;
+            playerPage.playerConfig = undefined;
+            mockFormAndFrameworkUtilService.invokePdfPlayerConfiguration = jest.fn(() =>
+                Promise.resolve([])
+            );
+            playerPage.initializePdfPlayerConfiguration();
+            setTimeout(() => {
+                expect(mockFormAndFrameworkUtilService.invokePdfPlayerConfiguration).toHaveBeenCalled();
+                expect(playerPage.playerConfig).toStrictEqual([]);
+                done();
+            }, 0);
+        });
+
+        it('should get pdf player config from app global service', (done) => {
+            mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({})) as any;
+            playerPage.initializePdfPlayerConfiguration();
+            setTimeout(() => {
+                done();
+            }, 0);
+        });
     });
 
     describe('ngOninit', () => {
@@ -91,6 +115,9 @@ describe('PlayerPage', () => {
             mockPlatform.pause = {
                 subscribe: subscribeFn
             } as any;
+            jest.spyOn(playerPage, 'initializePdfPlayerConfiguration').mockImplementation(() => {
+                return Promise.resolve();
+            });
             playerPage.ngOnInit();
             setTimeout(() => {
                 expect(playerPage.playerConfig).toBeTruthy();
@@ -100,4 +127,6 @@ describe('PlayerPage', () => {
             }, 0);
         });
     });
+
+
 });
