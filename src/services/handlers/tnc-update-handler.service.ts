@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import {
   AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, Consent
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -156,7 +156,8 @@ export class TncUpdateHandlerService {
     const request: Consent = {
       userId: profile.uid,
       consumerId: profile.serverProfile.rootOrg.rootOrgId,
-      objectId: profile.uid,
+      objectId: profile.serverProfile.rootOrg.rootOrgId,
+      objectType: 'Organisation'
     };
     let loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -183,7 +184,8 @@ export class TncUpdateHandlerService {
           status: ConsentStatus.ACTIVE,
           userId: profile.uid,
           consumerId: profile.serverProfile.rootOrg.rootOrgId,
-          objectId: profile.uid,
+          objectId: profile.serverProfile.rootOrg.rootOrgId,
+          objectType: 'Organisation'
         };
         await this.profileService.updateConsent(req).toPromise()
           .then(async (data) => {
