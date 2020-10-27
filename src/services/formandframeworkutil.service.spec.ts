@@ -28,8 +28,10 @@ import {
   mockLocationConfigResponse,
   mockContentConfigResponse,
   mockforceUpgradeFormAPIResponse,
-  mockCategoryTermsResponse
+  mockCategoryTermsResponse,
+  mockSelfDeclarationForm
 } from './formandframeworkutil.service.spec.data';
+import { FormConstants } from '../app/form.constants';
 
 
 describe('FormAndFrameworkUtilService', () => {
@@ -689,7 +691,7 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-      Promise.resolve( Promise.resolve(mockContentConfigResponse.form.data.fields)));
+        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
@@ -712,7 +714,7 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-      Promise.resolve(mockContentConfigResponse.form.data.fields));
+        Promise.resolve(mockContentConfigResponse.form.data.fields));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('course').then((response) => {
@@ -733,7 +735,7 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve( Promise.resolve(mockContentConfigResponse.form.data.fields)));
+        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
@@ -1104,35 +1106,66 @@ describe('FormAndFrameworkUtilService', () => {
   });
 
   it('should get form for notificationConfig and return data with fields', (done) => {
-      // arrange
-      mockFormService.getForm = jest.fn(() => of({
-          form: {
-              data: {
-                  fields: []
-              }
-          }
-      }));
-      // act
-      formAndFrameworkUtilService.getNotificationFormConfig().then(() => {
-          expect(mockFormService.getForm).toHaveBeenCalled();
-          done();
-      });
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getNotificationFormConfig().then(() => {
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
   });
 
   it('should get form with board alias and return data with fields', (done) => {
-        // arrange
-        mockFormService.getForm = jest.fn(() => of({
-            form: {
-                data: {
-                    fields: []
-                }
-            }
-        }));
-        // act
-        formAndFrameworkUtilService.getBoardAliasName().then(() => {
-            // assert
-            expect(mockFormService.getForm).toHaveBeenCalled();
-            done();
-        });
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getBoardAliasName().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
     });
+  });
+
+  describe('getFormFields()', () => {
+    it('should return the field data in the response', () => {
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+            fields: mockSelfDeclarationForm
+          }
+        }
+      }));
+
+      formAndFrameworkUtilService.getFormFields(FormConstants.SELF_DECLARATION).then((response) => {
+        expect(response).toEqual(mockSelfDeclarationForm);
+      });
+    });
+
+    it('should return the empty response', () => {
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+          }
+        }
+      }));
+
+      formAndFrameworkUtilService.getFormFields(FormConstants.SELF_DECLARATION, '12345678').then((response) => {
+        expect(response).toEqual([]);
+      });
+    });
+
+  });
+
 });
