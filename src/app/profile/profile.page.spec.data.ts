@@ -53,10 +53,7 @@ export const mockProfileData = {
     }]
 };
 
-export const mockFormData = {
-    form: {
-        data: {
-            fields: [
+export const mockFormData =  [
                 {
                     code: 'tenant',
                     templateOptions: {
@@ -81,7 +78,4 @@ export const mockFormData = {
                         ],
                     },
                 }
-            ],
-        },
-    },
-};
+            ];

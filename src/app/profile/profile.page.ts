@@ -63,6 +63,7 @@ import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { FormConstants } from '../form.constants';
 
 @Component({
   selector: 'app-profile',
@@ -998,7 +999,8 @@ export class ProfilePage implements OnInit {
 
     if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selfDeclarationInfo = this.profile.declarations[0];
-      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo_v2', 'get');
+      const tenantPersonaList = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.TENANT_PERSONAINFO, this.profile.rootOrg.rootOrgId);
       const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
         tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
@@ -1009,7 +1011,8 @@ export class ProfilePage implements OnInit {
       });
 
       if (this.selfDeclarationInfo.orgId) {
-        const formConfig = await this.getFormApiData('user', 'selfDeclaration_v2', 'submit', this.selfDeclarationInfo.orgId);
+        const formConfig = await this.formAndFrameworkUtilService.getFormFields(
+          FormConstants.SELF_DECLARATION, this.selfDeclarationInfo.orgId);
         const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
         this.selfDeclaredDetails = [];
         (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {
@@ -1019,32 +1022,6 @@ export class ProfilePage implements OnInit {
         });
       }
     }
-  }
-
-  private async fetchFormApi(req) {
-    return await this.formService.getForm(req).toPromise().then(res => {
-      return res;
-    }).catch(err => {
-      return null;
-    });
-  }
-
-  private async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
-    const formReq: FormRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      type,
-      subType,
-      action,
-      rootOrgId: rootOrgId || '*',
-      component: 'app'
-    };
-
-    let formData: any = await this.fetchFormApi(formReq);
-    if (!formData) {
-      formReq.rootOrgId = '*';
-      formData = await this.fetchFormApi(formReq);
-    }
-    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
   }
 
   shareUsername() {
