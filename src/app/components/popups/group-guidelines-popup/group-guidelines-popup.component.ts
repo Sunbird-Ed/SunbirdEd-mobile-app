@@ -3,6 +3,7 @@ import { Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { CommonUtilService, UtilityService } from '@app/services';
 import { RouterLinks } from '@app/app/app.constant';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-group-guidelines-popover',
@@ -11,6 +12,7 @@ import { RouterLinks } from '@app/app/app.constant';
 })
 export class GroupGuideLinesPopoverComponent implements OnInit, OnDestroy {
 
+  @Input("shouldUpdateUserLevelGroupTnc") shouldUpdateUserLevelGroupTnc;
   backButtonFunc: Subscription;
   appName: string;
   showGroupGuideLinesError = false;
@@ -20,12 +22,17 @@ export class GroupGuideLinesPopoverComponent implements OnInit, OnDestroy {
     public popoverCtrl: PopoverController,
     private platform: Platform,
     private utilityService: UtilityService,
-    private commonUtilService: CommonUtilService) { }
+    private commonUtilService: CommonUtilService,
+    private location: Location
+    ) { }
 
   async ngOnInit() {
     this.appName = await this.commonUtilService.getAppName();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+      if(this.shouldUpdateUserLevelGroupTnc) {
+        this.location.back();
+      }
       this.backButtonFunc.unsubscribe();
     });
   }
