@@ -1,6 +1,7 @@
 import { Events, PopoverController, Platform } from '@ionic/angular';
 import { GroupGuideLinesPopoverComponent } from './group-guidelines-popup.component';
 import { CommonUtilService, UtilityService } from '@app/services';
+import { Location } from '@angular/common';
 
 describe('SbGenericPopoverComponent', () => {
     let groupGuideLinesPopoverComponent: GroupGuideLinesPopoverComponent;
@@ -14,13 +15,17 @@ describe('SbGenericPopoverComponent', () => {
 
     const mockPlatform: Partial<Platform> = {};
     const mockUtilityService: Partial<UtilityService> = {};
+    const mockLocation: Partial<Location> = {
+        back: jest.fn()
+    };
 
     beforeAll(() => {
         groupGuideLinesPopoverComponent = new GroupGuideLinesPopoverComponent(
             mockPopOverController as PopoverController,
             mockPlatform as Platform,
             mockUtilityService as UtilityService,
-            mockCommonUtilService as CommonUtilService
+            mockCommonUtilService as CommonUtilService,
+            mockLocation as Location
         );
     });
 
@@ -44,11 +49,35 @@ describe('SbGenericPopoverComponent', () => {
             unsubscribe: unsubscribeFn,
         } as any;
         mockCommonUtilService.getAppName = jest.fn(() => 'sunbird');
+        groupGuideLinesPopoverComponent.shouldUpdateUserLevelGroupTnc = false
         // act
         groupGuideLinesPopoverComponent.ngOnInit();
         // assert
         setTimeout(() => {
             expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
+            expect(unsubscribeFn).toHaveBeenCalled();
+            done();
+        });
+    });
+
+    it('should subscribe to back button and events subscription', (done) => {
+        // arrange
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+        } as any;
+
+        const unsubscribeFn = jest.fn();
+        groupGuideLinesPopoverComponent.backButtonFunc = {
+            unsubscribe: unsubscribeFn,
+        } as any;
+        mockCommonUtilService.getAppName = jest.fn(() => 'sunbird');
+        groupGuideLinesPopoverComponent.shouldUpdateUserLevelGroupTnc = true
+        // act
+        groupGuideLinesPopoverComponent.ngOnInit();
+        // assert
+        setTimeout(() => {
+            expect(mockLocation.back).toHaveBeenCalled()
             expect(unsubscribeFn).toHaveBeenCalled();
             done();
         });
