@@ -480,6 +480,46 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
+  describe('invokePdfPlayerConfiguration()', () => {
+    it('should invoke form api to get pdf player configuration' , (done) => {
+      mockFormService.getForm = jest.fn(() => of(mockPdfPlayerConfigurationResponse));
+      const resolve = jest.fn(() => Promise.resolve());
+      const reject = jest.fn(() => Promise.reject());
+      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration');
+      formAndFrameworkUtilService.invokePdfPlayerConfiguration(undefined, resolve , reject).then((res) => {
+        done();
+      });
+    });
+  });
+
+  describe('getPdfPlayerConfiguration()', () => {
+    it('should not invoke pdf player configuration , if config is available locally', (done) => {
+      mockFormService.getForm = jest.fn(() => of({}));
+      mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => true);
+      formAndFrameworkUtilService.getPdfPlayerConfiguration().then((response) => {
+        expect(response).toEqual(true);
+        done();
+      });
+    });
+
+    it('should invoke pdf player configuration, if config is not available locally' , (done) => {
+      mockFormService.getForm = jest.fn(() => of({}));
+      jest.spyOn(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration').mockImplementation(() => {
+        return Promise.resolve();
+      });
+      mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => undefined);
+      formAndFrameworkUtilService.getPdfPlayerConfiguration();
+      setTimeout(() => {
+        expect(formAndFrameworkUtilService.invokePdfPlayerConfiguration).toHaveBeenCalled();
+        done();
+      }, 0);
+      // then((response) => {
+        // expect(formAndFrameworkUtilService.invokePdfPlayerConfiguration).toHaveBeenCalled();
+        // done();
+      // });
+    });
+  });
+
   describe('getCourseFilterConfig()', () => {
 
     it('should invoke invokeCourseFilterConfigFormApi if cached response is not available', (done) => {
@@ -582,16 +622,6 @@ describe('FormAndFrameworkUtilService', () => {
           code: 'skip',
           values: []
         }]);
-        done();
-      });
-    });
-  });
-
-  describe('invokePdfPlayerConfiguration()', () => {
-    it('should invoke form api to get pdf player configuration' , (done) => {
-      mockFormService.getForm = jest.fn(() => of(mockPdfPlayerConfigurationResponse));
-      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration');
-      formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
         done();
       });
     });
