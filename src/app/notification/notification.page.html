@@ -1,11 +1,12 @@
 <ion-content overflow-scroll="true">
+  <ng-container *ngIf="(notificationList$ | async) as notificationList">
   <!-- Shows Notification Count with Clear Button -->
   <ng-container *ngIf="(unreadNotificationList$ | async) as unreadNotificationList">
     <div class="sb-view-all-container">
       <div class="sb-view-all-items">
         <div class="sb-view-all-title">
           <span class="page-heading">{{ 'NOTIFICATION' | translate }}</span>
-          <span class="clear-btn" (click)="clearAllNotifications()">{{'CLEAR' | translate}}</span>
+          <span class="clear-btn" *ngIf="notificationList.length" (click)="clearAllNotifications()">{{'CLEAR' | translate}}</span>
           <span class="page-info">{{'NEW_NOTIFICATIONS' | translate:{'%s': unreadNotificationList?.length} }}&lrm;</span>
         </div>
       </div>
@@ -13,7 +14,6 @@
   </ng-container>
 
   <!-- Shows various types of notifications with sliding delete buttons-->
-    <ng-container *ngIf="(notificationList$ | async) as notificationList">
       <ion-list lines="none" *ngIf="notificationList.length">
         <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList" #slidingItem>
           <ion-item>
