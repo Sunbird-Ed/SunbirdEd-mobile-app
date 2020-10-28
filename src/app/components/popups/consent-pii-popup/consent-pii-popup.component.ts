@@ -72,6 +72,12 @@ export class ConsentPiiPopupComponent {
                 if (this.profile.serverProfile.declarations.length && this.profile.serverProfile.declarations[0].info) {
                    return this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] ?
                    this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] : '-';
+                } else if (ele.code === 'emailId' || ele.code === 'phoneNumber') {
+                  if (ele.code === 'emailId') {
+                      return this.profile.serverProfile['maskedEmail'] ? this.profile.serverProfile['maskedEmail'] : '-';
+                  } else {
+                    return this.profile.serverProfile['maskedPhone'] ? this.profile.serverProfile['maskedPhone'] : '-';
+                  }
                 }
                 return '-';
             default:
