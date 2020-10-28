@@ -34,8 +34,8 @@
                             <span (click)="openTermsOfUse()" class="terms-info">{{'INSTANCE_TERMS_OF_USE' | translate: {'app_name': appName} }}</span>
                         </p>
                         <p class="cr-terms-checkbox-label" *ngIf="isSSOUser">
-                            <span>{{'SELF_DECLARE_TEACHER_TNC' | translate: {'app_name': appName} }}</span>
-                            <span (click)="openTermsOfUse()" class="terms-info">{{'PRIVACY_POLICY' | translate: {'app_name': appName} }}</span>
+                            <span>{{'SELF_DECLARE_TEACHER_TNC' | translate: {'%appName': appName} }}</span>
+                            <span (click)="openTermsOfUse()" class="terms-info">{{'PRIVACY_POLICY' | translate }}</span>
                         </p>
                     </span>
                 </div>
