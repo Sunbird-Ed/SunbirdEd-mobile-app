@@ -159,15 +159,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-   async initializePdfPlayerConfiguration() {
-    return new Promise( async (resolve, reject) => {
+   initializePdfPlayerConfiguration() {
+    return new Promise((resolve) => {
       if (this.appGlobalService.getPdfPlayerConfiguration() !== undefined) {
       this.playerConfig = this.appGlobalService.getPdfPlayerConfiguration();
       resolve();
       }
       if (this.playerConfig === undefined) {
-        this.playerConfig = await this.formAndFrameworkUtilService.invokePdfPlayerConfiguration(this.playerConfig, resolve, reject );
-        resolve();
+        this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
+          this.playerConfig = res;
+          resolve();
+        });
       }
     });
   }
