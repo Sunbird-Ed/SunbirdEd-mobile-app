@@ -289,4 +289,54 @@ describe('ConsentPiiPopupComponent', () => {
         consentPiiPopupComponent.changeEvent(event);
         expect(consentPiiPopupComponent.isAgreed).toBeFalsy();
     });
+
+    describe('converDataSrcToObject', () => {
+        it('should return maskedEmail for empty email', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE_DECLARED',
+                        params: {
+                            categoryCode: 'declared-email'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [],
+                    maskedEmail: 'sample@sample.com'
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample@sample.com');
+        });
+
+        it('should return maskedphone for empty phone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE_DECLARED',
+                        params: {
+                            categoryCode: 'declared-phone'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [],
+                    maskedPhone: '9999999999'
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('9999999999');
+        });
+    });
 });
