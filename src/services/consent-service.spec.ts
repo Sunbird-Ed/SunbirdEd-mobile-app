@@ -108,7 +108,7 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('checkedUserConsent', () => {
+  describe('getConsent', () => {
     it('should return status for getConsent', (done) => {
       const request: Consent = {
         userId: 'sample-user-id',
@@ -126,7 +126,7 @@ describe('ConsentService', () => {
       };
       mockProfileService.getConsent = jest.fn(() => of({}));
       // act
-      consentService.checkedUserConsent(userDetails, true);
+      consentService.getConsent(userDetails, true);
       // assert
       setTimeout(() => {
         expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
@@ -163,7 +163,7 @@ describe('ConsentService', () => {
         return Promise.resolve();
       });
       // act
-      consentService.checkedUserConsent(userDetails, true);
+      consentService.getConsent(userDetails, true);
       // assert
       setTimeout(() => {
         expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
@@ -201,7 +201,7 @@ describe('ConsentService', () => {
         return Promise.resolve();
       });
       // act
-      consentService.checkedUserConsent(userDetails, true);
+      consentService.getConsent(userDetails, true);
       // assert
       setTimeout(() => {
         expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);

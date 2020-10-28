@@ -13,11 +13,11 @@ export class ConsentService {
         private commonUtilService: CommonUtilService
     ) { }
 
-    async showConsentPopup(userDetails, isGlobal?) {
+    async showConsentPopup(userDetails, isOrgConsent?) {
         const popover = await this.popoverCtrl.create({
             component: ConsentPiiPopupComponent,
             componentProps: {
-                isSSOUser: isGlobal ? true : false
+                isSSOUser: isOrgConsent
             },
             cssClass: 'sb-popover',
             backdropDismiss: false
@@ -25,18 +25,18 @@ export class ConsentService {
         await popover.present();
         const dismissResponse = await popover.onDidDismiss();
         const request: Consent = {
-            status: isGlobal ? ConsentStatus.ACTIVE : (dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED),
-            userId: isGlobal ? userDetails.uid : (userDetails.userId ? userDetails.userId : dismissResponse.data.userId),
-            consumerId: isGlobal ? userDetails.serverProfile.rootOrg.rootOrgId : (
+            status: isOrgConsent ? ConsentStatus.ACTIVE : (dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED),
+            userId: isOrgConsent ? userDetails.uid : (userDetails.userId ? userDetails.userId : dismissResponse.data.userId),
+            consumerId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : (
                 userDetails.channel ? userDetails.channel : userDetails.content.channel),
-            objectId: isGlobal ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.courseId,
-            objectType: isGlobal ? 'Organisation' : 'Collection'
+            objectId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.courseId,
+            objectType: isOrgConsent ? 'Organisation' : 'Collection'
         };
         const loader = await this.commonUtilService.getLoader();
         await loader.present();
         await this.profileService.updateConsent(request).toPromise()
             .then(async (data) => {
-                if (!isGlobal) {
+                if (!isOrgConsent) {
                     this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
                 }
                 await loader.dismiss();
@@ -49,20 +49,20 @@ export class ConsentService {
             });
     }
 
-    async checkedUserConsent(userDetails, isGlobal?) {
+    async getConsent(userDetails, isOrgConsent?) {
         const request: Consent = {
-            userId: isGlobal ? userDetails.uid : userDetails.userId,
-            consumerId: isGlobal ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.channel,
-            objectId: isGlobal ? userDetails.serverProfile.rootOrg.rootOrgId :
+            userId: isOrgConsent ? userDetails.uid : userDetails.userId,
+            consumerId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId : userDetails.channel,
+            objectId: isOrgConsent ? userDetails.serverProfile.rootOrg.rootOrgId :
              (userDetails.courseId ? userDetails.courseId : userDetails.batch.courseId),
-             objectType: isGlobal ? 'Organisation' : undefined
+             objectType: isOrgConsent ? 'Organisation' : undefined
         };
         await this.profileService.getConsent(request).toPromise()
             .then((data) => {
             })
             .catch(async (e) => {
                 if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND' && e.response.responseCode === 404) {
-                    await this.showConsentPopup(userDetails, isGlobal);
+                    await this.showConsentPopup(userDetails, isOrgConsent);
                 } else if (e.code === 'NETWORK_ERROR') {
                     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
                 }

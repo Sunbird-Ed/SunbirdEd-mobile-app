@@ -149,7 +149,7 @@ export class TermsAndConditionsPage implements OnInit {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
                 if (await tncUpdateHandlerService.isSSOUser(profile)) {
-                  await this.consentService.checkedUserConsent(profile, true);
+                  await this.consentService.getConsent(profile, true);
                 }
                 this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();

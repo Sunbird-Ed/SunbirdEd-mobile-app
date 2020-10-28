@@ -264,7 +264,7 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
+      mockConsentService.getConsent = jest.fn(() => Promise.resolve());
       mockProfileService.getConsent = jest.fn(() => of({ status: ConsentStatus.ACTIVE }));
       // act
       tncUpdateHandlerService.checkForTncUpdate();
@@ -275,7 +275,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
         expect(presentFn).toHaveBeenCalled();
         expect(dismissFn).toHaveBeenCalled();
-        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
+        expect(mockConsentService.getConsent).toHaveBeenCalled();
       }, 0);
     });
 
@@ -342,7 +342,7 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
+      mockConsentService.getConsent = jest.fn(() => Promise.resolve());
 
       mockProfileService.getConsent = jest.fn(() => throwError({
         response: {
@@ -359,7 +359,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
         expect(presentFn).toHaveBeenCalled();
         expect(dismissFn).toHaveBeenCalled();
-        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
+        expect(mockConsentService.getConsent).toHaveBeenCalled();
       }, 0);
     });
 
@@ -426,7 +426,7 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
+      mockConsentService.getConsent = jest.fn(() => Promise.resolve());
 
       mockProfileService.getConsent = jest.fn(() => throwError({
         response: {
@@ -442,7 +442,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
-        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
+        expect(mockConsentService.getConsent).toHaveBeenCalled();
       }, 0);
     });
 

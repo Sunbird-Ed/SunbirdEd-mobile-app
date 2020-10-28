@@ -102,7 +102,7 @@ export class LocalCourseService {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
             if (enrollCourse.userConsent === UserConsent.YES) {
               await this.sbProgressLoader.hide({id: 'login'});
-              await this.consentService.checkedUserConsent(enrollCourse);
+              await this.consentService.getConsent(enrollCourse);
             }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
