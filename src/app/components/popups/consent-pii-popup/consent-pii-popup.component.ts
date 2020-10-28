@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService, FormAndFrameworkUtilService, AppGlobalService, UtilityService } from '@app/services';
 import { RouterLinks } from '@app/app/app.constant';
 
@@ -15,13 +15,17 @@ export class ConsentPiiPopupComponent {
     consentForm = [];
     isAgreed = false;
     appName: string;
+    isSSOUser = false;
     constructor(
         private popOverCtrl: PopoverController,
         private commonUtilService: CommonUtilService,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private appGlobalService: AppGlobalService,
         private utilityService: UtilityService,
-    ) { }
+        private navParams: NavParams,
+    ) {
+        this.isSSOUser = this.navParams.get('isSSOUser');
+    }
     async ionViewWillEnter() {
         this.profile = this.appGlobalService.getCurrentUser();
         const profileKeys = await this.formAndFrameworkUtilService.getConsentFormConfig();
