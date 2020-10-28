@@ -200,6 +200,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {
             this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'user-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
           } else if (error.reason === 'download-failed') {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
