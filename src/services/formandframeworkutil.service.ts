@@ -326,6 +326,35 @@ export class FormAndFrameworkUtilService {
             });
     }
 
+
+
+
+    // get pdf player enable or disable configuration
+     async  invokePdfPlayerConfiguration() {
+         return new Promise((resolve, reject) => {
+             const req: FormRequest = {
+                 type: 'config',
+                 subType: 'pdfPlayer',
+                 action: 'get',
+             };
+             let currentConfiguration;
+             this.formService.getForm(req).toPromise()
+                 .then((res: any) => {
+                     console.log('in form and framework', res);
+                     res.form.data.fields.forEach((ele, index) => {
+                         if (ele.code === 'pdf') {
+                             currentConfiguration = ele.values[index].isEnabled;
+                         }
+                     });
+                     this.appGlobalService.setpdfPlayerconfiguration(currentConfiguration);
+                     resolve(currentConfiguration);
+                 }).catch((error: any) => {
+                     console.log('Error - ' + error);
+                     resolve(currentConfiguration);
+                 });
+         });
+     }
+
     private setContentFilterConfig(contentFilterConfig: Array<any>) {
         this.contentFilterConfig = contentFilterConfig;
     }

@@ -62,6 +62,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   pageId: string;
   telemetryObject: TelemetryObject;
   appName = '';
+  shareFromPlayer = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -82,6 +83,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.pageId = this.navParams.get('pageId');
     this.moduleId = this.navParams.get('moduleId');
     this.subContentIds = this.navParams.get('subContentIds');
+    this.shareFromPlayer = this.navParams.get('shareFromPlayer');
   }
 
   async ngOnInit() {

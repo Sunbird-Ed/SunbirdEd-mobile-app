@@ -3,18 +3,21 @@ import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
-import { Platform, AlertController, Events } from '@ionic/angular';
+import { Platform, AlertController, Events, PopoverController } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics, RouterLinks } from '../app.constant';
+import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { CourseService, Course } from 'sunbird-sdk';
+import { CourseService, Course, Content, Rollup } from 'sunbird-sdk';
+import { FormAndFrameworkUtilService, PageId } from '@app/services';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 
 @Component({
   selector: 'app-player',
-  templateUrl: './player.page.html'
+  templateUrl: './player.page.html',
 })
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
@@ -25,6 +28,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private navigateBackToContentDetails: boolean;
   corRelationList;
   private isCourse = false;
+  private loadPdfPlayer = false;
+  playerConfig: any;
+  private isChildContent: boolean;
+  private content: Content;
+  public objRollup: Rollup;
+
 
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
@@ -39,7 +48,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private popoverCtrl: PopoverController,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private downloadPdfService: DownloadPdfService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -48,57 +60,75 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     (window as any).onUserSwitch = this.onUserSwitch.bind(this);
 
     if (this.router.getCurrentNavigation().extras.state) {
+      this.content = this.router.getCurrentNavigation().extras.state.contentToPlay;
       this.config = this.router.getCurrentNavigation().extras.state.config;
       this.course = this.router.getCurrentNavigation().extras.state.course;
       this.navigateBackToContentDetails = this.router.getCurrentNavigation().extras.state.navigateBackToContentDetails;
       this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
       this.isCourse = this.router.getCurrentNavigation().extras.state.isCourse;
+      this.isChildContent = this.router.getCurrentNavigation().extras.state.childContent;
     }
   }
 
-  ngOnInit() {
-    this.pauseSubscription =  this.platform.pause.subscribe(() => {
+  async ngOnInit() {
+    await this.initializePdfPlayerConfiguration();
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
+      this.loadPdfPlayer = true;
+      this.config['metadata'] = this.config['metadata'].contentData;
+      this.config['data'] = {};
+      this.config['config'] = {
+        sideMenu: {
+          showShare: true,
+          showDownload: true,
+          showReplay: false,
+          showExit: true,
+        }
+      };
+    }
+    this.pauseSubscription = this.platform.pause.subscribe(() => {
       var iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
         iframes[0].contentWindow.postMessage('pause.youtube', '*');
       }
     });
   }
-  ionViewWillEnter() {
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
-    this.statusBar.hide();
+  async ionViewWillEnter() {
+    if (!this.loadPdfPlayer) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      this.statusBar.hide();
 
-    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
-      const activeAlert = await this.alertCtrl.getTop();
-      if (!activeAlert) {
-        this.showConfirm();
+      this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
+        const activeAlert = await this.alertCtrl.getTop();
+        if (!activeAlert) {
+          this.showConfirm();
+        }
+      });
+      this.config['uid'] = this.config['context'].actor.id;
+      this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+
+      if (this.config['metadata'].isAvailableLocally) {
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
-    });
-    this.config['uid'] = this.config['context'].actor.id;
-    this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
-    if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
-    }
-
-    // This is to reload a iframe as iframes reload method not working on cross-origin.
-    const src = this.previewElement.nativeElement.src;
-    this.previewElement.nativeElement.src = '';
-    this.previewElement.nativeElement.src = src;
-    this.previewElement.nativeElement.onload = () => {
-      console.log('config', this.config);
-      setTimeout(() => {
-        this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
-        this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
-        this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-        this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+      // This is to reload a iframe as iframes reload method not working on cross-origin.
+      const src = this.previewElement.nativeElement.src;
+      this.previewElement.nativeElement.src = '';
+      this.previewElement.nativeElement.src = src;
+      this.previewElement.nativeElement.onload = () => {
+        console.log('config', this.config);
+        setTimeout(() => {
+          this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
+          this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
+          this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
+          this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
             console.log('Player Response', resp);
             if (resp.data === 'renderer:question:submitscore') {
-                this.courseService.syncAssessmentEvents().subscribe();
+              this.courseService.syncAssessmentEvents().subscribe();
             }
-        });
-      }, 1000);
-    };
+          });
+        }, 1000);
+      };
+    }
 
     this.events.subscribe('endGenieCanvas', (res) => {
       if (res.showConfirmBox) {
@@ -121,7 +151,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.backButtonSubscription) {
       this.backButtonSubscription.unsubscribe();
     }
-    window.removeEventListener('renderer:question:submitscore', () => {});
+    window.removeEventListener('renderer:question:submitscore', () => { });
   }
 
   ngOnDestroy() {
@@ -129,6 +159,57 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.pauseSubscription.unsubscribe();
     }
 
+  }
+
+   initializePdfPlayerConfiguration() {
+    return new Promise((resolve) => {
+      if (this.appGlobalService.getPdfPlayerConfiguration() !== undefined) {
+      this.playerConfig = this.appGlobalService.getPdfPlayerConfiguration();
+      resolve();
+      }
+      if (this.playerConfig === undefined) {
+        this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
+          this.playerConfig = res;
+          resolve();
+        });
+      }
+    });
+  }
+
+  async pdfPlayerEvents(event) {
+    if (event.edata['type'] === 'EXIT') {
+      this.loadPdfPlayer = false;
+      this.location.back();
+    } else if (event.edata['type'] === 'SHARE') {
+      const popover = await this.popoverCtrl.create({
+        component: SbSharePopupComponent,
+        componentProps: {
+          content: this.content,
+          corRelationList: this.corRelationList,
+          pageId: PageId.PLAYER_PAGE,
+          shareFromPlayer: true,
+          shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+        },
+        cssClass: 'sb-popover',
+      });
+      await popover.present();
+    } else if (event.edata['type']['type'] === 'DOWNLOAD') {
+      if (this.content.contentData.downloadUrl) {
+        this.downloadPdfService.downloadPdf(this.content).then((res) => {
+          this.commonUtilService.showToast('PDF_DOWNLOADED');
+        }).catch((error) => {
+          if (error.reason === 'device-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'user-permission-denied') {
+            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+          } else if (error.reason === 'download-failed') {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          }
+        });
+      } else {
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+      }
+    }
   }
 
   /**
@@ -148,11 +229,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         });
      */
     setTimeout(() => {
-        this.closeIframe(content);
+      this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
-        content,
-        course: this.course
+      content,
+      course: this.course
     });
   }
 

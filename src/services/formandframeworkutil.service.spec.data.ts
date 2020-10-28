@@ -289,6 +289,30 @@ export const mockLocationConfigResponse =
  }
 } as any;
 
+
+export const mockPdfPlayerConfigurationResponse =
+{
+  form : {
+    type :  'config' ,
+    subtype :  'pdfPlayer' ,
+    action :  'get' ,
+    data : {
+      action :  'get' ,
+      fields : [
+        {
+          name: 'pdfPlayer',
+          code: 'pdf',
+          values: [
+            {
+              isEnabled: true
+             }
+          ]
+        }
+     ]
+   }
+ }
+} as any;
+
 export const mockContentConfigResponse =
 {
   form : {

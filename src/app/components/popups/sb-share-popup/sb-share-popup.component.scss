@@ -52,3 +52,39 @@
     }
 }
 
+.share-player-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 1em;
+    background: map-get($colors, white);
+    padding: 16px;
+
+    p {
+        padding-top: 16px;
+    }
+
+    ion-item {
+        --background: map-get($colors, white) !important;
+    }
+
+}
+
+@media only screen and (max-width: 480px) {
+    .share-player-container {
+        display: inherit;
+        background: map-get($colors, white);
+        padding: 16px;
+
+        p {
+            padding-top: 16px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        ion-item {
+            --background: map-get($colors, white);
+        }
+
+    }
+}

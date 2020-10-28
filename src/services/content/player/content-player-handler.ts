@@ -36,7 +36,7 @@ export class ContentPlayerHandler {
      */
     public launchContentPlayer(
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
-        navigateBackToContentDetails?: boolean) {
+        navigateBackToContentDetails?: boolean , isChildContent?: boolean) {
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -112,8 +112,8 @@ export class ContentPlayerHandler {
 
             } else {
                 this.router.navigate([RouterLinks.PLAYER],
-                    { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
-                            corRelation: contentInfo.correlationList, isCourse } });
+                    { state: { contentToPlay : content , config: data,  course : contentInfo.course, navigateBackToContentDetails,
+                            corRelation: contentInfo.correlationList, isCourse , childContent: isChildContent } });
             }
         });
     }
