@@ -12,6 +12,7 @@ import { AppGlobalService } from '../app-global-service.service';
 import { of, throwError } from 'rxjs';
 import { ProfileConstants } from '../../app/app.constant';
 import { ConsentStatus } from '@project-sunbird/client-services/models';
+import { ConsentService } from '../consent-service';
 
 describe('TncUpdateHandlerService', () => {
   let tncUpdateHandlerService: TncUpdateHandlerService;
@@ -35,7 +36,7 @@ describe('TncUpdateHandlerService', () => {
     closeSigninOnboardingLoader: jest.fn()
   };
 
-  const mockPopoverController: Partial<PopoverController> = {};
+  const mockConsentService: Partial<ConsentService> = {};
 
   beforeAll(() => {
     tncUpdateHandlerService = new TncUpdateHandlerService(
@@ -47,7 +48,7 @@ describe('TncUpdateHandlerService', () => {
       mockRouter as Router,
       mockExternalIdVerificationService as ExternalIdVerificationService,
       mockAppGlobalService as AppGlobalService,
-      mockPopoverController as PopoverController
+      mockConsentService as ConsentService
     );
   });
 
@@ -263,10 +264,7 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockPopoverController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-      } as any)));
+      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
       mockProfileService.getConsent = jest.fn(() => of({ status: ConsentStatus.ACTIVE }));
       // act
       tncUpdateHandlerService.checkForTncUpdate();
@@ -277,8 +275,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
         expect(presentFn).toHaveBeenCalled();
         expect(dismissFn).toHaveBeenCalled();
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        expect(mockProfileService.getConsent).toHaveBeenCalled();
+        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
       }, 0);
     });
 
@@ -345,10 +342,8 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockPopoverController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-      } as any)));
+      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
+
       mockProfileService.getConsent = jest.fn(() => throwError({
         response: {
           responseCode: 404
@@ -364,9 +359,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
         expect(presentFn).toHaveBeenCalled();
         expect(dismissFn).toHaveBeenCalled();
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        expect(mockProfileService.getConsent).toHaveBeenCalled();
-        expect(mockProfileService.updateConsent).toHaveBeenCalled();
+        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
       }, 0);
     });
 
@@ -433,10 +426,8 @@ describe('TncUpdateHandlerService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockPopoverController.create = jest.fn(() => (Promise.resolve({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
-      } as any)));
+      mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
+
       mockProfileService.getConsent = jest.fn(() => throwError({
         response: {
           responseCode: 404
@@ -451,12 +442,7 @@ describe('TncUpdateHandlerService', () => {
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
-        expect(presentFn).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        expect(mockProfileService.getConsent).toHaveBeenCalled();
-        expect(mockProfileService.updateConsent).toHaveBeenCalled();
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+        expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
       }, 0);
     });
 

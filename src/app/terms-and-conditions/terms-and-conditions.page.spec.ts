@@ -26,6 +26,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { RouterLinks } from '../app.constant';
+import { ConsentService } from '../../services/consent-service';
 describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
 
@@ -101,6 +102,7 @@ describe('TermsAndConditionsPage', () => {
         hide: jest.fn()
     };
 
+    const mockConsentService: Partial<ConsentService> = {};
 
     beforeAll(() => {
         termsAndConditionsPage = new TermsAndConditionsPage(
@@ -117,7 +119,8 @@ describe('TermsAndConditionsPage', () => {
             mockSplashScreenService as SplashScreenService,
             mockExternalIdVerificationService as ExternalIdVerificationService,
             mockAppGlobalService as AppGlobalService,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockConsentService as ConsentService
         );
     });
 
@@ -275,7 +278,7 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
-            mockTncUpdateHandlerService.showGlobalConsentPii = jest.fn(() => Promise.resolve());
+            mockConsentService.checkedUserConsent = jest.fn(() => Promise.resolve());
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
@@ -283,7 +286,7 @@ describe('TermsAndConditionsPage', () => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
                 setTimeout(() => {
-                    expect(mockTncUpdateHandlerService.showGlobalConsentPii).toHaveBeenCalled();
+                    expect(mockConsentService.checkedUserConsent).toHaveBeenCalled();
                     expect(mockRouter.navigate).toHaveBeenCalledWith(['/', RouterLinks.TABS]);
                     expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                     done();

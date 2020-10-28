@@ -15,6 +15,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { ConsentService } from '@app/services/consent-service';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -43,7 +44,8 @@ export class TermsAndConditionsPage implements OnInit {
     private splashScreenService: SplashScreenService,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private consentService: ConsentService
   ) {
   }
 
@@ -147,7 +149,7 @@ export class TermsAndConditionsPage implements OnInit {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
                 if (await tncUpdateHandlerService.isSSOUser(profile)) {
-                  await tncUpdateHandlerService.showGlobalConsentPii(profile);
+                  await this.consentService.checkedUserConsent(profile, true);
                 }
                 this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
