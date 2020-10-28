@@ -85,6 +85,7 @@ import {CsPrimaryCategory} from '@project-sunbird/client-services/services/conte
 import {ConsentStatus, UserConsent} from '@project-sunbird/client-services/models';
 import {ConsentPopoverActionsDelegate} from '@app/services/local-course.service';
 import {CategoryKeyTranslator} from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { ConsentService } from '@app/services/consent-service';
 
 declare const cordova;
 
@@ -270,7 +271,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private localCourseService: LocalCourseService,
     private sbProgressLoader: SbProgressLoader,
     private contentPlayerHandler: ContentPlayerHandler,
-    private categoryKeyTranslator: CategoryKeyTranslator
+    private categoryKeyTranslator: CategoryKeyTranslator,
+    private consentService: ConsentService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -2068,7 +2070,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           });
       } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
         await loader.dismiss();
-        await this.localCourseService.showConsentPopup(this.courseCardData);
+        await this.consentService.showConsentPopup(this.courseCardData);
         this.showShareData = false;
         this.checkDataSharingStatus();
       }
@@ -2092,7 +2094,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
      && this.course.userConsent === UserConsent.YES) {
          if (!this.isConsentPopUp) {
            this.isConsentPopUp = true;
-           await this.localCourseService.showConsentPopup(this.courseCardData);
+           await this.consentService.showConsentPopup(this.courseCardData);
            await this.checkDataSharingStatus();
          }
       } else if (e.code === 'NETWORK_ERROR') {

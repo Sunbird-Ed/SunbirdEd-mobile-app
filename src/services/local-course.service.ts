@@ -20,9 +20,9 @@ import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-import { ConsentPiiPopupComponent } from '@app/app/components/popups/consent-pii-popup/consent-pii-popup.component';
-import { UserConsent, Consent, ConsentStatus } from '@project-sunbird/client-services/models';
+import { UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { ConsentService } from './consent-service';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;
@@ -37,7 +37,6 @@ export class LocalCourseService {
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
@@ -49,7 +48,7 @@ export class LocalCourseService {
     private sbProgressLoader: SbProgressLoader,
     private datePipe: DatePipe,
     private categoryKeyTranslator: CategoryKeyTranslator,
-    private popoverCtrl: PopoverController,
+    private consentService: ConsentService
   ) {
   }
 
@@ -72,7 +71,8 @@ export class LocalCourseService {
           if (consentPopoverActionsDelegate) {
             consentPopoverActionsDelegate.onConsentPopoverShow();
           }
-          await this.showConsentPopup(enrollCourse);
+          await this.sbProgressLoader.hide({id: 'login'});
+          await this.consentService.showConsentPopup(enrollCourse);
 
           if (consentPopoverActionsDelegate) {
             consentPopoverActionsDelegate.onConsentPopoverDismiss();
@@ -101,7 +101,8 @@ export class LocalCourseService {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
             if (enrollCourse.userConsent === UserConsent.YES) {
-              await this.checkedUserConsent(enrollCourse);
+              await this.sbProgressLoader.hide({id: 'login'});
+              await this.consentService.getConsent(enrollCourse);
             }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
@@ -319,55 +320,5 @@ export class LocalCourseService {
       return false;
     }
     return true;
-  }
-
-  async showConsentPopup(course) {
-    await this.sbProgressLoader.hide({id: 'login'});
-    const popover = await this.popoverCtrl.create({
-      component: ConsentPiiPopupComponent,
-      componentProps: {
-      },
-      cssClass: 'sb-popover',
-      backdropDismiss: false
-    });
-    await popover.present();
-    const dismissResponse = await popover.onDidDismiss();
-    const request: Consent = {
-      status: dismissResponse.data.data ? ConsentStatus.ACTIVE : ConsentStatus.REVOKED,
-      userId: course.userId ? course.userId : dismissResponse.data.userId,
-      consumerId: course.channel ? course.channel : course.content.channel,
-      objectId: course.courseId,
-      objectType: 'Collection'
-    };
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    await this.profileService.updateConsent(request).toPromise()
-      .then(async (data) => {
-        this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
-        await loader.dismiss();
-      })
-      .catch((e) => {
-        loader.dismiss();
-        if (e.code === 'NETWORK_ERROR') {
-          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        }
-      });
-  }
-  private async checkedUserConsent(course) {
-    const request: Consent = {
-      userId: this.userId,
-      consumerId: course.channel,
-      objectId: course.courseId ? course.courseId : course.batch.courseId
-    };
-    await this.profileService.getConsent(request).toPromise()
-      .then((data) => {
-      })
-      .catch(async (e) => {
-        if (e.response.body.params.err === 'USER_CONSENT_NOT_FOUND') {
-          await this.showConsentPopup(course);
-        } else if (e.code === 'NETWORK_ERROR') {
-          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        }
-      });
   }
 }
