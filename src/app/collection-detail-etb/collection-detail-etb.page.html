@@ -53,6 +53,7 @@
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
+        [expandMode]="'single'"
         [type]="TocCardType.TRACKABLE"
         [tocData]="collectionTocData"
         [playBtnConfig]="playBtnConfig"
