@@ -28,7 +28,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private navigateBackToContentDetails: boolean;
   corRelationList;
   private isCourse = false;
-  private loadPdfPlayer = false;
+  loadPdfPlayer = false;
   playerConfig: any;
   private isChildContent: boolean;
   private content: Content;
@@ -115,13 +115,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.previewElement.nativeElement.src = '';
       this.previewElement.nativeElement.src = src;
       this.previewElement.nativeElement.onload = () => {
-        console.log('config', this.config);
         setTimeout(() => {
           this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
           this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
           this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
           this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
-            console.log('Player Response', resp);
             if (resp.data === 'renderer:question:submitscore') {
               this.courseService.syncAssessmentEvents().subscribe();
             }
@@ -161,17 +159,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-   initializePdfPlayerConfiguration() {
-    return new Promise((resolve) => {
+   async initializePdfPlayerConfiguration() {
+    return new Promise( async (resolve, reject) => {
       if (this.appGlobalService.getPdfPlayerConfiguration() !== undefined) {
       this.playerConfig = this.appGlobalService.getPdfPlayerConfiguration();
       resolve();
       }
       if (this.playerConfig === undefined) {
-        this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
-          this.playerConfig = res;
-          resolve();
-        });
+        this.playerConfig = await this.formAndFrameworkUtilService.invokePdfPlayerConfiguration(this.playerConfig, resolve, reject );
+        resolve();
       }
     });
   }
