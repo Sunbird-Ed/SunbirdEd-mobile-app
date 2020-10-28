@@ -160,11 +160,11 @@ export class AppGlobalService implements OnDestroy {
     }
 
 
-    async setpdfPlayerconfiguration(config) {
+     setpdfPlayerconfiguration(config) {
         this.pdfPlayerConfiguratiion = config;
     }
 
-    async getPdfPlayerConfiguration() {
+     getPdfPlayerConfiguration() {
         return this.pdfPlayerConfiguratiion;
     }
 
