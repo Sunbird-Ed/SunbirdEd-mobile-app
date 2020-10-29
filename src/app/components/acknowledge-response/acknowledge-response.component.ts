@@ -1,4 +1,5 @@
-import { Component, Output, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, Output, OnDestroy, EventEmitter, OnInit } from '@angular/core';
+import { CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -6,15 +7,19 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: './acknowledge-response.component.html',
     styleUrls: ['./acknowledge-response.component.scss']
 })
-export class AcknowledgeResponseComponent implements OnDestroy{
+export class AcknowledgeResponseComponent implements OnInit, OnDestroy {
     @Output() popupDismiss = new EventEmitter();
+    appName = '';
     constructor(
-        private translate: TranslateService,
-    ) {}
+        private commonUtilService: CommonUtilService
+    ) {
+    }
+
+    async ngOnInit() {
+        this.appName = await this.commonUtilService.getAppName();
+    }
 
     ngOnDestroy(): void {
         this.popupDismiss.emit('closed');
     }
-
-    
 }
