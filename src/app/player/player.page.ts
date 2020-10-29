@@ -71,7 +71,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   async ngOnInit() {
-    await this.initializePdfPlayerConfiguration();
+    this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
       this.config['metadata'] = this.config['metadata'].contentData;
@@ -157,21 +157,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.pauseSubscription.unsubscribe();
     }
 
-  }
-
-   initializePdfPlayerConfiguration() {
-    return new Promise((resolve) => {
-      if (this.appGlobalService.getPdfPlayerConfiguration() !== undefined) {
-      this.playerConfig = this.appGlobalService.getPdfPlayerConfiguration();
-      resolve();
-      }
-      if (this.playerConfig === undefined) {
-        this.formAndFrameworkUtilService.invokePdfPlayerConfiguration().then((res) => {
-          this.playerConfig = res;
-          resolve();
-        });
-      }
-    });
   }
 
   async pdfPlayerEvents(event) {
