@@ -230,7 +230,7 @@ export class ProfilePage implements OnInit {
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
-
+          this.getLearnerPassbook();
           this.getEnrolledCourses(refresher);
           this.searchContent();
           this.getSelfDeclaredDetails();
@@ -458,12 +458,44 @@ export class ProfilePage implements OnInit {
       if (course.issuedCertificates && course.issuedCertificates.length) {
         oneCert.issuedCertificate = course.issuedCertificates[0];
       }
-      if (oneCert.certificate || oneCert.issuedCertificate) {
-        this.learnerPassbook = this.learnerPassbook.concat(oneCert);
-      }
+      // if (oneCert.certificate || oneCert.issuedCertificate) {
+      //   this.learnerPassbook = this.learnerPassbook.concat(oneCert);
+      // }
       accumulator = accumulator.concat(oneCert);
       return accumulator;
     }, []);
+  }
+
+  async getLearnerPassbook() {
+    try {
+      const request = { userId: this.profile.userId || this.profile.id };
+      this.learnerPassbook = (await this.courseService.getLearnerCertificates(request).toPromise()).map((learnerCertificate: any) => {
+        const oneCert: any = {
+          issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
+          issuedOn: learnerCertificate._source.data.issuedOn,
+          courseName: learnerCertificate._source.data.badge.name,
+          courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
+        };
+        if (learnerCertificate._source.pdfUrl) {
+          oneCert.certificate = {
+            url: learnerCertificate._source.pdfUrl || undefined,
+            id: learnerCertificate._id || undefined,
+            issuedOn: learnerCertificate._source.data.issuedOn,
+            name: learnerCertificate._source.data.badge.issuer.name
+          }
+        } else {
+          oneCert.issuedCertificate = {
+            identifier: learnerCertificate._id,
+            name: learnerCertificate._source.data.badge.issuer.name,
+            issuedOn: learnerCertificate._source.data.issuedOn
+          };
+        }
+        return oneCert;
+      });
+      console.log('Learner passbook', this.learnerPassbook);
+    } catch (error) {
+      console.log('Learner Passbook API Error', error);
+    }
   }
 
   async downloadTrainingCertificate(course: {
