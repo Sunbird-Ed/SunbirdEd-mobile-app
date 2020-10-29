@@ -251,7 +251,7 @@
                     </div>
                 </div>
                 <div class="ion-text-center"
-                    *ngIf="mapTrainingsToCertificates(mappedTrainingCertificates).length >= myLearningLimit">
+                    *ngIf="mapTrainingsToCertificates(mappedTrainingCertificates).length > myLearningLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="myLearningLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings('myLearning')">
                         + {{mappedTrainingCertificates?.length - myLearningLimit}} {{'MORE' | translate}}
@@ -277,10 +277,7 @@
                             {{certificate.courseName}}
                         </div>
                         <div>
-                            <span *ngIf="certificate.status === 1 || certificate.status === 0"
-                                class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="lighter">
-                                {{certificate.dateTime | date:'MMMM yyyy'}} </span>
+                            <span class="lighter">{{certificate.issuedOn | date:'MMMM yyyy'}} </span>
                         </div>
                     </div>
                     <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
@@ -293,7 +290,7 @@
                     </div>
                 </div>
                 <div class="ion-text-center"
-                    *ngIf="mapTrainingsToCertificates(learnerPassbook).length >= learnerPassbookLimit">
+                    *ngIf="learnerPassbook.length > learnerPassbookLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="learnerPassbookLimit < learnerPassbook?.length" (click)="showMoreTrainings('learnerPassbook')">
                         + {{learnerPassbook?.length - learnerPassbookLimit}} {{'MORE' | translate}}
