@@ -103,3 +103,7 @@ global.qrScanner = {
     startScanner: (screenTitle, displayText, displayTextColor, buttonText, showButton, isRTL, callback) => {},
     stopScanner: () => {}
 }
+
+global.downloadManager = {
+    enqueue: () => { }
+}

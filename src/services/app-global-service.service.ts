@@ -60,6 +60,7 @@ export class AppGlobalService implements OnDestroy {
     courseFrameworkId: string;
 
     currentPageId: string;
+    pdfPlayerConfiguratiion: boolean;
 
     guestUserProfile: Profile;
     isGuestUser = false;
@@ -156,6 +157,15 @@ export class AppGlobalService implements OnDestroy {
         }
 
         return name;
+    }
+
+
+     setpdfPlayerconfiguration(config) {
+        this.pdfPlayerConfiguratiion = config;
+    }
+
+     getPdfPlayerConfiguration() {
+        return this.pdfPlayerConfiguratiion;
     }
 
     /**

@@ -1,5 +1,5 @@
 import { ConsentPiiPopupComponent } from './consent-pii-popup.component';
-import { PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { CommonUtilService, FormAndFrameworkUtilService, AppGlobalService, UtilityService } from '../../../../services';
 
 describe('ConsentPiiPopupComponent', () => {
@@ -11,6 +11,9 @@ describe('ConsentPiiPopupComponent', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockPopOverCtrl: Partial<PopoverController> = {};
     const mockUtilityService: Partial<UtilityService> = {};
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn()
+    };
 
     beforeAll(() => {
         consentPiiPopupComponent = new ConsentPiiPopupComponent(
@@ -19,6 +22,7 @@ describe('ConsentPiiPopupComponent', () => {
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppGlobalService as AppGlobalService,
             mockUtilityService as UtilityService,
+            mockNavParams as NavParams
         );
     });
 
@@ -284,5 +288,55 @@ describe('ConsentPiiPopupComponent', () => {
         };
         consentPiiPopupComponent.changeEvent(event);
         expect(consentPiiPopupComponent.isAgreed).toBeFalsy();
+    });
+
+    describe('converDataSrcToObject', () => {
+        it('should return maskedEmail for empty email', () => {
+            const ele = {
+                code: 'emailId',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE_DECLARED',
+                        params: {
+                            categoryCode: 'declared-email'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [],
+                    maskedEmail: 'sample@sample.com'
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample@sample.com');
+        });
+
+        it('should return maskedphone for empty phone', () => {
+            const ele = {
+                code: 'phoneNumber',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE_DECLARED',
+                        params: {
+                            categoryCode: 'declared-phone'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    declarations: [],
+                    maskedPhone: '9999999999'
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('9999999999');
+        });
     });
 });

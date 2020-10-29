@@ -29,15 +29,22 @@
                         <ion-checkbox class="cr-terms-checkbox" (ionChange)="changeEvent($event)"></ion-checkbox>
                     </span>
                     <span>
-                        <p class="cr-terms-checkbox-label">
+                        <p class="cr-terms-checkbox-label" *ngIf="!isSSOUser">
                             <span>{{'AGREE_TO_SHARE_PROFILE_DETAILS' | translate}}</span>
                             <span (click)="openTermsOfUse()" class="terms-info">{{'INSTANCE_TERMS_OF_USE' | translate: {'app_name': appName} }}</span>
                         </p>
+                        <p class="cr-terms-checkbox-label" *ngIf="isSSOUser">
+                            <span>{{'SELF_DECLARE_TEACHER_TNC' | translate: {'%appName': appName} }}</span>
+                            <span (click)="openTermsOfUse()" class="terms-info">{{'PRIVACY_POLICY' | translate }}</span>
+                        </p>
                     </span>
                 </div>
-                <div class="btn-info">
+                <div class="btn-info" *ngIf="!isSSOUser">
                     <button class="save-changes-not-agree" (click)="dontShare()">{{'FRMELEMNTS_BTN_DONOT_SHARE' | translate}}</button>
                     <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'share-disabled' : null">{{'SHARE' | translate}}</button>
+                </div>
+                <div class="btn-info" *ngIf="isSSOUser">
+                    <button class="save-changes" (click)="share()" [disabled]="!isAgreed" [ngClass]="!isAgreed ?  'share-disabled' : null">{{'CONTINUE' | translate}}</button>
                 </div>
             </div>
         </div>

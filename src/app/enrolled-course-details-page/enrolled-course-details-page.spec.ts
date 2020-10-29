@@ -35,6 +35,7 @@ import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { ConsentService } from '../../services/consent-service';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -112,7 +113,7 @@ describe('EnrolledCourseDetailsPage', () => {
         prepareRequestValue: jest.fn(),
         isEnrollable: jest.fn()
     };
-    const mockAppVersion: Partial<AppVersion> = {};
+    const mockConsentService: Partial<ConsentService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
     const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
@@ -147,7 +148,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockCategoryKeyTranslator as CategoryKeyTranslator
+            mockCategoryKeyTranslator as CategoryKeyTranslator,
+            mockConsentService as ConsentService
         );
     });
 
@@ -2194,7 +2196,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     }
                 }
             }));
-            mockLocalCourseService.showConsentPopup = jest.fn(() => Promise.resolve());
+            mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());
             });
@@ -2526,7 +2528,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.REVOKED;
-            mockLocalCourseService.showConsentPopup = jest.fn(() => Promise.resolve());
+            mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());
             });
@@ -2537,7 +2539,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(mockLocalCourseService.showConsentPopup).toHaveBeenCalled();
+                expect(mockConsentService.showConsentPopup).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
                 done();
             }, 0);

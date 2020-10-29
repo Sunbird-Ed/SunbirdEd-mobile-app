@@ -11,6 +11,7 @@ import { CommonUtilService } from '../common-util.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { AppGlobalService } from '../app-global-service.service';
+import { ConsentService } from '../consent-service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class TncUpdateHandlerService {
     private router: Router,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
+    private consentService: ConsentService
   ) { }
 
   public async checkForTncUpdate() {
@@ -74,6 +76,9 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    if (await this.isSSOUser(userDetails)) {
+      await this.consentService.getConsent(userDetails, true);
+    }
     if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
       !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
       this.preRequirementToBmcNavigation(profile.userId);
@@ -145,5 +150,4 @@ export class TncUpdateHandlerService {
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
-
 }

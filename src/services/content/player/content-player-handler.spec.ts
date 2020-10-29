@@ -169,7 +169,7 @@ describe('ContentPlayerHandler', () => {
             // assert
             setTimeout(() => {
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['player'],
-                { state: { config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
+                { state: {  contentToPlay : mockContent, config: mockPlayerConfigData, course: mockCourse, isCourse: false } });
                 done();
             }, 0);
         });

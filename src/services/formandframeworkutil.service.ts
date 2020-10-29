@@ -24,7 +24,7 @@ import {
     FrameworkCategoryCode
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
@@ -323,6 +323,48 @@ export class FormAndFrameworkUtilService {
             }).catch((error: any) => {
                 console.log('Error - ' + error);
                 resolve(locationConfig);
+            });
+    }
+
+    async getPdfPlayerConfiguration() {
+        return new Promise((resolve, reject) => {
+            let pdfPlayerConfig;
+            // get cached pdfplayer config
+            pdfPlayerConfig = this.appGlobalService.getPdfPlayerConfiguration();
+
+            if (pdfPlayerConfig === undefined) {
+                pdfPlayerConfig = this.invokePdfPlayerConfiguration(pdfPlayerConfig, resolve, reject);
+            } else {
+                resolve(pdfPlayerConfig);
+            }
+        });
+    }
+
+
+
+
+    // get pdf player enable or disable configuration
+    async invokePdfPlayerConfiguration(
+        pdfPlayerConfig: any,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'pdfPlayer',
+            action: 'get',
+        };
+        let currentConfiguration;
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                res.form.data.fields.forEach((ele, index) => {
+                    if (ele.code === 'pdf') {
+                        currentConfiguration = ele.values[index].isEnabled;
+                    }
+                });
+                this.appGlobalService.setpdfPlayerconfiguration(currentConfiguration);
+                resolve(currentConfiguration);
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
             });
     }
 
@@ -704,5 +746,11 @@ export class FormAndFrameworkUtilService {
             component: 'app'
         };
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
+
+    async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
+        formRequest.rootOrgId = rootOrgId || '*' ;
+        const formData  = await this.formService.getForm(formRequest).toPromise() as any;
+        return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
     }
 }
