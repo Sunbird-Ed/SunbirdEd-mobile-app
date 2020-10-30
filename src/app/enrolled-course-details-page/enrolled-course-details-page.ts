@@ -2012,6 +2012,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
         chapterParams);
     } else {
+      if(!this.batchId){
+        return false;
+      }
       this.navigateToContentDetails(event.item, 1);
     }
   }
