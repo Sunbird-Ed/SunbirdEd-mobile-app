@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks, MimeType } from '@app/app/app.constant';
-import { NavController } from '@ionic/angular';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 
@@ -9,8 +8,7 @@ import { CsContentType } from '@project-sunbird/client-services/services/content
 export class NavigationService {
 
     constructor(
-        private router: Router,
-        private navCtrl: NavController
+        private router: Router
     ) { }
 
     navigateToDetailPage(content, navExtras) {
