@@ -13,7 +13,7 @@ import {
   ContentImport, ContentImportResponse, CorrelationData, ContentImportStatus,
   TelemetryErrorCode, StorageService, Rollup, DownloadTracking, DownloadService,
   TelemetryObject, EventsBusService, EventsBusEvent, DownloadEventType, DownloadProgress,
-  ContentEventType, ContentImportCompleted, ContentUpdate
+  ContentEventType, ContentImportCompleted
 } from '@project-sunbird/sunbird-sdk';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { ConfirmAlertComponent } from '@app/app/components';
@@ -24,9 +24,6 @@ import { share } from 'rxjs/operators';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-// import {
-//   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
-// } from '../../services/telemetry-constants';
 
 @Component({
   selector: 'app-curriculum-course-details',
@@ -36,7 +33,6 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 export class CurriculumCourseDetailsPage implements OnInit {
 
   private eventSubscription: Subscription;
-
   public objRollup: Rollup;
   public telemetryObject: TelemetryObject;
   public corRelationList: Array<CorrelationData>;
@@ -54,11 +50,9 @@ export class CurriculumCourseDetailsPage implements OnInit {
     showBurgerMenu: false,
     actionButtons: []
   };
-
   showDownloadBtn = false;
   showDownload: boolean;
   showCollapsedPopup = true;
-
   public rollUpMap: { [key: string]: Rollup } = {};
   isUpdateAvailable = false;
   isDownloadStarted = false;
@@ -81,8 +75,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
     private appHeaderService: AppHeaderService,
     private zone: NgZone,
     private events: Events,
-    private platform: Platform,
-    private translate: TranslateService,
     private commonUtilService: CommonUtilService,
     private fileSizePipe: FileSizePipe,
     private popoverCtrl: PopoverController,
@@ -110,8 +102,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
         fieldPath: 'rollUp.l1',
         value: this.course.identifier
       }
-    })
-      .pipe(share());
+    }).pipe(share());
   }
 
   ionViewWillEnter() {
@@ -120,14 +111,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
         this.handleHeaderEvents(eventName);
       });
       this.refreshHeader(false);
-
-      // this.shownGroup = null;
-      // this.assignCardData();
-      // this.resetVariables();
       this.getContentDetails(this.course.identifier, true);
-      // this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
-      //   this.playContent(data);
-      // });
       this.subscribeSdkEvent();
     });
   }
@@ -135,23 +119,13 @@ export class CurriculumCourseDetailsPage implements OnInit {
   ionViewWillLeave() {
     this.downloadProgress = 0;
     this.headerObservable.unsubscribe();
-    // this.events.unsubscribe(EventTopics.CONTENT_TO_PLAY);
-    // this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
-    // if (this.backButtonFunc) {
-    //   this.backButtonFunc.unsubscribe();
-    // }
   }
 
   private handleHeaderEvents($event) {
     switch ($event.name) {
-      // case 'back':
-      //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CURRICULUM_COURSE_DETAIL, Environment.HOME,
-      //     true, this.course.identifier, this.corRelationList);
-      //   this.handleBackButton();
-      //   break;
       case 'download':
         this.redirectToActivedownloads();
         break;
@@ -179,16 +153,11 @@ export class CurriculumCourseDetailsPage implements OnInit {
           if (downloadEvent.payload.identifier === this.course.identifier) {
             this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
             if (this.downloadProgress === 100) {
-              // this.showLoading = false;
               this.refreshHeader(true);
               this.course.isAvailableLocally = true;
             }
           }
         }
-
-        // if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
-        //   this.licenseDetails = event.payload.licenseDetails;
-        // }
 
         // Get child content
         if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
@@ -197,63 +166,31 @@ export class CurriculumCourseDetailsPage implements OnInit {
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
             if (this.queuedIdentifiers.includes(contentImportedEvent.payload.contentId)) {
               this.currentCount++;
-              // this.downloadPercentage = +((this.currentCount / this.queuedIdentifiers.length) * (100)).toFixed(0);
             }
             if (this.queuedIdentifiers.length === this.currentCount) {
-              // this.showLoading = false;
               this.refreshHeader(true);
               this.isDownloadStarted = false;
               this.showDownloadBtn = false;
               this.isDownloadCompleted = true;
               this.showDownload = false;
               this.course.isAvailableLocally = true;
-              // this.downloadPercentage = 0;
               this.updateSavedResources();
-
-              // TODO: Do we need to call this
-              // this.getChildContents(this.course.identifier);
             }
-          }
-          // else if (this.parentContent && contentImportedEvent.payload.contentId === this.contentDetail.identifier) {
-          //   // this condition is for when the child content update is available and we have downloaded parent content
-          //   // but we have to refresh only the child content.
-          //   this.showLoading = false;
-          //   this.refreshHeader();
-          //   this.setContentDetails(this.identifier, false);
-          // }
-          else {
+          } else {
             if (this.isUpdateAvailable && contentImportedEvent.payload.contentId === this.course.identifier) {
               // this.showLoading = false;
               this.refreshHeader(true);
               this.getContentDetails(this.course.identifier, false);
             } else {
               if (contentImportedEvent.payload.contentId === this.course.identifier) {
-                // this.showLoading = false;
                 this.refreshHeader(true);
                 this.updateSavedResources();
                 this.getChildContents(this.course.identifier);
                 this.course.isAvailableLocally = true;
               }
-
             }
           }
         }
-
-        // For content update available
-        // const hierarchyInfo = this.course.hierarchyInfo ? this.course.hierarchyInfo : null;
-        // const contentUpdateEvent = event as ContentUpdate;
-        // if (contentUpdateEvent.type === ContentEventType.UPDATE && hierarchyInfo === null) {
-        //   this.zone.run(() => {
-        //     if (this.parentContent) {
-        //       const parentIdentifier = this.parentContent.contentId || this.parentContent.identifier;
-        //       // this.showLoading = true;
-        //       this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.course, false);
-        //       this.importContent([parentIdentifier], false);
-        //     } else {
-        //       this.getContentDetails(this.course.identifier, false);
-        //     }
-        //   });
-        // }
       });
     }) as any;
   }
@@ -279,8 +216,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: event.item,
-          // depth,
-          // contentState: this.stateData,
           corRelation: this.corRelationList
         }
       });
@@ -300,28 +235,10 @@ export class CurriculumCourseDetailsPage implements OnInit {
           if (!contentDetail.isAvailableLocally) {
             this.course = contentDetail;
             this.initCourseData(this.course);
-            // this.telemetryGeneratorService.generatefastLoadingTelemetry(
-            //   InteractSubtype.FAST_LOADING_INITIATED,
-            //   PageId.CURRICULUM_COURSE_DETAIL,
-            //   this.telemetryObject,
-            //   undefined,
-            //   this.objRollup,
-            //   this.corRelationList
-            // );
             this.contentService.getContentHeirarchy(contentDetailRequest).toPromise()
               .then((content: Content) => {
                 this.courseHeirarchy = content;
-                // this.childrenData = content.children;
                 this.showSheenAnimation = false;
-                // this.toggleGroup(0, this.content);
-                // this.telemetryGeneratorService.generatefastLoadingTelemetry(
-                //   InteractSubtype.FAST_LOADING_FINISHED,
-                //   PageId.CURRICULUM_COURSE_DETAIL,
-                //   this.telemetryObject,
-                //   undefined,
-                //   this.objRollup,
-                //   this.corRelationList
-                // );
               }).catch(() => {
                 this.showSheenAnimation = false;
               });
@@ -340,17 +257,12 @@ export class CurriculumCourseDetailsPage implements OnInit {
   }
 
   private importContent(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
-    // TODO: do we need this in colloection-detail-etb
-    // if (this.showLoading && !this.isDownloadStarted) {
-    // this.appHeaderService.hideHeader();
-    // }
-
     const contentImportRequest: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
     };
-    // // Call content service
+    //  Call content service
     this.contentService.importContent(contentImportRequest).toPromise()
       .then((contentImportResponse: ContentImportResponse[]) => {
         this.zone.run(() => {
@@ -375,7 +287,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
             if (this.queuedIdentifiers.length === 0 && this.isDownloadStarted) {
               this.showDownloadBtn = true;
               this.isDownloadStarted = false;
-              // this.showLoading = false;
               this.refreshHeader(true);
             }
 
@@ -392,11 +303,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
               this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
           } else if (contentImportResponse && contentImportResponse[0].status === ContentImportStatus.NOT_FOUND) {
-            // this.showLoading = false;
             this.refreshHeader(true);
-            // Not Required
-            // this.showChildrenLoader = false;
-            // this.childrenData.length = 0;
           }
         });
       })
@@ -404,7 +311,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           this.showDownloadBtn = true;
           this.isDownloadStarted = false;
-          // this.showLoading = false;
           this.refreshHeader(true);
           if (Boolean(this.isUpdateAvailable)) {
             this.getChildContents(this.courseHeirarchy.identifier);
@@ -414,8 +320,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
             } else {
               this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
-            // Not required
-            // this.showChildrenLoader = false;
             this.location.back();
           }
         });
@@ -439,93 +343,35 @@ export class CurriculumCourseDetailsPage implements OnInit {
 
   private extractApiResponse(content: Content) {
     this.course = content;
-    // this.objId = content.identifier;
-    // this.objVer = content.contentData.pkgVersion;
-
-    // User Rating
-    const contentFeedback: any = content.contentFeedback ? content.contentFeedback : [];
-    if (contentFeedback !== undefined && contentFeedback.length !== 0) {
-      // this.userRating = contentFeedback[0].rating;
-      // this.ratingComment = contentFeedback[0].comments;
-    }
-
-
-    // Not required
-    // if (Boolean(content.isAvailableLocally)) {
-    // this.showLoading = false;
     this.refreshHeader(true);
     if (content.isUpdateAvailable && !this.isUpdateAvailable) {
       this.isUpdateAvailable = true;
-      // this.showLoading = true;
       this.telemetryGeneratorService.generateSpineLoadingTelemetry(content, false);
       this.importContent([content.identifier], false);
     } else {
       this.isUpdateAvailable = false;
       this.getChildContents(content.identifier);
     }
-    // Not required
-    // } else {
-    //   // this.showLoading = true;
-    //   this.telemetryGeneratorService.generateSpineLoadingTelemetry(content, true);
-    //   this.importContent([content.identifier], false);
-    // }
-
-    // Not required
-    // if (content.contentData.me_totalDownloads) {
-    //   this.course.contentData.me_totalDownloads = content.contentData.me_totalDownloads.split('.')[0];
-    // }
-
-    // Not required
-    // this.setCollectionStructure();
   }
 
   private getChildContents(identifier: string) {
-    // this.showChildrenLoader = true;
     const hierarchyInfo = this.course.hierarchyInfo ? this.course.hierarchyInfo : null;
     const childContentRequest = { contentId: identifier, hierarchyInfo }; // TODO: remove level
     this.contentService.getChildContents(childContentRequest).toPromise()
       .then((content: Content) => {
         this.zone.run(() => {
-          // console.log('content setChildContents', content);
-          // if (content && content.children) {
-          // this.breadCrumb.set(data.identifier, data.contentData.name);
-          // if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
-          //   this.onFilterMimeTypeChange(this.mimeTypes[0].value, 0, this.mimeTypes[0].name);
-          // }
           this.courseHeirarchy = content;
-          // this.changeDetectionRef.detectChanges();
-          // }
-
-          // if (!this.isDepthChild) {
           this.downloadSize = 0;
           this.localResourseCount = 0;
           this.getContentsSize(content.children || []);
-          // }
-          // this.showChildrenLoader = false;
-
-          // this.telemetryGeneratorService.generateInteractTelemetry(
-          //   InteractType.OTHER,
-          //   InteractSubtype.IMPORT_COMPLETED,
-          //   Environment.HOME,
-          //   PageId.CURRICULUM_COURSE_DETAIL,
-          //   this.telemetryObject,
-          //   undefined,
-          //   this.objRollup,
-          //   this.corRelationList
-          // );
         });
       })
       .catch(() => {
-        this.zone.run(() => {
-          // this.showChildrenLoader = false;
-        });
       });
-    // this.ionContent.scrollTo(0, this.scrollPosition);
   }
 
   private getContentsSize(data) {
     data.forEach((content) => {
-      // this.breadCrumb.set(content.identifier, content.contentData.name);
       if (content.contentData.size) {
         this.downloadSize += Number(content.contentData.size);
       }
@@ -553,7 +399,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
     this.headerConfig = this.appHeaderService.getDefaultPageConfig();
     this.headerConfig.actionButtons = ['download'];
     this.headerConfig.showBurgerMenu = false;
-    // this.headerConfig.showHeader = true;
     this.appHeaderService.updatePageConfig(this.headerConfig);
     if (publishEvent) {
       this.events.publish('header:setzIndexToNormal');
@@ -650,7 +495,6 @@ export class CurriculumCourseDetailsPage implements OnInit {
       this.showLoginPopup();
       return;
     }
-    // TODO navigate to details
   }
 
   async showLoginPopup() {
@@ -673,7 +517,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
-      this.loginHandlerService.signIn({skipRootNavigation: true, componentData: this.extrasData});
+      this.loginHandlerService.signIn({ skipRootNavigation: true, componentData: this.extrasData });
     }
   }
 

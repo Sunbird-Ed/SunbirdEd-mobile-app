@@ -12,7 +12,6 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         private router: Router,
         private splashScreenService: SplashScreenService,
-        private events: Events,
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): any {

@@ -42,7 +42,6 @@ describe('CurriculumCoursesPage', () => {
             mockCourseService as CourseService,
             mockAppHeaderService as AppHeaderService,
             mockAppGlobalService as AppGlobalService,
-            mockTranslate as TranslateService,
             mockNavService as NavigationService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
