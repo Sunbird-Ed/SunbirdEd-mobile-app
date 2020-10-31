@@ -39,7 +39,6 @@ export class CurriculumCoursesPage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private appHeaderService: AppHeaderService,
     private appGlobalService: AppGlobalService,
-    private translate: TranslateService,
     private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private router: Router,
@@ -75,7 +74,6 @@ export class CurriculumCoursesPage implements OnInit {
       Environment.HOME
     );
     if (this.appGlobalService.isUserLoggedIn()) {
-      // TODO: get the current userId
       await this.appGlobalService.getActiveProfileUid()
         .then(async (uid) => {
           try {
@@ -114,19 +112,12 @@ export class CurriculumCoursesPage implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, course.identifier),
       this.corRelationList);
-      console.log('Content Data', course);
-      this.navService.navigateToTrackableCollection(
-        {
-          content: course,
-          corRelationList: this.corRelationList
-        }
-      );
-    // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-    //   state: {
-    //     content: course,
-    //     corRelationList: this.corRelationList
-    //   }
-    // });
+    this.navService.navigateToTrackableCollection(
+      {
+        content: course,
+        corRelationList: this.corRelationList
+      }
+    );
   }
 
   async getEnrolledCourses(userId: string) {
