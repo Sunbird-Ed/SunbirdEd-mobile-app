@@ -4,9 +4,14 @@ import {
   InteractType, InteractSubtype, ImpressionType, ImpressionSubtype, UtilityService
 } from '@app/services';
 import { Router } from '@angular/router';
-import { RouterLinks, ProfileConstants } from '../app.constant';
-import { TranslateService } from '@ngx-translate/core';
-import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest, CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
+import {
+  CourseService,
+  Course,
+  CorrelationData,
+  TelemetryObject,
+  GetUserEnrolledCoursesRequest,
+  CachedItemRequestSourceFrom
+} from '@project-sunbird/sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
