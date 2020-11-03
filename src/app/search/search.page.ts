@@ -214,13 +214,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           return from(this.searchHistoryService.getEntries({
             like: v,
             limit: 5,
-            namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+            namespace: SearchHistoryNamespaces.LIBRARY
           }).toPromise());
         }
 
         return from(this.searchHistoryService.getEntries({
           limit: 10,
-          namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+          namespace: SearchHistoryNamespaces.LIBRARY
         }).toPromise());
       }),
       tap((v) => {
@@ -906,7 +906,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.searchHistoryService
       .addEntry({
         query: this.searchKeywords,
-        namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+        namespace: SearchHistoryNamespaces.LIBRARY
       })
       .toPromise();
   }
