@@ -7,6 +7,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen
 import { CorReleationDataType } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { CorrelationData, TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { Events } from '@ionic/angular';
 
 declare const cordova;
 
@@ -21,7 +22,7 @@ export class NotificationService {
     private appId: any;
     private _notificationId: string;
     private contentUrl: string;
-    private _notificationPaylod: string;
+    private _notificationPaylod: any;
 
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -29,7 +30,8 @@ export class NotificationService {
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
         private localNotifications: LocalNotifications,
-        private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
+        private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+        private event: Events
     ) {
         this.getAppName();
     }
@@ -131,7 +133,7 @@ export class NotificationService {
 
     setNotificationParams(data) {
         this.notificationPayload = data;
-        switch (data.actionData.actionType) {
+        switch (this.notificationPayload.actionData.actionType) {
             case ActionType.EXT_URL:
                 this.externalUrl = data.actionData.deepLink;
                 break;
@@ -173,6 +175,8 @@ export class NotificationService {
         } else if (this.contentUrl) {
             this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: this.contentUrl }, this);
             this.contentUrl = null;
+        } else if (this.notificationPayload.actionData.actionType === ActionType.CERTIFICATE) {
+            this.event.publish('to_profile');
         }
         this.notificationId = undefined;
     }

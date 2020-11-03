@@ -356,6 +356,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.preferences.putString(PreferenceKey.NOTIFICAITON_RECEIVED_AT, '').toPromise();
     }
     FCMPlugin.onNotification((data) => {
+      data['isRead'] = data.wasTapped ? 1 : 0;
+      data['actionData'] = JSON.parse(data['actionData']);
+      this.notificationServices.addNotification(data).subscribe((status) => {
+        this.events.publish('notification:received');
+        this.events.publish('notification-status:update', { isUnreadNotifications: true });
+      });
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
         const value = {
@@ -370,13 +376,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           value,
           corRelationList
         );
-
-        data['isRead'] = data.wasTapped ? 1 : 0;
-        data['actionData'] = JSON.parse(data['actionData']);
-        this.notificationServices.addNotification(data).subscribe((status) => {
-          this.events.publish('notification:received');
-          this.events.publish('notification-status:update', { isUnreadNotifications: true });
-        });
         this.notificationSrc.notificationId = data.id || '';
         this.notificationSrc.setNotificationParams(data);
         if (this.isForeground) {
