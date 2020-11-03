@@ -148,6 +148,7 @@
   }
 
   .back-btn-container{
+    height: 32px;
     @include ltr() {
       top: 0;
       left: 0;
