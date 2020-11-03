@@ -49,7 +49,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "3.4.7",
     "@project-sunbird/common-consumption": "^3.4.3",
-    "@project-sunbird/content-player": "3.2.6",
+    "@project-sunbird/content-player": "3.3.3",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-pdf-player": "0.0.4",
     "@project-sunbird/sunbird-sdk": "3.4.7",
