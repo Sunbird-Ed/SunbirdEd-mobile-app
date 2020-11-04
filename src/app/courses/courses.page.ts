@@ -108,6 +108,8 @@ export class CoursesPage implements OnInit, OnDestroy {
   loader: any;
   dynamicCourses: any;
   searchGroupingContents: any;
+  resetFilter: boolean;
+  filter: ContentSearchCriteria;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -195,7 +197,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.refresher.disabled = false;
     this.isVisible = true;
-    this.getAggregatorResult();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
     });
@@ -301,6 +302,8 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.courseFilter = undefined;
             this.appliedFilter = undefined;
             this.isFilterApplied = false;
+            this.filter = undefined;
+            this.resetFilter = true
             this.getAggregatorResult();
           }
         }
@@ -451,7 +454,8 @@ export class CoursesPage implements OnInit, OnDestroy {
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
           if (isChecked) {
-            that.getAggregatorResult(filter);
+            that.filter = filter;
+            that.getAggregatorResult();
           }
         });
       }
@@ -466,6 +470,10 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.showFilterPage(filterOptions);
     } else {
       this.formAndFrameworkUtilService.getCourseFilterConfig().then((data) => {
+        if (this.resetFilter) {
+          data = this.reserFilter(data);
+          this.resetFilter = false;
+        }
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
       }).catch(() => {
@@ -473,6 +481,14 @@ export class CoursesPage implements OnInit, OnDestroy {
       });
     }
   }
+
+  reserFilter(data) {
+    for (let i =0; data.length > i; i++) {
+      data[i].selected = [];
+    }
+    return data;
+  }
+
   private async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
       duration: 3000,
@@ -495,7 +511,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       componentProps: {
         callback: filterOptions.callback,
         filter: filterOptions.filter,
-        pageId: PageId.COURSES
+        pageId: PageId.COURSES,
+        reset: filterOptions.reset || false
       },
       cssClass: 'resource-filter'
     });
@@ -929,13 +946,13 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  async getAggregatorResult(filter?: ContentSearchCriteria) {
+  async getAggregatorResult(resetFilter?: boolean) {
     this.spinner(true);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {},
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        if (filter) {
-          contentSearchCriteria = this.concatFilter(filter, contentSearchCriteria);
+        if (this.filter) {
+          contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
         }
         return contentSearchCriteria;
       }

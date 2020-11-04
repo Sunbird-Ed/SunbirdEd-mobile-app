@@ -175,7 +175,7 @@ export class NotificationService {
         } else if (this.contentUrl) {
             this.splaschreenDeeplinkActionHandlerDelegate.onAction({ url: this.contentUrl }, this);
             this.contentUrl = null;
-        } else if (this.notificationPayload.actionData.actionType === ActionType.CERTIFICATE) {
+        } else if (this.notificationPayload && this.notificationPayload.actionData.actionType === ActionType.CERTIFICATE) {
             this.event.publish('to_profile');
         }
         this.notificationId = undefined;
