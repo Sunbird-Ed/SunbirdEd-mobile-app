@@ -10,8 +10,7 @@ import { Content, ContentDelete } from 'sunbird-sdk';
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { InteractSubtype, Environment, PageId, ActionButtonType, CorReleationDataType } from '../../../services/telemetry-constants';
 import { EmitedContents } from '../download-manager.interface';
-import { Router } from '@angular/router';
-import { AppHeaderService, UtilityService } from '@app/services';
+import { AppHeaderService } from '@app/services';
 import { ContentUtil } from '@app/util/content-util';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
@@ -43,11 +42,10 @@ export class DownloadsTabComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router,
-    private zone: NgZone,
     private navService: NavigationService,
     private headerService: AppHeaderService) {
   }
+
   ngOnInit(): void {
     this.headerService.headerEventEmitted$.subscribe(async () => {
       if (this.deleteAllPopupPresent) {

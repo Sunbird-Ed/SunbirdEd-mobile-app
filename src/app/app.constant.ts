@@ -419,6 +419,7 @@ export class ActionType {
     public static readonly UPDATE_APP = 'updateApp';
     public static readonly EXT_URL = 'extURL';
     public static readonly CONTENT_URL = 'contentURL';
+    public static readonly CERTIFICATE = 'certificateUpdate';
 }
 
 export class RouterLinks {

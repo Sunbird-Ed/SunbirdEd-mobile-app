@@ -114,6 +114,10 @@
           font-weight: bold;
           text-align: center;
           @include padding(($base-block-space * 1), 0, 0, 0);
+          .sb-popover-download-content {
+            color: black !important;
+            font-size: 1.2rem !important;
+          }
         }
 
         .sb-popover-information {
