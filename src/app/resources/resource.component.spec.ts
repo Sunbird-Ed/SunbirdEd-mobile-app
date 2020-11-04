@@ -1320,6 +1320,15 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.redirectToNotifications).toHaveBeenCalled();
         });
 
+        it('should call information method when event name is equal information', () => {
+            // arrange
+            jest.spyOn(resourcesComponent, 'appTutorialScreen').mockImplementation();
+            // act
+            resourcesComponent.handleHeaderEvents({ name: 'information' });
+            // assert
+            expect(resourcesComponent.appTutorialScreen).toHaveBeenCalled();
+        });
+
         it('should call appTutorialScreen method', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();

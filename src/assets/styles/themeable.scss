@@ -1526,4 +1526,10 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  .file-download__action-btns .cancel-btn{
+   color: var(--primary-color) !important;
+   font-size: .9rem !important;
+   padding: .75em 2.5rem !important;
+  }
+
 }
