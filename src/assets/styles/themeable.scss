@@ -1084,6 +1084,12 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  .add-to-group-btn-container{
+    .open-btn {
+      color: var(--app-primary) !important;
+    }
+  }
+
   // Group edit delete popup
   .group-option-popover .popover-content{
     border-radius: 1rem !important;
