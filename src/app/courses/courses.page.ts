@@ -108,7 +108,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   loader: any;
   dynamicCourses: any;
   searchGroupingContents: any;
-  resetFilter: boolean;
+  resetCourseFilter: boolean;
   filter: ContentSearchCriteria;
 
   constructor(
@@ -303,7 +303,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.appliedFilter = undefined;
             this.isFilterApplied = false;
             this.filter = undefined;
-            this.resetFilter = true
+            this.resetCourseFilter = true
             this.getAggregatorResult();
           }
         }
@@ -470,9 +470,9 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.showFilterPage(filterOptions);
     } else {
       this.formAndFrameworkUtilService.getCourseFilterConfig().then((data) => {
-        if (this.resetFilter) {
-          data = this.reserFilter(data);
-          this.resetFilter = false;
+        if (this.resetCourseFilter) {
+          data = this.resetFilter(data);
+          this.resetCourseFilter = false;
         }
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
@@ -482,7 +482,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  reserFilter(data) {
+  resetFilter(data) {
     for (let i =0; data.length > i; i++) {
       data[i].selected = [];
     }
