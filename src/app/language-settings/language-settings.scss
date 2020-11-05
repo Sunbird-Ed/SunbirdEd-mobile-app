@@ -70,15 +70,17 @@
   height: 136px;
   padding: 5%;
   border-radius: 16px;
-    &.selected {
-      .language-selection {
-        background-color: var(--app-primary) !important;
-      }
-      .label-text {
-        color: var(--app-white) !important;
-      }
-    }
 }
+
+.selected-lang {
+  .language-selection {
+    background-color: var(--app-primary) !important;
+  }
+  .label-text {
+    color: var(--app-white) !important;
+  }
+}
+
 .language-card label {
   position: relative;
   box-shadow: 0 20px 40px -10px map-get($colors, light_silver);
