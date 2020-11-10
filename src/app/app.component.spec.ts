@@ -41,6 +41,9 @@ describe('AppComponent', () => {
                     action: 'click'
                 }
             }
+        },
+        InAppUpdateManager: {
+            checkForImmediateUpdate: jest.fn()
         }
     };
     const mockActivePageService: Partial<ActivePageService> = {
@@ -1693,6 +1696,16 @@ describe('AppComponent', () => {
             // assert
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
             expect(mockLogoutHandlerService.onLogout).toHaveBeenCalled();
+        });
+
+        it('should handle inappupdate', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'UPDATE'
+            };
+            // act
+            appComponent.menuItemAction(menuName);
+            // assert
         });
     });
 
