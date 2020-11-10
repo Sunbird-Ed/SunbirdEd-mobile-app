@@ -20,7 +20,7 @@ export class ProfileNameConfirmationPopoverComponent {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private popOverCtrl: PopoverController,
+    private popoverCtrl: PopoverController,
     private navService: NavigationService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService
@@ -50,25 +50,12 @@ export class ProfileNameConfirmationPopoverComponent {
   }
 
   closePopover(data?) {
-    this.popOverCtrl.dismiss(data);
+    this.popoverCtrl.dismiss(data);
   }
 
   onProfilePageClick() {
     this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE_NAME_CONFIRMATION_POPUP);
     this.closePopover({ editProfileClicked: true });
   }
-
-//   describe('onEditProfileClicked  test-suites', () => {
-//     it('should generate telemetry and navigate to district mapping if network is available', () => {
-//         // arrange
-//         // act
-//         profilePage.onEditProfileClicked();
-//         // assert
-//         expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
-//             mockProfileData,
-//             PageId.PROFILE
-//         );
-//     });
-// });
 
 }
