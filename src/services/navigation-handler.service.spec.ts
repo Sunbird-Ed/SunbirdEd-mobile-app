@@ -1,6 +1,9 @@
 import { NavigationService } from './navigation-handler.service';
-import { RouterLinks, MimeType } from '@app/app/app.constant';
+import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
+import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
+import { mockProfileData } from '../app/profile/profile.page.spec.data';
 
 describe('NavigationService', () => {
   let navigationService: NavigationService;
@@ -9,9 +12,14 @@ describe('NavigationService', () => {
     navigate: jest.fn()
   };
 
+  const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
+
   beforeAll(() => {
     navigationService = new NavigationService(
-      mockRouter as Router
+      mockRouter as Router,
+      mockTelemetryGeneratorService as TelemetryGeneratorService,
+      mockCommonUtilService as CommonUtilService,
     );
   });
 
@@ -132,5 +140,42 @@ describe('NavigationService', () => {
       });
     });
   });
+
+  describe('navigateToEditPersonalDetails  test-suites', () => {
+    it('should generate telemetry and navigate to district mapping if network is available', () => {
+        // arrange
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockRouter.navigate = jest.fn();
+        // act
+        navigationService.navigateToEditPersonalDetails(mockProfileData, 'some-page-id');
+        // assert
+        expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.EDIT_CLICKED,
+            Environment.HOME,
+            'some-page-id', null
+        );
+        expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DISTRICT_MAPPING],
+            {
+                state: {
+                    profile: mockProfileData,
+                    isShowBackButton: true
+                }
+            });
+    });
+
+    it('should call showToast when network is not available', () => {
+        // arrange
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        navigationService.navigateToEditPersonalDetails(undefined, 'some-page-id');
+        // assert
+        expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+    });
+});
 
 });

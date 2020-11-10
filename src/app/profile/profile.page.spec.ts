@@ -110,7 +110,8 @@ describe('Profile.page', () => {
     };
     const mockNavService: Partial<NavigationService> = {
         navigateToDetailPage: jest.fn(),
-        navigateToTrackableCollection: jest.fn()
+        navigateToTrackableCollection: jest.fn(),
+        navigateToEditPersonalDetails: jest.fn()
     };
 
     beforeAll(() => {
@@ -984,40 +985,16 @@ describe('Profile.page', () => {
         });
     });
 
-    describe('navigateToEditPersonalDetails  test-suites', () => {
+    describe('onEditProfileClicked  test-suites', () => {
         it('should generate telemetry and navigate to district mapping if network is available', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockRouter.navigate = jest.fn();
             // act
-            profilePage.navigateToEditPersonalDetails();
+            profilePage.onEditProfileClicked();
             // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.EDIT_CLICKED,
-                Environment.HOME,
-                PageId.PROFILE, null
+            expect(mockNavService.navigateToEditPersonalDetails).toHaveBeenCalledWith(
+                mockProfileData,
+                PageId.PROFILE
             );
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DISTRICT_MAPPING],
-                {
-                    state: {
-                        profile: mockProfileData,
-                        isShowBackButton: true
-                    }
-                });
-        });
-
-        it('should call showToast when network is not available', () => {
-            // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            profilePage.navigateToEditPersonalDetails();
-            // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
         });
     });
 

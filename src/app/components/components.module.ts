@@ -12,7 +12,7 @@ import { SbNoNetworkPopupComponent } from './popups/sb-no-network-popup/sb-no-ne
 import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
 import { CollectionChildComponent } from './collection-child/collection-child.component';
 import { ContentActionsComponent } from './content-actions/content-actions.component';
-import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
+import { IonicRatingModule } from 'ionic4-rating';
 import { ContentRatingAlertComponent } from './content-rating-alert/content-rating-alert.component';
 import { DetailCardComponent } from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -51,9 +51,13 @@ import { SupportAcknowledgement } from './support-acknowledgement/support-acknow
 import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { AddActivityToGroupComponent } from './add-activity-to-group/add-activity-to-group.component';
-import {ConsentPiiPopupComponent} from './popups/consent-pii-popup/consent-pii-popup.component';
-import {LicenseCardComponentComponent} from '@app/app/components/license-card-component/license-card-component.component';
+import { ConsentPiiPopupComponent } from './popups/consent-pii-popup/consent-pii-popup.component';
+import { LicenseCardComponentComponent } from '@app/app/components/license-card-component/license-card-component.component';
 import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup/group-guidelines-popup.component';
+import {
+  ProfileNameConfirmationPopoverComponent
+} from './popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
@@ -100,7 +104,8 @@ import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup
     AddActivityToGroupComponent,
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
-    GroupGuideLinesPopoverComponent
+    GroupGuideLinesPopoverComponent,
+    ProfileNameConfirmationPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -148,7 +153,8 @@ import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup
     AcknowledgeResponseComponent,
     ExploreBooksSortComponent,
     ConsentPiiPopupComponent,
-    GroupGuideLinesPopoverComponent
+    GroupGuideLinesPopoverComponent,
+    ProfileNameConfirmationPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -194,7 +200,8 @@ import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup
     AddActivityToGroupComponent,
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
-    GroupGuideLinesPopoverComponent
+    GroupGuideLinesPopoverComponent,
+    ProfileNameConfirmationPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

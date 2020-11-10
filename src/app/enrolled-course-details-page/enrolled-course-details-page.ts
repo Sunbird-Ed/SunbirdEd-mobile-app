@@ -1,91 +1,79 @@
-import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Events, Platform, PopoverController} from '@ionic/angular';
+import {
+  Component, ElementRef, Inject,
+  NgZone, OnDestroy, OnInit, ViewChild
+} from '@angular/core';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
-import {FileSizePipe} from '@app/pipes/file-size/file-size';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {CourseUtilService} from '@app/services/course-util.service';
-import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
-import {UtilityService} from '@app/services/utility-service';
-import {AppHeaderService} from '@app/services/app-header.service';
-import {DatePipe, Location} from '@angular/common';
-import {LoginHandlerService} from '@app/services/login-handler.service';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { DatePipe, Location } from '@angular/common';
+import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
-  AuditState,
-  AuthService,
+  AuditState, AuthService,
   Batch,
-  ChildContentRequest,
-  Consent,
-  Content,
-  ContentDetailRequest,
-  ContentEventType,
-  ContentImport,
-  ContentImportCompleted,
-  ContentImportRequest,
-  ContentImportResponse,
-  ContentImportStatus,
-  ContentService,
-  ContentState,
-  ContentStateResponse,
-  ContentUpdate,
-  CorrelationData,
-  Course,
-  CourseBatchesRequest,
-  CourseBatchStatus,
-  CourseEnrollmentType,
-  CourseService,
-  DownloadEventType,
-  DownloadProgress,
-  DownloadService,
-  DownloadTracking,
-  EventsBusEvent,
-  EventsBusService,
+  ChildContentRequest, Consent, Content, ContentDetailRequest,
+  ContentEventType, ContentImport, ContentImportCompleted,
+  ContentImportRequest, ContentImportResponse, ContentImportStatus,
+  ContentService, ContentState, ContentStateResponse, ContentUpdate,
+  CorrelationData, Course, CourseBatchesRequest, CourseBatchStatus,
+  CourseEnrollmentType, CourseService,
+  DownloadEventType, DownloadProgress,
+  DownloadService, DownloadTracking,
+  EventsBusEvent, EventsBusService,
   FetchEnrolledCourseRequest,
   GetContentStateRequest,
   NetworkError,
   ProfileService,
   Rollup,
-  ServerProfileDetailsRequest,
-  SharedPreferences,
-  SortOrder,
-  TelemetryErrorCode,
-  TelemetryObject,
+  ServerProfileDetailsRequest, SharedPreferences, SortOrder,
+  TelemetryErrorCode, TelemetryObject,
   UnenrollCourseRequest,
 } from 'sunbird-sdk';
-import {Observable, Subscription} from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {
   AuditType,
   CorReleationDataType,
-  Environment,
-  ErrorType,
-  ID,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
+  Environment, ErrorType,
+  ImpressionType, InteractSubtype, InteractType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';
-import {BatchConstants, EventTopics, MimeType, PreferenceKey, ProfileConstants, RouterLinks, ShareItemType} from '../app.constant';
-import {SbGenericPopoverComponent} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
-import {ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent} from '../components';
-import {NavigationExtras, Router} from '@angular/router';
-import {ContentUtil} from '@app/util/content-util';
-import {SbPopoverComponent} from '../components/popups';
-import {ContentInfo} from '@app/services/content/content-info';
-import {ContentDeleteHandler} from '@app/services/content/content-delete-handler';
-import {LocalCourseService} from '@app/services';
-import {EnrollCourse} from './course.interface';
-import {SbSharePopupComponent} from '../components/popups/sb-share-popup/sb-share-popup.component';
-import {share} from 'rxjs/operators';
-import {SbProgressLoader} from '../../services/sb-progress-loader.service';
-import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {CsGroupAddableBloc} from '@project-sunbird/client-services/blocs';
-import {CsPrimaryCategory} from '@project-sunbird/client-services/services/content';
-import {ConsentStatus, UserConsent} from '@project-sunbird/client-services/models';
-import {ConsentPopoverActionsDelegate} from '@app/services/local-course.service';
-import {CategoryKeyTranslator} from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import {
+  BatchConstants, EventTopics, MimeType,
+  PreferenceKey, ProfileConstants,
+  RouterLinks, ShareItemType
+} from '../app.constant';
+import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
+import {
+  ConfirmAlertComponent,
+  ContentActionsComponent, ContentRatingAlertComponent
+} from '../components';
+import { NavigationExtras, Router } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
+import { SbPopoverComponent } from '../components/popups';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { LocalCourseService } from '@app/services';
+import { EnrollCourse } from './course.interface';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { share } from 'rxjs/operators';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
+import { ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '@app/services/consent-service';
+import {
+  ProfileNameConfirmationPopoverComponent
+} from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 
 declare const cordova;
 
@@ -1234,7 +1222,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  startContent() {
+  async startLearning() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.START_CLICKED,
       Environment.HOME,
@@ -1244,6 +1232,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.objRollup,
       this.corRelationList
     );
+
+    const doNotShow = await this.preferences.getBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP).toPromise();
+    //   this.preferences.putBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP, true).toPromise().then();
+    if (doNotShow) {
+      this.startContent();
+    } else {
+      this.showProfileNameConfirmationPopup();
+    }
+  }
+
+  private startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
       if (!this.nextContent) {
@@ -1362,7 +1361,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
     if (this.isAlreadyEnrolled) {
-     await this.checkDataSharingStatus();
+      await this.checkDataSharingStatus();
     }
   }
 
@@ -1885,7 +1884,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverMainTitle:
-        this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course),
+          this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL', this.course),
         metaInfo: this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_TRAININGS_ONLY_REGISTERED_USERS', this.course),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
@@ -2012,7 +2011,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
         chapterParams);
     } else {
-      if(!this.batchId){
+      if (!this.batchId) {
         return false;
       }
       this.navigateToContentDetails(event.item, 1);
@@ -2048,35 +2047,35 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async saveChanges() {
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
-      if (this.dataSharingStatus === ConsentStatus.ACTIVE) {
-        const request: Consent = {
-          status: ConsentStatus.REVOKED,
-          userId: this.courseCardData.userId,
-          consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
-          objectId: this.courseCardData.courseId,
-          objectType: 'Collection',
-        };
-        this.profileService.updateConsent(request).toPromise()
-          .then(async (data) => {
-            await loader.dismiss();
-            this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
-            this.showShareData = false;
-            this.checkDataSharingStatus();
-          })
-          .catch(async (e) => {
-            await loader.dismiss();
-            if (e.code === 'NETWORK_ERROR') {
-              this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-            }
-          });
-      } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
-        await loader.dismiss();
-        await this.consentService.showConsentPopup(this.courseCardData);
-        this.showShareData = false;
-        this.checkDataSharingStatus();
-      }
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    if (this.dataSharingStatus === ConsentStatus.ACTIVE) {
+      const request: Consent = {
+        status: ConsentStatus.REVOKED,
+        userId: this.courseCardData.userId,
+        consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+        objectId: this.courseCardData.courseId,
+        objectType: 'Collection',
+      };
+      this.profileService.updateConsent(request).toPromise()
+        .then(async (data) => {
+          await loader.dismiss();
+          this.commonUtilService.showToast('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+          this.showShareData = false;
+          this.checkDataSharingStatus();
+        })
+        .catch(async (e) => {
+          await loader.dismiss();
+          if (e.code === 'NETWORK_ERROR') {
+            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+          }
+        });
+    } else if (this.dataSharingStatus === ConsentStatus.REVOKED) {
+      await loader.dismiss();
+      await this.consentService.showConsentPopup(this.courseCardData);
+      this.showShareData = false;
+      this.checkDataSharingStatus();
+    }
   }
 
   async checkDataSharingStatus() {
@@ -2086,24 +2085,24 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       objectId: this.courseCardData.courseId
     };
     await this.profileService.getConsent(request).toPromise()
-    .then((data) => {
-      if (data) {
-        this.dataSharingStatus = data.consents[0].status;
-        this.lastUpdateOn = data.consents[0].lastUpdatedOn;
-      }
-    })
-    .catch(async (e) => {
-      if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
-     && this.course.userConsent === UserConsent.YES) {
-         if (!this.isConsentPopUp) {
-           this.isConsentPopUp = true;
-           await this.consentService.showConsentPopup(this.courseCardData);
-           await this.checkDataSharingStatus();
-         }
-      } else if (e.code === 'NETWORK_ERROR') {
+      .then((data) => {
+        if (data) {
+          this.dataSharingStatus = data.consents[0].status;
+          this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+        }
+      })
+      .catch(async (e) => {
+        if (this.isAlreadyEnrolled && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
+          && this.course.userConsent === UserConsent.YES) {
+          if (!this.isConsentPopUp) {
+            this.isConsentPopUp = true;
+            await this.consentService.showConsentPopup(this.courseCardData);
+            await this.checkDataSharingStatus();
+          }
+        } else if (e.code === 'NETWORK_ERROR') {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
         }
-    });
+      });
   }
 
   onConsentPopoverShow() {
@@ -2121,5 +2120,28 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.courseService.displayDiscussionForum({
       forumId
     }).subscribe();
+  }
+
+  private async showProfileNameConfirmationPopup() {
+    const popUp = await this.popoverCtrl.create({
+      component: ProfileNameConfirmationPopoverComponent,
+      componentProps: {
+      },
+      cssClass: 'sb-popover sb-profile-name-confirmation-popover',
+    });
+    await popUp.present();
+    const { data } = await popUp.onDidDismiss();
+    if (data !== undefined) {
+      if (data.buttonClicked) {
+        this.startContent();
+      }
+    } else {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CLOSE_CLICKED,
+        PageId.PROFILE_NAME_CONFIRMATION_POPUP,
+        Environment.HOME
+      );
+    }
   }
 }

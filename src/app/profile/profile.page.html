@@ -91,9 +91,7 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-
-            <ion-button shape="round" (click)="navigateToEditPersonalDetails()"
-                class="custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="onEditProfileClicked()" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
@@ -253,12 +251,14 @@
                 <div class="ion-text-center"
                     *ngIf="mapTrainingsToCertificates(mappedTrainingCertificates).length > myLearningLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="myLearningLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings('myLearning')">
+                        *ngIf="myLearningLimit < mappedTrainingCertificates?.length"
+                        (click)="showMoreTrainings('myLearning')">
                         + {{mappedTrainingCertificates?.length - myLearningLimit}} {{'MORE' | translate}}
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="myLearningLimit >= mappedTrainingCertificates?.length" (click)="showLessTrainings('myLearning')">
+                        *ngIf="myLearningLimit >= mappedTrainingCertificates?.length"
+                        (click)="showLessTrainings('myLearning')">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>
@@ -289,15 +289,16 @@
                         </button>
                     </div>
                 </div>
-                <div class="ion-text-center"
-                    *ngIf="learnerPassbook.length > learnerPassbookLimit">
+                <div class="ion-text-center" *ngIf="learnerPassbook.length > learnerPassbookLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="learnerPassbookLimit < learnerPassbook?.length" (click)="showMoreTrainings('learnerPassbook')">
+                        *ngIf="learnerPassbookLimit < learnerPassbook?.length"
+                        (click)="showMoreTrainings('learnerPassbook')">
                         + {{learnerPassbook?.length - learnerPassbookLimit}} {{'MORE' | translate}}
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="learnerPassbookLimit >= learnerPassbook?.length" (click)="showLessTrainings('learnerPassbook')">
+                        *ngIf="learnerPassbookLimit >= learnerPassbook?.length"
+                        (click)="showLessTrainings('learnerPassbook')">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>

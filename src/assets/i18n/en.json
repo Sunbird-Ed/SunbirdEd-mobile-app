@@ -1096,5 +1096,10 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully",
+  "PROFILE_NAME_CONF_HEADING": "Profile name confirmation",
+  "PROFILE_NAME_CONF_LABEL": "Profile name",
+  "PROFILE_NAME_CONF_CHECKBOX": "I understand, don't show this message again",
+  "PROFILE_NAME_CONF_DESC_1": "This will be your {{%appName}} profile name in the course certificates, please make sure your name is correct.",
+  "PROFILE_NAME_CONF_DESC_2": "You can always update your profile information from Profile page.",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone."
 }

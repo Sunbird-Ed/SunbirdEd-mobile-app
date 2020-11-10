@@ -1,0 +1,28 @@
+@import "src/assets/styles/_variables.scss";
+
+ion-content {
+    background-color: map-get($colors, white );
+}
+.pnc-padding-32 {
+    padding: 16px 32px;
+}
+.pnc-profile-name {
+    font-weight: bold;
+    font-size: 20px;
+}
+.pnc-checkbox {
+    display: inline-block;
+}
+.pnc-checkbox-desc {
+    display: inline-block;
+    margin-left: 8px;
+    margin-bottom: 0px;
+    vertical-align: super;
+}
+ion-footer {
+    border-top: 1px solid map-get($colors, medium_gray );
+
+    .sb-popover-footer {
+        padding: 16px;
+    }
+}

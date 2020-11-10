@@ -1,0 +1,41 @@
+<ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+        <ion-title class="sb-popover-title text-left pl-16"> {{'PROFILE_NAME_CONF_HEADING' | translate}}
+            <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="sb-popover-container ion-no-padding">
+    <div class="sb-popover-items">
+        <div class="icon-container">
+            <img src="assets/imgs/profile_name_confirmation.png" alt="image">
+        </div>
+
+        <div class="sb-popover-content-details">
+            <div>{{'PROFILE_NAME_CONF_LABEL' | translate}}:</div>
+            <div class="pnc-profile-name mt-8">
+                {{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}
+            </div>
+            <div class="pnc-padding-32"> {{'PROFILE_NAME_CONF_DESC_1' | translate: {'%appName': appName} }} </div>
+            <div class="pnc-padding-32">
+                <span>{{'PROFILE_NAME_CONF_DESC_2' | translate: {'%appName': appName} }}</span>
+                <span (click)="onProfilePageClick()">profile page.</span></div>
+            <div>
+                <ion-checkbox class="pnc-checkbox" color="secondary" checked="false">
+                </ion-checkbox>
+                <p class="pnc-checkbox-desc">
+                    {{'PROFILE_NAME_CONF_CHECKBOX' | translate}}
+                </p>
+            </div>
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer>
+    <div class="sb-popover-footer">
+        <button class="sb-popover-action-btn popover-color" (click)="onButtonClick()">
+            {{'START_LEARNING' | translate}}
+        </button>
+    </div>
+</ion-footer>

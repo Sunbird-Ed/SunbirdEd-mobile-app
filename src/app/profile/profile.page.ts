@@ -467,9 +467,9 @@ export class ProfilePage implements OnInit {
     try {
       const request = { userId: this.profile.userId || this.profile.id };
       this.learnerPassbook = (await this.courseService.getLearnerCertificates(request).toPromise())
-      .filter((learnerCertificate: any) => (learnerCertificate &&
-        learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
-      .map((learnerCertificate: any) => {
+        .filter((learnerCertificate: any) => (learnerCertificate &&
+          learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
+        .map((learnerCertificate: any) => {
           const oneCert: any = {
             issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
             issuedOn: learnerCertificate._source.data.issuedOn,
@@ -491,7 +491,7 @@ export class ProfilePage implements OnInit {
             };
           }
           return oneCert;
-      });
+        });
     } catch (error) {
       console.log('Learner Passbook API Error', error);
     }
@@ -650,27 +650,10 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  navigateToEditPersonalDetails() {
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.EDIT_CLICKED,
-        Environment.HOME,
-        PageId.PROFILE, null);
-
-      const navigationExtras: NavigationExtras = {
-        state: {
-          profile: this.profile,
-          isShowBackButton: true
-        }
-      };
-
-      // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
-      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-    } else {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-    }
+  onEditProfileClicked() {
+    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
   }
+
   /**
    * Searches contents created by the user
    */
