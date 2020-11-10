@@ -1706,6 +1706,7 @@ describe('AppComponent', () => {
             // act
             appComponent.menuItemAction(menuName);
             // assert
+            expect(cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
         });
     });
 
