@@ -137,7 +137,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     try {
       this.isActivityLoading = true;
       const response: CsGroupActivityDataAggregation = await this.groupService.activityService.getDataAggregation(req).toPromise();
-      console.log('aggregation', response)
       if (response) {
         this.memberList = response.members;
         this.activityDetail = response.activity;
@@ -306,7 +305,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     
   }
 
-  private async checkForPermissions(): Promise<boolean | undefined> {
+  async checkForPermissions(): Promise<boolean | undefined> {
     return new Promise<boolean | undefined>(async (resolve) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
