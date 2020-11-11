@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy, NgZone } from '@angular/core';
 import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
@@ -10,7 +10,19 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { CourseService, Course } from 'sunbird-sdk';
+import {
+  CourseService,
+  Course,
+  UpdateContentStateRequest,
+  UpdateContentStateTarget,
+  InteractType,
+  TelemetryErrorCode,
+  ErrorType
+} from 'sunbird-sdk';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-player',
@@ -39,7 +51,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -57,7 +72,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   ngOnInit() {
-    this.pauseSubscription =  this.platform.pause.subscribe(() => {
+    this.pauseSubscription = this.platform.pause.subscribe(() => {
       var iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
         iframes[0].contentWindow.postMessage('pause.youtube', '*');
@@ -92,10 +107,27 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
         this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
         this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
-            console.log('Player Response', resp);
-            if (resp.data === 'renderer:question:submitscore') {
-                this.courseService.syncAssessmentEvents().subscribe();
+          console.log('Player Response', resp);
+          if (resp.data === 'renderer:question:submitscore') {
+            this.courseService.syncAssessmentEvents().subscribe();
+          } else if (resp.data && typeof resp.data === 'object') {
+            if (resp.data['player.pdf-renderer.error']) {
+              const pdfError = resp.data['player.pdf-renderer.error'];
+              if (pdfError.name === 'MissingPDFException') {
+                const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
+                  this.config['metadata']['contentData']['artifactUrl'];
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                  Environment.PLAYER,
+                  PageId.PLAYER,
+                  ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
+                  undefined,
+                  ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
+                this.openPDF(downloadUrl);
+              }
             }
+          }
         });
       }, 1000);
     };
@@ -121,7 +153,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.backButtonSubscription) {
       this.backButtonSubscription.unsubscribe();
     }
-    window.removeEventListener('renderer:question:submitscore', () => {});
+    window.removeEventListener('renderer:question:submitscore', () => { });
   }
 
   ngOnDestroy() {
@@ -148,11 +180,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         });
      */
     setTimeout(() => {
-        this.closeIframe(content);
+      this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
-        content,
-        course: this.course
+      content,
+      course: this.course
     });
   }
 
@@ -232,5 +264,59 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       cssClass: 'player-exit-popup'
     });
     await alert.present();
+  }
+
+  async openPDF(url) {
+    if (this.course) {
+      setTimeout(() => {
+        this.updateContentState();
+      }, 1000);
+    }
+    const loader = await this.commonUtilService.getLoader(undefined, this.commonUtilService.translateMessage('DOWNLOADING_2'));
+    await loader.present();
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    const entry = await fileTransfer
+      .download(url, cordova.file.cacheDirectory + url.substring(url.lastIndexOf('/') + 1))
+      .catch((e) => {
+        this.telemetryGeneratorService.generateErrorTelemetry(Environment.PLAYER,
+          TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+          ErrorType.SYSTEM,
+          PageId.PLAYER,
+          JSON.stringify(e),
+        );
+      });
+    loader.dismiss();
+    const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
+    try {
+      this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
+    } catch (err) {
+      console.error('End telemetry error:', err.message);
+    }
+
+    if (entry) {
+      const localUrl = entry.toURL();
+      this.fileOpener
+        .open(localUrl, 'application/pdf')
+        .catch((e) => {
+          console.log('Error opening file', e);
+          this.commonUtilService.showToast('ERROR_TECHNICAL_PROBLEM');
+        });
+    }
+    this.location.back();
+
+  }
+
+  private updateContentState() {
+    const updateContentStateRequest: UpdateContentStateRequest = {
+      userId: this.config['context']['actor']['id'],
+      contentId: this.config['metadata']['identifier'],
+      courseId: this.course['identifier'] || this.course['courseId'],
+      batchId: this.course['batchId'],
+      status: 2,
+      progress: 100,
+      target: [UpdateContentStateTarget.LOCAL, UpdateContentStateTarget.SERVER]
+    };
+
+    this.courseService.updateContentState(updateContentStateRequest).subscribe();
   }
 }
