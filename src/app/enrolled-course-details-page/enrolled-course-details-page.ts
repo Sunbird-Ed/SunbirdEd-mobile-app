@@ -1234,7 +1234,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     );
 
     const doNotShow = await this.preferences.getBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP).toPromise();
-    //   this.preferences.putBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP, true).toPromise().then();
     if (doNotShow) {
       this.startContent();
     } else {

@@ -1,15 +1,17 @@
 import { PopoverController } from '@ionic/angular';
-import { ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ProfileService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { AppGlobalService, CommonUtilService, NavigationService, } from '@app/services';
 import { mockProfileData } from '../../../profile/profile.page.spec.data';
 import { ProfileNameConfirmationPopoverComponent } from './sb-profile-name-confirmation-popup.component';
 import { PageId } from '../../../../services/telemetry-constants';
+import { PreferenceKey } from '../../../app.constant';
 
 describe('ProfileNameConfirmationPopoverComponent', () => {
     let profileNameConfirmationPopoverComponent: ProfileNameConfirmationPopoverComponent;
 
     const mockProfileService: Partial<ProfileService> = {};
+    const mockPreferences: Partial<SharedPreferences> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
@@ -24,6 +26,7 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
     beforeAll(() => {
         profileNameConfirmationPopoverComponent = new ProfileNameConfirmationPopoverComponent(
             mockProfileService as ProfileService,
+            mockPreferences as SharedPreferences,
             mockPopoverCtrl as PopoverController,
             mockNavService as NavigationService,
             mockAppGlobalService as AppGlobalService,
@@ -72,10 +75,12 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
     describe('onButtonClick()', () => {
         it('onButtonClick should close popover', () => {
             // arrange
+            mockPreferences.putBoolean = jest.fn(() => of(undefined));
             // act
             profileNameConfirmationPopoverComponent.onButtonClick();
             // assert
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
+            expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP, false);
         });
     });
 
