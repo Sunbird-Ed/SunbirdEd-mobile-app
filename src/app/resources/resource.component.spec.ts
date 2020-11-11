@@ -1189,7 +1189,7 @@ describe('ResourcesComponent', () => {
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
-                { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
+                { positionClicked: 0, sectionName: 'mathematics' }, { l1: undefined }, [{ id: 'mathematics', type: 'Section' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
             expect(mockNavService.navigateToDetailPage).toHaveBeenCalled();
         });
@@ -1210,7 +1210,7 @@ describe('ResourcesComponent', () => {
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
                 Environment.HOME, PageId.LIBRARY, { id: undefined, type: undefined, version: '' },
-                { positionClicked: 0, sectionName: 'mathematics part 1' }, { l1: undefined }, [{ id: 'mathematics', type: 'Subject' }]);
+                { positionClicked: 0, sectionName: 'mathematics' }, { l1: undefined }, [{ id: 'mathematics', type: 'Section' }]);
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
         });
 

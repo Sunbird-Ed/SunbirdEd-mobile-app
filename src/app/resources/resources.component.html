@@ -24,7 +24,7 @@
               <sb-course-cards-hlist [title]="result?.name"
                 [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="section.contents"
                 [viewMoreButtonText]="'VIEW_ALL' | translate" (viewMoreClick)="navigateToViewMoreContentsPage(result)"
-                (cardClick)="navigateToDetailPage($event)" [hideProgress]="true"></sb-course-cards-hlist>
+                (cardClick)="navigateToDetailPage($event, result?.name)" [hideProgress]="true"></sb-course-cards-hlist>
             </ng-container>
           </div>
           <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && result.name !== 'My Learnings'">
@@ -41,7 +41,7 @@
                     <sb-library-card
                       [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
                       [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
-                      (cardClick)="navigateToDetailPage($event, content);"
+                      (cardClick)="navigateToDetailPage($event, result?.name);"
                       [cardImg]="content?.appIcon || defaultAppIcon">
                     </sb-library-card>
                   </div>
