@@ -6,12 +6,15 @@ import {
     PageId, TelemetryGeneratorService
 } from '@app/services';
 import { GroupService, GroupMemberRole, MimeType } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService, CollectionService, AppGlobalService, InteractType, InteractSubtype } from '../../../services';
+import { AppHeaderService, CollectionService, AppGlobalService, InteractType, InteractSubtype, AndroidPermissionsService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { RouterLinks } from '../../app.constant';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
@@ -47,6 +50,15 @@ describe('ActivityDetailsPage', () => {
     const mockCollectionService: Partial<CollectionService> = {
         fetchCollectionData: jest.fn(() => Promise.reject(''))
     };
+    const mockFileService: Partial<File> = {
+    };
+    const mockPermissionService: Partial<AndroidPermissionsService> = {
+    };
+    const mockFileOpener: Partial<FileOpener> = {
+    };
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
+    };
 
     beforeAll(() => {
         activityDetailsPage = new ActivityDetailsPage(
@@ -59,7 +71,11 @@ describe('ActivityDetailsPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockCollectionService as CollectionService,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockFileService as File,
+            mockPermissionService as AndroidPermissionsService,
+            mockFileOpener as FileOpener,
+            mockAppVersion as AppVersion
         );
     });
 

@@ -12,7 +12,7 @@ import {
 import {
   GroupService, GroupActivityDataAggregationRequest,
   GroupMember, CachedItemRequestSourceFrom, Content,
-  Group, MimeType, CorrelationData, TrackingEnabled, CourseService
+  Group, MimeType, CorrelationData, TrackingEnabled
 } from '@project-sunbird/sunbird-sdk';
 import {
   CsGroupActivityDataAggregation,
@@ -56,7 +56,6 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private headerService: AppHeaderService,
     private router: Router,
     private filterPipe: FilterPipe,
@@ -288,35 +287,18 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         const expTime = new Date().getTime();
         const csvData: any = this.convertToCSV(this.memberList);
         const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
-        const downloadDirectoryLocal = this.file.externalDataDirectory;
+        // const downloadDirectoryLocal = this.file.externalDataDirectory;
         const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
         
-        // this.courseService.downloadCsv(filename, csvData)
-        // .then((res) => {
-        //   console.log('succ', res)
-        // }).catch((err) => {
-        //   console.log('err in Download folder', err)
-        // })
-
-        this.file.writeFile(downloadDirectoryLocal, filename, csvData)
-          .then((res)=> {
-              console.log('rs write file', res);
-              this.openCsv(res.nativeURL)
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-            }
-          )
-          .catch(
-            (err) => {
-              console.log('writeFile err', err)
-              this.file.writeExistingFile(downloadDirectory, filename, csvData)
-                .then(
-                  _ => {
-                    this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
-                  }
-                )
-                .catch();
-            }
-        );
+        this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
+        .then((res)=> {
+          console.log('rs write file', res);
+          this.openCsv(res.nativeURL)
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+        })
+        .catch((err) => {
+          console.log('writeFile err', err)
+        });
       } else{
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
       }
