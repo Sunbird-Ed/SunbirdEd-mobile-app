@@ -66,6 +66,8 @@ export class ConsentPiiPopupComponent {
                             location = element.name;
                         }
                     });
+                } else if (ele.code === 'state') {
+                    location = this.profile.serverProfile.rootOrgName ? this.profile.serverProfile.rootOrgName : '-';
                 }
                 return location;
             case 'SERVER_PROFILE_DECLARED':
