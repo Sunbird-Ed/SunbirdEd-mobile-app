@@ -314,7 +314,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
         resolve(false);
       } else {
-        this.showStoragePermissionPopup().then((result) => {
+        this.showStoragePermissionPopover().then((result) => {
           if (result) {
             resolve(true);
           } else {
@@ -325,8 +325,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  private async showStoragePermissionPopup(): Promise<boolean | undefined> {
-    // await this.popoverCtrl.dismiss();
+  private async showStoragePermissionPopover(): Promise<boolean | undefined> {
     return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {
@@ -378,8 +377,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   }
 
   openCsv(path) {
-    this.fileOpener
-      .open(path, 'text/csv')
+    this.fileOpener.open(path, 'text/csv')
       .then(() => console.log('File is opened'))
       .catch((e) => {
         console.log('Error opening file', e);
