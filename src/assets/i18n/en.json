@@ -1098,8 +1098,8 @@
   "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully",
   "PROFILE_NAME_CONF_HEADING": "Profile name confirmation",
   "PROFILE_NAME_CONF_LABEL": "Profile name",
-  "PROFILE_NAME_CONF_CHECKBOX": "I understand, don't show this message again",
-  "PROFILE_NAME_CONF_DESC_1": "This will be your {{%appName}} profile name in the course certificates, please make sure your name is correct.",
-  "PROFILE_NAME_CONF_DESC_2": "You can always update your profile information from Profile page.",
+  "FRMELEMNTS_CKBX_CERTMSG": "Do not show this message again",
+  "FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
+  "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone."
 }

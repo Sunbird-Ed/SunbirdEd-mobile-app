@@ -15,18 +15,17 @@
         <div class="sb-popover-content-details">
             <div>{{'PROFILE_NAME_CONF_LABEL' | translate}}:</div>
             <div class="pnc-profile-name mt-8">
-                {{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}
+                <span>{{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}</span>
+                <span (click)="onProfilePageClick()">
+                    <img src="assets/imgs/edit-icon.svg" alt="edit-name" />
+                </span>
             </div>
-            <div class="pnc-padding-32"> {{'PROFILE_NAME_CONF_DESC_1' | translate: {'%appName': appName} }} </div>
-            <div class="pnc-padding-32">
-                <span>{{'PROFILE_NAME_CONF_DESC_2' | translate: {'%appName': appName} }}</span>
-                <span class="pnc-profile-setting" (click)="onProfilePageClick()"> profile page.</span></div>
+            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_NAMEONCERT' | translate: {'%appName': appName} }} </div>
+            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_EDITCERTNAME' | translate: {'%appName': appName} }} </div>
             <div>
                 <ion-checkbox class="pnc-checkbox" color="secondary" checked="false" [(ngModel)]="doNotShowAgain">
                 </ion-checkbox>
-                <p class="pnc-checkbox-desc">
-                    {{'PROFILE_NAME_CONF_CHECKBOX' | translate}}
-                </p>
+                <p class="pnc-checkbox-desc"> {{'FRMELEMNTS_CKBX_CERTMSG' | translate}} </p>
             </div>
         </div>
     </div>
