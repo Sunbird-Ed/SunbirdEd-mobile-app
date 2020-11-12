@@ -259,17 +259,15 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     }
     if (data && data.isLeftButtonClicked) {
       if(!shouldUpdateUserLevelGroupTnc) {
-        const updateMembersRequest: UpdateMembersRequest = {
-          groupId: navigationExtras.state.groupId,
-          updateMembersRequest: {
-            members: [{
-              userId: this.userId,
-              visited: true
-            }]
-          }
+        const request: CsGroupUpdateGroupGuidelinesRequest = {
+          userId: this.userId,
+          groups: [{
+            groupId: navigationExtras.state.groupId,
+            visited: true
+          }]
         }
         try {
-          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
+          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
           this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err){

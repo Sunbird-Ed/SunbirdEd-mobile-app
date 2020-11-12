@@ -128,7 +128,7 @@ describe('MyGroupsPage', () => {
             myGroupsPage.groupTncVersion = '3.4.0'
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
-            mockGroupService.updateMembers = jest.fn(() => of('success') as any);
+            mockGroupService.updateGroupGuidelines = jest.fn(() => of('success') as any);
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
