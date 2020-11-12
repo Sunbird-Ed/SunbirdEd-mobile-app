@@ -325,7 +325,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  private async showStoragePermissionPopover(): Promise<boolean | undefined> {
+  async showStoragePermissionPopover(): Promise<boolean | undefined> {
     return new Promise<boolean | undefined>(async (resolve) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {
