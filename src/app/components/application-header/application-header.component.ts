@@ -129,11 +129,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
-    console.log('appTheme', this.appTheme);
     this.checkForAppUpdate().then();
   }
 
-  setAppVersion(): any {
+  private setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(vName => {
         this.versionName = vName;
@@ -184,7 +183,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  listenNotifications() {
+  private listenNotifications() {
     this.pushNotificationService.notifications$.subscribe((notifications) => {
       this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
