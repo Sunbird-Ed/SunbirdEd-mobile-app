@@ -967,6 +967,7 @@ export class ProfilePage implements OnInit {
               InteractSubtype.ALLOW_CLICKED,
               Environment.SETTINGS,
               PageId.PERMISSION_POPUP);
+            this.appGlobalService.isNativePopupVisible = true;
             this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
               .subscribe(async (status: AndroidPermissionsStatus) => {
                 if (status.hasPermission) {
@@ -991,6 +992,7 @@ export class ProfilePage implements OnInit {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
                 }
+                this.appGlobalService.setNativePopupVisible(false);
                 resolve(undefined);
               });
           }

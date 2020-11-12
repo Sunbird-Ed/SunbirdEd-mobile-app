@@ -79,8 +79,10 @@ describe('Profile.page', () => {
         })
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        openPopover: jest.fn(() => Promise.resolve())
+        openPopover: jest.fn(() => Promise.resolve()),
+        setNativePopupVisible: jest.fn()
     };
+
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getCustodianOrgId: jest.fn(() => Promise.resolve({
