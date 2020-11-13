@@ -530,7 +530,8 @@ export enum ID {
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
     NOTIFICATION_REQUEST = 'notification-request',
     DEACTIVATE_GROUP= 'deactivate-group',
-    REACTIVATE_GROUP= 'reactivate-group'
+    REACTIVATE_GROUP= 'reactivate-group',
+    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines'
 }
 
 export enum ActionButtonType {
