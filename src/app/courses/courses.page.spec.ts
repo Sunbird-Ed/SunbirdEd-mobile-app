@@ -49,14 +49,21 @@ describe('CoursesPage', () => {
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn()
     };
-    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        getCourseFilterConfig: jest.fn(() => Promise.resolve())
+    };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockNetwork: Partial<Network> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn((fn) => fn())
     };
     const mockPageService: Partial<PageAssembleService> = {};
-    const mockPopCtrl: Partial<PopoverController> = {};
+    const mockPopCtrl: Partial<PopoverController> = {
+        create: jest.fn(() => Promise.resolve({
+            present: jest.fn(),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: {} }))
+        }) as any)
+    };
     const mockPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of('{"body": {"identifier": "do_123"}}'))
     };
@@ -240,7 +247,22 @@ describe('CoursesPage', () => {
         });
         it('should trigger showFilter() if event name receives search', () => {
             // arrange
+            let data = [{
+                selected: [1,2]
+            }];
+            jest.spyOn(coursesPage, 'showFilter');
+            coursesPage.resetCourseFilter = true;
+            mockFormAndFrameworkUtilService.getCourseFilterConfig = jest.fn(() => Promise.resolve(data))
+            // act
+            coursesPage.handleHeaderEvents({name: 'filter'});
+            // assert
+            expect(coursesPage.showFilter).toHaveBeenCalled();
+        });
+
+        it('call showFilter method', () => {
+            // arrange
             jest.spyOn(coursesPage, 'showFilter').mockImplementation();
+            coursesPage.resetCourseFilter = true;
             // act
             coursesPage.handleHeaderEvents({name: 'filter'});
             // assert
@@ -1175,6 +1197,19 @@ describe('CoursesPage', () => {
             expect(mockToastController.create).toHaveBeenCalled();
             done();
         }, 0);
+    });
+
+    describe('resetFilter', () => {
+        it('return reset values', () => {
+            // arrange
+            let data = [{
+                selected: [1,2]
+            }];
+            // act
+            data = coursesPage.resetFilter(data);
+            // assert
+            expect(data[0].selected).toEqual([]);
+        });
     });
 });
 

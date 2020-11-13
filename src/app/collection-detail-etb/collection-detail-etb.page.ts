@@ -66,7 +66,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { IButtonConfig, TocCardType } from '@project-sunbird/common-consumption';
+import { IButtonConfig, TocCardType, IAccordianConfig, ExpandMode, ExpandBehavior } from '@project-sunbird/common-consumption';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -282,6 +282,10 @@ export class CollectionDetailEtbPage implements OnInit {
   TocCardType = TocCardType;
   activeContent;
   playBtnConfig: IButtonConfig;
+  accordianConfig: IAccordianConfig = {
+    expandMode: ExpandMode.SINGLE,
+    expandBehavior: ExpandBehavior.EXPAND_FIRST
+  };
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,

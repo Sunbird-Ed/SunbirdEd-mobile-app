@@ -1981,6 +1981,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     // if (this.csGroupAddableBloc.state) {
     //   return;
     // }
+    if (this.isGuestUser) {
+      this.navigateToBatchListPage();
+      return false;
+    }
+
+    if (this.course.createdBy !== this.userId) {
+      if (!this.isAlreadyEnrolled && !this.isBatchNotStarted) {
+        this.joinTraining();
+        return false;
+      } else if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+          return false;
+      }
+    }
 
     if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
       return false;

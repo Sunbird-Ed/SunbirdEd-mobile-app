@@ -6,14 +6,13 @@
     </div>
 
     <div class="language-container">
-      <div class="language-card" *ngFor="let lang of languages" [class.selected]="lang.code === language">
+      <div class="language-card" (click)="language = lang.code; onLanguageSelected()" *ngFor="let lang of languages" [ngClass]="{'selected-lang': lang.code === language}">
         <label class="language-selection" [for]="'language-selection' + lang.code">
           <span class="label-text">
             {{lang?.label | translate}}
           </span>
           <img src='assets/imgs/ic_check_white.svg' alt="check" class="icon-check">
         </label>
-        <input (change)="language = lang.code; onLanguageSelected();" [id]="'language-selection' + lang.code" [value]="languages" type="radio" name="language-selection">
       </div>
     </div>
 
