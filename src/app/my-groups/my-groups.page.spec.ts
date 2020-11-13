@@ -640,5 +640,4 @@ describe('MyGroupsPage', () => {
             });
         });
     });
-
 });
