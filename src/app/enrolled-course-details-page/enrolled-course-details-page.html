@@ -151,7 +151,7 @@
 						</ion-card-title>
 						<button
 							*ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
-							class="enrolled-course-card-button" (click)="startContent()">
+							class="enrolled-course-card-button" (click)="startLearning()">
 							<span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_LEARNING' | translate }} </span>

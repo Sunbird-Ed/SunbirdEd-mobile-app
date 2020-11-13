@@ -1,0 +1,40 @@
+<ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+        <ion-title class="sb-popover-title text-left pl-16"> {{'FRMELEMNTS_LBL_PROFCONF' | translate}}
+            <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="sb-popover-container ion-no-padding">
+    <div class="sb-popover-items">
+        <div class="icon-container">
+            <img src="assets/imgs/profile_name_confirmation.png" alt="image">
+        </div>
+
+        <div class="sb-popover-content-details">
+            <div>{{'FRMELEMNTS_LBL_PROFTITLE' | translate}}:</div>
+            <div class="pnc-profile-name mt-8">
+                <span>{{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}</span>
+                <span (click)="onProfilePageClick()">
+                    <img src="assets/imgs/edit-icon.svg" alt="edit-name" />
+                </span>
+            </div>
+            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_NAMEONCERT' | translate: {'%appName': appName} }} </div>
+            <div class="pnc-padding-32"> {{'FRMELEMNTS_MSG_EDITCERTNAME' | translate: {'%appName': appName} }} </div>
+            <div>
+                <ion-checkbox class="pnc-checkbox" color="secondary" checked="false" [(ngModel)]="doNotShowAgain">
+                </ion-checkbox>
+                <p class="pnc-checkbox-desc"> {{'FRMELEMNTS_CKBX_CERTMSG' | translate}} </p>
+            </div>
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer>
+    <div class="sb-popover-footer">
+        <button class="sb-popover-action-btn popover-color" (click)="onSubmitClick()">
+            {{'START_LEARNING' | translate}}
+        </button>
+    </div>
+</ion-footer>

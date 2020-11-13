@@ -1,6 +1,6 @@
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService} from '../../../../services';
+import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService, AppGlobalService} from '../../../../services';
 import { DeviceInfo } from 'sunbird-sdk';
 import { SbAppSharePopupComponent } from '@app/app/components/popups';
 import {PopoverController, Platform, NavParams, ToastController} from '@ionic/angular';
@@ -51,6 +51,9 @@ describe('SbAppSharePopupComponent', () => {
     const mockRouter: Partial<Router> = {
         navigate: jest.fn()
     };
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        setNativePopupVisible: jest.fn()
+    };
 
     beforeAll(() => {
         sbAppSharePopupComponent = new SbAppSharePopupComponent(
@@ -63,7 +66,8 @@ describe('SbAppSharePopupComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockPermissionService as AndroidPermissionsService,
             mockRouter as Router,
-            mockCommonUtilService as CommonUtilService);
+            mockCommonUtilService as CommonUtilService,
+            mockAppGlobalService as AppGlobalService);
     });
 
     beforeEach(() => {

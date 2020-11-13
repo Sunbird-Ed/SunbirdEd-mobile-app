@@ -1918,8 +1918,8 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('startContent()', () => {
-        it('should find next content which status is 0 or 1', () => {
+    describe('startLearning()', () => {
+        it('should find next content which status is 0 or 1', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             enrolledCourseDetailsPage.courseHeirarchy = {
@@ -1955,25 +1955,31 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.isBatchNotStarted = false;
             enrolledCourseDetailsPage.nextContent = false;
             mockContentPlayerHandler.playContent = jest.fn();
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+
             // act
-            enrolledCourseDetailsPage.startContent();
+            enrolledCourseDetailsPage.startLearning();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                {},
-                [{ id: '', type: 'CourseBatch' }],
-            );
-            expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
-            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
-            expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
+                expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                done();
+            }, 0);
         });
 
-        it('should show toast message', () => {
+        it('should show toast message', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             enrolledCourseDetailsPage.courseHeirarchy = {
@@ -1983,23 +1989,69 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+
             // act
-            enrolledCourseDetailsPage.startContent();
+            enrolledCourseDetailsPage.startLearning();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                {},
-                [{ id: '', type: 'CourseBatch' }],
-            );
-            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
-            expect(mockDatePipe.transform).toBeCalled();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
+                expect(mockDatePipe.transform).toBeCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                done();
+            }, 0);
+        });
+
+        it('should show profile name confirmation popup', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                children: []
+            };
+            enrolledCourseDetailsPage.isBatchNotStarted = true;
+            mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { buttonClicked: true } }))
+            } as any)));
+
+            // act
+            enrolledCourseDetailsPage.startLearning();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
+                expect(mockDatePipe.transform).toBeCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
@@ -2150,7 +2202,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId
-              };
+            };
             mockProfileService.getConsent = jest.fn(() => of({
                 consents: [{
                     status: ConsentStatus.ACTIVE,
@@ -2181,7 +2233,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId
-              };
+            };
             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
             enrolledCourseDetailsPage.course = {
                 userConsent: UserConsent.YES
@@ -2224,7 +2276,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
-              };
+            };
             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
             enrolledCourseDetailsPage.course = {
                 userConsent: UserConsent.YES
@@ -2457,8 +2509,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
                 objectType: 'Collection',
-              };
-            mockProfileService.updateConsent = jest.fn(() => of({message: 'successfull'}));
+            };
+            mockProfileService.updateConsent = jest.fn(() => of({ message: 'successfull' }));
             mockCommonUtilService.showToast = jest.fn();
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());
@@ -2499,8 +2551,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
                 objectType: 'Collection',
-              };
-            mockProfileService.updateConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+            };
+            mockProfileService.updateConsent = jest.fn(() => throwError({ code: 'NETWORK_ERROR' }));
             mockCommonUtilService.showToast = jest.fn();
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());

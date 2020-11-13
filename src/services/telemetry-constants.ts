@@ -7,7 +7,8 @@ export enum Environment {
     SETTINGS = 'settings',
     ONBOARDING = 'onboarding',
     NOTIFICATION = 'notification',
-    GROUP = 'group'
+    GROUP = 'group',
+    PLAYER = 'player'
 }
 
 export enum ErrorCode {
@@ -144,6 +145,7 @@ export enum PageId {
     LOCATION = 'location',
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
+    PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
@@ -152,7 +154,8 @@ export enum PageId {
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
     PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner',
     FRAMEWORK_SELECTION = 'framework-selection',
-    RELEVANT_CONTENTS = 'relevant-contents'
+    RELEVANT_CONTENTS = 'relevant-contents',
+    PLAYER = 'player'
 }
 
 export enum LogType {
@@ -483,7 +486,8 @@ export enum InteractSubtype {
     ACTIVITY_TAB_CLICKED = 'activity-tab-clicked',
     MEMBER_TAB_CLICKED = 'member-tab-clicked',
     EDIT_GROUP_CLICKED = 'edit-group-clicked',
-    LET_US_KNOW_CLICKED = 'let-us-know-clicked'
+    LET_US_KNOW_CLICKED = 'let-us-know-clicked',
+    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked'
 }
 
 export enum ID {

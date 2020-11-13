@@ -8,7 +8,7 @@ import {
   TelemetryObject,
   ServerProfile
 } from 'sunbird-sdk';
-import { PreferenceKey } from '../../../app/app.constant';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 import {
   AppHeaderService,
   CommonUtilService,
@@ -32,6 +32,7 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
 import { FieldConfig } from 'common-form-elements';
 import { FormConstants } from '@app/app/form.constants';
+import { ConsentService } from '@app/services/consent-service';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -71,7 +72,8 @@ export class SelfDeclaredTeacherEditPage {
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formValidationAsyncFactory: FormValidationAsyncFactory,
-    private formnFrameworkService: FormAndFrameworkUtilService
+    private formnFrameworkService: FormAndFrameworkUtilService,
+    private consentService: ConsentService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
@@ -370,6 +372,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async showAddedSuccessfullPopup() {
+    const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -386,8 +389,10 @@ export class SelfDeclaredTeacherEditPage {
       cssClass: 'sb-popover success',
     });
     await confirm.present();
-    await confirm.onDidDismiss();
-
+    const data = await confirm.onDidDismiss();
+    if (data && data.data && data.data.canDelete) {
+      await this.consentService.getConsent(userDetails, true);
+    }
   }
 
   generateTelemetryInteract(type, id, value?) {
