@@ -72,12 +72,12 @@ describe('ProfileNameConfirmationPopoverComponent', () => {
         });
     });
 
-    describe('onButtonClick()', () => {
-        it('onButtonClick should close popover', () => {
+    describe('onSubmitClick()', () => {
+        it('onSubmitClick should close popover', () => {
             // arrange
             mockPreferences.putBoolean = jest.fn(() => of(undefined));
             // act
-            profileNameConfirmationPopoverComponent.onButtonClick();
+            profileNameConfirmationPopoverComponent.onSubmitClick();
             // assert
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({ buttonClicked: true });
             expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP, false);
