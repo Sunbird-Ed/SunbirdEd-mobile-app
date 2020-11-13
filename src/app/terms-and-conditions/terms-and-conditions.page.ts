@@ -156,7 +156,8 @@ export class TermsAndConditionsPage implements OnInit {
               ||  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
-                if (await tncUpdateHandlerService.isSSOUser(profile)) {
+                if (await tncUpdateHandlerService.isSSOUser(profile) ||
+                (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                   await this.consentService.getConsent(profile, true);
                 }
                 this.router.navigate(['/', RouterLinks.TABS]);
@@ -174,7 +175,8 @@ export class TermsAndConditionsPage implements OnInit {
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
-              if (await tncUpdateHandlerService.isSSOUser(profile)) {
+              if (await tncUpdateHandlerService.isSSOUser(profile) ||
+              (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                 await this.consentService.getConsent(profile, true);
               }
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {

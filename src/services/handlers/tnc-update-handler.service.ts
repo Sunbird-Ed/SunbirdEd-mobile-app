@@ -76,7 +76,7 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (await this.isSSOUser(userDetails)) {
+    if (await this.isSSOUser(userDetails) || (userDetails.serverProfile.declarations && userDetails.serverProfile.declarations.length)) {
       await this.consentService.getConsent(userDetails, true);
     }
     if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
