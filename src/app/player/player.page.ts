@@ -19,7 +19,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType
+  ErrorType, SunbirdSdk
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -98,6 +98,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showDownload: true,
           showReplay: false,
           showExit: true,
+        }
+      };
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+            (err) => console.log('error while saving', err)
+        );
+
         }
       };
     }
