@@ -460,7 +460,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     this.platform.pause.subscribe(() => {
-      this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
+      if (!this.appGlobalService.isNativePopupVisible) {
+        this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
+      }
       this.isForeground = false;
     });
   }
@@ -468,7 +470,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleBackButton() {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
-        // Show loading indicator
         this.rootPageDisplayed = event.url.indexOf('tabs') !== -1;
       }
     });

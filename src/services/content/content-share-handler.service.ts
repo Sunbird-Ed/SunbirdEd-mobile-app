@@ -10,6 +10,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppGlobalService } from '../app-global-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,8 @@ export class ContentShareHandlerService {
     private commonUtilService: CommonUtilService,
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion) {
+    private appVersion: AppVersion,
+    private appGlobalService: AppGlobalService) {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
@@ -80,7 +82,9 @@ export class ContentShareHandlerService {
         content_link: contentLink,
         play_store_url: await this.getPackageNameWithUTM()
       });
+      this.appGlobalService.isNativePopupVisible = true;
       this.social.share(null, null, null, shareLink);
+      this.appGlobalService.setNativePopupVisible(false, 2000);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
@@ -109,7 +113,9 @@ export class ContentShareHandlerService {
             content_name: content.contentData.name,
             play_store_url: await this.getPackageNameWithUTM()
           });
+          this.appGlobalService.isNativePopupVisible = true;
           this.social.share(shareLink, '', '' + response.exportedFilePath, '');
+          this.appGlobalService.setNativePopupVisible(false, 2000);
         }
         this.generateShareInteractEvents(InteractType.OTHER,
           InteractSubtype.SHARE_CONTENT_SUCCESS, this.getPrimaryCategory(content), corRelationList, rollup, pageId);

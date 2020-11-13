@@ -1793,6 +1793,27 @@ describe('AppComponent', () => {
                 done();
             }, 0);
         });
+
+        it('should not generate a event for for platform pause', (done) => {
+            mockPlatform.pause = of({
+                subscribe: jest.fn()
+            }) as any;
+            mockAppGlobalService.isNativePopupVisible = true;
+            const value = new Map();
+            mockTelemetryGeneratorService.generateInterruptTelemetry = jest.fn();
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve()) as any;
+            mockPreferences.getString = jest.fn(() => of(undefined));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNotificationSrc.handleNotification = jest.fn(() => Promise.resolve());
+            // act
+            appComponent.ngAfterViewInit();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInterruptTelemetry).not.toHaveBeenCalledWith('background', '');
+                mockAppGlobalService.isNativePopupVisible = false;
+                done();
+            }, 0);
+        });
     });
 
     describe('startOpenrapDiscovery', () => {
