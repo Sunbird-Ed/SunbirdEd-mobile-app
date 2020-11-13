@@ -528,7 +528,9 @@ export enum ID {
     VERIFY_MEMBER = 'verify-member',
     ADD_MEMBER_TO_GROUP = 'add-member-to-group',
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
-    NOTIFICATION_REQUEST = 'notification-request'
+    NOTIFICATION_REQUEST = 'notification-request',
+    DEACTIVATE_GROUP= 'deactivate-group',
+    REACTIVATE_GROUP= 'reactivate-group'
 }
 
 export enum ActionButtonType {

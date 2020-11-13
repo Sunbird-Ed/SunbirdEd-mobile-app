@@ -385,16 +385,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      // this.telemetryGeneratorService.generateInteractTelemetry(
-      //   InteractType.INITIATED,
-      //   '',
-      //   Environment.GROUP,
-      //   PageId.GROUP_DETAIL,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   this.corRelationList,
-      //   ID.DELETE_GROUP);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.GROUP_DETAIL,
+        undefined,
+        undefined,
+        undefined,
+        this.corRelationList,
+        ID.DEACTIVATE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
@@ -407,17 +407,17 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
         // this.location.back();
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.SUCCESS,
-        //   '',
-        //   Environment.GROUP,
-        //   PageId.GROUP_DETAIL,
-        //   undefined,
-        //   undefined,
-        //   undefined,
-        //   this.corRelationList,
-        //   ID.DELETE_GROUP
-        // );
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.GROUP_DETAIL,
+          undefined,
+          undefined,
+          undefined,
+          this.corRelationList,
+          ID.DEACTIVATE_GROUP
+        );
         this.fetchGroupDetails();
       } catch (e) {
         await loader.dismiss();
@@ -459,16 +459,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      // this.telemetryGeneratorService.generateInteractTelemetry(
-      //   InteractType.INITIATED,
-      //   '',
-      //   Environment.GROUP,
-      //   PageId.GROUP_DETAIL,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   this.corRelationList,
-      //   ID.MAKE_GROUP_ADMIN);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.GROUP_DETAIL,
+        undefined,
+        undefined,
+        undefined,
+        this.corRelationList,
+        ID.REACTIVATE_GROUP);
 
       this.isGroupLoading = true;
       const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
@@ -482,16 +482,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.isGroupLoading = false;
         // if (updateMemberResponse) {
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
-          // this.telemetryGeneratorService.generateInteractTelemetry(
-          //   InteractType.SUCCESS,
-          //   '',
-          //   Environment.GROUP,
-          //   PageId.GROUP_DETAIL,
-          //   undefined,
-          //   undefined,
-          //   undefined,
-          //   this.corRelationList,
-          //   ID.MAKE_GROUP_ADMIN);
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SUCCESS,
+            '',
+            Environment.GROUP,
+            PageId.GROUP_DETAIL,
+            undefined,
+            undefined,
+            undefined,
+            this.corRelationList,
+            ID.REACTIVATE_GROUP);
 
         this.fetchGroupDetails();
         // }
