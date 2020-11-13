@@ -144,6 +144,7 @@ export enum PageId {
     LOCATION = 'location',
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
+    PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',

@@ -176,8 +176,8 @@ export class MenuOverflow {
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
     public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_DELETE_GROUP'];
     public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_LEAVE_GROUP'];
-    public static readonly MENU_GROUP_CREATOR_SUSPENDED = [ 'FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_DELETE_GROUP'];
-    public static readonly MENU_GROUP_ADMIN__SUSPENDED = [ 'FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR_SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN__SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_MEMBER_NON_ADMIN = ['MENU_MAKE_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
     public static readonly MENU_GROUP_MEMBER_ADMIN = ['DISMISS_AS_GROUP_ADMIN', 'MENU_REMOVE_FROM_GROUP'];
@@ -226,6 +226,7 @@ export class PreferenceKey {
     public static readonly ADD_MEMBER_TO_GROUP_INFO_POPUP = 'add_member_to_group_info_popup';
     public static readonly NOTIFICAITON_RECEIVED_AT = 'notification_received_at';
     public static readonly CURRENT_SELECTED_THEME = 'current_selected_theme';
+    public static readonly DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP = 'do_not_show_pnc_popup';
 }
 
 export class GenericAppConfig {
