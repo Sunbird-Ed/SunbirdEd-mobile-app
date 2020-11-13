@@ -37,7 +37,9 @@ describe('MyGroupsPage', () => {
     };
     const mockGroupService: Partial<GroupService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockPlatform: Platform<Platform> = {};
     const mockLocation: Partial<Location> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
@@ -72,7 +74,7 @@ describe('MyGroupsPage', () => {
         expect(myGroupsPage).toBeTruthy();
     });
     describe('openAcceptGuidelinesPopup', () => {
-        it('should acceptTermsAndConditions popup', (done) => {
+        it('should show acceptTermsAndConditions popup', (done) => {
             // arrange
             myGroupsPage.groupTncVersion = '3.4.0';
             myGroupsPage.userId = 'sample-uid';
@@ -83,8 +85,13 @@ describe('MyGroupsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
+            const nanavigationExtras = {
+                state: {
+                    groupId: 'some_group'
+                }
+            }
             // act
-            myGroupsPage.openAcceptGuidelinesPopup(true);
+            myGroupsPage.openAcceptGuidelinesPopup(true, nanavigationExtras);
             // expect
             setTimeout(() => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
@@ -108,9 +115,13 @@ describe('MyGroupsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
-
+            const nanavigationExtras = {
+                state: {
+                    groupId: 'some_group'
+                }
+            }
             // act
-            myGroupsPage.openAcceptGuidelinesPopup(true);
+            myGroupsPage.openAcceptGuidelinesPopup(true, nanavigationExtras);
             // expect
             setTimeout(() => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
@@ -128,7 +139,7 @@ describe('MyGroupsPage', () => {
             myGroupsPage.groupTncVersion = '3.4.0';
             mockRouter.navigate = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.translateMessage = jest.fn(() => 'msg');
-            mockGroupService.updateGroupGuidelines = jest.fn(() => of('success') as any);
+            mockGroupService.updateMembers = jest.fn(() => of('success') as any);
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
