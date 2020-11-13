@@ -285,7 +285,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           }
         };
         try {
-          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
+          await this.groupService.updateMembers(updateMembersRequest).toPromise();
           this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err) {
