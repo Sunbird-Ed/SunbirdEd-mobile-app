@@ -3,7 +3,7 @@ import {
     UtilityService,
     TelemetryGeneratorService,
     CommonUtilService,
-    AndroidPermissionsService, InteractType, InteractSubtype
+    AndroidPermissionsService, InteractType, InteractSubtype, AppGlobalService
 } from '../../../../services';
 import { SbSharePopupComponent } from './sb-share-popup.component';
 import { ContentService } from 'sunbird-sdk';
@@ -63,6 +63,10 @@ describe('SbSharePopupComponent', () => {
     const mockPermissionService: Partial<AndroidPermissionsService> = {
         checkPermissions: jest.fn()
     };
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        setNativePopupVisible: jest.fn()
+    };
+
     beforeAll(() => {
         sbSharePopupComponent = new SbSharePopupComponent(
             mockContentService as ContentService,
@@ -75,6 +79,7 @@ describe('SbSharePopupComponent', () => {
             mockAppVersion as AppVersion,
             mockCommonUtilService as CommonUtilService,
             mockPermissionService as AndroidPermissionsService,
+            mockAppGlobalService as AppGlobalService
         );
     });
 

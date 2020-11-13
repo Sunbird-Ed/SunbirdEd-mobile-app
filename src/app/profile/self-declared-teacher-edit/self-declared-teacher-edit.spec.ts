@@ -26,6 +26,7 @@ import { PreferenceKey } from '../../app.constant';
 import { mockTenantPersonaInfoForm, mockSelfDeclarationForm } from '../../../services/formandframeworkutil.service.spec.data';
 import { FormConstants } from '../../form.constants';
 import { FieldConfigValidationType } from 'common-form-elements';
+import { ConsentService } from '../../../services/consent-service';
 
 describe('SelfDeclaredTeacherEditPage', () => {
     let selfDeclaredTeacherEditPage: SelfDeclaredTeacherEditPage;
@@ -110,6 +111,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
         })),
         updateLoggedInUser: jest.fn(() => Promise.resolve({}))
     };
+    const mockConsentService: Partial<ConsentService> = {};
 
     beforeAll(() => {
         selfDeclaredTeacherEditPage = new SelfDeclaredTeacherEditPage(
@@ -126,6 +128,7 @@ describe('SelfDeclaredTeacherEditPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormValidationAsyncFactory as FormValidationAsyncFactory,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockConsentService as ConsentService
         );
     });
 
@@ -840,6 +843,56 @@ describe('SelfDeclaredTeacherEditPage', () => {
               } as any, true);
             // assert
             expect(childConfig.default).not.toEqual('sample_masked_email');
+        });
+    });
+
+    describe('showAddedSuccessfullPopup', () => {
+        it('should open consent popup', (done) => {
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockPopOverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+              } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockConsentService.getConsent = jest.fn(() => Promise.resolve());
+            // act
+            selfDeclaredTeacherEditPage.showAddedSuccessfullPopup();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                expect(mockPopOverController.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1,
+                    'THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2,
+                    'FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3,
+                    'OK');
+                expect(mockConsentService.getConsent).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should not open consent popup', (done) => {
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockPopOverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
+              } as any)));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            // act
+            selfDeclaredTeacherEditPage.showAddedSuccessfullPopup();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                expect(mockPopOverController.create).toHaveBeenCalled();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1,
+                    'THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2,
+                    'FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3,
+                    'OK');
+                done();
+            }, 0);
         });
     });
 

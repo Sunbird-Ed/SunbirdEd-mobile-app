@@ -13,6 +13,7 @@ import {
     Environment, PageId
 } from '../telemetry-constants';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { AppGlobalService } from '../app-global-service.service';
 
 describe('ContentShareHandlerService', () => {
 
@@ -25,6 +26,9 @@ describe('ContentShareHandlerService', () => {
     };
     const mockSocialSharing: Partial<SocialSharing> = {};
     const mockAppVersion: Partial<AppVersion> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        setNativePopupVisible: jest.fn()
+    };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
@@ -34,7 +38,8 @@ describe('ContentShareHandlerService', () => {
             mockCommonUtilService as CommonUtilService,
             mockSocialSharing as SocialSharing,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockAppVersion as AppVersion
+            mockAppVersion as AppVersion,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
