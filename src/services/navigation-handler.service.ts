@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { RouterLinks, MimeType } from '@app/app/app.constant';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { CommonUtilService } from './common-util.service';
+import { Environment, InteractSubtype, InteractType } from './telemetry-constants';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
 
 @Injectable()
 export class NavigationService {
 
     constructor(
-        private router: Router
+        private router: Router,
+        private telemetryGeneratorService: TelemetryGeneratorService,
+        private commonUtilService: CommonUtilService
     ) { }
 
     navigateToDetailPage(content, navExtras) {
@@ -38,16 +43,19 @@ export class NavigationService {
             }
         }
     }
+
     navigateToTrackableCollection(navExtras) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
             state: navExtras
         });
     }
+
     navigateToCollection(navExtras) {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
             state: navExtras
         });
     }
+
     navigateToContent(navExtras) {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
             state: navExtras
@@ -58,6 +66,26 @@ export class NavigationService {
         this.router.navigate(path, {
             state: navExtras
         });
+    }
+
+    navigateToEditPersonalDetails(profile, pageId) {
+        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.EDIT_CLICKED,
+                Environment.HOME,
+                pageId, null);
+
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    profile,
+                    isShowBackButton: true
+                }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+        } else {
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+        }
     }
 
 }

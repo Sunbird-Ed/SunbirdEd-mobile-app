@@ -7,7 +7,7 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import {
   CommonUtilService, PageId, Environment, AppHeaderService,
   ImpressionType, TelemetryGeneratorService,
-  CollectionService, AppGlobalService, InteractSubtype, InteractType
+  CollectionService, AppGlobalService, InteractSubtype, InteractType, AndroidPermissionsService
 } from '@app/services';
 import {
   GroupService, GroupActivityDataAggregationRequest,
@@ -22,6 +22,10 @@ import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from './../../app.constant';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { File } from '@ionic-native/file/ngx';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Component({
   selector: 'app-activity-details',
@@ -47,6 +51,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
   selectedCourse;
   courseData: Content;
   isTrackable = false;
+  isGroupCreatorOrAdmin = false;
+  appName: string;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -58,7 +64,11 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     private location: Location,
     private platform: Platform,
     private collectionService: CollectionService,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private file: File,
+    private permissionService: AndroidPermissionsService,
+    private fileOpener: FileOpener,
+    private appVersion: AppVersion
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.loggedinUser = extras.loggedinUser;
@@ -66,12 +76,14 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.activity = extras.activity;
     this.corRelationList = extras.corRelation;
     this.isTrackable = this.activity.trackable && (this.activity.trackable.enabled === TrackingEnabled.YES) ;
+    this.isGroupCreatorOrAdmin = extras.isGroupCreatorOrAdmin;
   }
 
   async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '', PageId.ACTIVITY_DETAIL, Environment.GROUP,
       undefined, undefined, undefined, undefined, this.corRelationList);
+      this.appName = await this.appVersion.getAppName();
   }
 
   async ionViewWillEnter() {
@@ -235,6 +247,125 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ACTIVITY_DETAIL,
       Environment.GROUP, isNavBack, undefined, this.corRelationList);
     this.location.back();
+  }
+
+  convertToCSV(memberList) {
+    let csv: any = '';
+    let line: any = '';
+
+    memberList.forEach(member => {
+      let progress = 0;
+      if (member.agg) {
+        const progressMetric = member.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.PROGRESS);
+        progress = progressMetric ? progressMetric.value : 0;
+      }
+      member.progress = progress;
+    });
+    console.log('memberList progress', this.memberList)
+    line += 'Name' + ',';
+    line += 'progress' + '\n';
+    line += '\n';
+    for (let j = 0; j < memberList.length; j++) {
+      line += '\"' + memberList[j].name + '\"' + ',';
+      line += '\"' + memberList[j].progress + '%\"' + '\n';
+    }
+    csv += line + '\n';
+    return csv;
+
+  }
+
+  async downloadCsv() {
+    await this.checkForPermissions().then(async (result) => {
+      if (result) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.DOWNLOAD_CLICKED,
+          Environment.USER,
+          PageId.ACTIVITY_DETAIL, undefined,
+        );
+        const expTime = new Date().getTime();
+        const csvData: any = this.convertToCSV(this.memberList);
+        const filename = this.courseData.name.trim() + '_' + expTime + '.csv';
+        // const downloadDirectoryLocal = this.file.externalDataDirectory;
+        const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
+        
+        this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
+        .then((res)=> {
+          console.log('rs write file', res);
+          this.openCsv(res.nativeURL)
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('DOWNLOAD_COMPLETED', filename), false, 'custom-toast');
+        })
+        .catch((err) => {
+          console.log('writeFile err', err)
+        });
+      } else{
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
+      }
+    });
+    
+  }
+
+  async checkForPermissions(): Promise<boolean | undefined> {
+    return new Promise<boolean | undefined>(async (resolve) => {
+      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
+      if (permissionStatus.hasPermission) {
+        resolve(true);
+      } else if (permissionStatus.isPermissionAlwaysDenied) {
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        resolve(false);
+      } else {
+        this.showStoragePermissionPopover().then((result) => {
+          if (result) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
+      }
+    });
+  }
+
+  private async showStoragePermissionPopover(): Promise<boolean | undefined> {
+    return new Promise<boolean | undefined>(async (resolve) => {
+      const confirm = await this.commonUtilService.buildPermissionPopover(
+        async (selectedButton: string) => {
+          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.NOT_NOW_CLICKED, Environment.SETTINGS, PageId.PERMISSION_POPUP);
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.ALLOW_CLICKED,
+              Environment.SETTINGS,
+              PageId.PERMISSION_POPUP);
+            this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE).subscribe(async (status: AndroidPermissionsStatus) => {
+                if (status.hasPermission) {
+                  this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ALLOW_CLICKED, Environment.SETTINGS, PageId.APP_PERMISSION_POPUP);
+                  resolve(true);
+                } else if (status.isPermissionAlwaysDenied) {
+                  await this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                  resolve(false);
+                } else {
+                  this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DENY_CLICKED, Environment.SETTINGS, PageId.APP_PERMISSION_POPUP);
+                  await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                }
+                resolve(undefined);
+              });
+          }
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+      );
+      await confirm.present();
+    });
+  }
+
+  openCsv(path) {
+    this.fileOpener.open(path, 'text/csv')
+      .then(() => console.log('File is opened'))
+      .catch((e) => {
+        console.log('Error opening file', e);
+        this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
+      });
   }
 
 }

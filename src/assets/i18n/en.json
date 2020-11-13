@@ -1096,5 +1096,11 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully",
-  "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone."
+  "FRMELEMNTS_LBL_PROFCONF": "Profile name confirmation",
+  "FRMELEMNTS_LBL_PROFTITLE": "Profile name",
+  "FRMELEMNTS_CKBX_CERTMSG": "Do not show this message again",
+  "FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
+  "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
+  "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone.",
+  "DOWNLOAD_CSV": "Download .CSV"
 }

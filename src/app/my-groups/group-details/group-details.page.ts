@@ -1029,6 +1029,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           group: this.groupDetails,
           memberList: this.memberList,
           activity,
+          isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
           corRelation: this.corRelationList
         });
     }
