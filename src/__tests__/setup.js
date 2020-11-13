@@ -92,7 +92,8 @@ global.FCMPlugin = {
     getToken: () => {},
     onNotification: () => {},
     onTokenRefresh: () => {},
-    subscribeToTopic: () => {}
+    subscribeToTopic: () => {},
+    unsubscribeFromTopic: () => {}
 }
 
 global.sbsync = {
