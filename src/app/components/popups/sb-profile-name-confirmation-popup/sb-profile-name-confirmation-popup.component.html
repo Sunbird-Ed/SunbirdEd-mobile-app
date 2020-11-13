@@ -1,6 +1,6 @@
 <ion-header class="sb-popover-header">
     <ion-toolbar class="sb-popover-toolbar">
-        <ion-title class="sb-popover-title text-left pl-16"> {{'PROFILE_NAME_CONF_HEADING' | translate}}
+        <ion-title class="sb-popover-title text-left pl-16"> {{'FRMELEMNTS_LBL_PROFCONF' | translate}}
             <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
         </ion-title>
     </ion-toolbar>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="sb-popover-content-details">
-            <div>{{'PROFILE_NAME_CONF_LABEL' | translate}}:</div>
+            <div>{{'FRMELEMNTS_LBL_PROFTITLE' | translate}}:</div>
             <div class="pnc-profile-name mt-8">
                 <span>{{ profile?.firstName | titlecase }} {{ profile?.lastName | titlecase }}</span>
                 <span (click)="onProfilePageClick()">
