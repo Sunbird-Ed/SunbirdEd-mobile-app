@@ -273,14 +273,12 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     if (data && data.isLeftButtonClicked) {
       const corRelationList: Array<CorrelationData> = [{ id: navigationExtras.state.groupId, type: CorReleationDataType.GROUP_ID }];
       if(!shouldUpdateUserLevelGroupTnc) {
-        const updateMembersRequest: UpdateMembersRequest = {
-          groupId: navigationExtras.state.groupId,
-          updateMembersRequest: {
-            members: [{
-              userId: this.userId,
-              visited: true
-            }]
-          }
+        const request: CsGroupUpdateGroupGuidelinesRequest = {
+          userId: this.userId,
+          groups: [{
+            groupId: navigationExtras.state.groupId,
+            visited: true
+          }]
         }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.INITIATED,
@@ -293,7 +291,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           corRelationList,
           ID.ACCEPT_GROUP_GUIDELINES);
         try {
-          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
+          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.SUCCESS,
             '',
