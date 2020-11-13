@@ -2358,6 +2358,7 @@ describe('GroupDetailsPage', () => {
             group: groupDetailsPage.groupDetails,
             memberList: groupDetailsPage.memberList,
             activity: { type: 'course' },
+            isGroupCreatorOrAdmin: true,
             corRelation: groupDetailsPage.corRelationList
         });
     });
