@@ -338,5 +338,29 @@ describe('ConsentPiiPopupComponent', () => {
             // assert
             expect(data).toBe('9999999999');
         });
+
+        it('should return state for empty location', () => {
+            const ele = {
+                code: 'state',
+                templateOptions: {
+                    dataSrc: {
+                        marker: 'SERVER_PROFILE_LOCATIONS',
+                        params: {
+                            categoryCode: 'state'
+                        }
+                    }
+                }
+            };
+            consentPiiPopupComponent.profile = {
+                serverProfile: {
+                    userLocations: [],
+                    rootOrgName: 'sample-state'
+                }
+            };
+            // act
+            const data = consentPiiPopupComponent.converDataSrcToObject(ele);
+            // assert
+            expect(data).toBe('sample-state');
+        });
     });
 });

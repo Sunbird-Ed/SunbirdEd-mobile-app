@@ -53,16 +53,16 @@
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="!showSheenAnimation && childrenData" class="textbook-accordian">
       <sb-toc-item
-        [expandMode]="'single'"
-        [type]="TocCardType.TRACKABLE"
-        [tocData]="collectionTocData"
-        [playBtnConfig]="playBtnConfig"
-        (tocCardClick)="tocCardClick($event)"
-        [activeMimeTypeFilter]="activeMimeTypeFilter"
-        [activeContent]="activeContent"
-        (playButtonClick)="playButtonClick($event)"
-        [trackableDefaultImage]="'assets/imgs/ic_courses_selected_joyful.svg'">
-      </sb-toc-item>
+      [accordianConfig]="accordianConfig"
+      [type]="TocCardType.TRACKABLE"
+      [tocData]="collectionTocData"
+      [playBtnConfig]="playBtnConfig"
+      (tocCardClick)="tocCardClick($event)"
+      [activeMimeTypeFilter]="activeMimeTypeFilter"
+      [activeContent]="activeContent"
+      (playButtonClick)="playButtonClick($event)"
+      [trackableDefaultImage]="'assets/imgs/ic_courses_selected_joyful.svg'">
+    </sb-toc-item>
 
     </section>
   </div>

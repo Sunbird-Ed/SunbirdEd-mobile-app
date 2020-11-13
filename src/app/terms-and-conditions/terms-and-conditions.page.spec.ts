@@ -319,6 +319,8 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ status: false }));
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+            mockConsentService.getConsent = jest.fn(() => Promise.resolve());
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
