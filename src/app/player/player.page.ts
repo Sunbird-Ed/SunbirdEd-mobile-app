@@ -105,7 +105,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         dispatch: function (event) {
           SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
             (res) => console.log('response after telemetry', res),
-            (err) => console.log('error while saving', err)
           );
         }
       };

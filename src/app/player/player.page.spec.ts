@@ -1,7 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, Events, AlertController, PopoverController } from '@ionic/angular';
-import { CourseService } from '@project-sunbird/sunbird-sdk';
+import { CourseService, SunbirdSdk, TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
@@ -13,6 +13,8 @@ import { Location } from '@angular/common';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { Observable, of, throwError } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 
 
@@ -103,15 +105,38 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                        dispatch: jest.fn()
+                        // dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
                     }
                 },
                 metadata: {
                     mimeType: 'application/pdf'
                 }
             };
+            jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                telemetryService: {
+                    saveTelemetry(request: string): Observable<boolean> {
+                        // for success
+                        return of(true);
+                        // for error
+                        return throwError(new Error('sample_error'));
+                    }
+                } as Partial<TelemetryService> as TelemetryService
+            } as Partial<SunbirdSdk> as SunbirdSdk);
             playerPage.playerConfig = {};
-            playerPage.ngOnInit();
+            playerPage.ngOnInit().then(() => {
+                jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                    telemetryService: {
+                        saveTelemetry(request: string): Observable<boolean> {
+                            done();
+                            return of(true);
+                        }
+                    } as Partial<TelemetryService> as TelemetryService
+                } as Partial<SunbirdSdk> as SunbirdSdk);
+                playerPage.config['context'].dispatcher.dispatch();
+            });
             setTimeout(() => {
                 expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
                 expect(playerPage.loadPdfPlayer).toBe(true);
@@ -128,7 +153,10 @@ describe('PlayerPage', () => {
             playerPage.config = {
                 context: {
                     dispatcher: {
-                        dispatch: jest.fn()
+                        // dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
                     }
                 },
                 metadata: {
@@ -136,13 +164,22 @@ describe('PlayerPage', () => {
                 }
             };
             playerPage.playerConfig = {};
-            playerPage.ngOnInit();
-            setTimeout(() => {
-                expect(playerPage.playerConfig).toBeTruthy();
-                expect(mockPlatform.pause).toBeTruthy();
-                expect(subscribeFn).toHaveBeenCalled();
-                done();
-            }, 0);
+            playerPage.ngOnInit().then(() => {
+                jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                    telemetryService: {
+                        saveTelemetry : jest.fn((request: string) => {
+                            return of(true).pipe(
+                                finalize(() => {
+                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
+                                    done();
+
+                                })
+                            );
+                        })
+                    } as Partial<TelemetryService> as TelemetryService
+                } as Partial<SunbirdSdk> as SunbirdSdk);
+                playerPage.config['context'].dispatcher.dispatch({});
+            });
         });
     });
 
