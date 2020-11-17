@@ -39,6 +39,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   course: Course;
   pauseSubscription: any;
   private navigateBackToContentDetails: boolean;
+  private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
   loadPdfPlayer = false;
@@ -162,6 +163,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                     ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
                   this.openPDF(downloadUrl);
                 }
+              }
+            } else if (this.isJSON(resp.data)) {
+              const response = JSON.parse(resp.data);
+              if (response.event === 'renderer:navigate') {
+                this.navigateBackToTrackableCollection = true;
+                this.navigateBackToContentDetails = false;
+                this.closeIframe({
+                  identifier: response.data.identifier
+                });
               }
             }
           });
@@ -294,6 +304,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         replaceUrl: true
       });
+    }  else if (this.navigateBackToTrackableCollection) {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content
+        },
+        replaceUrl: true
+      });
     } else {
       this.location.back();
     }
@@ -394,4 +411,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   pdfTelemetryEvents(event) {}
+
+  private isJSON(input): boolean {
+    try {
+      JSON.parse(input);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
