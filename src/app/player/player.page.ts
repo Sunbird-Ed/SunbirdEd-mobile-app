@@ -90,6 +90,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -105,8 +106,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
             (res) => console.log('response after telemetry', res),
             (err) => console.log('error while saving', err)
-        );
-
+          );
         }
       };
     }
@@ -393,4 +393,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     this.courseService.updateContentState(updateContentStateRequest).subscribe();
   }
+
+  pdfTelemetryEvents(event) {}
 }

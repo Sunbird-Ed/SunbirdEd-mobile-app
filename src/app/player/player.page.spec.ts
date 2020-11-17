@@ -10,6 +10,9 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService, PageId } from '@app/services';
 import { Location } from '@angular/common';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 
 
 
@@ -55,6 +58,9 @@ describe('PlayerPage', () => {
         // getPdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
     };
     const mockDownloadPdfService: Partial<DownloadPdfService> = {};
+    const mockFileOpener: Partial<FileOpener> = {};
+    const mockTransfer: Partial<FileTransfer> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
@@ -71,7 +77,10 @@ describe('PlayerPage', () => {
             mockLocation as Location,
             mockPopoverCtrl as PopoverController,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-            mockDownloadPdfService as DownloadPdfService
+            mockDownloadPdfService as DownloadPdfService,
+            mockFileOpener as FileOpener,
+            mockTransfer as FileTransfer,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -91,6 +100,17 @@ describe('PlayerPage', () => {
                 subscribe: subscribeFn
             } as any;
             mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
+            playerPage.config = {
+                context: {
+                    dispatcher: {
+                        dispatch: jest.fn()
+                    }
+                },
+                metadata: {
+                    mimeType: 'application/pdf'
+                }
+            };
+            playerPage.playerConfig = {};
             playerPage.ngOnInit();
             setTimeout(() => {
                 expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
@@ -106,10 +126,16 @@ describe('PlayerPage', () => {
                 subscribe: subscribeFn
             } as any;
             playerPage.config = {
+                context: {
+                    dispatcher: {
+                        dispatch: jest.fn()
+                    }
+                },
                 metadata: {
                     mimeType: 'application/pdf'
                 }
             };
+            playerPage.playerConfig = {};
             playerPage.ngOnInit();
             setTimeout(() => {
                 expect(playerPage.playerConfig).toBeTruthy();
