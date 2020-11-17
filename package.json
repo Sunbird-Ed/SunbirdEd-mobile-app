@@ -99,7 +99,6 @@
     "grapheme-splitter": "^1.0.4",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
-    "jquery": "^3.5.1",
     "jspdf": "^2.0.0",
     "ng-recaptcha": "^5.0.0",
     "rxjs": "^6.5.3",
