@@ -113,6 +113,11 @@ export class TabsPage implements OnInit, AfterViewInit {
         this.tabRef.select('courses');
       }, 300);
     });
+    this.events.subscribe('to_profile', () => {
+      setTimeout(() => {
+        this.tabRef.select('profile');
+      }, 300);
+    });
   }
 
   openScanner(tab) {

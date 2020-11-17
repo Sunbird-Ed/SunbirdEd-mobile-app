@@ -117,10 +117,18 @@ export class TermsAndConditionsPage implements OnInit {
       );
       await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
-      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
-        userId: this.userProfileDetails.userId,
-        version: this.userProfileDetails.tncLatestVersion
-      })
+      let request;
+      if (this.userProfileDetails.managedBy) {
+        request = {
+          userId: this.userProfileDetails.userId,
+          version: this.userProfileDetails.tncLatestVersion
+        };
+      } else {
+        request = {
+          version: this.userProfileDetails.tncLatestVersion
+        };
+      }
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions(request)
         .toPromise();
 
       if (isTCAccepted) {
@@ -166,6 +174,9 @@ export class TermsAndConditionsPage implements OnInit {
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
+              if (await tncUpdateHandlerService.isSSOUser(profile)) {
+                await this.consentService.getConsent(profile, true);
+              }
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: {
                   hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),

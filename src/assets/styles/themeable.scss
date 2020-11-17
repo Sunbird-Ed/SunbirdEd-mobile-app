@@ -643,7 +643,7 @@ html[data-theme="JOYFUL"]{
       }
       .sb-slider-pills-container {
         border-radius: 1.5rem;
-        overflow: hidden !important;
+        // overflow: hidden !important;
         margin-bottom: 8px;
         background: var(--app-secondary-background) !important;
         .sb-pills-container{
@@ -1081,6 +1081,12 @@ html[data-theme="JOYFUL"]{
   .tutorial-popover, .download-popover, .leave-training-popup, .cd-leave-training-popup {
     .popover-content{
       border-radius: 1rem !important;
+    }
+  }
+
+  .add-to-group-btn-container{
+    .open-btn {
+      color: var(--app-primary) !important;
     }
   }
 
@@ -1524,6 +1530,12 @@ html[data-theme="JOYFUL"]{
         color: unset !important;
       }
     }
+  }
+
+  .file-download__action-btns .cancel-btn{
+   color: var(--primary-color) !important;
+   font-size: .9rem !important;
+   padding: .75em 2.5rem !important;
   }
 
 }

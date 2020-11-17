@@ -585,12 +585,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification', 'information']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification', 'information']);
 
     this.getCategoryData();
 
@@ -853,9 +853,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
+    const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
     const values = {};
-    values['sectionName'] = item.subject;
+    values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
@@ -906,9 +906,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       case 'notification':
         this.redirectToNotifications();
         break;
-      // case 'information':
-      //   this.appTutorialScreen();
-      //   break;
+      case 'information':
+        this.appTutorialScreen();
+        break;
       default: console.warn('Use Proper Event name');
     }
   }

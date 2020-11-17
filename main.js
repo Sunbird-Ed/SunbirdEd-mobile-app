@@ -80,7 +80,25 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'notification',
+        'subType': 'boardAlias',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'dynamicform',
+        'subType': 'consentdeclaration',
+        'action': 'submit',
+        'component': 'app'
+    },
+    {
+        'type': 'dynamicform',
+        'subType': 'contentrequest',
+        'action': 'submit',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'library',
         'action': 'get',
         'component': 'app'
     }

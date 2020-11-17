@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, PopoverController } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   Content,
   ContentDeleteRequest,
@@ -34,6 +33,7 @@ import {
 } from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-download-manager',
@@ -64,11 +64,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private events: Events,
     private popoverCtrl: PopoverController,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private route: ActivatedRoute
   ) { }
 
   async ngOnInit() {
@@ -98,7 +96,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private async getAppName() {
-    return this.appVersion.getAppName()
+    return this.commonUtilService.getAppName()
       .then((appName: any) => {
         this.appName = appName;
       });
@@ -145,17 +143,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         }
         data.forEach((value) => {
           value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
-          if (value.contentData.appIcon) {
-            if (value.contentData.appIcon.startsWith('http:') || value.contentData.appIcon.startsWith('https:')) {
-              if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                value.contentData.appIcon = value.contentData.appIcon;
-              } else {
-                value.contentData.appIcon = this.defaultImg;
-              }
-            } else if (value.basePath) {
-              value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
-            }
-          }
+          value.contentData.appIcon = ContentUtil.getAppIcon(value.contentData.appIcon,
+            value.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
         });
         this.ngZone.run(async () => {
           this.downloadedContents = data;
@@ -203,6 +192,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         });
     }
   }
+
   private async deleteAllContents(emitedContents) {
     const valuesMap = {};
     valuesMap['size'] = this.commonUtilService.fileSizeInMB(emitedContents.selectedContentsInfo.totalSize);
@@ -251,8 +241,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           .next(`${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`);
 
         this.deleteAllConfirm.dismiss();
-
-
         this.events.publish('savedResources:update', {
           update: true
         });
@@ -306,7 +294,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private handleHeaderEvents($event) {
-    console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
       case 'download':
         this.redirectToActivedownloads();
@@ -332,15 +319,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.SETTINGS_CLICKED,
       Environment.DOWNLOADS,
-      PageId.DOWNLOADS, undefined,
-      undefined,
-      undefined,
-      undefined);
+      PageId.DOWNLOADS);
     this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
+
   private async fetchStorageDestination() {
     this.storageDestination = await this.storageService.getStorageDestination().toPromise();
   }
+
   private async presentPopupForLessStorageSpace() {
     this._toast = await this.popoverCtrl.create({
       component: SbInsufficientStoragePopupComponent,
