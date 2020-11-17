@@ -19,7 +19,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType
+  ErrorType, SunbirdSdk
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -90,6 +90,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -98,6 +99,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showDownload: true,
           showReplay: false,
           showExit: true,
+        }
+      };
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+          );
         }
       };
     }
@@ -384,4 +392,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     this.courseService.updateContentState(updateContentStateRequest).subscribe();
   }
+
+  pdfTelemetryEvents(event) {}
 }
