@@ -112,7 +112,12 @@ describe('PlayerPage', () => {
                     }
                 },
                 metadata: {
-                    mimeType: 'application/pdf'
+                    mimeType: 'application/pdf',
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath'
+                    }
+
                 }
             };
             jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
@@ -160,7 +165,11 @@ describe('PlayerPage', () => {
                     }
                 },
                 metadata: {
-                    mimeType: 'application/pdf'
+                    mimeType: 'application/pdf',
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath'
+                    }
                 }
             };
             playerPage.playerConfig = {};
@@ -181,17 +190,5 @@ describe('PlayerPage', () => {
                 playerPage.config['context'].dispatcher.dispatch({});
             });
         });
-    });
-
-    it('should handle back button and redirect to content details page', () => {
-        mockPlatform.backButton = of({
-            subscribe: jest.fn(() => ({
-                unsubscribe: jest.fn()
-            }))
-        }) as any;
-        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
-        playerPage.handleBackButton();
-        expect(mockRouter.navigate).toHaveBeenCalledWith(['content-details']);
-        expect(mockPlatform.backButton).toBeTruthy();
     });
 });
