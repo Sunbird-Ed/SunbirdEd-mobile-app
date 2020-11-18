@@ -354,12 +354,12 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeactivateGroupPopup() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.DELETE_GROUP_CLICKED,
-    //   Environment.GROUP,
-    //   PageId.GROUP_DETAIL,
-    //   undefined, undefined, undefined, this.corRelationList);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DEACTIVATE_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
 
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -428,12 +428,12 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showReactivateGroupPopup() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.MAKE_GROUP_ADMIN_CLICKED,
-    //   Environment.GROUP,
-    //   PageId.GROUP_DETAIL,
-    //   undefined, undefined, undefined, this.corRelationList);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.REACTIVATE_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.GROUP_DETAIL,
+      undefined, undefined, undefined, this.corRelationList);
 
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,

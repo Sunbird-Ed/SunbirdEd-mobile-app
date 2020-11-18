@@ -487,7 +487,9 @@ export enum InteractSubtype {
     MEMBER_TAB_CLICKED = 'member-tab-clicked',
     EDIT_GROUP_CLICKED = 'edit-group-clicked',
     LET_US_KNOW_CLICKED = 'let-us-know-clicked',
-    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked'
+    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked',
+    DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
+    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked'
 }
 
 export enum ID {

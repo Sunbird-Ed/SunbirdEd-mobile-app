@@ -1638,6 +1638,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateCsGroupAddableBloc(params, pageId) {
+    const cData = {
+      type: CorReleationDataType.GROUP_ID,
+      id: CsGroupAddableBloc.instance.state.groupId
+    }
+    params.corRelation.push(cData)
     CsGroupAddableBloc.instance.updateState(
       {
         pageIds: [pageId],
