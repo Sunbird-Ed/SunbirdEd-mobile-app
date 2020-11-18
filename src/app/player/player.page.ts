@@ -10,10 +10,23 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { CourseService, Course, Content, Rollup } from 'sunbird-sdk';
-import { FormAndFrameworkUtilService, PageId } from '@app/services';
+import {
+  CourseService,
+  Course,
+  Content,
+  Rollup,
+  InteractType,
+  UpdateContentStateTarget,
+  UpdateContentStateRequest,
+  TelemetryErrorCode,
+  ErrorType, SunbirdSdk
+} from 'sunbird-sdk';
+import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-player',
@@ -26,6 +39,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   course: Course;
   pauseSubscription: any;
   private navigateBackToContentDetails: boolean;
+  private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
   loadPdfPlayer = false;
@@ -51,7 +65,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private location: Location,
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private downloadPdfService: DownloadPdfService
+    private downloadPdfService: DownloadPdfService,
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -74,6 +91,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -84,9 +102,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showExit: true,
         }
       };
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+          );
+        }
+      };
     }
     this.pauseSubscription = this.platform.pause.subscribe(() => {
-      var iframes = window.document.getElementsByTagName('iframe');
+      const iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
         iframes[0].contentWindow.postMessage('pause.youtube', '*');
       }
@@ -122,6 +147,32 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
             if (resp.data === 'renderer:question:submitscore') {
               this.courseService.syncAssessmentEvents().subscribe();
+            } else if (resp.data && typeof resp.data === 'object') {
+              if (resp.data['player.pdf-renderer.error']) {
+                const pdfError = resp.data['player.pdf-renderer.error'];
+                if (pdfError.name === 'MissingPDFException') {
+                  const downloadUrl = this.config['metadata']['contentData']['streamingUrl'] ||
+                    this.config['metadata']['contentData']['artifactUrl'];
+                  this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_PDF_CLICKED,
+                    Environment.PLAYER,
+                    PageId.PLAYER,
+                    ContentUtil.getTelemetryObject(this.config['metadata']['contentData']),
+                    undefined,
+                    ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
+                  this.openPDF(downloadUrl);
+                }
+              }
+            } else if (this.isJSON(resp.data)) {
+              const response = JSON.parse(resp.data);
+              if (response.event === 'renderer:navigate') {
+                this.navigateBackToTrackableCollection = true;
+                this.navigateBackToContentDetails = false;
+                this.closeIframe({
+                  identifier: response.data.identifier
+                });
+              }
             }
           });
         }, 1000);
@@ -253,6 +304,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         replaceUrl: true
       });
+    }  else if (this.navigateBackToTrackableCollection) {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content
+        },
+        replaceUrl: true
+      });
     } else {
       this.location.back();
     }
@@ -267,7 +325,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-      'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type: type, stageId: stageId });
+      'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
 
     const alert = await this.alertCtrl.create({
       header: this.commonUtilService.translateMessage('CONFIRM'),
@@ -278,14 +336,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           role: 'cancel',
           handler: () => {
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-              'TOUCH', 'ALERT_CANCEL', 'EXIT', { type: type, stageId: stageId });
+              'TOUCH', 'ALERT_CANCEL', 'EXIT', { type, stageId });
           }
         },
         {
           text: this.commonUtilService.translateMessage('OKAY'),
           handler: () => {
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-              'END', 'ALERT_OK', 'EXIT', { type: type, stageId: stageId });
+              'END', 'ALERT_OK', 'EXIT', { type, stageId });
             this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
             this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
 
@@ -296,5 +354,70 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       cssClass: 'player-exit-popup'
     });
     await alert.present();
+  }
+
+  async openPDF(url) {
+    if (this.course) {
+      setTimeout(() => {
+        this.updateContentState();
+      }, 1000);
+    }
+    const loader = await this.commonUtilService.getLoader(undefined, this.commonUtilService.translateMessage('DOWNLOADING_2'));
+    await loader.present();
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    const entry = await fileTransfer
+      .download(url, cordova.file.cacheDirectory + url.substring(url.lastIndexOf('/') + 1))
+      .catch((e) => {
+        this.telemetryGeneratorService.generateErrorTelemetry(Environment.PLAYER,
+          TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+          ErrorType.SYSTEM,
+          PageId.PLAYER,
+          JSON.stringify(e),
+        );
+      });
+    loader.dismiss();
+    const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
+    try {
+      this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
+    } catch (err) {
+      console.error('End telemetry error:', err.message);
+    }
+
+    if (entry) {
+      const localUrl = entry.toURL();
+      this.fileOpener
+        .open(localUrl, 'application/pdf')
+        .catch((e) => {
+          console.log('Error opening file', e);
+          this.commonUtilService.showToast('ERROR_TECHNICAL_PROBLEM');
+        });
+    }
+    this.location.back();
+
+  }
+
+  private updateContentState() {
+    const updateContentStateRequest: UpdateContentStateRequest = {
+      userId: this.config['context']['actor']['id'],
+      contentId: this.config['metadata']['identifier'],
+      courseId: this.course['identifier'] || this.course['courseId'],
+      batchId: this.course['batchId'],
+      status: 2,
+      progress: 100,
+      target: [UpdateContentStateTarget.LOCAL, UpdateContentStateTarget.SERVER]
+    };
+
+    this.courseService.updateContentState(updateContentStateRequest).subscribe();
+  }
+
+  pdfTelemetryEvents(event) {}
+
+  private isJSON(input): boolean {
+    try {
+      JSON.parse(input);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
