@@ -47,7 +47,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
-  backButtonFunc: any;
 
 
   @ViewChild('preview') previewElement: ElementRef;
