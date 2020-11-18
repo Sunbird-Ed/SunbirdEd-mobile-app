@@ -50,16 +50,14 @@
         <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>
         <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('information') >=0"
+        (click)="emitEvent($event, 'information');">
+        <img src="./assets/imgs/ic_info_circle.svg" class="tool-icon" alt="information">
+      </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
         <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
       </ion-button>
-
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('information') >=0"
-                  (click)="emitEvent($event, 'information');">
-        <img src="./assets/imgs/ic_info_circle.svg" class="tool-icon" alt="information">
-      </ion-button>
-
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
         (click)="emitEvent($event, 'person');">
         <ion-icon name="person"></ion-icon>
