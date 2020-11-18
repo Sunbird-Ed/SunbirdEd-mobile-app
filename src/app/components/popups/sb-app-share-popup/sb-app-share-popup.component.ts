@@ -50,9 +50,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private permissionService: AndroidPermissionsService,
-    private router: Router,
-    private commonUtilService: CommonUtilService,
-    private appGlobalService: AppGlobalService) {
+    private commonUtilService: CommonUtilService) {
     this.pageId = this.navParams.get('pageId');
   }
 
@@ -121,9 +119,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const appName = await this.appVersion.getAppName();
     const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', { app_name: appName, play_store_url: this.shareUrl });
-    this.appGlobalService.isNativePopupVisible = true;
     this.social.share(null, null, null, url);
-    this.appGlobalService.setNativePopupVisible(false);
     this.popoverCtrl.dismiss();
     this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
   }
@@ -171,9 +167,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     await loader.present();
     this.utilityService.exportApk(destination).then(async (output) => {
       if (shareParams.byFile) {
-        this.appGlobalService.isNativePopupVisible = true;
         this.social.share('', '', 'file://' + output, '');
-        this.appGlobalService.setNativePopupVisible(false);
       } else {
         this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
       }
@@ -221,7 +215,6 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
               InteractSubtype.ALLOW_CLICKED,
               Environment.SETTINGS,
               PageId.PERMISSION_POPUP);
-            this.appGlobalService.isNativePopupVisible = true;
             this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
               .subscribe(async (status: AndroidPermissionsStatus) => {
                 if (status.hasPermission) {
@@ -246,7 +239,6 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                 }
-                this.appGlobalService.isNativePopupVisible = false;
                 resolve(undefined);
               });
           }

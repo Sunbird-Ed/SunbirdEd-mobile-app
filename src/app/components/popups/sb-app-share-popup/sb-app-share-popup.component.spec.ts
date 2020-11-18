@@ -20,7 +20,8 @@ describe('SbAppSharePopupComponent', () => {
         share: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        showToast: jest.fn()
+        showToast: jest.fn(),
+        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any))
     };
     const mockUtilityService: Partial<UtilityService> = {
         exportApk: jest.fn(() => Promise.resolve('filePath')),
@@ -65,9 +66,7 @@ describe('SbAppSharePopupComponent', () => {
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockPermissionService as AndroidPermissionsService,
-            mockRouter as Router,
-            mockCommonUtilService as CommonUtilService,
-            mockAppGlobalService as AppGlobalService);
+            mockCommonUtilService as CommonUtilService);
     });
 
     beforeEach(() => {
