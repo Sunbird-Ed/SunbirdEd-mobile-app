@@ -27,7 +27,7 @@
                 (cardClick)="navigateToDetailPage($event, result?.name)" [hideProgress]="true"></sb-course-cards-hlist>
             </ng-container>
           </div>
-          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && !result.dataSrc && result.dataSrc!== 'TRACKABLE_CONTENTS'">
+          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && (!result.dataSrc || result.dataSrc!== 'TRACKABLE_CONTENTS')">
             <div class="sb-recently-viewed-items">
               <div class="sb-recenlty-viewed-title">{{result.name}}
                 <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
