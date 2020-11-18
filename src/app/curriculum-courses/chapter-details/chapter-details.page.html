@@ -77,11 +77,11 @@
       <div class="cd-container-progress" *ngIf="isAlreadyEnrolled">{{viewedContents.length}}/{{childContents.length}} {{"COMPLETED" | translate}}</div>
     </div>
     <div *ngIf="!contentStatusData">
-      <sb-toc-curriculum *ngIf="chapter" [type]="cardType" [isAccordion]="true" [tocData]="chapter"
+      <sb-toc-curriculum *ngIf="chapter" [type]="cardType" [tocData]="chapter"
       (tocCardClick)="openContentDetails($event)"></sb-toc-curriculum>
     </div>
     <div *ngIf="contentStatusData">
-      <sb-toc-curriculum *ngIf="chapter" [type]="cardType" [isAccordion]="true" [tocData]="chapter" [contentStatus]="contentStatusData?.contentList"
+      <sb-toc-curriculum *ngIf="chapter" [type]="cardType"  [tocData]="chapter" [contentStatus]="contentStatusData?.contentList"
       (tocCardClick)="openContentDetails($event)"></sb-toc-curriculum>
     </div>
     
