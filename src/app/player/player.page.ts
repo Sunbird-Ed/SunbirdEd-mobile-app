@@ -46,6 +46,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
+  backButtonFunc: any;
 
 
   @ViewChild('preview') previewElement: ElementRef;
@@ -117,6 +118,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
+    this.handleBackButton();
     if (!this.loadPdfPlayer) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
@@ -394,4 +396,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   pdfTelemetryEvents(event) {}
+
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS]);
+      this.backButtonFunc.unsubscribe();
+    });
+  }
 }

@@ -183,5 +183,15 @@ describe('PlayerPage', () => {
         });
     });
 
-
+    it('should handle back button and redirect to content details page', () => {
+        mockPlatform.backButton = of({
+            subscribe: jest.fn(() => ({
+                unsubscribe: jest.fn()
+            }))
+        }) as any;
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        playerPage.handleBackButton();
+        expect(mockRouter.navigate).toHaveBeenCalledWith(['content-details']);
+        expect(mockPlatform.backButton).toBeTruthy();
+    });
 });
