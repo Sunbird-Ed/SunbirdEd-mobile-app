@@ -92,6 +92,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+      this.config['metadata']['contentData']['basePath'] = this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -121,13 +123,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (!this.loadPdfPlayer) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
-
-      this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
-        const activeAlert = await this.alertCtrl.getTop();
-        if (!activeAlert) {
-          this.showConfirm();
-        }
-      });
       this.config['uid'] = this.config['context'].actor.id;
       this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
@@ -178,6 +173,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         }, 1000);
       };
     }
+
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
+      const activeAlert = await this.alertCtrl.getTop();
+      if (!activeAlert) {
+        this.showConfirm();
+      }
+      if (this.loadPdfPlayer) {
+        this.router.navigate([RouterLinks.CONTENT_DETAILS]);
+      }
+    });
 
     this.events.subscribe('endGenieCanvas', (res) => {
       if (res.showConfirmBox) {

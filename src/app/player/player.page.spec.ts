@@ -15,6 +15,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { RouterLinks } from '../app.constant';
 
 
 
@@ -95,6 +96,31 @@ describe('PlayerPage', () => {
         expect(playerPage).toBeTruthy();
     });
 
+    describe('ionviewWillEnter', () => {
+        it('should initialize the backbutton', (done) => {
+            playerPage.loadPdfPlayer = true;
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+            jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+            playerPage.ionViewWillEnter();
+            setTimeout(() => {
+                expect(playerPage.loadPdfPlayer).toBeTruthy();
+                expect(mockPlatform.backButton).toBeTruthy();
+                expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS]);
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+    });
+
     describe('ngOninit', () => {
         it('should call getPdfPlayerConfiguration', (done) => {
             const subscribeFn = jest.fn(() => { }) as any;
@@ -112,7 +138,12 @@ describe('PlayerPage', () => {
                     }
                 },
                 metadata: {
-                    mimeType: 'application/pdf'
+                    mimeType: 'application/pdf',
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath'
+                    }
+
                 }
             };
             jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
@@ -160,7 +191,11 @@ describe('PlayerPage', () => {
                     }
                 },
                 metadata: {
-                    mimeType: 'application/pdf'
+                    mimeType: 'application/pdf',
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath'
+                    }
                 }
             };
             playerPage.playerConfig = {};
@@ -182,6 +217,4 @@ describe('PlayerPage', () => {
             });
         });
     });
-
-
 });
