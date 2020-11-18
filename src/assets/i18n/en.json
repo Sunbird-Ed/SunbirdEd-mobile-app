@@ -1096,5 +1096,6 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY": "Updated successfully",
-  "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone."
+  "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone.",
+  "APP_UPDATE": "Update {{%s}} app"
 }

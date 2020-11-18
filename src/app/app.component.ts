@@ -809,6 +809,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         break;
 
+      case 'UPDATE':
+        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+            () => {},
+            () => {}
+        );
+        break;
     }
   }
 
