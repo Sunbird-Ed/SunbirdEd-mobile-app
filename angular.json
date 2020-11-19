@@ -61,7 +61,9 @@
                 "input": "src/global.scss"
               }
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/@project-sunbird/telemetry-sdk/index.js"
+            ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true
           },
