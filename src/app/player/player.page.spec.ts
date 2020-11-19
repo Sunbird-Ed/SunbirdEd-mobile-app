@@ -29,7 +29,10 @@ describe('PlayerPage', () => {
         handleAction: jest.fn()
     };
     const mockPlatform: Partial<Platform> = {};
-    const mockScreenOrientation: Partial<ScreenOrientation> = {};
+    const mockScreenOrientation: Partial<ScreenOrientation> = {
+        unlock: jest.fn()
+
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
     };
     const mockStatusBar: Partial<StatusBar> = {};
