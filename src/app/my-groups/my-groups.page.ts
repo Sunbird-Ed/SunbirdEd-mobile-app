@@ -292,17 +292,21 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           ID.ACCEPT_GROUP_GUIDELINES);
         try {
           const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            corRelationList,
-            ID.ACCEPT_GROUP_GUIDELINES
-          );
+          if(updateMemberResponse.error){
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          } else {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.SUCCESS,
+              '',
+              Environment.GROUP,
+              PageId.GROUP_DETAIL,
+              undefined,
+              undefined,
+              undefined,
+              corRelationList,
+              ID.ACCEPT_GROUP_GUIDELINES
+            );
+          }
           this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err) {
