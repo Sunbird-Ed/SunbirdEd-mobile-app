@@ -270,7 +270,8 @@ describe('MyGroupsPage', () => {
             myGroupsPage.handleHeaderEvents(data);
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+                undefined, undefined, undefined, undefined, undefined
             );
             expect(data.name).toBe('groupInfo');
         });
@@ -286,7 +287,8 @@ describe('MyGroupsPage', () => {
             expect(data.name).toBe('groupInfo');
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+                undefined, undefined, undefined, undefined, undefined
             );
         });
 
@@ -509,7 +511,8 @@ describe('MyGroupsPage', () => {
             InteractType.TOUCH,
             InteractSubtype.CREATE_GROUP_CLICKED,
             Environment.GROUP,
-            PageId.MY_GROUP
+            PageId.MY_GROUP,
+            undefined, undefined, undefined, undefined, undefined
         );
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
     });
@@ -522,7 +525,8 @@ describe('MyGroupsPage', () => {
             InteractType.TOUCH,
             InteractSubtype.LOGIN_CLICKED,
             Environment.GROUP,
-            PageId.MY_GROUP
+            PageId.MY_GROUP,
+            undefined, undefined, undefined, undefined, undefined
         );
         expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith(
             { skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS }
