@@ -144,7 +144,8 @@ describe('PlayerPage', () => {
                     mimeType: 'application/pdf',
                     contentData: {
                         isAvailableLocally: true,
-                        basePath: 'basePath'
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
                     }
 
                 }
@@ -197,7 +198,8 @@ describe('PlayerPage', () => {
                     mimeType: 'application/pdf',
                     contentData: {
                         isAvailableLocally: true,
-                        basePath: 'basePath'
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
                     }
                 }
             };
