@@ -130,6 +130,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
+    this.corRelationList = this.extrasData.corRelation;
   }
 
   ngOnInit() {
@@ -989,7 +990,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       objectType,
       objectVersion,
       this.objRollup,
-      // this.corRelationList
+      this.corRelationList
       );
   }
 

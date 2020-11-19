@@ -8,10 +8,7 @@ import {
 import {
   AuthService, SharedPreferences, GroupService, Group,
   GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder,
-  ObjectType, TelemetryObject, UpdateMembersRequest,
-  GroupUpdateMembersResponse, SystemSettingsService,
-  GetSystemSettingsRequest, SystemSettings,
-  ProfileService, ServerProfileDetailsRequest
+  ObjectType, TelemetryObject, UpdateMembersRequest, GroupUpdateMembersResponse, SystemSettingsService, GetSystemSettingsRequest, SystemSettings, ProfileService, ServerProfileDetailsRequest, CorrelationData
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -20,7 +17,7 @@ import {
   TelemetryGeneratorService,
   ImpressionType,
   PageId,
-  Environment, InteractType, InteractSubtype
+  Environment, InteractType, InteractSubtype, ID, CorReleationDataType
 } from '@app/services';
 import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
@@ -140,8 +137,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
+          this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.INFORMATION_ICON_CLICKED)
         this.openinfopopup();
         break;
       case 'back':
@@ -170,22 +166,12 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   createClassroom() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.CREATE_GROUP_CLICKED,
-      Environment.GROUP,
-      PageId.MY_GROUP
-    );
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CREATE_GROUP_CLICKED)
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
   login() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.LOGIN_CLICKED,
-      Environment.GROUP,
-      PageId.MY_GROUP
-    );
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_CLICKED)
     this.loginHandlerService.signIn({ skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS });
   }
 
@@ -274,18 +260,24 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       return;
     }
     if (data && data.isLeftButtonClicked) {
-      if (!shouldUpdateUserLevelGroupTnc) {
-        const updateMembersRequest: UpdateMembersRequest = {
-          groupId: navigationExtras.state.groupId,
-          updateMembersRequest: {
-            members: [{
-              userId: this.userId,
-              visited: true
-            }]
-          }
-        };
+      const corRelationList: Array<CorrelationData> = [{ id: navigationExtras.state.groupId, type: CorReleationDataType.GROUP_ID }];
+      if(!shouldUpdateUserLevelGroupTnc) {
+        const request: CsGroupUpdateGroupGuidelinesRequest = {
+          userId: this.userId,
+          groups: [{
+            groupId: navigationExtras.state.groupId,
+            visited: true
+          }]
+        }
+        this.generateInteractTelemetry(InteractType.INITIATED, '', corRelationList, ID.ACCEPT_GROUP_GUIDELINES)
+
         try {
-          await this.groupService.updateMembers(updateMembersRequest).toPromise();
+          const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
+          if(updateMemberResponse.error){
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          } else {
+            this.generateInteractTelemetry(InteractType.SUCCESS,'', corRelationList, ID.ACCEPT_GROUP_GUIDELINES)
+          }
           this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
           // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
         } catch (err) {
@@ -349,9 +341,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } catch (err) {
       console.error('acceptTermsAndConditions err', err);
     }
-
-    if (this.groupList.length) {
-      try {
+    if(this.groupList.length){
+        this.generateInteractTelemetry(InteractType.INITIATED, '', ID.ACCEPT_GROUP_GUIDELINES)
+      try{
         const groupsData = [];
         this.groupList.forEach((g) => {
           const gdata = {
@@ -365,10 +357,24 @@ export class MyGroupsPage implements OnInit, OnDestroy {
           groups: groupsData
         };
         const groupsUpdateResponse = await this.groupService.updateGroupGuidelines(request).toPromise();
+        this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.ACCEPT_GROUP_GUIDELINES)
         this.fetchGroupList();
       } catch (err) {
         console.log('groupsUpdateResponse err', err);
       }
     }
+  }
+  private generateInteractTelemetry(interactType, interactSubType, correlationList?, id? ){
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      interactType,
+      interactSubType,
+      Environment.GROUP,
+      PageId.MY_GROUP,
+      undefined,
+      undefined,
+      undefined,
+      correlationList,
+      id
+    );
   }
 }
