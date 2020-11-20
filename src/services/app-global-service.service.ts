@@ -215,7 +215,7 @@ export class AppGlobalService implements OnDestroy {
      * This method stores the location config, for a particular session of the app
      */
     setLocationConfig(locationConfig: Array<any>) {
-        this.courseFilterConfig = locationConfig;
+        this.locationConfig = locationConfig;
     }
 
     /**
