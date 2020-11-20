@@ -37,7 +37,9 @@ describe('MyGroupsPage', () => {
     };
     const mockGroupService: Partial<GroupService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockPlatform: Platform<Platform> = {};
     const mockLocation: Partial<Location> = {};
     const mockSystemSettingService: Partial<SystemSettingsService> = {};
@@ -72,7 +74,7 @@ describe('MyGroupsPage', () => {
         expect(myGroupsPage).toBeTruthy();
     });
     describe('openAcceptGuidelinesPopup', () => {
-        it('should acceptTermsAndConditions popup', (done) => {
+        it('should show acceptTermsAndConditions popup', (done) => {
             // arrange
             myGroupsPage.groupTncVersion = '3.4.0';
             myGroupsPage.userId = 'sample-uid';
@@ -83,8 +85,13 @@ describe('MyGroupsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
+            const nanavigationExtras = {
+                state: {
+                    groupId: 'some_group'
+                }
+            }
             // act
-            myGroupsPage.openAcceptGuidelinesPopup(true);
+            myGroupsPage.openAcceptGuidelinesPopup(true, nanavigationExtras);
             // expect
             setTimeout(() => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
@@ -108,9 +115,13 @@ describe('MyGroupsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
             } as any)));
-
+            const nanavigationExtras = {
+                state: {
+                    groupId: 'some_group'
+                }
+            }
             // act
-            myGroupsPage.openAcceptGuidelinesPopup(true);
+            myGroupsPage.openAcceptGuidelinesPopup(true, nanavigationExtras);
             // expect
             setTimeout(() => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
@@ -259,7 +270,8 @@ describe('MyGroupsPage', () => {
             myGroupsPage.handleHeaderEvents(data);
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+                undefined, undefined, undefined, undefined, undefined
             );
             expect(data.name).toBe('groupInfo');
         });
@@ -275,7 +287,8 @@ describe('MyGroupsPage', () => {
             expect(data.name).toBe('groupInfo');
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP
+                InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP,
+                undefined, undefined, undefined, undefined, undefined
             );
         });
 
@@ -498,7 +511,8 @@ describe('MyGroupsPage', () => {
             InteractType.TOUCH,
             InteractSubtype.CREATE_GROUP_CLICKED,
             Environment.GROUP,
-            PageId.MY_GROUP
+            PageId.MY_GROUP,
+            undefined, undefined, undefined, undefined, undefined
         );
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
     });
@@ -511,7 +525,8 @@ describe('MyGroupsPage', () => {
             InteractType.TOUCH,
             InteractSubtype.LOGIN_CLICKED,
             Environment.GROUP,
-            PageId.MY_GROUP
+            PageId.MY_GROUP,
+            undefined, undefined, undefined, undefined, undefined
         );
         expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith(
             { skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS }

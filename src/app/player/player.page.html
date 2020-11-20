@@ -4,7 +4,7 @@
       style="width:100%;height:100vh;border:none;"></iframe>
   </div>
   <div *ngIf="loadPdfPlayer" style="height:100vh;width:100%;">
-    <sunbird-pdf-player [playerConfig]="config" (playerEvent)="pdfPlayerEvents($event)"></sunbird-pdf-player>
+    <sunbird-pdf-player [playerConfig]="config" (playerEvent)="pdfPlayerEvents($event)" (telemetryEvent)="pdfTelemetryEvents($event)"></sunbird-pdf-player>
   </div>
 </ion-content>
 

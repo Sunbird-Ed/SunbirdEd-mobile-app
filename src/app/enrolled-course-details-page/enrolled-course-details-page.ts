@@ -2018,7 +2018,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           batchExp: this.batchExp,
           isChapterCompleted: this.courseCompletionData[event.item.identifier],
           contentStatusData: this.contentStatusData,
-          courseContent: this.content
+          courseContent: this.content,
+          corRelation: this.corRelationList
         }
       };
 

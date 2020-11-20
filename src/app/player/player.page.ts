@@ -19,7 +19,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType
+  ErrorType, SunbirdSdk
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -39,6 +39,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   course: Course;
   pauseSubscription: any;
   private navigateBackToContentDetails: boolean;
+  private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
   loadPdfPlayer = false;
@@ -90,6 +91,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
       this.loadPdfPlayer = true;
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+      if (this.config['metadata'].isAvailableLocally) {
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+      }
+      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -98,6 +105,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showDownload: true,
           showReplay: false,
           showExit: true,
+        }
+      };
+      this.config['context'].dispatcher = {
+        dispatch: function (event) {
+          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+            (res) => console.log('response after telemetry', res),
+          );
         }
       };
     }
@@ -112,13 +126,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (!this.loadPdfPlayer) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
-
-      this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
-        const activeAlert = await this.alertCtrl.getTop();
-        if (!activeAlert) {
-          this.showConfirm();
-        }
-      });
       this.config['uid'] = this.config['context'].actor.id;
       this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
 
@@ -155,11 +162,30 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                   this.openPDF(downloadUrl);
                 }
               }
+            } else if (this.isJSON(resp.data)) {
+              const response = JSON.parse(resp.data);
+              if (response.event === 'renderer:navigate') {
+                this.navigateBackToTrackableCollection = true;
+                this.navigateBackToContentDetails = false;
+                this.closeIframe({
+                  identifier: response.data.identifier
+                });
+              }
             }
           });
         }, 1000);
       };
     }
+
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
+      const activeAlert = await this.alertCtrl.getTop();
+      if (!activeAlert) {
+        this.showConfirm();
+      }
+      if (this.loadPdfPlayer) {
+        this.router.navigate([RouterLinks.CONTENT_DETAILS]);
+      }
+    });
 
     this.events.subscribe('endGenieCanvas', (res) => {
       if (res.showConfirmBox) {
@@ -286,6 +312,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         replaceUrl: true
       });
+    }  else if (this.navigateBackToTrackableCollection) {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content
+        },
+        replaceUrl: true
+      });
     } else {
       this.location.back();
     }
@@ -383,5 +416,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     };
 
     this.courseService.updateContentState(updateContentStateRequest).subscribe();
+  }
+
+  pdfTelemetryEvents(event) {}
+
+  private isJSON(input): boolean {
+    try {
+      JSON.parse(input);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
