@@ -30,7 +30,19 @@
 						<div class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</div>
 						<div class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</div>
 					</div>
+
 					<div class="board-select-dummy" (click)="boardClicked($event)">
+						<ion-item appCustomIonSelect>
+							<ion-label position="stacked" class="label-font text-uppercase align-text">
+								{{'BOARD' | translate }}</ion-label>
+							<ion-select multiple="false" class="ion-text-capitalize" formControlName="syllabus"
+										[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()"
+										okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
+										placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+								<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+									{{eachSyllabus.name}}&lrm;</ion-select-option>
+							</ion-select>
+						</ion-item>
 						<div class="ps-board">
 							<div class="ps-board-label">{{'BOARD' | translate}}</div>
 							<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block"
