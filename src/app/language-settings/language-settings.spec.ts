@@ -562,7 +562,6 @@ describe('LanguageSettingsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockAppHeaderService.hideHeader).toHaveBeenCalled();
-                expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
                 done();
             }, 0);
         });
