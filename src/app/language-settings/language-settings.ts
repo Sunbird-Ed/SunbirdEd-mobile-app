@@ -65,8 +65,6 @@ export class LanguageSettingsPage {
     this.activatedRoute.params.subscribe(async params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
-        await this.preferences.putString(PreferenceKey.CURRENT_SELECTED_THEME, AppThemes.JOYFUL).toPromise();
-        await this.headerService.showStatusBar();
         this.headerService.hideHeader();
       } else {
         this.headerService.showHeaderWithBackButton();
