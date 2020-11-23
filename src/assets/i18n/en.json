@@ -1051,6 +1051,8 @@
   "USER_TYPE_1": "Teacher",
   "USER_TYPE_2": "Student",
   "USER_TYPE_3": "Other",
+  "USER_TYPE_4": "Admin",
+  "USER_TYPE_5": "Parent",
   "USER_TYPE_SELECT_WARNING": "Choose user type",
   "USER_VERIFICATION": "User Verification",
   "USE_APP_AS": "Use {{%s}} as",

@@ -104,13 +104,14 @@ export class TncUpdateHandlerService {
   private async navigateToBmc(serverProfile, userprofile) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
       .then((value) => {
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-          state: {
-            hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-            showOnlyMandatoryFields: true,
-            profile: value['profile'],
-            isRootPage: true
-          }
+        const categoriesProfileData = {
+          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+          showOnlyMandatoryFields: true,
+          profile: value['profile'],
+          isRootPage: true
+        };
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+          state: {categoriesProfileData}
         });
       });
   }

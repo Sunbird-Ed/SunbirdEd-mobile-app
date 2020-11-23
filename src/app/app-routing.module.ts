@@ -30,6 +30,10 @@ const routes: Routes = [
     resolve: { message: HasNotSelectedUserTypeGuard }
   },
   {
+    path: `${RouterLinks.USER_TYPE_SELECTION_LOGGEDIN}`,
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+  },
+  {
     path: RouterLinks.PROFILE_SETTINGS,
     loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
     canLoad: [HasNotBeenOnboardedGuard],

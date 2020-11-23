@@ -46,6 +46,7 @@ export class UserTypeSelectionPage {
   appName = '';
   public hideBackButton = true;
   ProfileType = ProfileType;
+  categoriesProfileData: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -67,6 +68,8 @@ export class UserTypeSelectionPage {
 
   getNavParams() {
     this.navParams = window.history.state;
+    this.categoriesProfileData = this.navParams.categoriesProfileData;
+    console.log('fiiii', this.categoriesProfileData);
   }
 
   ionViewDidEnter() {
@@ -168,6 +171,22 @@ export class UserTypeSelectionPage {
     }, 50);
   }
 
+  selectAdminCard() {
+    this.selectCard('USER_TYPE_4', 'admin');
+    this.generateUserTypeClicktelemetry('admin');
+    setTimeout(() => {
+      this.continue();
+    }, 50);
+  }
+
+  selectParentCard() {
+    this.selectCard('USER_TYPE_5', 'parent');
+    this.generateUserTypeClicktelemetry('parent');
+    setTimeout(() => {
+      this.continue();
+    }, 50);
+  }
+
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
     this.generateUserTypeClicktelemetry(ProfileType.OTHER);
@@ -246,7 +265,7 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
-            const correlationlist: Array<CorrelationData> = [{id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE}];
+            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
             correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
             this.telemetryGeneratorService.generateAuditTelemetry(
               Environment.ONBOARDING,
@@ -341,10 +360,29 @@ export class UserTypeSelectionPage {
 
   navigateToTabsAsGuest() {
     const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    this.router.navigate(['/tabs'], navigationExtras);
+    if (this.categoriesProfileData) {
+      if (this.categoriesProfileData.status) {
+        if (this.categoriesProfileData.isUserLocationAvalable) {
+          this.router.navigate(['/', RouterLinks.TABS]);
+        } else {
+          const navigationExtrasData: NavigationExtras = {
+            state: {
+              isShowBackButton: false
+            }
+          };
+          this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtrasData);
+        }
+      } else {
+        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+          state: this.categoriesProfileData
+        });
+      }
+    } else {
+      this.router.navigate(['/tabs'], navigationExtras);
+    }
   }
 
-  navigateToProfileSettingsPage(params) {
+  async navigateToProfileSettingsPage(params) {
     const navigationExtras: NavigationExtras = { state: params };
     const options: NativeTransitionOptions = {
       direction: 'left',
