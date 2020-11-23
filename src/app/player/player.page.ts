@@ -89,7 +89,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
-    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig) {
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig &&
+        this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
       this.loadPdfPlayer = true;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
