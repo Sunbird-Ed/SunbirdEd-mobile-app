@@ -7,6 +7,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
+
+    window.cordova.plugins = {
+        InAppUpdateManager: {
+            checkForImmediateUpdate: jest.fn()
+        }
+    };
+
     const mockUtilityService: Partial<UtilityService> = {
         openPlayStore: jest.fn()
     };
@@ -90,7 +97,6 @@ describe('UpgradePopoverComponent', () => {
         // act
         upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
         // assert
-        expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
     });
 
@@ -100,7 +106,6 @@ describe('UpgradePopoverComponent', () => {
         // act
         upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
         // assert
-        expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
         expect(mockPopOverController.dismiss).not.toHaveBeenCalled();
     });
 
@@ -318,7 +323,6 @@ describe('UpgradeComponent in deeplink for deeplink upgrade scenario ', () => {
             done();
         }, 0);
     });
-
 
 
 });
