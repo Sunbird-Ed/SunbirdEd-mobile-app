@@ -133,14 +133,18 @@ describe('PlayerPage', () => {
             mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
             playerPage.config = {
                 context: {
+                    objectRollup: {
+                        l1: 'li'
+                    },
                     dispatcher: {
-                        // dispatch: jest.fn()
+                        dispatch: jest.fn()
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
                     }
                 },
                 metadata: {
+                    identifier: 'identifier',
                     mimeType: 'application/pdf',
                     contentData: {
                         isAvailableLocally: true,
@@ -192,9 +196,13 @@ describe('PlayerPage', () => {
                     },
                     pdata: {
                         pid: 'sunbird.app.contentplayer'
+                    },
+                    objectRollup: {
+                        l1: 'li'
                     }
                 },
                 metadata: {
+                    identifier: 'li',
                     mimeType: 'application/pdf',
                     contentData: {
                         isAvailableLocally: true,
