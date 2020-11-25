@@ -5,7 +5,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '@app/services';
+import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype, AppGlobalService } from '@app/services';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ShareMode, ShareItemType } from '@app/app/app.constant';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
@@ -50,7 +50,6 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private permissionService: AndroidPermissionsService,
-    private router: Router,
     private commonUtilService: CommonUtilService) {
     this.pageId = this.navParams.get('pageId');
   }

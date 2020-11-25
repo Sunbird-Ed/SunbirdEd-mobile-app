@@ -134,7 +134,8 @@ describe('ChapterDetailsPage', () => {
                 chapterDetailsPage.chapter.identifier,
                 undefined,
                 chapterDetailsPage.chapter.contentData.pkgVersion,
-                {}
+                {},
+                undefined
             );
 
         });

@@ -145,6 +145,7 @@ export enum PageId {
     LOCATION = 'location',
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
+    PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
@@ -486,7 +487,9 @@ export enum InteractSubtype {
     MEMBER_TAB_CLICKED = 'member-tab-clicked',
     EDIT_GROUP_CLICKED = 'edit-group-clicked',
     LET_US_KNOW_CLICKED = 'let-us-know-clicked',
-    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked'
+    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked',
+    DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
+    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked'
 }
 
 export enum ID {
@@ -531,7 +534,10 @@ export enum ID {
     VERIFY_MEMBER = 'verify-member',
     ADD_MEMBER_TO_GROUP = 'add-member-to-group',
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
-    NOTIFICATION_REQUEST = 'notification-request'
+    NOTIFICATION_REQUEST = 'notification-request',
+    DEACTIVATE_GROUP= 'deactivate-group',
+    REACTIVATE_GROUP= 'reactivate-group',
+    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines'
 }
 
 export enum ActionButtonType {

@@ -143,10 +143,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   navigateToAddUserPage() {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_MEMBER_CLICKED)
     this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
       groupId: this.groupId,
       memberList: this.memberList,
@@ -242,13 +239,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
 
   switchTabs(tab) {
     this.activeTab = tab;
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED : InteractSubtype.MEMBER_TAB_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
+    this.generateInteractTelemetry(InteractType.TOUCH, tab === 'activities' ? InteractSubtype.ACTIVITY_TAB_CLICKED : InteractSubtype.MEMBER_TAB_CLICKED)
   }
+  
 
   async groupMenuClick(event) {
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
@@ -281,13 +274,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.EDIT_GROUP_CLICKED,
-          Environment.GROUP,
-          PageId.GROUP_DETAIL,
-          undefined, undefined, undefined, this.corRelationList);
-
+        this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.EDIT_GROUP_CLICKED);
         this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
@@ -354,13 +341,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeactivateGroupPopup() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.DELETE_GROUP_CLICKED,
-    //   Environment.GROUP,
-    //   PageId.GROUP_DETAIL,
-    //   undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DEACTIVATE_GROUP_CLICKED);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -384,17 +365,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
-      // this.telemetryGeneratorService.generateInteractTelemetry(
-      //   InteractType.INITIATED,
-      //   '',
-      //   Environment.GROUP,
-      //   PageId.GROUP_DETAIL,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   this.corRelationList,
-      //   ID.DELETE_GROUP);
+      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const deactivateByIdRequest: ActivateAndDeactivateByIdRequest = {
@@ -407,17 +378,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
         // this.location.back();
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.SUCCESS,
-        //   '',
-        //   Environment.GROUP,
-        //   PageId.GROUP_DETAIL,
-        //   undefined,
-        //   undefined,
-        //   undefined,
-        //   this.corRelationList,
-        //   ID.DELETE_GROUP
-        // );
+        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DEACTIVATE_GROUP);
         this.fetchGroupDetails();
       } catch (e) {
         await loader.dismiss();
@@ -428,13 +389,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showReactivateGroupPopup() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.MAKE_GROUP_ADMIN_CLICKED,
-    //   Environment.GROUP,
-    //   PageId.GROUP_DETAIL,
-    //   undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REACTIVATE_GROUP_CLICKED);
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -459,17 +414,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      // this.telemetryGeneratorService.generateInteractTelemetry(
-      //   InteractType.INITIATED,
-      //   '',
-      //   Environment.GROUP,
-      //   PageId.GROUP_DETAIL,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   this.corRelationList,
-      //   ID.MAKE_GROUP_ADMIN);
-
+      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REACTIVATE_GROUP);
       this.isGroupLoading = true;
       const reActivateByIdRequest: ActivateAndDeactivateByIdRequest = {
         id: this.groupId
@@ -482,16 +427,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.isGroupLoading = false;
         // if (updateMemberResponse) {
         this.commonUtilService.showToast('FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS');
-          // this.telemetryGeneratorService.generateInteractTelemetry(
-          //   InteractType.SUCCESS,
-          //   '',
-          //   Environment.GROUP,
-          //   PageId.GROUP_DETAIL,
-          //   undefined,
-          //   undefined,
-          //   undefined,
-          //   this.corRelationList,
-          //   ID.MAKE_GROUP_ADMIN);
+        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.REACTIVATE_GROUP);
 
         this.fetchGroupDetails();
         // }
@@ -503,12 +439,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeleteGroupPopup() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.DELETE_GROUP_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DELETE_GROUP_CLICKED);  
 
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -533,17 +464,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.DELETE_GROUP);
+      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DELETE_GROUP);  
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const deleteByIdRequest: DeleteByIdRequest = {
@@ -555,17 +476,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.showToast('DELETE_GROUP_SUCCESS_MSG');
         await loader.dismiss();
         this.location.back();
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.SUCCESS,
-          '',
-          Environment.GROUP,
-          PageId.GROUP_DETAIL,
-          undefined,
-          undefined,
-          undefined,
-          this.corRelationList,
-          ID.DELETE_GROUP
-        );
+        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DELETE_GROUP);  
       } catch (e) {
         await loader.dismiss();
         console.error(e);
@@ -575,13 +486,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showLeaveGroupPopup() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.LEAVE_GROUP_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.LEAVE_GROUP_CLICKED);  
     const leaveGroupConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -605,17 +510,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.LEAVE_GROUP);
+      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.LEAVE_GROUP);  
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const removeMembersRequest: RemoveMembersRequest = {
@@ -636,16 +531,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.location.back();
 
           this.commonUtilService.showToast('LEAVE_GROUP_SUCCESS_MSG');
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList,
-            ID.LEAVE_GROUP);
+        this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.LEAVE_GROUP);  
         }
       } catch (e) {
         console.error(e);
@@ -656,13 +542,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showRemoveActivityPopup(selectedActivity): Promise<boolean> {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.REMOVE_ACTIVITY_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry( InteractType.TOUCH,  InteractSubtype.REMOVE_ACTIVITY_CLICKED);  
     const removeActivityConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -686,18 +566,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return false;
       }
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.REMOVE_ACTIVITY);
-
+      this.generateInteractTelemetry( InteractType.INITIATED, '', ID.REMOVE_ACTIVITY);  
       this.isGroupLoading = true;
       const removeActivitiesRequest: RemoveActivitiesRequest = {
         groupId: this.groupId,
@@ -716,16 +585,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           return false;
         } else {
           this.commonUtilService.showToast('REMOVE_ACTIVITY_SUCCESS_MSG');
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList,
-            ID.REMOVE_ACTIVITY);
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_ACTIVITY);  
           this.fetchGroupDetails();
           return true;
         }
@@ -739,13 +599,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showRemoveMemberPopup(selectedMember) {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.REMOVE_MEMBER_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.REMOVE_MEMBER_CLICKED);  
     const removeMemberConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -769,18 +623,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.REMOVE_MEMBER);
-
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.REMOVE_MEMBER);  
       this.isGroupLoading = true;
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
@@ -798,17 +641,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('REMOVE_MEMBER_ERROR_MSG');
         } else {
           this.commonUtilService.showToast('REMOVE_MEMBER_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList,
-            ID.REMOVE_MEMBER);
-
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.REMOVE_MEMBER);  
           this.fetchGroupDetails();
         }
       } catch (e) {
@@ -821,13 +654,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showMakeGroupAdminPopup(selectedMember) {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.MAKE_GROUP_ADMIN_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.MAKE_GROUP_ADMIN_CLICKED);  
     const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -852,18 +679,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.MAKE_GROUP_ADMIN);
-
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.MAKE_GROUP_ADMIN);  
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
         groupId: this.groupId,
@@ -885,17 +701,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('MAKE_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
           this.commonUtilService.showToast('MAKE_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList,
-            ID.MAKE_GROUP_ADMIN);
-
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.MAKE_GROUP_ADMIN);  
           this.fetchGroupDetails();
         }
       } catch (e) {
@@ -907,12 +713,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDismissAsGroupAdminPopup(selectedMember) {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.DISMISS_GROUP_ADMIN_CLICKED,
-      Environment.GROUP,
-      PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
+    this.generateInteractTelemetry(InteractType.TOUCH,  InteractSubtype.DISMISS_GROUP_ADMIN_CLICKED);  
 
     const dismissAsGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -939,16 +740,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         return;
       }
 
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.INITIATED,
-        '',
-        Environment.GROUP,
-        PageId.GROUP_DETAIL,
-        undefined,
-        undefined,
-        undefined,
-        this.corRelationList,
-        ID.DISMISS_GROUP_ADMIN);
+      this.generateInteractTelemetry(InteractType.INITIATED, '', ID.DISMISS_GROUP_ADMIN);  
 
       this.isGroupLoading = true;
       const updateMembersRequest: UpdateMembersRequest = {
@@ -970,17 +762,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_ERROR_MSG', { member_name: selectedMember.name });
         } else {
           this.commonUtilService.showToast('DISMISS_AS_GROUP_ADMIN_SUCCESS_MSG', { member_name: selectedMember.name });
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.SUCCESS,
-            '',
-            Environment.GROUP,
-            PageId.GROUP_DETAIL,
-            undefined,
-            undefined,
-            undefined,
-            this.corRelationList,
-            ID.DISMISS_GROUP_ADMIN);
-
+          this.generateInteractTelemetry(InteractType.SUCCESS, '', ID.DISMISS_GROUP_ADMIN);  
           this.fetchGroupDetails();
         }
       } catch (e) {
@@ -1029,6 +811,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
           group: this.groupDetails,
           memberList: this.memberList,
           activity,
+          isGroupCreatorOrAdmin: this.isGroupCreatorOrAdmin,
           corRelation: this.corRelationList
         });
     }
@@ -1039,11 +822,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
-
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL,
-      undefined, undefined, undefined, this.corRelationList);
-
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_ACTIVITY_CLICKED);  
     try {
       const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
         = await this.groupService.getSupportedActivities().toPromise();
@@ -1098,6 +877,20 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.flattenedActivityList = [...this.flattenedActivityList , ...this.filteredGroupedActivityListMap[key]];
       }
     }
+  }
+
+  private generateInteractTelemetry(interactType, interactSubType, id?){
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      interactType,
+      interactSubType,
+      Environment.GROUP,
+      PageId.GROUP_DETAIL,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelationList,
+      id
+    );
   }
 
 }

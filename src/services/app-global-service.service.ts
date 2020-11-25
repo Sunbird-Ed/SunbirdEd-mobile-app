@@ -86,6 +86,7 @@ export class AppGlobalService implements OnDestroy {
     private _formConfig: any;
     private _selectedActivityCourseId: string;
     private _redirectUrlAfterLogin: string;
+    private _isNativePopupVisible: boolean;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -160,11 +161,11 @@ export class AppGlobalService implements OnDestroy {
     }
 
 
-     setpdfPlayerconfiguration(config) {
+    setpdfPlayerconfiguration(config) {
         this.pdfPlayerConfiguratiion = config;
     }
 
-     getPdfPlayerConfiguration() {
+    getPdfPlayerConfiguration() {
         return this.pdfPlayerConfiguratiion;
     }
 
@@ -790,6 +791,24 @@ export class AppGlobalService implements OnDestroy {
 
     set redirectUrlAfterLogin(value) {
         this._redirectUrlAfterLogin = value;
+    }
+
+    get isNativePopupVisible() {
+        return this._isNativePopupVisible;
+    }
+
+    set isNativePopupVisible(value) {
+        this._isNativePopupVisible = value;
+    }
+
+    setNativePopupVisible(value, timeOut?) {
+        if (timeOut) {
+            setTimeout(() => {
+                this._isNativePopupVisible = value;
+            }, timeOut);
+        } else {
+            this._isNativePopupVisible = value;
+        }
     }
 
 

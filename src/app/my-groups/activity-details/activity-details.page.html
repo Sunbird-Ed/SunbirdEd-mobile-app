@@ -9,6 +9,9 @@
         (menuClick)="activityMenuClick($event, activity, i)">
       </sb-library-card>
     </div>
+    <!-- <div class="mb-8" *ngIf="isGroupCreatorOrAdmin">
+      <button class="sb-btn sb-btn-small" (click)="downloadCsv()">download</button>
+    </div> -->
     <div class="ad-member-container">
       <div class="ad-note" *ngIf="!isTrackable">
         <span>{{'NOTE' | translate}} :</span>
@@ -25,9 +28,16 @@
         <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onMemberSearch(searchMember)"
           placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
       </div>
-      <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
-        [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
+      <div class="ad-timestamp-container clearfix">
+        <span *ngIf="isGroupCreatorOrAdmin" (click)="downloadCsv()">
+          <img src="assets/imgs/ic_download_selected_joyful.svg" alt="">
+          <span>{{'DOWNLOAD_CSV' | translate}}</span>
+        </span>
+        <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
+          [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">
+        </div>
       </div>
+     
 
       <div class="ad-mebers-container">
         <div *ngIf="isActivityLoading">

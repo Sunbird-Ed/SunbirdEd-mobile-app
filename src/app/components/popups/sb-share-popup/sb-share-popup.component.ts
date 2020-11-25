@@ -3,7 +3,7 @@ import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import {
-  AndroidPermissionsService, CommonUtilService,
+  AndroidPermissionsService, AppGlobalService, CommonUtilService,
   ContentShareHandlerService, TelemetryGeneratorService
 } from '@app/services';
 import {
@@ -75,6 +75,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     private appVersion: AppVersion,
     private commonUtilService: CommonUtilService,
     private permissionService: AndroidPermissionsService,
+    private appGlobalService: AppGlobalService
   ) {
     this.content = this.navParams.get('content');
     this.corRelationList = this.navParams.get('corRelationList');
@@ -258,6 +259,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
               InteractSubtype.ALLOW_CLICKED,
               Environment.HOME,
               PageId.PERMISSION_POPUP);
+            this.appGlobalService.isNativePopupVisible = true;
             this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
               .subscribe(async (status: AndroidPermissionsStatus) => {
                 if (status.hasPermission) {
@@ -282,6 +284,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                 }
+                this.appGlobalService.isNativePopupVisible = false;
                 resolve(undefined);
               });
           }

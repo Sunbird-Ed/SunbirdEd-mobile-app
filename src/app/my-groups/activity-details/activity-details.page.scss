@@ -41,11 +41,14 @@
         padding: 0 4px;
     }
 }
-
-.ad-timestamp{
-    color: $gray-300;
+.ad-timestamp-container{
     padding: 8px;
-    text-align: right;
+    color: map-get($colors, primary);
+    .ad-timestamp{
+        color: $gray-300;
+        float: right;
+        text-align: right;
+    }
 }
 .ad-mebers-container{
     min-height: calc(100vh - 215px);

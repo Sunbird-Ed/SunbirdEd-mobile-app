@@ -1430,6 +1430,16 @@ ion-modal.sb-progress-loader {
     padding-top: 16px;
   }
 }
+.sb-profile-name-confirmation-popover{
+  .popover-content{
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto;
+    width: 90% !important;
+    padding: 16px;
+    position: static;
+  }
+}
 .grecaptcha-badge {
    position: absolute;
    top: 70vh;
