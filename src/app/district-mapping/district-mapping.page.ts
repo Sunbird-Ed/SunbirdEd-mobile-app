@@ -351,7 +351,7 @@ export class DistrictMappingPage {
           this.districtList = success;
           if (this.availableLocationDistrict) {
             this.districtName = this.availableLocationDistrict;
-            const district = this.districtList.find(d => d.name === this.availableLocationDistrict);
+            const district = this.districtList.find(d => d.name.toLowerCase() === this.availableLocationDistrict.toLowerCase());
             await loader.dismiss();
             if (district) {
               await this.selectDistrict(district.name, district.code);
