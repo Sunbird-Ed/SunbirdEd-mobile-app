@@ -1311,14 +1311,14 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.redirectToActivedownloads).toHaveBeenCalled();
         });
 
-        it('should call notification method when event name is equal notification', () => {
-            // arrange
-            jest.spyOn(resourcesComponent, 'redirectToNotifications').mockImplementation();
-            // act
-            resourcesComponent.handleHeaderEvents({ name: 'notification' });
-            // assert
-            expect(resourcesComponent.redirectToNotifications).toHaveBeenCalled();
-        });
+        // it('should call notification method when event name is equal notification', () => {
+        //     // arrange
+        //     jest.spyOn(resourcesComponent, 'redirectToNotifications').mockImplementation();
+        //     // act
+        //     resourcesComponent.handleHeaderEvents({ name: 'notification' });
+        //     // assert
+        //     expect(resourcesComponent.redirectToNotifications).toHaveBeenCalled();
+        // });
 
         it('should call information method when event name is equal information', () => {
             // arrange
