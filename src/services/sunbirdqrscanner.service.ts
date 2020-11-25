@@ -136,6 +136,7 @@ export class SunbirdQRScanner {
                     } else {
                       resolve(undefined);
                     }
+                    this.appGlobalService.isNativePopupVisible = false;
                   });
               } else {
                   this.telemetryGeneratorService.generateInteractTelemetry(
@@ -146,8 +147,8 @@ export class SunbirdQRScanner {
                   );
                   this.commonUtilService.showSettingsPageToast
                 ('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, this.appGlobalService.isOnBoardingCompleted);
+                  this.appGlobalService.setNativePopupVisible(false, 1000);
               }
-              this.appGlobalService.isNativePopupVisible = false;
             }, (e) => { reject(e); });
           }
         }, this.appName, this.commonUtilService.translateMessage('CAMERA'), 'CAMERA_PERMISSION_DESCRIPTION', PageId.QRCodeScanner,
