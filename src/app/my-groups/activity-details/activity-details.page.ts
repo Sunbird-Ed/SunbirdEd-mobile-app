@@ -262,10 +262,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
       member.progress = progress;
     });
     console.log('memberList progress', this.memberList)
-    line += 'Name' + ',';
-    line += 'progress' + '\n';
+    line += 'Course name' + ',';
+    line += 'Member name' + ',';
+    line += 'Progress' + '\n';
     line += '\n';
     for (let j = 0; j < memberList.length; j++) {
+      line += '\"' + this.courseData.name.trim() + '\"' + ',';
       line += '\"' + memberList[j].name + '\"' + ',';
       line += '\"' + memberList[j].progress + '%\"' + '\n';
     }
