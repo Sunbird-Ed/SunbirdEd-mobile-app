@@ -860,7 +860,7 @@ describe('ActivityDetailsPage', () => {
                 }
             ]
             activityDetailsPage.courseData = {
-                name: 'saome_name'
+                name: 'some_name'
             } as any
             //act
             activityDetailsPage.convertToCSV(memberList)
