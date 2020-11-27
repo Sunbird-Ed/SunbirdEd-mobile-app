@@ -2,18 +2,14 @@ import { Router } from '@angular/router';
 import {
   AlertController,
   Events,
-  Platform,
-  PopoverController
-} from '@ionic/angular';
+  Platform} from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import isEqual from 'lodash/isEqual';
 import {
-  CategoryTerm,
   Framework,
   FrameworkCategoryCodesGroup,
-  FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
@@ -40,11 +36,11 @@ import {
 import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { PreferenceKey, RouterLinks, RegexPatterns } from '@app/app/app.constant';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { PreferenceKey, RegexPatterns } from '@app/app/app.constant';
 import { Location } from '@angular/common';
-import { Observable, merge, Subscription, combineLatest } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-guest-edit',
@@ -54,7 +50,6 @@ import { tap } from 'rxjs/operators';
 export class GuestEditPage implements OnInit, OnDestroy {
 
   private framework: Framework;
-
   ProfileType = ProfileType;
   guestEditForm: FormGroup;
   profile: any = {};
@@ -66,18 +61,15 @@ export class GuestEditPage implements OnInit, OnDestroy {
   isNewUser = false;
   unregisterBackButton: any;
   isCurrentUser = true;
-
   isFormValid = true;
-
   previousProfileType;
   profileForTelemetry: any = {};
-
   private formControlSubscriptions: Subscription;
-
   public syllabusList: { name: string, code: string }[] = [];
   public mediumList: { name: string, code: string }[] = [];
   public gradeList: { name: string, code: string }[] = [];
   public subjectList: { name: string, code: string }[] = [];
+  public supportedProfileAttributes: { [key: string]: string } = {};
 
   syllabusOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
@@ -134,61 +126,40 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private translate: TranslateService,
     private events: Events,
-    private platform: Platform,
-    private alertCtrl: AlertController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
-    private popoverCtrl: PopoverController,
     private headerService: AppHeaderService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private profileHandler: ProfileHandler
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
       this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
     }
 
-    if (this.isNewUser) {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
-      } else {
-        this.profile = {};
-      }
-
-      this.guestEditForm = this.fb.group({
-        name: [this.profile.handle || ''],
-        profileType: [this.profile.profileType || ProfileType.STUDENT],
-        syllabus: [],
-        boards: [],
-        medium: [],
-        grades: [],
-        subjects: []
-      });
-
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
     } else {
-      if (this.router.getCurrentNavigation().extras.state) {
-        this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
-      } else {
-        this.profile = {};
-      }
-
-      this.guestEditForm = this.fb.group({
-        name: [this.profile.handle || ''],
-        profileType: [this.profile.profileType || ProfileType.STUDENT],
-        syllabus: [],
-        boards: [],
-        medium: [],
-        grades: [],
-        subjects: []
-      });
+      this.profile = {};
     }
+
+    this.guestEditForm = this.fb.group({
+      name: [this.profile.handle || ''],
+      profileType: [this.profile.profileType || ProfileType.STUDENT],
+      syllabus: [],
+      boards: [],
+      medium: [],
+      grades: [],
+      subjects: []
+    });
 
     this.previousProfileType = this.profile.profileType;
     this.profileForTelemetry = Object.assign({}, this.profile);
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_USER,
@@ -201,17 +172,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
       Environment.USER,
       PageId.CREATE_USER
     );
+    this.addAttributeSubscription(undefined);
+  }
 
-    // auto fill alert is called when it is new user , profile and profile.name is present
-    if (this.isNewUser && this.profile && this.profile.handle) {
-      this.showAutoFillAlert();
-    }
-
-    this.formControlSubscriptions = combineLatest(
-      this.onSyllabusChange(),
-      this.onMediumChange(),
-      this.onGradeChange(),
-    ).subscribe();
+  private async addAttributeSubscription(userType: string) {
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, userType);
+    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
   }
 
 
@@ -220,9 +187,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
       this.commonUtilService.translateMessage('EDIT_PROFILE');
     this.headerService.showHeaderWithBackButton([], headerTitle);
     this.getSyllabusDetails();
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.dismissPopup();
-    });
   }
 
   ionViewWillLeave() {
@@ -235,42 +199,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.formControlSubscriptions.unsubscribe();
   }
 
-  // shows auto fill alert on load
-  async showAutoFillAlert() {
-    const confirm = await this.popoverCtrl.create({
-      component: SbGenericPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('ALERT'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('PREVIOUS_USER_SETTINGS'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'sb-btn sb-btn-sm sb-btn-outline-info'
-          }, {
-            btntext: this.commonUtilService.translateMessage('OKAY'),
-            btnClass: 'popover-color'
-          }
-        ],
-        icon: null
-      },
-      cssClass: 'sb-popover',
-    });
-    await confirm.present();
-    const { data } = await confirm.onDidDismiss();
-    if (data.isLeftButtonClicked) {
-      this.guestEditForm.patchValue({
-        name: undefined,
-        syllabus: [],
-        boards: [],
-        grades: [],
-        subjects: [],
-        medium: []
-      });
-      this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
-    }
-  }
-
   onProfileTypeChange() {
+    if (this.formControlSubscriptions) {
+      this.formControlSubscriptions.unsubscribe();
+    }
+    this.addAttributeSubscription(this.guestEditForm.value.profileType);
     this.guestEditForm.patchValue({
       syllabus: [],
       boards: [],
@@ -335,7 +268,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
           };
 
           const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0]).name));
 
           this.boardControl.patchValue([boardTerm.code]);
 
@@ -356,11 +289,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
             this.mediumControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          // this.mediumControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -396,11 +326,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
             this.gradeControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          // this.gradeControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -410,10 +337,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
   private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
-        // await this.commonUtilService.getLoader().then((loader) => {
-        //   this.loader = loader;
-        //   this.loader.present();
-        // });
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -432,18 +355,14 @@ export class GuestEditPage implements OnInit, OnDestroy {
             this.subjectControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          // this.subjectControl.patchValue([]);
           this.loader.dismiss();
         }
       })
     );
   }
 
- 
   /**
    * This method is added as we are not getting subject value in reset form method
    */
@@ -486,13 +405,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('BOARD')), false, 'red-toast');
       return false;
-    } else if (formVal.medium.length === 0) {
+    } else if (formVal.medium.length === 0 && !!this.supportedProfileAttributes['medium']) {
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'failed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('MEDIUM')), false, 'red-toast');
       return false;
-    } else if (formVal.grades.length === 0) {
+    } else if (formVal.grades.length === 0 && !!this.supportedProfileAttributes['gradeLevel']) {
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'failed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
       this.commonUtilService.showToast(
@@ -565,7 +484,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       });
     }
     this.profileService.updateProfile(req)
-      .subscribe((res: any) => {
+      .subscribe(() => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -580,7 +499,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
         } else {
           this.location.back();
         }
-      }, (err: any) => {
+      }, () => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
       });
@@ -640,13 +559,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
       });
     }
 
-    this.profileService.createProfile(req, req.source).subscribe((res: any) => {
+    this.profileService.createProfile(req, req.source).subscribe(() => {
       this._dismissLoader(loader);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_CREATED_SUCCESSFULLY'));
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER, InteractSubtype.CREATE_USER_SUCCESS, Environment.USER, PageId.CREATE_USER);
       this.location.back();
-    }, (err: any) => {
+    }, () => {
       this._dismissLoader(loader);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('FILL_THE_MANDATORY_FIELDS'));
     });
@@ -661,16 +580,22 @@ export class GuestEditPage implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * It will Dismiss active popup
-   */
-  async dismissPopup() {
-    const activePortal = await this.alertCtrl.getTop();
-    if (activePortal) {
-      await activePortal.dismiss();
-    } else {
-      this.location.back();
-    }
+  private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
+    const subscriptionArray = [];
+    Object.keys(attributes).forEach((attribute) => {
+      switch (attribute) {
+        case 'board':
+          subscriptionArray.push(this.onSyllabusChange());
+          break;
+        case 'medium':
+          subscriptionArray.push(this.onMediumChange());
+          break;
+        case 'gradeLevel':
+          subscriptionArray.push(this.onGradeChange());
+          break;
+      }
+    });
+    return subscriptionArray;
   }
 
 }

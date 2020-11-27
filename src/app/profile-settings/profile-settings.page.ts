@@ -29,11 +29,7 @@ import {
   ProfileService,
   ProfileType,
   CorrelationData,
-  Rollup,
-  Actor,
-  TelemetryAuditRequest,
-  AuditState
-} from 'sunbird-sdk';
+  AuditState} from 'sunbird-sdk';
 import {
   AppGlobalService,
   AppHeaderService,
@@ -46,6 +42,7 @@ import { AlertController, Events, Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-profile-settings',
@@ -76,6 +73,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   public syllabusList: { name: string, code: string }[] = [];
   public mediumList: { name: string, code: string }[] = [];
   public gradeList: { name: string, code: string }[] = [];
+
+  public supportedProfileAttributes: { [key: string]: string } = {};
 
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD_OPTION_TEXT'),
@@ -125,13 +124,14 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     private alertCtrl: AlertController,
     private location: Location,
     private splashScreenService: SplashScreenService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private profileHandler: ProfileHandler
   ) {
     this.profileSettingsForm = new FormGroup({
-      syllabus: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      board: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      medium: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      grade: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' })
+      syllabus: new FormControl([]),
+      board: new FormControl([]),
+      medium: new FormControl([]),
+      grade: new FormControl([])
     });
   }
 
@@ -146,18 +146,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.formControlSubscriptions = combineLatest(
-      this.onSyllabusChange(),
-      this.onMediumChange(),
-      this.onGradeChange(),
-      this.profileSettingsForm.valueChanges.pipe(
-        delay(250),
-        tap(() => {
-          this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
-        })
-      )
-    ).subscribe();
 
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes();
+    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
     await this.fetchSyllabusList();
   }
 
@@ -296,7 +288,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       Environment.ONBOARDING,
@@ -537,11 +529,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
             .map(t => ({ name: t.name, code: t.code }));
 
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          this.mediumControl.patchValue([]);
+          if (this.mediumControl) {
+            this.mediumControl.patchValue([]);
+          }
           this.loader.dismiss();
         }
       })
@@ -574,10 +566,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
             .map(t => ({ name: t.name, code: t.code }));
 
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
           this.gradeControl.patchValue([]);
           this.loader.dismiss();
         }
@@ -640,11 +630,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
-        let correlationlist: Array<CorrelationData> = [{id: PageId.MANUAL_PROFILE, type: CorReleationDataType.FROM_PAGE}];
+        let correlationlist: Array<CorrelationData> = [{ id: PageId.MANUAL_PROFILE, type: CorReleationDataType.FROM_PAGE }];
         correlationlist = correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
         correlationlist = correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
         correlationlist = correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
-        correlationlist.push({id: PageId.MANUAL, type: CorReleationDataType.FILL_MODE});
+        correlationlist.push({ id: PageId.MANUAL, type: CorReleationDataType.FILL_MODE });
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
@@ -770,7 +760,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,
@@ -781,4 +771,32 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       correlationList
     );
   }
+
+  private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
+    const subscriptionArray = [];
+    Object.keys(attributes).forEach((attribute) => {
+      switch (attribute) {
+        case 'board':
+          subscriptionArray.push(this.onSyllabusChange());
+          this.boardControl.setValidators((c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
+          break;
+        case 'medium':
+          subscriptionArray.push(this.onMediumChange());
+          this.mediumControl.setValidators((c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
+          break;
+        case 'gradeLevel':
+          subscriptionArray.push(this.onGradeChange());
+          this.gradeControl.setValidators((c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
+          break;
+      }
+    });
+    subscriptionArray.push(this.profileSettingsForm.valueChanges.pipe(
+      delay(250),
+      tap(() => {
+        this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
+      })
+    ));
+    return subscriptionArray;
+  }
+
 }

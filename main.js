@@ -101,7 +101,14 @@ var formRequestArray = [{
         'subType': 'library',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'userType',
+        'action': 'get',
+        'component': 'app'
     }
+
 
 ];
 
