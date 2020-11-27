@@ -103,7 +103,8 @@ describe('TncUpdateHandlerService', () => {
         promptTnC: false,
         tncLatestVersionUrl: 'sample_tncLatestVersionUrl',
         id: 'sample_id',
-        avatar: 'sample_avatar'
+        avatar: 'sample_avatar',
+        declarations: [{name: 'sample-name'}]
       };
       const ProfileData: Profile = {
         uid: 'sample_uid',
@@ -168,7 +169,8 @@ describe('TncUpdateHandlerService', () => {
         promptTnC: false,
         tncLatestVersionUrl: 'sample_tncLatestVersionUrl',
         id: 'sample_id',
-        avatar: 'sample_avatar'
+        avatar: 'sample_avatar',
+        declarations: [{name: 'sample-name'}]
       };
       const ProfileData: Profile = {
         uid: 'sample_uid',
@@ -256,7 +258,7 @@ describe('TncUpdateHandlerService', () => {
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileData));
       mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ value: { profile: {} } }));
       jest.spyOn(tncUpdateHandlerService, 'isSSOUser').mockImplementation(() => {
-        return Promise.resolve(true);
+        return Promise.resolve(false);
       });
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
