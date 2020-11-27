@@ -47,6 +47,10 @@ const routes: Routes = [
     path: RouterLinks.RESOURCES,
     loadChildren: './resources/resources.module#ResourcesModule',
   },
+  {
+    path: 'new-home',
+    loadChildren: './new-home/new-home.module#NewHomePageModule'
+  },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
   { path: RouterLinks.DOWNLOAD_MANAGER, loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
@@ -91,6 +95,7 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
+  { path: 'new-home', loadChildren: './new-home/new-home.module#NewHomePageModule' },
 
 ];
 

@@ -15,14 +15,23 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: RouterLinks.RESOURCES,
+        path: 'new-home',
         children: [
           {
             path: '',
-            loadChildren: '../resources/resources.module#ResourcesModule'
+            loadChildren: '../new-home/new-home.module#NewHomePageModule'
           }
         ]
       },
+      // {
+      //   path: RouterLinks.RESOURCES,
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: '../resources/resources.module#ResourcesModule'
+      //     }
+      //   ]
+      // },
       {
         path: RouterLinks.COURSES,
         children: [

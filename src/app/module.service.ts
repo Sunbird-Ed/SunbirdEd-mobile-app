@@ -23,7 +23,7 @@ const SCANNER_TAB = {
     index: 3
 };
 const LIBRARY_TAB = {
-    root: 'resources',
+    root: 'new-home',
     icon: 'resources',
     label: 'LIBRARY_BNAV',
     index: 1,

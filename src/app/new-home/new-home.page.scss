@@ -1,0 +1,18 @@
+@import "src/assets/styles/_variables.scss";
+.filter-style{
+    font-size: 14px;
+    font-weight: 500;
+    color: $blue;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 45vh;
+    display:inline-block;
+    // position: absolute;
+    // top: 18%
+  }
+  
+  .user-profile{
+    padding: 10px;
+    font-size: 3.2vh;
+  }
