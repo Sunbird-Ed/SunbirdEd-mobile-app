@@ -37,7 +37,9 @@ describe('SunbirdQRScanner', () => {
     const mockPlatform: Partial<Platform> = {};
     const mockQRScannerResultHandler: Partial<QRScannerResultHandler> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        setNativePopupVisible: jest.fn()
+    };
     const mockContainerService: Partial<ContainerService> = {};
     const mockAndroidPermissionsService: Partial<AndroidPermissionsService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};

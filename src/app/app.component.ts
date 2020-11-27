@@ -452,7 +452,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.platform.resume.subscribe(() => {
-      this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
+      if (!this.appGlobalService.isNativePopupVisible) {
+        this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
+      }
       this.splashScreenService.handleSunbirdSplashScreenActions();
       this.checkForCodeUpdates();
       this.notificationSrc.handleNotification();
