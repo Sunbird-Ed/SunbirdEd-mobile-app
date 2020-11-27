@@ -284,7 +284,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                 }
-                this.appGlobalService.isNativePopupVisible = false;
+                this.appGlobalService.setNativePopupVisible(false, 1000);
                 resolve(undefined);
               });
           }

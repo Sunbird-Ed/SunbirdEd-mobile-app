@@ -26,6 +26,22 @@
                     <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
                 </div>
             </div>
+            <div class="card">
+<!--                Admin -->
+                <div class="card-container" (click)="selectAdminCard()" [class.selected]="selectedUserType === 'admin'">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === 'admin'" [src]="selectCardImageUri"/>
+                    <img class="thumbnail" alt="" src="assets/imgs/ic_admin.svg"/>
+                    <h4 class="card-title">{{ 'USER_TYPE_4' | translate }}</h4>
+                </div>
+            </div>
+            <div class="card">
+<!--                Parent -->
+                <div class="card-container" (click)="selectParentCard()" [class.selected]="selectedUserType === 'parent'">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === 'parent'" [src]="selectCardImageUri"/>
+                    <img class="thumbnail" alt="" src="assets/imgs/ic_parent.svg"/>
+                    <h4 class="card-title">{{ 'USER_TYPE_5' | translate }}</h4>
+                </div>
+            </div>
 <!--            other-->
             <div class="card">
                 <div class="card-container" (click)="selectOtherCard()" [class.selected]="selectedUserType === ProfileType.OTHER">

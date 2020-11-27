@@ -151,40 +151,61 @@ export class TermsAndConditionsPage implements OnInit {
               await this.appGlobalService.signinOnboardingLoader.present();
             }
             this.disableSubmitButton = false;
+            const categoriesProfileData = {
+              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+              showOnlyMandatoryFields: true,
+              profile: value['profile'],
+              isRootPage: true
+            };
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)
               ||  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
-                if (await tncUpdateHandlerService.isSSOUser(profile)) {
+                if (await tncUpdateHandlerService.isSSOUser(profile) ||
+                (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                   await this.consentService.getConsent(profile, true);
                 }
-                this.router.navigate(['/', RouterLinks.TABS]);
+                categoriesProfileData['status'] = value['status'],
+                categoriesProfileData['isUserLocationAvalable'] = true;
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                  state: {categoriesProfileData}
+                });
+                // this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                const navigationExtras: NavigationExtras = {
-                  state: {
-                    isShowBackButton: false
-                  }
-                };
-                this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                categoriesProfileData['status'] = value['status'],
+                categoriesProfileData['isUserLocationAvalable'] = false;
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                  state: {categoriesProfileData}
+                });
+                // const navigationExtras: NavigationExtras = {
+                //   state: {
+                //     isShowBackButton: false
+                //   }
+                // };
+                // this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
               }
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
-              if (await tncUpdateHandlerService.isSSOUser(profile)) {
+              if (await tncUpdateHandlerService.isSSOUser(profile) ||
+              (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                 await this.consentService.getConsent(profile, true);
               }
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                state: {
-                  hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-                  showOnlyMandatoryFields: true,
-                  profile: value['profile'],
-                  isRootPage: true
-                }
+              this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                state: {categoriesProfileData}
               });
+              // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+              //   state: {
+              //     hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+              //     showOnlyMandatoryFields: true,
+              //     profile: value['profile'],
+              //     isRootPage: true
+              //   }
+              // });
             }
           }).catch(async e => {
             this.dismissLoader(loader);

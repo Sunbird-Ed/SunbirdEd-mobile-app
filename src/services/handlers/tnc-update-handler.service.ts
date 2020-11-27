@@ -76,7 +76,7 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (await this.isSSOUser(userDetails)) {
+    if (await this.isSSOUser(userDetails) || (userDetails.serverProfile.declarations && userDetails.serverProfile.declarations.length)) {
       await this.consentService.getConsent(userDetails, true);
     }
     if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
@@ -104,13 +104,14 @@ export class TncUpdateHandlerService {
   private async navigateToBmc(serverProfile, userprofile) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
       .then((value) => {
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-          state: {
-            hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-            showOnlyMandatoryFields: true,
-            profile: value['profile'],
-            isRootPage: true
-          }
+        const categoriesProfileData = {
+          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+          showOnlyMandatoryFields: true,
+          profile: value['profile'],
+          isRootPage: true
+        };
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+          state: {categoriesProfileData}
         });
       });
   }
