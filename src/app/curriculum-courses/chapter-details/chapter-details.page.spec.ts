@@ -1,6 +1,9 @@
 import { ChapterDetailsPage } from './chapter-details.page';
 import { TranslateService } from '@ngx-translate/core';
-import { AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService } from '@app/services';
+import {
+    AppHeaderService, CommonUtilService, LoginHandlerService,
+    AppGlobalService, LocalCourseService
+} from '@app/services';
 import { Router } from '@angular/router';
 import {
     SharedPreferences, AuthService, CourseService, DownloadService,
@@ -179,7 +182,7 @@ describe('ChapterDetailsPage', () => {
                 {
                     batchId: 'sample-batch-id',
                     courseId: 'sample-course-id',
-                    batch: {status: 1}
+                    batch: { status: 1 }
                 }
             ]));
             jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
@@ -662,7 +665,7 @@ describe('ChapterDetailsPage', () => {
             // arrange
             chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id',
-                batch: {staus: 1}
+                batch: { staus: 1 }
             };
             mockCourseService.getBatchDetails = jest.fn(() => throwError({ error: 'error' }));
             mockZone.run = jest.fn((fn) => fn());
@@ -864,7 +867,7 @@ describe('ChapterDetailsPage', () => {
     });
 
     describe('startLearning', () => {
-        it('should load FirstChildren', () => {
+        it('should load FirstChildren', (done) => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
@@ -873,43 +876,58 @@ describe('ChapterDetailsPage', () => {
                 return;
             });
             mockContentPlayerHandler.playContent = jest.fn();
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+
             // act
             chapterDetailsPage.startLearning();
+
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.CHAPTER_DETAILS,
-                new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
-                    undefined, 'sample-pkg-ver'), undefined, undefined);
-            expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
-            expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS,
+                    new TelemetryObject(chapterDetailsPage.childContents[0].identifier, undefined, 'sample-pkg-ver'),
+                    undefined, undefined, undefined);
+                expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
+                expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+                expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                done();
+            }, 0);
         });
 
-        it('should skip the naviation flow and show toast message like NO_CONTENT_AVAILABLE_IN_MODULE', () => {
+        it('should skip the naviation flow and show toast message like NO_CONTENT_AVAILABLE_IN_MODULE', (done) => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
             chapterDetailsPage.isBatchNotStarted = false;
             mockCommonUtilService.showToast = jest.fn();
+
             // act
             chapterDetailsPage.startLearning();
+
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.CHAPTER_DETAILS,
-                new TelemetryObject('do-123',
-                    undefined, 'sample-pkg-ver'), undefined, undefined);
-            expect(chapterDetailsPage.childContents.length).toEqual(0);
-            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS,
+                    new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
+                    undefined, undefined, undefined);
+                expect(chapterDetailsPage.childContents.length).toEqual(0);
+                expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                done();
+            }, 0);
         });
 
-        it('should skip the naviation flow and show toast message like COURSE_WILL_BE_AVAILABLE', () => {
+        it('should skip the naviation flow and show toast message like COURSE_WILL_BE_AVAILABLE', (done) => {
             // arrnge
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
@@ -917,21 +935,63 @@ describe('ChapterDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'COURSE_WILL_BE_AVAILABLE');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
+
             // act
             chapterDetailsPage.startLearning();
+
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.CHAPTER_DETAILS,
-                new TelemetryObject('do-123',
-                    undefined, 'sample-pkg-ver'), undefined, undefined);
-            expect(chapterDetailsPage.childContents.length).toBe(1);
-            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE');
-            expect(mockDatePipe.transform).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS,
+                    new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
+                    undefined, undefined, undefined);
+                expect(chapterDetailsPage.childContents.length).toBe(1);
+                expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE');
+                expect(mockDatePipe.transform).toHaveBeenCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                done();
+            }, 0);
+        });
+
+        it('should show profile name confirmation popup', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            chapterDetailsPage.isBatchNotStarted = true;
+            mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { buttonClicked: true } }))
+            } as any)));
+
+            // act
+            chapterDetailsPage.startLearning();
+
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS,
+                    new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
+                    undefined, undefined, undefined);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
+                expect(mockDatePipe.transform).toBeCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
@@ -1653,8 +1713,10 @@ describe('ChapterDetailsPage', () => {
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+
             // act
             chapterDetailsPage.promptToLogin(batchdetail);
+
             // assert
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
@@ -1751,7 +1813,7 @@ describe('ChapterDetailsPage', () => {
     it('should dismiss consentPii popup', () => {
         // arrange
         const dismissFn = jest.fn(() => Promise.resolve(true));
-        chapterDetailsPage.loader = {data: '', dismiss: dismissFn} as any;
+        chapterDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
         // act
         chapterDetailsPage.onConsentPopoverShow();
         // assert

@@ -1233,7 +1233,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.corRelationList
     );
 
-    const doNotShow = await this.preferences.getBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP).toPromise();
+    const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
+    const doNotShow = await this.preferences.getBoolean(key).toPromise();
     if (doNotShow) {
       this.startContent();
     } else {
@@ -1702,11 +1703,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         courseId: this.identifier,
         contentIds: this.courseHeirarchy.contentData.leafNodes,
         returnRefreshedContentStates: returnRefresh,
-        batchId: this.courseCardData.batchId
+        batchId: this.courseCardData.batchId,
+        fields: ['progress', 'score']
       };
       this.courseService.getContentState(request).toPromise()
-        .then((success: ContentStateResponse) => {
-          this.contentStatusData = success;
+        .then((contentStateResponse: ContentStateResponse) => {
+          this.contentStatusData = contentStateResponse;
 
           this.initNextContent();
           if (this.contentStatusData && this.contentStatusData.contentList) {
@@ -1744,8 +1746,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
   getLocalCourseAndUnitProgress() {
     const courseLevelViewedContents = [];
+    let leafNodeIds;
     this.courseHeirarchy.children.forEach(collection => {
-      const leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([collection]));
+      leafNodeIds = Array.from(this.getLeafNodeIdsWithoutDuplicates([collection]));
       const UnitLevelViewedContents = [];
       for (const contentId of leafNodeIds) {
         if (this.contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
@@ -1762,7 +1765,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       }
     });
     if (courseLevelViewedContents.length) {
-      const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+      if (this.courseHeirarchy.contentData.leafNodes) {
+        leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+      }
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
     }
     if (!this.course.progress || this.course.progress !== 100) {
@@ -1989,9 +1994,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.joinTraining();
         return false;
       } else if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
-          return false;
+        this.commonUtilService.showToast(
+          this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE', this.datePipe.transform(this.courseStartDate, 'mediumDate'))
+        );
+        return false;
       }
     }
 

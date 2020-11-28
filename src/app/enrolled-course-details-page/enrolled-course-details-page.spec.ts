@@ -1974,7 +1974,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
                 expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 done();
             }, 0);
         });
@@ -2009,7 +2010,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
                 expect(mockDatePipe.transform).toBeCalled();
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 done();
             }, 0);
         });
@@ -2032,6 +2034,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
             // act
             enrolledCourseDetailsPage.startLearning();
+
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -2048,7 +2051,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
                 expect(mockDatePipe.transform).toBeCalled();
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP);
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
             }, 0);
