@@ -1073,7 +1073,7 @@ describe('ResourcesComponent', () => {
             resourcesComponent.swipeDownToRefresh(refresher);
             // assert
             setTimeout(() => {
-                expect(resourcesComponent.getPopularContent).toHaveBeenCalledWith(false, null, undefined);
+                expect(resourcesComponent.getPopularContent).toHaveBeenCalledWith(false, null);
                 done();
             }, 0);
         });
