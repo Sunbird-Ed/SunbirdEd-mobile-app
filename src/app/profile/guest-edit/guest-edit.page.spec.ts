@@ -16,7 +16,13 @@ import {
     TelemetryGeneratorService,
     CommonUtilService,
     ContainerService,
-    AppHeaderService
+    AppHeaderService,
+    InteractType,
+    InteractSubtype,
+    Environment,
+    PageId,
+    ImpressionType,
+    ObjectType
 } from '../../../services';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
@@ -25,7 +31,6 @@ import { ProfileHandler } from '@app/services/profile-handler';
 
 describe('GuestEditPage', () => {
     let guestEditPage: GuestEditPage;
-    const mockAlertCtrl: Partial<AlertController> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn()
     };
@@ -39,7 +44,6 @@ describe('GuestEditPage', () => {
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
-    const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {};
     const mockRoterExtras = {
         extras: {
@@ -51,7 +55,7 @@ describe('GuestEditPage', () => {
                 userId: 'userId',
                 shouldGenerateEndTelemetry: false,
                 isNewUser: true,
-                lastCreatedProfile: {id: 'sample-id'}
+                lastCreatedProfile: { id: 'sample-id' }
             }
         }
     };
@@ -79,9 +83,8 @@ describe('GuestEditPage', () => {
         control: jest.fn()
     };
 
-    const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockProfileHandler: Partial<ProfileHandler> = {
-        getSupportedProfileAttributes: jest.fn(() => Promise.resolve({borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel'}))
+        getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
 
     beforeAll(() => {
@@ -115,35 +118,35 @@ describe('GuestEditPage', () => {
 
     it('should return syllabusControl', () => {
         guestEditPage.guestEditForm = {
-            get: jest.fn(() => ({Validators: ''})) as any
+            get: jest.fn(() => ({ Validators: '' })) as any
         } as any;
         expect(guestEditPage.syllabusControl).toBeTruthy();
     });
 
     it('should return boardControl', () => {
         guestEditPage.guestEditForm = {
-            get: jest.fn(() => ({Validators: ''})) as any
+            get: jest.fn(() => ({ Validators: '' })) as any
         } as any;
         expect(guestEditPage.boardControl).toBeTruthy();
     });
 
     it('should return mediumControl', () => {
         guestEditPage.guestEditForm = {
-            get: jest.fn(() => ({Validators: ''})) as any
+            get: jest.fn(() => ({ Validators: '' })) as any
         } as any;
         expect(guestEditPage.mediumControl).toBeTruthy();
     });
 
     it('should return gradeControl', () => {
         guestEditPage.guestEditForm = {
-            get: jest.fn(() => ({Validators: ''})) as any
+            get: jest.fn(() => ({ Validators: '' })) as any
         } as any;
         expect(guestEditPage.gradeControl).toBeTruthy();
     });
 
     it('should return subjectControl', () => {
         guestEditPage.guestEditForm = {
-            get: jest.fn(() => ({Validators: ''})) as any
+            get: jest.fn(() => ({ Validators: '' })) as any
         } as any;
         expect(guestEditPage.subjectControl).toBeTruthy();
     });
@@ -159,10 +162,10 @@ describe('GuestEditPage', () => {
             })) as any;
             guestEditPage.guestEditForm = {
                 syllabus: ['sampl'],
-                get: jest.fn(() => ({name: 'sample-name', board: 'board', patchValue: jest.fn()}))
+                get: jest.fn(() => ({ name: 'sample-name', board: 'board', patchValue: jest.fn() }))
             } as any;
             guestEditPage.profile = {
-                syllabus: [{name: 'sample-name'}]
+                syllabus: [{ name: 'sample-name' }]
             };
             guestEditPage.loader = mockCommonUtilService.getLoader;
             const frameworkRes: Framework[] = [{
@@ -457,43 +460,189 @@ describe('GuestEditPage', () => {
         //     }, 0);
         // });
         // it('should call submitEditForm if not new user', (done) => {
-    //         // arrange
-    //         guestEditPage.isFormValid = true;
-    //         guestEditPage.isNewUser = false;
-    //         jest.spyOn(guestEditPage, 'submitEditForm').mockImplementation();
-    //         guestEditPage.guestEditForm = {
-    //             value: {
-    //                 syllabus: [],
-    //                 userType: 'userType',
-    //                 boards: ['board'],
-    //                 medium: ['medium'],
-    //                 grades: ['grade']
-    //             },
-    //             getRawValue: jest.fn(() => { })
-    //         } as any;
-    //         mockCommonUtilService.translateMessage = jest.fn((arg) => {
-    //             let value;
-    //             switch (arg) {
-    //                 case 'PLEASE_SELECT':
-    //                     value = 'translated1';
-    //                     break;
-    //                 case 'CLASS':
-    //                     value = 'translated2';
-    //                     break;
-    //             }
-    //             return value;
-    //         }
-    //         );
-    //         jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
-    //         mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
-    //         // act
-    //         guestEditPage.onSubmit();
-    //         // assert
-    //         setTimeout(() => {
-    //             expect(guestEditPage.submitEditForm).toHaveBeenCalled();
-    //             done();
-    //         }, 0);
-    //     });
+        //         // arrange
+        //         guestEditPage.isFormValid = true;
+        //         guestEditPage.isNewUser = false;
+        //         jest.spyOn(guestEditPage, 'submitEditForm').mockImplementation();
+        //         guestEditPage.guestEditForm = {
+        //             value: {
+        //                 syllabus: [],
+        //                 userType: 'userType',
+        //                 boards: ['board'],
+        //                 medium: ['medium'],
+        //                 grades: ['grade']
+        //             },
+        //             getRawValue: jest.fn(() => { })
+        //         } as any;
+        //         mockCommonUtilService.translateMessage = jest.fn((arg) => {
+        //             let value;
+        //             switch (arg) {
+        //                 case 'PLEASE_SELECT':
+        //                     value = 'translated1';
+        //                     break;
+        //                 case 'CLASS':
+        //                     value = 'translated2';
+        //                     break;
+        //             }
+        //             return value;
+        //         }
+        //         );
+        //         jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
+        //         mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
+        //         // act
+        //         guestEditPage.onSubmit();
+        //         // assert
+        //         setTimeout(() => {
+        //             expect(guestEditPage.submitEditForm).toHaveBeenCalled();
+        //             done();
+        //         }, 0);
+        //     });
+    });
+
+    describe('ngOnInit', () => {
+        it('should generate INTERACT and IMPRESSION telemetry for new User', (done) => {
+            // arrange
+            // act
+            guestEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.CREATE_USER_INITIATED,
+                    Environment.USER,
+                    PageId.CREATE_USER
+                );
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.CREATE_USER,
+                    Environment.USER, '',
+                    ''
+                );
+                done();
+            });
+        });
+
+        it('should generate INTERACT and IMPRESSION telemetry for existing User', (done) => {
+            // arrange
+            guestEditPage['isNewUser'] = false;
+            // act
+            guestEditPage.ngOnInit().then(() => {
+                // assert
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.EDIT_USER_INITIATED,
+                    Environment.USER,
+                    PageId.CREATE_USER
+                );
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.VIEW,
+                    '',
+                    PageId.CREATE_USER,
+                    Environment.USER, undefined,
+                    ObjectType.USER
+                );
+                done();
+            });
+        });
+
+        it('should populate the supported attributes', (done) => {
+            // arrange
+            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
+                {
+                    board: 'board',
+                    medium: 'medium',
+                    gradeLevel: 'gradeLevel'
+                }));
+            guestEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
+            guestEditPage['onMediumChange'] = jest.fn(() => of({} as any));
+            guestEditPage['onGradeChange'] = jest.fn(() => of({} as any));
+            // act
+            guestEditPage.ngOnInit().then(() => {
+                // assert
+                expect(guestEditPage.supportedProfileAttributes).toEqual({
+                    board: 'board',
+                    medium: 'medium',
+                    gradeLevel: 'gradeLevel'
+                });
+                done();
+            });
+        });
+
+    });
+
+    describe('onProfileTypeChange', () => {
+        it('should unsubscribe the previous subscription and create a new one', (done) => {
+            // arrange
+            guestEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
+            guestEditPage['onMediumChange'] = jest.fn(() => of({} as any));
+            guestEditPage['onGradeChange'] = jest.fn(() => of({} as any));
+            mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
+                {
+                    board: 'board',
+                    medium: 'medium',
+                    gradeLevel: 'gradeLevel'
+                }));
+            guestEditPage.guestEditForm = {
+                get: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'syllabus':
+                            value = { value: ['AP'] };
+                            break;
+                        case 'board':
+                            value = { value: ['AP'] };
+                            break;
+                        case 'medium':
+                            value = { value: ['English'] };
+                            break;
+                        case 'grade':
+                            value = { value: ['Class 1'] };
+                            break;
+                        case 'profileType':
+                            value = { value: '' };
+                            break;
+                    }
+                    return value;
+                }),
+                value: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'profileType':
+                            value = { value: '' };
+                            break;
+                    }
+                    return value;
+                }),
+                patchValue: jest.fn(),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    },
+                    profileType: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any;
+            guestEditPage['formControlSubscriptions'] = {
+                unsubscribe: jest.fn()
+            } as any;
+            // act
+            guestEditPage.onProfileTypeChange();
+
+            // assert
+            expect(guestEditPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
+            done();
+        });
+
     });
 
 });

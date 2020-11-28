@@ -163,7 +163,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_USER,
-      Environment.USER, this.isNewUser ? '' : this.profile.uid, this.isNewUser ? '' : ObjectType.USER,
+      Environment.USER, this.isNewUser ? '' : this.profile.uid, this.isNewUser ? '' : ObjectType.USER
     );
 
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -582,6 +582,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
+    console.log('attributes', attributes);
+    
     Object.keys(attributes).forEach((attribute) => {
       switch (attribute) {
         case 'board':

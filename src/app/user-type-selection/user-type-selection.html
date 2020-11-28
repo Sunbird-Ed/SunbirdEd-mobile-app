@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="card">
-                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_4', ProfileType.ADMIN)" [class.selected]="selectedUserType === 'admin'">
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_4', ProfileType.ADMIN)" [class.selected]="selectedUserType === ProfileType.ADMIN">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.ADMIN" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" src="assets/imgs/ic_admin.svg"/>
                     <h4 class="card-title">{{ 'USER_TYPE_4' | translate }}</h4>

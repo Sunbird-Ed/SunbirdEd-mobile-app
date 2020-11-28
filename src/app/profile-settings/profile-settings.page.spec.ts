@@ -171,6 +171,39 @@ describe('ProfileSettingsPage', () => {
         });
     });
 
+    it('should populate the supported userTypes', (done) => {
+        // arrange
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockProfileHandler.getSupportedProfileAttributes = jest.fn(() => Promise.resolve(
+            {board: 'board',
+            medium: 'medium',
+            gradeLevel: 'gradeLevel'}));
+        jest.spyOn(profileSettingsPage, 'handleActiveScanner').mockImplementation(() => {
+            return;
+        });
+        mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation(() => {
+            return;
+        });
+        jest.spyOn(profileSettingsPage, 'fetchSyllabusList').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        profileSettingsPage.profileSettingsForm['valueChanges'] = of({} as any);
+        // act
+        profileSettingsPage.ngOnInit().then(() => {
+            // assert
+            setTimeout(() => {
+                expect(mockAppVersion.getAppName).toHaveBeenCalled();
+                expect(profileSettingsPage.supportedProfileAttributes).toEqual(
+                    { board: 'board',
+                    medium: 'medium',
+                    gradeLevel: 'gradeLevel'});
+                done();
+            }, 500);
+        });
+    });
+
     it('should subscribe formControl to call ngOnDestroy()', () => {
         // arrange
         const formControlSubscriptions: Partial<Subscription> = { unsubscribe: jest.fn() };

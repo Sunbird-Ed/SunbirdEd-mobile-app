@@ -187,7 +187,7 @@ export class UserTypeSelectionPage {
 
       this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
     });
-    const values = new Map();
+    const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

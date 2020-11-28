@@ -531,9 +531,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         } catch (e) {
           console.error(e);
         } finally {
-          if (this.mediumControl) {
-            this.mediumControl.patchValue([]);
-          }
+          this.mediumControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -774,7 +772,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
+    console.log('attributes', attributes);
+    
     Object.keys(attributes).forEach((attribute) => {
+      console.log('attribute', attribute);
       switch (attribute) {
         case 'board':
           subscriptionArray.push(this.onSyllabusChange());

@@ -17,8 +17,8 @@ export class ProfileHandler {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
         const userTypeSpecificCofig = formFields.find(config => config.code === userType);
-        let supportedAttribute = userTypeSpecificCofig ? userTypeSpecificCofig['attributes']['mandatory'] : [];
-        const supportedOptionalAttribute = userTypeSpecificCofig ? userTypeSpecificCofig['attributes']['optional'] : [];
+        let supportedAttribute = userTypeSpecificCofig['attributes']['mandatory'];
+        const supportedOptionalAttribute = userTypeSpecificCofig['attributes']['optional'];
         if (showOptionalCategories) {
             supportedAttribute = supportedAttribute.concat(supportedOptionalAttribute);
         }
@@ -28,21 +28,9 @@ export class ProfileHandler {
         }, {});
     }
 
-    public async getSupportedUserTypes(): Promise<{ name: string, code: string, identifier: string }[]> {
-        const formFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES);
-        return formFields.reduce((acc, val) => {
-            acc.push({
-                name: val.name,
-                code: val.code,
-                identifier: val.identifier
-            });
-            return acc;
-        }, []);
-    }
-
     public async getAudience(userType: string): Promise<string[]> {
         const formFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES);
-        const userTypeConfig = formFields.filter(formField => formField.code === userType) || {};
+        const userTypeConfig = formFields.find(formField => formField.code === userType);
         return userTypeConfig['searchFilter'];
     }
 }
