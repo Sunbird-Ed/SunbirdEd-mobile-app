@@ -74,6 +74,7 @@ import { ConsentService } from '@app/services/consent-service';
 import {
   ProfileNameConfirmationPopoverComponent
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 declare const cordova;
 
@@ -260,7 +261,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private sbProgressLoader: SbProgressLoader,
     private contentPlayerHandler: ContentPlayerHandler,
     private categoryKeyTranslator: CategoryKeyTranslator,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -1235,7 +1237,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
     const doNotShow = await this.preferences.getBoolean(key).toPromise();
-    if (doNotShow) {
+    const profile = await this.profileService.getActiveSessionProfile({
+      requiredFields: ProfileConstants.REQUIRED_FIELDS
+    }).toPromise();
+
+    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile)) {
       this.startContent();
     } else {
       this.showProfileNameConfirmationPopup();

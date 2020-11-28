@@ -12,7 +12,7 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
   RouterLinks, PreferenceKey, EventTopics,
-  MimeType, ShareItemType, BatchConstants
+  MimeType, ShareItemType, BatchConstants, ProfileConstants
 } from '@app/app/app.constant';
 import {
   SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
@@ -20,7 +20,7 @@ import {
   CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress,
   EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
   ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
-  ContentUpdate, ContentImport, Rollup, AuditState
+  ContentUpdate, ContentImport, Rollup, AuditState, ProfileService
 } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe, Location } from '@angular/common';
@@ -40,6 +40,7 @@ import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/catego
 import {
   ProfileNameConfirmationPopoverComponent
 } from '@app/app/components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-chapter-details',
@@ -101,6 +102,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   loader?: HTMLIonLoadingElement;
 
   constructor(
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -124,7 +126,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     private location: Location,
     private platform: Platform,
     private contentPlayerHandler: ContentPlayerHandler,
-    private categoryKeyTranslator: CategoryKeyTranslator
+    private categoryKeyTranslator: CategoryKeyTranslator,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
   ) {
     this.extrasData = this.router.getCurrentNavigation().extras.state;
     this.appGlobalService.preSignInData = null;
@@ -436,7 +439,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
     const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.userId;
     const doNotShow = await this.preferences.getBoolean(key).toPromise();
-    if (doNotShow) {
+    const profile = await this.profileService.getActiveSessionProfile({
+      requiredFields: ProfileConstants.REQUIRED_FIELDS
+    }).toPromise();
+
+    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile)) {
       this.startContent();
     } else {
       this.showProfileNameConfirmationPopup();

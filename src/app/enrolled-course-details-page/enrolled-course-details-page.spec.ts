@@ -1,21 +1,21 @@
 import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
-    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
-    ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
+    AuthService, CorrelationData, TelemetryObject,
+    ProfileType, UnenrollCourseRequest, ContentDetailRequest,
+    ServerProfileDetailsRequest, ServerProfile,
     NetworkError, DownloadService
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, ID, InteractType
+    LocalCourseService, PageId, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
@@ -36,6 +36,10 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '../../services/consent-service';
+import {
+    TncUpdateHandlerService,
+} from '../../services/handlers/tnc-update-handler.service';
+import { mockProfileData } from '../profile/profile.page.spec.data';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -119,6 +123,10 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
         transform: jest.fn(() => 'sample-message')
     };
+    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
+        dismissTncPage: jest.fn(),
+        isSSOUser: jest.fn()
+    };
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -149,7 +157,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockSbProgressLoader as SbProgressLoader,
             mockContentPlayerHandler as ContentPlayerHandler,
             mockCategoryKeyTranslator as CategoryKeyTranslator,
-            mockConsentService as ConsentService
+            mockConsentService as ConsentService,
+            mockTncUpdateHandlerService as TncUpdateHandlerService
         );
     });
 
@@ -1956,6 +1965,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.nextContent = false;
             mockContentPlayerHandler.playContent = jest.fn();
             mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             enrolledCourseDetailsPage.startLearning();
@@ -1976,6 +1986,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1991,6 +2002,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');
             mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             enrolledCourseDetailsPage.startLearning();
@@ -2012,6 +2024,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockDatePipe.transform).toBeCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2027,6 +2040,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');
             mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { buttonClicked: true } }))
@@ -2054,6 +2068,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });

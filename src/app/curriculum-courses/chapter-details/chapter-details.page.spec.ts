@@ -6,7 +6,8 @@ import {
 } from '@app/services';
 import { Router } from '@angular/router';
 import {
-    SharedPreferences, AuthService, CourseService, DownloadService,
+    ProfileService, SharedPreferences, AuthService,
+    CourseService, DownloadService,
     EventsBusService, ContentService, TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
 import { PopoverController, Events, Platform } from '@ionic/angular';
@@ -21,9 +22,15 @@ import { TelemetryGeneratorService } from '../../../services/telemetry-generator
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import {
+    TncUpdateHandlerService,
+} from '../../services/handlers/tnc-update-handler.service';
+import { mockProfileData } from '../../profile/profile.page.spec.data';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
+
+    const mockProfileService: Partial<ProfileService> = {};
     const mockAppHeaderService: Partial<AppHeaderService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockRouter: Partial<Router> = {
@@ -80,9 +87,14 @@ describe('ChapterDetailsPage', () => {
     const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
         transform: jest.fn(() => 'sample-message')
     };
+    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
+        dismissTncPage: jest.fn(),
+        isSSOUser: jest.fn()
+    };
 
     beforeAll(() => {
         chapterDetailsPage = new ChapterDetailsPage(
+            mockProfileService as ProfileService,
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockCourseService as CourseService,
@@ -106,7 +118,8 @@ describe('ChapterDetailsPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockCategoryKeyTranslator as CategoryKeyTranslator
+            mockCategoryKeyTranslator as CategoryKeyTranslator,
+            mockTncUpdateHandlerService as TncUpdateHandlerService
         );
     });
 
@@ -422,6 +435,7 @@ describe('ChapterDetailsPage', () => {
 
         beforeAll(() => {
             chapterDetailsPage = new ChapterDetailsPage(
+                mockProfileService as ProfileService,
                 mockPreferences as SharedPreferences,
                 mockAuthService as AuthService,
                 mockCourseService as CourseService,
@@ -445,7 +459,8 @@ describe('ChapterDetailsPage', () => {
                 mockLocation as Location,
                 mockPlatform as Platform,
                 mockContentPlayerHandler as ContentPlayerHandler,
-                mockCategoryKeyTranslator as CategoryKeyTranslator
+                mockCategoryKeyTranslator as CategoryKeyTranslator,
+                mockTncUpdateHandlerService as TncUpdateHandlerService
             );
         });
         it('should return all batches', (done) => {
@@ -877,6 +892,7 @@ describe('ChapterDetailsPage', () => {
             });
             mockContentPlayerHandler.playContent = jest.fn();
             mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             chapterDetailsPage.startLearning();
@@ -895,6 +911,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -905,6 +922,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.childContents = [];
             chapterDetailsPage.isBatchNotStarted = false;
             mockCommonUtilService.showToast = jest.fn();
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             chapterDetailsPage.startLearning();
@@ -923,6 +941,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -935,6 +954,7 @@ describe('ChapterDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'COURSE_WILL_BE_AVAILABLE');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             chapterDetailsPage.startLearning();
@@ -955,6 +975,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockDatePipe.transform).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -971,6 +992,7 @@ describe('ChapterDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { buttonClicked: true } }))
             } as any)));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
             // act
             chapterDetailsPage.startLearning();
@@ -990,6 +1012,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1513,6 +1536,7 @@ describe('ChapterDetailsPage', () => {
     describe('enrollIntoBatch', () => {
         beforeAll(() => {
             chapterDetailsPage = new ChapterDetailsPage(
+                mockProfileService as ProfileService,
                 mockPreferences as SharedPreferences,
                 mockAuthService as AuthService,
                 mockCourseService as CourseService,
@@ -1536,7 +1560,8 @@ describe('ChapterDetailsPage', () => {
                 mockLocation as Location,
                 mockPlatform as Platform,
                 mockContentPlayerHandler as ContentPlayerHandler,
-                mockCategoryKeyTranslator as CategoryKeyTranslator
+                mockCategoryKeyTranslator as CategoryKeyTranslator,
+                mockTncUpdateHandlerService as TncUpdateHandlerService
             );
         });
         beforeEach(() => {
@@ -1658,6 +1683,7 @@ describe('ChapterDetailsPage', () => {
     describe('promptToLogin', () => {
         beforeAll(() => {
             chapterDetailsPage = new ChapterDetailsPage(
+                mockProfileService as ProfileService,
                 mockPreferences as SharedPreferences,
                 mockAuthService as AuthService,
                 mockCourseService as CourseService,
@@ -1681,7 +1707,8 @@ describe('ChapterDetailsPage', () => {
                 mockLocation as Location,
                 mockPlatform as Platform,
                 mockContentPlayerHandler as ContentPlayerHandler,
-                mockCategoryKeyTranslator as CategoryKeyTranslator
+                mockCategoryKeyTranslator as CategoryKeyTranslator,
+                mockTncUpdateHandlerService as TncUpdateHandlerService
             );
         });
         beforeEach(() => {
