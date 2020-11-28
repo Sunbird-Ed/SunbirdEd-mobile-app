@@ -1,8 +1,6 @@
 import { Router } from '@angular/router';
 import {
-  AlertController,
-  Events,
-  Platform} from '@ionic/angular';
+  Events} from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
@@ -582,8 +580,6 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
     const subscriptionArray = [];
-    console.log('attributes', attributes);
-    
     Object.keys(attributes).forEach((attribute) => {
       switch (attribute) {
         case 'board':

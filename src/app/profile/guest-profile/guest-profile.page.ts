@@ -13,7 +13,7 @@ import {
   SharedPreferences,
   Profile
 } from 'sunbird-sdk';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -187,7 +187,7 @@ export class GuestProfilePage implements OnInit {
           });
 
           if (selectedFrameworkId !== undefined && selectedFrameworkId.length > 0) {
-            this.getFrameworkDetails(selectedFrameworkId);
+            this.getFrameworkDetails();
           } else {
             this.loader.dismiss();
           }
@@ -198,7 +198,7 @@ export class GuestProfilePage implements OnInit {
       });
   }
 
-  getFrameworkDetails(frameworkId?: string): void {
+  getFrameworkDetails(): void {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -234,7 +234,7 @@ export class GuestProfilePage implements OnInit {
     return this.commonUtilService.arrayToString(displayValues);
   }
 
-  onLoginClick(isNetAvailable?) {
+  onLoginClick() {
     this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
   }
 

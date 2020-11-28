@@ -19,7 +19,6 @@ import {
   CorrelationData,
   EventsBusEvent,
   EventsBusService,
-  FormService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
@@ -401,7 +400,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, isPullToRefreshed = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -639,7 +638,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
       this.getGroupByPage(false);
     } else {
-      this.getPopularContent(false, null, avoidRefreshList);
+      this.getPopularContent(false, null);
     }
   }
 

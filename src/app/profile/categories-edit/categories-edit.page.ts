@@ -1,6 +1,6 @@
 import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
-import { Component, Inject, ViewChild, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,12 +10,10 @@ import {
   FrameworkUtilService,
   GetSuggestedFrameworksRequest,
   GetFrameworkCategoryTermsRequest,
-  FrameworkDetailsRequest,
   Framework,
   FrameworkCategoryCodesGroup,
   Profile,
   ProfileService,
-  CategoryTerm,
   UpdateServerProfileInfoRequest,
   ServerProfileDetailsRequest,
   CachedItemRequestSourceFrom,
@@ -28,7 +26,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
@@ -299,7 +297,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
-      tap(async (value) => {
+      tap(async () => {
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -466,7 +464,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(updatedProfile => {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
-                .then(async (value) => {
+                .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
                   if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
                     this.router.navigate([RouterLinks.TABS]);
@@ -480,7 +478,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                     this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
                   }
                 });
-            }).catch(e => {
+            }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
                 this.router.navigate([RouterLinks.TABS]);
