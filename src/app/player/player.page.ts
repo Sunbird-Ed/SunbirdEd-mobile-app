@@ -184,7 +184,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.showConfirm();
       }
       if (this.loadPdfPlayer) {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS]);
+        this.location.back();
       }
     });
 
