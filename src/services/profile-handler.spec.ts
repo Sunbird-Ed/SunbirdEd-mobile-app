@@ -3,6 +3,7 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { of } from 'rxjs';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
+import { mockSupportedUserTypeConfig } from './profile-handler.data';
 
 describe('ProfileHandler', () => {
     let profileHandler: ProfileHandler;
@@ -11,55 +12,7 @@ describe('ProfileHandler', () => {
         getString: jest.fn(() => of('student'))
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-        getFormFields: jest.fn(() => Promise.resolve([
-            {
-                code: 'student',
-                name: 'Student',
-                searchFilter: [
-                    'Student'
-                ],
-                attributes: {
-                    mandatory: [
-                        'board',
-                        'medium',
-                        'gradeLevel'
-                    ],
-                    optional: [
-                        'subject'
-                    ]
-                }
-            },
-            {
-                code: 'teacher',
-                name: 'Teacher',
-                searchFilter: [
-                    'Teacher'
-                ],
-                attributes: {
-                    mandatory: [
-                        'board',
-                        'medium',
-                        'gradeLevel'
-                    ],
-                    optional: [
-                        'subject'
-                    ]
-                }
-            },
-            {
-                code: 'administrator',
-                name: 'Admin',
-                searchFilter: [
-                    'Administrator'
-                ],
-                attributes: {
-                    mandatory: [
-                        'board'
-                    ],
-                    optional: []
-                }
-            }
-        ]))
+        getFormFields: jest.fn(() => Promise.resolve(mockSupportedUserTypeConfig))
     };
 
 
@@ -134,7 +87,18 @@ describe('ProfileHandler', () => {
             // act
             profileHandler.getAudience('student').then((response) => {
                 // assert
-                expect(response).toEqual(['Student']);
+                expect(response).toEqual(['Student', 'Learner']);
+                done();
+            });
+        });
+    });
+    describe('getSupportedUserTypes', () => {
+        it('should return supporteduserType Config', (done) => {
+            // arrange
+            // act
+            profileHandler.getSupportedUserTypes().then((response) => {
+                // assert
+                expect(response.length).toEqual(4);
                 done();
             });
         });

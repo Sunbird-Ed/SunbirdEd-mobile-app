@@ -11,7 +11,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
-import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
+import { ContentService, ContentSearchResult, SearchType, FilterValue } from 'sunbird-sdk';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-filters',
@@ -28,6 +29,7 @@ export class FiltersPage {
   unregisterBackButton: Subscription;
   source: string;
   shouldEnableFilter = true;
+  supportedUserTypesConfig: Array<any> = [];
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -38,21 +40,21 @@ export class FiltersPage {
     private location: Location,
     private router: Router,
     private headerService: AppHeaderService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
-    this.filterCriteria =  this.router.getCurrentNavigation().extras.state.filterCriteria;
+    this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
     this.initialFilterCriteria = this.router.getCurrentNavigation().extras.state.initialfilterCriteria;
     this.source = this.router.getCurrentNavigation().extras.state.source;
+    this.supportedUserTypesConfig = this.router.getCurrentNavigation().extras.state.supportedUserTypesConfig;
     this.init();
     this.handleBackButton();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
   }
 
   ionViewWillLeave() {
-    // Unregister the custom back button action for this page
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -84,7 +86,7 @@ export class FiltersPage {
   }
 
   reset() {
-    this.filterCriteria =  JSON.parse(JSON.stringify(this.initialFilterCriteria));
+    this.filterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
     this.facetsFilter = [];
     this.init();
   }
@@ -141,6 +143,17 @@ export class FiltersPage {
         if (facet.name === 'gradeLevel') {
           const maxIndex: number = facet.values.reduce((acc, val) => (val.index && (val.index > acc)) ? val.index : acc, 0);
           facet.values.sort((i, j) => (i.index || maxIndex + 1) - (j.index || maxIndex + 1));
+        } else if (facet.name === 'audience') {
+          facet.values.sort((i, j) => i.name.localeCompare(j.name));
+          facet.values.forEach((element, index) => {
+            this.supportedUserTypesConfig.forEach((userType, newIndex) => {
+              if (userType['ambiguousFilters'].includes(element.name)) {
+                element.name = userType['code'];
+              }
+            });
+
+          });
+          facet.values = this.commonUtilService.deDupe(facet.values, 'name');
         } else {
           facet.values.sort((i, j) => i.name.localeCompare(j.name));
         }
@@ -185,7 +198,15 @@ export class FiltersPage {
     this.shouldEnableFilter = false;
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.contentService.searchContent(this.filterCriteria).toPromise()
+    const modifiedCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+    modifiedCriteria.facetFilters.forEach(facet => {
+      if (facet.values && facet.values.length > 0) {
+        if (facet.name === 'audience') {
+          facet.values = ContentUtil.getAudienceFilter(facet, this.supportedUserTypesConfig);
+        }
+      }
+    });
+    this.contentService.searchContent(modifiedCriteria).toPromise()
       .then(async (responseData: ContentSearchResult) => {
         await loader.dismiss();
         this.shouldEnableFilter = true;
