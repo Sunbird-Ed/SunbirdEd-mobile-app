@@ -12,7 +12,6 @@ import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
-  ContentAggregatorResponse,
   ContentEventType,
   ContentRequest,
   ContentSearchCriteria,
@@ -20,8 +19,6 @@ import {
   CorrelationData,
   EventsBusEvent,
   EventsBusService,
-  FormService,
-  FormRequest,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
@@ -32,8 +29,7 @@ import {
   ProfileType,
   SearchType,
   SharedPreferences,
-  SortOrder,
-  TelemetryObject
+  SortOrder
 } from 'sunbird-sdk';
 
 import {
@@ -45,7 +41,6 @@ import {
   PreferenceKey,
   ProfileConstants,
   RouterLinks,
-  FormConfigCategories,
   PrimaryCategory,
   Search, ViewMore
 } from '@app/app/app.constant';
@@ -81,6 +76,7 @@ import {
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-resources',
@@ -246,7 +242,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('FORM_SERVICE') private formService: FormService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -267,7 +262,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     private appNotificationService: NotificationService,
     private popoverCtrl: PopoverController,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
-    private contentAggregatorHandler: ContentAggregatorHandler
+    private contentAggregatorHandler: ContentAggregatorHandler,
+    private profileHandler: ProfileHandler
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -404,7 +400,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, isPullToRefreshed = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -450,11 +446,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
-    this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
+    this.getGroupByPage(isAfterLanguageChange);
   }
 
   // Make this method as private
-  async getGroupByPage(isAfterLanguageChange = false, isPullToRefreshed = false) {
+  async getGroupByPage(isAfterLanguageChange = false) {
 
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -472,10 +468,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       Environment.HOME,
       this.source, undefined,
       reqvalues);
+
     this.getGroupByPageReq.sortCriteria = [{
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
+    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
@@ -485,6 +483,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
         contentSearchCriteria.board = this.getGroupByPageReq.board;
         contentSearchCriteria.medium = this.getGroupByPageReq.medium;
         contentSearchCriteria.grade = this.getGroupByPageReq.grade;
+        contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };
@@ -637,9 +636,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     if (refresher) {
       refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
-      this.getGroupByPage(false, true);
+      this.getGroupByPage(false);
     } else {
-      this.getPopularContent(false, null, avoidRefreshList);
+      this.getPopularContent(false, null);
     }
   }
 
@@ -755,7 +754,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
           }
         }
       })
-      .catch(err => {
+      .catch(() => {
       });
   }
 
@@ -795,7 +794,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.dynamicResponse = [];
-      this.getGroupByPage(false, !isClassClicked);
+      this.getGroupByPage(false);
     }
 
     for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
@@ -832,7 +831,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.getGroupByPageReq.medium = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
       this.dynamicResponse = [];
-      this.getGroupByPage(false, !isMediumClicked);
+      this.getGroupByPage(false);
     }
     for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
       if (this.categoryMediumNamesArray[i] === mediumName) {

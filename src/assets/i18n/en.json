@@ -1104,5 +1104,6 @@
   "FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
   "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone.",
-  "DOWNLOAD_CSV": "Download .CSV"
+  "DOWNLOAD_CSV": "Download .CSV",
+  "FRMELEMNTS_LBL_MEANT_FOR": "Meant For"
 }

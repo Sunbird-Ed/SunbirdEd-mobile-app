@@ -19,6 +19,8 @@
           </ion-label>
           <ion-label *ngIf="facet?.name === 'mimeType'" text-capitalize>{{ 'FRMELEMNTS_LBL_MEDIA_TYPE' | translate }}
           </ion-label>
+          <ion-label *ngIf="facet?.name === 'audience'" text-capitalize>{{ 'FRMELEMNTS_LBL_MEANT_FOR' | translate }}
+          </ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">

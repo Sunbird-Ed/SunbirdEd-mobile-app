@@ -20,12 +20,12 @@ import {
   FrameworkUtilService,
   GetSuggestedFrameworksRequest, SearchEntry,
   SearchHistoryService, SortOrder,
-  AuditState, GroupActivity
+  GroupActivity
 } from 'sunbird-sdk';
 import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
-  RouterLinks, AudienceFilter, MimeType, Search, ContentCard,
+  RouterLinks, AudienceFilter, Search, ContentCard,
   ContentFilterConfig
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -52,6 +52,7 @@ import { GroupHandlerService } from '@app/services';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 declare const cordova;
 @Component({
@@ -117,6 +118,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   LibraryCardTypes = LibraryCardTypes;
   initialFilterCriteria: any;
   showAddToGroupButtons = false;
+  supportedUserTypesConfig: Array<any>;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -147,7 +149,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private navCtrl: NavController,
     private sbProgressLoader: SbProgressLoader,
     private groupHandlerService: GroupHandlerService,
-    private navService: NavigationService
+    private navService: NavigationService,
+    private profileHandler: ProfileHandler
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -177,8 +180,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.selectedLanguageCode = this.translate.currentLang;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.getAppName();
+    this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
   }
 
   ionViewWillEnter() {
@@ -223,7 +227,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           namespace: SearchHistoryNamespaces.LIBRARY
         }).toPromise());
       }),
-      tap((v) => {
+      tap(() => {
         setTimeout(() => {
           this.showAddToGroupButtons = false;
           this.changeDetectionRef.detectChanges();
@@ -418,7 +422,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     switch(ContentUtil.isTrackable(content)) {
       case 1:
         if (!this.guestUser) {
-          this.enrolledCourses = await this.getEnrolledCourses(false, false);
+          this.enrolledCourses = await this.getEnrolledCourses(false);
         } else {
           this.enrolledCourses = [];
         }
@@ -754,6 +758,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         state: {
           filterCriteria: this.responseData.filterCriteria,
           initialfilterCriteria: this.initialFilterCriteria,
+          supportedUserTypesConfig: this.supportedUserTypesConfig,
           source: this.source
         }
       });
@@ -765,7 +770,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
+    const modifiedCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
+    modifiedCriteria.facetFilters.forEach(facet => {
+      if (facet.values && facet.values.length > 0) {
+        if (facet.name === 'audience') {
+          facet.values = ContentUtil.getAudienceFilter(facet, this.supportedUserTypesConfig);
+        }
+      }
+    });
+    this.contentService.searchContent(modifiedCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
         this.zone.run(() => {
@@ -918,7 +931,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.loader.onDidDismiss(() => { this.loader = undefined; });
     let retiredBatches: Array<any> = [];
     let anyOpenBatch = false;
-    await this.getEnrolledCourses(false, true);
+    await this.getEnrolledCourses(true);
     this.enrolledCourses = this.enrolledCourses || [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
       retiredBatches = this.enrolledCourses.filter((element) => {
@@ -962,7 +975,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.zone.run(async () => {
               this.batches = res;
               if (this.batches.length) {
-                this.batches.forEach((batch, key) => {
+                this.batches.forEach((batch) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
                   } else {
@@ -1064,7 +1077,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
           this.showLoader = false;
         });
-      }).catch(error => {
+      }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -1543,7 +1556,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
    *
    * It internally calls course handler of genie sdk
    */
-  private getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false): Promise<any> {
+  private getEnrolledCourses(returnRefreshedCourses: boolean = false): Promise<any> {
     this.showLoader = true;
     const option: FetchEnrolledCourseRequest = {
       userId: this.userId,
@@ -1566,7 +1579,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           });
           return enrolledCourses;
         }
-      }, (err) => {
+      }, () => {
         this.showLoader = false;
         return [];
       });

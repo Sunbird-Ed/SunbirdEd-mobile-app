@@ -1,5 +1,6 @@
 import { Content } from 'sunbird-sdk';
 import { ContentUtil } from '@app/util/content-util';
+import { mockSupportedUserTypeConfig } from '../services/profile-handler.spec.data';
 
 describe('ContentUtil', () => {
     describe('resolvePDFPreview()', () => {
@@ -170,6 +171,36 @@ describe('ContentUtil', () => {
             // arrange
             // act / assert
             expect(ContentUtil.mergeProperties({}, ['author', 'ceator'])).toBeUndefined();
+        });
+    });
+
+    describe('getAudienceFilter()', () => {
+        it('should return undefined if contentData is empty', () => {
+            // arrange
+            const facetFilter = {
+                name: 'audience',
+                values: [
+                    {
+                        name: 'student',
+                        apply: true
+                    },
+                    {
+                        name: 'teacher',
+                        apply: true
+                    },
+                    {
+                        name: 'new_user_type',
+                        apply: true
+                    }
+                ]
+            };
+            // act / assert
+            expect(ContentUtil.getAudienceFilter(facetFilter, mockSupportedUserTypeConfig)).toEqual(
+                [{ apply: true, count: 0, name: 'Student' },
+                { apply: true, count: 0, name: 'Learner' },
+                { apply: true, count: 0, name: 'Teacher' },
+                { apply: true, count: 0, name: 'Instructor' },
+                { apply: true, name: 'new_user_type' }]);
         });
     });
 });
