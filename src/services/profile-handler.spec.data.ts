@@ -6,6 +6,10 @@ export const mockSupportedUserTypeConfig = [
            'Student',
            'Learner'
        ],
+       ambiguousFilters: [
+        'learner',
+        'student'
+      ],
        attributes: {
            mandatory: [
                'board',
@@ -24,6 +28,10 @@ export const mockSupportedUserTypeConfig = [
            'Teacher',
            'Instructor'
        ],
+       ambiguousFilters: [
+        'teacher',
+        'instructor'
+      ],
        attributes: {
            mandatory: [
                'board',
@@ -41,6 +49,7 @@ export const mockSupportedUserTypeConfig = [
        searchFilter: [
            'Administrator'
        ],
+       ambiguousFilters: [],
        attributes: {
            mandatory: [
                'board'

@@ -32,7 +32,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { mockSupportedUserTypeConfig } from '../../services/profile-handler.data';
+import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {

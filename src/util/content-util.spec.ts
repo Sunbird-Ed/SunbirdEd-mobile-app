@@ -1,6 +1,6 @@
 import { Content } from 'sunbird-sdk';
 import { ContentUtil } from '@app/util/content-util';
-import { mockSupportedUserTypeConfig } from '../services/profile-handler.data';
+import { mockSupportedUserTypeConfig } from '../services/profile-handler.spec.data';
 
 describe('ContentUtil', () => {
     describe('resolvePDFPreview()', () => {

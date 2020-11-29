@@ -11,7 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
-import { ContentService, ContentSearchResult, SearchType, FilterValue } from 'sunbird-sdk';
+import { ContentService, ContentSearchResult, SearchType } from 'sunbird-sdk';
 import { ContentUtil } from '@app/util/content-util';
 
 @Component({

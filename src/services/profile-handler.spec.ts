@@ -3,7 +3,7 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { of } from 'rxjs';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
-import { mockSupportedUserTypeConfig } from './profile-handler.data';
+import { mockSupportedUserTypeConfig } from './profile-handler.spec.data';
 
 describe('ProfileHandler', () => {
     let profileHandler: ProfileHandler;
