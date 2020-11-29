@@ -271,6 +271,7 @@ describe('LoginHandlerService', () => {
             valuesMap['UID'] = 'sample_id';
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
             mockProfileService.createProfile = jest.fn(() => of(mockProfileData));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({}));

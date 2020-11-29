@@ -69,7 +69,6 @@ export class UserTypeSelectionPage {
   getNavParams() {
     this.navParams = window.history.state;
     this.categoriesProfileData = this.navParams.categoriesProfileData;
-    console.log('fiiii', this.categoriesProfileData);
   }
 
   ionViewDidEnter() {
@@ -300,7 +299,7 @@ export class UserTypeSelectionPage {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
 
-    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted) {
+    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
@@ -348,7 +347,7 @@ export class UserTypeSelectionPage {
     this.profile.profileType = this.selectedUserType;
     this.profileService.updateProfile(this.profile).toPromise()
       .then((res: any) => {
-        if (page === 'TabsPage') {
+        if (page === 'TabsPage' || this.categoriesProfileData) {
           this.navigateToTabsAsGuest();
         } else {
           this.navigateToProfileSettingsPage(params);
