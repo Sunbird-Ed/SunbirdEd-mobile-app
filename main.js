@@ -98,9 +98,20 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library',
+        'subType': 'library_v2',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'course',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'pdfPlayer',
+        'action': 'get'
     },
     {
         'type': 'config',

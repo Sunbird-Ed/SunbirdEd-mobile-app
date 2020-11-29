@@ -109,14 +109,14 @@ describe('PlayerPage', () => {
             jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
                 return Promise.resolve();
             });
-            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockLocation.back  = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
             playerPage.ionViewWillEnter();
             setTimeout(() => {
                 expect(playerPage.loadPdfPlayer).toBeTruthy();
                 expect(mockPlatform.backButton).toBeTruthy();
                 expect(mockAlertCtrl.getTop).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.CONTENT_DETAILS]);
+                expect(mockLocation.back).toHaveBeenCalledWith();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);
