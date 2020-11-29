@@ -296,8 +296,8 @@ describe('TermsAndConditionsPage', () => {
                 expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
                 setTimeout(() => {
                     expect(mockConsentService.getConsent).toHaveBeenCalled();
-                    expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`],
-                        {state: categoriesProfileData});
+                    expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
+                        {state: {categoriesProfileData}});
                     expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                     done();
                 }, 0);
@@ -348,8 +348,8 @@ describe('TermsAndConditionsPage', () => {
             termsAndConditionsPage.onAcceptanceClick().then(() => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 setTimeout(() => {
-                    expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`],
-                        {state: categoriesProfileData});
+                    expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
+                        {state: {categoriesProfileData}});
                     done();
                 }, 0);
             });
