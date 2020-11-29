@@ -44,6 +44,11 @@ export class LogoutHandlerService {
       tap(async (guestUserId: string) => {
         if (!guestUserId) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+        } else {
+          const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+          const currentProfile = allProfileDetais.find(ele => ele.uid === guestUserId);
+          const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
+          await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
 
         splashscreen.clearPrefs();
