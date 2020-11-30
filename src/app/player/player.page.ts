@@ -27,11 +27,13 @@ import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.serv
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
+declare const cordova;
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.page.html',
 })
+
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
   config = {};
@@ -90,14 +92,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig &&
-        this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
+      this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
       this.loadPdfPlayer = true;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
       this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
       this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
+      this.config['metadata'].contentData.compatibilityLevel = 5;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -252,6 +255,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       } else {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       }
+    } else if (event.edata.type === 'compatibility-error') {
+      console.log('compatibility error', event.edata.type);
+      cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        () => {},
+        () => {}
+    );
     }
   }
 
