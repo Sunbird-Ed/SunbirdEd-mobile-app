@@ -98,7 +98,7 @@ describe('ProfileHandler', () => {
             // act
             profileHandler.getSupportedUserTypes().then((response) => {
                 // assert
-                expect(response.length).toEqual(4);
+                expect(response.length).toEqual(3);
                 done();
             });
         });
