@@ -1,4 +1,4 @@
-import { Rollup, Content, ContentData, TelemetryObject, CorrelationData } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject, CorrelationData, FilterValue, ContentSearchFilter } from 'sunbird-sdk';
 import { CorReleationDataType } from '@app/services/telemetry-constants';
 import { TrackingEnabled } from '@project-sunbird/client-services/models';
 import { MimeType } from '@app/app/app.constant';
@@ -193,5 +193,32 @@ export class ContentUtil {
         return -1;
       }
     }
+  }
+
+  public static getAudienceFilter(searchFilter: ContentSearchFilter, supportedUserTypesConfig: Array<any>): FilterValue[] {
+    let audienceFilter = [];
+    searchFilter.values.forEach((element) => {
+      if (element.apply) {
+        const userTypeConfig = supportedUserTypesConfig.find(supportedUserType => supportedUserType.code === element.name);
+        if (userTypeConfig && userTypeConfig['searchFilter']) {
+          audienceFilter = audienceFilter.concat(this.createAudienceFilter(userTypeConfig['searchFilter']));
+        } else {
+          audienceFilter.push(element);
+        }
+      }
+    });
+    return audienceFilter;
+  }
+
+  private static createAudienceFilter(audienceSearchFilter: string[]): FilterValue[] {
+    const audienceFilter: FilterValue[] = [];
+    audienceSearchFilter.forEach((element) => {
+      audienceFilter.push({
+        name: element,
+        count: 0,
+        apply: true
+      });
+    });
+    return audienceFilter;
   }
 }

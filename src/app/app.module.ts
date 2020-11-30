@@ -74,6 +74,7 @@ import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-servic
 import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -475,6 +476,7 @@ declare const sbutility;
     ContentAggregatorHandler,
     AliasBoardName,
     ConsentService,
+    ProfileHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

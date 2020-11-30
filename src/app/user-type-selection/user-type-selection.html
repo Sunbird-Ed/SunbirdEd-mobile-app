@@ -1,7 +1,7 @@
 <ion-content class="ui-container" padding>
     <div class="ui-content">
         <div class="back-btn-container">
-            <img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton"
+            <img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !categoriesProfileData"
                  (click)="handleBackButton(true)"
                  class="top-back-button" alt="back">
         </div>
@@ -9,9 +9,8 @@
         <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
         <div class="container">
-<!--            Teacher -->
             <div class="card">
-                <div class="card-container" (click)="selectTeacherCard()" [class.selected]="selectedUserType === ProfileType.TEACHER">
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_1', ProfileType.TEACHER)" [class.selected]="selectedUserType === ProfileType.TEACHER">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.TEACHER" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" [src]="teacherImageUri"/>
                     <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
@@ -19,32 +18,28 @@
             </div>
 
             <div class="card">
-<!--                Student -->
-                <div class="card-container" (click)="selectStudentCard()" [class.selected]="selectedUserType === ProfileType.STUDENT">
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_2', ProfileType.STUDENT)" [class.selected]="selectedUserType === ProfileType.STUDENT">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.STUDENT" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" [src]="studentImageUri"/>
                     <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
                 </div>
             </div>
             <div class="card">
-<!--                Admin -->
-                <div class="card-container" (click)="selectAdminCard()" [class.selected]="selectedUserType === 'admin'">
-                    <img class="icon-check" alt="" [class.selected]="selectedUserType === 'admin'" [src]="selectCardImageUri"/>
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_4', ProfileType.ADMIN)" [class.selected]="selectedUserType === ProfileType.ADMIN">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.ADMIN" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" src="assets/imgs/ic_admin.svg"/>
                     <h4 class="card-title">{{ 'USER_TYPE_4' | translate }}</h4>
                 </div>
             </div>
-            <div class="card">
-<!--                Parent -->
-                <div class="card-container" (click)="selectParentCard()" [class.selected]="selectedUserType === 'parent'">
+            <!-- <div class="card">
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_5', ProfileType.PARENT)" [class.selected]="selectedUserType === 'parent'">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === 'parent'" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" src="assets/imgs/ic_parent.svg"/>
                     <h4 class="card-title">{{ 'USER_TYPE_5' | translate }}</h4>
                 </div>
-            </div>
-<!--            other-->
+            </div> -->
             <div class="card">
-                <div class="card-container" (click)="selectOtherCard()" [class.selected]="selectedUserType === ProfileType.OTHER">
+                <div class="card-container" (click)="selectUserTypeCard('USER_TYPE_3', ProfileType.OTHER)" [class.selected]="selectedUserType === ProfileType.OTHER">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
                     <img class="thumbnail" alt="" [src]="otherImageUri"/>
                     <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>

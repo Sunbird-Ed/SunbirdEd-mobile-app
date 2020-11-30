@@ -59,7 +59,8 @@ export class Search {
         'medium',
         'primaryCategory',
         'publisher',
-        'mimeType'
+        'mimeType',
+        'audience'
     ];
 
     public static readonly FACETS_COURSE = [
