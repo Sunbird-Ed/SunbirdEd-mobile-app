@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
-import { ProfileService, ServerProfile, CachedItemRequestSourceFrom } from 'sunbird-sdk';
+import { ProfileService, ServerProfile, CachedItemRequestSourceFrom, ProfileType } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
@@ -168,9 +168,15 @@ export class TermsAndConditionsPage implements OnInit {
                 }
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
-                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                  state: {categoriesProfileData}
+                if (profile.profileType === ProfileType.NONE) {
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: {categoriesProfileData}
+                  });
+                } else {
+                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                    state: categoriesProfileData
                 });
+              }
                 // this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
@@ -195,9 +201,15 @@ export class TermsAndConditionsPage implements OnInit {
               (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                 await this.consentService.getConsent(profile, true);
               }
-              this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                state: {categoriesProfileData}
+              if (profile.profileType === ProfileType.NONE) {
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                  state: {categoriesProfileData}
+                });
+              } else {
+                this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                  state: categoriesProfileData
               });
+            }
               // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
               //   state: {
               //     hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),

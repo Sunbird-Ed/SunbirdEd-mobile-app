@@ -143,18 +143,22 @@ export class LoginHandlerService {
               requiredFields: ProfileConstants.REQUIRED_FIELDS
             };
             that.profileService.getServerProfilesDetails(req).toPromise()
-              .then((success) => {
+              .then(async (success) => {
+                const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+                const currentProfile = allProfileDetais.find(ele => ele.uid === success.id);
+                const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
                   handle: success.id,
-                  profileType: ProfileType.TEACHER,
+                  profileType: guestProfileType,
                   source: ProfileSource.SERVER,
                   serverProfile: success
                 };
                 this.profileService.createProfile(profile, ProfileSource.SERVER)
                   .toPromise()
-                  .then(() => {
+                  .then(async () => {
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
                         that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)

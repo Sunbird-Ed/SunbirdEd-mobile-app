@@ -49,7 +49,8 @@ export class ProfileNameConfirmationPopoverComponent {
   }
 
   onSubmitClick() {
-    this.preferences.putBoolean(PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP, this.doNotShowAgain).toPromise().then();
+    const key = PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-' + this.profile.userId;
+    this.preferences.putBoolean(key, this.doNotShowAgain).toPromise().then();
     this.closePopover({ buttonClicked: true });
   }
 

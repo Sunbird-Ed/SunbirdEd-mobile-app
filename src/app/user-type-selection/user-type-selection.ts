@@ -69,7 +69,6 @@ export class UserTypeSelectionPage {
   getNavParams() {
     this.navParams = window.history.state;
     this.categoriesProfileData = this.navParams.categoriesProfileData;
-    console.log('fiiii', this.categoriesProfileData);
   }
 
   ionViewDidEnter() {
@@ -155,41 +154,9 @@ export class UserTypeSelectionPage {
     }
   }
 
-  selectTeacherCard() {
-    this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
-    this.generateUserTypeClicktelemetry(ProfileType.TEACHER);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectStudentCard() {
-    this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
-    this.generateUserTypeClicktelemetry(ProfileType.STUDENT);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectAdminCard() {
-    this.selectCard('USER_TYPE_4', 'admin');
-    this.generateUserTypeClicktelemetry('admin');
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectParentCard() {
-    this.selectCard('USER_TYPE_5', 'parent');
-    this.generateUserTypeClicktelemetry('parent');
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectOtherCard() {
-    this.selectCard('USER_TYPE_3', ProfileType.OTHER);
-    this.generateUserTypeClicktelemetry(ProfileType.OTHER);
+  selectUserTypeCard(selectedUserTypeName: string, userType: string) {
+    this.selectCard(selectedUserTypeName, userType);
+    this.generateUserTypeClicktelemetry(userType);
     setTimeout(() => {
       this.continue();
     }, 50);
@@ -219,7 +186,7 @@ export class UserTypeSelectionPage {
 
       this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
     });
-    const values = new Map();
+    const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -286,7 +253,7 @@ export class UserTypeSelectionPage {
 
   /**
    * It will initializes tabs based on the user type and navigates to respective page
-   * @param isUserTypeChanged
+   * isUserTypeChanged
    */
 
   // changes
@@ -300,7 +267,7 @@ export class UserTypeSelectionPage {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
 
-    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted) {
+    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
@@ -341,14 +308,14 @@ export class UserTypeSelectionPage {
 
   /**
    * Updates profile and navigates to desired page with given params
-   * @param page
-   * @param params
+   * page
+   * params
    */
   updateProfile(page: string, params = {}) {
     this.profile.profileType = this.selectedUserType;
     this.profileService.updateProfile(this.profile).toPromise()
       .then((res: any) => {
-        if (page === 'TabsPage') {
+        if (page === 'TabsPage' || this.categoriesProfileData) {
           this.navigateToTabsAsGuest();
         } else {
           this.navigateToProfileSettingsPage(params);
@@ -370,7 +337,7 @@ export class UserTypeSelectionPage {
               isShowBackButton: false
             }
           };
-          this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtrasData);
+          this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtrasData);
         }
       } else {
         this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {

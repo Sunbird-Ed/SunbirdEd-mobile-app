@@ -31,7 +31,7 @@ describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
 
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({ serverProfile: { tncLatestVersionUrl: 'sample_tnc_url' ,
+        getActiveSessionProfile: jest.fn(() => of({profileType: 'none', serverProfile: { tncLatestVersionUrl: 'sample_tnc_url' ,
         declarations: [{name: 'sample-name'}]} })),
         getServerProfilesDetails: jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url' })),
     };
