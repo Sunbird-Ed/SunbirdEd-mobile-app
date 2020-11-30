@@ -369,13 +369,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       } else {
         this.showErrorToastMessage('BOARD');
       }
-    } else if (formVal.medium && !formVal.medium.length) {
+    } else if (formVal.medium && !formVal.medium.length && this.supportedProfileAttributes['medium']) {
       if (this.showOnlyMandatoryFields) {
         this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
-    } else if (formVal.grades && !formVal.grades.length) {
+    } else if (formVal.grades && !formVal.grades.length && this.supportedProfileAttributes['gradeLevel']) {
       if (this.showOnlyMandatoryFields) {
         this.gradeSelect.open();
       } else {
