@@ -8,7 +8,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState} from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -20,10 +20,11 @@ import {
   AuditType
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
-import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
+import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -62,7 +63,8 @@ export class UserTypeSelectionPage {
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
     private splashScreenService: SplashScreenService,
-    private nativePageTransitions: NativePageTransitions
+    private nativePageTransitions: NativePageTransitions,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
   }
 
@@ -315,8 +317,10 @@ export class UserTypeSelectionPage {
     this.profile.profileType = this.selectedUserType;
     this.profileService.updateProfile(this.profile).toPromise()
       .then((res: any) => {
-        if (page === 'TabsPage' || this.categoriesProfileData) {
+        if (page === 'TabsPage') {
           this.navigateToTabsAsGuest();
+        } else if (this.categoriesProfileData) {
+          this.navigateToTabsAsLogInUser();
         } else {
           this.navigateToProfileSettingsPage(params);
         }
@@ -325,28 +329,31 @@ export class UserTypeSelectionPage {
       });
   }
 
-  navigateToTabsAsGuest() {
-    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    if (this.categoriesProfileData) {
-      if (this.categoriesProfileData.status) {
-        if (this.categoriesProfileData.isUserLocationAvalable) {
-          this.router.navigate(['/', RouterLinks.TABS]);
+  async navigateToTabsAsLogInUser() {
+    if (this.categoriesProfileData.status) {
+      if (this.categoriesProfileData.showOnlyMandatoryFields) {
+        initTabs(this.container, LOGIN_TEACHER_TABS);
+        if (this.categoriesProfileData.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+          this.router.navigate([RouterLinks.TABS]);
         } else {
-          const navigationExtrasData: NavigationExtras = {
+          const navigationExtras: NavigationExtras = {
             state: {
               isShowBackButton: false
             }
           };
-          this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtrasData);
+          this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
         }
-      } else {
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-          state: this.categoriesProfileData
-        });
       }
     } else {
-      this.router.navigate(['/tabs'], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+        state: this.categoriesProfileData
+      });
     }
+  }
+
+  navigateToTabsAsGuest() {
+    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+    this.router.navigate(['/tabs'], navigationExtras);
   }
 
   async navigateToProfileSettingsPage(params) {

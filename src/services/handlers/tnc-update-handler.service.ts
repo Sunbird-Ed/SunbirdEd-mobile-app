@@ -111,9 +111,16 @@ export class TncUpdateHandlerService {
           profile: value['profile'],
           isRootPage: true
         };
-        if (userprofile.profileType === ProfileType.NONE) {
+        if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
+          !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length) {
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-            state: {categoriesProfileData}
+            state: { categoriesProfileData }
+          });
+        } else if (userprofile.profileType === ProfileType.NONE) {
+          categoriesProfileData['status'] = true;
+          categoriesProfileData['isUserLocationAvalable'] = this.commonUtilService.isUserLocationAvalable(serverProfile);
+          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+            state: { categoriesProfileData }
           });
         } else {
           this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
