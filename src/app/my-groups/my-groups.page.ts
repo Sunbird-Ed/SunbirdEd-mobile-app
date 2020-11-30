@@ -8,7 +8,7 @@ import {
 import {
   AuthService, SharedPreferences, GroupService, Group,
   GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder,
-  ObjectType, TelemetryObject, UpdateMembersRequest, GroupUpdateMembersResponse, SystemSettingsService, GetSystemSettingsRequest, SystemSettings, ProfileService, ServerProfileDetailsRequest, CorrelationData
+  ObjectType, TelemetryObject, UpdateMembersRequest, GroupUpdateMembersResponse, SystemSettingsService, GetSystemSettingsRequest, SystemSettings, ProfileService, ServerProfileDetailsRequest, CorrelationData, AcceptTermsConditionRequest
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -313,14 +313,14 @@ export class MyGroupsPage implements OnInit, OnDestroy {
                     // this.updateGroupTnc(this.groupTncVersion);
                     this.openAcceptGuidelinesPopup(true);
                   } else {
-                    this.updateGroupTnc(this.groupTncVersion);
+                    this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
                   }
                 }
               } else {
                 if (this.groupList.length) {
                   this.openAcceptGuidelinesPopup(true);
                 } else {
-                  this.updateGroupTnc(this.groupTncVersion);
+                  this.updateGroupTnc(this.groupTncVersion, profileDetails.managedBy);
                 }
               }
             });
@@ -330,14 +330,17 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       });
   }
 
-  private async updateGroupTnc(latestVersion) {
+  private async updateGroupTnc(latestVersion, managedBy) {
     this.isGroupTncAcceptenceChecked = true;
     try {
-      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
-        // userId: this.userId,
+      let acceptTermsAndConditionsRequest: AcceptTermsConditionRequest = {
         version: latestVersion,
         tncType: 'groupsTnc'
-      }).toPromise();
+      };
+      if(managedBy) {
+        acceptTermsAndConditionsRequest.userId = this.userId
+      } 
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions(acceptTermsAndConditionsRequest).toPromise();
     } catch (err) {
       console.error('acceptTermsAndConditions err', err);
     }
