@@ -170,7 +170,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       Environment.USER,
       PageId.CREATE_USER
     );
-    this.addAttributeSubscription(undefined);
+    this.addAttributeSubscription(this.profile.profileType || undefined);
   }
 
   private async addAttributeSubscription(userType: string) {
