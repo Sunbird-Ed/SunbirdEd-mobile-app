@@ -247,10 +247,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   subscribeUtilityEvents() {
-    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).subscribe((profile: Profile) => {
-      this.profile = profile;
-    });
-
     // Event for optional and forceful upgrade
     this.events.subscribe('force_optional_upgrade', async (upgrade) => {
       if (upgrade && !this.isUpgradePopoverShown) {
@@ -955,6 +951,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   async getAggregatorResult(resetFilter?: boolean) {
     this.spinner(true);
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {},
