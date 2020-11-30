@@ -962,7 +962,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         if (this.filter) {
           contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
         }
-        contentSearchCriteria.audience = audience;
+        // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };
