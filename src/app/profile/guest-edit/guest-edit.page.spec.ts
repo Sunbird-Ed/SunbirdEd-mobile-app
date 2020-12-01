@@ -290,7 +290,7 @@ describe('GuestEditPage', () => {
             guestEditPage.isFormValid = true;
             guestEditPage.guestEditForm = {
                 value: {
-                    userType: 'userType'
+                    profileType: 'userType'
                 },
                 getRawValue: jest.fn(() => { })
             } as any;
@@ -322,7 +322,7 @@ describe('GuestEditPage', () => {
             guestEditPage.guestEditForm = {
                 value: {
                     syllabus: [],
-                    userType: 'userType',
+                    profileType: 'userType',
                     boards: []
                 },
                 getRawValue: jest.fn(() => { })
