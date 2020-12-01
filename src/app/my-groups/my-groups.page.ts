@@ -330,7 +330,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       });
   }
 
-  private async updateGroupTnc(latestVersion, managedBy) {
+  private async updateGroupTnc(latestVersion, managedBy?) {
     this.isGroupTncAcceptenceChecked = true;
     try {
       let acceptTermsAndConditionsRequest: AcceptTermsConditionRequest = {
