@@ -19,7 +19,7 @@ import { RouterLinks } from '../app.constant';
 
 
 
-
+declare const cordova;
 
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
@@ -37,16 +37,25 @@ describe('PlayerPage', () => {
     };
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+    };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({
             extras: {
                 state: {
-                    contentToPlay: { identifier: '123456' },
+                    contentToPlay: {
+                        identifier: '123456',
+                        contentData: {
+                            downloadUrl: 'https://'
+                        }
+                    },
                     config: {
                         metadata: {
-                            mimeType: 'application/pdf'
+                            mimeType: 'application/pdf',
+                            contentData: {
+                                downloadUrl: '12345'
+                            }
                         }
                     },
                     course: {},
@@ -63,7 +72,9 @@ describe('PlayerPage', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         // getPdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
     };
-    const mockDownloadPdfService: Partial<DownloadPdfService> = {};
+    const mockDownloadPdfService: Partial<DownloadPdfService> = {
+        // downloadPdf: jest.fn(() => Promise.resolve({}))
+    };
     const mockFileOpener: Partial<FileOpener> = {};
     const mockTransfer: Partial<FileTransfer> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -109,7 +120,7 @@ describe('PlayerPage', () => {
             jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
                 return Promise.resolve();
             });
-            mockLocation.back  = jest.fn();
+            mockLocation.back = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
             playerPage.ionViewWillEnter();
             setTimeout(() => {
@@ -215,7 +226,7 @@ describe('PlayerPage', () => {
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                     telemetryService: {
-                        saveTelemetry : jest.fn((request: string) => {
+                        saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
                                     expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
@@ -228,6 +239,120 @@ describe('PlayerPage', () => {
                 } as Partial<SunbirdSdk> as SunbirdSdk);
                 playerPage.config['context'].dispatcher.dispatch({});
             });
+        });
+    });
+    describe('pdfPlayerEvents', () => {
+        it('should exit the player', (done) => {
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                }
+            };
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(playerPage.loadPdfPlayer).toBe(false);
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 50);
+        });
+        it('should call the download service to download the pdf', (done) => {
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            };
+            const event = {
+                edata: {
+                    type: {
+                        type: 'DOWNLOAD'
+                    }
+                }
+            };
+
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.resolve());
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('PDF_DOWNLOADED');
+                done();
+            }, 100);
+
+        });
+        it('should call the download service to download the pdf for catch part', (done) => {
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            };
+            const event = {
+                edata: {
+                    type: {
+                        type: 'DOWNLOAD'
+                    }
+                }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
+                    reason: 'device-permission-denied'
+            }));
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
+                done();
+            }, 0);
+
+        });
+        it('should call the download service to download the pdf for catch part(user-permission-denied)', (done) => {
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            };
+            const event = {
+                edata: {
+                    type: {
+                        type: 'DOWNLOAD'
+                    }
+                }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
+                    reason: 'user-permission-denied'
+            }));
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
+                done();
+            }, 0);
+
+        });
+        it('should call the download service to download the pdf for catch part(download-failed)', (done) => {
+            playerPage['content'] = {
+                contentData: {
+                    downloadUrl: 'https://'
+                }
+            };
+            const event = {
+                edata: {
+                    type: {
+                        type: 'DOWNLOAD'
+                    }
+                }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
+                    reason: 'download-failed'
+            }));
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
+                done();
+            }, 0);
+
         });
     });
 });
