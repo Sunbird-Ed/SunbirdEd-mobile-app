@@ -391,25 +391,25 @@ export class GuestEditPage implements OnInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.guestEditForm.value;
 
-    if (formVal.userType === '') {
+    if (!formVal.profileType) {
       this.commonUtilService.showToast('USER_TYPE_SELECT_WARNING');
       return false;
     } else if (!this.validateName()) {
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('FULL_NAME')), false, 'red-toast');
-    } else if (formVal.boards.length === 0) {
+    } else if (formVal.boards && formVal.boards.length === 0) {
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'failed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('BOARD')), false, 'red-toast');
       return false;
-    } else if (formVal.medium.length === 0 && !!this.supportedProfileAttributes['medium']) {
+    } else if (formVal.medium && formVal.medium.length === 0 && !!this.supportedProfileAttributes['medium']) {
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'failed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
       this.commonUtilService.showToast(
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('MEDIUM')), false, 'red-toast');
       return false;
-    } else if (formVal.grades.length === 0 && !!this.supportedProfileAttributes['gradeLevel']) {
+    } else if (formVal.grades && formVal.grades.length === 0 && !!this.supportedProfileAttributes['gradeLevel']) {
       this.appGlobalService.generateSaveClickedTelemetry(
         this.extractProfileForTelemetry(formVal), 'failed', PageId.EDIT_USER, InteractSubtype.SAVE_CLICKED);
       this.commonUtilService.showToast(
@@ -505,7 +505,11 @@ export class GuestEditPage implements OnInit, OnDestroy {
 
   publishProfileEvents(formVal) {
     // Publish event if the all the fields are submitted
-    if (formVal.syllabus.length && formVal.boards.length && formVal.grades.length && formVal.medium.length && formVal.subjects.length) {
+    if (formVal.syllabus && formVal.syllabus.length
+      && (formVal.boards && formVal.boards.length)
+      && (formVal.grades && formVal.grades.length)
+      && (formVal.medium && formVal.medium.length)
+      && (formVal.subjects && formVal.subjects.length)) {
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
     } else {
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: false });
