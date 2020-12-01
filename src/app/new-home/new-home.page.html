@@ -15,6 +15,10 @@
     <div style="display:inline"><ion-icon name="arrow-dropdown"></ion-icon></div>
   </div>
 
+  <div>
+    <ion-button (click)="goToNextPage()">go to next page</ion-button>
+  </div>
+
 <!-- <div *ngFor="let result of aggregatorResponse; let i=index;">
   <div *ngIf="result.dataSrc.name === 'TRACKABLE_CONTENTS'">
     <ng-container *ngIf="result.data && result.data.length">
