@@ -15,7 +15,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { RouterLinks } from '../app.constant';
+import { RouterLinks, ShareItemType } from '../app.constant';
 
 
 
@@ -68,7 +68,9 @@ describe('PlayerPage', () => {
         })) as any
     };
     const mockLocation: Partial<Location> = {};
-    const mockPopoverCtrl: Partial<PopoverController> = {};
+    const mockPopoverCtrl: Partial<PopoverController> = {
+
+    };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         // getPdfPlayerConfiguration: jest.fn(() => Promise.resolve({}))
     };
@@ -157,6 +159,7 @@ describe('PlayerPage', () => {
                 metadata: {
                     identifier: 'identifier',
                     mimeType: 'application/pdf',
+                    isAvailableLocally: true,
                     contentData: {
                         isAvailableLocally: true,
                         basePath: 'basePath',
@@ -215,6 +218,7 @@ describe('PlayerPage', () => {
                 metadata: {
                     identifier: 'li',
                     mimeType: 'application/pdf',
+                    isAvailableLocally: true,
                     contentData: {
                         isAvailableLocally: true,
                         basePath: 'basePath',
@@ -353,6 +357,35 @@ describe('PlayerPage', () => {
                 done();
             }, 0);
 
+        });
+        it('should handle the share event', (done) => {
+            const event = {
+                edata: {
+                        type: 'SHARE'
+                }
+            };
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({}))
+            } as any)));
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                done();
+            },50);
+
+        });
+        it('should handle the content compatibility error', (done) => {
+            const event = {
+                edata: {
+                    type: 'compatibility-error'
+                }
+            };
+            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => {});
+            playerPage.pdfPlayerEvents(event);
+            setTimeout(() => {
+                expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
+                done();
+            }, 50);
         });
     });
 });
