@@ -95,7 +95,7 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
-  { path: 'new-home', loadChildren: './new-home/new-home.module#NewHomePageModule' },
+  { path: RouterLinks.HOME_PAGE, loadChildren: './resources/home-page/home-page.module#HomePagePageModule'},
 
 ];
 

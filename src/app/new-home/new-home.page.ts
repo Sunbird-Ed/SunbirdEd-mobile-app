@@ -122,4 +122,24 @@ export class NewHomePage implements OnInit {
     return this.commonUtilService.arrayToString(displayValues);
   }
 
+    goToNextPage() {
+        const mockData: any = {
+            facet: 'English',
+            searchCriteria: {
+                board: ['State (Andhra Pradesh)'],
+                facets: ['subject'],
+                grade: ['Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6'],
+                limit: 0,
+                medium: ['English', 'Telugu', 'Urdu'],
+                mode: 'hard',
+                offset: 0,
+                subject: ['english']
+            },
+            aggregate: {groupBy: 'primaryCategory'}
+        };
+        const params = {
+            formField: mockData
+        };
+        this.router.navigate([RouterLinks.HOME_PAGE], {state: params});
+    }
 }

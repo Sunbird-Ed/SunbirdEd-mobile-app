@@ -1,0 +1,27 @@
+<ion-content>
+  <div>
+    <h1>{{formField.facet| translate}}</h1>
+    <p>{{'SUBJECT_DESCRIPTION' | translate}}</p>
+  </div>
+
+  <div>
+    <br>
+    <sb-pills-grid *ngIf="sectionGroup?.sections" [pillShape]="'default'" [pillsViewType]="'scroll'" [pillBorder]="'rounded'">
+      <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)" *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
+    </sb-pills-grid>
+    <br>
+  </div>
+
+  <div>
+    <div *ngFor="let section of sectionGroup?.sections">
+      <div class="sb-textbook-container" [id]="sectionGroup.name + '_'+ section.name" *ngIf="section?.contents && section?.contents?.length">
+        <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
+                                [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+                                [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
+                                (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"
+                                (cardClick)="navigateToDetailPage($event, section.name)">
+        </sb-library-cards-stack>
+      </div>
+    </div>
+  </div>
+</ion-content>

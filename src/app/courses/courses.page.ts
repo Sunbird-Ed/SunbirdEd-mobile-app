@@ -954,33 +954,31 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   async getAggregatorResult(resetFilter?: boolean) {
-    this.spinner(true);
-    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
-    const request: ContentAggregatorRequest = {
-      applyFirstAvailableCombination: {},
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        if (this.filter) {
-          contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
-        }
-        // contentSearchCriteria.audience = audience;
-        return contentSearchCriteria;
-      }
-    };
-    try {
-      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
-      if (this.dynamicCourses) {
-        this.dynamicCourses.forEach((val) => {
-          if (val.orientation === Orientation.HORIZONTAL) {
-            this.enrolledCourses = val.section.sections[0].contents;
-          } else if (val.orientation === Orientation.VERTICAL) {
-            this.popularAndLatestCourses = val.section.sections;
-          }
-        });
-      }
-      this.spinner(false);
-    } catch (e) {
-      this.spinner(false);
-    }
+    // this.spinner(true);
+    // const request: ContentAggregatorRequest = {
+    //   applyFirstAvailableCombination: {},
+    //   interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+    //     if (this.filter) {
+    //       contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
+    //     }
+    //     return contentSearchCriteria;
+    //   }
+    // };
+    // try {
+    //   this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
+    //   if (this.dynamicCourses) {
+    //     this.dynamicCourses.forEach((val) => {
+    //       if (val.orientation === Orientation.HORIZONTAL) {
+    //         this.enrolledCourses = val.section.sections[0].contents;
+    //       } else if (val.orientation === Orientation.VERTICAL) {
+    //         this.popularAndLatestCourses = val.section.sections;
+    //       }
+    //     });
+    //   }
+    //   this.spinner(false);
+    // } catch (e) {
+    //   this.spinner(false);
+    // }
   }
 
   concatFilter(filter, searchCriteria) {
