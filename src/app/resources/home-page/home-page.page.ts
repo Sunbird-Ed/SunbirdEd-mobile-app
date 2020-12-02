@@ -40,6 +40,7 @@ export class HomePagePage implements OnInit {
     };
     public imageSrcMap = new Map();
     defaultImg: string;
+    showSheenAnimation = true;
 
     constructor(
         public commonUtilService: CommonUtilService,
@@ -90,25 +91,7 @@ export class HomePagePage implements OnInit {
                     },
                     theme: {}
                 }]).toPromise()).result[0] as ContentAggregation<'CONTENTS'>).data;
-
-        this.sectionGroup.sections.forEach((content) => {
-            const data: any[] = content.contents;
-            data.forEach((individualContent) => {
-                if (individualContent.appIcon) {
-                    if (individualContent.appIcon.includes('http:') || individualContent.appIcon.includes('https:')) {
-                        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                            individualContent.appIcon = individualContent.appIcon;
-                        } else {
-                            this.imageSrcMap.set(individualContent.identifier, individualContent.appIcon);
-                            // this.imageSrcMap[content.identifier] = content.appIcon;
-                            individualContent.appIcon = this.defaultImg;
-                        }
-                    } else if (individualContent.basePath) {
-                        individualContent.appIcon = individualContent.basePath + '/' + individualContent.appIcon;
-                    }
-                }
-            });
-        });
+        this.showSheenAnimation = false;
     }
 
     navigateToTextbookPage(items, subject) {
