@@ -1,0 +1,22 @@
+@import "src/assets/styles/_variables.scss";
+.filter-style {
+  font-size: 14px;
+  font-weight: 500;
+  color: $blue;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 45vh;
+  display: inline-block;
+}
+
+.user-profile {
+  padding: 10px;
+  font-size: 3.2vh;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 700;
+  padding-left: 8px;
+}

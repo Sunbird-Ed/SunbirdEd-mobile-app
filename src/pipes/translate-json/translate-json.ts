@@ -1,0 +1,21 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+
+@Pipe(
+    { name: 'translateJson' }
+)
+
+export class TranslateJsonPipe implements PipeTransform {
+
+  constructor(private translate: TranslateService) {}
+
+  transform(value: string): string {
+    try {
+      console.log('this.translate.currentLang', this.translate.currentLang);
+      const availableTranslation = JSON.parse(value);
+      return (availableTranslation.hasOwnProperty(this.translate.currentLang)) ? availableTranslation[this.translate.currentLang] : '';
+    } catch (e) {
+      return value;
+    }
+  }
+}

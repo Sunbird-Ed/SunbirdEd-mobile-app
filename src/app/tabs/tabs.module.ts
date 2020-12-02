@@ -15,11 +15,11 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'new-home',
+        path: RouterLinks.HOME,
         children: [
           {
             path: '',
-            loadChildren: '../new-home/new-home.module#NewHomePageModule'
+            loadChildren: '../home/home.module#HomePageModule'
           }
         ]
       },
@@ -70,7 +70,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'resources',
+        redirectTo: RouterLinks.HOME,
         pathMatch: 'full'
       }
     ]
