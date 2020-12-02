@@ -6,13 +6,14 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 import { IonicModule } from '@ionic/angular';
 
-import { NewHomePage } from './new-home.page';
+import { HomePage } from './home.page';
 import { TranslateModule } from '@ngx-translate/core';
+import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: NewHomePage
+    component: HomePage
   }
 ];
 
@@ -24,7 +25,8 @@ const routes: Routes = [
     CommonConsumptionModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
+    PipesModule
   ],
-  declarations: [NewHomePage]
+  declarations: [HomePage]
 })
-export class NewHomePageModule {}
+export class HomePageModule {}

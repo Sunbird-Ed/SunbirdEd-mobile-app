@@ -23,7 +23,14 @@ const SCANNER_TAB = {
     index: 3
 };
 const LIBRARY_TAB = {
-    root: 'new-home',
+    root: 'resources',
+    icon: 'resources',
+    label: 'LIBRARY_BNAV',
+    index: 1,
+    isSelected: true
+};
+const HOME_TAB = {
+    root: 'home',
     icon: 'resources',
     label: 'LIBRARY_BNAV',
     index: 1,
@@ -57,7 +64,7 @@ const DOWNLOADS_TAB = {
 };
 
 export const GUEST_TEACHER_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -65,7 +72,7 @@ export const GUEST_TEACHER_TABS = [
 ];
 
 export const LOGIN_TEACHER_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -73,7 +80,7 @@ export const LOGIN_TEACHER_TABS = [
 ];
 
 export const GUEST_STUDENT_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -89,7 +96,7 @@ export const GUEST_STUDENT_TABS = [
 // ];
 
 export const GUEST_TEACHER_SWITCH_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -97,7 +104,7 @@ export const GUEST_TEACHER_SWITCH_TABS = [
 ];
 
 export const GUEST_STUDENT_SWITCH_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,

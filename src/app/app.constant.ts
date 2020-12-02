@@ -456,6 +456,9 @@ export class RouterLinks {
     public static readonly EXPLORE_BOOK = 'explore-book';
     public static readonly RELEVANT_CONTENTS = 'relevant-contents';
 
+    // HOME Routes
+    public static readonly HOME = 'home';
+
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
 
@@ -540,6 +543,9 @@ export class RouterLinks {
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
+
+    // home page
+    public static readonly HOME_PAGE = 'home-page';
 }
 
 export class ShareItemType {
