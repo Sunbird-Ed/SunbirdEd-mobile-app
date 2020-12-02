@@ -489,7 +489,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     // Get the book data
     try {
-      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
+      // this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
           if (val.orientation === Orientation.VERTICAL) {

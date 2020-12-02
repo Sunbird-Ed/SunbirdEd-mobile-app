@@ -48,8 +48,8 @@ const routes: Routes = [
     loadChildren: './resources/resources.module#ResourcesModule',
   },
   {
-    path: 'new-home',
-    loadChildren: './new-home/new-home.module#NewHomePageModule'
+    path: RouterLinks.HOME,
+    loadChildren: './home/home.module#HomePageModule'
   },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },

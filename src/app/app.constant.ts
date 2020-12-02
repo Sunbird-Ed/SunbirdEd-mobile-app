@@ -456,6 +456,9 @@ export class RouterLinks {
     public static readonly EXPLORE_BOOK = 'explore-book';
     public static readonly RELEVANT_CONTENTS = 'relevant-contents';
 
+    // HOME Routes
+    public static readonly HOME = 'home';
+
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
 

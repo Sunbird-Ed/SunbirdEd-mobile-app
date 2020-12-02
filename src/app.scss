@@ -1533,3 +1533,19 @@ app-collection-detail-etb{
     }
   }
 }
+
+app-home{
+  sb-pills-grid{
+    .sb-label-grid{
+      @include padding(null, 8px, null, 8px !important);
+      label{
+        margin-bottom: 0 !important;
+      }
+    }
+    .sb-pills-grid{
+      .item{
+        padding: 1.5rem !important;
+      }
+    }
+  }
+}
