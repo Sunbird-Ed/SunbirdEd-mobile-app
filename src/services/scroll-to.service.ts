@@ -21,6 +21,6 @@ export class ScrollToService {
 
     scrollToWithinContent(content: IonContent, elementId: string): void {
         const y = document.getElementById(elementId).offsetTop;
-        content.scrollToPoint(0, y, 500);
+        content.scrollToPoint(0, y, 500).then();
     }
 }
