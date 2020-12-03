@@ -28,6 +28,8 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
 
+declare const cordova;
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.page.html',
@@ -161,6 +163,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                     ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
                   this.openPDF(downloadUrl);
                 }
+              } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
+                  || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
+                cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                    () => {},
+                    () => {}
+                );
               }
             } else if (this.isJSON(resp.data)) {
               const response = JSON.parse(resp.data);
