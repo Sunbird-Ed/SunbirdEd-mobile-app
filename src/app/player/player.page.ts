@@ -100,7 +100,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       }
       this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
       this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
-      this.config['metadata'].contentData.compatibilityLevel = 5;
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
@@ -256,7 +255,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       }
     } else if (event.edata.type === 'compatibility-error') {
-      console.log('compatibility error', event.edata.type);
       cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
         () => {},
         () => {}
