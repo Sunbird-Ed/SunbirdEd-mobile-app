@@ -20,3 +20,19 @@
   font-weight: 700;
   padding-left: 8px;
 }
+
+.sb-card-scroll-container {
+  overflow-x: auto;
+  padding: 0 0 8px 0;
+}
+.sb-card-recently-container {
+  .recently-viewed-card-size{
+    margin: 0 8px; 
+    min-width:288px;
+    max-width:288px;
+    &:only-child {
+      min-width: 100%;
+      max-width: calc(100vw - 32px);
+    }
+  }
+}

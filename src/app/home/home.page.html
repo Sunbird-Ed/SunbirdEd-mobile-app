@@ -14,7 +14,7 @@
 
   <ng-container *ngFor="let section of displaySections">
 
-    <div *ngIf="section?.dataSrc?.name !== 'TRACKABLE_CONTENTS'" class="label">{{section?.title | translateJson}}</div>
+    <!-- <div *ngIf="section?.dataSrc?.name !== 'TRACKABLE_CONTENTS'" class="label">{{section?.title | translateJson}}</div> -->
     <!-- Trackable contents -->
     <ng-container *ngIf="section?.dataSrc?.name === 'TRACKABLE_CONTENTS'">
       <ng-container *ngFor="let subSection of section?.data?.sections">
@@ -30,6 +30,7 @@
     </ng-container>
 
     <!-- Pills -->
+    <div *ngIf="section?.theme?.component === 'sb-pills-grid'" class="label">{{section?.title | translateJson}}</div>
     <ng-container *ngIf="section?.theme?.component === 'sb-pills-grid'">
       <sb-pills-grid [pillShape]="section?.theme?.inputs?.pillShape"
         [pillsViewType]="section?.theme?.inputs?.pillsViewType" 
@@ -42,6 +43,27 @@
           [value]="pillData"></sb-pill-item>
       </sb-pills-grid>
     </ng-container>
+
+    <div class="sb-recently-viewed-container" style="padding-bottom:40px;"
+      *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.dataSrc?.name=== 'RECENTLY_VIEWED_CONTENTS'">
+      <div class="label">{{section?.title | translateJson}}</div>
+      <!-- <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
+        (click)="navigateToViewMoreContentsPage(section);">
+        {{ 'VIEW_ALL' | translate }}</button> -->
+
+      <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
+        <div class="sb-card-container sb-card-recently-container">
+          <div class="recently-viewed-card-size" *ngFor="let content of section.data.sections[0].contents">
+            <sb-library-card
+              [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
+              [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
+              (cardClick)="navigateToDetailPage($event, section?.title);"
+              [cardImg]="content?.appIcon || defaultAppIcon">
+            </sb-library-card>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </ng-container>
 
