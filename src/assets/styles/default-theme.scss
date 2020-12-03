@@ -57,5 +57,11 @@ html[data-theme="DEFAULT"]{
       border-top-right-radius: 0px !important;
     }
   }
+
+  app-guest-edit{
+    ion-content{
+      --background: var(--app-white);
+    }
+  }
 }
 

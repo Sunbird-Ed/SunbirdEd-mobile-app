@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {
   AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, ProfileType
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -76,11 +76,12 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (await this.isSSOUser(userDetails)) {
+    if (await this.isSSOUser(userDetails) || (userDetails.serverProfile.declarations && userDetails.serverProfile.declarations.length)) {
       await this.consentService.getConsent(userDetails, true);
     }
-    if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
-      !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
+    if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
+      !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
+      || (userDetails.profileType === ProfileType.NONE)) {
       this.preRequirementToBmcNavigation(profile.userId);
     } else {
       this.checkDistrictMapping(profile);
@@ -104,14 +105,28 @@ export class TncUpdateHandlerService {
   private async navigateToBmc(serverProfile, userprofile) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
       .then((value) => {
-        this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-          state: {
-            hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-            showOnlyMandatoryFields: true,
-            profile: value['profile'],
-            isRootPage: true
-          }
-        });
+        const categoriesProfileData = {
+          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+          showOnlyMandatoryFields: true,
+          profile: value['profile'],
+          isRootPage: true
+        };
+        if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
+          !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length) {
+          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+            state: { categoriesProfileData }
+          });
+        } else if (userprofile.profileType === ProfileType.NONE) {
+          categoriesProfileData['status'] = true;
+          categoriesProfileData['isUserLocationAvalable'] = this.commonUtilService.isUserLocationAvalable(serverProfile);
+          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+            state: { categoriesProfileData }
+          });
+        } else {
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+            state: categoriesProfileData
+          });
+        }
       });
   }
 

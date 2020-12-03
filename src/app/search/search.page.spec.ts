@@ -31,8 +31,8 @@ import { FormAndFrameworkUtilService, AuditType, ImpressionSubtype, GroupHandler
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { NavigationService } from '../../services/navigation-handler.service';
-import { CsContentType } from '@project-sunbird/client-services/services/content';
-
+import { ProfileHandler } from '@app/services/profile-handler';
+import { mockSupportedUserTypeConfig } from '../../services/profile-handler.spec.data';
 describe('SearchPage', () => {
     let searchPage: SearchPage;
     const mockAppGlobalService: Partial<AppGlobalService> = {
@@ -120,7 +120,8 @@ describe('SearchPage', () => {
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         init: jest.fn(),
-        checkNewAppVersion: jest.fn(() => Promise.resolve({}))
+        checkNewAppVersion: jest.fn(() => Promise.resolve({})),
+        getFormFields: jest.fn(() => Promise.resolve([]))
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -134,6 +135,11 @@ describe('SearchPage', () => {
         navigateToContent: jest.fn(),
         navigateToTrackableCollection: jest.fn()
     };
+
+    const mockProfileHandler: Partial<ProfileHandler> = {
+        getSupportedUserTypes: jest.fn(() => Promise.resolve(mockSupportedUserTypeConfig))
+    };
+
 
     beforeAll(() => {
         searchPage = new SearchPage(
@@ -164,7 +170,8 @@ describe('SearchPage', () => {
             mockNavCtrl as NavController,
             mockSbProgressLoader as SbProgressLoader,
             mockgroupHandlerService as GroupHandlerService,
-            mockNavigationService as NavigationService
+            mockNavigationService as NavigationService,
+            mockProfileHandler as ProfileHandler
         );
     });
 
@@ -957,6 +964,9 @@ describe('SearchPage', () => {
         it('should goto filter page on showFilter', (done) => {
             // arrange
             searchPage.source = 'source';
+            searchPage.initialFilterCriteria = {
+                    facetFilters: [{ name: 'name' }]
+                };
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [{ name: 'name' }]

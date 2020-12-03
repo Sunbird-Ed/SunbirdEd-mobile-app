@@ -9,16 +9,7 @@
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
         <div class="card-text">
-          <ion-label *ngIf="facet?.name === 'board'" text-capitalize>{{ 'BOARD' | translate }}</ion-label>
-          <ion-label *ngIf="facet?.name === 'subject'" text-capitalize>{{ 'SUBJECT' | translate }}</ion-label>
-          <ion-label *ngIf="facet?.name === 'medium'" text-capitalize>{{ 'MEDIUM' | translate }}</ion-label>
-          <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
-          <ion-label *ngIf="facet?.name === 'primaryCategory'" text-capitalize>{{ 'FRMELEMENTS_LBL_CONTENT_TYPE' | translate }}
-          </ion-label>
-          <ion-label *ngIf="facet?.name === 'publisher'" text-capitalize>{{ 'PUBLISHER' | translate }}
-          </ion-label>
-          <ion-label *ngIf="facet?.name === 'mimeType'" text-capitalize>{{ 'FRMELEMNTS_LBL_MEDIA_TYPE' | translate }}
-          </ion-label>
+          <ion-label text-capitalize>{{ facet?.translatedName }}</ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">

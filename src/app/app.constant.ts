@@ -59,7 +59,8 @@ export class Search {
         'medium',
         'primaryCategory',
         'publisher',
-        'mimeType'
+        'mimeType',
+        'audience'
     ];
 
     public static readonly FACETS_COURSE = [
@@ -477,6 +478,7 @@ export class RouterLinks {
 
     // User Type Selection Routes
     public static readonly USER_TYPE_SELECTION = 'user-type-selection';
+    public static readonly USER_TYPE_SELECTION_LOGGEDIN = 'user-type-selection-loggedin';
 
     // View more activity Routes
     public static readonly VIEW_MORE_ACTIVITY = 'view-more-activity';

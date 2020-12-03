@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding-vertical">
   <form [formGroup]="profileEditForm">
-    <ion-item *ngIf="isBoardAvailable">
+    <ion-item *ngIf="isBoardAvailable || !!supportedProfileAttributes['board']">
       <ion-label position="stacked" class="label-font">{{'BOARD' | translate}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -23,7 +23,7 @@
           &lrm;</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
+    <ion-item *ngIf="!!supportedProfileAttributes['medium']">
       <ion-label position="stacked" class="label-font">{{'MEDIUM' | translate}}<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -36,7 +36,7 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
+    <ion-item *ngIf="!!supportedProfileAttributes['gradeLevel']">
       <ion-label position="stacked" class="label-font">{{'CLASS' | translate}}<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -51,7 +51,7 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item *ngIf="!showOnlyMandatoryFields">
+    <ion-item *ngIf="!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']">
       <ion-label position="stacked" class="label-font">{{'SUBJECTS' | translate}}</ion-label>
       <ion-select formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
         placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"

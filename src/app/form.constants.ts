@@ -15,4 +15,18 @@ export class FormConstants {
         action: 'get',
         component: 'app'
     };
+
+    public static  SUPPORTED_USER_TYPES: FormRequest = {
+        type: 'config',
+        subType: 'userType',
+        action: 'get',
+        component: 'app'
+    };
+
+    public static  SEARCH_FILTER: FormRequest = {
+        type: 'config',
+        subType: 'search',
+        action: 'filter',
+        component: 'app'
+    };
 }

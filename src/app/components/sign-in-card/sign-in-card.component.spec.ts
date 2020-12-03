@@ -121,6 +121,7 @@ describe('SignInCardComponent', () => {
                 }
             };
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
             mockProfileService.createProfile = jest.fn(() => of(mockProfileData));
             mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({}));
@@ -415,6 +416,8 @@ describe('SignInCardComponent', () => {
                 refresh_token: 'SOME_REFRESH_TOKEN',
                 userToken: 'SOME_USER_TOKEN'
             }));
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
             const mockProfileData: Profile = {
                 uid: 'sample_id',
                 handle: 'sample_name',
@@ -433,6 +436,7 @@ describe('SignInCardComponent', () => {
             };
             mockRouter.navigateByUrl = jest.fn();
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
             mockProfileService.createProfile = jest.fn(() => throwError('error'));
             // act
             signInCardComponent.signIn();

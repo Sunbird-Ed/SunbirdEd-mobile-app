@@ -28,21 +28,26 @@ import {
 } from 'sunbird-sdk';
 import {of, throwError} from 'rxjs';
 import {BatchConstants, ContentCard, PageName} from '../app.constant';
-import {LocalCourseService} from '../../services/local-course.service';
 import {SbProgressLoader} from '../../services/sb-progress-loader.service';
 import {CsNetworkError} from '@project-sunbird/client-services/core/http-service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
+import { ProfileHandler } from '../../services/profile-handler';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+    };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('sunbird'))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        getActiveSessionProfile: jest.fn(() => of({ profileType: 'Student'} as any))
+    };
     const mockFrameworkService: Partial<FrameWorkService> = {};
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockEventBusService: Partial<EventsBusService> = {};
@@ -82,6 +87,9 @@ describe('CoursesPage', () => {
         navigateToContent: jest.fn()
     };
     const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
+    const mockProfileHandler: Partial<ProfileHandler> = {
+        getAudience: jest.fn(() => Promise.resolve(['Student']))
+    };
 
     beforeAll(() => {
         coursesPage = new CoursesPage(
@@ -90,6 +98,7 @@ describe('CoursesPage', () => {
             mockCourseService as CourseService,
             mockContentService as ContentService,
             mockFrameworkService as FrameWorkService,
+            mockProfileService as ProfileService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppVersion as AppVersion,
             mockNgZone as NgZone,
@@ -106,7 +115,8 @@ describe('CoursesPage', () => {
             mockHeaderService as AppHeaderService,
             mockSbProgressLoader as SbProgressLoader,
             mockNavService as NavigationService,
-            mockContentAggregatorHandler as ContentAggregatorHandler
+            mockContentAggregatorHandler as ContentAggregatorHandler,
+            mockProfileHandler as ProfileHandler
         );
     });
 

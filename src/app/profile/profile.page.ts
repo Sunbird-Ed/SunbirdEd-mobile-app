@@ -293,12 +293,12 @@ export class ProfilePage implements OnInit {
                           }); */
 
                           // Need to test thoroughly
-                          that.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                            state: {
-                              showOnlyMandatoryFields: true,
-                              profile: frameWorkData['activeProfileData']
-                            }
-                          });
+                          // that.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                          //   state: {
+                          //     showOnlyMandatoryFields: true,
+                          //     profile: frameWorkData['activeProfileData']
+                          //   }
+                          // });
                         }
                       });
                     that.formatRoles();

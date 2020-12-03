@@ -20,9 +20,9 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
-  PageAssembleCriteria, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
+  PageAssembleCriteria, PageName, SharedPreferences, NetworkError, CorrelationData,
   PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus,
-  CourseBatchesRequest, TelemetryObject, SortOrder, FormRequest, ContentAggregatorRequest, ContentSearchCriteria
+  CourseBatchesRequest, TelemetryObject, SortOrder, ContentAggregatorRequest, ContentSearchCriteria, ProfileService, Profile
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -35,6 +35,7 @@ import { CsPrimaryCategory } from '@project-sunbird/client-services/services/con
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-courses',
@@ -82,7 +83,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   courseFilter: any;
   appliedFilter: any;
   filterIcon = './assets/imgs/ic_action_filter.png';
-  profile: any;
+  profile: Profile;
   isVisible = false;
   inProgressSection = 'My Courses';
 
@@ -117,6 +118,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private appVersion: AppVersion,
     private ngZone: NgZone,
@@ -133,7 +135,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private sbProgressLoader: SbProgressLoader,
     private navService: NavigationService,
-    private contentAggregatorHandler: ContentAggregatorHandler
+    private contentAggregatorHandler: ContentAggregatorHandler,
+    private profileHandler: ProfileHandler
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -303,7 +306,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.appliedFilter = undefined;
             this.isFilterApplied = false;
             this.filter = undefined;
-            this.resetCourseFilter = true
+            this.resetCourseFilter = true;
             this.getAggregatorResult();
           }
         }
@@ -483,7 +486,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   resetFilter(data) {
-    for (let i =0; data.length > i; i++) {
+    for (let i = 0; data.length > i; i++) {
       data[i].selected = [];
     }
     return data;
@@ -948,12 +951,15 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   async getAggregatorResult(resetFilter?: boolean) {
     this.spinner(true);
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {},
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         if (this.filter) {
           contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
         }
+        // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
       }
     };

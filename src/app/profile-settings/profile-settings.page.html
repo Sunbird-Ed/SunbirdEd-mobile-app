@@ -55,7 +55,7 @@
 				</div>
 			</div>
 			<div novalidate class="form-position" *ngIf="!showQRScanner">
-				<ion-item appCustomIonSelect (click)="onCategoryCliked('board')">
+				<ion-item *ngIf="!!supportedProfileAttributes['board']" appCustomIonSelect (click)="onCategoryCliked('board')">
 					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}
 					</ion-label>
 					<ion-select multiple="false" #boardSelect class="ion-text-capitalize" formControlName="syllabus"
@@ -67,7 +67,7 @@
 					</ion-select>
 				</ion-item>
 
-				<ion-item appCustomIonSelect (click)="onCategoryCliked('medium')">
+				<ion-item *ngIf="!!supportedProfileAttributes['medium']" appCustomIonSelect (click)="onCategoryCliked('medium')">
 					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}
 					</ion-label>
 					<ion-select formControlName="medium" #mediumSelect multiple="true" class="ion-text-capitalize"
@@ -80,7 +80,7 @@
 					</ion-select>
 				</ion-item>
 
-				<ion-item appCustomIonSelect (click)="onCategoryCliked('grade')">
+				<ion-item *ngIf="!!supportedProfileAttributes['gradeLevel']" appCustomIonSelect (click)="onCategoryCliked('grade')">
 					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}
 					</ion-label>
 					<ion-select multiple="true" #gradeSelect class="ion-text-capitalize" formControlName="grade"

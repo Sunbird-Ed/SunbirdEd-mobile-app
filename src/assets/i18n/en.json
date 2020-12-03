@@ -1051,6 +1051,8 @@
   "USER_TYPE_1": "Teacher",
   "USER_TYPE_2": "Student",
   "USER_TYPE_3": "Other",
+  "USER_TYPE_4": "Admin",
+  "USER_TYPE_5": "Parent",
   "USER_TYPE_SELECT_WARNING": "Choose user type",
   "USER_VERIFICATION": "User Verification",
   "USE_APP_AS": "Use {{%s}} as",
@@ -1102,5 +1104,6 @@
   "FRMELEMNTS_MSG_NAMEONCERT": "This name will be printed on your course certificate. Check if it is correct.",
   "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone.",
-  "DOWNLOAD_CSV": "Download .CSV"
+  "DOWNLOAD_CSV": "Download .CSV",
+  "FRMELEMNTS_LBL_MEANT_FOR": "Meant For"
 }

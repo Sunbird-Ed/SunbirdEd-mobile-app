@@ -16,9 +16,7 @@
       <p class="change-role ion-text-uppercase" (click)="editGuestProfile(true,'change-role')">
         {{'CHANGE_ROLE' | translate }}
       </p>
-      <p *ngIf="profile?.profileType === ProfileType.TEACHER" class="user-type">{{'USER_TYPE_1' | translate }}</p>
-      <p *ngIf="profile?.profileType === ProfileType.STUDENT" class="user-type">{{'USER_TYPE_2' | translate }}</p>
-      <p *ngIf="profile?.profileType === ProfileType.OTHER" class="user-type">{{'USER_TYPE_3' | translate }}</p>
+      <p class="user-type">{{currentUserTypeConfig?.name}}</p>
     </div>
 
     <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
@@ -43,8 +41,8 @@
         </div>
 
         <!-- Board -->
-        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
-        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
+        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item info-title text-align-start ion-text-uppercase">{{'BOARD' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
             <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary">
@@ -56,8 +54,8 @@
         </div>
         <!-- Medium -->
 
-        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
-        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'medium')">
+        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item info-title text-align-start ion-text-uppercase">{{'MEDIUM' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['medium']" class="grid-item text-align-end" (click)="editGuestProfile(false,'medium')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{medium}}</div>
@@ -70,8 +68,8 @@
 
 
         <!-- Class -->
-        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
-        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'class')">
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item info-title text-align-start ion-text-uppercase">{{'CLASS' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['gradeLevel']" class="grid-item text-align-end" (click)="editGuestProfile(false,'class')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
             class="align-content">
@@ -86,8 +84,8 @@
 
 
         <!-- Subject -->
-        <div class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
-        <div class="grid-item text-align-end" (click)="editGuestProfile(false,'subjects')">
+        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item info-title text-align-start ion-text-uppercase">{{'SUBJECTS' | translate}}</div>
+        <div *ngIf="!!supportedProfileAttributes['subject']" class="grid-item text-align-end" (click)="editGuestProfile(false,'subjects')">
           <div
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
             class="align-content">
@@ -129,7 +127,7 @@
     </div>
 
     <div *ngIf="showSignInCard" class="signin-card-bg">
-      <app-sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></app-sign-in-card>
+      <app-sign-in-card [source]="'profile'" (valueChange)="onLoginClick($event)"></app-sign-in-card>
     </div>
   </div>
 </ion-content>
