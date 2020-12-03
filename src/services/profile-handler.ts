@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { PreferenceKey } from '@app/app/app.constant';
 import { FormConstants } from '@app/app/form.constants';
 import { SharedPreferences } from 'sunbird-sdk';
+import { CommonUtilService } from './common-util.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class ProfileHandler {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private commonUtilService: CommonUtilService
     ) { }
 
     public async getSupportedProfileAttributes(showOptionalCategories?: boolean, userType?: string): Promise<{ [key: string]: string }> {
@@ -29,92 +31,12 @@ export class ProfileHandler {
     }
 
     public async getSupportedUserTypes(): Promise<Array<any>> {
-        return Promise.resolve([
-            {
-              "code": "student",
-              "name": "Student",
-              "ambiguousFilters": [
-                "learner",
-                "student"
-              ],
-              "searchFilter": [
-                "Student",
-                "Learner"
-              ],
-              "attributes": {
-                "mandatory": [
-                  "board",
-                  "medium",
-                  "gradeLevel"
-                ],
-                "optional": [
-                  "subject"
-                ]
-              }
-            },
-            {
-              "code": "teacher",
-              "name": "Teacher",
-              "ambiguousFilters": [
-                "teacher",
-                "instructor"
-              ],
-              "searchFilter": [
-                "Teacher",
-                "Instructor"
-              ],
-              "attributes": {
-                "mandatory": [
-                  "board",
-                  "medium",
-                  "gradeLevel"
-                ],
-                "optional": [
-                  "subject"
-                ]
-              }
-            },
-            {
-              "code": "administrator",
-              "name": "Admin",
-              "ambiguousFilters": [],
-              "searchFilter": [
-                "administrator"
-              ],
-              "attributes": {
-                "mandatory": [
-                  "board"
-                ],
-                "optional": []
-              }
-            },
-            {
-              "code": "other",
-              "name": "Other",
-              "ambiguousFilters": [
-                "student, teacher",
-                "instructor and learner",
-                "learner & instructor"
-              ],
-              "searchFilter": [
-                "Student",
-                "Teacher",
-                "Instructor",
-                "Learner"
-              ],
-              "attributes": {
-                "mandatory": [
-                  "board",
-                  "medium",
-                  "gradeLevel"
-                ],
-                "optional": [
-                  "subject"
-                ]
-              }
-            }
-          ]);
-        // return await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES);
+        const supportedUserTypes = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SUPPORTED_USER_TYPES);
+        return supportedUserTypes.map((element) => {
+            element.name = element.translations ?
+                this.commonUtilService.getTranslatedValue(element.translations, element.name) : element.name;
+            return element;
+        });
     }
 
     public async getAudience(userType: string): Promise<string[]> {
