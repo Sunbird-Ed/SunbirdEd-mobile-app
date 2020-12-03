@@ -8,7 +8,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState} from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -25,6 +25,7 @@ import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-frame
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -48,6 +49,7 @@ export class UserTypeSelectionPage {
   public hideBackButton = true;
   ProfileType = ProfileType;
   categoriesProfileData: any;
+  supportedUserTypeConfig: Array<any>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -64,7 +66,8 @@ export class UserTypeSelectionPage {
     public frameworkGuard: HasNotSelectedFrameworkGuard,
     private splashScreenService: SplashScreenService,
     private nativePageTransitions: NativePageTransitions,
-    private tncUpdateHandlerService: TncUpdateHandlerService
+    private tncUpdateHandlerService: TncUpdateHandlerService,
+    private profileHandler: ProfileHandler
   ) {
   }
 
@@ -86,6 +89,7 @@ export class UserTypeSelectionPage {
   }
 
   async ionViewWillEnter() {
+    this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(

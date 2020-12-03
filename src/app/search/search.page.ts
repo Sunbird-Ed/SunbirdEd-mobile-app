@@ -25,7 +25,7 @@ import {
 import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
-  RouterLinks, AudienceFilter, Search, ContentCard,
+  RouterLinks, Search, ContentCard,
   ContentFilterConfig
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -53,6 +53,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { FormConstants } from '../form.constants';
 
 declare const cordova;
 @Component({
@@ -91,7 +92,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   contentData: any;
   childContent: any = undefined;
   loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT');
-  audienceFilter = [];
   eventSubscription?: Subscription;
   displayDialCodeResult: any;
   profile: Profile;
@@ -119,6 +119,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   initialFilterCriteria: any;
   showAddToGroupButtons = false;
   supportedUserTypesConfig: Array<any>;
+  searchFilterConfig: Array<any>;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -183,6 +184,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
   }
 
   ionViewWillEnter() {
@@ -419,7 +421,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.appGlobalService.setOnBoardingCompleted();
     }
 
-    switch(ContentUtil.isTrackable(content)) {
+    switch (ContentUtil.isTrackable(content)) {
       case 1:
         if (!this.guestUser) {
           this.enrolledCourses = await this.getEnrolledCourses(false);
@@ -744,12 +746,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
       this.source, undefined);
-    this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
-      const filterCriteriaData = this.responseData.filterCriteria;
-      filterCriteriaData.facetFilters.forEach(element => {
-        data.forEach(item => {
-          if (element.name === item.code) {
-            element.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
+    const filterCriteriaData = this.responseData.filterCriteria;
+    filterCriteriaData.facetFilters.forEach(element => {
+      this.searchFilterConfig.forEach(item => {
+        if (element.name === item.code) {
+          element.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
+          return;
+        }
+      });
+
+      this.initialFilterCriteria.facetFilters.forEach(newElement => {
+        this.searchFilterConfig.forEach(item => {
+          if (newElement.name === item.code) {
+            newElement.translatedName = this.commonUtilService.getTranslatedValue(item.translations, item.name);
             return;
           }
         });
@@ -828,13 +837,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
 
     (window as any).cordova.plugins.Keyboard.close();
-
+    const facets = this.searchFilterConfig.reduce((acc, filterConfig) => {
+      acc.push(filterConfig.code);
+      return acc;
+    }, []);
     const contentSearchRequest: ContentSearchCriteria = {
       searchType: SearchType.SEARCH,
       query: this.searchKeywords,
       primaryCategories: this.primaryCategories,
-      facets: Search.FACETS,
-      audience: this.audienceFilter,
+      facets: facets ? facets : Search.FACETS,
       mode: 'soft',
       framework: this.currentFrameworkId,
       languageCode: this.selectedLanguageCode,
@@ -874,7 +885,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = {...searchQuery.request.filters, ...profileFilters}
+      searchQuery.request.filters = { ...searchQuery.request.filters, ...profileFilters }
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
@@ -1486,18 +1497,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkUserSession() {
-    const isGuestUser = !this.appGlobalService.isUserLoggedIn();
-
-    if (isGuestUser) {
-      const userType = this.appGlobalService.getGuestUserType();
-      if (userType === ProfileType.STUDENT) {
-        this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
-        this.audienceFilter = AudienceFilter.GUEST_TEACHER;
-      }
-    } else {
-      this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
-    }
     this.profile = this.appGlobalService.getCurrentUser();
   }
 

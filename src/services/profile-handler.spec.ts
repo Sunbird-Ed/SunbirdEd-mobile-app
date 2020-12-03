@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import { mockSupportedUserTypeConfig } from './profile-handler.spec.data';
+import { CommonUtilService } from './common-util.service';
 
 describe('ProfileHandler', () => {
     let profileHandler: ProfileHandler;
@@ -15,12 +16,15 @@ describe('ProfileHandler', () => {
         getFormFields: jest.fn(() => Promise.resolve(mockSupportedUserTypeConfig))
     };
 
-
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getTranslatedValue: jest.fn(() => 'Student')
+    };
 
     beforeAll(() => {
         profileHandler = new ProfileHandler(
             mockSharedPreference as SharedPreferences,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockCommonUtilService as CommonUtilService
         );
     });
 

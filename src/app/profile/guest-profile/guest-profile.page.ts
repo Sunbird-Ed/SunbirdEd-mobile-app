@@ -45,6 +45,7 @@ export class GuestProfilePage implements OnInit {
   isUpgradePopoverShown = false;
   deviceLocation: any;
   public supportedProfileAttributes: { [key: string]: string } = {};
+  public currentUserTypeConfig: any = {};
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -73,7 +74,6 @@ export class GuestProfilePage implements OnInit {
       }
     });
 
-    // TODO: Need to make an get Profile user details API call.
     this.refreshProfileData();
 
     this.events.subscribe('refresh:profile', () => {
@@ -131,6 +131,8 @@ export class GuestProfilePage implements OnInit {
         this.getSyllabusDetails();
         this.refreshSignInCard();
         this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(true, this.profile.profileType);
+        const supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
+        this.currentUserTypeConfig = supportedUserTypes.find(userTypes => userTypes.code ===  this.profile.profileType);
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
         }, 500);

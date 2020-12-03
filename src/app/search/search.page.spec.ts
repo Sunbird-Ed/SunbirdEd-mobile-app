@@ -120,7 +120,8 @@ describe('SearchPage', () => {
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         init: jest.fn(),
-        checkNewAppVersion: jest.fn(() => Promise.resolve({}))
+        checkNewAppVersion: jest.fn(() => Promise.resolve({})),
+        getFormFields: jest.fn(() => Promise.resolve([]))
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
@@ -963,6 +964,9 @@ describe('SearchPage', () => {
         it('should goto filter page on showFilter', (done) => {
             // arrange
             searchPage.source = 'source';
+            searchPage.initialFilterCriteria = {
+                    facetFilters: [{ name: 'name' }]
+                };
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [{ name: 'name' }]
