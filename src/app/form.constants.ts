@@ -22,4 +22,11 @@ export class FormConstants {
         action: 'get',
         component: 'app'
     };
+
+    public static  SEARCH_FILTER: FormRequest = {
+        type: 'config',
+        subType: 'search',
+        action: 'filter',
+        component: 'app'
+    };
 }
