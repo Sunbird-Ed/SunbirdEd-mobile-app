@@ -484,6 +484,7 @@ export class CommonUtilService {
                 const profile = response;
                 const subscribeTopic: Array<string> = [];
                 subscribeTopic.push(profile.board[0]);
+                subscribeTopic.push(profile.profileType.concat('-', profile.board[0]));
                 profile.medium.forEach((m) => {
                     subscribeTopic.push(profile.board[0].concat('-', m));
                     profile.grade.forEach((g) => {
@@ -493,6 +494,7 @@ export class CommonUtilService {
                 });
                 await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
                     subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
                     subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
                 });
                 await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
