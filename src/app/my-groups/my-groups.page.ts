@@ -260,7 +260,10 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       return;
     }
     if (data && data.isLeftButtonClicked) {
-      const corRelationList: Array<CorrelationData> = [{ id: navigationExtras.state.groupId, type: CorReleationDataType.GROUP_ID }];
+      let corRelationList = [];
+      if(navigationExtras) {
+        corRelationList = [{ id: navigationExtras.state.groupId, type: CorReleationDataType.GROUP_ID }];
+      }
       if(!shouldUpdateUserLevelGroupTnc) {
         const request: CsGroupUpdateGroupGuidelinesRequest = {
           userId: this.userId,
@@ -338,7 +341,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         tncType: 'groupsTnc'
       };
       if(managedBy) {
-        acceptTermsAndConditionsRequest.userId = this.userId
+        const userId = (await this.profileService.getActiveProfileSession().toPromise()).uid;
+        acceptTermsAndConditionsRequest.userId = userId
       } 
       const isTCAccepted = await this.profileService.acceptTermsAndConditions(acceptTermsAndConditionsRequest).toPromise();
     } catch (err) {
