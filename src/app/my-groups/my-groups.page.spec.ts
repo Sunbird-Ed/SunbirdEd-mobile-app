@@ -654,5 +654,38 @@ describe('MyGroupsPage', () => {
                 expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalled();
             });
         });
+
+        it('should directly call updateGroupTnc with userid when profile is managed', () => {
+            // arrange
+            myGroupsPage.groupList = [];
+            myGroupsPage.userId = 'sampleuserid';
+            const profile = {
+                allTncAccepted: {
+                    groupsTnc: {
+                        version: '3.4.0'
+                    }
+                },
+                managedBy: 'some_uid'
+            };
+            const systemSetings = {
+                value: JSON.stringify({
+                    latestversion: '3.4.0'
+                })
+            };
+            mockProfileService.getActiveProfileSession = jest.fn(() => of({uid: 'root_uid'} as any))
+            mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true) as any);
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(profile) as any);
+            mockSystemSettingService.getSystemSettings = jest.fn(() => of(systemSetings)) as any;
+            // act
+            myGroupsPage.checkIfUserAcceptedGuidelines();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.acceptTermsAndConditions).toHaveBeenCalledWith(
+                    {
+                        userId: 'root_uid'
+                    }
+                );
+            });
+        });
     });
 });

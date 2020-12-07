@@ -16,10 +16,7 @@
       <p class="change-role ion-text-uppercase" (click)="editGuestProfile(true,'change-role')">
         {{'CHANGE_ROLE' | translate }}
       </p>
-      <p *ngIf="profile?.profileType === ProfileType.TEACHER" class="user-type">{{'USER_TYPE_1' | translate }}</p>
-      <p *ngIf="profile?.profileType === ProfileType.STUDENT" class="user-type">{{'USER_TYPE_2' | translate }}</p>
-      <p *ngIf="profile?.profileType === ProfileType.OTHER" class="user-type">{{'USER_TYPE_3' | translate }}</p>
-      <p *ngIf="profile?.profileType === ProfileType.ADMIN" class="user-type">{{'USER_TYPE_4' | translate }}</p>
+      <p class="user-type">{{currentUserTypeConfig?.name}}</p>
     </div>
 
     <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">

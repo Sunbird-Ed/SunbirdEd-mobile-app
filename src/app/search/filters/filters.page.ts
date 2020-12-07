@@ -214,6 +214,14 @@ export class FiltersPage {
           this.facetsFilter = [];
           this.filterCriteria = undefined;
           this.filterCriteria = responseData.filterCriteria;
+          responseData.filterCriteria.facetFilters.forEach(element => {
+            this.initialFilterCriteria.facetFilters.forEach(item => {
+              if (element.name === item.name) {
+                element['translatedName'] = item.translatedName;
+                return;
+              }
+            });
+          });
           this.init();
         }
       }).catch(async () => {
