@@ -294,6 +294,7 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async submit() {
+    const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -348,7 +349,8 @@ export class SelfDeclaredTeacherEditPage {
       this.location.back();
       if (this.editType === 'add') {
         this.generateTncAudit();
-        this.showAddedSuccessfullPopup();
+        this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+        await this.consentService.getConsent(userDetails, true);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
@@ -369,30 +371,6 @@ export class SelfDeclaredTeacherEditPage {
       persona: tenantPersonaDetails.persona,
       info: declaredDetails
     };
-  }
-
-  async showAddedSuccessfullPopup() {
-    const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    const confirm = await this.popoverCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS'),
-        sbPopoverInfo: this.commonUtilService.translateMessage('FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO'),
-        showCloseBtn: false,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('OK'),
-            btnClass: 'popover-color'
-          },
-        ]
-      },
-      cssClass: 'sb-popover success',
-    });
-    await confirm.present();
-    const data = await confirm.onDidDismiss();
-    if (data && data.data && data.data.canDelete) {
-      await this.consentService.getConsent(userDetails, true);
-    }
   }
 
   generateTelemetryInteract(type, id, value?) {
