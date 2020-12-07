@@ -6,6 +6,9 @@ window.dayjs = require('dayjs')
 
 global.cordova = {
     plugins: {
+        InAppUpdateManager: {
+            checkForImmediateUpdate: () => {}
+        },
         notification: {
             local: {
                 lanchDetails: {},
@@ -107,3 +110,4 @@ global.qrScanner = {
 global.downloadManager = {
     enqueue: () => { }
 }
+
