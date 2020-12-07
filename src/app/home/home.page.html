@@ -5,7 +5,7 @@
   </div>
   <div style="padding: 10px; margin-top: -13px;">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
   </div>
-  <div style="padding: 10px;" (click)="editProfileDetails()">
+  <div style="padding: 10px;" (click)="editProfileDetails()" *ngIf="boards">
     <div class="filter-style">{{grade+ ', ' +medium+ ', '+ boards}}</div>
     <div style="display:inline">
       <ion-icon name="arrow-dropdown"></ion-icon>
@@ -21,7 +21,7 @@
         <sb-course-cards-hlist 
           [title]="(subSection.name || section?.title) | translateJson"
           [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
-          [contentList]="subSection.contents"
+          [contentList]="subSection.contents" [hideProgress]="true"
           [viewMoreButtonText]="'VIEW_ALL' | translate"
           (viewMoreClick)="navigateToViewMoreContentsPage(result)"
           (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">

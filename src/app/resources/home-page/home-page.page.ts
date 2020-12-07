@@ -57,6 +57,7 @@ export class HomePagePage implements OnInit {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
         }
     }
 
