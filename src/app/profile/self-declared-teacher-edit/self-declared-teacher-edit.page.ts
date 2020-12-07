@@ -294,7 +294,6 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async submit() {
-    const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -348,9 +347,11 @@ export class SelfDeclaredTeacherEditPage {
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
       if (this.editType === 'add') {
+        const userDetails = await this.profileService.getActiveSessionProfile(
+          { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         this.generateTncAudit();
         this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
-        await this.consentService.getConsent(userDetails, true);
+        this.consentService.getConsent(userDetails, true);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
