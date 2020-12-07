@@ -238,7 +238,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         cssClass: 'sb-popover',
       });
       await popover.present();
-    } else if (event.edata['type']['type'] === 'DOWNLOAD') {
+    } else if (event.edata['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
         this.downloadPdfService.downloadPdf(this.content).then((res) => {
           this.commonUtilService.showToast('PDF_DOWNLOADED');

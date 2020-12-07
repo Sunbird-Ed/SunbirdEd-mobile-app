@@ -267,9 +267,7 @@ describe('PlayerPage', () => {
             };
             const event = {
                 edata: {
-                    type: {
-                        type: 'DOWNLOAD'
-                    }
+                    type: 'DOWNLOAD'
                 }
             };
 
@@ -291,9 +289,7 @@ describe('PlayerPage', () => {
             };
             const event = {
                 edata: {
-                    type: {
-                        type: 'DOWNLOAD'
-                    }
+                    type: 'DOWNLOAD'
                 }
             };
             mockCommonUtilService.showToast = jest.fn();
@@ -316,9 +312,7 @@ describe('PlayerPage', () => {
             };
             const event = {
                 edata: {
-                    type: {
-                        type: 'DOWNLOAD'
-                    }
+                    type: 'DOWNLOAD'
                 }
             };
             mockCommonUtilService.showToast = jest.fn();
@@ -341,9 +335,7 @@ describe('PlayerPage', () => {
             };
             const event = {
                 edata: {
-                    type: {
-                        type: 'DOWNLOAD'
-                    }
+                    type: 'DOWNLOAD'
                 }
             };
             mockCommonUtilService.showToast = jest.fn();
