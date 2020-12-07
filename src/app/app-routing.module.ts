@@ -91,7 +91,9 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
-
+  { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule' },
+  { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule' },
+  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule' },
 ];
 
 @NgModule({

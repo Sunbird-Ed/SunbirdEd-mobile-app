@@ -540,6 +540,12 @@ export class RouterLinks {
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
+
+    //Manage learn router
+    public static readonly PROGRAM = 'program';
+    public static readonly SURVEY = 'survey';
+    public static readonly PROJECT = 'project';
+
 }
 
 export class ShareItemType {

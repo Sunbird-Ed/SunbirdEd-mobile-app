@@ -7,5 +7,11 @@
     <app-downloads-tab #downloadsTab *ngIf="downloadedContents.length" [downloadedContents]="downloadedContents"
       (deleteContents)="deleteContents($event)" (sortCriteriaChanged)="onSortCriteriaChange($event)">
     </app-downloads-tab>
+
+    <ion-button color="primary" routerLink="/program">Program</ion-button>
+    <ion-button routerLink="/survey">Survey</ion-button>
+    <ion-button routerLink="/project">Project</ion-button>
+    <ion-button>Observation</ion-button>
+
   </div>
 </ion-content>
