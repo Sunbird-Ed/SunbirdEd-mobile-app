@@ -28,6 +28,8 @@ import { filter, map } from 'rxjs/operators';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
+declare const cordova;
+
 @Component({
   selector: 'app-application-header',
   templateUrl: './application-header.component.html',
@@ -57,7 +59,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
   unreadNotificationsCount = 0;
-
+  isUpdateAvailable = false;
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -127,10 +129,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
-    console.log('appTheme', this.appTheme);
+    this.checkForAppUpdate().then();
   }
 
-  setAppVersion(): any {
+  private setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(vName => {
         this.versionName = vName;
@@ -181,7 +183,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  listenNotifications() {
+  private listenNotifications() {
     this.pushNotificationService.notifications$.subscribe((notifications) => {
       this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
@@ -396,4 +398,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.menuCtrl.close();
   }
 
+  private async checkForAppUpdate() {
+      return new Promise((resolve => {
+          cordova.plugins.InAppUpdateManager.isUpdateAvailable((result: string) => {
+              if (result) {
+                  this.isUpdateAvailable = true;
+                  resolve();
+              }
+          }, () => {});
+      }));
+  }
 }
