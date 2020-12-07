@@ -27,9 +27,9 @@ import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.serv
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
-declare const cordova;
 
 declare const cordova;
+
 
 @Component({
   selector: 'app-player',
