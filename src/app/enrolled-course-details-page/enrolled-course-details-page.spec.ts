@@ -8,25 +8,25 @@ import {
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, ID, InteractType
+    LocalCourseService, PageId, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses,
+    mockGetChildDataResponse, mockImportContentResponse,
+    mockEnrolledCourses, mockExpiredBatchEnrolledCourses,
     mockCourseCardData_2, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, BatchConstants } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
@@ -36,6 +36,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from '../../services/consent-service';
+import { CourseBatchStatus, CourseEnrollmentType, SortOrder } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -2150,7 +2151,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId
-              };
+            };
             mockProfileService.getConsent = jest.fn(() => of({
                 consents: [{
                     status: ConsentStatus.ACTIVE,
@@ -2181,7 +2182,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId
-              };
+            };
             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
             enrolledCourseDetailsPage.course = {
                 userConsent: UserConsent.YES
@@ -2224,7 +2225,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 userId: enrolledCourseDetailsPage.courseCardData.userId,
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
-              };
+            };
             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
             enrolledCourseDetailsPage.course = {
                 userConsent: UserConsent.YES
@@ -2316,6 +2317,78 @@ describe('EnrolledCourseDetailsPage', () => {
             setTimeout(() => {
                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should show expired batch popup for logged in user and enrolled into course if already enrolled batch is expired, ', (done) => {
+            // act
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            enrolledCourseDetailsPage.isGuestUser = false;
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
+            enrolledCourseDetailsPage.courseHeirarchy = mockCourseCardData_2;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => { })
+            };
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn((fn) => fn({}))
+            });
+            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'populateCorRelationData').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'handleBackButton').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'getAllBatches').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockCourseService.getEnrolledCourses = jest.fn(() => of(mockExpiredBatchEnrolledCourses));
+            mockAppGlobalService.getEnrolledCourseList = jest.fn(() => mockExpiredBatchEnrolledCourses);
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            const batches = [
+                {
+                    enrollmentEndDate: '01/01/2020',
+                    endDate: '05/01/2020',
+                    identifier: 'do-123',
+                    status: 1
+                },
+                {
+                    enrollmentEndDate: '01/01/2020',
+                    endDate: '05/01/2020',
+                    identifier: 'do-1234',
+                    status: 0
+                }
+            ];
+            mockCourseService.getCourseBatches = jest.fn(() => of(batches));
+            mockZone.run = jest.fn((fn) => fn());
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
+            } as any)));
+
+            // act
+            enrolledCourseDetailsPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockCourseService.getCourseBatches).toBeCalledWith({
+                    filters: {
+                        courseId: enrolledCourseDetailsPage.courseHeirarchy.identifier,
+                        enrollmentType: CourseEnrollmentType.OPEN,
+                        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                    },
+                    sort_by: { createdDate: SortOrder.DESC },
+                    fields: BatchConstants.REQUIRED_FIELDS
+                });
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2457,8 +2530,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
                 objectType: 'Collection',
-              };
-            mockProfileService.updateConsent = jest.fn(() => of({message: 'successfull'}));
+            };
+            mockProfileService.updateConsent = jest.fn(() => of({ message: 'successfull' }));
             mockCommonUtilService.showToast = jest.fn();
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());
@@ -2499,8 +2572,8 @@ describe('EnrolledCourseDetailsPage', () => {
                 consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
                 objectId: enrolledCourseDetailsPage.courseCardData.courseId,
                 objectType: 'Collection',
-              };
-            mockProfileService.updateConsent = jest.fn(() => throwError({code: 'NETWORK_ERROR'}));
+            };
+            mockProfileService.updateConsent = jest.fn(() => throwError({ code: 'NETWORK_ERROR' }));
             mockCommonUtilService.showToast = jest.fn();
             jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
                 return (Promise.resolve());

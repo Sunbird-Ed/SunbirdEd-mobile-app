@@ -1344,7 +1344,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
 
     // check if the course is already enrolled
-    await this.isCourseEnrolled(this.identifier);
+    this.isCourseEnrolled(this.identifier);
     if (this.batchId) {
       this.courseCardData.batchId = this.batchId;
     }
