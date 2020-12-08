@@ -568,7 +568,7 @@ export class ViewMoreActivityComponent implements OnInit {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatches,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });

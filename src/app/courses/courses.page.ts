@@ -844,7 +844,7 @@ export class CoursesPage implements OnInit, OnDestroy {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatched,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });
