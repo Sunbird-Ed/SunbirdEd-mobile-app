@@ -12,7 +12,7 @@
 <ion-content>
     <ion-list no-lines>
         <ion-item-group>
-            <ion-item-divider class="subtitle mytitle">{{ 'VIEW_RETIRED_BATCHES' | translate }}</ion-item-divider>
+            <ion-item-divider *ngIf="retiredBatched" class="subtitle mytitle">{{ 'VIEW_RETIRED_BATCHES' | translate }}</ion-item-divider>
             <ion-item *ngFor="let batches of retiredBatched; let i=index">
                 <div item-start class="width-80">
                     <h5 class="subtitle title">{{ batches.batch.name }}</h5>

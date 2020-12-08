@@ -980,7 +980,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatched,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });
