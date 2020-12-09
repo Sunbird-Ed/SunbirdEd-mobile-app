@@ -1,34 +1,25 @@
-<p>
-  program-listing works!
-</p>
-<p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p><p>
-  program-listing works!
-</p>
+<ion-app>
+<ion-content fullscreen>
+  <!-- <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+    <div class="sb-circle">
+      <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+    </div>
+  </div> -->
+  <ion-list>
+    <ion-item>
+      <div>
+        <ion-label>
+          <div class="title">Programs</div>
+          <div>
+            <div class="desc">Text indicating the below cards are the combination of textbooks
+              from all the classes(for teachers)</div>
+          </div>
+        </ion-label>
+      </div>
+    </ion-item>
+  </ion-list>
+    <ion-list *ngFor = "let data of programListDetails">
+    <app-program-card [programListDetails]="data" (programSelect)="selectedProgram($event)"></app-program-card>
+  </ion-list>
+</ion-content>
+</ion-app>

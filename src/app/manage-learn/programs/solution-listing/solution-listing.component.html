@@ -1,3 +1,30 @@
-<p>
-  solution-listing works!
-</p>
+<ion-app>
+  <!-- <ion-header class="sb-header">
+    <ion-toolbar class="sb-header-toolbar">
+      <ion-buttons class="font-size-20  padding-left-6" (click)="goBack()" slot="start">
+        <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
+      </ion-buttons>
+      <ion-title class="batches-header-text font-size-20">
+        <strong>solutions</strong>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header> -->
+  <ion-content fullscreen>
+    <ion-list>
+      <ion-item>
+        <div>
+          <ion-label>
+            <div class="title">Aadhyaan Assesment SSIP Program</div>
+            <div>
+              <div class="desc">Text indicating the below cards are the combination of textbooks
+                from all the classes(for teachers)</div>
+            </div>
+          </ion-label>
+        </div>
+      </ion-item>
+    </ion-list>
+      <ion-list *ngFor = "let data of programDetails">
+      <app-program-card [programListDetails]="data" (programSelect)="selectedProgram($event)"></app-program-card>
+    </ion-list>
+  </ion-content>
+  </ion-app>
