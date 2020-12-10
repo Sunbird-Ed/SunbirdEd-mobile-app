@@ -2382,7 +2382,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     filters: {
                         courseId: enrolledCourseDetailsPage.courseHeirarchy.identifier,
                         enrollmentType: CourseEnrollmentType.OPEN,
-                        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                        status: [CourseBatchStatus.IN_PROGRESS]
                     },
                     sort_by: { createdDate: SortOrder.DESC },
                     fields: BatchConstants.REQUIRED_FIELDS
