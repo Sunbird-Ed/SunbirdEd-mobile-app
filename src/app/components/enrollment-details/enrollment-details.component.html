@@ -26,7 +26,8 @@
             </ion-item>
 
             <ion-item-divider *ngIf="ongoingBatches && ongoingBatches.length" class="subtitle mytitle">
-                {{ 'VIEW_ONGOING_BATCHES' | translate }}</ion-item-divider>
+                {{ 'VIEW_OPEN_BATCHES' | translate }}</ion-item-divider>
+            <div class="p-16 card-section-danger">{{ 'FRMELEMNTS_LBL_OPEN_BATCH_NOT_RECOMMENDED' | translate }}</div>
             <ion-item *ngFor="let batch of ongoingBatches; let i=index">
                 <div item-start class="width-80">
                     <h5 class="subtitle title">{{ batch.name }}</h5>
