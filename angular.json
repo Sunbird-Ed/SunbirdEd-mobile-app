@@ -71,8 +71,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.prod.ts"
                 }
               ],
               "optimization": true,
@@ -95,8 +95,16 @@
             "hmr": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.hmr.ts"
+                }
+              ]
+            },
+            "debug": {
+              "fileReplacements": [
+                {
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.debug.ts"
                 }
               ]
             },

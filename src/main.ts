@@ -1,20 +1,20 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { configuration } from './configuration/configuration';
 import { hmrBootstrap } from './hmr';
 import 'reflect-metadata';
 import * as dayjs from 'dayjs';
 
 window.dayjs = dayjs;
 
-if (environment.production) {
+if (configuration.production) {
   enableProdMode();
 }
 
 const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
 
-if (environment.hmr) {
+if (configuration.hmr) {
   if (module['hot']) {
     hmrBootstrap(module, bootstrap);
   } else {

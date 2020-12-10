@@ -75,6 +75,7 @@ import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import {configuration} from '@app/configuration/configuration';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -282,7 +283,7 @@ export const sunbirdSdkFactory =
       }));
 
       await SunbirdSdk.instance.init({
-        platform: 'cordova',
+        platform: configuration.debug ? 'web' : 'cordova',
         fileConfig: {
         },
         apiConfig: {
