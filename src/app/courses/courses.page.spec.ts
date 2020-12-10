@@ -817,7 +817,7 @@ describe('CoursesPage', () => {
                 filters: {
                     courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
                     enrollmentType: CourseEnrollmentType.OPEN,
-                    status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                    status: [CourseBatchStatus.IN_PROGRESS]
                 },
                 sort_by: {
                     createdDate: 'desc',
@@ -867,7 +867,7 @@ describe('CoursesPage', () => {
                 filters: {
                     courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
                     enrollmentType: CourseEnrollmentType.OPEN,
-                    status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                    status: [CourseBatchStatus.IN_PROGRESS]
                 },
                 sort_by: {
                     createdDate: 'desc',
