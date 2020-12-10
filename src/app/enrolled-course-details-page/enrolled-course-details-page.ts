@@ -762,7 +762,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
 
     if (Boolean(data.isAvailableLocally)) {
-      this.setChildContents();
+      await this.setChildContents();
     } else {
       this.showLoading = true;
       // this.headerService.hideHeader();
