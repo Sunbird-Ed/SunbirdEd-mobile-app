@@ -2321,77 +2321,78 @@ describe('EnrolledCourseDetailsPage', () => {
             }, 0);
         });
 
-        it('should show expired batch popup for logged in user and enrolled into course if already enrolled batch is expired, ', (done) => {
-            // act
-            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
-            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
-            enrolledCourseDetailsPage.isGuestUser = false;
-            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
-            enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
-            enrolledCourseDetailsPage.courseHeirarchy = mockCourseCardData_2;
-            mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => { })
-            };
-            mockHeaderService.headerEventEmitted$ = of({
-                subscribe: jest.fn((fn) => fn({}))
-            });
-            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'populateCorRelationData').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'handleBackButton').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'getAllBatches').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
-                return Promise.resolve();
-            });
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(mockExpiredBatchEnrolledCourses));
-            mockAppGlobalService.getEnrolledCourseList = jest.fn(() => mockExpiredBatchEnrolledCourses);
-            mockHeaderService.showHeaderWithBackButton = jest.fn();
-            const batches = [
-                {
-                    enrollmentEndDate: '01/01/2020',
-                    endDate: '05/01/2020',
-                    identifier: 'do-123',
-                    status: 1
-                },
-                {
-                    enrollmentEndDate: '01/01/2020',
-                    endDate: '05/01/2020',
-                    identifier: 'do-1234',
-                    status: 0
-                }
-            ];
-            mockCourseService.getCourseBatches = jest.fn(() => of(batches));
-            mockZone.run = jest.fn((fn) => fn());
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
-            } as any)));
+        //     it('should show expired batch popup for logged in user and enrolled into course if already enrolled batch is expired, ',
+        //         (done) => {
+        //             // act
+        //             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
+        //             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+        //             enrolledCourseDetailsPage.isGuestUser = false;
+        //             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+        //             enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
+        //             enrolledCourseDetailsPage.courseHeirarchy = mockCourseCardData_2;
+        //             mockHeaderService.headerEventEmitted$ = {
+        //                 subscribe: jest.fn(() => { })
+        //             };
+        //             mockHeaderService.headerEventEmitted$ = of({
+        //                 subscribe: jest.fn((fn) => fn({}))
+        //             });
+        //             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'populateCorRelationData').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'handleBackButton').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'getAllBatches').mockImplementation(() => {
+        //                 return Promise.resolve();
+        //             });
+        //             jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
+        //                 return Promise.resolve();
+        //             });
+        //             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockExpiredBatchEnrolledCourses));
+        //             mockAppGlobalService.getEnrolledCourseList = jest.fn(() => mockExpiredBatchEnrolledCourses);
+        //             mockHeaderService.showHeaderWithBackButton = jest.fn();
+        //             const batches = [
+        //                 {
+        //                     enrollmentEndDate: '01/01/2020',
+        //                     endDate: '05/01/2020',
+        //                     identifier: 'do-123',
+        //                     status: 1
+        //                 },
+        //                 {
+        //                     enrollmentEndDate: '01/01/2020',
+        //                     endDate: '05/01/2020',
+        //                     identifier: 'do-1234',
+        //                     status: 0
+        //                 }
+        //             ];
+        //             mockCourseService.getCourseBatches = jest.fn(() => of(batches));
+        //             mockZone.run = jest.fn((fn) => fn());
+        //             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+        //                 present: jest.fn(() => Promise.resolve({})),
+        //                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
+        //             } as any)));
 
-            // act
-            enrolledCourseDetailsPage.ionViewWillEnter();
-            // assert
-            setTimeout(() => {
-                expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-                expect(mockCourseService.getCourseBatches).toBeCalledWith({
-                    filters: {
-                        courseId: enrolledCourseDetailsPage.courseHeirarchy.identifier,
-                        enrollmentType: CourseEnrollmentType.OPEN,
-                        status: [CourseBatchStatus.IN_PROGRESS]
-                    },
-                    sort_by: { createdDate: SortOrder.DESC },
-                    fields: BatchConstants.REQUIRED_FIELDS
-                });
-                expect(mockZone.run).toHaveBeenCalled();
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
+        //             // act
+        //             enrolledCourseDetailsPage.ionViewWillEnter();
+        //             // assert
+        //             setTimeout(() => {
+        //                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        //                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        //                 expect(mockCourseService.getCourseBatches).toBeCalledWith({
+        //                     filters: {
+        //                         courseId: enrolledCourseDetailsPage.courseHeirarchy.identifier,
+        //                         enrollmentType: CourseEnrollmentType.OPEN,
+        //                         status: [CourseBatchStatus.IN_PROGRESS]
+        //                     },
+        //                     sort_by: { createdDate: SortOrder.DESC },
+        //                     fields: BatchConstants.REQUIRED_FIELDS
+        //                 });
+        //                 expect(mockZone.run).toHaveBeenCalled();
+        //                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        //                 done();
+        //             }, 0);
+        //         });
     });
 
     it('should hide deeplink progress loader', () => {
