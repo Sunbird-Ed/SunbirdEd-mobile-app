@@ -686,6 +686,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         /* setting child content here */
         this.showSheenAnimation = false;
         this.courseHeirarchy = content;
+        this.checkRetiredOpenBatch(this.courseHeirarchy);
         this.toggleGroup(0, content.children[0]);
         this.getContentState(true);
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
@@ -757,7 +758,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     /* getting batch details for the course
        Check Point: should be called on the condition of already enrolled courses only */
-    this.getBatchDetails();
+    await this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
 
 
@@ -1195,6 +1196,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
               }
             }, 1000);
             this.courseHeirarchy = data;
+            this.checkRetiredOpenBatch(this.courseHeirarchy);
             this.getContentState(true);
           }
           if (this.courseCardData.batchId) {
@@ -1377,10 +1379,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.handleBackButton();
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
-    }
-
-    if (this.isAlreadyEnrolled && !this.skipCheckRetiredOpenBatch) {
-      await this.checkRetiredOpenBatch(this.courseHeirarchy);
     }
   }
 
@@ -2168,6 +2166,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    if (!this.isAlreadyEnrolled || this.skipCheckRetiredOpenBatch) {
+      return;
+    }
     this.skipCheckRetiredOpenBatch = true;
     // this.showLoader = false;
     // this.loader = await this.commonUtilService.getLoader();
