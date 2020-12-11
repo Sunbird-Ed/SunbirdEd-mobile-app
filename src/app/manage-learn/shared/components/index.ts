@@ -1,1 +1,1 @@
-export * from './program-card/program-card.component';
+export * from './common-list-card/common-list-card.component';

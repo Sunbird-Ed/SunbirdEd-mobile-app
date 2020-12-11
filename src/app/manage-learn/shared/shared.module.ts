@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { ProgramCardComponent } from './components';
+import { CommonListCardComponent } from './components';
+
 
 
 @NgModule({
-  declarations: [ProgramCardComponent],
+  declarations: [CommonListCardComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +16,6 @@ import { ProgramCardComponent } from './components';
     ReactiveFormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  exports: [ ProgramCardComponent ]
+  exports: [CommonListCardComponent ]
 })
 export class SharedModule { }

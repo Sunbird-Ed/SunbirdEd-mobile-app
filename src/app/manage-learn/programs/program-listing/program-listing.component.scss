@@ -1,4 +1,21 @@
 .desc {
     color: #999999;
-    white-space: normal
+    white-space: normal;
+    padding: 5px 0px 20px 0px;
+}
+
+.title{
+    font-size: 16px;
+    font-weight: bold;
+    // color: $black;
+    color: black;
+}
+
+.list-md {
+    padding-top: 0px !important; 
+    padding-bottom: 0px !important;
+}
+
+.button-native {
+    background: #DFE7F1 !important;
 }

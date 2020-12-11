@@ -9,22 +9,22 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
-  programDetails = [
+  result = [
     {
-      title: "Aadhyaan Assesment SSIP Program",
-      Description: "Course Completed",
+      name: "Aadhyaan Assesment SSIP Program",
+      description: "Course Completed",
       image: "",
       id: '111'
     },
     {
-      title: "Improvement project demo Program",
-      Description: "Assesment Completed",
+      name: "Improvement project demo Program",
+      description: "Assesment Completed",
       image: "",
       id: '222'
     },
     {
-      title: "Africa Test  Program",
-      Description: "Assesment",
+      name: "Africa Test  Program",
+      description: "Assesment",
       image: "",
       id: '333'
     }
@@ -39,7 +39,7 @@ export class SolutionListingComponent implements OnInit {
 
   ngOnInit() {}
 
-  selectedProgram(data){
+  selectedSolution(data){
 
   }
 
