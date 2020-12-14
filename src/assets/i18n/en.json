@@ -1108,5 +1108,7 @@
   "BROWES_RELEVANT_CONTENT": "Browse {{app_name}} Library to find relevant content based on your preferences (Board, Medium, Class)",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
   "SUBJECT_DESCRIPTION": "Text is indicating the below cards combination oof textbooks from all classes(for teachers)",
-  "WELCOME": "Welcome"
+  "WELCOME": "Welcome",
+  "DISCOVER_BNAV": "Search",
+  "HOME_BNAV": "Home"
 }

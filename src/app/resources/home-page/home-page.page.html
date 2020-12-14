@@ -4,12 +4,10 @@
     <p>{{'SUBJECT_DESCRIPTION' | translate}}</p>
   </div>
 
-  <div style="height: 9%; margin-top: -4vh;">
-    <br>
+  <div class="px-8">
     <sb-pills-grid *ngIf="sectionGroup?.sections" [pillShape]="'default'" [pillsViewType]="'scroll'" [pillBorder]="'rounded'">
       <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)" *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
     </sb-pills-grid>
-    <br>
   </div>
 
   <!-- <div class="m-n" *ngIf="showSheenAnimation">

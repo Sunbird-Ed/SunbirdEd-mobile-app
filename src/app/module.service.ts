@@ -1,19 +1,42 @@
 import { ContainerService } from 'services';
 import { TabOptions } from '../services/container.services';
 
-const COURSE_TAB = {
-    root: 'courses',
-    icon: 'courses',
-    label: 'COURSES_BNAV',
-    index: 2
+// const LIBRARY_TAB = {
+//     root: 'resources',
+//     icon: 'resources',
+//     label: 'LIBRARY_BNAV',
+//     index: 1,
+//     isSelected: true
+// };
+
+const HOME_TAB = {
+    root: 'home',
+    icon: 'resources',
+    label: 'HOME_BNAV',
+    index: 1,
+    isSelected: true
 };
 
-const COURSE_TAB_DISABLED = {
-    root: '',
+// const COURSE_TAB = {
+//     root: 'courses',
+//     icon: 'courses',
+//     label: 'COURSES_BNAV',
+//     index: 2
+// };
+
+// const COURSE_TAB_DISABLED = {
+//     root: '',
+//     icon: 'courses',
+//     label: 'COURSES_BNAV',
+//     index: 2,
+//     disabled: true
+// };
+
+const DISCOVER_TAB = {
+    root: 'discover',
     icon: 'courses',
-    label: 'COURSES_BNAV',
-    index: 2,
-    disabled: true
+    label: 'DISCOVER_BNAV',
+    index: 2
 };
 
 const SCANNER_TAB = {
@@ -21,39 +44,6 @@ const SCANNER_TAB = {
     icon: 'qrscanner',
     label: '',
     index: 3
-};
-const LIBRARY_TAB = {
-    root: 'resources',
-    icon: 'resources',
-    label: 'LIBRARY_BNAV',
-    index: 1,
-    isSelected: true
-};
-const HOME_TAB = {
-    root: 'home',
-    icon: 'resources',
-    label: 'LIBRARY_BNAV',
-    index: 1,
-    isSelected: true
-};
-const GUEST_PROFILE_TAB = {
-    root: 'guest-profile',
-    icon: 'profile',
-    label: 'PROFILE_BNAV',
-    index: 5
-};
-const GUEST_PROFILE_SWITCH_TAB = {
-    root: 'guest-profile',
-    icon: 'profile',
-    label: 'PROFILE_BNAV',
-    index: 5,
-    isSelected: true
-};
-const PROFILE_TAB = {
-    root: 'profile',
-    icon: 'profile',
-    label: 'PROFILE_BNAV',
-    index: 5
 };
 
 const DOWNLOADS_TAB = {
@@ -63,9 +53,31 @@ const DOWNLOADS_TAB = {
     index: 4
 };
 
+const GUEST_PROFILE_TAB = {
+    root: 'guest-profile',
+    icon: 'profile',
+    label: 'PROFILE_BNAV',
+    index: 5
+};
+
+const GUEST_PROFILE_SWITCH_TAB = {
+    root: 'guest-profile',
+    icon: 'profile',
+    label: 'PROFILE_BNAV',
+    index: 5,
+    isSelected: true
+};
+
+const PROFILE_TAB = {
+    root: 'profile',
+    icon: 'profile',
+    label: 'PROFILE_BNAV',
+    index: 5
+};
+
 export const GUEST_TEACHER_TABS = [
     HOME_TAB,
-    COURSE_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
@@ -73,7 +85,7 @@ export const GUEST_TEACHER_TABS = [
 
 export const LOGIN_TEACHER_TABS = [
     HOME_TAB,
-    COURSE_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB
@@ -81,7 +93,7 @@ export const LOGIN_TEACHER_TABS = [
 
 export const GUEST_STUDENT_TABS = [
     HOME_TAB,
-    COURSE_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
@@ -97,7 +109,7 @@ export const GUEST_STUDENT_TABS = [
 
 export const GUEST_TEACHER_SWITCH_TABS = [
     HOME_TAB,
-    COURSE_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_SWITCH_TAB
@@ -105,7 +117,7 @@ export const GUEST_TEACHER_SWITCH_TABS = [
 
 export const GUEST_STUDENT_SWITCH_TABS = [
     HOME_TAB,
-    COURSE_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_SWITCH_TAB

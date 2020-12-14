@@ -33,14 +33,23 @@ const routes: Routes = [
       //   ]
       // },
       {
-        path: RouterLinks.COURSES,
+        path: RouterLinks.DISCOVER,
         children: [
           {
             path: '',
-            loadChildren: '../courses/courses.module#CoursesPageModule'
+            loadChildren: '../discover/discover.module#DiscoverPageModule'
           }
         ]
       },
+      // {
+      //   path: RouterLinks.COURSES,
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: '../courses/courses.module#CoursesPageModule'
+      //     }
+      //   ]
+      // },
       {
         path: RouterLinks.GUEST_PROFILE,
         children: [

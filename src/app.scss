@@ -1534,13 +1534,16 @@ app-collection-detail-etb{
   }
 }
 
+sb-pills-grid{
+  label{
+    margin-bottom: 0 !important;
+  }
+}
+
 app-home{
   sb-pills-grid{
     .sb-label-grid{
       @include padding(null, 8px, null, 8px !important);
-      label{
-        margin-bottom: 0 !important;
-      }
     }
     .sb-pills-grid{
       .item{

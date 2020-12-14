@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes, PillShape, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria, CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '../app.constant';
@@ -32,6 +32,10 @@ export class HomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
+
+  pillsViewType = PillsViewType;
+  selectMode = SelectMode;
+  pillShape = PillShape;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
