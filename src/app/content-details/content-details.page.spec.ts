@@ -1306,7 +1306,7 @@ describe('ContentDetailsPage', () => {
                         return of(context);
                 }
             });
-            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(100));
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100}));
             // act
             contentDetailsPage.getContentState();
             // assert
