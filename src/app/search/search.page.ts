@@ -184,13 +184,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
-    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.hideHeader();
     this.handleDeviceBackButton();
-
+    this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if (this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) {
       this.isFirstLaunch = false;
       this.handleSearch(true);
