@@ -1533,3 +1533,8 @@ app-collection-detail-etb{
     }
   }
 }
+
+.disabled-toc-card {
+  background-color: $gray-100 !important;
+  border-color: $gray-100 !important;
+}

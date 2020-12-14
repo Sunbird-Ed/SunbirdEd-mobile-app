@@ -599,3 +599,7 @@ export class AppThemes {
 export class StatusBarTheme {
     public static readonly SET_DEFAULT = '#BB000000';
 }
+
+export class AssessmentConstant {
+    public static readonly MAX_ATTEMPTS = 3;
+}

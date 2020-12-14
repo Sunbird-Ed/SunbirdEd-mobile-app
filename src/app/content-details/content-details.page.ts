@@ -43,7 +43,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, PreferenceKey
+  ShareItemType, PreferenceKey, AssessmentConstant
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
@@ -176,6 +176,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
+  isLastAttempt = false;
+  isContentDisabled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -949,6 +951,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   handleContentPlay(isStreaming) {
+    if (this.isContentDisabled) {
+      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      return;
+    }
+    if (this.isLastAttempt) {
+      this.commonUtilService.showToast('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+      this.isLastAttempt = false;
+    }
     if (this.limitedShareContentFlag) {
       if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
         return;
@@ -1367,13 +1377,28 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
       this.courseContext = JSON.parse(this.courseContext);
       if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
-        const progress = await this.localCourseService.getCourseProgress(this.courseContext);
+        const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
+        const progress = courseDetails.progress;
+        const contentStatusData = courseDetails.contentStatusData || {};
         if (progress !== 100) {
           this.appGlobalService.showCourseCompletePopup = true;
         }
         if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
           this.appGlobalService.showCourseCompletePopup = false;
           this.showCourseCompletePopup = true;
+        }
+
+        if (contentStatusData.contentList) {
+          contentStatusData.contentList.forEach((item) => {
+            if (item.contentId === this.identifier && item.bestScore) {
+              if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
+                this.isLastAttempt = true;
+              }
+              if (AssessmentConstant.MAX_ATTEMPTS <= item.score.length) {
+                this.isContentDisabled = true;
+              }
+            }
+          });
         }
       }
       resolve();

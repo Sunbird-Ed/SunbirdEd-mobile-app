@@ -11,7 +11,7 @@ import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
-  RouterLinks, PreferenceKey, EventTopics,
+  RouterLinks, PreferenceKey, EventTopics, AssessmentConstant,
   MimeType, ShareItemType, BatchConstants, ProfileConstants
 } from '@app/app/app.constant';
 import {
@@ -100,6 +100,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   public objRollup: Rollup;
   private corRelationList: any;
   loader?: HTMLIonLoadingElement;
+  maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -286,7 +287,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         .then(async (res: ContentStateResponse) => {
           this.zone.run(() => {
             this.contentStatusData = res;
-            console.log('this.contentStatusData', this.contentStatusData);
             this.checkChapterCompletion();
           });
           // await loader.dismiss();
@@ -538,6 +538,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   openContentDetails(event) {
+    if (event && event.event && event.event.isDisabled) {
+      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      return;
+    }
+    if (event.event.isLastAttempt) {
+      this.commonUtilService.showToast('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+    }
     if ((event.event && Object.keys(event.event).length !== 0) || event.isFromDeeplink) {
       if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
