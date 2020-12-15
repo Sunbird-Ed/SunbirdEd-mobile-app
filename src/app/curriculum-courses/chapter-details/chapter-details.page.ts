@@ -544,11 +544,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   openContentDetails(event) {
-    if (event && event.event && event.event.isDisabled) {
+    if (!event) {
+      return;
+    }
+    if (event.event && event.event.isDisabled) {
       this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
       return;
     }
-    if (event.event.isLastAttempt) {
+    if (event.event && event.event.isLastAttempt) {
       this.commonUtilService.showToast('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
     }
     if ((event.event && Object.keys(event.event).length !== 0) || event.isFromDeeplink) {
