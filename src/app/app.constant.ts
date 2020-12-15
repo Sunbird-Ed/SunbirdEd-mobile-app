@@ -549,8 +549,8 @@ export class RouterLinks {
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
 
-    // home page
-    public static readonly HOME_PAGE = 'home-page';
+    // category-list page
+    public static readonly CATEGORY_LIST = 'category-list';
 }
 
 export class ShareItemType {

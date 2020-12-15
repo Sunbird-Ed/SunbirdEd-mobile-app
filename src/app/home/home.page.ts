@@ -148,7 +148,7 @@ export class HomePage implements OnInit, OnDestroy {
     const params = {
       formField: event.data[0].value
     };
-    this.router.navigate([RouterLinks.HOME_PAGE], { state: params });
+    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
   navigateToViewMoreContentsPage(section, pageName) {
