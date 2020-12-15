@@ -351,7 +351,9 @@ export class SelfDeclaredTeacherEditPage {
           { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         this.generateTncAudit();
         this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
-        this.consentService.getConsent(userDetails, true);
+        setTimeout(() => {
+          this.consentService.getConsent(userDetails, true);
+        }, 1000);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
