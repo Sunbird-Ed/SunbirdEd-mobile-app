@@ -101,6 +101,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   private corRelationList: any;
   loader?: HTMLIonLoadingElement;
   maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
+  isCertifiedCourse: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -305,6 +306,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               return;
             }
             this.batchDetails = data;
+            if (data.cert_templates && Object.keys(data.cert_templates).length) {
+              this.isCertifiedCourse = true;
+            } else {
+              this.isCertifiedCourse = false;
+            }
             if (this.batchDetails.status === 2) {
               this.batchExp = true;
             } else if (this.batchDetails.status === 0) {
@@ -443,7 +449,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile)) {
+    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
       this.startContent();
     } else {
       this.showProfileNameConfirmationPopup();

@@ -1108,5 +1108,6 @@
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
   "ASSESSMENT_LAST_ATTEMPT_MESSAGE": "This will be your last attempt.",
   "ASSESSMENT_ATTEMPT_EXCEED_MESSAGE": "You have exceeded the number of attempts to consume this content.",
-  "BEST_SCORE": "Best score"
+  "BEST_SCORE": "Best score",
+  "APP_UPDATE": "Update {{%s}} app"
 }
