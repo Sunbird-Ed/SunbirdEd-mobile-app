@@ -11,7 +11,7 @@ import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
-  RouterLinks, PreferenceKey, EventTopics,
+  RouterLinks, PreferenceKey, EventTopics, AssessmentConstant,
   MimeType, ShareItemType, BatchConstants, ProfileConstants
 } from '@app/app/app.constant';
 import {
@@ -100,6 +100,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   public objRollup: Rollup;
   private corRelationList: any;
   loader?: HTMLIonLoadingElement;
+  maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
+  isCertifiedCourse: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -286,7 +288,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         .then(async (res: ContentStateResponse) => {
           this.zone.run(() => {
             this.contentStatusData = res;
-            console.log('this.contentStatusData', this.contentStatusData);
             this.checkChapterCompletion();
           });
           // await loader.dismiss();
@@ -305,6 +306,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
               return;
             }
             this.batchDetails = data;
+            if (data.cert_templates && Object.keys(data.cert_templates).length) {
+              this.isCertifiedCourse = true;
+            } else {
+              this.isCertifiedCourse = false;
+            }
             if (this.batchDetails.status === 2) {
               this.batchExp = true;
             } else if (this.batchDetails.status === 0) {
@@ -443,7 +449,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile)) {
+    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
       this.startContent();
     } else {
       this.showProfileNameConfirmationPopup();
@@ -538,6 +544,16 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   openContentDetails(event) {
+    if (!event) {
+      return;
+    }
+    if (event.event && event.event.isDisabled) {
+      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      return;
+    }
+    if (event.event && event.event.isLastAttempt) {
+      this.commonUtilService.showToast('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+    }
     if ((event.event && Object.keys(event.event).length !== 0) || event.isFromDeeplink) {
       if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
