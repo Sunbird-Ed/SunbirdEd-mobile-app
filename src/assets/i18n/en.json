@@ -1105,5 +1105,7 @@
   "FRMELEMNTS_MSG_EDITCERTNAME": "You may edit it from your profile page.",
   "FRMELEMNTS_MSG_TICKET_SUBMISSION_SUCCESS": "We appreciate your feedback. We can't respond to every report, but your submissions do help us make {{app_name}} better for everyone.",
   "DOWNLOAD_CSV": "Download .CSV",
-  "FRMELEMNTS_LBL_MEANT_FOR": "Meant For"
+  "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
+  "COPY_TRACE_ID": "Copy trace id",
+  "COPY_TRACE_ID_DESC": "Copy trace id for support"
 }
