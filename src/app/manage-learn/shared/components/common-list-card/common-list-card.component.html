@@ -1,0 +1,21 @@
+
+<ion-card (click)="programDetails(id)" class="card-container">
+  <div>
+    <div class="img-container image">
+    </div>
+    <div>
+      <!-- <ion-avatar slot="start">
+        <div class="img-container image">
+          <img alt="content-logo"
+            [src]="defaultImg" />
+        </div>
+      </ion-avatar> -->
+      <ion-card-header>
+          <div class="title" text-capitalize style="margin-top: 5px;">{{title | titlecase}}</div>
+          <div class="info grade_ellipsis" style="margin-top: 10px;">
+            <span class="class">{{subTitle | titlecase}}</span>
+          </div>
+      </ion-card-header>
+    </div>
+  </div>
+</ion-card>
