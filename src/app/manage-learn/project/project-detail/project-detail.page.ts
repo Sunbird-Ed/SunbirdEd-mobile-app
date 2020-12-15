@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController, AlertController, ModalController, Platform } from '@ionic/angular';
+import { PopoverController, AlertController, Platform } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { Location } from '@angular/common';
-import { DbService } from '@project-sunbird/sunbird-sdk';
-import { statuses } from '@app/app/statuses.constant';
-import { UtilsService } from '@app/services/utils.service';
+import { statuses } from '@app/app/manage-learn/shared/constants/statuses.constant';
+import { UtilsService } from '@app/app/manage-learn/shared/services/utils.service';
 import * as moment from "moment";
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: "app-project-detail",
@@ -49,6 +48,11 @@ export class ProjectDetailPage implements OnInit {
     },
   ];
   sortedTasks;
+  // header
+  private _headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false
+  };
 
   isSynced: boolean;
   locationChangeTriggered: boolean = false;
@@ -56,6 +60,7 @@ export class ProjectDetailPage implements OnInit {
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
+    private headerService: AppHeaderService,
     // private db: DbService,
     // private loader: LoaderService,
     private router: Router,
@@ -105,8 +110,15 @@ export class ProjectDetailPage implements OnInit {
 
   ngOnInit() { }
   ionViewDidEnter() {
+    this.initApp();
     this.getProject();
     this.getDateFilters();
+  }
+
+  initApp(){
+    this._headerConfig = this.headerService.getDefaultPageConfig();
+    this._headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this._headerConfig);
   }
   getDateFilters() {
     let currentDate = moment();

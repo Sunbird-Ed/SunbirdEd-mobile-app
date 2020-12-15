@@ -8,7 +8,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectDetailPage } from './project-detail/project-detail.page';
-import { UtilsService } from '@app/services/utils.service';
 
 const routes: Routes = [
   {
@@ -27,7 +26,6 @@ const routes: Routes = [
     SharedModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
-  ],
-  providers: [UtilsService]
+  ]
 })
 export class ProjectModule { }
