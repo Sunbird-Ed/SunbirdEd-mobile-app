@@ -116,6 +116,7 @@ describe('LocalCourseService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
+      mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
