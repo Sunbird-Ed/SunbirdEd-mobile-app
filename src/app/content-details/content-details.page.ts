@@ -176,8 +176,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
-  isLastAttempt = false;
-  isContentDisabled = false;
+  private isLastAttempt = false;
+  private isContentDisabled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1391,6 +1391,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         if (contentStatusData.contentList) {
           contentStatusData.contentList.forEach((item) => {
             if (item.contentId === this.identifier && item.bestScore) {
+              console.log('AssessmentConstant.MAX_ATTEMPTS', AssessmentConstant.MAX_ATTEMPTS)
+              console.log(item.score && item.score.length)
               if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
                 this.isLastAttempt = true;
               }
