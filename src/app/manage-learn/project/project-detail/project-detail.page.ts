@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
-import { statuses } from '@app/app/manage-learn/shared/constants/statuses.constant';
-import { UtilsService } from '@app/app/manage-learn/shared/services/utils.service';
+import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService } from '@app/services';
 
