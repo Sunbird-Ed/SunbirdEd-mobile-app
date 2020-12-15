@@ -51,7 +51,8 @@ export class ProjectDetailPage implements OnInit {
   // header
   private _headerConfig = {
     showHeader: true,
-    showBurgerMenu: false
+    showBurgerMenu: false,
+    actionButtons: [] as string[]
   };
 
   isSynced: boolean;
@@ -117,6 +118,7 @@ export class ProjectDetailPage implements OnInit {
 
   initApp(){
     this._headerConfig = this.headerService.getDefaultPageConfig();
+    this._headerConfig.actionButtons = [];
     this._headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this._headerConfig);
   }
