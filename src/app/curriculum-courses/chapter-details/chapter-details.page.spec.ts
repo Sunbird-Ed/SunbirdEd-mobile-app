@@ -1409,6 +1409,40 @@ describe('ChapterDetailsPage', () => {
             // assert
             expect(Object.keys(event.event).length).toEqual(0);
         });
+        
+        it('should not allow the user to consume ontent if number of attempts are exceeded', () => {
+            // arrange
+            const event = {
+                event: {
+                    isDisabled: true
+                },
+                data: { name: 'data-name' }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+        });
+
+        it('should show a toast message to the user that this will be his last attempt', () => {
+            // arrange
+            const event = {
+                event: {isLastAttempt: true},
+                data: { name: 'data-name' }
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // chapterDetailsPage.courseContentData = {
+            //     contentData: {
+            //         createdBy: 'sample-creator'
+            //     }
+            // };
+            // chapterDetailsPage.userId = 'sample-creator';
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+        });
     });
 
     describe('navigateToBatchListPage', () => {
