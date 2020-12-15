@@ -1110,5 +1110,9 @@
   "SUBJECT_DESCRIPTION": "Text is indicating the below cards combination oof textbooks from all classes(for teachers)",
   "WELCOME": "Welcome",
   "DISCOVER_BNAV": "Search",
-  "HOME_BNAV": "Home"
+  "HOME_BNAV": "Home",
+  "ASSESSMENT_LAST_ATTEMPT_MESSAGE": "This will be your last attempt.",
+  "ASSESSMENT_ATTEMPT_EXCEED_MESSAGE": "You have exceeded the number of attempts to consume this content.",
+  "BEST_SCORE": "Best score",
+  "APP_UPDATE": "Update {{%s}} app"
 }
