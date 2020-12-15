@@ -116,16 +116,12 @@ describe('LocalCourseService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
-      mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
-        setTimeout(() => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
           expect(mockCourseService.enrollCourse).toHaveBeenCalled();
           expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-          expect(mockConsentService.showConsentPopup).toHaveBeenCalled();
-        }, 200);
-        done();
+          done();
       });
     });
 
