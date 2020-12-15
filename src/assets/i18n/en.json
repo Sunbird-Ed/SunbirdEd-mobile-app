@@ -1107,5 +1107,6 @@
   "DOWNLOAD_CSV": "Download .CSV",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
   "COPY_TRACE_ID": "Copy trace id",
-  "COPY_TRACE_ID_DESC": "Copy trace id for support"
+  "COPY_TRACE_ID_DESC": "Copy trace id for support",
+  "APP_UPDATE": "Update {{%s}} app"
 }
