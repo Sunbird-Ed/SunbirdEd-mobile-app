@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HomePagePage } from './home-page.page';
+import { CategoryListPage } from './category-list-page.component';
 import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '@app/app/components/components.module';
@@ -13,7 +13,7 @@ import {ComponentsModule} from '@app/app/components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: HomePagePage
+    component: CategoryListPage
   }
 ];
 
@@ -27,6 +27,6 @@ const routes: Routes = [
         TranslateModule,
         ComponentsModule
     ],
-  declarations: [HomePagePage]
+  declarations: [CategoryListPage]
 })
-export class HomePagePageModule {}
+export class CategoryListPageModule {}

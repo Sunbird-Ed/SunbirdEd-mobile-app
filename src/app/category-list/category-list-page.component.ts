@@ -21,11 +21,11 @@ import {ScrollToService} from '@app/services/scroll-to.service';
 
 @Component({
     selector: 'app-home-page',
-    templateUrl: './home-page.page.html',
-    styleUrls: ['./home-page.page.scss'],
+    templateUrl: './category-list-page.component.html',
+    styleUrls: ['./category-list-page.component.scss'],
 })
 
-export class HomePagePage implements OnInit {
+export class CategoryListPage {
 
     sectionGroup?: ContentsGroupedByPageSection;
     formField: {
@@ -61,11 +61,8 @@ export class HomePagePage implements OnInit {
         }
     }
 
-    ngOnInit() {
-        this.appHeaderService.showHeaderWithBackButton();
-    }
-
     ionViewWillEnter() {
+        this.appHeaderService.showHeaderWithBackButton();
         this.fetchAndSortData();
     }
 

@@ -5,8 +5,7 @@ import { ResourcesComponent } from './resources.component';
 
 const routes: Routes = [
     { path: '', component: ResourcesComponent, },
-    { path: RouterLinks.RELEVANT_CONTENTS, loadChildren: './relevant-contents/relevant-contents.module#RelevantContentsPageModule' },
-    { path: 'home-page', loadChildren: './home-page/home-page.module#HomePagePageModule' },
+    { path: RouterLinks.RELEVANT_CONTENTS, loadChildren: './relevant-contents/relevant-contents.module#RelevantContentsPageModule' }
 ];
 
 @NgModule({
