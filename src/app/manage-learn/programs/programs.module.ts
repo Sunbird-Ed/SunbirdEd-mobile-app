@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-
-
 import { ProgramListingComponent } from './program-listing/program-listing.component';
 import { SolutionListingComponent } from './solution-listing/solution-listing.component';
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../shared/shared.module';
+import { RouterLinks } from '@app/app/app.constant';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -13,7 +14,7 @@ const routes: Routes = [
     component: ProgramListingComponent
   },
   {
-    path: 'solutions',
+    path: `${RouterLinks.SOLUTIONS}/:id`,
     component: SolutionListingComponent
   }
 ];
@@ -26,7 +27,9 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    IonicModule
+    TranslateModule.forChild(),
+    IonicModule,
+    SharedModule
   ]
 })
 export class ProgramsModule { }
