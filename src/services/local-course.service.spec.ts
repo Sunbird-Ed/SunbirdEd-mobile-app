@@ -732,8 +732,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of(contentStatus));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(100);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(100);
         done();
       });
     });
@@ -746,8 +746,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => throwError(''));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
@@ -760,8 +760,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of(undefined));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
@@ -774,8 +774,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of({ contentList: [{ contentId: 'do_1234' }] }));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
