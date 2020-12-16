@@ -475,10 +475,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
-      // applyFirstAvailableCombination: {
-      //   medium: this.getGroupByPageReq.medium,
-      //   gradeLevel: this.getGroupByPageReq.grade
-      // },
+      applyFirstAvailableCombination: {
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade
+      },
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         contentSearchCriteria.board = this.getGroupByPageReq.board;
         contentSearchCriteria.medium = this.getGroupByPageReq.medium;
@@ -489,7 +489,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     };
     // Get the book data
     try {
-      // this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
           if (val.orientation === Orientation.VERTICAL) {
