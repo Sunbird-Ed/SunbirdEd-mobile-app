@@ -76,6 +76,24 @@ const PROFILE_TAB = {
 };
 
 // todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
+
+const ADMIN_HOME_TAB = {
+    root: 'admin-home',
+    icon: 'resources',
+    label: 'LIBRARY_BNAV',
+    index: 1,
+    isSelected: true
+};
+
+export const ADMIN_LOGIN_TABS = [
+    ADMIN_HOME_TAB,
+    COURSE_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    GUEST_PROFILE_TAB
+];
+
+
 export const GUEST_TEACHER_TABS = [
     HOME_TAB,
     DISCOVER_TAB,

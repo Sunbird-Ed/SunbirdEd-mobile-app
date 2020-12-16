@@ -26,6 +26,7 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { LoginHandlerService } from '@app/services';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -34,7 +35,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 
 export class UserTypeSelectionPage {
-  selectedUserType?: ProfileType;
+  selectedUserType?: any;
   continueAs = '';
   profile: Profile;
   backButtonFunc: Subscription;
@@ -67,7 +68,8 @@ export class UserTypeSelectionPage {
     private splashScreenService: SplashScreenService,
     private nativePageTransitions: NativePageTransitions,
     private tncUpdateHandlerService: TncUpdateHandlerService,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private loginHandlerService: LoginHandlerService
   ) {
   }
 
@@ -89,6 +91,9 @@ export class UserTypeSelectionPage {
   }
 
   async ionViewWillEnter() {
+    if (this.appGlobalService.isUserLoggedIn()) {
+      this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    }
     this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
@@ -163,9 +168,11 @@ export class UserTypeSelectionPage {
   selectUserTypeCard(selectedUserTypeName: string, userType: string) {
     this.selectCard(selectedUserTypeName, userType);
     this.generateUserTypeClicktelemetry(userType);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
+    if (!this.categoriesProfileData) {
+      setTimeout(() => {
+        this.continue();
+      }, 50);
+    }
   }
 
   generateUserTypeClicktelemetry(userType: string) {
@@ -279,7 +286,8 @@ export class UserTypeSelectionPage {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+        this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() :
+         this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
       }
     } else {
       this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
@@ -326,7 +334,8 @@ export class UserTypeSelectionPage {
         } else if (this.categoriesProfileData) {
           this.navigateToTabsAsLogInUser();
         } else {
-          this.navigateToProfileSettingsPage(params);
+          this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() : this.navigateToProfileSettingsPage(params);
+         // this.navigateToProfileSettingsPage(params);
         }
       }).catch(error => {
         console.error('Error=', error);
@@ -371,5 +380,24 @@ export class UserTypeSelectionPage {
     };
     this.nativePageTransitions.slide(options);
     this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+  }
+
+  async navigateToProfilePage() {
+    const navigationExtras: NavigationExtras = {};
+    const options: NativeTransitionOptions = {
+      direction: 'left',
+      duration: 500,
+      androiddelay: 500,
+      fixedPixelsTop: 0,
+      fixedPixelsBottom: 0
+    };
+    // this.nativePageTransitions.slide(options);
+    this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
+  }
+
+  onSubmitAttempt() {
+    setTimeout(() => {
+      this.continue();
+    }, 50);
   }
 }

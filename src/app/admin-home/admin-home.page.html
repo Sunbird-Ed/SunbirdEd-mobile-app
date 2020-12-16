@@ -1,0 +1,49 @@
+<ion-content>
+  <div class="user-profile">
+    <span>{{'WELCOME' | translate}},</span>
+    <strong>&nbsp;{{profile?.handle}}</strong>
+  </div>
+  <div class="p-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
+  </div>
+  <div class="p-8" (click)="editProfileDetails()" *ngIf="boards">
+    <div class="filter-style">{{grade+ ', ' +medium+ ', '+ boards}}</div>
+    <div class="d-inline">
+      <ion-icon name="arrow-dropdown"></ion-icon>
+    </div>
+  </div>
+  
+    <ng-container *ngFor="let section of displaySections">
+  
+      <!-- <div *ngIf="section?.dataSrc?.name !== 'TRACKABLE_CONTENTS'" class="label">{{section?.title | translateJson}}</div> -->
+      <!-- Trackable contents -->
+      <ng-container *ngIf="section?.dataSrc?.name === 'TRACKABLE_CONTENTS'">
+        <ng-container *ngFor="let subSection of section?.data?.sections">
+          <sb-course-cards-hlist 
+            [title]="(subSection.name || section?.title) | translateJson"
+            [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
+            [contentList]="subSection.contents" [hideProgress]="true"
+            [viewMoreButtonText]="'VIEW_ALL' | translate"
+            (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+            (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
+          </sb-course-cards-hlist>
+        </ng-container>
+      </ng-container>
+  
+      <!-- Pills -->
+      <div *ngIf="section?.theme?.component === 'sb-pills-grid'" class="label">{{section?.title | translateJson}}</div>
+      <ng-container *ngIf="section?.theme?.component === 'sb-pills-grid'">
+        <sb-pills-grid [pillShape]="section?.theme?.inputs?.pillShape"
+          [pillsViewType]="section?.theme?.inputs?.pillsViewType" 
+          [selectMode]="section?.theme?.inputs?.selectMode"
+          [minDisplayCount]="section?.theme?.inputs?.minDisplayCount"
+          [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
+          [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
+          (select)="handlePillSelect($event)">
+          <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData?.icon"
+            [value]="pillData"></sb-pill-item>
+        </sb-pills-grid>
+      </ng-container>
+  
+    </ng-container>
+  
+  </ion-content>

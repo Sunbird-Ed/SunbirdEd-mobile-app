@@ -1,0 +1,38 @@
+@import "src/assets/styles/_variables.scss";
+.filter-style {
+  font-size: 14px;
+  font-weight: 500;
+  color: $blue;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 45vh;
+  display: inline-block;
+}
+
+.user-profile {
+  padding: 10px;
+  font-size: 3.2vh;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 700;
+  padding-left: 8px;
+}
+
+.sb-card-scroll-container {
+  overflow-x: auto;
+  padding: 0 0 8px 0;
+}
+.sb-card-recently-container {
+  .recently-viewed-card-size{
+    margin: 0 8px; 
+    min-width:288px;
+    max-width:288px;
+    &:only-child {
+      min-width: 100%;
+      max-width: calc(100vw - 32px);
+    }
+  }
+}
