@@ -12,8 +12,12 @@ export class ProgramSolutionComponent implements OnInit {
 
   ngOnInit() {
     this.httpClient.get("assets/dummy/programs.json").subscribe((data: any) => {
-      console.log(data)
-      this.programList=data.result
+      console.log(data);
+      this.programList = data.result;
     });
+  }
+
+  redirectOnSoluctionClick() {
+    
   }
 }

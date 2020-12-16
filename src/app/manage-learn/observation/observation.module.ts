@@ -5,9 +5,10 @@ import { ObservationRoutingModule } from './observation-routing.module';
 import { ObservationHomeComponent } from './observation-home/observation-home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../shared/shared.module';
+import { ObservationDetailComponent } from './observation-detail/observation-detail.component';
 
 @NgModule({
-  declarations: [ObservationHomeComponent],
+  declarations: [ObservationHomeComponent,ObservationDetailComponent],
   imports: [
     CommonModule,
     ObservationRoutingModule,

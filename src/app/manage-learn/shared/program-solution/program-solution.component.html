@@ -7,6 +7,7 @@
             <div style="flex: 1">
               <h2 class="sb-topic-text">{{ solution.name }}</h2>
               <p *ngIf="showProgram || 1" class="sb-topic-text">{{ programList[programIndex]?.name }}</p>
+              <p> {{solution.type}}</p>
             </div>
             <button
               icon-only
