@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 
 @Component({
-  selector: 'app-project-header',
-  templateUrl: './project-header.component.html',
-  styleUrls: ['./project-header.component.scss'],
+  selector: 'app-common-header',
+  templateUrl: './common-header.component.html',
+  styleUrls: ['./common-header.component.scss'],
 })
-export class ProjectHeaderComponent implements OnInit {
+export class CommonHeaderComponent implements OnInit {
   @Input() title: any;
   @Input() subTitle: any;
 

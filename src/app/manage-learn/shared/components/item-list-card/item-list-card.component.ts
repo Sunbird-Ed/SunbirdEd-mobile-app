@@ -3,11 +3,11 @@ import { CommonUtilService } from '@app/services';
 import { Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-project-list-card',
-  templateUrl: './project-list-card.component.html',
-  styleUrls: ['./project-list-card.component.scss'],
+  selector: 'app-item-list-card',
+  templateUrl: './item-list-card.component.html',
+  styleUrls: ['./item-list-card.component.scss'],
 })
-export class ProjectListCardComponent implements OnInit {
+export class ItemListCardComponent implements OnInit {
   @Input() title: any;
   @Input() subTitle: any;
   @Input() id: any;
