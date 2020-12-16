@@ -160,10 +160,12 @@ export class SubProfileEditPage {
         firstName: this.formValue.name,
         managedBy: parentProfile.userId,
         framework: parentProfile['framework'] || undefined,
-        locationCodes: (parentProfile['userLocations'] && parentProfile['userLocations'].map(i => i.code)) || undefined,
       };
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
+      }
+      if (parentProfile['userLocations'] && parentProfile['userLocations'].length) {
+        userDetails.locationCodes = (parentProfile['userLocations'].map(i => i.code));
       }
       const response = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
       if (response) {
