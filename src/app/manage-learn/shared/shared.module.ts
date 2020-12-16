@@ -6,10 +6,12 @@ import { CUSTOM_ELEMENTS_SCHEMA  } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CommonListCardComponent } from './components';
+import { ItemListCardComponent } from './components/item-list-card/item-list-card.component';
+import { CommonHeaderComponent } from './components/common-header/common-header.component';
 
 @NgModule({
   
-  declarations: [CamelToTitlePipe, CommonListCardComponent],
+  declarations: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -17,6 +19,6 @@ import { CommonListCardComponent } from './components';
     ReactiveFormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  exports: [CamelToTitlePipe, CommonListCardComponent ]
+  exports: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent ]
 })
 export class SharedModule { }
