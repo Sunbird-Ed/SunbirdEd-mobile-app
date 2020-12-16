@@ -1130,6 +1130,8 @@
   "LABELS_THIS_WEEK": "This Week",
   "LABELS_THIS_MONTH": "This Month",
   "LABELS_PAST": "Past",
-  "LABELS_UPCOMING": "Upcoming"
+  "LABELS_UPCOMING": "Upcoming",
+  "PROJECT": "Project",
+  "PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)"
 
 }

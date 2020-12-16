@@ -1,0 +1,23 @@
+@import "src/assets/styles/_variables.scss";
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.list-md {
+    padding-top: 0px !important; 
+    padding-bottom: 0px !important;
+}
+
+.button-native {
+    background: #DFE7F1 !important;
+}
+
+.view-more {
+    --background: #{map-get($colors, white_f3)};
+    --color: #{map-get($colors, deep_blue)};
+    margin: 20px 20px;
+    div {
+        text-transform: capitalize;
+    }
+}

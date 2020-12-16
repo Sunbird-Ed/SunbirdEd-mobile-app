@@ -1,0 +1,11 @@
+<ion-app>
+  <ion-content fullscreen>
+    <app-project-header title="{{'PROJECT' | translate}}" subTitle="{{'PROJECT_DESC' | translate}}"></app-project-header>
+    <app-project-list-card *ngFor="let data of result" [title]="data?.name" [subTitle]="data?.description"
+      [id]="data?._id" (cardSelect)="selectedProgram($event)"></app-project-list-card>
+
+  </ion-content>
+  <ion-button class="view-more" expand="block" (click)="loadMore();">
+    {{ 'VIEW_MORE' | translate }}
+  </ion-button>
+</ion-app>
