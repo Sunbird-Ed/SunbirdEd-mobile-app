@@ -60,17 +60,17 @@ export class ContentAggregatorHandler {
 
 
     async newAggregate(request, pageName: AggregatorPageType): Promise<any> {
-        const dataSrc: DataSourceType[] = ['CONTENTS', 'CONTENT_FACETS', 'RECENTLY_VIEWED_CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
-            dataSrc.push('TRACKABLE_CONTENTS');
+            dataSrc = [];
         }
 
         const formRequest: FormRequest = {
             type: 'config',
             subType: pageName,
             action: 'get',
-            // component: 'app',
+            component: 'app',
         };
         try {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
