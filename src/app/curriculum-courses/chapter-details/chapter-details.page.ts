@@ -206,8 +206,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       }
       if (this.isFromDeeplink) {
         this.getContentState(true);
-        this.getBatchDetails();
       }
+      this.getBatchDetails();
       console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
     }
