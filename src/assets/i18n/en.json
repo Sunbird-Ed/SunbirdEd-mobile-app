@@ -1114,5 +1114,7 @@
   "ASSESSMENT_LAST_ATTEMPT_MESSAGE": "This will be your last attempt.",
   "ASSESSMENT_ATTEMPT_EXCEED_MESSAGE": "You have exceeded the number of attempts to consume this content.",
   "BEST_SCORE": "Best score",
-  "APP_UPDATE": "Update {{%s}} app"
+  "APP_UPDATE": "Update {{%s}} app",
+  "SEARCH_IN_APP": "Search {{app_name}}",
+  "SEARCH_IN_APP_DESCRIPTION": "Search and find content on {{app_name}} from all boards, mediums, classes and subjects"
 }
