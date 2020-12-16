@@ -515,8 +515,8 @@ export class RouterLinks {
     // Terms and conditions Routes
     public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
 
-    // public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
-    // public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
+    public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
+    public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
     public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;

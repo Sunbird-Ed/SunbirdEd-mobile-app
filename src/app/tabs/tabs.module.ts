@@ -23,15 +23,6 @@ const routes: Routes = [
           }
         ]
       },
-      // {
-      //   path: RouterLinks.RESOURCES,
-      //   children: [
-      //     {
-      //       path: '',
-      //       loadChildren: '../resources/resources.module#ResourcesModule'
-      //     }
-      //   ]
-      // },
       {
         path: RouterLinks.DISCOVER,
         children: [
@@ -41,15 +32,24 @@ const routes: Routes = [
           }
         ]
       },
-      // {
-      //   path: RouterLinks.COURSES,
-      //   children: [
-      //     {
-      //       path: '',
-      //       loadChildren: '../courses/courses.module#CoursesPageModule'
-      //     }
-      //   ]
-      // },
+      {
+        path: RouterLinks.RESOURCES,
+        children: [
+          {
+            path: '',
+            loadChildren: '../resources/resources.module#ResourcesModule'
+          }
+        ]
+      },
+      {
+        path: RouterLinks.COURSES,
+        children: [
+          {
+            path: '',
+            loadChildren: '../courses/courses.module#CoursesPageModule'
+          }
+        ]
+      },
       {
         path: RouterLinks.GUEST_PROFILE,
         children: [

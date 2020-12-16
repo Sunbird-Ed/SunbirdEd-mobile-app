@@ -13,7 +13,11 @@ export class ActivePageService {
     const routeUrl = url;
     let pageId = PageId.HOME;
 
-    if (routeUrl === RouterLinks.HOME_TAB) {
+    if (routeUrl === RouterLinks.LIBRARY_TAB) {
+      pageId = PageId.LIBRARY;
+    } else if (routeUrl === RouterLinks.COURSE_TAB) {
+      pageId = PageId.COURSES;
+    } else if (routeUrl === RouterLinks.HOME_TAB) {
       pageId = PageId.HOME;
     } else if (routeUrl === RouterLinks.DISCOVER_TAB) {
       pageId = PageId.SEARCH;

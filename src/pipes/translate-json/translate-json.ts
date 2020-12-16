@@ -11,10 +11,10 @@ export class TranslateJsonPipe implements PipeTransform {
 
   transform(value: string): string {
     try {
-      console.log('this.translate.currentLang', this.translate.currentLang);
       const availableTranslation = JSON.parse(value);
       return (availableTranslation.hasOwnProperty(this.translate.currentLang)) ? availableTranslation[this.translate.currentLang] : '';
     } catch (e) {
+      console.error(e);
       return value;
     }
   }

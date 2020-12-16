@@ -21,7 +21,45 @@ export class ContentAggregatorHandler {
         private appGlobalService: AppGlobalService,
     ) { }
 
-    async aggregate(request, pageName: AggregatorPageType): Promise<any> {
+    async aggregate(request, pageName): Promise<any> {
+        const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
+        if (this.appGlobalService.isUserLoggedIn()) {
+            pageName === AggregatorPageType.COURSE ? dataSrc.push('TRACKABLE_COURSE_CONTENTS') : dataSrc.push('TRACKABLE_CONTENTS');
+        }
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: pageName === AggregatorPageType.COURSE ? AggregatorPageType.COURSE : AggregatorPageType.LIBRARY,
+            action: 'get',
+            component: 'app',
+        };
+        try {
+            this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
+            if (this.aggregatorResponse && this.aggregatorResponse.result) {
+                this.aggregatorResponse.result.forEach((val) => {
+                    val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
+                    if (val.orientation === Orientation.HORIZONTAL) {
+                        for (let count = 0; count < val.section.sections[0].contents.length; count++) {
+                            val.section.sections[0].contents[count]['cardImg'] =
+                                this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
+                        }
+                    } else if (val.orientation === Orientation.VERTICAL) {
+                        for (let i = 0; i < val.section.sections.length; i++) {
+                            for (let count = 0; count < val.section.sections[i].contents.length; count++) {
+                                val.section.sections[i].contents[count]['cardImg'] =
+                                    this.commonUtilService.getContentImg(val.section.sections[i].contents[count]);
+                            }
+                        }
+                    }
+                });
+            }
+            return this.aggregatorResponse.result;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
+    async newAggregate(request, pageName: AggregatorPageType): Promise<any> {
         const dataSrc: DataSourceType[] = ['CONTENTS', 'CONTENT_FACETS', 'RECENTLY_VIEWED_CONTENTS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
@@ -44,6 +82,6 @@ export class ContentAggregatorHandler {
 
     private async aggregateContent(request, dataSrc, formRequest): Promise<ContentAggregatorResponse> {
         return this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
-          .aggregate(request, dataSrc, formRequest).toPromise();
+            .aggregate(request, dataSrc, formRequest).toPromise();
     }
 }

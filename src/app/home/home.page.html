@@ -41,7 +41,7 @@
         [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
         [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
         (select)="handlePillSelect($event)">
-        <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="'https://www.flaticon.com/svg/static/icons/svg/2502/2502529.svg'"
+        <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData?.icon"
           [value]="pillData"></sb-pill-item>
       </sb-pills-grid>
     </ng-container>

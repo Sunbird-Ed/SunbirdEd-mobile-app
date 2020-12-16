@@ -137,7 +137,7 @@ export class HomePage implements OnInit, OnDestroy {
       }, from: CachedItemRequestSourceFrom.SERVER
     };
 
-    this.displaySections = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.HOME);
+    this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
   }
 
   handlePillSelect(event) {

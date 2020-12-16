@@ -1,13 +1,13 @@
 import { ContainerService } from 'services';
 import { TabOptions } from '../services/container.services';
 
-// const LIBRARY_TAB = {
-//     root: 'resources',
-//     icon: 'resources',
-//     label: 'LIBRARY_BNAV',
-//     index: 1,
-//     isSelected: true
-// };
+const LIBRARY_TAB = {
+    root: 'resources',
+    icon: 'resources',
+    label: 'LIBRARY_BNAV',
+    index: 1,
+    isSelected: true
+};
 
 const HOME_TAB = {
     root: 'home',
@@ -17,20 +17,20 @@ const HOME_TAB = {
     isSelected: true
 };
 
-// const COURSE_TAB = {
-//     root: 'courses',
-//     icon: 'courses',
-//     label: 'COURSES_BNAV',
-//     index: 2
-// };
+const COURSE_TAB = {
+    root: 'courses',
+    icon: 'courses',
+    label: 'COURSES_BNAV',
+    index: 2
+};
 
-// const COURSE_TAB_DISABLED = {
-//     root: '',
-//     icon: 'courses',
-//     label: 'COURSES_BNAV',
-//     index: 2,
-//     disabled: true
-// };
+const COURSE_TAB_DISABLED = {
+    root: '',
+    icon: 'courses',
+    label: 'COURSES_BNAV',
+    index: 2,
+    disabled: true
+};
 
 const DISCOVER_TAB = {
     root: 'discover',
@@ -75,6 +75,7 @@ const PROFILE_TAB = {
     index: 5
 };
 
+// todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
 export const GUEST_TEACHER_TABS = [
     HOME_TAB,
     DISCOVER_TAB,
@@ -99,6 +100,23 @@ export const GUEST_STUDENT_TABS = [
     GUEST_PROFILE_TAB
 ];
 
+// todo name 
+export const GUEST_HOME_DISCOVER_TABS = [
+    HOME_TAB,
+    DISCOVER_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    GUEST_PROFILE_TAB
+];
+
+export const LOGGEDIN_HOME_DISCOVER_TABS = [
+    HOME_TAB,
+    DISCOVER_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    PROFILE_TAB
+];
+
 // export const GUEST_STUDENT_TABS = [
 //     LIBRARY_TAB,
 //     COURSE_TAB_DISABLED,
@@ -107,21 +125,21 @@ export const GUEST_STUDENT_TABS = [
 //     GUEST_PROFILE_TAB
 // ];
 
-export const GUEST_TEACHER_SWITCH_TABS = [
-    HOME_TAB,
-    DISCOVER_TAB,
-    SCANNER_TAB,
-    DOWNLOADS_TAB,
-    GUEST_PROFILE_SWITCH_TAB
-];
+// export const GUEST_TEACHER_SWITCH_TABS = [
+//     LIBRARY_TAB,
+//     COURSE_TAB,
+//     SCANNER_TAB,
+//     DOWNLOADS_TAB,
+//     GUEST_PROFILE_SWITCH_TAB
+// ];
 
-export const GUEST_STUDENT_SWITCH_TABS = [
-    HOME_TAB,
-    DISCOVER_TAB,
-    SCANNER_TAB,
-    DOWNLOADS_TAB,
-    GUEST_PROFILE_SWITCH_TAB
-];
+// export const GUEST_STUDENT_SWITCH_TABS = [
+//     LIBRARY_TAB,
+//     COURSE_TAB,
+//     SCANNER_TAB,
+//     DOWNLOADS_TAB,
+//     GUEST_PROFILE_SWITCH_TAB
+// ];
 
 // export const GUEST_STUDENT_SWITCH_TABS = [
 //     LIBRARY_TAB,
