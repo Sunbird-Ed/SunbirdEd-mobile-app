@@ -2,7 +2,7 @@ export enum AggregatorPageType {
     COURSE = 'course_v2',
     LIBRARY = 'library_v3',
     HOME = 'home',
-    SEARCH = 'search'
+    DISCOVER = 'discover'
 }
 
 export enum Orientation {

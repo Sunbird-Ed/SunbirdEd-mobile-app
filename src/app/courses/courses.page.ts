@@ -967,10 +967,10 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
       if (this.dynamicCourses) {
         this.dynamicCourses.forEach((val) => {
-          if (val.orientation === Orientation.HORIZONTAL) {
-            this.enrolledCourses = val.section.sections[0].contents;
-          } else if (val.orientation === Orientation.VERTICAL) {
-            this.popularAndLatestCourses = val.section.sections;
+          if (val.theme && val.theme.orientation === Orientation.HORIZONTAL) {
+            this.enrolledCourses = val.data && val.data.sections && val.data.sections.length && val.data.sections[0].contents;
+          } else if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
+            this.popularAndLatestCourses = val.data && val.data.sections;
           }
         });
       }

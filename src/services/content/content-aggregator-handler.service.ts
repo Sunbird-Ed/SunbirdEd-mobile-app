@@ -22,13 +22,14 @@ export class ContentAggregatorHandler {
     ) { }
 
     async aggregate(request, pageName): Promise<any> {
-        const dataSrc: ('CONTENTS' | 'TRACKABLE_CONTENTS' | 'TRACKABLE_COURSE_CONTENTS')[] = ['CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
+
         if (this.appGlobalService.isUserLoggedIn()) {
-            pageName === AggregatorPageType.COURSE ? dataSrc.push('TRACKABLE_COURSE_CONTENTS') : dataSrc.push('TRACKABLE_CONTENTS');
+            dataSrc = [];
         }
         const formRequest: FormRequest = {
             type: 'config',
-            subType: pageName === AggregatorPageType.COURSE ? AggregatorPageType.COURSE : AggregatorPageType.LIBRARY,
+            subType: pageName,
             action: 'get',
             component: 'app',
         };
@@ -54,6 +55,7 @@ export class ContentAggregatorHandler {
             }
             return this.aggregatorResponse.result;
         } catch (e) {
+            console.error(e);
             throw e;
         }
     }
@@ -76,6 +78,7 @@ export class ContentAggregatorHandler {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
             return this.aggregatorResponse.result;
         } catch (e) {
+            console.error(e);
             throw e;
         }
     }
