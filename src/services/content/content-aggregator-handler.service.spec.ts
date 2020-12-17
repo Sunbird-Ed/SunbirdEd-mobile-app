@@ -47,7 +47,7 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'course';
+        const pageName = AggregatorPageType.COURSE;
         const dataSrc = ['CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
@@ -111,7 +111,7 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'course';
+        const pageName = AggregatorPageType.COURSE;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
