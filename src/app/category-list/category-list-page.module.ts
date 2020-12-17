@@ -5,10 +5,11 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CategoryListPage } from './category-list-page.component';
+import { CategoryListPage } from './category-list-page';
 import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '@app/app/components/components.module';
+import {CommonFormElementsModule} from 'common-form-elements';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         CommonConsumptionModule,
         TranslateModule,
-        ComponentsModule
+        ComponentsModule,
+        CommonFormElementsModule
     ],
   declarations: [CategoryListPage]
 })
