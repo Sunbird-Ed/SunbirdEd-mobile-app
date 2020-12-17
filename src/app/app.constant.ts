@@ -549,6 +549,7 @@ export class RouterLinks {
 
   // Observation routes
   public static readonly OBSERVATION_DETAILS = "observation-details";
+  public static readonly OBSERVATION_SUBMISSION = "observation-submission";
 }
 
 export class ShareItemType {

@@ -1,3 +1,28 @@
-<p>
-  observation-detail works!
-</p>
+<ion-content fullscreen>
+  <app-common-header title=" {{ selectedSolution?.name }}"></app-common-header>
+
+  <ion-card *ngFor="let entity of selectedSolution?.entities" (click)="goToObservationSubmission(entity)">
+    <ion-card-header>
+      <!-- <div class="title" text-capitalize>{{title | titlecase}}</div> -->
+    </ion-card-header>
+    <ion-card-content>
+      <div class="info grade_ellipsis">
+        <span class="title"> {{ entity?.name | titlecase }}</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+  <!-- <div *ngFor="let program of programList; let programIndex = index">
+    <ng-container *ngFor="let data of program?.solutions; let solutionIndex = index">
+      <app-item-list-card
+        *ngIf="data.type == 'observation'"
+        [title]="data?.name"
+        [subTitle]="data?.description"
+        [id]="data?._id"
+        (cardSelect)="observationDetails(programIndex, solutionIndex)"
+      ></app-item-list-card>
+    </ng-container>
+  </div> -->
+</ion-content>
+<ion-button class="view-more" expand="block" (click)="loadMore()">
+  {{ "VIEW_MORE" | translate }}
+</ion-button>
