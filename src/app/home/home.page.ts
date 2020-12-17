@@ -57,12 +57,12 @@ export class HomePage implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async getUserProfileDetails() {
@@ -191,20 +191,33 @@ export class HomePage implements OnInit, OnDestroy {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'search':
-        // this.search();
-        break;
       case 'download':
-        // this.redirectToActivedownloads();
+        this.redirectToActivedownloads();
         break;
-      // case 'notification':
-      //   this.redirectToNotifications();
-      //   break;
-      case 'information':
-        // this.appTutorialScreen();
+      case 'notification':
+        this.redirectToNotifications();
         break;
+
       default: console.warn('Use Proper Event name');
     }
+  }
+
+  redirectToActivedownloads() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+  }
+
+  redirectToNotifications() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.NOTIFICATION_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
   ionViewWillLeave(): void {

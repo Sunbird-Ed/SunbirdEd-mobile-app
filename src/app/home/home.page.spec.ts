@@ -13,7 +13,7 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
-describe('CoursesPage', () => {
+describe('HomePage', () => {
   let homePage: HomePage;
   const mockAppGlobalService: Partial<AppGlobalService> = {
   };
