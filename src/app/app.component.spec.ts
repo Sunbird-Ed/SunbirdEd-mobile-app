@@ -28,6 +28,7 @@ import { of, Subject, EMPTY } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { CsClientStorage } from '@project-sunbird/client-services/core';
 
 declare const supportfile;
 declare const plugins;
@@ -92,6 +93,7 @@ describe('AppComponent', () => {
         } as Partial<BackButtonEmitter> as BackButtonEmitter
     };
     const mockPreferences: Partial<SharedPreferences> = {
+        addListener: jest.fn(() => { })
     };
     const mockRouter: Partial<Router> = {
         events: EMPTY,
@@ -313,6 +315,24 @@ describe('AppComponent', () => {
                     Environment.HOME,
                     'some_page_id'
                 );
+                done();
+            }, 0);
+        });
+        it('should listen if traceId is changed', (done) => {
+            // arrange
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = of(false);
+            mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
+            mockPreferences.addListener = jest.fn(() => 'some_trace_id');
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            jest.advanceTimersByTime(2100);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            // assert
+            setTimeout(() => {
+                expect(mockPreferences.addListener).toHaveBeenCalledWith(CsClientStorage.TRACE_ID, expect.any(Function));
                 done();
             }, 0);
         });
