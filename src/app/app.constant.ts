@@ -516,7 +516,6 @@ export class RouterLinks {
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
     public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
 
-
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
 
@@ -546,7 +545,10 @@ export class RouterLinks {
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
     public static readonly SOLUTIONS = 'solutions';
-
+    public static readonly OBSERVATION = 'observation';
+    // Observation routes
+    public static readonly OBSERVATION_DETAILS = 'observation-details';
+    public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
 }
 
 export class ShareItemType {

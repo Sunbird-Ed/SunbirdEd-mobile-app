@@ -1132,6 +1132,8 @@
   "LABELS_PAST": "Past",
   "LABELS_UPCOMING": "Upcoming",
   "PROJECT": "Project",
-  "PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)"
-
+  "PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)",
+  "FRMELEMNTS_LBL_OBSERVATION": "Observation",
+  "FRMELEMNTS_LBL_OBSERVATION_DESC": "Obseration Listing",
+  "FRMELEMNTS_LBL_IN_PROGRESS": "In Progress"
 }
