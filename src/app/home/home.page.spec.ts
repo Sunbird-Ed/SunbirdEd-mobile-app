@@ -1,27 +1,63 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { HomePage } from './home.page';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Events } from '@ionic/angular';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { Router } from '@angular/router';
+import { AppHeaderService } from '../../services/app-header.service';
+import {
+  FrameWorkService
+} from 'sunbird-sdk';
+import { of } from 'rxjs';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
+import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
-describe('HomePage', () => {
-  let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
+describe('CoursesPage', () => {
+  let homePage: HomePage;
+  const mockAppGlobalService: Partial<AppGlobalService> = {
+  };
+  const mockAppVersion: Partial<AppVersion> = {
+    getAppName: jest.fn(() => Promise.resolve('sunbird'))
+  };
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockProfileService: Partial<ProfileService> = {
+    getActiveSessionProfile: jest.fn(() => of({ profileType: 'Student' } as any))
+  };
+  const mockFrameworkService: Partial<FrameWorkService> = {};
+  const mockEvents: Partial<Events> = {
+    subscribe: jest.fn()
+  };
+  const mockHeaderService: Partial<AppHeaderService> = {};
+  const mockRouter: Partial<Router> = {};
+  const mockNavService: Partial<NavigationService> = {
+    navigateToTrackableCollection: jest.fn(),
+    navigateToCollection: jest.fn(),
+    navigateToContent: jest.fn()
+  };
+  const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
+ 
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ HomePage ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(HomePage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeAll(() => {
+    homePage = new HomePage(
+      mockFrameworkService as FrameWorkService,
+      mockProfileService as ProfileService,
+      mockCommonUtilService as CommonUtilService,
+      mockRouter as Router,
+      mockAppGlobalService as AppGlobalService,
+      mockAppVersion as AppVersion,
+      mockContentAggregatorHandler as ContentAggregatorHandler,
+      mockNavService as NavigationService,
+      mockHeaderService as AppHeaderService,
+      mockEvents as Events
+    );
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should be create an instance of HomePage', () => {
+    expect(homePage).toBeTruthy();
   });
 });
