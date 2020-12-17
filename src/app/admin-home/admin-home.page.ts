@@ -136,6 +136,20 @@ export class AdminHomePage implements OnInit, OnDestroy {
     };
 
     this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.ADMIN_HOME);
+    const iconList = new Map();
+    iconList.set('Programs', 'assets/imgs/ic_programs_blue.svg');
+    iconList.set('Projects', 'assets/imgs/ic_project_Blue.svg');
+    iconList.set('Observations', 'assets/imgs/ic_observation_blue.svg');
+    iconList.set('Surveys', 'assets/imgs/ic_survey_blue.svg');
+    iconList.set('Reports', 'assets/imgs/ic_report_blue.svg');
+    iconList.set('Courses', 'assets/imgs/ic_courses_selected.png');
+    this.displaySections.forEach((data) => {
+      if (data.dataSrc.name === 'CONTENT_FACETS_ADMIN' && data.data && data.data.length) {
+        data.data.forEach((e) => {
+          e['icon'] = iconList.get(this.commonUtilService.getTranslatedValue(e.title, ''));
+        });
+      }
+    });
     console.log('adminnnn', this.displaySections);
   }
 
@@ -183,6 +197,22 @@ export class AdminHomePage implements OnInit, OnDestroy {
         // this.appTutorialScreen();
         break;
       default: console.warn('Use Proper Event name');
+    }
+  }
+
+
+  navigateToDetailPage(event, sectionName) {
+    event.data = event.data.content ? event.data.content : event.data;
+    const item = event.data;
+    const index = event.index;
+    const identifier = item.contentId || item.identifier;
+    const values = {};
+    values['sectionName'] = sectionName;
+    values['positionClicked'] = index;
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
+      this.navService.navigateToDetailPage(item, { content: item }); // TODO
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
