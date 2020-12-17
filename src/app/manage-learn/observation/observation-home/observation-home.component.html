@@ -3,8 +3,8 @@
 <ion-app>
   <ion-content fullscreen>
     <app-common-header
-      title="{{ 'OBSERVATION' | translate }}"
-      subTitle="{{ 'OBSERVATION_DESC' | translate }}"
+      title="{{ 'FRMELEMNTS_LBL_OBSERVATION' | translate }}"
+      subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_DESC' | translate }}"
     ></app-common-header>
     <div *ngFor="let program of programList; let programIndex = index">
       <ng-container *ngFor="let data of program?.solutions; let solutionIndex = index">
