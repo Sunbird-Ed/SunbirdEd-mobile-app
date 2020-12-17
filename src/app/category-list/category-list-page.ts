@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {
     AppHeaderService,
     CommonUtilService,
@@ -21,8 +21,8 @@ import {ScrollToService} from '@app/services/scroll-to.service';
 
 @Component({
     selector: 'app-home-page',
-    templateUrl: './category-list-page.component.html',
-    styleUrls: ['./category-list-page.component.scss'],
+    templateUrl: './category-list-page.html',
+    styleUrls: ['./category-list-page.scss'],
 })
 
 export class CategoryListPage {
@@ -76,16 +76,16 @@ export class CategoryListPage {
                         limit: 100
                     })
                 },
-                ['CONTENTS'], null, [{
+                [], null, [{
                     index: 0,
                     title: this.formField.facet,
                     isEnabled: true,
                     dataSrc: {
                         name: 'CONTENTS',
                         aggregate: this.formField.aggregate,
-                    },
-                    searchRequest: {
-                        filters: {}
+                        search: {
+                            filters: {}
+                        },
                     },
                     theme: {}
                 }]).toPromise()).result[0] as ContentAggregation<'CONTENTS'>).data;
@@ -137,5 +137,13 @@ export class CategoryListPage {
 
     scrollToSection(id: string) {
         this.scrollService.scrollTo(id);
+    }
+
+    valueChanged(event) {
+
+    }
+
+    statusChanged(event) {
+
     }
 }
