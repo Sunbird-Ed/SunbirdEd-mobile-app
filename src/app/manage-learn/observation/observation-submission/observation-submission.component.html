@@ -1,0 +1,36 @@
+<ion-app>
+  <ion-content fullscreen>
+    <ion-card class="card-box-shadow">
+      <ion-card-content class="card-content-bottom-0 card-content-top-0">
+        <ion-segment class="d-flex" [(ngModel)]="currentTab" (ionChange)="tabChange($event.value)">
+          <ion-segment-button value="info" class="flex-5">
+            <ion-label class="font-12 text-transform-none title">{{ "ALL" | translate }}</ion-label>
+          </ion-segment-button>
+          <div class="hr-div">
+            <hr class="hr-height" />
+          </div>
+          <ion-segment-button value="modules" class="flex-5">
+            <ion-label class="font-12 text-transform-none title">{{"FRMELEMNTS_LBL_IN_PROGRESS" | translate}}</ion-label>
+          </ion-segment-button>
+          <div class="hr-div">
+            <hr class="hr-height" />
+          </div>
+          <ion-segment-button value="modules" class="flex-5">
+            <ion-label class="font-12 text-transform-none title">{{"COMPLETED" | translate}}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngFor="let submission of submissions" (click)="goToObservationSubmission(entity)">
+      <ion-card-header>
+        <div class="title" text-capitalize>{{ submission?.title | titlecase }}</div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info grade_ellipsis">
+          <span class="title"> {{ submission?.createdAt | date }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ion-app>

@@ -10,6 +10,7 @@ import { ItemListCardComponent } from './components/item-list-card/item-list-car
 import { CommonHeaderComponent } from './components/common-header/common-header.component';
 import { PopoverComponent } from './components/popover/popover.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
 
@@ -19,6 +20,9 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     FormsModule,
     IonicModule,
+    ReactiveFormsModule,
+    CommonModule,
+    HttpClientModule, //TODO:remove after api integration
     TranslateModule.forChild(),
     ReactiveFormsModule
   ],
@@ -27,4 +31,4 @@ import { TranslateModule } from '@ngx-translate/core';
     PopoverComponent],
     entryComponents: [PopoverComponent]
 })
-export class SharedModule { }
+export class SharedModule {}

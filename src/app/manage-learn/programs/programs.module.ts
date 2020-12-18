@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../shared/shared.module';
 import { RouterLinks } from '@app/app/app.constant';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { CoreModule } from '../core/core.module';
 
 const routes: Routes = [
   {
@@ -20,16 +22,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    ProgramListingComponent,
-    SolutionListingComponent
-  ],
+  declarations: [ProgramListingComponent, SolutionListingComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
     IonicModule,
-    SharedModule
-  ]
+    FormsModule,
+    CoreModule,
+    SharedModule,
+  ],
 })
-export class ProgramsModule { }
+export class ProgramsModule {}
