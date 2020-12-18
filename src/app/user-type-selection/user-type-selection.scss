@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts";
 
 :host {
   .card-title {
@@ -93,6 +94,31 @@
     align-items: center;
     &.selected {
       border:3px solid map-get($colors, vived_blue_fe);
+    }
+  }
+
+  .continue {
+    position: fixed;
+    z-index: 2;
+    bottom: 32px;
+    width: 90vw;
+    left: 5vw;
+  }
+  img.arrow-icon {
+    display: inline-block;
+    width: 22px;
+    margin-top: -3px;
+    float: right;
+
+    &.animate {
+      position: relative;
+      animation: dropDown 5s linear infinite;
+      animation-duration: 0.9s;
+    }
+
+    @include rtl {
+      transform: rotate(180deg);
+      float: left !important;
     }
   }
 }
