@@ -1,6 +1,9 @@
 import { Router, NavigationExtras, NavigationStart, Event } from '@angular/router';
 import { Location } from '@angular/common';
-import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, Component, Inject, NgZone,
+  OnInit, EventEmitter, ViewChild
+} from '@angular/core';
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,7 +14,8 @@ import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ProfileService,
+  CodePushExperimentService, AuthEventType, CorrelationData,
+  Profile, DeviceRegisterService, ProfileService,
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -21,7 +25,10 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import {PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants, AppThemes} from './app.constant';
+import {
+  AppThemes, EventTopics, GenericAppConfig,
+  PreferenceKey, ProfileConstants, SystemSettingsIds
+} from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -41,6 +48,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { EventParams } from './components/sign-in-card/event-params.interface';
+import { CsClientStorage } from '@project-sunbird/client-services/core';
 
 declare const cordova;
 
@@ -153,6 +161,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
+      this.onTraceIdUpdate();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -812,6 +821,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
         break;
 
+      case 'UPDATE':
+        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+          () => { },
+          () => { }
+        );
+        break;
     }
   }
 
@@ -924,5 +939,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else {
       this.headerService.hideStatusBar();
     }
+  }
+
+  private onTraceIdUpdate() {
+    this.preferences.addListener(CsClientStorage.TRACE_ID, (value) => {
+      if (value) {
+        // show toast
+      } else {
+        // do not show the toast.
+      }
+    });
   }
 }
