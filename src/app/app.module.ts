@@ -283,10 +283,11 @@ export const sunbirdSdkFactory =
       }));
 
       await SunbirdSdk.instance.init({
-        platform: configuration.debug ? 'web' : 'cordova',
+        platform: 'cordova',
         fileConfig: {
         },
         apiConfig: {
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
