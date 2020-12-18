@@ -90,7 +90,7 @@ export const ADMIN_LOGIN_TABS = [
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
-    GUEST_PROFILE_TAB
+    PROFILE_TAB
 ];
 
 

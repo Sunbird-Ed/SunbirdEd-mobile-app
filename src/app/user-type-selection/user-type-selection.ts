@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
 import { } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
@@ -34,7 +34,7 @@ import { LoginHandlerService } from '@app/services';
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage {
+export class UserTypeSelectionPage implements OnDestroy {
   selectedUserType?: any;
   continueAs = '';
   profile: Profile;
@@ -399,5 +399,11 @@ export class UserTypeSelectionPage {
     setTimeout(() => {
       this.continue();
     }, 50);
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 }

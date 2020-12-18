@@ -17,7 +17,7 @@ import {
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { ADMIN_LOGIN_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import {ProfileConstants, PreferenceKey, RouterLinks, EventTopics, IgnoreTelemetryPatters} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -94,6 +94,7 @@ export class LoginHandlerService {
         .toPromise()
         .then(async () => {
           await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
+          const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
           // set default guest user for Quiz deeplink
           const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
           if (!isOnboardingCompleted) {
@@ -108,6 +109,7 @@ export class LoginHandlerService {
             this.appGlobalService.redirectUrlAfterLogin = skipNavigation.redirectUrlAfterLogin;
           }
           this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
+          selectedUserType === ProfileType.ADMIN ? initTabs(that.container, ADMIN_LOGIN_TABS) :
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })

@@ -142,7 +142,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
     iconList.set('Observations', 'assets/imgs/ic_observation_blue.svg');
     iconList.set('Surveys', 'assets/imgs/ic_survey_blue.svg');
     iconList.set('Reports', 'assets/imgs/ic_report_blue.svg');
-    iconList.set('Courses', 'assets/imgs/ic_courses_selected.png');
+    iconList.set('Courses', 'assets/imgs/ic_course_admin .svg');
     this.displaySections.forEach((data) => {
       if (data.dataSrc.name === 'CONTENT_FACETS_ADMIN' && data.data && data.data.length) {
         data.data.forEach((e) => {

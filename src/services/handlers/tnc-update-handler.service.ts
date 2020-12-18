@@ -12,8 +12,7 @@ import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { AppGlobalService } from '../app-global-service.service';
 import { ConsentService } from '../consent-service';
-import { initTabs, ADMIN_LOGIN_TABS } from '@app/app/module.service';
-import { ContainerService } from '@app/services/container.services';
+import { SbProgressLoader } from '../sb-progress-loader.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +32,7 @@ export class TncUpdateHandlerService {
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
     private consentService: ConsentService,
-    private containerService: ContainerService
+    private sbProgressLoader: SbProgressLoader
   ) { }
 
   public async checkForTncUpdate() {
@@ -85,6 +84,7 @@ export class TncUpdateHandlerService {
       await this.consentService.getConsent(userDetails, true);
     }
     if (selectedUserType === ProfileType.ADMIN) {
+      this.sbProgressLoader.hide({id: 'login'});
       this.checkDistrictMapping(profile, ProfileType.ADMIN);
     } else if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
@@ -157,7 +157,6 @@ export class TncUpdateHandlerService {
           this.navigateToDistrictMapping();
         } else {
           if (userType === ProfileType.ADMIN) {
-            initTabs(this.containerService, ADMIN_LOGIN_TABS);
             this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
           }
           this.externalIdVerificationService.showExternalIdVerificationPopup();

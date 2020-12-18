@@ -34,7 +34,6 @@ import {
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { tap } from 'rxjs/operators';
-import { initTabs, ADMIN_LOGIN_TABS } from '@app/app/module.service';
 import { ContainerService } from '@app/services/container.services';
 
 @Component({
@@ -151,8 +150,7 @@ export class DistrictMappingPage {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private changeDetectionRef: ChangeDetectorRef,
     private ngZone: NgZone,
-    private externalIdVerificationService: ExternalIdVerificationService,
-    private containerService: ContainerService
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.userType = extrasState.userType;
@@ -459,7 +457,6 @@ export class DistrictMappingPage {
               window.history.go(-2);
             } else {
               if (this.userType === ProfileType.ADMIN) {
-                initTabs(this.containerService, ADMIN_LOGIN_TABS);
                 this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
               } else {
                 this.router.navigate([`/${RouterLinks.TABS}`]);
@@ -474,7 +471,6 @@ export class DistrictMappingPage {
             this.location.back();
           } else {
             if (this.userType === ProfileType.ADMIN) {
-              initTabs(this.containerService, ADMIN_LOGIN_TABS);
               this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
             } else {
               this.router.navigate([`/${RouterLinks.TABS}`]);

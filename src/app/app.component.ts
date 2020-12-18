@@ -480,7 +480,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || this.router.url === RouterLinks.HOME_TAB || this.router.url === RouterLinks.DISCOVER_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
-      ) {
+        || this.router.url === '/tabs/admin-home') {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
@@ -751,7 +751,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
           || this.router.url === RouterLinks.HOME_TAB || this.router.url === RouterLinks.DISCOVER_TAB
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
-          this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
+          this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === '/tabs/admin-home') {
           this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
         } else {
           // this.routerOutlet.pop();

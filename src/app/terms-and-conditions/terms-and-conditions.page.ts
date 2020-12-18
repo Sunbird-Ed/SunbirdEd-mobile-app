@@ -16,7 +16,6 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentService } from '@app/services/consent-service';
-import { initTabs, ADMIN_LOGIN_TABS } from '@app/app/module.service';
 import { ContainerService } from '@app/services/container.services';
 
 @Component({
@@ -48,8 +47,7 @@ export class TermsAndConditionsPage implements OnInit {
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
     private sbProgressLoader: SbProgressLoader,
-    private consentService: ConsentService,
-    private containerService: ContainerService
+    private consentService: ConsentService
   ) {
   }
 
@@ -173,7 +171,6 @@ export class TermsAndConditionsPage implements OnInit {
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
                 if (this.commonUtilService.isUserLocationAvalable(serverProfile) && selectedUserType === ProfileType.ADMIN) {
-                  initTabs(this.containerService, ADMIN_LOGIN_TABS);
                   this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
                 } else if (profile.profileType === ProfileType.NONE) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -213,7 +210,6 @@ export class TermsAndConditionsPage implements OnInit {
                 await this.consentService.getConsent(profile, true);
               }
               if (selectedUserType === ProfileType.ADMIN) {
-                initTabs(this.containerService, ADMIN_LOGIN_TABS);
                 this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
               } else if (profile.profileType === ProfileType.NONE) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
