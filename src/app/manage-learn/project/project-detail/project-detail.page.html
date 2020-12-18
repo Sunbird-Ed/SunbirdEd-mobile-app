@@ -1,11 +1,3 @@
-<!-- <ion-header>
-  <app-header title="LABELS_PROJECT_VIEW" [bottomBorder]="true" [showMenu]="false" [showReload]="false"
-    [showSync]="true" (onAction)="action($event)" [showMore]="true" (onMore)="openPopover($event)"
-    [hideNotification]="true" [synced]="!isSynced">
-    <ion-back-button></ion-back-button>
-  </app-header>
-</ion-header> -->
-
 <ion-content *ngIf="project">
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
@@ -54,7 +46,7 @@
   </ion-card>
   <ion-card class="project-box" *ngIf="!showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-forward-outline" color="primary" (click)="toggle()"></ion-icon>
+      <ion-icon name="caret-forward" color="primary" (click)="toggle()"></ion-icon>
       <ion-label> {{'LABELS_PROJECT_TITLE' | translate}} : </ion-label>
       {{project?.title}}
     </ion-card-header>
@@ -90,10 +82,8 @@
             <ion-col size="10" (click)="action('editTask',task._id)">
               <h5>{{task.name}}</h5>
               <div class="date_button-container">
-
                 <h5 class="task-endDate">
                   {{'LABELS_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
-
                 </h5>
               </div>
             </ion-col>
@@ -134,8 +124,8 @@
     </ion-fab-button>
     {{'LABELS_NEW_TASK' | translate}}
   </ion-fab>
-  <div class="file-container" *ngIf="taskCount">
+  <!-- <div class="file-container" *ngIf="taskCount">
     <img src="assets/imgs/folder.png" (click)="openAttachments()" />
     <div>{{'LABELS_FILES' | translate}}</div>
-  </div>
+  </div> -->
 </ion-content>

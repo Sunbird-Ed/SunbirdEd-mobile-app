@@ -1132,6 +1132,9 @@
   "LABELS_PAST": "Past",
   "LABELS_UPCOMING": "Upcoming",
   "PROJECT": "Project",
-  "PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)"
+  "PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)",
+  "SHARE_TASK": "Share Task",
+  "SHARE_PROJECT": "Share Project",
+  "DELETE_CONFIRMATION": "Are you sure you want to delete your "
 
 }
