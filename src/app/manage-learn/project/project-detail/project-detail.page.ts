@@ -20,34 +20,34 @@ import { Subscription } from 'rxjs';
 export class ProjectDetailPage implements OnInit {
   showDetails: boolean = true;
   statuses = statuses;
-  project:any = {"userId":"01c04166-a65e-4e92-a87b-a9e4194e771d","status":"notStarted","isDeleted":false,"categories":[{"value":"5fc48155b9335656a106c06a","label":"Infrastructure"}],"tasks":[{"_id":"668fd6e2-9c06-458d-a286-6d4f642d3605","createdBy":"f449823a-06bb-4a3f-9d49-edbe1524ebbb","updatedBy":"01c04166-a65e-4e92-a87b-a9e4194e771d","isDeleted":false,"isDeleteable":false,"taskSequence":[],"children":[{"_id":"e08afef0-3857-42d5-9850-8ee882bf8631","status":"notStarted","name":"te","endDate":"","assignee":"","type":"simple","attachments":[],"startDate":"","isDeleted":false,"externalId":"tesstostyurssdtyureany ","isDeleteable":false,"createdAt":"2020-12-01T15:29:07.334Z","updatedAt":"2020-12-01T17:20:04.953Z","isImportedFromLibrary":false,"lastSync":"2020-12-01T17:20:04.953Z","children":[]}],"visibleIf":[],"hasSubTasks":false,"learningResources":[],"deleted":false,"type":"assessment","solutionDetails":{"type":"assessment","subType":"institutional","_id":"5d0a0cf11e724f059a0d8f10","isReusable":true,"externalId":"EF-DCPCR-2018-001-TEMPLATE","name":"DCPCR Assessment Framework 2018"},"projectTemplateId":"5fc4f056ed1ae1783770692f","name":"REJNEESH ASSESSMENT1","externalId":"REJNEESH-ASSESSMENT1","description":"Task-1 Description","updatedAt":"2020-12-01T17:20:04.953Z","createdAt":"2020-11-30T13:23:33.880Z","__v":0,"status":"notStarted","isImportedFromLibrary":false,"lastSync":"2020-12-01T17:20:04.953Z"},{"_id":"67fb7c47-44e2-437f-97f2-e367ec9c4ea8","createdBy":"f449823a-06bb-4a3f-9d49-edbe1524ebbb","updatedBy":"f449823a-06bb-4a3f-9d49-edbe1524ebbb","isDeleted":false,"isDeleteable":false,"taskSequence":[],"children":[],"visibleIf":[],"hasSubTasks":false,"learningResources":[],"deleted":false,"type":"assessment","solutionDetails":{"type":"assessment","subType":"institutional","_id":"5b98fa069f664f7e1ae7498c","isReusable":false,"externalId":"EF-DCPCR-2018-001","name":"DCPCR Assessment Framework 2018"},"projectTemplateId":"5fc4f056ed1ae1783770692f","name":"REJNEESH ASSESSMENT2","externalId":"REJNEESH-ASSESSMENT2","description":"Task-3 Description","updatedAt":"2020-11-30T14:18:46.647Z","createdAt":"2020-11-30T13:23:33.886Z","__v":0,"status":"notStarted","isImportedFromLibrary":true,"lastSync":"2020-11-30T14:18:46.647Z","submissionDetails":{"entityId":"5beaa888af0065f0e0a10515","programId":"5fc4ad7a4f96e8623deacda9","solutionId":"5b98fa069f664f7e1ae7498c"}},{"_id":"4f61c97a-571c-4dcc-b58e-1872230940dc","createdBy":"f449823a-06bb-4a3f-9d49-edbe1524ebbb","updatedBy":"f449823a-06bb-4a3f-9d49-edbe1524ebbb","isDeleted":false,"isDeleteable":false,"taskSequence":[],"children":[],"visibleIf":[],"hasSubTasks":false,"learningResources":[],"deleted":false,"type":"observation","solutionDetails":{"type":"observation","subType":"school","_id":"5d0a0cf11e724f059a0d8f11","isReusable":false,"externalId":"CRO-2019-TEMPLATE","name":"CRO-2019"},"projectTemplateId":"5fc4f056ed1ae1783770692f","name":"REJNEESH OBSERVATION2","externalId":"REJNEESH-OBSERVATION2","description":"Task-2 Description","updatedAt":"2020-11-30T14:18:46.647Z","createdAt":"2020-11-30T13:23:33.890Z","__v":0,"status":"notStarted","isImportedFromLibrary":true,"lastSync":"2020-11-30T14:18:46.647Z"}],"learningResources":[{"name":"Copy Feature","link":"https://dev.bodh.shikshalokam.org/resources/play/content/do_113059727462957056137","app":"bodh","id":"do_113059727462957056137"}],"deleted":false,"title":"REJNEESH-TEST","description":"improving community library","updatedAt":"2020-12-01T17:20:04.954Z","createdAt":"2020-11-30T13:15:02.824Z","lastDownloadedAt":"2020-12-11T04:10:37.799Z","lastSync":"2020-12-01T17:20:04.953Z","entityId":"5beaa888af0065f0e0a10515","entityName":"Apple School","programId":"5fc4ad7a4f96e8623deacda9","programName":"Project -30-nov","rationale":"","primaryAudience":["teachers","head master"],"_id":"5fc4ff46ed1ae17837706937","_rev":"1-28270c873915239807bd35fde4d4157f"};
+  project:any = this.utils.getProjectData();
   projectId;
   categories = [];
   taskCount: number = 0;
   filters: any = {};
   schedules = [
     {
-      title: "LABELS_PAST",
+      title: "FRMELEMNTS_LBL_PAST",
       value: "past"
     },
     {
-      title: "LABELS_TODAY",
+      title: "FRMELEMNTS_LBL_TODAY",
       value: "today"
     },
     {
-      title: "LABELS_THIS_WEEK",
+      title: "FRMELEMNTS_LBL_THIS_WEEK",
       value: "thisWeek"
     },
     {
-      title: "LABELS_THIS_MONTH",
+      title: "FRMELEMNTS_LBL_THIS_MONTH",
       value: "thisMonth"
     },
     {
-      title: "LABELS_THIS_QUARTER",
+      title: "FRMELEMNTS_LBL_THIS_QUARTER",
       value: "thisQuarter"
     },
     {
-      title: "LABELS_UPCOMING",
+      title: "FRMELEMNTS_LBL_UPCOMING",
       value: "upcoming"
     },
   ];
@@ -133,13 +133,13 @@ export class ProjectDetailPage implements OnInit {
       }
     });
     let data;
-    this.translate.get(["LABELS_PROJECT_VIEW"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
     this._headerConfig.actionButtons = ['more', 'sync-done'];
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["LABELS_PROJECT_VIEW"];
+    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this._headerConfig);
   }
 
@@ -273,20 +273,20 @@ export class ProjectDetailPage implements OnInit {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "FRMELEMNTS_LBL_CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
-      message: data["DELETE_CONFIRMATION"] + type + "?",
+      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
       buttons: [
         {
-          text: data["CANCEL"],
+          text: data["FRMELEMNTS_LBL_CANCEL"],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => { },
         },
         {
-          text: data["BTN_SUBMIT"],
+          text: data["FRMELEMNTS_LBL_SUBMIT"],
           handler: () => {
             type == "task" ? this.deleteTask(id) : this.deleteProject();
           },

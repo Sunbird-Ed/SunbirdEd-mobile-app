@@ -1,6 +1,6 @@
 export const menuConstants = {
     TASK: [{
-        TITLE: 'SHARE_TASK',
+        TITLE: 'FRMELEMNTS_LBL_SHARE_TASK',
         VALUE: 'shareTask',
         ICON: 'share'
     },{
@@ -9,7 +9,7 @@ export const menuConstants = {
         ICON: 'create'
     }],
     PROJECT: [{
-        TITLE: 'SHARE_PROJECT',
+        TITLE: 'FRMELEMNTS_LBL_SHARE_PROJECT',
         VALUE: 'shareProject',
         ICON: 'share'
     },{
@@ -21,7 +21,7 @@ export const menuConstants = {
         VALUE: 'deleteProject',
         ICON: 'trash'
     },{
-        TITLE: 'LABELS_FILES',
+        TITLE: 'FRMELEMNTS_LBL_FILES',
         VALUE: 'fileProject',
         ICON: 'document'
     }],

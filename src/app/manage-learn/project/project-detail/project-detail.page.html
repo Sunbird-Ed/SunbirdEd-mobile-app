@@ -1,34 +1,34 @@
 <ion-content *ngIf="project">
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-down" color="primary" (click)="toggle()"></ion-icon>
-      <ion-label>{{'LABELS_PROGRAM_NAME' | translate}} :
+      <ion-icon name="caret-down" (click)="toggle()"></ion-icon>
+      <ion-label>{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
     <ion-card-content>
       <div class="custom-filed">
-        <ion-label> {{'LABELS_PROJECT_TITLE' | translate}} : </ion-label>
+        <ion-label> {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}} : </ion-label>
         {{project?.title}}
       </div>
       <div class="custom-filed">
-        <ion-label position="fixed"> {{'LABELS_OBJECTIVE' | translate}} : </ion-label>
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_OBJECTIVE' | translate}} : </ion-label>
         {{project?.description}}
       </div>
       <div class="custom-filed" *ngIf="project?.duration">
-        <ion-label position="fixed"> {{'LABELS_DURATION' | translate}} : </ion-label>
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
         {{project?.duration?.label || project?.duration }}
       </div>
       <div class="custom-filed" *ngIf="project?.startDate">
-        <ion-label position="fixed"> {{'LABELS_START_DATE' | translate}} : </ion-label>
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
         {{project?.startDate | date : 'dd/MM/yyyy' }}
       </div>
       <div class="custom-filed" *ngIf="project?.endDate">
-        <ion-label position="fixed"> {{'LABELS_END_DATE' | translate}} : </ion-label>
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
         {{project?.endDate | date : 'dd/MM/yyyy' }}
       </div>
       <ion-row class="custom-filed" *ngIf="project?.status">
         <ion-col size="5">
-          <ion-label position="stacked"> {{'LABELS_PROJECT_STATUS' | translate}} </ion-label>
+          <ion-label position="stacked"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
         </ion-col>
         <ion-col size=5 class="status-bar">
           <ion-progress-bar value="1" color="success" *ngIf="project.status == statuses[2].title"></ion-progress-bar>
@@ -39,21 +39,21 @@
         </ion-col>
       </ion-row>
       <div class="custom-filed" *ngIf="project?.learningResources">
-        <ion-label position="fixed"> {{'LABELS_LEARNING_RESOURCES' | translate}} : </ion-label>
-        <a (click)="openResources()"> {{'LABELS_CLICK_HERE_TO_VIEW_LIBRARY' | translate}}</a>
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_LEARNING_RESOURCES' | translate}} : </ion-label>
+        <a (click)="openResources()"> {{'FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY' | translate}}</a>
       </div>
     </ion-card-content>
   </ion-card>
   <ion-card class="project-box" *ngIf="!showDetails">
     <ion-card-header class="custom-filed">
       <ion-icon name="caret-forward" color="primary" (click)="toggle()"></ion-icon>
-      <ion-label> {{'LABELS_PROJECT_TITLE' | translate}} : </ion-label>
+      <ion-label> {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}} : </ion-label>
       {{project?.title}}
     </ion-card-header>
     <ion-card-content>
       <ion-row class="custom-filed">
         <ion-col size="5">
-          <ion-label position="stacked"> {{'LABELS_PROJECT_STATUS' | translate}} </ion-label>
+          <ion-label position="stacked"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
         </ion-col>
         <ion-col size="5" class="status-bar">
           <ion-progress-bar value="1" color="medium"> </ion-progress-bar>
@@ -64,7 +64,7 @@
   </ion-card>
   <ion-row class="ion-padding" *ngIf="sortedTasks">
     <ion-col size="6" class="text-left">
-      {{'LABELS_TOTAL_TASKS' | translate}} : {{taskCount}}
+      {{'FRMELEMNTS_LBL_TOTAL_TASKS' | translate}} : {{taskCount}}
     </ion-col>
     <!-- <ion-col size="6" class="text-right">
       {{categories}}
@@ -83,7 +83,7 @@
               <h5>{{task.name}}</h5>
               <div class="date_button-container">
                 <h5 class="task-endDate">
-                  {{'LABELS_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
+                  {{'FRMELEMNTS_LBL_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
                 </h5>
               </div>
             </ion-col>
@@ -95,17 +95,17 @@
           <div class="viewBtn">
             <ion-button size="small" *ngIf="task?.type=='content'&&task?.learningResources?.length"
               (click)="$event.stopPropagation();openResources(task)">
-              {{'LABELS_VIEW_RESOURCES' | translate}}
+              {{'FRMELEMNTS_LBL_VIEW_RESOURCES' | translate}}
             </ion-button>
             <ion-button size="small"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
               (click)="$event.stopPropagation();startAssessment(task)">
-              {{'LABELS_START' | translate}} {{task?.type}}
+              {{'FRMELEMNTS_LBL_START' | translate}} {{task?.type}}
             </ion-button>
             <ion-button size="small"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "
               (click)="$event.stopPropagation();checkReport(task)">
-              {{'LABELS_REPORTS' | translate}}
+              {{'FRMELEMNTS_LBL_REPORTS' | translate}}
             </ion-button>
           </div>
         </ion-card>
@@ -116,16 +116,16 @@
     <ion-fab-button (click)="addTask()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-    {{'LABELS_NEW_TASK' | translate}}
+    {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
   <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1" slot="fixed">
     <ion-fab-button (click)="addTask()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-    {{'LABELS_NEW_TASK' | translate}}
+    {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
   <!-- <div class="file-container" *ngIf="taskCount">
     <img src="assets/imgs/folder.png" (click)="openAttachments()" />
-    <div>{{'LABELS_FILES' | translate}}</div>
+    <div>{{'FRMELEMNTS_LBL_FILES' | translate}}</div>
   </div> -->
 </ion-content>
