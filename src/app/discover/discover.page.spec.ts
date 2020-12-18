@@ -4,9 +4,10 @@ import { Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
-import { FormAndFrameworkUtilService } from '../../services';
+import { CommonUtilService, FormAndFrameworkUtilService } from '../../services';
+import { NavigationService } from '../../services/navigation-handler.service';
 
-describe('CoursesPage', () => {
+describe('DiscoverPage', () => {
   let discoverPage: DiscoverPage;
   const mockAppVersion: Partial<AppVersion> = {
     getAppName: jest.fn(() => Promise.resolve('sunbird'))
@@ -21,6 +22,12 @@ describe('CoursesPage', () => {
     init: jest.fn(),
     checkNewAppVersion: jest.fn(() => Promise.resolve({}))
   };
+  const mockCommonUtilService: Partial<CommonUtilService> = {};
+  const mockNavService: Partial<NavigationService> = {
+    navigateToTrackableCollection: jest.fn(),
+    navigateToCollection: jest.fn(),
+    navigateToContent: jest.fn()
+  };
 
   beforeAll(() => {
     discoverPage = new DiscoverPage(
@@ -29,7 +36,9 @@ describe('CoursesPage', () => {
       mockRouter as Router,
       mockEvents as Events,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
-      mockContentAggregatorHandler as ContentAggregatorHandler
+      mockContentAggregatorHandler as ContentAggregatorHandler,
+      mockNavService as NavigationService,
+      mockCommonUtilService as CommonUtilService
     );
   });
 

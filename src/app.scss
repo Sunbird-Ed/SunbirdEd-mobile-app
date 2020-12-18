@@ -1567,3 +1567,18 @@ app-admin-home{
     }
   }
 }
+
+app-discover{
+  sb-pills-grid{
+    .item{
+      padding: 1rem !important;
+      margin: 0.5rem !important;
+      font-size: 16px !important;
+    }
+    .show-circle{
+      font-size: 20px !important;
+      min-height: 75px !important;
+      grid-template-columns: repeat(auto-fill,minmax(110px,0fr)) !important;
+    }
+  }
+}
