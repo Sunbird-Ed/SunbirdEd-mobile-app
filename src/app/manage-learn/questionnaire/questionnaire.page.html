@@ -1,0 +1,42 @@
+<ion-content #pageTop>
+  <div class="_container ion-padding" id="stop" *ngIf="submissionId">
+    <ng-container *ngFor="let question of questions| slice:start:end; let i=index">
+      <ng-container [ngSwitch]="question.responseType.toLowerCase()">
+        <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'text'"
+          [enableQuestionReadOut]="enableQuestionReadOut"></app-text-type-input>
+        <app-text-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'number'"
+          [enableQuestionReadOut]="enableQuestionReadOut"></app-text-type-input>
+        <app-radio-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'radio'"
+          [enableQuestionReadOut]="enableQuestionReadOut"></app-radio-type-input>
+        <app-date-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'date'"
+          [enableQuestionReadOut]="enableQuestionReadOut"></app-date-type-input>
+        <app-multiple-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+          [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+          *ngSwitchCase="'multiselect'" [enableQuestionReadOut]="enableQuestionReadOut"></app-multiple-type-input>
+        <!-- <app-matrix-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+            [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+            (updateLocalData)="updateLocalData()" *ngSwitchCase="'matrix'"
+            [enableGps]="captureGpsLocationAtQuestionLevel" [enableQuestionReadOut]="enableQuestionReadOut">
+          </app-matrix-type-input> -->
+        <!-- <app-page-questions [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+            [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+            (updateLocalData)="updateLocalData()" *ngSwitchCase="'pagequestions'"
+            [enableQuestionReadOut]="enableQuestionReadOut">
+          </app-page-questions> -->
+        <app-slider-type-input [inputIndex]="start + 1" [evidenceId]="selectedEvidenceId" [submissionId]="submissionId"
+          [schoolId]="schoolId" [data]="question" [imageLocalCopyId]="localImageListKey" *ngSwitchCase="'slider'"
+          [enableQuestionReadOut]="enableQuestionReadOut"></app-slider-type-input>
+      </ng-container>
+    </ng-container>
+  </div>
+</ion-content>
+<app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start"
+  [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
+  [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
+  [questionCount]="questions?.length" (nextAction)="next()" (backAction)="back()" (openSheetAction)="openActionSheet()">
+
+</app-footer-buttons>

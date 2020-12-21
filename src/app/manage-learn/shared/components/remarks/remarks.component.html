@@ -1,0 +1,17 @@
+<!-- Generated template for the RemarksComponent component -->
+<div  class="ion-margin-top ion-margin-bottom">
+  <h4 class="_flex-box justify-content">
+    <div style="flex:1">{{'labels.remarks'|translate}}</div>
+    <button ion-button clear color="primary" *ngIf="!data.remarks" (click)="openUpdateRemarks()">
+      {{'buttons.add'|translate}}
+    </button>
+    <button ion-button clear color="primary" *ngIf="data.remarks" (click)="data.remarks = ''">
+      {{'buttons.delete'|translate}}
+    </button>
+  </h4>
+  <ion-item *ngIf="data.remarks" (click)="openUpdateRemarks()">
+    {{data.remarks}}
+    <ion-icon name="create" class="ion-float-right"></ion-icon>
+    <!-- <ion-textarea [(ngModel)]="data.remarks" placeholder="Remarks"></ion-textarea> -->
+  </ion-item>
+</div>

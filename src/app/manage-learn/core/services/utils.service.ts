@@ -6,7 +6,7 @@ import { statusType } from '@app/app/manage-learn/core/constants/statuses.consta
 
 @Injectable()
 export class UtilsService {
-  constructor() {}
+  constructor() { }
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -110,24 +110,24 @@ export class UtilsService {
           if (task.status == statusType.completed) {
             task.status = statusType.inProgress;
           }
-          
+
         }
         if (!task.submissionDetails) {
           if (task.status == statusType.completed) {
             task.status = statusType.inProgress;
           }
-          
+
         }
 
         if (task.submissionDetails && task.submissionDetails.status == statusType.completed && !task.children.length) {
           task.status = statusType.completed;
         }
-        if (!task.submissionDetails  && !task.children.length) {
+        if (!task.submissionDetails && !task.children.length) {
           task.status = statusType.notStarted;
         }
-       /*  if (!task.submissionDetails  && task.children.length) {
-          task.status = statusType.inProgress;
-        } */
+        /*  if (!task.submissionDetails  && task.children.length) {
+           task.status = statusType.inProgress;
+         } */
       }
 
       console.log(task.status);
@@ -149,7 +149,7 @@ export class UtilsService {
     const notStartedList = _.filter(items, function (el) {
       return el.status === statusType.notStarted;
     });
-    const validchildArray =  _.filter(items, function (el) {
+    const validchildArray = _.filter(items, function (el) {
       return !el.isDeleted;
     });
     if (completedList.length === validchildArray.length) {
@@ -201,4 +201,109 @@ export class UtilsService {
     }
     return projectData;
   }
+
+  getFileExtensions(url) {
+    let splittedString = url.split('.');
+    let splittedStringForName = url.split('/')
+    const obj = {
+      type: splittedString[splittedString.length - 1],
+      name: splittedStringForName[splittedStringForName.length - 1]
+    }
+    return obj
+  }
+
+  getAssessmentLocalStorageKey(entityId) {
+    // return this.currentAssessmentType ? this.currentAssessmentType + schoolId : "schoolDetails_" + schoolId
+    return 'assessmentDetails_' + entityId
+  }
+
+  checkForDependentVisibility(qst, allQuestion): boolean {
+    let display = true;
+    for (const question of allQuestion) {
+      for (const condition of qst.visibleIf) {
+        if (condition._id === question._id) {
+          let expression = [];
+          if (condition.operator != "===") {
+            if (question.responseType === 'multiselect') {
+              for (const parentValue of question.value) {
+                for (const value of condition.value) {
+                  expression.push("(", "'" + parentValue + "'", "===", "'" + value + "'", ")", condition.operator);
+                }
+              }
+            } else {
+              for (const value of condition.value) {
+                expression.push("(", "'" + question.value + "'", "===", "'" + value + "'", ")", condition.operator)
+              }
+            }
+
+            expression.pop();
+          } else {
+            if (question.responseType === 'multiselect') {
+              for (const value of question.value) {
+                expression.push("(", "'" + condition.value + "'", "===", "'" + value + "'", ")", "||");
+              }
+              expression.pop();
+            } else {
+              expression.push("(", "'" + question.value + "'", condition.operator, "'" + condition.value + "'", ")")
+            }
+          }
+          if (!eval(expression.join(''))) {
+            return false
+          }
+        }
+      }
+    }
+    return display
+  }
+
+  isQuestionComplete(question): boolean {
+    if (question.validation.required && question.value === "" && question.responseType !== 'multiselect') {
+      return false
+    }
+    if (question.validation.required && question.value && !question.value.length && question.responseType === 'multiselect') {
+      return false
+    }
+    if (question.validation.regex && (question.responseType === 'number' || question.responseType === 'text') && !this.testRegex(question.validation.regex, question.value)) {
+      return false
+    }
+    return true
+  }
+
+  isMatrixQuestionComplete(question): boolean {
+    if (!question.value.length) {
+      return false
+    }
+    for (const instance of question.value) {
+      for (const question of instance) {
+        if (!question.isCompleted) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+  isPageQuestionComplete(question) {
+    for (const element of question.pageQuestions) {
+      if (!element.isCompleted) {
+        return false
+      }
+    }
+    return true;
+  }
+
+  testRegex(rege, value): boolean {
+    const regex = new RegExp(rege);
+    return regex.test(value)
+  }
+
+  getCompletedQuestionsCount(questions) {
+    let count = 0;
+    for (const question of questions) {
+      if (question.isCompleted) {
+        count++;
+      }
+    }
+    return count
+  }
+
 }
