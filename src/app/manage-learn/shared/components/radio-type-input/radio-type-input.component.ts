@@ -69,4 +69,8 @@ export class RadioTypeInputComponent implements OnInit {
     // this.hintService.presentHintModal({hint: hint});
   }
 
+  checkForCompletion() {
+    
+  }
+
 }
