@@ -98,6 +98,7 @@ const routes: Routes = [
     path: `${RouterLinks.QUESTIONNAIRE}/:submisssionId/:evidenceIndex/:sectionIndex`,
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
   },
+  { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
 ];
 
 @NgModule({

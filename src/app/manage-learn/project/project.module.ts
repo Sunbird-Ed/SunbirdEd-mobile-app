@@ -9,6 +9,7 @@ import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectDetailPage } from './project-detail/project-detail.page';
 import { ProjectListingComponent } from './project-listing/project-listing.component';
+import { LearningResourcesPage } from './learning-resources/learning-resources.page';
 
 const routes: Routes = [
   {
@@ -18,11 +19,19 @@ const routes: Routes = [
   {
     path: 'listing',
     component: ProjectListingComponent
+  },
+  {
+    path: "learning-resources/:id/:taskId",
+    component: LearningResourcesPage
+  },
+  {
+    path: "learning-resources/:id",
+    component: LearningResourcesPage
   }
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent],
+  declarations: [ProjectDetailPage, ProjectListingComponent, LearningResourcesPage],
   imports: [
     CommonModule,
     FormsModule,

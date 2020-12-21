@@ -1,0 +1,23 @@
+<ion-content fullscreen>
+  <app-common-header title=" {{ selectedSolution?.name }}"></app-common-header>
+  <div class="d-flex flex-jc-flex-end grade_ellipsis info">
+    <ion-button
+      size="small"
+      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
+      (click)="openEntityFilter()"
+      >Add Entity</ion-button
+    >
+  </div>
+  <div *ngFor="let entity of selectedSolution?.entities" (click)="goToObservationSubmission(entity)">
+    <app-item-list-card
+      [title]="entity?.name"
+      [subTitle]="data?.description"
+      (cardSelect)="goToObservationSubmission(entity)"
+    >
+      <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
+    </app-item-list-card>
+  </div>
+</ion-content>
+<ion-button class="view-more" expand="block" (click)="loadMore()">
+  {{ 'FRMELEMNTS_LBL_VIEW_MORE' | translate }}
+</ion-button>

@@ -16,3 +16,5 @@ export * from './radio-type-input/radio-type-input.component';
 export * from './remarks/remarks.component';
 export * from './slider-type-input/slider-type-input.component';
 export * from './text-type-input/text-type-input.component';
+export * from './popover/popover.component';
+export * from './entityfilter/entityfilter.component';
