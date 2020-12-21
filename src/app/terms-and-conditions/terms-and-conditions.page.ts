@@ -176,11 +176,8 @@ export class TermsAndConditionsPage implements OnInit {
                     state: {categoriesProfileData}
                   });
                 } else {
-                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                    state: categoriesProfileData
-                });
+                  this.router.navigate(['/', RouterLinks.TABS]);
               }
-                // this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
