@@ -10,7 +10,7 @@ import {
   CommonListCardComponent, MultipleTypeInputComponent, AttchmentsComponent, AudioListComponent,
   CommonHeaderComponent, DateTypeInputComponent, FooterButtonsComponent, ImageUploadComponent, ItemListCardComponent,
   MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, RadioTypeInputComponent, SliderTypeInputComponent,
-  RemarksComponent, PopoverComponent, EntityfilterComponent
+  RemarksComponent, PopoverComponent, EntityfilterComponent, TextTypeInputComponent
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -30,7 +30,7 @@ import { Media } from '@ionic-native/media/ngx';
     CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
     DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
     MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent],
+    PopoverComponent, TextTypeInputComponent],
   imports: [
     CommonModule,
     FormsModule,
