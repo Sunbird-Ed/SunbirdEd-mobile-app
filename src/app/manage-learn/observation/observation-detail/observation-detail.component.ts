@@ -2,16 +2,17 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { Location } from "@angular/common";
 import { AppHeaderService } from "@app/services";
-import { Platform } from "@ionic/angular";
+import { Platform, PopoverController } from "@ionic/angular";
 import { ObservationService } from "../observation.service";
 import { Subscription } from "rxjs";
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
+import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
 
 @Component({
-  selector: "app-observation-detail",
-  templateUrl: "./observation-detail.component.html",
-  styleUrls: ["./observation-detail.component.scss"],
+  selector: 'app-observation-detail',
+  templateUrl: './observation-detail.component.html',
+  styleUrls: ['./observation-detail.component.scss'],
 })
 export class ObservationDetailComponent implements OnInit {
   private backButtonFunc: Subscription;
@@ -29,7 +30,8 @@ export class ObservationDetailComponent implements OnInit {
     private platform: Platform,
     private httpClient: HttpClient,
     private observationService: ObservationService,
-    private router: Router
+    private router: Router,
+    private popCtrl: PopoverController
   ) {}
 
   ionViewWillEnter() {
@@ -61,7 +63,7 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   getLocalStorageData() {
-    this.httpClient.get("assets/dummy/programs.json").subscribe((data: any) => {
+    this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
       console.log(data);
       let programList = data.result;
       this.selectedSolution = programList[this.programIndex].solutions[this.solutionIndex];
@@ -109,5 +111,16 @@ export class ObservationDetailComponent implements OnInit {
         })
         .catch((err) => {});
     } */
+  }
+
+  async openEntityFilter() {
+    const filterDialog = await this.popCtrl.create({
+      component: EntityfilterComponent,
+      componentProps: {
+        
+      },
+      cssClass: 'resource-filter-options',
+    });
+    await filterDialog.present();
   }
 }

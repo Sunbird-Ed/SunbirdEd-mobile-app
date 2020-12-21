@@ -1,16 +1,23 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { HttpClientModule } from "@angular/common/http";
-import { IonicModule } from "@ionic/angular";
-import { CamelToTitlePipe } from "./pipe/camel-to-title.pipe";
-import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CommonListCardComponent } from "./components";
-import { ItemListCardComponent } from "./components/item-list-card/item-list-card.component";
-import { CommonHeaderComponent } from "./components/common-header/common-header.component";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { IonicModule } from '@ionic/angular';
+import { CamelToTitlePipe } from './pipe/camel-to-title.pipe';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonListCardComponent } from './components';
+import { ItemListCardComponent } from './components/item-list-card/item-list-card.component';
+import { CommonHeaderComponent } from './components/common-header/common-header.component';
+import { EntityfilterComponent } from './components/entityfilter/entityfilter.component';
 
 @NgModule({
-  declarations: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent],
+  declarations: [
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -22,6 +29,13 @@ import { CommonHeaderComponent } from "./components/common-header/common-header.
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 
-  exports: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent],
+  exports: [
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+  ],
+  entryComponents: [EntityfilterComponent],
 })
 export class SharedModule {}

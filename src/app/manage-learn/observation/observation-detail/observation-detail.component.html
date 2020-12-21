@@ -1,28 +1,23 @@
 <ion-content fullscreen>
   <app-common-header title=" {{ selectedSolution?.name }}"></app-common-header>
-
-  <ion-card *ngFor="let entity of selectedSolution?.entities" (click)="goToObservationSubmission(entity)">
-    <ion-card-header>
-      <!-- <div class="title" text-capitalize>{{title | titlecase}}</div> -->
-    </ion-card-header>
-    <ion-card-content>
-      <div class="info grade_ellipsis">
-        <span class="title"> {{ entity?.name | titlecase }}</span>
-      </div>
-    </ion-card-content>
-  </ion-card>
-  <!-- <div *ngFor="let program of programList; let programIndex = index">
-    <ng-container *ngFor="let data of program?.solutions; let solutionIndex = index">
-      <app-item-list-card
-        *ngIf="data.type == 'observation'"
-        [title]="data?.name"
-        [subTitle]="data?.description"
-        [id]="data?._id"
-        (cardSelect)="observationDetails(programIndex, solutionIndex)"
-      ></app-item-list-card>
-    </ng-container>
-  </div> -->
+  <div _ngcontent-iup-c17="" class="d-flex flex-jc-flex-end grade_ellipsis info">
+    <ion-button
+      size="small"
+      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
+      (click)="openEntityFilter()"
+      >Add Entity</ion-button
+    >
+  </div>
+  <div *ngFor="let entity of selectedSolution?.entities" (click)="goToObservationSubmission(entity)">
+    <app-item-list-card
+      [title]="entity?.name"
+      [subTitle]="data?.description"
+      (cardSelect)="goToObservationSubmission(entity)"
+    >
+      <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
+    </app-item-list-card>
+  </div>
 </ion-content>
 <ion-button class="view-more" expand="block" (click)="loadMore()">
-  {{ "VIEW_MORE" | translate }}
+  {{ 'VIEW_MORE' | translate }}
 </ion-button>
