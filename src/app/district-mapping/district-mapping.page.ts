@@ -10,7 +10,8 @@ import {
   LocationSearchResult,
   CachedItemRequestSourceFrom,
   CorrelationData,
-  AuditState
+  AuditState,
+  ProfileType
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig, RegexPatterns } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -33,6 +34,7 @@ import {
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { tap } from 'rxjs/operators';
+import { ContainerService } from '@app/services/container.services';
 
 @Component({
   selector: 'app-district-mapping',
@@ -130,6 +132,7 @@ export class DistrictMappingPage {
   isKeyboardShown$;
   isLocationChanged = false;
   disableSubmitButton = false;
+  userType: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -149,6 +152,8 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    this.userType = extrasState.userType;
     this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
       tap(() => this.changeDetectionRef.detectChanges())
@@ -451,7 +456,11 @@ export class DistrictMappingPage {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-              this.router.navigate([`/${RouterLinks.TABS}`]);
+              if (this.userType === ProfileType.ADMIN) {
+                this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
+              } else {
+                this.router.navigate([`/${RouterLinks.TABS}`]);
+              }
             }
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
@@ -461,7 +470,11 @@ export class DistrictMappingPage {
           if (this.profile) {
             this.location.back();
           } else {
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            if (this.userType === ProfileType.ADMIN) {
+              this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
+            } else {
+              this.router.navigate([`/${RouterLinks.TABS}`]);
+            }
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });

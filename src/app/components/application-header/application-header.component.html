@@ -45,11 +45,11 @@
         (click)="emitEvent($event, 'settings');">
         <ion-icon name="settings"></ion-icon>
       </ion-button>
-      <!-- <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
         <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>
         <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
-      </ion-button> -->
+      </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
         <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
@@ -332,7 +332,16 @@
     </ion-list>
     </div>
   </ion-content>
-  <ion-footer class="side-menu-footer">
-    {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+  <ion-footer class="side-menu-footer" style="height: 97px; padding: 26px">
+    <div *ngIf="!isUpdateAvailable">
+      {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+    </div>
+    <div *ngIf="isUpdateAvailable">
+      <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
+              (click)="emitSideMenuItemEvent($event, 'UPDATE')">
+        <img class="update-icon" src="./assets/imgs/ic_update.svg" alt="">
+        <span>{{ 'APP_UPDATE' | translate: {'%s': appName} }}</span>
+      </button>
+    </div>
   </ion-footer>
 </ion-menu>

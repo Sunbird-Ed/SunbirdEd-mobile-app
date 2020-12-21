@@ -15,7 +15,7 @@
     </ng-container>
   </div>
   <div *ngFor="let result of dynamicCourses">
-    <div *ngIf="!guestUser && result.orientation === 'horizontal'" class="pt-8 enrolled-course-bg">
+    <div *ngIf="!guestUser && result.theme.orientation === 'horizontal'" class="pt-8 enrolled-course-bg">
       <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
         <sb-course-cards-hlist [title]="result?.name" [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
           [contentList]="enrolledCourses" [viewMoreButtonText]="'VIEW_ALL' | translate"
@@ -23,7 +23,7 @@
           [hideProgress]="true"></sb-course-cards-hlist>
       </ng-container>
     </div>
-    <div *ngIf="result.orientation === 'vertical'">
+    <div *ngIf="result.theme.orientation === 'vertical'">
       <div class="section-header-style" *ngIf="popularAndLatestCourses.length">{{result.name}}</div>
       <div *ngFor="let section of popularAndLatestCourses; let i=index">
         <div *ngIf="section?.contents?.length" class="sb-textbook-container">
