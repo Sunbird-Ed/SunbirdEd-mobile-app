@@ -1,3 +1,130 @@
-<p>
-  entityfilter works!
-</p>
+<ion-header>
+  <ion-list>
+    <ion-item lines="none">
+      <div style="margin-top: 15px">
+        <ion-label>
+          <div class="title">{{ 'Select Entity' }}</div>
+        </ion-label>
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-toolbar>
+    <!-- <div class="" *ngIf="!isProfileAssignedWithState"> -->
+    <div >
+      <ion-item>
+        <ion-label>{{ 'Selected State' }}</ion-label>
+        <ion-select
+          [(ngModel)]="selectedState"
+          class="whiteSelection"
+          (ionChange)="searchQuery = ''; search(); onStateChange($event)"
+          #selectStateRef
+          interface="action-sheet"
+        >
+          <!-- <ion-option *ngFor="let state of allStates" [value]="state._id">
+            <b>{{ state?.name }}</b>
+          </ion-option> -->
+          <ion-select-option value="1">
+            Kerala
+          </ion-select-option>
+          <ion-select-option value="2">
+           Karnataka
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+    <!-- <div class="_flex-box searchCard" *ngIf="selectedState || profileMappedState"> -->
+    <div class="_flex-box searchCard">
+      <ion-searchbar
+        debounce="500"
+        class="serachBar"
+        (keyup.enter)="searchEntity()"
+        [(ngModel)]="searchQuery"
+        placeholder="Search Entity "
+        (ionClear)="searchQuery = ''; searchEntity()"
+      ></ion-searchbar>
+      <!-- <button ion-button icon-only (click)="searchEntity()" class="serachBtn">
+        <ion-icon name="search" class="searchIcon"></ion-icon>
+      </button> -->
+    </div>
+  </ion-toolbar>
+
+  <!-- <header [title]="'headings.addSchools'|translate" [hideBack]="false" [showMenu]="false" [showClose]="true"
+    [disableNetwork]="true" [hideNotification]="true">
+  </header> -->
+  <!-- <ion-toolbar style="background-color: white !important">
+    <div class="_flex-box searchCard" *ngIf="!isProfileAssignedWithState">
+      <ion-item>
+        <ion-label>{{ 'labels.selectState' | translate }}</ion-label>
+        <ion-select
+          [(ngModel)]="selectedState"
+          class="whiteSelection"
+          (ionChange)="searchQuery = ''; search(); onStateChange($event)"
+          #selectStateRef
+          interface="action-sheet"
+        >
+          <ion-option *ngFor="let state of allStates" [value]="state._id">
+            <b>{{ state?.name }}</b>
+          </ion-option>
+        </ion-select>
+      </ion-item>
+    </div>
+    <div class="_flex-box searchCard" *ngIf="selectedState || profileMappedState">
+      <ion-searchbar
+        debounce="500"
+        class="serachBar"
+        (keyup.enter)="searchEntity()"
+        [(ngModel)]="searchQuery"
+        placeholder="{{ 'message.startSearchEntity' | translate }}"
+        (ionClear)="searchQuery = ''; searchEntity()"
+      ></ion-searchbar>
+      <button ion-button icon-only (click)="searchEntity()" class="serachBtn">
+        <ion-icon name="search" class="searchIcon"></ion-icon>
+      </button>
+    </div>
+  </ion-toolbar> -->
+</ion-header>
+<!-- <ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
+  <div *ngIf="selectedState || profileMappedState">
+    <ion-list *ngIf="selectableList" (ionScroll)="detectBottom()">
+      <ng-container *ngFor="let listItem of selectableList">
+        <ion-item *ngIf="!listItem.isSelected">
+          <ion-label text-wrap>{{ listItem.name }}</ion-label>
+          <ion-checkbox color="dark" [checked]="listItem.selected" (click)="checkItem(listItem)"></ion-checkbox>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+    <ion-list *ngIf="!selectableList?.length && !loading">
+      <div class="_flex-box _justify-content-center noDataMsg">
+        {{ 'message.noSchoolFound' | translate }}
+      </div>
+    </ion-list>
+  </div>
+
+  <div *ngIf="!(this.selectableList?.length == totalCount) && this.selectableList?.length > 0">
+    <ion-infinite-scroll
+      [enabled]="!(this.selectableList?.length == totalCount) && this.selectableList?.length > 0"
+      (ionInfinite)="doInfinite($event)"
+    >
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content> -->
+<!-- <ion-footer no-shadow>
+  <ion-toolbar class="_toolbar-background-md" position="bottom">
+    <ion-row>
+      <ion-col>
+        <button ion-button full (click)="cancel()" class="btnText">
+          <ion-icon name="close" margin-right></ion-icon>
+          {{ 'buttons.cancel' | translate }}
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button full (click)="addSchools()" class="btnText" [disabled]="selectedListCount.count === 0">
+          <ion-icon name="add" margin-right></ion-icon>
+          {{ 'buttons.add' | translate }}
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer> -->

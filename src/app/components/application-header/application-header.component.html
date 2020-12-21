@@ -74,6 +74,14 @@
         (click)="emitEvent($event, 'share');">
         <ion-icon md="md-share" class="ion-float-right"></ion-icon>
       </ion-button>
+      <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-done') >=0"
+        (click)="emitEvent($event, 'sync');" style="font-size: 1.8rem;">
+        <ion-icon name="cloud-done" class="ion-float-right" style="color: green;"></ion-icon>
+      </ion-buttons>
+      <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-offline') >=0"
+        (click)="emitEvent($event, 'sync');" style="font-size: 1.8rem;">
+        <ion-icon name="cloud-offline-outline" class="ion-float-right"></ion-icon>
+      </ion-buttons>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
         <ion-icon class="ion-float-end" md="md-more"></ion-icon>

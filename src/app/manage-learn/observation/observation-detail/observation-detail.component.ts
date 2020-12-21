@@ -116,10 +116,8 @@ export class ObservationDetailComponent implements OnInit {
   async openEntityFilter() {
     const filterDialog = await this.popCtrl.create({
       component: EntityfilterComponent,
-      componentProps: {
-        
-      },
-      cssClass: 'resource-filter-options',
+      componentProps: {},
+      cssClass: 'sb-popover',
     });
     await filterDialog.present();
   }

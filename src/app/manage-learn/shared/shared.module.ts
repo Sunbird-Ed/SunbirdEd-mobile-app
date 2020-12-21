@@ -9,6 +9,9 @@ import { CommonListCardComponent } from './components';
 import { ItemListCardComponent } from './components/item-list-card/item-list-card.component';
 import { CommonHeaderComponent } from './components/common-header/common-header.component';
 import { EntityfilterComponent } from './components/entityfilter/entityfilter.component';
+import { UtilsService } from '../core/services/utils.service';
+import { PopoverComponent } from './components/popover/popover.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,9 @@ import { EntityfilterComponent } from './components/entityfilter/entityfilter.co
     ItemListCardComponent,
     CommonHeaderComponent,
     EntityfilterComponent,
+    PopoverComponent,
   ],
+
   imports: [
     CommonModule,
     FormsModule,
@@ -25,7 +30,8 @@ import { EntityfilterComponent } from './components/entityfilter/entityfilter.co
     ReactiveFormsModule,
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
-    IonicModule,
+    TranslateModule.forChild(),
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 
@@ -35,7 +41,8 @@ import { EntityfilterComponent } from './components/entityfilter/entityfilter.co
     ItemListCardComponent,
     CommonHeaderComponent,
     EntityfilterComponent,
+    PopoverComponent,
   ],
-  entryComponents: [EntityfilterComponent],
+  entryComponents: [EntityfilterComponent, PopoverComponent],
 })
 export class SharedModule {}
