@@ -1,0 +1,27 @@
+<!-- Generated template for the InputTypeComponent component -->
+<ion-col class="_flex-box _justify-content-center _flex-direction-column">
+  <h4 [ngClass]="{'_validQuestion': data?.value?.length}" class="flexbox">
+    <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
+    </app-question-heading>
+  </h4>
+</ion-col>
+<div class="_tip _flex-box">{{data?.tip}}</div>
+
+<div class="ion-margin-top">
+  <ion-list>
+    <ion-item *ngFor="let option of data?.options" class="ion-text-wrap">
+      <ion-label class="_flex-box label ion-text-wrap" >
+        <ion-icon name="bulb" class="help" (click)="openHint(option?.hint)" *ngIf="option?.hint"></ion-icon>
+        <div style="flex: 1;" [ngStyle]="{'margin-right': option?.hint ? '35px' :'0px'}">
+          {{option?.label}}
+        </div>
+      </ion-label>
+      <ion-checkbox [checked]="data?.value?.indexOf(option?.value) >-1" class="checkbox" (ionChange)="updateModelValue(option?.value)"
+        [disabled]="data.isEditable!=undefined && !data.isEditable">
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
+  <app-image-upload [data]="data" [generalQuestion]="generalQuestion" [imageLocalCopyId]="imageLocalCopyId"
+    [evidenceId]="evidenceId" [submissionId]="submissionId"></app-image-upload>
+</div>

@@ -15,6 +15,7 @@ import { DownloadsHeaderComponent } from './downloads-tab/downloads-header/downl
 import { RouterLinks } from '../app.constant';
 import { ComponentsModule } from '../components/components.module';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
+import { CoreModule } from '../manage-learn/core/core.module';
 
 
 
@@ -47,7 +48,8 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule
+    ComponentsModule,
+    CoreModule
   ],
   declarations: [DownloadManagerPage,
     NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],

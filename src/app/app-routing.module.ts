@@ -94,6 +94,10 @@ const routes: Routes = [
   { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule' },
   { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule' },
   { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule' },
+  {
+    path: `${RouterLinks.QUESTIONNAIRE}/:submisssionId/:evidenceIndex/:sectionIndex`,
+    loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
+  },
   { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
 ];
 

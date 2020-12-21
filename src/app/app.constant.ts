@@ -545,6 +545,7 @@ export class RouterLinks {
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
     public static readonly SOLUTIONS = 'solutions';
+    public static readonly QUESTIONNAIRE = 'questionnaire';
     public static readonly OBSERVATION = 'observation';
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
