@@ -1,21 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { IonicModule } from '@ionic/angular';
 import { CamelToTitlePipe } from './pipe/camel-to-title.pipe';
-import { UtilsService } from '../core/services/utils.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { CommonListCardComponent } from './components';
 import { ItemListCardComponent } from './components/item-list-card/item-list-card.component';
 import { CommonHeaderComponent } from './components/common-header/common-header.component';
+import { EntityfilterComponent } from './components/entityfilter/entityfilter.component';
+import { UtilsService } from '../core/services/utils.service';
 import { PopoverComponent } from './components/popover/popover.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
+  declarations: [
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+    PopoverComponent,
+  ],
 
-  declarations: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent,
-    PopoverComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -24,11 +31,18 @@ import { HttpClientModule } from '@angular/common/http';
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     TranslateModule.forChild(),
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  exports: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent, CommonHeaderComponent,
-    PopoverComponent],
-    entryComponents: [PopoverComponent]
+
+  exports: [
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+    PopoverComponent,
+  ],
+  entryComponents: [EntityfilterComponent, PopoverComponent],
 })
 export class SharedModule {}

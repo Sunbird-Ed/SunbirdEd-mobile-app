@@ -5,13 +5,12 @@ import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
-import { Location } from "@angular/common";
-
+import { Location } from '@angular/common';
 
 @Component({
-  selector: "app-observation-submission",
-  templateUrl: "./observation-submission.component.html",
-  styleUrls: ["./observation-submission.component.scss"],
+  selector: 'app-observation-submission',
+  templateUrl: './observation-submission.component.html',
+  styleUrls: ['./observation-submission.component.scss'],
 })
 export class ObservationSubmissionComponent implements OnInit {
   private backButtonFunc: Subscription;
@@ -27,7 +26,7 @@ export class ObservationSubmissionComponent implements OnInit {
   inProgressObservations = [];
   completedObservations = [];
   submissions: any[];
-  currentTab = "ALL";
+  currentTab = 'all';
   // height: number;
   selectedSolution: any;
   programList: any;
@@ -71,7 +70,7 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   async getProgramFromStorage(stopLoader?, noLoader?) {
-    this.httpClient.get("assets/dummy/programs.json").subscribe((data: any) => {
+    this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
       console.log(data);
       this.programList = data.result;
       this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
@@ -79,6 +78,7 @@ export class ObservationSubmissionComponent implements OnInit {
         this.entityIndex
       ].submissions;
       this.splitCompletedAndInprogressObservations();
+      this.tabChange(this.currentTab ? this.currentTab : 'all');
     });
 
     /* await this.localStorage
@@ -121,7 +121,7 @@ export class ObservationSubmissionComponent implements OnInit {
     this.completedObservations = [];
     this.inProgressObservations = [];
     for (const submission of this.submissionList) {
-      submission.status === "completed"
+      submission.status === 'completed'
         ? this.completedObservations.push(submission)
         : this.inProgressObservations.push(submission);
     }
@@ -132,14 +132,14 @@ export class ObservationSubmissionComponent implements OnInit {
     this.submissions = [];
     this.currentTab = value;
     switch (value) {
-      case "inProgress":
+      case 'inProgress':
         this.submissions = this.inProgressObservations;
 
         break;
-      case "completed":
+      case 'completed':
         this.submissions = this.completedObservations;
         break;
-      case "all":
+      case 'all':
         this.submissions = this.submissions.concat(this.inProgressObservations, this.completedObservations);
         break;
       default:
