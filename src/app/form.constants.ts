@@ -18,7 +18,7 @@ export class FormConstants {
 
     public static  SUPPORTED_USER_TYPES: FormRequest = {
         type: 'config',
-        subType: 'userType',
+        subType: 'userType_v2',
         action: 'get',
         component: 'app'
     };

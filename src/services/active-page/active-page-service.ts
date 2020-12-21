@@ -17,6 +17,10 @@ export class ActivePageService {
       pageId = PageId.LIBRARY;
     } else if (routeUrl === RouterLinks.COURSE_TAB) {
       pageId = PageId.COURSES;
+    } else if (routeUrl === RouterLinks.HOME_TAB) {
+      pageId = PageId.HOME;
+    } else if (routeUrl === RouterLinks.DISCOVER_TAB) {
+      pageId = PageId.SEARCH;
     } else if (routeUrl === RouterLinks.PROFILE_TAB) {
       pageId = PageId.PROFILE;
     } else if (routeUrl === RouterLinks.GUEST_PROFILE_TAB) {

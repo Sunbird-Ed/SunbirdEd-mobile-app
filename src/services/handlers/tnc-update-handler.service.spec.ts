@@ -13,6 +13,8 @@ import { of, throwError } from 'rxjs';
 import { ProfileConstants } from '../../app/app.constant';
 import { ConsentStatus } from '@project-sunbird/client-services/models';
 import { ConsentService } from '../consent-service';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { SbProgressLoader } from '../sb-progress-loader.service';
 
 describe('TncUpdateHandlerService', () => {
   let tncUpdateHandlerService: TncUpdateHandlerService;
@@ -37,18 +39,24 @@ describe('TncUpdateHandlerService', () => {
   };
 
   const mockConsentService: Partial<ConsentService> = {};
+  const mockSharedPreferences: Partial<SharedPreferences> = {};
+  const mockSbProgressLoader: Partial<SbProgressLoader> = {
+    hide: jest.fn()
+};
 
   beforeAll(() => {
     tncUpdateHandlerService = new TncUpdateHandlerService(
       mockProfileService as ProfileService,
       mockAuthService as AuthService,
+      mockSharedPreferences as SharedPreferences,
       mockCommonUtilService as CommonUtilService,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
       mockModalCtrl as ModalController,
       mockRouter as Router,
       mockExternalIdVerificationService as ExternalIdVerificationService,
       mockAppGlobalService as AppGlobalService,
-      mockConsentService as ConsentService
+      mockConsentService as ConsentService,
+      mockSbProgressLoader as SbProgressLoader,
     );
   });
 
