@@ -17,9 +17,9 @@
       </ng-container>
     </div>
     <div *ngFor="let result of dynamicResponse; let i=index;">
-      <div *ngIf="result.orientation === 'horizontal'">
-        <div *ngFor="let section of result.section?.sections">
-          <div *ngIf="result.dataSrc === 'TRACKABLE_CONTENTS'" style="padding-top: 5px;">
+      <div *ngIf="result?.theme?.orientation === 'horizontal'">
+        <div *ngFor="let section of result.data?.sections[0]">
+          <div *ngIf="result?.dataSrc?.name === 'TRACKABLE_CONTENTS'" style="padding-top: 5px;">
             <ng-container *ngIf="section.contents && section.contents.length">
               <sb-course-cards-hlist [title]="result?.name"
                 [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [contentList]="section.contents"
@@ -27,9 +27,9 @@
                 (cardClick)="navigateToDetailPage($event, result?.name)" [hideProgress]="true"></sb-course-cards-hlist>
             </ng-container>
           </div>
-          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && (!result.dataSrc || result.dataSrc!== 'TRACKABLE_CONTENTS')">
+          <div class="sb-recently-viewed-container" style="padding-bottom:40px;" *ngIf="section.contents?.length && (!result?.dataSrc || result?.dataSrc?.name!== 'TRACKABLE_CONTENTS')">
             <div class="sb-recently-viewed-items">
-              <div class="sb-recenlty-viewed-title">{{result.name}}
+              <div class="sb-recenlty-viewed-title">{{result?.name}}
                 <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
                   (click)="navigateToViewMoreContentsPage(result);">
                   {{ 'VIEW_ALL' | translate }}</button>
@@ -51,9 +51,9 @@
           </div>
         </div>
       </div>
-      <div *ngIf="result.orientation === 'vertical'">
-        <div class="section-header-style" *ngIf="result.section.sections.length">{{result.name}}</div>
-        <div *ngFor="let section of result.section.sections">
+      <div *ngIf="result?.theme?.orientation === 'vertical'">
+        <div class="section-header-style" *ngIf="result.data.sections.length">{{result.name}}</div>
+        <div *ngFor="let section of result.data.sections">
           <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">
             <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
               [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"

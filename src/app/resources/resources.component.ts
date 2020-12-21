@@ -492,8 +492,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
       if (this.dynamicResponse) {
         this.dynamicResponse.forEach((val) => {
-          if (val.orientation === Orientation.VERTICAL) {
-            this.searchGroupingContents = val.section;
+          if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
+            this.searchGroupingContents = val.data;
           }
         });
       }
@@ -1135,7 +1135,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     const params: NavigationExtras = {
       state: {
         requestParams: {
-          request: section.searchRequest
+          request: section.meta && section.meta.searchRequest
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         pageName: ViewMore.PAGE_TV_PROGRAMS

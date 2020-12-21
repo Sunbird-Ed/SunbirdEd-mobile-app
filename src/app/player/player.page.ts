@@ -28,10 +28,14 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
 
+declare const cordova;
+
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.page.html',
 })
+
 export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
   config = {};
@@ -90,11 +94,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig &&
-        this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
+      this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
       this.loadPdfPlayer = true;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
       this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
       this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
@@ -162,6 +166,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                     ContentUtil.generateRollUp(this.config['metadata']['hierarchyInfo'], this.config['metadata']['identifier']));
                   this.openPDF(downloadUrl);
                 }
+              } else if (resp.data && resp.data.event === 'renderer:contentNotComaptible'
+                  || resp.data && resp.data.data.event === 'renderer:contentNotComaptible') {
+                cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+                    () => {},
+                    () => {}
+                );
               }
             } else if (this.isJSON(resp.data)) {
               const response = JSON.parse(resp.data);
@@ -236,7 +246,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         cssClass: 'sb-popover',
       });
       await popover.present();
-    } else if (event.edata['type']['type'] === 'DOWNLOAD') {
+    } else if (event.edata['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
         this.downloadPdfService.downloadPdf(this.content).then((res) => {
           this.commonUtilService.showToast('PDF_DOWNLOADED');
@@ -252,6 +262,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       } else {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       }
+    } else if (event.edata.type === 'compatibility-error') {
+      cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        () => {},
+        () => {}
+    );
     }
   }
 
