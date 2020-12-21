@@ -385,7 +385,7 @@
   "ENROLLMENT_LAST_DATE": "Last date for joining: ",
   "ENTER_GROUP_NAME": "Enter group name",
   "ENTER_ID": "Enter ID",
-  "ENTER_ID_AS_REQUESTED_BY_STATE_BOARD_ORG": "Enter ID as requested by your State/ Board/ Org",
+  "ENTER_ID_AS_REQUESTED_BY_STATE_BOARD_ORG": "ID as requested by your State/ Board/ Org",
   "ENTER_LOCATION_FROM_PROFILE_PAGE": "Enter location from the Profile page",
   "ENTER_MEMBER_ID": "Enter {{app_name}} ID",
   "ENTER_OTP": "Enter OTP",
@@ -792,7 +792,7 @@
   "SELECT_CHAPTER": "Select module",
   "SELECT_YOUR_STATE": "Select your State",
   "SELF_DECLARED_INFO": "Self declared info",
-  "SELF_DECLARE_TEACHER_TNC": "I agree to share these details with the Administrators of the State/Institution mentioned above to track my activities on {{%appName}}, as per the",
+  "SELF_DECLARE_TEACHER_TNC": "I  agree to share the above and my Profile Details with the Administrators of the choosen State/Institution mentioned above to track my activities on {{%appName}}, as per the",
   "SEND_FILE": "Send file",
   "SERVER_CONNECTION_ERROR": "Unable to connect to server",
   "SETTINGS": "Settings",
@@ -1116,5 +1116,8 @@
   "BEST_SCORE": "Best score",
   "APP_UPDATE": "Update {{%s}} app",
   "SEARCH_IN_APP": "Search {{app_name}}",
-  "SEARCH_IN_APP_DESCRIPTION": "Search and find content on {{app_name}} from all boards, mediums, classes and subjects"
+  "SEARCH_IN_APP_DESCRIPTION": "Search and find content on {{app_name}} from all boards, mediums, classes and subjects",
+  "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile Number for State/ Org",
+  "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email ID for State/ Org",
+  "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page"
 }

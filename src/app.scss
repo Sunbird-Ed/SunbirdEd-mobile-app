@@ -1498,6 +1498,11 @@ body {
   color: map-get($colors, red);
 }
 
+.consent-info {
+  font-size: 12px;
+  padding-left: 4em;
+}
+
 .cd-license-card {
   ion-card {
     margin-left: 0;
