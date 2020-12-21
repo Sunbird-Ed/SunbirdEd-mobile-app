@@ -53,7 +53,7 @@
       </div>
       <div *ngIf="result?.theme?.orientation === 'vertical'">
         <div class="section-header-style" *ngIf="result.data.sections.length">{{result.name}}</div>
-        <div *ngFor="let section of result.section.sections">
+        <div *ngFor="let section of result.data.sections">
           <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">
             <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
               [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
