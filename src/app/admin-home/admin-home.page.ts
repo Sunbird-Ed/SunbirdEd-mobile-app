@@ -137,11 +137,11 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
     this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.ADMIN_HOME);
     const iconList = new Map();
-    iconList.set('Programs', 'assets/imgs/ic_programs_blue.svg');
-    iconList.set('Projects', 'assets/imgs/ic_project_Blue.svg');
-    iconList.set('Observations', 'assets/imgs/ic_observation_blue.svg');
-    iconList.set('Surveys', 'assets/imgs/ic_survey_blue.svg');
-    iconList.set('Reports', 'assets/imgs/ic_report_blue.svg');
+    iconList.set('Programs', 'assets/imgs/ic_program.svg');
+    iconList.set('Projects', 'assets/imgs/ic_project.svg');
+    iconList.set('Observations', 'assets/imgs/ic_observation.svg');
+    iconList.set('Surveys', 'assets/imgs/ic_survey.svg');
+    iconList.set('Reports', 'assets/imgs/ic_report.svg');
     iconList.set('Courses', 'assets/imgs/ic_course_admin .svg');
     this.displaySections.forEach((data) => {
       if (data.dataSrc.name === 'CONTENT_FACETS_ADMIN' && data.data && data.data.length) {

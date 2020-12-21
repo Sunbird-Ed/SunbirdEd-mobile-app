@@ -16,7 +16,6 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentService } from '@app/services/consent-service';
-import { ContainerService } from '@app/services/container.services';
 
 @Component({
   selector: 'app-terms-and-conditions',
