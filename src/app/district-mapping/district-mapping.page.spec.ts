@@ -49,7 +49,12 @@ describe('DistrictMappingPage', () => {
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockRouter: Partial<Router> = {
-        navigate: jest.fn()
+        navigate: jest.fn(),
+        getCurrentNavigation: jest.fn(() => ({
+            extras: {
+                state: true
+            }
+        })) as any
     };
     const mockLocation: Partial<Location> = {
         back: jest.fn()
@@ -80,9 +85,9 @@ describe('DistrictMappingPage', () => {
     beforeAll(() => {
         mockRouter.getCurrentNavigation = jest.fn(() => {
             return {
-                extras: {}
+                extras: { state: {}}
             };
-        });
+        }) as any;
         districtMappingPage = new DistrictMappingPage(
             mockProfileService as ProfileService,
             mockPreferences as SharedPreferences,
@@ -989,6 +994,11 @@ describe('DistrictMappingPage', () => {
     });
 
     describe('checkLocationAvailability', () => {
+        mockRouter.getCurrentNavigation = jest.fn(() => {
+            return {
+                extras: { state: {}}
+            };
+        }) as any;
         it('should populate availableLocationState and availableLocationDistrict to undefined if profile is empty', () => {
             // arrange
             window.history.replaceState({ profile: undefined }, 'MOCK');

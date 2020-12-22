@@ -1,10 +1,10 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS, ADMIN_LOGIN_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants, EventTopics, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, EventTopics, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId } from '@app/services';
 import { Router } from '@angular/router';
@@ -46,6 +46,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
+    const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
@@ -61,9 +62,9 @@ export class TabsPage implements OnInit, AfterViewInit {
           userId: session.userToken,
           requiredFields: ProfileConstants.REQUIRED_FIELDS,
         }).toPromise();
-
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
+      userType === ProfileType.ADMIN ? initTabs(this.container, ADMIN_LOGIN_TABS) :
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 

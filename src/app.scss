@@ -1498,6 +1498,11 @@ body {
   color: map-get($colors, red);
 }
 
+.consent-info {
+  font-size: 12px;
+  padding-left: 4em;
+}
+
 .cd-license-card {
   ion-card {
     margin-left: 0;
@@ -1530,6 +1535,56 @@ app-collection-detail-etb{
       .arrange-card-items{
         align-items: center;
       }
+    }
+  }
+}
+
+.disabled-toc-card {
+  background-color: $gray-100 !important;
+  border-color: $gray-100 !important;
+}
+
+sb-pills-grid{
+  label{
+    margin-bottom: 0 !important;
+  }
+}
+
+app-home{
+  sb-pills-grid{
+    .sb-label-grid{
+      @include padding(null, 8px, null, 8px !important);
+    }
+    .sb-pills-grid{
+      .item{
+        padding: 1.5rem !important;
+      }
+    }
+  }
+}
+
+app-admin-home{
+  sb-pills-grid{
+    .sb-label-grid{
+      padding: 12px;
+      .sb-icon-img{
+        width: 3.5rem!important;
+      }
+    }
+  }
+}
+
+app-discover{
+  sb-pills-grid{
+    .item{
+      padding: 1rem !important;
+      margin: 0.5rem !important;
+      font-size: 16px !important;
+    }
+    .show-circle{
+      font-size: 20px !important;
+      min-height: 75px !important;
+      grid-template-columns: repeat(auto-fill,minmax(110px,0fr)) !important;
     }
   }
 }

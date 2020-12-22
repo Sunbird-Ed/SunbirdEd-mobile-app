@@ -6,7 +6,8 @@ import {
   AuditState,
   CorrelationData,
   TelemetryObject,
-  ServerProfile
+  ServerProfile,
+  Consent
 } from 'sunbird-sdk';
 import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 import {
@@ -26,13 +27,14 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
-import { Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
 import { FieldConfig } from 'common-form-elements';
 import { FormConstants } from '@app/app/form.constants';
 import { ConsentService } from '@app/services/consent-service';
+import { ConsentStatus, Profile } from '@project-sunbird/client-services/models';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -341,7 +343,12 @@ export class SelfDeclaredTeacherEditPage {
         telemetryValue = this.getUpdatedValues(declaredDetails);
       }
 
-      await this.profileService.updateServerProfileDeclarations(req).toPromise();
+      try {
+        await this.profileService.updateServerProfileDeclarations(req).toPromise();
+      } catch (e) {
+
+      }
+
       this.events.publish('loggedInProfile:update');
 
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
@@ -351,7 +358,7 @@ export class SelfDeclaredTeacherEditPage {
           { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         this.generateTncAudit();
         this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
-        this.consentService.getConsent(userDetails, true);
+        this.updateConsent(userDetails, declarations[0].orgId);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
@@ -428,7 +435,7 @@ export class SelfDeclaredTeacherEditPage {
 
   tenantPersonaFormValueChanges(event) {
     this.tenantPersonaLatestFormValue = event;
-    if (event && event.tenant && event.persona) {
+    if (event && event.tenant) {
       if (!this.selectedTenant) {
         this.selectedTenant = event.tenant;
         this.initTenantSpecificForm(this.selectedTenant, false);
@@ -465,5 +472,20 @@ export class SelfDeclaredTeacherEditPage {
   linkClicked(event) {
     this.commonUtilService.openLink(event);
   }
-
+  // todo Move this to consent service
+  public updateConsent(profileDetails, orgId) {
+    const request: Consent = {
+      status: ConsentStatus.ACTIVE,
+      userId: profileDetails.uid,
+      consumerId: orgId,
+      objectId: orgId,
+      objectType: 'Organisation'
+    };
+    this.profileService.updateConsent(request).toPromise()
+      .catch((e) => {
+        if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
+  }
 }
