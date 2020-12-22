@@ -5,7 +5,7 @@
   </div>
   <div class="p-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
   </div>
-  <div class="p-8" (click)="editProfileDetails()" *ngIf="boards">
+  <div class="p-8" (click)="navigateToEditProfilePage()" *ngIf="boards">
     <div class="filter-style">{{boards+ ', ' +medium+ ', '+ grade}}</div>
     <div class="d-inline">
       <ion-icon name="arrow-dropdown"></ion-icon>
@@ -39,7 +39,7 @@
           [minDisplayCount]="section?.theme?.inputs?.minDisplayCount"
           [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
           [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
-          (select)="handlePillSelect($event)">
+          (select)="onPillClick($event)">
           <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.title | translateJson" [icon]="pillData?.icon"
             [value]="pillData"></sb-pill-item>
         </sb-pills-grid>
