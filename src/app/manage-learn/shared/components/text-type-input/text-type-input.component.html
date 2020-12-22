@@ -1,29 +1,25 @@
-<!-- Generated template for the InputTypeComponent component -->
-<ion-col class="_flex-box _justify-content-center _flex-direction-column">
-  <h4 [ngClass]="{'_validQuestion': data?.value}" class="flexbox">
-    <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
-    </app-question-heading>
-  </h4>
-</ion-col>
-<div class="_tip _flex-box">{{data?.tip}}</div>
-<div class="ion-margin-top">
-  <ion-item text-center no-padding *ngIf="data?.responseType != 'text'">
-    <ion-input type="{{data?.responseType}}" (input)="isaNumber()" (keyup.enter)="keyboard.hide()"
-      [(ngModel)]="data.value" (ngModelChange)="checkForValidation()"
-      [disabled]="data.isEditable!=undefined && !data.isEditable"></ion-input>
-  </ion-item>
-  <ion-item text-center no-padding *ngIf="data?.responseType == 'text'">
-    <ion-textarea (keyup.enter)="keyboard.hide()" [(ngModel)]="data.value" (ngModelChange)="checkForValidation()"
-      [disabled]="data.isEditable!=undefined && !data.isEditable"></ion-textarea>
-  </ion-item>
-  <div *ngIf="!notNumber" class="_errorMsg">{{getErrorMsg()}}</div>
+<ion-card class="_cardBg ion-padding">
+  <ion-col class="_flex-box _justify-content-center _flex-direction-column">
+    <h4 [ngClass]="{'_validQuestion': data?.value}" class="flexbox">
+      <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
+      </app-question-heading>
+    </h4>
+  </ion-col>
+  <div class="_tip _flex-box">{{data?.tip}}</div>
+  <div class="ion-margin-top">
+    <ion-item text-center no-padding *ngIf="data?.responseType != 'text'">
+      <ion-input type="{{data?.responseType}}" (input)="isaNumber()" (keyup.enter)="keyboard.hide()"
+        [(ngModel)]="data.value" (ngModelChange)="checkForValidation()"
+        [disabled]="data.isEditable!=undefined && !data.isEditable"></ion-input>
+    </ion-item>
+    <ion-item text-center no-padding *ngIf="data?.responseType == 'text'">
+      <ion-textarea (keyup.enter)="keyboard.hide()" [(ngModel)]="data.value" (ngModelChange)="checkForValidation()"
+        [disabled]="data.isEditable!=undefined && !data.isEditable"></ion-textarea>
+    </ion-item>
+    <div *ngIf="!notNumber" class="_errorMsg">{{getErrorMsg()}}</div>
 
-  <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
-  <app-image-upload
-    [data]="data"
-    [generalQuestion]="generalQuestion"
-    [imageLocalCopyId]="imageLocalCopyId"
-    [evidenceId]="evidenceId"
-    [submissionId]="submissionId"
-  ></app-image-upload>
-</div>
+    <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
+    <app-image-upload [data]="data" [generalQuestion]="generalQuestion" [imageLocalCopyId]="imageLocalCopyId"
+      [evidenceId]="evidenceId" [submissionId]="submissionId"></app-image-upload>
+  </div>
+</ion-card>

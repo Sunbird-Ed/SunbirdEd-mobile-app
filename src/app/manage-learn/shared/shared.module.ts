@@ -43,7 +43,7 @@ import { Media } from '@ionic-native/media/ngx';
     CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
     DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
     MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent],
+    PopoverComponent, TextTypeInputComponent],
   providers: [
     Camera,
     ImagePicker,

@@ -1596,3 +1596,28 @@ app-collection-detail-etb{
 
   overflow: hidden;
 }
+
+._footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #e8eaed;
+  background: white;
+  z-index: 10;
+  padding: 5px 16px;
+}
+
+._validQuestion {
+  color: green;
+}
+
+._cardBg {
+  background: #fff;
+}
+
+._tip {
+  color: #777;
+  font-size: 12px;
+  padding-left: 10px;
+}
