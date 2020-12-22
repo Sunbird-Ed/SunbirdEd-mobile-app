@@ -26,7 +26,6 @@ export class MultipleTypeInputComponent implements OnInit {
     private utils: UtilsService,
     // private hintService: HintProvider
   ) {
-    console.log("Hello checkboxTypeComponent Component");
     this.text = "Hello World";
 
     // if(!this.data.value) {
@@ -55,12 +54,10 @@ export class MultipleTypeInputComponent implements OnInit {
       this.data.value.push(val);
     }
     this.checkForValidation();
-    console.log(this.data.value);
   }
 
   next(status?: string) {
     // this.utils.isQuestionComplete(this.data);
-    console.log(this.utils.isQuestionComplete(this.data));
     this.data.isCompleted = this.utils.isQuestionComplete(this.data);
     this.nextCallBack.emit(status);
   }
@@ -71,7 +68,6 @@ export class MultipleTypeInputComponent implements OnInit {
   }
 
   checkForValidation(): void {
-    console.log("innnn");
     this.data.isCompleted = this.utils.isQuestionComplete(this.data);
     this.data.endTime = this.data.isCompleted ? Date.now() : "";
   }

@@ -26,9 +26,6 @@ export class SliderTypeInputComponent implements OnInit {
   isComplete: boolean;
 
   constructor(private utils: UtilsService) {
-
-    console.log('Hello SliderComponent Component');
-
   }
 
   ngOnInit() {
