@@ -24,7 +24,10 @@
       </ion-card-content>
     </ion-card>
 
-    <div *ngFor="let submission of submissions">
+    <div
+      *ngFor="let submission of submissions"
+      (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
+    >
       <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
         <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
       </app-item-list-card>

@@ -12,6 +12,8 @@ import { EntityfilterComponent } from './components/entityfilter/entityfilter.co
 import { UtilsService } from '../core/services/utils.service';
 import { PopoverComponent } from './components/popover/popover.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { SectionListingComponent } from './components/section-listing/section-listing.component';
+import { EcmListingComponent } from './components/ecm-listing/ecm-listing.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonHeaderComponent,
     EntityfilterComponent,
     PopoverComponent,
+    SectionListingComponent,
+    EcmListingComponent
   ],
 
   imports: [
@@ -42,6 +46,8 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonHeaderComponent,
     EntityfilterComponent,
     PopoverComponent,
+    SectionListingComponent,
+    EcmListingComponent
   ],
   entryComponents: [EntityfilterComponent, PopoverComponent],
 })

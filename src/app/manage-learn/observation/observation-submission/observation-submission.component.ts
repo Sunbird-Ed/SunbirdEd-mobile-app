@@ -6,6 +6,7 @@ import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
 import { Location } from '@angular/common';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-observation-submission',
@@ -146,5 +147,76 @@ export class ObservationSubmissionComponent implements OnInit {
         this.submissions = this.submissions.concat(this.inProgressObservations, this.completedObservations);
         console.log(this.submissions);
     }
+  }
+  getAssessmentDetails(submission) {
+    // TODO: Remove
+    this.getAssessmentDetailsApi(submission);
+    //TODO : till here
+    // this.showActionsheet = false;
+    // this.showEntityActionsheet = false;
+
+    // this.localStorage
+    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
+    //   .then((data) => {
+    //     if (!data) {
+    //       this.getAssessmentDetailsApi(submission);
+    //     } else {
+    //       this.goToEcm(submission);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     this.getAssessmentDetailsApi(submission);
+    //   });
+  }
+
+  getAssessmentDetailsApi(submission) {
+    // TODO: Remove
+    this.goToEcm(submission);
+    //TODO : till here
+    //   let event = {
+    //     programIndex: this.programIndex,
+    //     solutionIndex: this.solutionIndex,
+    //     entityIndex: this.entityIndex,
+    //     submission: submission,
+    //   };
+    //   this.programService
+    //     .getAssessmentDetailsForObservation(event, this.programList)
+    //     .then(async (programList) => {
+    //       await this.getProgramFromStorage();
+    //       this.goToEcm(submission);
+    //     })
+    //     .catch((error) => {});
+  }
+
+  goToEcm(submission) {
+    // TODO: Remove
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`])
+        // let heading = this.selectedSolution.entities[this.entityIndex].name;
+
+    // this.localStorage
+    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
+    //   .then((successData) => {
+    //     if (successData.assessment.evidences.length > 1) {
+    //       this.navCtrl.push('EvidenceListPage', {
+    //         _id: submissionId,
+    //         name: heading,
+    //         recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+    //       });
+    //     } else {
+    //       if (successData.assessment.evidences[0].startTime) {
+    //         this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
+    //         this.navCtrl.push('SectionListPage', {
+    //           _id: submissionId,
+    //           name: heading,
+    //           selectedEvidence: 0,
+    //           recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+    //         });
+    //       } else {
+    //         const assessment = { _id: submissionId, name: heading };
+    //         this.openAction(assessment, successData, 0);
+    //       }
+    //     }
+    //   })
+    //   .catch((error) => {});
   }
 }

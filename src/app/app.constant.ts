@@ -425,130 +425,133 @@ export class ActionType {
 }
 
 export class RouterLinks {
-    public static readonly TABS = 'tabs';
-    public static readonly TABS_COURSE = 'tabs/courses';
+  public static readonly TABS = 'tabs';
+  public static readonly TABS_COURSE = 'tabs/courses';
 
-    // Profile Routs
-    public static readonly PROFILE = 'profile';
-    public static readonly GUEST_EDIT = 'guest-edit';
-    public static readonly GUEST_PROFILE = 'guest-profile';
-    public static readonly PERSONAL_DETAILS_EDIT = 'personal-details-edit';
-    public static readonly CATEGORIES_EDIT = 'categories-edit';
-    public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
-    public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
-    public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
-    public static readonly FRAMEWORK_SELECTION = 'framework-selection';
+  // Profile Routs
+  public static readonly PROFILE = 'profile';
+  public static readonly GUEST_EDIT = 'guest-edit';
+  public static readonly GUEST_PROFILE = 'guest-profile';
+  public static readonly PERSONAL_DETAILS_EDIT = 'personal-details-edit';
+  public static readonly CATEGORIES_EDIT = 'categories-edit';
+  public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
+  public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
+  public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
+  public static readonly FRAMEWORK_SELECTION = 'framework-selection';
 
-    // Courses Routs
-    public static readonly COURSES = 'courses';
-    public static readonly ENROLLED_COURSE_DETAILS = 'enrolled-course-details';
-    public static readonly COLLECTION_DETAILS = 'collection-details';
+  // Courses Routs
+  public static readonly COURSES = 'courses';
+  public static readonly ENROLLED_COURSE_DETAILS = 'enrolled-course-details';
+  public static readonly COLLECTION_DETAILS = 'collection-details';
 
-    // Course Batch
-    public static readonly COURSE_BATCHES = 'course-batches';
+  // Course Batch
+  public static readonly COURSE_BATCHES = 'course-batches';
 
-    // Resources Routs
-    public static readonly RESOURCES = 'resources';
-    public static readonly COLLECTION_DETAIL_ETB = 'collection-detail-etb';
-    public static readonly CONTENT_DETAILS = 'content-details';
-    public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
-    public static readonly TEXTBOOK_TOC = 'textbook-toc';
-    public static readonly EXPLORE_BOOK = 'explore-book';
-    public static readonly RELEVANT_CONTENTS = 'relevant-contents';
+  // Resources Routs
+  public static readonly RESOURCES = 'resources';
+  public static readonly COLLECTION_DETAIL_ETB = 'collection-detail-etb';
+  public static readonly CONTENT_DETAILS = 'content-details';
+  public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
+  public static readonly TEXTBOOK_TOC = 'textbook-toc';
+  public static readonly EXPLORE_BOOK = 'explore-book';
+  public static readonly RELEVANT_CONTENTS = 'relevant-contents';
 
-    // DownloadManger Routs
-    public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
+  // DownloadManger Routs
+  public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
 
-    // Player Routs
-    public static readonly PLAYER = 'player';
+  // Player Routs
+  public static readonly PLAYER = 'player';
 
-    // Notification Routes
-    public static readonly NOTIFICATION = 'notification';
+  // Notification Routes
+  public static readonly NOTIFICATION = 'notification';
 
-    // Settings Routes
-    public static readonly SETTINGS = 'settings';
-    public static readonly DATA_SYNC = 'data-sync';
-    public static readonly LANGUAGE_SETTING = 'language-setting';
-    public static readonly PERMISSION = 'permission';
-    public static readonly ABOUT_US = 'about-us';
-    public static readonly DISTRICT_MAPPING = 'district-mapping';
+  // Settings Routes
+  public static readonly SETTINGS = 'settings';
+  public static readonly DATA_SYNC = 'data-sync';
+  public static readonly LANGUAGE_SETTING = 'language-setting';
+  public static readonly PERMISSION = 'permission';
+  public static readonly ABOUT_US = 'about-us';
+  public static readonly DISTRICT_MAPPING = 'district-mapping';
 
-    // Profile settings Routes
-    public static readonly PROFILE_SETTINGS = 'profile-settings';
+  // Profile settings Routes
+  public static readonly PROFILE_SETTINGS = 'profile-settings';
 
-    // User Type Selection Routes
-    public static readonly USER_TYPE_SELECTION = 'user-type-selection';
-    public static readonly USER_TYPE_SELECTION_LOGGEDIN = 'user-type-selection-loggedin';
+  // User Type Selection Routes
+  public static readonly USER_TYPE_SELECTION = 'user-type-selection';
+  public static readonly USER_TYPE_SELECTION_LOGGEDIN = 'user-type-selection-loggedin';
 
-    // View more activity Routes
-    public static readonly VIEW_MORE_ACTIVITY = 'view-more-activity';
+  // View more activity Routes
+  public static readonly VIEW_MORE_ACTIVITY = 'view-more-activity';
 
-    // Download manager Routes
-    public static readonly DOWNLOAD_MANAGER = 'download-manager';
-    public static readonly NO_DOWNLOADS = 'no-downloads';
-    public static readonly DOWNLOADS_TAB = 'downloads-tab';
-    public static readonly DOWNLOADS_HEADER = 'downloads-header';
+  // Download manager Routes
+  public static readonly DOWNLOAD_MANAGER = 'download-manager';
+  public static readonly NO_DOWNLOADS = 'no-downloads';
+  public static readonly DOWNLOADS_TAB = 'downloads-tab';
+  public static readonly DOWNLOADS_HEADER = 'downloads-header';
 
-    // Storage Settings Routes
-    public static readonly STORAGE_SETTINGS = 'storage-settings';
+  // Storage Settings Routes
+  public static readonly STORAGE_SETTINGS = 'storage-settings';
 
-    // Search Routes
-    public static readonly SEARCH = 'search';
+  // Search Routes
+  public static readonly SEARCH = 'search';
 
-    // QR Scanner Routes
-    public static readonly QRSCANNER_ALERT = 'qrscanner-alert';
-    public static readonly QRCODERESULT = 'qrcoderesult';
+  // QR Scanner Routes
+  public static readonly QRSCANNER_ALERT = 'qrscanner-alert';
+  public static readonly QRCODERESULT = 'qrcoderesult';
 
-    // Page Filter Routes
-    public static readonly PAGE_FILTER = 'page-filter';
-    public static readonly PAGE_FILTER_OPTIONS = 'page-filter-options';
+  // Page Filter Routes
+  public static readonly PAGE_FILTER = 'page-filter';
+  public static readonly PAGE_FILTER_OPTIONS = 'page-filter-options';
 
-    // Help Routes
-    public static readonly FAQ_HELP = 'faq-help';
+  // Help Routes
+  public static readonly FAQ_HELP = 'faq-help';
 
-    // Terms and conditions Routes
-    public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
+  // Terms and conditions Routes
+  public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
 
-    public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
-    public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
-    public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
-    public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
-    public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
-    public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
+  public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
+  public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
+  public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
+  public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
+  public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
+  public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
 
-    // TEXTBOOK view more page Routes
-    public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
+  // TEXTBOOK view more page Routes
+  public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
 
-    // faq Report Issue Pag
-    public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
+  // faq Report Issue Pag
+  public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
 
-    // routing to Term of use Web Page
-    public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
+  // routing to Term of use Web Page
+  public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
 
-    // My Groups
-    public static readonly MY_GROUPS = 'my-groups';
-    public static readonly CREATE_EDIT_GROUP = 'create-edit-group';
-    public static readonly MY_GROUP_DETAILS = 'group-details';
-    public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
-    public static readonly ACTIVITY_DETAILS = 'activity-details';
-    public static readonly ACTIVITY_TOC = 'activity-toc';
-    public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
-    public static readonly ACTIVITY_VIEW_MORE = 'activity-view-more';
+  // My Groups
+  public static readonly MY_GROUPS = 'my-groups';
+  public static readonly CREATE_EDIT_GROUP = 'create-edit-group';
+  public static readonly MY_GROUP_DETAILS = 'group-details';
+  public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
+  public static readonly ACTIVITY_DETAILS = 'activity-details';
+  public static readonly ACTIVITY_TOC = 'activity-toc';
+  public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
+  public static readonly ACTIVITY_VIEW_MORE = 'activity-view-more';
 
-    // Curriculum courses
-    public static readonly CURRICULUM_COURSES = 'curriculum-courses';
-    public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
-    public static readonly CHAPTER_DETAILS = 'chapter-details';
+  // Curriculum courses
+  public static readonly CURRICULUM_COURSES = 'curriculum-courses';
+  public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
+  public static readonly CHAPTER_DETAILS = 'chapter-details';
 
-    //Manage learn router
-    public static readonly PROGRAM = 'program';
-    public static readonly SURVEY = 'survey';
-    public static readonly PROJECT = 'project';
-    public static readonly SOLUTIONS = 'solutions';
-    public static readonly OBSERVATION = 'observation';
-    // Observation routes
-    public static readonly OBSERVATION_DETAILS = 'observation-details';
-    public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
+  //Manage learn router
+  public static readonly PROGRAM = 'program';
+  public static readonly SURVEY = 'survey';
+  public static readonly PROJECT = 'project';
+  public static readonly SOLUTIONS = 'solutions';
+  public static readonly OBSERVATION = 'observation';
+  public static readonly SECTION_LISTING = 'section-listing';
+  public static readonly ECM_LISTING = 'ecm-listing';
+  
+  // Observation routes
+  public static readonly OBSERVATION_DETAILS = 'observation-details';
+  public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
 }
 
 export class ShareItemType {
