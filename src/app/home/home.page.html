@@ -6,7 +6,7 @@
   <div class="p-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
   </div>
   <div class="p-8" (click)="editProfileDetails()" *ngIf="boards">
-    <div class="filter-style">{{grade+ ', ' +medium+ ', '+ boards}}</div>
+    <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
     <div class="d-inline">
       <ion-icon name="arrow-dropdown"></ion-icon>
     </div>
