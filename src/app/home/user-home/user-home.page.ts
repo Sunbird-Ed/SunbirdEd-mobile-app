@@ -55,6 +55,9 @@ export class UserHomePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getUserProfileDetails();
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
+      this.getUserProfileDetails();
+    });
   }
 
   async ionViewWillEnter() {

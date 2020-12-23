@@ -85,10 +85,10 @@ export class TncUpdateHandlerService {
     }
     if (selectedUserType === ProfileType.ADMIN) {
       this.sbProgressLoader.hide({id: 'login'});
-      this.checkDistrictMapping(profile, ProfileType.ADMIN);
+      this.checkDistrictMapping(profile);
     } else if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
-        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
+        || (userDetails.profileType === ProfileType.NONE)) {
         this.preRequirementToBmcNavigation(profile.userId);
       } else {
         this.checkDistrictMapping(profile);
@@ -123,7 +123,7 @@ export class TncUpdateHandlerService {
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
-        } else if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
+        } else if (userprofile.profileType === ProfileType.NONE) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] = this.commonUtilService.isUserLocationAvalable(serverProfile);
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
@@ -147,13 +147,12 @@ export class TncUpdateHandlerService {
     }
   }
 
-  private checkDistrictMapping(profile, userType?) {
+  private checkDistrictMapping(profile) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId
           && !this.commonUtilService.isUserLocationAvalable(profile)) {
-          userType === ProfileType.ADMIN ? this.navigateToDistrictMapping(ProfileType.ADMIN) :
           this.navigateToDistrictMapping();
         } else {
           this.externalIdVerificationService.showExternalIdVerificationPopup();
@@ -165,7 +164,7 @@ export class TncUpdateHandlerService {
       });
   }
 
-  private navigateToDistrictMapping(userType?) {
+  private navigateToDistrictMapping() {
     const navigationExtras: NavigationExtras = {
       state: {
         isShowBackButton: false

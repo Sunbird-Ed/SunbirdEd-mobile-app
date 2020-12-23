@@ -166,7 +166,8 @@ export class SignInCardComponent {
             };
             that.profileService.getServerProfilesDetails(req).toPromise()
               .then(async (success: any) => {
-                const currentProfileType = (success && success.userType) ? success.userType : ProfileType.NONE;
+                const currentProfileType = (success && success.userType === ProfileType.OTHER.toUpperCase()) ?
+                ProfileType.NONE : success.userType.toLowerCase();
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
