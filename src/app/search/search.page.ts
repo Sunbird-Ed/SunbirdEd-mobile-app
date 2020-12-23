@@ -120,6 +120,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   showAddToGroupButtons = false;
   supportedUserTypesConfig: Array<any>;
   searchFilterConfig: Array<any>;
+  preAppliedFilter: any;
 
   @ViewChild('contentView') contentView: IonContent;
   constructor(
@@ -171,6 +172,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.guestUser = extras.guestUser;
       this.userId = extras.userId;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
+      this.preAppliedFilter = extras.preAppliedFilter;
     }
 
     this.checkUserSession();
@@ -190,7 +192,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.headerService.hideHeader();
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
-    if (this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) {
+    if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       this.handleSearch(true);
     }
@@ -827,7 +829,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   handleSearch(shouldApplyProfileFilter = false) {
     this.scrollToTop();
-    if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
+    if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL && !this.preAppliedFilter) {
       return;
     }
     this.showAddToGroupButtons = false;
@@ -873,8 +875,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeResult = undefined;
     this.corRelationList = [];
     let searchQuery;
-    if (this.activityTypeData) {
-      searchQuery = updateFilterInSearchQuery(this.activityTypeData.searchQuery, undefined, false);
+    if (this.activityTypeData ||  this.preAppliedFilter) {
+      const query = this.activityTypeData ? this.activityTypeData.searchQuery :
+      JSON.stringify({ request:  this.preAppliedFilter });
+      searchQuery = updateFilterInSearchQuery(query, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
       searchQuery.request.mode = contentSearchRequest.mode;
@@ -890,6 +894,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
           this.responseData = response;
+          this.preAppliedFilter = undefined;
           if (response) {
             if (!this.initialFilterCriteria) {
               this.initialFilterCriteria = JSON.parse(JSON.stringify(this.responseData.filterCriteria));
