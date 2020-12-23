@@ -129,7 +129,7 @@ export class ProjectDetailPage implements OnInit {
       if(eventName.name === 'more') {
         this.openPopover(eventName.event);
       } else if(eventName.name === 'sync') {
-
+        this.action(eventName.name);
       }
     });
     let data;
@@ -244,11 +244,11 @@ export class ProjectDetailPage implements OnInit {
       case "sync": {
         this.project.isNew
           ? this.createNewProject()
-          : this.router.navigate(["/menu/sync"], { queryParams: { projectId: this.projectId } });
+          : this.router.navigate(["/project/sync"], { queryParams: { projectId: this.projectId } });
         break;
       }
       case "editTask": {
-        this.router.navigate(["/menu/task-view", this.project._id, taskId]);
+        this.router.navigate(["/project/task-view", this.project._id, taskId]);
         break;
       }
       case "deleteTask": {
