@@ -2,7 +2,7 @@
   <ion-content fullscreen>
     <ion-card class="card-box-shadow">
       <ion-card-content class="card-content-bottom-0 card-content-top-0">
-        <ion-segment class="d-flex" [(ngModel)]="currentTab" (ionChange)="tabChange($event.value)">
+        <ion-segment class="d-flex" [(ngModel)]="currentTab" (ionChange)="tabChange($event.detail.value)">
           <ion-segment-button value="all" class="flex-5">
             <ion-label class="font-12 text-transform-none title">{{ 'ALL' | translate }}</ion-label>
           </ion-segment-button>
@@ -24,7 +24,10 @@
       </ion-card-content>
     </ion-card>
 
-    <div *ngFor="let submission of submissions">
+    <div
+      *ngFor="let submission of submissions"
+      (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
+    >
       <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
         <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
       </app-item-list-card>

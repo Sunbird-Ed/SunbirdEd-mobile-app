@@ -8,6 +8,12 @@ import { ApiInterceptor } from './interceptor/apiInterceptor';
 import { KendraApiService } from './services/kendra-api.service';
 import { UnnatiDataService } from './services/unnati-data.service';
 import { SunbirdService } from './services/sunbird.service';
+import { UpdateLocalSchoolDataService } from './services/update-local-school-data.service';
+import { LocalStorageService } from './services';
+import { IonicStorageModule } from '@ionic/storage';
+import { UpdateTrackerService } from './services/update-tracker.service';
+import { EvidenceService } from './services/evidence.service';
+
 
 @NgModule({
   declarations: [],
@@ -16,7 +22,7 @@ import { SunbirdService } from './services/sunbird.service';
   ],
   providers: [
     UtilsService, NetworkService, SyncService, ApiService, KendraApiService, UnnatiDataService, SunbirdService,
-    ApiInterceptor
+    ApiInterceptor, UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService
   ],
 })
-export class CoreModule { }
+export class CoreModule {}

@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ActionSheetController, AlertController, Events, IonContent } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: 'app-questionnaire',
@@ -12,6 +13,13 @@ import { LocalStorageService, LoaderService, UtilsService, ToastService } from '
 export class QuestionnairePage implements OnInit {
   @ViewChild('sample') nameInputRef: ElementRef;
   @ViewChild('pageTop') pageTop: IonContent;
+
+
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: []
+  };
 
   questions: any;
   schoolName: string;
@@ -51,7 +59,8 @@ export class QuestionnairePage implements OnInit {
     // private translate: TranslateService,
     // private network: Network,
     private alertCtrl: AlertController,
-    // private ngps: NetworkGpsProvider
+    // private ngps: NetworkGpsProvider,
+    private headerService: AppHeaderService,
   ) {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
@@ -75,10 +84,8 @@ export class QuestionnairePage implements OnInit {
   }
 
   ngOnInit() {
-    debugger
     // this.loader.startLoader();
     this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-      debugger
       this.schoolData = data;
       const currentEvidences = this.schoolData['assessment']['evidences'];
       this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
@@ -88,10 +95,8 @@ export class QuestionnairePage implements OnInit {
       this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
       this.localImageListKey = "images_" + this.selectedEvidenceId + "_" + this.submissionId;
       this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-      debugger
 
       this.questions = currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
-      console.log(this.questions, "questions");
       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].totalQuestions = this.questions.length;
       this.dashbordData = {
         questions: this.questions,
@@ -111,47 +116,15 @@ export class QuestionnairePage implements OnInit {
     })
   }
 
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+  }
+
   ionViewDidLoad() {
-    debugger
-    console.log('ionViewDidLoad Questioner');
-    // this.submissionId = this.navParams.get('_id');
-    console.log(this.submissionId)
-    // this.schoolName = this.navParams.get('name');
-    // this.selectedEvidenceIndex = this.navParams.get('selectedEvidence');
-    // this.selectedSectionIndex = this.navParams.get('selectedSection');
-    // this.loader.startLoader();
-    // this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-    //   debugger
-    //   this.schoolData = data;
-    //   const currentEvidences = this.schoolData['assessment']['evidences'];
-    //   this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
-    //   this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
-    //   this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions']);
-
-    //   this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
-    //   this.localImageListKey = "images_" + this.selectedEvidenceId + "_" + this.submissionId;
-    //   this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-    // debugger
-
-    //   this.questions = currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
-    //   console.log(this.questions, "questions");
-    //   this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].totalQuestions = this.questions.length;
-    //   this.dashbordData = {
-    //     questions: this.questions,
-    //     evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
-    //     sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
-    //     currentViewIndex: this.start
-    //   }
-    //   this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted
-    //   if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-    //     document.getElementById('stop').style.pointerEvents = 'none';
-
-    //   }
-    //   this.loader.stopLoader();
-    // }).catch(error => {
-    //   this.loader.stopLoader();
-
-    // })
   }
   // images_CO_5bebcfcf92ec921dcf114828
 

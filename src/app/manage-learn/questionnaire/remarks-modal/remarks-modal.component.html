@@ -1,14 +1,3 @@
-<ion-header>
-  <ion-navbar >
-    <div class="_flex-box">
-      <ion-title class="_ellipsis titleAdj">{{ 'FRMELEMENTS_LBL_REMARKS'|translate  }} </ion-title>
-      <ion-button  icon-start clear  (click)="update()"
-        [disabled]="required ? !data.remarks : false">
-        {{'FRMELEMENTS_BTN_DONE'|translate}}
-      </ion-button>
-    </div>
-  </ion-navbar>
-</ion-header>
 
 
 <ion-content class="ion-padding">
@@ -25,7 +14,7 @@
       </ion-button>
     </ion-col>
     <ion-col>
-      <ion-button icon-start expand="full" float-right  (click)="update()"
+      <ion-button icon-start expand="full"  (click)="update()"
         [disabled]="required ? !data.remarks : false">
         {{'FRMELEMENTS_BTN_ADD'|translate}}
       </ion-button>

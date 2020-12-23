@@ -559,6 +559,8 @@ export class RouterLinks {
     public static readonly SOLUTIONS = 'solutions';
     public static readonly QUESTIONNAIRE = 'questionnaire';
     public static readonly OBSERVATION = 'observation';
+    public static readonly SECTION_LISTING = 'section-listing';
+    public static readonly ECM_LISTING = 'ecm-listing';
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';

@@ -7,9 +7,9 @@
     </ion-col>
     <div class="_tip _flex-box">{{data?.tip}}</div>
 
-    <ion-list class="ion-margin-top ion-text-wrap" [(ngModel)]="data.value" (ionChange)="checkForCompletion()"
-      (ngModelChange)="checkForValidation()" ngDefaultControl>
-      <ion-radio-group>
+    <ion-list class="ion-margin-top ion-text-wrap"  >
+      <ion-radio-group [(ngModel)]="data.value" 
+      (ngModelChange)="checkForValidation()">
         <ion-item *ngFor="let option of data?.options" class="ds-item">
           <ion-label class="_flex-box label ion-text-wrap ds-m0">
             <ion-icon name="bulb" class="help" (click)="openHint(option?.hint)" *ngIf="option?.hint"></ion-icon>
