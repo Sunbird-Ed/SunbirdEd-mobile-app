@@ -10,7 +10,7 @@
 
   <div class="ion-margin-top" style="position: relative;">
     <ion-item>
-      <ion-label floating>{{'ionLabel.date'| translate}}</ion-label>
+      <ion-label floating>{{'FRMELEMENTS_LBL_DATE'| translate}}</ion-label>
       <ion-datetime [disabled]="data?.autoCapture || (data.isEditable!=undefined && !data.isEditable)"
         displayFormat="{{data?.dateFormat}}" *ngIf="data?.validation.max && !data?.validation.min"
         [max]='data?.validation.max ? data?.validation.max : ""' (ionCancel)="canceled()" [(ngModel)]="data.value"
@@ -31,14 +31,14 @@
         (ionCancel)="canceled()" [(ngModel)]="data.value" [max]="futureDate" (ngModelChange)="checkForValidation()">
       </ion-datetime>
     </ion-item>
-    <button ion-button icon-start clear color="primary" class="capture ion-float-right" (click)="captureTime()"
+    <ion-button icon-start clear class="capture ion-float-right" (click)="captureTime()"
       *ngIf="!data?.value && data?.autoCapture">
-      {{'buttons.capture'| translate}}
-    </button>
-    <button ion-button icon-start clear color="primary" class="capture ion-float-right" (click)="captureTime()"
+      {{'FRMELEMENTS_LBL_CAPTURE'| translate}}
+    </ion-button>
+    <ion-button icon-start clear class="capture ion-float-right" (click)="captureTime()"
       *ngIf="!data?.autoCapture">
-      {{'buttons.today'| translate}}
-    </button>
+      {{'FRMELEMENTS_LBL_TODAY'| translate}}
+    </ion-button>
     <div style="width: 100%;">
       <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
     </div>
