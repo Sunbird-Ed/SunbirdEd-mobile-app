@@ -1,5 +1,3 @@
-
-
 <ion-app>
   <ion-content fullscreen>
     <app-common-header
@@ -13,10 +11,10 @@
           [title]="data?.name"
           [subTitle]="data?.description"
           [id]="data?._id"
-          (cardSelect)="observationDetails(programIndex,solutionIndex)"
+          (cardSelect)="observationDetails(programIndex, solutionIndex)"
         >
-       <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
-      </app-item-list-card>
+          <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
+        </app-item-list-card>
       </ng-container>
     </div>
   </ion-content>

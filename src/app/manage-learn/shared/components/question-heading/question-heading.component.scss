@@ -1,0 +1,14 @@
+.flexbox {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
+}
+
+.noWrap {
+    white-space: nowrap;
+    text-align: justify;
+}
+
+.wrapText {
+    white-space: wrap;
+}

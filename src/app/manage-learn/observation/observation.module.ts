@@ -10,6 +10,8 @@ import { IonicModule } from "@ionic/angular";
 import { ObservationService } from "./observation.service";
 import { ObservationSubmissionComponent } from "./observation-submission/observation-submission.component";
 import { FormsModule } from '@angular/forms';
+import { CoreModule } from '../core/core.module';
+import { LocalStorageService } from '../core';
 
 @NgModule({
   declarations: [ObservationHomeComponent, ObservationDetailComponent, ObservationSubmissionComponent],
@@ -21,7 +23,8 @@ import { FormsModule } from '@angular/forms';
     SharedModule,
     IonicModule,
     FormsModule,
+    CoreModule
   ],
-  providers: [ObservationService],
+  providers: [ObservationService,LocalStorageService],
 })
 export class ObservationModule {}

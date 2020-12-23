@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
+import { LocalStorageService, UtilsService } from '../../core';
+import { storageKeys } from '../../storageKeys';
 
 @Component({
   selector: 'app-observation-submission',
@@ -33,13 +35,16 @@ export class ObservationSubmissionComponent implements OnInit {
   programList: any;
   showEntityActionsheet: boolean;
   showActionsheet: boolean;
+  submissionIdArr: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
     private platform: Platform,
     private httpClient: HttpClient,
     private observationService: ObservationService,
-    private router: Router
+    private router: Router,
+    private localStorage: LocalStorageService,
+    private utils: UtilsService
   ) {}
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -70,17 +75,40 @@ export class ObservationSubmissionComponent implements OnInit {
     this.getProgramFromStorage();
   }
 
-  async getProgramFromStorage(stopLoader?, noLoader?) {
-    this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-      console.log(data);
-      this.programList = data.result;
-      this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-      this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-        this.entityIndex
-      ].submissions;
-      this.splitCompletedAndInprogressObservations();
-      this.tabChange(this.currentTab ? this.currentTab : 'all');
-    });
+  getProgramFromStorage(stopLoader?, noLoader?) {
+    this.localStorage
+      .getLocalStorage(storageKeys.observationSubmissionIdArr)
+      .then((ids) => {
+        this.submissionIdArr = ids;
+          this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
+            console.log(data);
+            this.programList = data.result;
+            this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
+            this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
+              this.entityIndex
+            ].submissions;
+            this.applyDownloadedflag();
+            this.splitCompletedAndInprogressObservations();
+            this.tabChange(this.currentTab ? this.currentTab : 'all');
+          });
+      })
+      .catch((err) => {
+        this.submissionIdArr = [];
+          this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
+            console.log(data);
+            this.programList = data.result;
+            this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
+            this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
+              this.entityIndex
+            ].submissions;
+            this.applyDownloadedflag();
+            this.splitCompletedAndInprogressObservations();
+            this.tabChange(this.currentTab ? this.currentTab : 'all');
+          });
+      })
+      .finally(() => {
+      
+      });
 
     /* await this.localStorage
       .getLocalStorage(storageKeys.observationSubmissionIdArr)
@@ -118,6 +146,12 @@ export class ObservationSubmissionComponent implements OnInit {
         this.submissionList = null;
       }); */
   }
+
+  applyDownloadedflag() {
+    this.submissionList.map((s) => {
+      this.submissionIdArr.includes(s._id) ? (s.downloaded = true) : null;
+    });
+  }
   splitCompletedAndInprogressObservations() {
     this.completedObservations = [];
     this.inProgressObservations = [];
@@ -149,49 +183,43 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   getAssessmentDetails(submission) {
-    // TODO: Remove
-    this.getAssessmentDetailsApi(submission);
-    //TODO : till here
-    // this.showActionsheet = false;
-    // this.showEntityActionsheet = false;
+    this.showActionsheet = false;
+    this.showEntityActionsheet = false;
 
-    // this.localStorage
-    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
-    //   .then((data) => {
-    //     if (!data) {
-    //       this.getAssessmentDetailsApi(submission);
-    //     } else {
-    //       this.goToEcm(submission);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     this.getAssessmentDetailsApi(submission);
-    //   });
+    this.localStorage
+      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submission._id))
+      .then((data) => {
+        if (!data) {
+          this.getAssessmentDetailsApi(submission);
+        } else {
+          this.goToEcm(submission);
+        }
+      })
+      .catch((error) => {
+        this.getAssessmentDetailsApi(submission);
+      });
   }
 
   getAssessmentDetailsApi(submission) {
-    // TODO: Remove
-    this.goToEcm(submission);
-    //TODO : till here
-    //   let event = {
-    //     programIndex: this.programIndex,
-    //     solutionIndex: this.solutionIndex,
-    //     entityIndex: this.entityIndex,
-    //     submission: submission,
-    //   };
-    //   this.programService
-    //     .getAssessmentDetailsForObservation(event, this.programList)
-    //     .then(async (programList) => {
-    //       await this.getProgramFromStorage();
-    //       this.goToEcm(submission);
-    //     })
-    //     .catch((error) => {});
+    let event = {
+      programIndex: this.programIndex,
+      solutionIndex: this.solutionIndex,
+      entityIndex: this.entityIndex,
+      submission: submission,
+    };
+    this.observationService
+      .getAssessmentDetailsForObservation(event, this.programList)
+      .then(async (programList) => {
+        await this.getProgramFromStorage();
+        this.goToEcm(submission);
+      })
+      .catch((error) => {});
   }
 
   goToEcm(submission) {
     // TODO: Remove
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`])
-        // let heading = this.selectedSolution.entities[this.entityIndex].name;
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+    // let heading = this.selectedSolution.entities[this.entityIndex].name;
 
     // this.localStorage
     //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
