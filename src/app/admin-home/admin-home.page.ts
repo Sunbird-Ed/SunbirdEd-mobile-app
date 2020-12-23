@@ -2,9 +2,11 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-    CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
+import {
+  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+  CachedItemRequestSourceFrom, SearchType
+} from '@project-sunbird/sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -155,18 +157,40 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   handlePillSelect(event) {
     console.log(event);
+    debugger
     const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
-    this.commonUtilService.showToast(title);
-    if (title === 'Courses') {
-      this.router.navigate([RouterLinks.SEARCH], {});
+    // this.commonUtilService.showToast(title);
+    switch (title) {
+      case 'Programs':
+        this.router.navigate([RouterLinks.PROGRAM], {})
+        break
+      case 'Projects':
+        this.router.navigate([RouterLinks.PROJECT], {})
+        break
+      case 'Observations':
+        this.router.navigate([RouterLinks.OBSERVATION], {})
+        break
+      case 'Surveys':
+        this.router.navigate([RouterLinks.SURVEY], {})
+        break
+      case 'Reports':
+        // this.router.navigate([RouterLinks.PROGRAM], {})
+
+        break
+      case 'Courses':
+        this.router.navigate([RouterLinks.SEARCH], {});
+        break
     }
+    // if (title === 'Courses') {
+    //   this.router.navigate([RouterLinks.SEARCH], {});
+    // }
     if (!event || !event.data || !event.data.length) {
       return;
     }
     const params = {
       formField: event.data[0].value
     };
-   // this.router.navigate([RouterLinks.HOME_PAGE], { state: params });
+    // this.router.navigate([RouterLinks.HOME_PAGE], { state: params });
   }
 
   navigateToViewMoreContentsPage(section, pageName) {

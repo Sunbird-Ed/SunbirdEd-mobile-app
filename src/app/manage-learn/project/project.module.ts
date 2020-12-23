@@ -13,11 +13,11 @@ import { LearningResourcesPage } from './learning-resources/learning-resources.p
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'details',
     component: ProjectDetailPage
   },
   {
-    path: 'listing',
+    path: '',
     component: ProjectListingComponent
   },
   {
