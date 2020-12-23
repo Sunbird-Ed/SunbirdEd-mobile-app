@@ -6,6 +6,9 @@ window.dayjs = require('dayjs')
 
 global.cordova = {
     plugins: {
+        InAppUpdateManager: {
+            checkForImmediateUpdate: () => {}
+        },
         notification: {
             local: {
                 lanchDetails: {},
@@ -92,7 +95,8 @@ global.FCMPlugin = {
     getToken: () => {},
     onNotification: () => {},
     onTokenRefresh: () => {},
-    subscribeToTopic: () => {}
+    subscribeToTopic: () => {},
+    unsubscribeFromTopic: () => {}
 }
 
 global.sbsync = {
@@ -107,3 +111,4 @@ global.qrScanner = {
 global.downloadManager = {
     enqueue: () => { }
 }
+

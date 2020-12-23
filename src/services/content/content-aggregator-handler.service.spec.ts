@@ -47,7 +47,7 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'course';
+        const pageName = AggregatorPageType.COURSE;
         const dataSrc = ['CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
@@ -96,7 +96,7 @@ describe('ContentAggregatorHandler', () => {
                 JSON.stringify({ en: 'sample-enrolled-course' }), '');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
                 JSON.stringify({ en: 'sample-course' }), '');
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
         }, 0);
@@ -111,7 +111,7 @@ describe('ContentAggregatorHandler', () => {
                 return contentSearchCriteria;
             }
         };
-        const pageName = 'course';
+        const pageName = AggregatorPageType.COURSE;
         const dataSrc = ['CONTENTS'];
         const formRequest: FormRequest = {
             type: 'config',
@@ -147,7 +147,7 @@ describe('ContentAggregatorHandler', () => {
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(1,
                 JSON.stringify({ en: 'sample-course' }), '');
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
         }, 0);
@@ -211,7 +211,7 @@ describe('ContentAggregatorHandler', () => {
                 JSON.stringify({ en: 'sample-learning-course' }), '');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
                 JSON.stringify({ en: 'sample-textbook' }), '');
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
         }, 0);
@@ -275,7 +275,7 @@ describe('ContentAggregatorHandler', () => {
                 JSON.stringify({ en: 'sample-learning-course' }), '');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
                 JSON.stringify({ en: 'sample-textbook' }), '');
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
         }, 0);
@@ -322,7 +322,7 @@ describe('ContentAggregatorHandler', () => {
         setTimeout(() => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -355,7 +355,7 @@ describe('ContentAggregatorHandler', () => {
         setTimeout(() => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -388,7 +388,7 @@ describe('ContentAggregatorHandler', () => {
         contentAggregatorHandler.aggregate(request, pageName).catch(() => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
-            expect(data).toHaveBeenCalledWith(request, dataSrc, formRequest);
+            expect(data).toHaveBeenCalled();
             done();
         });
     });

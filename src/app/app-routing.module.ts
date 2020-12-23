@@ -47,6 +47,18 @@ const routes: Routes = [
     path: RouterLinks.RESOURCES,
     loadChildren: './resources/resources.module#ResourcesModule',
   },
+  {
+    path: RouterLinks.HOME,
+    loadChildren: './home/home.module#HomePageModule'
+  },
+  {
+    path: RouterLinks.DISCOVER,
+    loadChildren: './discover/discover.module#DiscoverPageModule'
+  },
+  {
+    path: RouterLinks.ADMIN_HOME,
+    loadChildren: './admin-home/admin-home.module#AdminHomePageModule',
+  },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
   { path: RouterLinks.DOWNLOAD_MANAGER, loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
@@ -99,6 +111,9 @@ const routes: Routes = [
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
   },
   { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
+  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
+  { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' }
+
 ];
 
 @NgModule({

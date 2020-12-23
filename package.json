@@ -56,12 +56,12 @@
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "3.5.1",
-    "@project-sunbird/common-consumption": "^3.4.7",
+    "@project-sunbird/client-services": "3.6.4",
+    "@project-sunbird/common-consumption": "^3.6.4",
     "@project-sunbird/content-player": "3.4.1",
     "@project-sunbird/sb-styles": "0.0.7",
-    "@project-sunbird/sunbird-pdf-player": "0.0.9",
-    "@project-sunbird/sunbird-sdk": "3.5.1",
+    "@project-sunbird/sunbird-pdf-player": "0.1.0",
+    "@project-sunbird/sunbird-sdk": "3.6.2",
     "com-sarriaroman-photoviewer": "^1.2.5",
     "com.jjdltc.cordova.plugin.zip": "https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
@@ -86,6 +86,7 @@
     "cordova-plugin-filepath": "^1.5.8",
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-inappbrowser": "^3.2.0",
+    "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.2.1",
     "cordova-plugin-media": "^5.0.3",
@@ -144,7 +145,6 @@
     "@babel/preset-typescript": "^7.9.0",
     "@ionic/angular-toolkit": "~1.5.1",
     "@ionic/v4-migration-tslint": "^1.7.1",
-    "@project-sunbird/client-services": "^3.5.1",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@types/jest": "^25.2.1",
     "@types/node": "12.11.5",
@@ -239,7 +239,8 @@
       "cordova-sqlite-storage": {},
       "cordova-plugin-telerik-imagepicker": {},
       "cordova-plugin-photo-library": {},
-      "cordova-plugin-filechooser": {}
+      "cordova-plugin-filechooser": {},
+      "cordova-plugin-inappupdatemanager": {}
     },
     "platforms": [
       "android"
