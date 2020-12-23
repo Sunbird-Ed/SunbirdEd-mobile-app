@@ -257,7 +257,8 @@ export class LocalCourseService {
         courseId: courseContext.courseId,
         contentIds: courseContext.leafNodeIds,
         returnRefreshedContentStates: true,
-        batchId: courseContext.batchId
+        batchId: courseContext.batchId,
+        fields: ['progress', 'score']
       };
       let progress = 0;
       try {
@@ -270,10 +271,11 @@ export class LocalCourseService {
             }
           }
           progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
+
         }
-        resolve(progress);
+        resolve({progress, contentStatusData});
       } catch (err) {
-        resolve(progress);
+        resolve({progress});
       }
     });
   }

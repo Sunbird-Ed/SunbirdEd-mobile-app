@@ -1498,6 +1498,11 @@ body {
   color: map-get($colors, red);
 }
 
+.consent-info {
+  font-size: 12px;
+  padding-left: 4em;
+}
+
 .cd-license-card {
   ion-card {
     margin-left: 0;
@@ -1530,6 +1535,143 @@ app-collection-detail-etb{
       .arrange-card-items{
         align-items: center;
       }
+    }
+  }
+}
+
+
+._flex-box {
+  display: flex;
+  align-items: center;
+}
+
+._justify-content-center {
+  justify-content: center;
+}
+
+._justify-content-end {
+  justify-content: flex-end;
+}
+
+._vertical-center {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+._flex-direction-column {
+  flex-direction: column;
+}
+
+._justify-content-space-between {
+  justify-content: space-between;
+}
+
+._container {
+  flex-wrap: wrap;
+  padding-bottom: 60px;
+}
+
+._overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.2);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+._cards {
+  width: calc(25% - 8px) !important;
+  margin: 4px;
+  background: $white-color;
+  position: relative;
+  height: 75px;
+  border: 1px solid #e8eaed;
+  border-radius: 3px;
+
+  .iconAdj {
+    font-size: 5rem;
+  }
+
+  overflow: hidden;
+}
+
+._footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #e8eaed;
+  background: white;
+  z-index: 10;
+  padding: 5px 16px;
+}
+
+._validQuestion {
+  color: green;
+}
+
+._cardBg {
+  background: #fff;
+}
+
+._tip {
+  color: #777;
+  font-size: 12px;
+  padding-left: 10px;
+}
+.disabled-toc-card {
+  background-color: $gray-100 !important;
+  border-color: $gray-100 !important;
+}
+
+sb-pills-grid{
+  label{
+    margin-bottom: 0 !important;
+  }
+}
+
+app-home{
+  sb-pills-grid{
+    .sb-label-grid{
+      @include padding(null, 8px, null, 8px !important);
+    }
+    .sb-pills-grid{
+      .item{
+        padding: 1.5rem !important;
+      }
+    }
+  }
+}
+
+app-admin-home{
+  sb-pills-grid{
+    .sb-label-grid{
+      padding: 12px;
+      .sb-icon-img{
+        width: 3.5rem!important;
+      }
+    }
+  }
+}
+
+app-discover{
+  sb-pills-grid{
+    .item{
+      padding: 1rem !important;
+      margin: 0.5rem !important;
+      font-size: 16px !important;
+    }
+    .show-circle{
+      font-size: 20px !important;
+      min-height: 75px !important;
+      grid-template-columns: repeat(auto-fill,minmax(110px,0fr)) !important;
     }
   }
 }

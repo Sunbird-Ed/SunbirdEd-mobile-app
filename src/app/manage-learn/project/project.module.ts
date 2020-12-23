@@ -19,10 +19,6 @@ const routes: Routes = [
     component: ProjectListingComponent
   },
   {
-    path: 'listing',
-    component: ProjectListingComponent
-  },
-  {
     path: 'details',
     component: ProjectDetailPage
   },

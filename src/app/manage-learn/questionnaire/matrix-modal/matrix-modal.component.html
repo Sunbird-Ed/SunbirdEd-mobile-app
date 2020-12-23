@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-navbar>
+    <div class="_flex-box">
+      <ion-title class="ion-text-capitalize">{{data?.instanceIdentifier}} {{selectedIndex+1 }}</ion-title>
+      <ion-icon name="close" class="closeBtn ion-float-right ion-margin-right"  (click)="cancel()"></ion-icon>
+    </div>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <ion-col class="_flex-box _justify-content-center _flex-direction-column ">
+      <h4 *ngFor="let question of data.question">{{question}}</h4>
+    </ion-col>
+
+
+    <div *ngFor="let instance of data?.value; let i = index">
+      <ng-container *ngIf="selectedIndex ===i">
+        <ng-container [ngSwitch]="question?.responseType" *ngFor="let question of instance; let j=index" class="ion-margin-bottom">
+          <ion-item-divider color="light" *ngIf="question?.sectionHeader">
+            <h4 class="bold _flex-box sectionHeader ion-text-wrap" >{{question?.sectionHeader}}</h4>
+          </ion-item-divider>
+          <div class="_fullScreenCard" *ngIf="checkForVisibility(j)">
+            <app-text-type-input [inputIndex]="j+1" [data]="question" [generalQuestion]="generalQuestion"
+              [evidenceId]="evidenceId" [schoolId]="schoolId" *ngSwitchCase="'text'" [hideButton]="true"
+              [submissionId]="submissionId" [enableQuestionReadOut]="enableQuestionReadOut"></app-text-type-input>
+            <app-text-type-input [inputIndex]="j+1" [data]="question" [generalQuestion]="generalQuestion"
+              [evidenceId]="evidenceId" [schoolId]="schoolId" *ngSwitchCase="'number'" [submissionId]="submissionId"
+              [hideButton]="true" [enableQuestionReadOut]="enableQuestionReadOut"></app-text-type-input>
+            <app-radio-type-input [inputIndex]="j+1" [data]="question" [generalQuestion]="generalQuestion"
+              [evidenceId]="evidenceId" [schoolId]="schoolId" *ngSwitchCase="'radio'" [submissionId]="submissionId"
+              [hideButton]="true" [enableQuestionReadOut]="enableQuestionReadOut"></app-radio-type-input>
+            <app-date-type-input [inputIndex]="j+1" [data]="question" [generalQuestion]="generalQuestion"
+              [evidenceId]="evidenceId" [schoolId]="schoolId" *ngSwitchCase="'date'" [submissionId]="submissionId"
+              [hideButton]="true" [enableQuestionReadOut]="enableQuestionReadOut"></app-date-type-input>
+            <app-multiple-type-input [inputIndex]="j+1" [data]="question" [generalQuestion]="generalQuestion"
+              [evidenceId]="evidenceId" [schoolId]="schoolId" *ngSwitchCase="'multiselect'"
+              [submissionId]="submissionId" [hideButton]="true" [enableQuestionReadOut]="enableQuestionReadOut">
+            </app-multiple-type-input>
+            <app-slider-type-input [inputIndex]="j+1" [evidenceId]="selectedEvidenceId" [schoolId]="schoolId"
+              [data]="question" [imageLocalCopyId]="localImageListKey" [submissionId]="submissionId"
+              *ngSwitchCase="'slider'" [enableQuestionReadOut]="enableQuestionReadOut"></app-slider-type-input>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+  </div>
+</ion-content>
+<div class="_footer customFooter">
+  <ion-row>
+    <ion-col>
+      <ion-button icon-start size="full" color="light" (click)="cancel()">
+        {{'FRMELEMENTS_LBL_CANCEL'|translate}}
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button size="full" float-right (click)="update()">
+        {{'FRMELEMENTS_BTN_SAVE'|translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</div>

@@ -2036,6 +2036,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 children: []
             };
             enrolledCourseDetailsPage.isBatchNotStarted = true;
+            enrolledCourseDetailsPage.isCertifiedCourse = true;
             mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');

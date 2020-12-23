@@ -1241,7 +1241,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile)) {
+    if (doNotShow || await this.tncUpdateHandlerService.isSSOUser(profile) || !this.isCertifiedCourse) {
       this.startContent();
     } else {
       this.showProfileNameConfirmationPopup();

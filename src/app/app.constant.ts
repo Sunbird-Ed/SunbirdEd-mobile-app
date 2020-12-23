@@ -446,6 +446,8 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
+     // ADMIN HOME Routes
+     public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -455,6 +457,12 @@ export class RouterLinks {
     public static readonly TEXTBOOK_TOC = 'textbook-toc';
     public static readonly EXPLORE_BOOK = 'explore-book';
     public static readonly RELEVANT_CONTENTS = 'relevant-contents';
+
+    // HOME Routes
+    public static readonly HOME = 'home';
+
+    // Discover(SEARCH) Routes
+    public static readonly DISCOVER = 'discover';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -511,10 +519,13 @@ export class RouterLinks {
 
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
+    public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
+    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
     public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
+    public static readonly ADMIN_HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.ADMIN_HOME}`;
 
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
@@ -546,10 +557,13 @@ export class RouterLinks {
     public static readonly PROJECT = 'project';
     public static readonly PROJECT_DETAILS = 'details';
     public static readonly SOLUTIONS = 'solutions';
+    public static readonly QUESTIONNAIRE = 'questionnaire';
     public static readonly OBSERVATION = 'observation';
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
+    // category-list page
+    public static readonly CATEGORY_LIST = 'category-list';
 }
 
 export class ShareItemType {
@@ -608,4 +622,8 @@ export class AppThemes {
 
 export class StatusBarTheme {
     public static readonly SET_DEFAULT = '#BB000000';
+}
+
+export class AssessmentConstant {
+    public static readonly MAX_ATTEMPTS = 3;
 }

@@ -1,0 +1,26 @@
+<ion-card class="_cardBg ion-padding">
+  <ion-col class="_flex-box _justify-content-center _flex-direction-column">
+    <h4 [ngClass]="{'_validQuestion': data?.value}" class="flexbox">
+      <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
+      </app-question-heading>
+    </h4>
+  </ion-col>
+  <div class="_tip _flex-box">{{data?.tip}}</div>
+  <div class="_flex-box _justify-content-center _full-width ion-margin-top">
+    <span class="valueBox _flex-box _justify-content-center">{{data?.value}}</span>
+  </div>
+  <div class="ion-margin-top">
+    <ion-item>
+      <ion-range [(ngModel)]="data.value" pin="true" step="1" (ngModelChange)="checkForValidation()" snaps="true"
+        [min]="data?.validation.min" [max]="data?.validation.max"
+        [disabled]="data.isEditable!=undefined && !data.isEditable">
+        <ion-label range-left>{{data?.validation.min}}</ion-label>
+        <ion-label range-right>{{data?.validation.max}}</ion-label>
+      </ion-range>
+    </ion-item>
+
+    <app-remarks *ngIf="data?.showRemarks" [data]="data"></app-remarks>
+    <app-image-upload [data]="data" [generalQuestion]="generalQuestion" [imageLocalCopyId]="imageLocalCopyId"
+      [evidenceId]="evidenceId" [submissionId]="submissionId"></app-image-upload>
+  </div>
+</ion-card>

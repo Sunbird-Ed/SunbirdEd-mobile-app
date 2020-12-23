@@ -1,0 +1,25 @@
+<ion-card class="_cardBg ion-padding">
+  <ion-col class="_flex-box _justify-content-center _flex-direction-column ">
+    <h4
+      [ngClass]="{'_validQuestion': data?.completedInstance?.length && (data?.completedInstance?.length === data?.value?.length)}">
+      <app-question-heading [inputIndex]="inputIndex" [data]="data" [enableQuestionReadOut]="enableQuestionReadOut">
+      </app-question-heading>
+    </h4>
+  </ion-col>
+  <div class="_tip _flex-box "> {{data?.tip}}</div>
+  <div class="_flex-box alignBtn">
+    <ion-button (click)="addInstances()">{{'FRMELEMENTS_BTN_ADD'|
+      translate}} {{data.instanceIdentifier}}</ion-button>
+  </div>
+  <ion-list class="ion-margin-top ion-text-wrap" *ngIf="data?.value?.length">
+    <ion-item text-capitalize class="_flex-box" *ngFor="let instance of data?.value; let i = index">
+      <div class="_flex-box conatiner" (click)="viewInstance(i)">
+        <span [ngClass]="{'_validQuestion': data?.completedInstance?.includes(i)}" style="flex:1">
+          {{data?.instanceIdentifier}} {{i+1}}</span>
+        <span class="modified" *ngIf="getLastModified(instance)">Last Modified
+          {{getLastModified(instance)|date:'shortTime'}} {{getLastModified(instance)|date:'mediumDate'}} </span>
+      </div>
+      <ion-icon name="trash" class="deletOption ion-margin-right" item-end (click)="deleteInstanceAlert(i)"></ion-icon>
+    </ion-item>
+  </ion-list>
+</ion-card>

@@ -21,6 +21,8 @@ import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
 
+declare const FCMPlugin;
+
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
 
@@ -55,7 +57,7 @@ describe('CommonUtilService', () => {
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
-    onChange: jest.fn(() => of({ type: 'online' }))
+    onChange: jest.fn(() => of([{ type: 'online' }]))
   };
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
@@ -100,6 +102,7 @@ describe('CommonUtilService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('should create an instance of CommonUtilService', () => {
@@ -195,46 +198,6 @@ describe('CommonUtilService', () => {
       expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en');
       expect(mockSharedPreferences.putString).toHaveBeenCalledWith(PreferenceKey.SELECTED_LANGUAGE, 'English');
     });
-  });
-
-  describe('showExitPopUp()', () => {
-
-    it('should show Exit Popup', (done) => {
-      // arrange
-      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-        present: jest.fn(() => Promise.resolve({})),
-        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
-      } as any);
-      // act
-      commonUtilService.showExitPopUp('permission', 'home', false);
-      // assert
-      setTimeout(() => {
-        expect(mockPopoverController.create).toHaveBeenCalled();
-        expect(createMock.mock.calls[0][0]['component']).toEqual(SbGenericPopoverComponent);
-        createMock.mockReset();
-        done();
-      }, 0);
-    });
-
-    // it('should dismiss the popup when NO button is clicked', (done) => {
-    //   // arrange
-    //   const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
-    //     present: jest.fn(() => Promise.resolve({})),
-    //     onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
-    //     dismiss: jest.fn(() => Promise.resolve({}))
-    //   } as any);
-    //   // act
-    //   commonUtilService.showExitPopUp('library', 'home', false);
-    //   // assert
-    //   setTimeout(() => {
-    //     expect(mockPopoverController.create).toHaveBeenCalled();
-    //     expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
-    //       InteractSubtype.NO_CLICKED,
-    //       'home',
-    //       'library');
-    //     done();
-    //   }, 0);
-    // });
   });
 
   describe('afterOnBoardQRErrorAlert()', () => {
@@ -502,7 +465,10 @@ describe('CommonUtilService', () => {
   describe('handleToTopicBasedNotification()', () => {
     it('should return true if IP location is available', (done) => {
       // arrange
-      const profile = { board: ['AP'], medium: ['English', 'Hindi', 'Bengali'], grade: ['class 8', 'class9', 'class10'] } as any;
+      const profile = {
+        board: ['AP'], medium: ['English', 'Hindi', 'Bengali'],
+        grade: ['class 8', 'class9', 'class10'], profileType: 'teacher'
+      } as any;
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile));
       mockSharedPreferences.getString = jest.fn((arg) => {
         let value;
@@ -515,12 +481,17 @@ describe('CommonUtilService', () => {
         }
         return of(value);
       });
+      FCMPlugin.unsubscribeFromTopic = jest.fn((_, resolve, reject) => resolve());
+      FCMPlugin.subscribeToTopic = jest.fn((_, resolve, reject) => resolve());
+      mockSharedPreferences.putString = jest.fn(() => of(undefined));
       // act
       commonUtilService.handleToTopicBasedNotification();
       // assert
       setTimeout(() => {
         expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-        expect(mockSharedPreferences.getString).toHaveBeenCalled();
+        expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(1, PreferenceKey.DEVICE_LOCATION);
+        expect(mockSharedPreferences.getString).toHaveBeenNthCalledWith(2, PreferenceKey.SUBSCRIBE_TOPICS);
+        expect(mockSharedPreferences.putString).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -633,4 +604,64 @@ describe('CommonUtilService', () => {
     });
   });
 
+  describe('showExitPopUp()', () => {
+    it('should show Exit Popup', (done) => {
+      // arrange
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+        dismiss: jest.fn(() => Promise.resolve({}))
+      }) as any);
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      // act
+      commonUtilService.showExitPopUp('permission', 'home', false);
+      // assert
+      setTimeout(() => {
+        expect(mockPopoverController.create).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should return non-clicked telemetry', (done) => {
+      // arrange
+      commonUtilService = new CommonUtilService(
+        mockSharedPreferences as SharedPreferences,
+        mockProfileService as ProfileService,
+        mockTranslateService as TranslateService,
+        mockLoadingController as LoadingController,
+        mockEvents as Events,
+        mockPopoverController as PopoverController,
+        mockNetwork as Network,
+        mockNgZone as NgZone,
+        mockPlatform as Platform,
+        mockTelemetryGeneratorService as TelemetryGeneratorService,
+        mockWebView as WebView,
+        mockAppversion as AppVersion,
+        mockRouter as Router,
+        mockToastController as ToastController,
+        mockPermissionService as AndroidPermissionsService,
+        mockComingSoonMessageService as ComingSoonMessageService
+      );
+      mockPopoverController.create = jest.fn(() => Promise.resolve({
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: {isLeftButtonClicked: false} })),
+        dismiss: jest.fn(() => Promise.resolve({}))
+      }) as any);
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+      // act
+      commonUtilService.showExitPopUp('library', 'home', false);
+      // assert
+      setTimeout(() => {
+         expect(mockPopoverController.create).toHaveBeenCalled();
+         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+          InteractSubtype.NO_CLICKED,
+          'home',
+          'library');
+         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
+         done();
+      }, 0);
+    });
+  });
 });

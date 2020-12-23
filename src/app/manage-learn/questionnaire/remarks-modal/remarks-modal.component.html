@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-navbar >
+    <div class="_flex-box">
+      <ion-title class="_ellipsis titleAdj">{{ 'FRMELEMENTS_LBL_REMARKS'|translate  }} </ion-title>
+      <ion-button  icon-start clear  (click)="update()"
+        [disabled]="required ? !data.remarks : false">
+        {{'FRMELEMENTS_BTN_DONE'|translate}}
+      </ion-button>
+    </div>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-textarea [(ngModel)]="data.remarks" placeholder="Remarks" #remarkInput style="height: 40vh"></ion-textarea>
+  </ion-item>
+</ion-content>
+
+<div class="_footer" no-padding>
+  <ion-row>
+    <ion-col>
+      <ion-button icon-start expand="full" color="light" (click)="close()">
+        {{'FRMELEMENTS_LBL_CANCEL'|translate}}
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button icon-start expand="full" float-right  (click)="update()"
+        [disabled]="required ? !data.remarks : false">
+        {{'FRMELEMENTS_BTN_ADD'|translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</div>

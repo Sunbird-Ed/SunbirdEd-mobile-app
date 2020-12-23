@@ -1,0 +1,18 @@
+<div class="flexbox">
+  <div class="noWrap" *ngIf="data?.questionNumber">{{data?.questionNumber}} .</div>
+  <div padding-left style="flex: 1;" class="_flex-direction-column">
+    <div *ngFor="let question of data.question;let first = first">
+      <div class=" _flex-box  _justify-content-space-between">
+        <div class="wrapText">{{question}}</div>
+      </div>
+    </div>
+
+  </div>
+  <div *ngIf="enableQuestionReadOut">
+    <ion-icon *ngIf="!play" margin-left class="noWrap" name="volume-off"
+      (click)="playQuestion(data.question[0],data.options,data.responseType)"></ion-icon>
+    <ion-icon *ngIf="play"  margin-left class="noWrap" name="volume-up" (click)="pauseQuestion()">
+    </ion-icon>
+  </div>
+
+</div>
