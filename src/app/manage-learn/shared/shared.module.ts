@@ -87,7 +87,9 @@ import { Media } from '@ionic-native/media/ngx';
     PopoverComponent,
     SectionListingComponent,
     EcmListingComponent,
+    TextTypeInputComponent,
   ],
+
   providers: [
     Camera,
     ImagePicker,

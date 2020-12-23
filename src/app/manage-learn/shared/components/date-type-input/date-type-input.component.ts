@@ -29,7 +29,6 @@ export class DateTypeInputComponent implements OnInit {
     private utils: UtilsService,
     private datePipe: DatePipe
   ) {
-    console.log('Hello DateTypeComponent Component');
     this.getFutureDate();
 
   }
@@ -44,7 +43,6 @@ export class DateTypeInputComponent implements OnInit {
 
   captureTime(): void {
     const parseString = this.data.dateFormat;
-    console.log(this.datePipe.transform(Date.now(), 'full'));
     this.data.value = new Date(Date.now()).toISOString();
     this.checkForValidation();
   }
@@ -55,16 +53,12 @@ export class DateTypeInputComponent implements OnInit {
   }
 
   canceled() {
-    console.log('cancelled')
   }
 
   ngOnInit() {
     const dateTime = new Date();
-    console.log(dateTime);
     this.data.validation.max = this.data.validation.max === "currentDate" ? new Date().toISOString().split('T')[0] : this.data.validation.max;
     this.data.validation.min = this.data.validation.min === "currentDate" ? new Date().toISOString().split('T')[0] : this.data.validation.min;
-
-    console.log(JSON.stringify(this.data.validation))
     this.checkForValidation();
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
   }

@@ -28,10 +28,7 @@ export class TextTypeInputComponent implements OnInit {
 
   ngOnInit() {
     debugger
-    console.log(this.imageLocalCopyId);
     this.isaNumber();
-    console.log(JSON.stringify(this.data))
-
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
     if (!this.data.validation.required) {
       this.data.isCompleted = true;
