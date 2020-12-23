@@ -4,20 +4,20 @@ import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
-
+import { ToastService } from './toast/toast.service';
+const environment = {
+  apiBaseUrl:''
+}
 @Injectable()
 export class ApiService {
   baseUrl: string;
   constructor(public http: HttpClient,
-    // public auth: AuthService,
-    // public toast: ToastMessageService,
+    public toast: ToastService,
     public modalController: ModalController
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
-    return this.http.get(
-      // environment.apiBaseUrl + 
-      this.baseUrl + requestParam.url).pipe(
+    return this.http.get(environment.apiBaseUrl + this.baseUrl + requestParam.url).pipe(
       tap(data => {
         return data
       }, error => {
@@ -27,10 +27,7 @@ export class ApiService {
   }
 
   post(requestParam: RequestParams): Observable<any> {
-    return this.http.post(
-      // environment.apiBaseUrl + 
-      this.baseUrl + requestParam.url, requestParam.payload
-      ).pipe(
+    return this.http.post(environment.apiBaseUrl + this.baseUrl + requestParam.url, requestParam.payload).pipe(
       tap(data => {
         return data
       }, error => {
@@ -45,13 +42,13 @@ export class ApiService {
   private handleError(result) {
     switch (result.status) {
       case 0:
-        // this.toast.showMessage('MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN' , 'danger')
+        this.toast.openToast('MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN' , 'danger')
         break
       case 401:
         // this.auth.sessionExpired();
         break
       default:
-        // this.toast.showMessage(result.error ? result.error.message : 'MESSAGES.SOMETHING_WENT_WRONG' , 'danger')
+        this.toast.openToast(result.error ? result.error.message : 'MESSAGES.SOMETHING_WENT_WRONG' , 'danger')
 
     }
     return (error: any): Observable<any> => {

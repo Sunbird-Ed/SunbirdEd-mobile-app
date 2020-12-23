@@ -22,6 +22,7 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Media } from '@ionic-native/media/ngx';
+import { CreateTaskComponent } from './components/create-task/create-task.component';
 
 @NgModule({
 
@@ -30,7 +31,7 @@ import { Media } from '@ionic-native/media/ngx';
     CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
     DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
     MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent, TextTypeInputComponent],
+    PopoverComponent, TextTypeInputComponent, CreateTaskComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -43,7 +44,7 @@ import { Media } from '@ionic-native/media/ngx';
     CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
     DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
     MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent, TextTypeInputComponent],
+    PopoverComponent, TextTypeInputComponent, CreateTaskComponent],
   providers: [
     Camera,
     ImagePicker,
@@ -58,6 +59,6 @@ import { Media } from '@ionic-native/media/ngx';
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
   ],
-  entryComponents: [EntityfilterComponent, PopoverComponent],
+  entryComponents: [EntityfilterComponent, PopoverComponent, CreateTaskComponent],
 })
 export class SharedModule { }

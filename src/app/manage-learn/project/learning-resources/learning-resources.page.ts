@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppHeaderService } from "@app/services";
 import { TranslateService } from "@ngx-translate/core";
+import { LoaderService, ToastService } from "../../core";
+import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
 
 @Component({
@@ -26,9 +28,9 @@ export class LearningResourcesPage implements OnInit {
     private headerService: AppHeaderService,
     private translate: TranslateService,
     private utils: UtilsService,
-    // private loader: LoaderService,
-    // private toast: ToastMessageService,
-    // private db: DbService,
+    private loader: LoaderService,
+    private toast: ToastService,
+    private db: DbService,
     // private openResources: OpenResourcesService
   ) {
     let data;

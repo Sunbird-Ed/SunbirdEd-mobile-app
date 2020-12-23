@@ -8,7 +8,16 @@ import { statuses } from "../../core/constants/statuses.constant";
 import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
 import { AppHeaderService } from "@app/services";
+import { DbService } from "../../core/services/db.service";
+import { ToastService } from "../../core";
 
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
 @Component({
   selector: "app-task-view",
   templateUrl: "./task-view.page.html",
@@ -39,9 +48,9 @@ export class TaskViewPage implements OnInit {
   constructor(
     private router: Router,
     private params: ActivatedRoute,
-    // private db: DbService,
+    private db: DbService,
     private utils: UtilsService,
-    // private toast: ToastMessageService,
+    private toast: ToastService,
     private translate: TranslateService,
     private alert: AlertController,
     // private attachmentService: AttachementService,
@@ -52,7 +61,7 @@ export class TaskViewPage implements OnInit {
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
     this.saveSubTaskChanges = _.debounce(this.saveSubTaskChanges, 800);
-    // this.db.createPouchDB(environment.db.projects);
+    this.db.createPouchDB(environment.db.projects);
     params.params.subscribe((parameters) => {
       this.parameters = parameters;
       this.getTask();
@@ -76,8 +85,8 @@ export class TaskViewPage implements OnInit {
   }
 
   getTask() {
-    // this.db.query({ _id: this.parameters.projectId }).then(
-    //   (success) => {
+    this.db.query({ _id: this.parameters.projectId }).then(
+      (success) => {
         this.project =  this.utils.getProjectData()//success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         // this.copyOfProject = { ...this.project };
@@ -92,9 +101,9 @@ export class TaskViewPage implements OnInit {
         this.getSubtasksCount(this.task).then((data: number) => {
           this.subTaskCount = data;
         });
-    //   },
-    //   (error) => { }
-    // );
+      },
+      (error) => { }
+    );
   }
   selectedStatus(event) {
     this.enableTaskMarkButton();
@@ -133,7 +142,7 @@ export class TaskViewPage implements OnInit {
       this.update();
     } else {
       this.task.name = this.copyOfSelectEditField;
-      // this.toast.showMessage("MESSAGES.REQUIRED_FIELDS", "danger");
+      this.toast.openToast("MESSAGES.REQUIRED_FIELDS", "danger");
     }
   }
 
@@ -144,7 +153,7 @@ export class TaskViewPage implements OnInit {
       this.update();
     } else {
       this.task.children[index].name = this.copyOfSelectEditField;
-      // this.toast.showMessage("MESSAGES.REQUIRED_FIELDS", "danger");
+      this.toast.openToast("MESSAGES.REQUIRED_FIELDS", "danger");
     }
   }
 
@@ -159,27 +168,27 @@ export class TaskViewPage implements OnInit {
       });
       this.project.isEdit = isProjectEdit.length ? true : this.project.isEdit;
       this.project = this.utils.setStatusForProject(this.project);
-      // this.db
-      //   .update(this.project)
-      //   .then((success) => {
-      //     this.project._rev = success.rev;
-      //     this.prepareSubTaskMeta();
-      //     this.attachments = [];
-      //     // this.toast.showMessage('MESSAGES.YOUR_CHANGES_ARE_SAVED', 'success');
-      //     goBack ? this.location.back() : "";
-      //   })
-      //   .catch((error) => { });
+      this.db
+        .update(this.project)
+        .then((success) => {
+          this.project._rev = success.rev;
+          this.prepareSubTaskMeta();
+          this.attachments = [];
+          this.toast.openToast('MESSAGES.YOUR_CHANGES_ARE_SAVED', 'success');
+          goBack ? this.location.back() : "";
+        })
+        .catch((error) => { });
     } else {
-      // this.toast.showMessage("MESSAGES.REQUIRED_FIELDS", "danger");
+      this.toast.openToast("MESSAGES.REQUIRED_FIELDS", "danger");
     }
   }
 
   openResources(task) {
-    // if (task && task.learningResources && task.learningResources.length === 1) {
-    //   let link = task.learningResources[0].link;
-    //   this.openBodh(link);
-    //   return;
-    // }
+    if (task && task.learningResources && task.learningResources.length === 1) {
+      let link = task.learningResources[0].link;
+      this.openBodh(link);
+      return;
+    }
     if (task) {
       this.router.navigate(["/project/learning-resources", this.project._id, task._id]);
     } else {
@@ -326,7 +335,7 @@ export class TaskViewPage implements OnInit {
           handler: (data) => {
             console.log(data);
             if (data.field == "" && what != "assignName") {
-              // this.toast.showMessage("MESSAGES.REQUIRED_FIELDS", "danger");
+              this.toast.openToast("MESSAGES.REQUIRED_FIELDS", "danger");
               return;
             }
 

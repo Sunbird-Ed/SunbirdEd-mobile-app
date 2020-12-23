@@ -3,18 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { ApiService } from './api.service';
 import { urlConstants } from '../constants/urlConstants';
+import { ToastService } from './toast/toast.service';
 
 @Injectable()
-export class SunbirdService 
-// extends ApiService 
-{
+export class SunbirdService extends ApiService {
   baseUrl: string;
   constructor(public http: HttpClient,
-    // public auth: AuthService,
-    // public toast: ToastMessageService,
+    public toast: ToastService,
     public modalController: ModalController
   ) {
-    // super(http, auth, toast, modalController);
+    super(http, toast, modalController);
     this.baseUrl = urlConstants.SERVICES.SUNBIRD;
   }
 }
