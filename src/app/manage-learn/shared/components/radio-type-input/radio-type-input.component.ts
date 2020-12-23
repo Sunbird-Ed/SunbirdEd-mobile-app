@@ -29,23 +29,19 @@ export class RadioTypeInputComponent implements OnInit {
     // private hintService: HintProvider
     ) {
 
-    console.log('Hello RadioTypeComponent Component');
 
   }
 
   ngOnInit() {
-    // console.log(JSON.stringify(this.data))
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
     if(!this.data.validation.required) {
       this.data.isCompleted = true;
     }
-    console.log("Evidence id"+ this.evidenceId)
     
 
   }
 
   updateData(event){
-    console.log(JSON.stringify(this.data));
     // this.data ={}
     // this.data = Object.assign({}, this.data)
     this.data.fileName = [...this.data.fileName]

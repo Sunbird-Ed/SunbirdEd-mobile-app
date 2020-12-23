@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 export class LocalStorageService {
 
   constructor(private storage: Storage) {
-    console.log("Hello LocalStorageProvider Provider");
   }
 
   setLocalStorage(key, value): Promise<any> {
@@ -45,7 +44,7 @@ export class LocalStorageService {
       this.storage
         .clear()
         .then((data) => {
-          resolve();
+          resolve(data);
         })
         .catch((error) => {
           reject();
@@ -58,7 +57,7 @@ export class LocalStorageService {
       this.storage
         .remove(key)
         .then((data) => {
-          resolve();
+          resolve(data);
         })
         .catch((error) => {
           reject();
