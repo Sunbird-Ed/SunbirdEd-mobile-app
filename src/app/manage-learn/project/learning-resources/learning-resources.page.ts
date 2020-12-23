@@ -6,6 +6,14 @@ import { LoaderService, ToastService } from "../../core";
 import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
 
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
+
 @Component({
   selector: "app-learning-resources",
   templateUrl: "./learning-resources.page.html",
@@ -52,23 +60,23 @@ export class LearningResourcesPage implements OnInit {
 
   ngOnInit() {}
   getProjectFromLocal(projectId) {
-    // this.loader.startLoader();
-    // this.db.createPouchDB(environment.db.projects);
-    // this.db.query({ _id: projectId }).then(
-    //   (success) => {
+    this.loader.startLoader();
+    this.db.createPouchDB(environment.db.projects);
+    this.db.query({ _id: projectId }).then(
+      (success) => {
         // this.db.getById(id).then(success => {
-        // this.loader.stopLoader();
+        this.loader.stopLoader();
         this.list = this.utils.getProjectData();
         if (this.taskId) {
           // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
         console.log(this.list, "learningResources");
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
   openBodh(link) {
     console.log(link, "link");

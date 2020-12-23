@@ -1182,5 +1182,12 @@
   "FRMELEMNTS_LBL_ASSIGNED_TO": "Assigned to",
   "FRMELEMNTS_LBL_TASK_DESCRIPTION": "Task Description",
   "FRMELEMNTS_LBL_ATTACH": "Attach",
-  "FRMELEMNTS_LBL_ADD_TASK": "Add Task"
+  "FRMELEMNTS_LBL_ADD_TASK": "Add Task",
+  "FRMELEMNTS_MSG_NO_ENTITY_MAPPED": " No entity mapped to the Project",
+  "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS": "Cannot get project details",
+  "FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE": "Your project is already upto date.",
+  "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED": "Successfully synced the project",
+  "FRMELEMNTS_MSG_SYNC_FAILED": "Sync Failed",
+  "FRMELEMNTS_MSG_SYNCING_PROJECT": "Syncing Project",
+  "OFFLINE": "You are offline!"
 }

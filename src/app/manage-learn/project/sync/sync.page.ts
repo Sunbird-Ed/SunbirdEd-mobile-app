@@ -5,6 +5,16 @@ import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { NetworkService } from '../../core/services/network.service';
+import { ToastService } from '../../core';
+import { DbService } from '../../core/services/db.service';
+
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
 
 @Component({
   selector: 'app-sync',
@@ -24,19 +34,20 @@ export class SyncPage implements OnInit, OnDestroy {
   syncCompletedProjects = []
   constructor(
     private routerparam: ActivatedRoute,
-    // private toast: ToastMessageService,
+    private toast: ToastService,
     private location: Location,
     private syncServ: SyncService,
     private translate: TranslateService,
+    private db: DbService,
     private network: NetworkService) {
-    // this.db.createPouchDB(environment.db.projects);
+    this.db.createPouchDB(environment.db.projects);
     this.translate
       .get([
-        "MESSAGES.PROJCET_ALREADY_UPTODATE",
-        "MESSAGES.SUCCESSFULLY_SYNCED",
-        "MESSAGES.SOMETHING_WENT_WRONG",
-        "MESSAGES.SYNC_FAILED",
-        "MESSAGE.OFFLINE"
+        "FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE",
+        "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED",
+        "SOMETHING_WENT_WRONG",
+        "FRMELEMNTS_MSG_SYNC_FAILED",
+        "FRMELEMNTS_MSG_OFFLINE"
       ])
       .subscribe((data) => {
         this.allStrings = data
@@ -53,10 +64,9 @@ export class SyncPage implements OnInit, OnDestroy {
         }
       })
     } else {
-      // this.toast.showMessage('MESSAGES.OFFLINE', 'danger');
+      this.toast.openToast('FRMELEMNTS_MSG_OFFLINE', 'danger');
       this.location.back();
     }
-
   }
 
   ngOnInit() {
@@ -67,43 +77,43 @@ export class SyncPage implements OnInit, OnDestroy {
 
   //get single project from db
   getProjectFromId(projectId) {
-    // this.db.customQuery({
-    //   selector: {
-    //     _id: projectId,
-    //     $or: [
-    //       { isNew: true },
-    //       { isEdit: true },
-    //     ]
-    //   }
-    // }).then(success => {
-    //   if (success['docs'].length) {
-    //     this.allProjects.push(success['docs'][0]);
-    //     this.checkForActions();
-    //   } else {
-    //     this.location.back()
-    //     this.toast.showMessage(this.allStrings['MESSAGES.PROJCET_ALREADY_UPTODATE'], 'danger')
-    //   }
-    // }, error => { })
+    this.db.customQuery({
+      selector: {
+        _id: projectId,
+        $or: [
+          { isNew: true },
+          { isEdit: true },
+        ]
+      }
+    }).then(success => {
+      if (success['docs'].length) {
+        this.allProjects.push(success['docs'][0]);
+        this.checkForActions();
+      } else {
+        this.location.back()
+        this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'], 'danger')
+      }
+    }, error => { })
   }
 
   //get all new and edited projects (for overall sync)
   getAllUnSyncedProject() {
-    // this.db.customQuery({
-    //   selector: {
-    //     $or: [
-    //       { isNew: true },
-    //       { isEdit: true },
-    //     ]
-    //   }
-    // }).then(success => {
-    //   if (success['docs'].length) {
-    //     this.allProjects = this.allProjects.concat(success['docs']);
-    //     this.checkForActions();
-    //   } else {
-    //     this.location.back()
-    //     this.toast.showMessage(this.allStrings['MESSAGES.PROJCET_ALREADY_UPTODATE'])
-    //   };
-    // }, error => { })
+    this.db.customQuery({
+      selector: {
+        $or: [
+          { isNew: true },
+          { isEdit: true },
+        ]
+      }
+    }).then(success => {
+      if (success['docs'].length) {
+        this.allProjects = this.allProjects.concat(success['docs']);
+        this.checkForActions();
+      } else {
+        this.location.back()
+        this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'])
+      };
+    }, error => { })
   }
 
   //Check if the project is new or edited existing
@@ -120,7 +130,7 @@ export class SyncPage implements OnInit, OnDestroy {
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
-      // this.toast.showMessage(this.allStrings['MESSAGES.SUCCESSFULLY_SYNCED'])
+      this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'])
       this.location.back()
     }
   }
@@ -135,7 +145,7 @@ export class SyncPage implements OnInit, OnDestroy {
     this.syncServ.createNewProject().then(success => {
       this.updateProjectDoc(success.result);
     }).catch(error => {
-      // this.toast.showMessage(this.allStrings['MESSAGES.SOMETHING_WENT_WRONG'], 'danger');
+      this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
       this.location.back();
     })
   }
@@ -149,22 +159,22 @@ export class SyncPage implements OnInit, OnDestroy {
     delete this.allProjects[this.syncIndex]._rev;
     //remove is isNew flag from project meta, task and sub task
     const newObj = this.syncServ.removeKeys(this.allProjects[this.syncIndex], ['isNew'])
-    // this.db.create(newObj).then(success => {
-    //   this.allProjects[this.syncIndex]._rev = success.rev;
-    //   this.db.delete(oldPrjstId, _rev).then(deleteSuccess => {
-    //     // this.doSyncCall()
-    //     // this.getImageUploadUrls();
-    //     this.attachments = this.syncServ.getAllAttachmentOfProject(this.allProjects[this.syncIndex]);
-    //     this.attachments.length ? this.getImageUploadUrls() : this.doSyncCall();
-    //   }).catch(deletError => {
-    //     this.toast.showMessage(this.allStrings['MESSAGES.SOMETHING_WENT_WRONG'], 'danger');
-    //     this.location.back();
-    //   })
-    // }).catch(error => {
-    //   this.toast.showMessage(this.allStrings['MESSAGES.SOMETHING_WENT_WRONG'], 'danger');
-    //   this.location.back();
+    this.db.create(newObj).then(success => {
+      this.allProjects[this.syncIndex]._rev = success.rev;
+      this.db.delete(oldPrjstId, _rev).then(deleteSuccess => {
+        // this.doSyncCall()
+        // this.getImageUploadUrls();
+        this.attachments = this.syncServ.getAllAttachmentOfProject(this.allProjects[this.syncIndex]);
+        this.attachments.length ? this.getImageUploadUrls() : this.doSyncCall();
+      }).catch(deletError => {
+        this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
+        this.location.back();
+      })
+    }).catch(error => {
+      this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
+      this.location.back();
 
-    // })
+    })
   }
 
   //Syn project API call
@@ -181,14 +191,14 @@ export class SyncPage implements OnInit, OnDestroy {
 
   //update the synced data to local
   updateSyncedDataToDb() {
-    // this.db.update(this.allProjects[this.syncIndex]).then(success => {
-    //   this.syncCompletedProjects.push(this.allProjects[this.syncIndex]);
-    //   this.syncIndex++;
-    //   this.resetImageUploadVariables()
-    //   this.checkForActions();
-    // }).catch(error => {
+    this.db.update(this.allProjects[this.syncIndex]).then(success => {
+      this.syncCompletedProjects.push(this.allProjects[this.syncIndex]);
+      this.syncIndex++;
+      this.resetImageUploadVariables()
+      this.checkForActions();
+    }).catch(error => {
 
-    // })
+    })
   }
 
   createSyncPayload() {
@@ -219,7 +229,6 @@ export class SyncPage implements OnInit, OnDestroy {
     })
   }
 
-
   resetImageUploadVariables() {
     this.imageUploadIndex = 0;
     this.attachments = [];
@@ -242,9 +251,4 @@ export class SyncPage implements OnInit, OnDestroy {
       this.cloudUpload(this.attachments[this.imageUploadIndex])
     })
   }
-
-
-
-
-
 }
