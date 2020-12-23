@@ -8,14 +8,14 @@ import { ModalController } from '@ionic/angular';
 })
 export class RemarksModalComponent implements OnInit {
   @ViewChild('remarkInput') remarkInput;
-
+  hideBack;
   @Input() data: any;
   @Input() button: string;
   @Input() required: boolean;
 
-  constructor(private modal: ModalController) { }
+  constructor(private modal: ModalController) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   close(): void {
     this.modal.dismiss();
@@ -26,7 +26,6 @@ export class RemarksModalComponent implements OnInit {
   }
 
   ngAfterViewChecked() {
-    this.remarkInput.setFocus()
+    this.remarkInput.setFocus();
   }
-
 }
