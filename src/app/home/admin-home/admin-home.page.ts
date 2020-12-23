@@ -1,14 +1,12 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import {
-  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType, InteractType
-} from '@project-sunbird/sunbird-sdk';
-import { ContentFilterConfig, ProfileConstants, RouterLinks } from '../app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ContentFilterConfig, ProfileConstants, RouterLinks } from '../../app.constant';
+import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events } from '@ionic/angular';

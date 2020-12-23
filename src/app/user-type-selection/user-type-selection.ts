@@ -8,7 +8,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -340,6 +340,12 @@ export class UserTypeSelectionPage implements OnDestroy {
       }).catch(error => {
         console.error('Error=', error);
       });
+    const request: UpdateServerProfileInfoRequest = {
+        userId: this.profile.uid,
+        userType: (this.selectedUserType.charAt(0).toUpperCase() + this.selectedUserType.slice(1))
+      };
+    this.profileService.updateServerProfile(request).toPromise()
+    .then().catch((e) => console.log('server error for update profile', e));
   }
 
   async navigateToTabsAsLogInUser() {

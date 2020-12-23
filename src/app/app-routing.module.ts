@@ -55,10 +55,6 @@ const routes: Routes = [
     path: RouterLinks.DISCOVER,
     loadChildren: './discover/discover.module#DiscoverPageModule'
   },
-  {
-    path: RouterLinks.ADMIN_HOME,
-    loadChildren: './admin-home/admin-home.module#AdminHomePageModule',
-  },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
   { path: RouterLinks.DOWNLOAD_MANAGER, loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },

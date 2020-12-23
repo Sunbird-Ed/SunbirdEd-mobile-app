@@ -2,8 +2,10 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
 import { CourseCardGridTypes, PillShape, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria, CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
+  Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+  CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
+import { ProfileConstants, RouterLinks } from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
@@ -12,11 +14,11 @@ import { Events } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  selector: 'app-user-home',
+  templateUrl: './user-home.page.html',
+  styleUrls: ['./user-home.page.scss'],
 })
-export class HomePage implements OnInit, OnDestroy {
+export class UserHomePage implements OnInit, OnDestroy {
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
