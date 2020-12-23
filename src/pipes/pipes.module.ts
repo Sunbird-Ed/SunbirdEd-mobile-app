@@ -10,6 +10,8 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { InitialPipe } from '@app/pipes/initial/initial';
 import { CategoryKeyTranslator } from './category-key-translator/category-key-translator-pipe';
 import {AliasBoardName} from './alias-board-name/alias-board-name';
+import { TranslateJsonPipe } from './translate-json/translate-json';
+
 @NgModule({
   declarations: [FileSizePipe,
     CSAPipe,
@@ -20,7 +22,8 @@ import {AliasBoardName} from './alias-board-name/alias-board-name';
     DateAgoPipe,
     InitialPipe,
     CategoryKeyTranslator,
-    AliasBoardName
+    AliasBoardName,
+    TranslateJsonPipe
   ],
   imports: [CommonModule],
   exports: [FileSizePipe,
@@ -32,7 +35,8 @@ import {AliasBoardName} from './alias-board-name/alias-board-name';
     DateAgoPipe,
     InitialPipe,
     CategoryKeyTranslator,
-    AliasBoardName
+    AliasBoardName,
+    TranslateJsonPipe
   ],
   providers: [DatePipe, CategoryKeyTranslator]
 })

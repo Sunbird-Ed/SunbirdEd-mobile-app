@@ -1,0 +1,165 @@
+{
+  "id": "api.form.read",
+  "params": {
+    "resmsgid": "ba01ec9f-45c7-47a8-965b-b783e06913dc",
+    "msgid": "65aa2046-619c-496d-a539-7d3b417ca1f9",
+    "status": "successful"
+  },
+  "responseCode": "OK",
+  "result": {
+    "form": {
+      "type": "config",
+      "subType": "discover",
+      "action": "get",
+      "component": "app",
+      "rootOrgId": "*",
+      "data": {
+        "templateName": "discover",
+        "action": "get",
+        "fields": [
+          {
+            "index": 0,
+            "title": "{\"en\":\"Popular categories\"}",
+            "isEnabled": true,
+            "dataSrc": {
+              "name": "SEARCH_CONTENTS_BY_POULAR_CATEGORY",
+              "values": [
+                {
+                  "facet": "{\"en\":\"Digital Textbook\"}",
+                  "search": {
+                    "facets": [
+                      "primaryCategory"
+                    ],
+                    "filters": {
+                      "primaryCategory": [
+                        "Digital Textbook"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"Courses\"}",
+                  "search": {
+                    "facets": [
+                      "primaryCategory"
+                    ],
+                    "filters": {
+                      "primaryCategory": [
+                        "Course"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"TV classes\"}",
+                  "search": {
+                    "facets": [
+                      "primaryCategory"
+                    ],
+                    "filters": {
+                      "primaryCategory": [
+                        "Explanation Content"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "theme": {
+              "component": "sb-pills-grid",
+              "inputs": {
+                "pillShape": "default"
+              }
+            }
+          },
+          {
+            "index": 1,
+            "title": "{\"en\":\"Search from other boards\"}",
+            "isEnabled": true,
+            "component": "tag",
+            "shape": "circle",
+            "dataSrc": {
+              "name": "SEARCH_CONTENTS_FROM_BOARDS",
+              "values": [
+                {
+                  "facet": "{\"en\":\"AP\"}",
+                  "search": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "ts_k-12_2"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"AS\"}",
+                  "search": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "as_k-12_5"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"KA\"}",
+                  "search": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "ka_k-12_1"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "theme": {
+              "component": "sb-pills-grid",
+              "inputs": {
+                "pillShape": "circle",
+                "pillsViewType": "scroll"
+              }
+            }
+          },
+          {
+            "index": 2,
+            "title": "{\"en\":\"Trending courses from your state\"}",
+            "isEnabled": true,
+            "dataSrc": {
+              "name": "SEARCH_TRENDING_COURSE",
+              "search": {
+                "facets": [
+                  "primaryCategory"
+                ],
+                "filters": {
+                  "primaryCategory": [
+                    "Course"
+                  ]
+                }
+              }
+            },
+            "theme":{
+              "component": "sb-course-cards-hlist",
+              "inputs": {
+                "type": "course_card_grid",
+                "hideProgress": true,
+                "viewMoreButtonText": "{\"en\":\"View all\"}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "ts": "2019-12-13T07:50:01.901Z",
+  "ver": "1.0"
+}

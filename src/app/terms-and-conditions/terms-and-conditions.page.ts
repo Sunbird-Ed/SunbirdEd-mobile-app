@@ -2,19 +2,19 @@ import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
-import { ProfileService, ServerProfile, CachedItemRequestSourceFrom, ProfileType } from 'sunbird-sdk';
+import { ProfileService, ServerProfile, CachedItemRequestSourceFrom, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentService } from '@app/services/consent-service';
 
 @Component({
@@ -32,6 +32,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private platform: Platform,
     private logoutHandlerService: LogoutHandlerService,
     private sanitizer: DomSanitizer,
@@ -142,7 +143,7 @@ export class TermsAndConditionsPage implements OnInit {
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
-
+        const selectedUserType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             this.dismissLoader(loader);
@@ -159,7 +160,7 @@ export class TermsAndConditionsPage implements OnInit {
             };
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)
-              ||  await tncUpdateHandlerService.isSSOUser(profile)) {
+             || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
                 if (await tncUpdateHandlerService.isSSOUser(profile) ||
@@ -168,31 +169,34 @@ export class TermsAndConditionsPage implements OnInit {
                 }
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
-                if (profile.profileType === ProfileType.NONE) {
+                if (this.commonUtilService.isUserLocationAvalable(serverProfile) && selectedUserType === ProfileType.ADMIN) {
+                  this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
+                } else if (profile.profileType === ProfileType.NONE) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: {categoriesProfileData}
                   });
                 } else {
-                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                    state: categoriesProfileData
-                });
+                  this.router.navigate(['/', RouterLinks.TABS]);
               }
-                // this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                categoriesProfileData['status'] = value['status'],
-                categoriesProfileData['isUserLocationAvalable'] = false;
-                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-                  state: {categoriesProfileData}
+                if (selectedUserType === ProfileType.ADMIN) {
+                  const navigationExtras: NavigationExtras = {
+                    state: {
+                      isShowBackButton: false,
+                      userType: ProfileType.ADMIN
+                    }
+                  };
+                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                } else {
+                  categoriesProfileData['status'] = value['status'],
+                    categoriesProfileData['isUserLocationAvalable'] = false;
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: { categoriesProfileData }
                 });
-                // const navigationExtras: NavigationExtras = {
-                //   state: {
-                //     isShowBackButton: false
-                //   }
-                // };
-                // this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                }
               }
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
@@ -201,23 +205,17 @@ export class TermsAndConditionsPage implements OnInit {
               (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
                 await this.consentService.getConsent(profile, true);
               }
-              if (profile.profileType === ProfileType.NONE) {
+              if (selectedUserType === ProfileType.ADMIN) {
+                this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
+              } else if (profile.profileType === ProfileType.NONE) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}
                 });
               } else {
                 this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                   state: categoriesProfileData
-              });
+             });
             }
-              // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-              //   state: {
-              //     hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-              //     showOnlyMandatoryFields: true,
-              //     profile: value['profile'],
-              //     isRootPage: true
-              //   }
-              // });
             }
           }).catch(async e => {
             this.dismissLoader(loader);

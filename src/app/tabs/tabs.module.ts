@@ -15,11 +15,38 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
+        path: RouterLinks.HOME,
+        children: [
+          {
+            path: '',
+            loadChildren: '../home/home.module#HomePageModule'
+          }
+        ]
+      },
+      {
+        path: RouterLinks.DISCOVER,
+        children: [
+          {
+            path: '',
+            loadChildren: '../discover/discover.module#DiscoverPageModule'
+          }
+        ]
+      },
+      {
         path: RouterLinks.RESOURCES,
         children: [
           {
             path: '',
             loadChildren: '../resources/resources.module#ResourcesModule'
+          }
+        ]
+      },
+      {
+        path: RouterLinks.ADMIN_HOME,
+        children: [
+          {
+            path: '',
+            loadChildren: '../admin-home/admin-home.module#AdminHomePageModule'
           }
         ]
       },
@@ -61,7 +88,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'resources',
+        redirectTo: RouterLinks.HOME,
         pathMatch: 'full'
       }
     ]
