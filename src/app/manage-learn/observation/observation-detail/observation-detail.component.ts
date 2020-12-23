@@ -1,10 +1,10 @@
-import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
-import { Location } from "@angular/common";
-import { AppHeaderService } from "@app/services";
-import { Platform, PopoverController } from "@ionic/angular";
-import { ObservationService } from "../observation.service";
-import { Subscription } from "rxjs";
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { AppHeaderService } from '@app/services';
+import { Platform, PopoverController } from '@ionic/angular';
+import { ObservationService } from '../observation.service';
+import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
@@ -24,6 +24,7 @@ export class ObservationDetailComponent implements OnInit {
   programIndex: any;
   solutionIndex: any;
   selectedSolution: any;
+  submissionCount: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
@@ -67,7 +68,7 @@ export class ObservationDetailComponent implements OnInit {
       console.log(data);
       let programList = data.result;
       this.selectedSolution = programList[this.programIndex].solutions[this.solutionIndex];
-      // this.checkForAnySubmissionsMade();
+      this.checkForAnySubmissionsMade();
     });
 
     /*  this.localStorage
@@ -81,6 +82,28 @@ export class ObservationDetailComponent implements OnInit {
        });
    } */
   }
+
+  checkForAnySubmissionsMade() {
+    const payload = {
+      observationId: this.selectedSolution._id,
+    };
+    this.httpClient.post('assets/dummy/submissionCount.json', payload).subscribe((success: any) => {
+      console.log(success);
+      this.submissionCount = success.data.noOfSubmissions;
+    });
+
+    //   this.apiProviders.httpPost(
+    //     AppConfigs.cro.observationSubmissionCount,
+    //     payload,
+    //     (success) => {
+    //       this.submissionCount = success.data.noOfSubmissions;
+    //     },
+    //     (error) => {},
+    //     { baseUrl: "dhiti" }
+    //   );
+    // }
+  }
+
   goToObservationSubmission(entity) {
     let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
     if (

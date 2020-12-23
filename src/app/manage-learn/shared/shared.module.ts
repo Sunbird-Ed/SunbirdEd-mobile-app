@@ -7,12 +7,28 @@ import { UtilsService } from '../core/services/utils.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  CommonListCardComponent, MultipleTypeInputComponent, AttchmentsComponent, AudioListComponent,
-  CommonHeaderComponent, DateTypeInputComponent, FooterButtonsComponent, ImageUploadComponent, ItemListCardComponent,
-  MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, RadioTypeInputComponent, SliderTypeInputComponent,
-  RemarksComponent, PopoverComponent, EntityfilterComponent, TextTypeInputComponent
+  CommonListCardComponent,
+  MultipleTypeInputComponent,
+  AttchmentsComponent,
+  AudioListComponent,
+  CommonHeaderComponent,
+  DateTypeInputComponent,
+  FooterButtonsComponent,
+  ImageUploadComponent,
+  ItemListCardComponent,
+  MatrixTypeInputComponent,
+  PageQuestionsComponent,
+  QuestionHeadingComponent,
+  RadioTypeInputComponent,
+  SliderTypeInputComponent,
+  RemarksComponent,
+  PopoverComponent,
+  EntityfilterComponent,
+  TextTypeInputComponent,
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
+import { SectionListingComponent } from './components/section-listing/section-listing.component';
+import { EcmListingComponent } from './components/ecm-listing/ecm-listing.component';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
@@ -24,26 +40,56 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Media } from '@ionic-native/media/ngx';
 
 @NgModule({
-
   declarations: [
-    CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent,
-    CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
-    DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
-    MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent, TextTypeInputComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ReactiveFormsModule,
-    TranslateModule
+    MultipleTypeInputComponent,
+    RadioTypeInputComponent,
+    RemarksComponent,
+    DateTypeInputComponent,
+    AttchmentsComponent,
+    AudioListComponent,
+    FooterButtonsComponent,
+    ImageUploadComponent,
+    MatrixTypeInputComponent,
+    PageQuestionsComponent,
+    QuestionHeadingComponent,
+    SliderTypeInputComponent,
+
+    TextTypeInputComponent,
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+    PopoverComponent,
+    SectionListingComponent,
+    EcmListingComponent,
   ],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  exports: [CamelToTitlePipe, CommonListCardComponent, ItemListCardComponent,
-    CommonHeaderComponent, MultipleTypeInputComponent, RadioTypeInputComponent, RemarksComponent,
-    DateTypeInputComponent, AttchmentsComponent, AudioListComponent, FooterButtonsComponent, ImageUploadComponent,
-    MatrixTypeInputComponent, PageQuestionsComponent, QuestionHeadingComponent, SliderTypeInputComponent, EntityfilterComponent,
-    PopoverComponent, TextTypeInputComponent],
+  exports: [
+    MultipleTypeInputComponent,
+    RadioTypeInputComponent,
+    RemarksComponent,
+    DateTypeInputComponent,
+    AttchmentsComponent,
+    AudioListComponent,
+    FooterButtonsComponent,
+    ImageUploadComponent,
+    MatrixTypeInputComponent,
+    PageQuestionsComponent,
+    QuestionHeadingComponent,
+    SliderTypeInputComponent,
+    CamelToTitlePipe,
+    CommonListCardComponent,
+    ItemListCardComponent,
+    CommonHeaderComponent,
+    EntityfilterComponent,
+    PopoverComponent,
+    SectionListingComponent,
+    EcmListingComponent,
+    TextTypeInputComponent,
+  ],
+
   providers: [
     Camera,
     ImagePicker,
@@ -60,4 +106,4 @@ import { Media } from '@ionic-native/media/ngx';
   ],
   entryComponents: [EntityfilterComponent, PopoverComponent],
 })
-export class SharedModule { }
+export class SharedModule {}

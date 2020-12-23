@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { LocalStorageService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-entityfilter',
@@ -28,7 +29,7 @@ export class EntityfilterComponent implements OnInit {
   profileData: any;
   selectedState;
   loading: boolean = false;
-  constructor() {
+  constructor(private localStorage:LocalStorageService) {
     //  this.searchUrl = AppConfigs.cro.searchEntity;
     //  this.observationId = this.navParams.get('data');
     //  this.solutionId = this.navParams.get('solutionId');
@@ -106,11 +107,11 @@ export class EntityfilterComponent implements OnInit {
   //       }, 100);
   // }
 
-  // onStateChange(event) {
-  //   this.profileData.stateSelected = event;
-  //   this.localStorage.setLocalStorage('profileRole', this.profileData);
-  //   this.searchQuery = '';
-  // }
+  onStateChange(event) {
+    this.profileData.stateSelected = event;
+    this.localStorage.setLocalStorage('profileRole', this.profileData);
+    this.searchQuery = '';
+  }
   // addSchools() {
   //   let selectedSchools = [];
   //   this.selectableList.forEach((element) => {
@@ -133,56 +134,57 @@ export class EntityfilterComponent implements OnInit {
   //   listItem.selected ? this.selectedListCount.count++ : this.selectedListCount.count--;
   // }
 
-  // search(event?) {
-  //   !event ? this.utils.startLoader() : '';
-  //   this.page = !event ? 1 : this.page + 1;
-  //   let apiUrl =
-  //     this.searchUrl +
-  //     '?observationId=' +
-  //     this.observationId +
-  //     '&search=' +
-  //     encodeURIComponent(this.searchQuery ? this.searchQuery : '') +
-  //     '&page=' +
-  //     this.page +
-  //     '&limit=' +
-  //     this.limit;
-  //   apiUrl =
-  //     apiUrl +
-  //     `&parentEntityId=${encodeURIComponent(
-  //       this.isProfileAssignedWithState ? this.profileMappedState : this.selectedState
-  //     )}`;
-  //   this.loading = true;
-  //   this.apiProviders.httpGet(
-  //     apiUrl,
-  //     (success) => {
-  //       this.loading = false;
-  //       this.selectableList = !event ? [] : this.selectableList;
-  //       for (let i = 0; i < success.result[0].data.length; i++) {
-  //         success.result[0].data[i].isSelected = success.result[0].data[i].selected;
-  //         success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
-  //       }
-  //       this.totalCount = success.result[0].count;
-  //       this.selectableList = [...this.selectableList, ...success.result[0].data];
-  //       !event ? this.utils.stopLoader() : event.complete();
-  //     },
-  //     (error) => {
-  //       this.loading = false;
-  //       !event ? this.utils.stopLoader() : event.complete();
-  //     },
-  //     { version: 'v2' }
-  //   );
-  // }
+  search(event?) {
+    // !event ? this.utils.startLoader() : ''; //TODO:uncomment
+    this.page = !event ? 1 : this.page + 1;
+    let apiUrl =
+      this.searchUrl +
+      '?observationId=' +
+      this.observationId +
+      '&search=' +
+      encodeURIComponent(this.searchQuery ? this.searchQuery : '') +
+      '&page=' +
+      this.page +
+      '&limit=' +
+      this.limit;
+    apiUrl =
+      apiUrl +
+      `&parentEntityId=${encodeURIComponent(
+        this.isProfileAssignedWithState ? this.profileMappedState : this.selectedState
+      )}`;
+    this.loading = true;
+    //TODO:uncomment
+    // this.apiProviders.httpGet(
+    //   apiUrl,
+    //   (success) => {
+    //     this.loading = false;
+    //     this.selectableList = !event ? [] : this.selectableList;
+    //     for (let i = 0; i < success.result[0].data.length; i++) {
+    //       success.result[0].data[i].isSelected = success.result[0].data[i].selected;
+    //       success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
+    //     }
+    //     this.totalCount = success.result[0].count;
+    //     this.selectableList = [...this.selectableList, ...success.result[0].data];
+    //     !event ? this.utils.stopLoader() : event.complete();
+    //   },
+    //   (error) => {
+    //     this.loading = false;
+    //     !event ? this.utils.stopLoader() : event.complete();
+    //   },
+    //   { version: 'v2' }
+    // );
+  }
 
   // doInfinite(infiniteScroll) {
   //   setTimeout(() => {
   //     this.search(infiniteScroll);
   //   }, 500);
   // }
-  // searchEntity() {
+  searchEntity() {
    
-  //   this.selectableList = [];
-  //   this.search();
-  // }
+    this.selectableList = [];
+    this.search();
+  }
 
   ngOnInit() {}
 }
