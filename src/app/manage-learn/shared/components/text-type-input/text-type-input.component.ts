@@ -55,7 +55,6 @@ export class TextTypeInputComponent implements OnInit {
   //   this.questionValid = this.utils.isQuestionComplete(this.data);
   // }
   checkForValidation(): void {
-    console.log(this.submissionId)
     this.data.isCompleted = this.utils.isQuestionComplete(this.data);
     this.data.endTime = this.data.isCompleted ? Date.now() : "";
     this.isaNumber();

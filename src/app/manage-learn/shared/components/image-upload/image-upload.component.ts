@@ -81,7 +81,6 @@ export class ImageUploadComponent implements OnInit {
     private alertCtrl: AlertController,
     private toast: ToastService
   ) {
-    console.log("Hello ImageUploadComponent Component");
     this.text = "Hello World";
     this.isIos = this.platform.is("ios") ? true : false;
     if (this.isIos) {
@@ -352,7 +351,6 @@ export class ImageUploadComponent implements OnInit {
       ])
       .subscribe((translations) => {
         translateObject = translations;
-        console.log(JSON.stringify(translations));
       });
     let alert = await this.alertCtrl.create({
       header: translateObject["actionSheet.confirmDelete"],
@@ -413,7 +411,6 @@ export class ImageUploadComponent implements OnInit {
 
   startRecord() {
     if (this.platform.is("ios")) {
-      console.log("inside ios");
       this.file
         .checkDir(this.file.documentsDirectory, "images")
         .then((success) => {
@@ -521,7 +518,6 @@ export class ImageUploadComponent implements OnInit {
       this.interval = setInterval(() => {
         if (this.timeLeft >= 0) {
           this.timeLeft++;
-          console.log(this.timeLeft);
           this.minutes = Math.ceil(this.timeLeft / 60) - 1;
           this.seconds = Math.floor(this.timeLeft % 60);
         } else {
@@ -536,13 +532,9 @@ export class ImageUploadComponent implements OnInit {
     this.diagnostic
       .isMicrophoneAuthorized()
       .then((success) => {
-        console.log(JSON.stringify(success));
         this.diagnostic
           .requestMicrophoneAuthorization()
           .then((success) => {
-            console.log("inside success of permission ");
-            console.log(success === "true");
-            console.log(success);
             if (success === "authorized" || success === "GRANTED") {
               const permissionsArray = [
                 this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
@@ -574,7 +566,6 @@ export class ImageUploadComponent implements OnInit {
           });
       })
       .catch((error) => {
-        console.log(JSON.stringify(error));
       });
     // const permissionsArray = [
     //   this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE,
@@ -606,7 +597,6 @@ export class ImageUploadComponent implements OnInit {
         )
         .then(
           (success) => {
-            console.log("inside copy success");
             this.file.removeFile(this.file.tempDirectory, this.fileName);
             this.pushToFileList(this.fileName);
           },

@@ -130,7 +130,6 @@ export class UtilsService {
          } */
       }
 
-      console.log(task.status);
     }
     projectData.status = this.calculateStatus(projectData.tasks);
 
