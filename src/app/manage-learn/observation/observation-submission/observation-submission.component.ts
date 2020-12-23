@@ -80,34 +80,22 @@ export class ObservationSubmissionComponent implements OnInit {
       .getLocalStorage(storageKeys.observationSubmissionIdArr)
       .then((ids) => {
         this.submissionIdArr = ids;
-          this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-            console.log(data);
-            this.programList = data.result;
-            this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-            this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-              this.entityIndex
-            ].submissions;
-            this.applyDownloadedflag();
-            this.splitCompletedAndInprogressObservations();
-            this.tabChange(this.currentTab ? this.currentTab : 'all');
-          });
       })
       .catch((err) => {
         this.submissionIdArr = [];
-          this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-            console.log(data);
-            this.programList = data.result;
-            this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-            this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-              this.entityIndex
-            ].submissions;
-            this.applyDownloadedflag();
-            this.splitCompletedAndInprogressObservations();
-            this.tabChange(this.currentTab ? this.currentTab : 'all');
-          });
       })
       .finally(() => {
-      
+        this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
+          console.log(data);
+          this.programList = data.result;
+          this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
+          this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
+            this.entityIndex
+          ].submissions;
+          this.applyDownloadedflag();
+          this.splitCompletedAndInprogressObservations();
+          this.tabChange(this.currentTab ? this.currentTab : 'all');
+        });
       });
 
     /* await this.localStorage

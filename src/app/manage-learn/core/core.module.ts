@@ -7,7 +7,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, IonicStorageModule.forRoot({'name': '__mydb', 'driverOrder': ['websql', 'indexeddb', 'sqlite']})],
+  imports: [CommonModule],
   providers: [UtilsService, UpdateLocalSchoolDataService, LocalStorageService],
 })
 export class CoreModule {}

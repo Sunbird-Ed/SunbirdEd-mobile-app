@@ -11,7 +11,6 @@ import { ObservationService } from "./observation.service";
 import { ObservationSubmissionComponent } from "./observation-submission/observation-submission.component";
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '../core/core.module';
-import { LocalStorageService } from '../core';
 
 @NgModule({
   declarations: [ObservationHomeComponent, ObservationDetailComponent, ObservationSubmissionComponent],
@@ -25,6 +24,6 @@ import { LocalStorageService } from '../core';
     FormsModule,
     CoreModule
   ],
-  providers: [ObservationService,LocalStorageService],
+  providers: [ObservationService],
 })
 export class ObservationModule {}

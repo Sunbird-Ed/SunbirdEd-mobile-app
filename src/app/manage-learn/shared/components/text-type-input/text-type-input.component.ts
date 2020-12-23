@@ -27,7 +27,6 @@ export class TextTypeInputComponent implements OnInit {
   constructor(private utils: UtilsService) { }
 
   ngOnInit() {
-    debugger
     this.isaNumber();
     this.data.startTime = this.data.startTime ? this.data.startTime : Date.now();
     if (!this.data.validation.required) {

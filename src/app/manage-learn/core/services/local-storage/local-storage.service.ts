@@ -28,7 +28,6 @@ export class LocalStorageService {
       this.storage
         .get(key)
         .then((data) => {
-          debugger
           if (data) {
             resolve(data);
           } else {
@@ -36,7 +35,6 @@ export class LocalStorageService {
           }
         })
         .catch((error) => {
-          debugger
           reject(error);
         });
     });
