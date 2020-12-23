@@ -1,3 +1,6 @@
+@import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 // @import '../../theme/colors.scss';
 .heading-name{
     display: flex;
@@ -59,8 +62,8 @@
     .pop-container {
         margin: auto;
         width: 80%;
-        // box-shadow: 0px 1px 4px 1px $dark-grey-color;
-        // background: $white-color;
+        box-shadow: 0px 1px 4px 1px map-get($colors, dark_gray);
+        background: map-get($colors, white);
         padding: 10px;
     }
 }
