@@ -9,6 +9,7 @@ import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
 import { LocalStorageService, UtilsService } from '../../core';
 import { storageKeys } from '../../storageKeys';
+import { EvidenceService } from '../../core/services/evidence.service';
 
 @Component({
   selector: 'app-observation-submission',
@@ -44,7 +45,8 @@ export class ObservationSubmissionComponent implements OnInit {
     private observationService: ObservationService,
     private router: Router,
     private localStorage: LocalStorageService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private evdnsServ: EvidenceService
   ) {}
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -206,33 +208,59 @@ export class ObservationSubmissionComponent implements OnInit {
 
   goToEcm(submission) {
     // TODO: Remove
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
-    // let heading = this.selectedSolution.entities[this.entityIndex].name;
+    // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+    let submissionId = submission._id;
+    let heading = this.selectedSolution.entities[this.entityIndex].name;
 
-    // this.localStorage
-    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
-    //   .then((successData) => {
-    //     if (successData.assessment.evidences.length > 1) {
-    //       this.navCtrl.push('EvidenceListPage', {
-    //         _id: submissionId,
-    //         name: heading,
-    //         recentlyUpdatedEntity: this.recentlyUpdatedEntity,
-    //       });
-    //     } else {
-    //       if (successData.assessment.evidences[0].startTime) {
-    //         this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
-    //         this.navCtrl.push('SectionListPage', {
-    //           _id: submissionId,
-    //           name: heading,
-    //           selectedEvidence: 0,
-    //           recentlyUpdatedEntity: this.recentlyUpdatedEntity,
-    //         });
-    //       } else {
-    //         const assessment = { _id: submissionId, name: heading };
-    //         this.openAction(assessment, successData, 0);
-    //       }
-    //     }
-    //   })
-    //   .catch((error) => {});
+    this.localStorage
+      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
+      .then((successData) => {
+        if (successData.assessment.evidences.length > 1) {
+          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.ECM_LISTING}`]);
+
+          // this.navCtrl.push('EvidenceListPage', {
+          //   _id: submissionId,
+          //   name: heading,
+          //   recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+          // });
+        } else {
+          if (successData.assessment.evidences[0].startTime) {
+            this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
+            let extras = {
+              _id: submissionId,
+              name: heading,
+              selectedEvidence: 0,
+              // recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+            };
+            this.observationService.setSectionNavExtras(extras);
+            this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+
+            // this.navCtrl.push('SectionListPage', {
+            //   _id: submissionId,
+            //   name: heading,
+            //   selectedEvidence: 0,
+            //   recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+            // });
+          } else {
+            const assessment = { _id: submissionId, name: heading };
+            this.openAction(assessment, successData, 0);
+          }
+        }
+      })
+      .catch((error) => {});
+  }
+  openAction(assessment, aseessmemtData, evidenceIndex) {
+    this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
+    const options = {
+      _id: assessment._id,
+      name: assessment.name,
+      selectedEvidence: evidenceIndex,
+      entityDetails: aseessmemtData,
+      // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
+    };
+    console.log(JSON.stringify(options));
+    this.observationService.setSectionNavExtras(options);
+
+    this.evdnsServ.openActionSheet(options, 'Observation');
   }
 }

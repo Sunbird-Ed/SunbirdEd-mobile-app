@@ -10,13 +10,28 @@ export class ObservationService {
   private programIndex;
   private solutionIndex;
   private entityIndex;
+  private sectionNavExtras = {
+    _id: null,
+    name: null,
+    selectedEvidence:null
+  };
 
-  constructor(private httpClient: HttpClient, private localStorage: LocalStorageService,private ulsdp:UpdateLocalSchoolDataService,private utils:UtilsService) {}
+  constructor(
+    private httpClient: HttpClient,
+    private localStorage: LocalStorageService,
+    private ulsdp: UpdateLocalSchoolDataService,
+    private utils: UtilsService
+  ) {}
 
   public setIndex(programIndex = null, solutionIndex = null, entityIndex = null) {
     this.programIndex = programIndex;
     this.solutionIndex = solutionIndex;
     this.entityIndex = entityIndex;
+  }
+  public setSectionNavExtras(obj) {
+    this.sectionNavExtras._id = obj._id;
+    this.sectionNavExtras.name = obj.name;
+    this.sectionNavExtras.selectedEvidence = obj.selectedEvidence;
   }
 
   public getProgramIndex() {
@@ -28,6 +43,9 @@ export class ObservationService {
   }
   public getEntityIndex() {
     return this.entityIndex;
+  }
+  public getSectionNavExtras() {
+    return this.sectionNavExtras;
   }
 
   getAssessmentDetailsForObservation(event, programs) {
@@ -53,13 +71,13 @@ export class ObservationService {
         );
 
         this.ulsdp.storeObsevationSubmissionId(success.result['assessment']['submissionId']);
-         this.localStorage.setLocalStorage(
-             this.utils.getAssessmentLocalStorageKey(success.result.assessment.submissionId),
-            success.result
-           );
-      //     this.localStorage.setLocalStorage(storageKeys.programList, programs);
-      //     this.utils.stopLoader();
-          resolve(programs);
+        this.localStorage.setLocalStorage(
+          this.utils.getAssessmentLocalStorageKey(success.result.assessment.submissionId),
+          success.result
+        );
+        //     this.localStorage.setLocalStorage(storageKeys.programList, programs);
+        //     this.utils.stopLoader();
+        resolve(programs);
       });
 
       // this.utils.startLoader();
