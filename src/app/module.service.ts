@@ -80,7 +80,7 @@ const PROFILE_TAB = {
 const ADMIN_HOME_TAB = {
     root: 'admin-home',
     icon: 'resources',
-    label: 'LIBRARY_BNAV',
+    label: 'HOME_BNAV',
     index: 1,
     isSelected: true
 };
