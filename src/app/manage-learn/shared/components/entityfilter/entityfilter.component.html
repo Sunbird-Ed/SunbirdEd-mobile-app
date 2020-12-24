@@ -15,7 +15,7 @@
         <ion-label>{{ 'Selected State' }}</ion-label>
         <ion-select
           [(ngModel)]="selectedState"
-          class="whiteSelection"
+          color="primary"
           (ionChange)="searchQuery = ''; search(); onStateChange($event)"
           #selectStateRef
           interface="action-sheet"
@@ -36,7 +36,7 @@
     <div class="_flex-box searchCard">
       <ion-searchbar
         debounce="500"
-        class="serachBar"
+        color="primary"
         (keyup.enter)="searchEntity()"
         [(ngModel)]="searchQuery"
         placeholder="Search Entity "
