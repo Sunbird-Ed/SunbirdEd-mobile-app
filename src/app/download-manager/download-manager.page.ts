@@ -366,7 +366,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
 
   setQuestions() {
-    debugger
     const key = this.utils.getAssessmentLocalStorageKey('5fd9f2d0c91909226f7ec649');
     const obj = {
       "entityProfile": { "_id": "5d7c8cbce3be8677c3fedff9", "entityTypeId": "5d28233dd772d270e55b4072", "entityType": "school", "form": [] }, "program": { "_id": "5d7dbf6b639f5817a1de9239", "externalId": "APDEMO-PGM-MANTRA-SHALASIDDHI-2019-001", "name": "MANTRA SHAHASIDDHI 2019 : All schools assessment program", "description": "APDEMO MANTRA SHAHASIDDHI 2019 : All schools assessment program", "imageCompression": { "quality": 10 }, "isAPrivateProgram": false }, "solution": { "_id": "5d7dbfb6e3be8677c3fee052", "externalId": "Mantra-SHALASIDDHI-2019-001", "name": "Mantra ShalaSiddhi School Assessment framework 2019", "description": "Mantra ShalaSiddhi School Assessment framework 2019", "registry": [], "captureGpsLocationAtQuestionLevel": false, "enableQuestionReadOut": false, "allowMultipleAssessemts": false, "scoringSystem": "percentage", "isRubricDriven": false }, "assessment": {
@@ -965,7 +964,15 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
 
     this.localStorage.setLocalStorage(key, obj).then(success => {
-      this.router.navigateByUrl(`${RouterLinks.QUESTIONNAIRE}/5fd9f2d0c91909226f7ec649/0/0`)
+      this.router.navigate([RouterLinks.QUESTIONNAIRE],
+        {
+          queryParams: {
+            submisssionId: '5fd9f2d0c91909226f7ec649',
+            evidenceIndex: 0,
+            sectionIndex: 0,
+            schoolName: "sample"
+          }
+        })
     })
   }
 

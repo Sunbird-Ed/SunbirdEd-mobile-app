@@ -155,7 +155,8 @@ export enum PageId {
     PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner',
     FRAMEWORK_SELECTION = 'framework-selection',
     RELEVANT_CONTENTS = 'relevant-contents',
-    PLAYER = 'player'
+    PLAYER = 'player',
+    ADMIN_HOME = 'admin-home',
 }
 
 export enum LogType {

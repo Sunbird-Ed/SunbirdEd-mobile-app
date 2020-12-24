@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController, AlertController, Platform, Events } from '@ionic/angular';
+import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
@@ -11,7 +11,21 @@ import { NetworkService } from '../../core/services/network.service';
 import { menuConstants } from '../../core/constants/menuConstants';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { Subscription } from 'rxjs';
+import { DbService } from '../../core/services/db.service';
+import { LoaderService, ToastService } from '../../core';
+import { SyncService } from '../../core/services/sync.service';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
+import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
+
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
 
 @Component({
   selector: "app-project-detail",
@@ -70,29 +84,29 @@ export class ProjectDetailPage implements OnInit {
     public params: ActivatedRoute,
     public popoverController: PopoverController,
     private headerService: AppHeaderService,
-    // private db: DbService,
-    // private loader: LoaderService,
+    private db: DbService,
+    private loader: LoaderService,
     private router: Router,
     private utils: UtilsService,
     private alert: AlertController,
     // private location: Location,
-    // private syncServ: SyncService,
-    // private toast: ToastMessageService,
+    private syncServ: SyncService,
+    private toast: ToastService,
     private translate: TranslateService,
     private networkService: NetworkService,
     // private openResourceSrvc: OpenResourcesService,
-    // private modal: ModalController,
-    // private unnatiService: UnnatiDataService,
+    private modal: ModalController,
+    private unnatiService: UnnatiDataService,
     // private iab: InAppBrowser,
     private event: Events,
     private platform: Platform
   ) {
-    // this.db.createPouchDB(environment.db.projects);
+    this.db.createPouchDB(environment.db.projects);
     params.params.subscribe((parameters) => {
       this.projectId = parameters.id;
     });
     this.translate
-      .get(["MESSAGES.SOMETHING_WENT_WRONG", "MESSAGES.NO_ENTITY_MAPPED", ".MESSAGES.CANNOT_GET_PROJECT_DETAILS"])
+      .get(["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG", "FRMELEMNTS_MSG_NO_ENTITY_MAPPED", "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"])
       .subscribe((texts) => {
         this.allStrings = texts;
       });
@@ -130,7 +144,7 @@ export class ProjectDetailPage implements OnInit {
       if (eventName.name === 'more') {
         this.openPopover(eventName.event);
       } else if (eventName.name === 'sync') {
-
+        this.action(eventName.name);
       }
     });
     let data;
@@ -198,13 +212,13 @@ export class ProjectDetailPage implements OnInit {
       }
     });
     this.project = this.utils.setStatusForProject(this.project);
-    // if (inProgress > 0 || completed != this.taskCount) {
-    //   this.project.status = this.statuses[1].title;
-    // } else if (this.taskCount && this.taskCount == completed) {
-    //   this.project.status = this.statuses[2].title;
-    // } else {
-    //   this.project.status = this.statuses[0].title;
-    // }
+    if (inProgress > 0 || completed != this.taskCount) {
+      this.project.status = this.statuses[1].title;
+    } else if (this.taskCount && this.taskCount == completed) {
+      this.project.status = this.statuses[2].title;
+    } else {
+      this.project.status = this.statuses[0].title;
+    }
   }
   syn() { }
 
@@ -245,11 +259,11 @@ export class ProjectDetailPage implements OnInit {
       case "sync": {
         this.project.isNew
           ? this.createNewProject()
-          : this.router.navigate(["/menu/sync"], { queryParams: { projectId: this.projectId } });
+          : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
         break;
       }
       case "editTask": {
-        this.router.navigate(["/menu/task-view", this.project._id, taskId]);
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, taskId]);
         break;
       }
       case "deleteTask": {
@@ -261,7 +275,7 @@ export class ProjectDetailPage implements OnInit {
         break;
       }
       case "editProject": {
-        this.router.navigate([`/${RouterLinks.PROJECT}/project-edit`, this.project._id]);
+        this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.project._id]);
         break;
       }
       case "deleteProject": {
@@ -316,9 +330,9 @@ export class ProjectDetailPage implements OnInit {
       return;
     }
     if (task) {
-      this.router.navigate(["/project/learning-resources", this.project._id, task._id]);
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      this.router.navigate(["/project/learning-resources", this.project._id]);
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
     }
   }
   //open openBodh
@@ -331,146 +345,147 @@ export class ProjectDetailPage implements OnInit {
 
   //Update the project
   update(type) {
-    // this.project.isEdit = true;
-    // this.db.createPouchDB(environment.db.projects);
-    // this.project = this.utils.setStatusForProject(this.project);
-    // this.db
-    //   .update(this.project)
-    //   .then((success) => {
-    //     this.project._rev = success.rev;
-    //     this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
-    //     if (type == "newTask") {
-    //       this.toast.showMessage("MESSAGES.NEW_TASK_ADDED_SUCCESSFUL", "success");
-    //     } else if (type == "ProjectDelete") {
-    //       this.toast.showMessage("MESSAGES.PROJECT_DELETED_SUCCESSFUL", "success");
-    //       this.location.back();
-    //     } else if (type == "taskDelete") {
-    //       this.toast.showMessage("MESSAGES.TASK_DELETED_SUCCESSFUL", "success");
-    //     }
-    //     this.sortTasks();
-    //   })
-    //   .catch((error) => { });
+    this.project.isEdit = true;
+    this.db.createPouchDB(environment.db.projects);
+    this.project = this.utils.setStatusForProject(this.project);
+    this.db
+      .update(this.project)
+      .then((success) => {
+        this.project._rev = success.rev;
+        this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
+        if (type == "newTask") {
+          this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
+        } else if (type == "ProjectDelete") {
+          this.toast.showMessage("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
+          //TODO: add location service
+          // this.location.back();
+        } else if (type == "taskDelete") {
+          this.toast.showMessage("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
+        }
+        this.sortTasks();
+      })
+      .catch((error) => { });
   }
   createNewProject() {
-    // this.loader.startLoader();
-    // const projectDetails = JSON.parse(JSON.stringify(this.project));
-    // this.syncServ
-    //   .createNewProject()
-    //   .then((success) => {
-    //     projectDetails._id = success.result._id;
-    //     projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-    //     this.doDbActions(projectDetails);
-    //     this.loader.stopLoader();
-    //   })
-    //   .catch((error) => {
-    //     this.toast.showMessage(this.allStrings["MESSAGES.SOMETHING_WENT_WRONG"], "danger");
-    //     this.loader.stopLoader();
-    //   });
+    this.loader.startLoader();
+    const projectDetails = JSON.parse(JSON.stringify(this.project));
+    this.syncServ
+      .createNewProject()
+      .then((success) => {
+        projectDetails._id = success.result._id;
+        projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
+        this.doDbActions(projectDetails);
+        this.loader.stopLoader();
+      })
+      .catch((error) => {
+        this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+        this.loader.stopLoader();
+      });
   }
 
   doDbActions(projectDetails) {
-    // const _rev = projectDetails._rev;
-    // delete projectDetails._rev;
-    // const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
-    // this.db
-    //   .create(newObj)
-    //   .then((success) => {
-    //     this.db
-    //       .delete(this.projectId, _rev)
-    //       .then((deleteSuccess) => {
-    //         this.loader.stopLoader();
-    //         this.projectId = newObj._id;
-    //         this.project = newObj;
-    //         this.router.navigate(["/menu/project-detail/" + this.projectId], { replaceUrl: true });
-    //         setTimeout(() => {
-    //           this.router.navigate(["/menu/sync"], { queryParams: { projectId: this.projectId } });
-    //         }, 0);
-    //       })
-    //       .catch((deletError) => {
-    //         this.toast.showMessage(this.allStrings["MESSAGES.SOMETHING_WENT_WRONG"], "danger");
-    //         this.loader.stopLoader();
-    //       });
-    //   })
-    //   .catch((error) => {
-    //     this.toast.showMessage(this.allStrings["MESSAGES.SOMETHING_WENT_WRONG"], "danger");
-    //     this.loader.stopLoader();
-    //   });
+    const _rev = projectDetails._rev;
+    delete projectDetails._rev;
+    const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
+    this.db
+      .create(newObj)
+      .then((success) => {
+        this.db
+          .delete(this.projectId, _rev)
+          .then((deleteSuccess) => {
+            this.loader.stopLoader();
+            this.projectId = newObj._id;
+            this.project = newObj;
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}` + this.projectId], { replaceUrl: true });
+            setTimeout(() => {
+              this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+            }, 0);
+          })
+          .catch((deletError) => {
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+            this.loader.stopLoader();
+          });
+      })
+      .catch((error) => {
+        this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+        this.loader.stopLoader();
+      });
   }
 
   async addTask() {
-    // const modal = await this.modal.create({
-    //   component: CreateTaskComponent,
-    //   cssClass: "create-task-modal",
-    // });
-    // modal.onDidDismiss().then((data) => {
-    //   if (data.data) {
-    //     !this.project.tasks ? (this.project.tasks = []) : "";
-    //     this.project.tasks.push(data.data);
-    //     this.update("newTask");
-    //   }
-    // });
-    // return await modal.present();
+    const modal = await this.modal.create({
+      component: CreateTaskComponent,
+      cssClass: "create-task-modal",
+    });
+    modal.onDidDismiss().then((data) => {
+      if (data.data) {
+        !this.project.tasks ? (this.project.tasks = []) : "";
+        this.project.tasks.push(data.data);
+        this.update("newTask");
+      }
+    });
+    return await modal.present();
   }
 
   openAttachments() {
     console.log("openAttachments");
-    this.router.navigate(["menu/attachment-list", this.project._id], { replaceUrl: true });
+    this.router.navigate(["project/attachment-list", this.project._id], { replaceUrl: true });
   }
 
   startAssessment(task) {
-    // if (this.project.entityId) {
-    //   const config = {
-    //     url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
-    //   };
-    //   this.unnatiService.get(config).subscribe(
-    //     (success) => {
-    //       if (!success.result) {
-    //         this.toast.showMessage(this.allStrings["MESSAGES.CANNOT_GET_PROJECT_DETAILS"], "danger");
-    //         return;
-    //       }
-    //       let data = success.result;
+    if (this.project.entityId) {
+      const config = {
+        url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+      };
+      this.unnatiService.get(config).subscribe(
+        (success) => {
+          if (!success.result) {
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+            return;
+          }
+          let data = success.result;
 
-    //       let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
-    //       let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
-    //       this.iab.create(link, "_system");
-    //     },
-    //     (error) => {
-    //       this.toast.showMessage(this.allStrings["MESSAGES.CANNOT_GET_PROJECT_DETAILS"], "danger");
-    //       console.log(error);
-    //     }
-    //   );
-    // } else {
-    //   this.toast.showMessage(this.allStrings["MESSAGES.NO_ENTITY_MAPPED"], "danger");
-    // }
+          let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
+          let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
+          // this.iab.create(link, "_system");
+        },
+        (error) => {
+          this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+          console.log(error);
+        }
+      );
+    } else {
+      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
+    }
   }
 
   getProjectTaskStatus() {
-    // if (!this.project.tasks && !this.project.tasks.length) {
-    //   return
-    // }
-    // let taskIdArr = this.getAssessmentTypeTaskId()
+    if (!this.project.tasks && !this.project.tasks.length) {
+      return
+    }
+    let taskIdArr = this.getAssessmentTypeTaskId()
 
-    // if (!taskIdArr.length) {
-    //   return
-    // }
-    // const config = {
-    //   url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.project._id}`,
-    //   payload: {
-    //     taskIds: taskIdArr,
-    //   },
-    // };
-    // this.unnatiService.post(config).subscribe(
-    //   (success) => {
-    //     console.log(success);
-    //     if (!success.result) {
-    //       return;
-    //     }
-    //     this.updateAssessmentStatus(success.result);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    if (!taskIdArr.length) {
+      return
+    }
+    const config = {
+      url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.project._id}`,
+      payload: {
+        taskIds: taskIdArr,
+      },
+    };
+    this.unnatiService.post(config).subscribe(
+      (success) => {
+        console.log(success);
+        if (!success.result) {
+          return;
+        }
+        this.updateAssessmentStatus(success.result);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   updateAssessmentStatus(data) {
@@ -497,29 +512,29 @@ export class ProjectDetailPage implements OnInit {
   }
 
   checkReport(task) {
-    // if (this.project.entityId) {
-    //   const config = {
-    //     url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
-    //   };
-    //   this.unnatiService.get(config).subscribe(
-    //     (success) => {
-    //       if (!success.result) {
-    //         this.toast.showMessage(this.allStrings["MESSAGES.CANNOT_GET_PROJECT_DETAILS"], "danger");
-    //         return;
-    //       }
-    //       let data = success.result;
-    //       let entityType = data.entityType
-    //       let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
-    //       let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
-    //       this.iab.create(link, "_system");
-    //     },
-    //     (error) => {
-    //       this.toast.showMessage(this.allStrings["MESSAGES.CANNOT_GET_PROJECT_DETAILS"], "danger");
-    //       console.log(error);
-    //     }
-    //   );
-    // } else {
-    //   this.toast.showMessage(this.allStrings["MESSAGES.NO_ENTITY_MAPPED"], "danger");
-    // }
+    if (this.project.entityId) {
+      const config = {
+        url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+      };
+      this.unnatiService.get(config).subscribe(
+        (success) => {
+          if (!success.result) {
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+            return;
+          }
+          let data = success.result;
+          let entityType = data.entityType
+          let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
+          let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
+          // this.iab.create(link, "_system");
+        },
+        (error) => {
+          this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+          console.log(error);
+        }
+      );
+    } else {
+      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
+    }
   }
 }

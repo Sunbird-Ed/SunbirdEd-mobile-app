@@ -12,36 +12,47 @@ import { ProjectListingComponent } from './project-listing/project-listing.compo
 import { LearningResourcesPage } from './learning-resources/learning-resources.page';
 import { ProjectEditPage } from './project-edit/project-edit.page';
 import { ProjectOperationPage } from './project-operation/project-operation.page';
+import { SyncPage } from './sync/sync.page';
+import { TaskViewPage } from './task-view/task-view.page';
+import { RouterLinks } from '@app/app/app.constant';
+
 const routes: Routes = [
-  {
-    path: 'details',
-    component: ProjectDetailPage
-  },
   {
     path: '',
     component: ProjectListingComponent
   },
   {
-    path: "learning-resources/:id/:taskId",
+    path: RouterLinks.DETAILS,
+    component: ProjectDetailPage
+  },
+  {
+    path: `${RouterLinks.TASK_VIEW}/:id/:taskId`,
+    component: TaskViewPage
+  },
+  {
+    path: `${RouterLinks.LEARNING_RESOURCES}/:id/:taskId`,
     component: LearningResourcesPage
   },
   {
-    path: "learning-resources/:id",
+    path: `${RouterLinks.LEARNING_RESOURCES}/:id`,
     component: LearningResourcesPage
   },
   {
-    path: "project-edit/:id",
+    path: `${RouterLinks.PROJECT_EDIT}/:id`,
     component: ProjectEditPage
   },
   {
-    path: 'project-operation/:id',
+    path: `${RouterLinks.PROJECT_OPERATION}/:id`,
     component: ProjectOperationPage
+  }, {
+    path: RouterLinks.SYNC,
+    component: SyncPage
   }
 
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage],
   imports: [
     CommonModule,
     FormsModule,

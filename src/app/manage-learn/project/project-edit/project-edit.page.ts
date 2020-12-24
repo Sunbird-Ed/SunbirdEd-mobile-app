@@ -45,12 +45,12 @@ export class ProjectEditPage implements OnInit {
   }
   edit(type) {
     type == "metaData" ?
-      this.router.navigate(['menu/create-project'], {
-        queryParams: {
-          projectId: this.project._id, type: type
-        }
-      }) :
-      this.router.navigate([`/${RouterLinks.PROJECT}/project-operation`, this.project._id], { queryParams: { createdType: 'bySelf', isEdit: true } });
-
+      // this.router.navigate(['menu/create-project'], {
+      //   queryParams: {
+      //     projectId: this.project._id, type: type
+      //   }
+      // })   This is not yet implemented
+      '' :
+      this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`, this.project._id], { queryParams: { createdType: 'bySelf', isEdit: true } });
   }
 }

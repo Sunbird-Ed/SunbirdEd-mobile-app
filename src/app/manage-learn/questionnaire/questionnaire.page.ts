@@ -1,18 +1,21 @@
 import { Location } from '@angular/common';
-import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ActionSheetController, AlertController, Events, IonContent } from '@ionic/angular';
+import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
 import { AppHeaderService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 
 @Component({
   selector: 'app-questionnaire',
   templateUrl: './questionnaire.page.html',
   styleUrls: ['./questionnaire.page.scss'],
 })
-export class QuestionnairePage implements OnInit {
+export class QuestionnairePage implements OnInit, OnDestroy {
   @ViewChild('sample') nameInputRef: ElementRef;
   @ViewChild('pageTop') pageTop: IonContent;
+  private _appHeaderSubscription?: Subscription;
 
 
   headerConfig = {
@@ -61,19 +64,29 @@ export class QuestionnairePage implements OnInit {
     private alertCtrl: AlertController,
     // private ngps: NetworkGpsProvider,
     private headerService: AppHeaderService,
+    private modalCtrl: ModalController
   ) {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
     });
-    this.routerParam.params.subscribe((parameters) => {
-      this.submissionId = parameters.submisssionId;
-      this.selectedEvidenceIndex = parameters.evidenceIndex;
-      this.selectedSectionIndex = parameters.sectionIndex;
-    });
+    // this.routerParam.params.subscribe((parameters) => {
+    //   this.submissionId = parameters.submisssionId;
+    //   this.selectedEvidenceIndex = parameters.evidenceIndex;
+    //   this.selectedSectionIndex = parameters.sectionIndex;
+    // });
 
     this.routerParam.queryParams.subscribe((params) => {
-      this.schoolName = params.name;
+      this.submissionId = params.submisssionId;
+      this.selectedEvidenceIndex = params.evidenceIndex;
+      this.selectedSectionIndex = params.sectionIndex;
+      this.schoolName = params.schoolName;
     })
+
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      if (eventName.name === 'questionMap') {
+        this.openQuestionMap();
+      }
+    });
 
 
     // Online event
@@ -83,10 +96,15 @@ export class QuestionnairePage implements OnInit {
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
 
+  ngOnDestroy() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
+  }
+
   ngOnInit() {
     // this.loader.startLoader();
     this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-      debugger
       this.schoolData = data;
       const currentEvidences = this.schoolData['assessment']['evidences'];
       this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
@@ -96,7 +114,6 @@ export class QuestionnairePage implements OnInit {
       this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
       this.localImageListKey = "images_" + this.selectedEvidenceId + "_" + this.submissionId;
       this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-      debugger
 
       this.questions = currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].totalQuestions = this.questions.length;
@@ -120,13 +137,31 @@ export class QuestionnairePage implements OnInit {
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
-    this.headerConfig.actionButtons = [];
+    this.headerConfig.actionButtons = ['questionMap'];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
   ionViewDidLoad() {
+  }
+
+  async openQuestionMap() {
+    debugger
+    const questionModal = await this.modalCtrl.create({
+      component: QuestionMapModalComponent,
+      componentProps: {
+        data: this.dashbordData
+      }
+    });
+    debugger
+    await questionModal.present();
+    const { data } = await questionModal.onDidDismiss();
+    if (data >= 0) {
+      this.start = data;
+      this.end = data + 1;
+      this.dashbordData.currentViewIndex = data;
+    }
   }
   // images_CO_5bebcfcf92ec921dcf114828
 

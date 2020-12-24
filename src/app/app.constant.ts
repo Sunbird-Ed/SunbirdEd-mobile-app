@@ -446,8 +446,8 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
-     // ADMIN HOME Routes
-     public static readonly ADMIN_HOME = 'admin-home';
+    // ADMIN HOME Routes
+    public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -555,9 +555,17 @@ export class RouterLinks {
     public static readonly PROGRAM = 'program';
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
+    public static readonly DETAILS = 'details';
+    public static readonly TASK_VIEW = 'task-view';
+    public static readonly LEARNING_RESOURCES = 'learning-resources';
+    public static readonly SYNC = 'sync';
+    public static readonly PROJECT_EDIT = 'project-edit';
+    public static readonly PROJECT_OPERATION = 'project-operation';
     public static readonly SOLUTIONS = 'solutions';
     public static readonly QUESTIONNAIRE = 'questionnaire';
     public static readonly OBSERVATION = 'observation';
+    public static readonly SECTION_LISTING = 'section-listing';
+    public static readonly ECM_LISTING = 'ecm-listing';
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
