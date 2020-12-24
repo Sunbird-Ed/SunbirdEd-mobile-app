@@ -557,9 +557,9 @@ export class RouterLinks {
     public static readonly PROJECT = 'project';
     public static readonly PROJECT_DETAILS = 'project/details';
     public static readonly DETAILS = 'details';
-    public static readonly TASK_VIEW = 'task-view/:id/:taskId';
-    public static readonly LEARNING_RESOURCES_TASK = 'learning-resources/:id/:taskId';
-    public static readonly LEARNING_RESOURCES_PROJECT = 'learning-resources/:id';
+    public static readonly TASK_VIEW = 'task-view';
+    public static readonly LEARNING_RESOURCES_TASK = 'learning-resources';
+    public static readonly LEARNING_RESOURCES_PROJECT = 'learning-resources';
     public static readonly SYNC = 'sync';
 
     public static readonly SOLUTIONS = 'solutions';

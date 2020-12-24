@@ -24,15 +24,15 @@ const routes: Routes = [
     component: ProjectDetailPage
   },
   {
-    path: RouterLinks.TASK_VIEW,
+    path: `${RouterLinks.TASK_VIEW}/:id/:taskId`,
     component: TaskViewPage
   },
   {
-    path: RouterLinks.LEARNING_RESOURCES_TASK,
+    path: `${RouterLinks.LEARNING_RESOURCES_TASK}/:id/:taskId`,
     component: LearningResourcesPage
   },
   {
-    path: RouterLinks.LEARNING_RESOURCES_PROJECT,
+    path: `${RouterLinks.LEARNING_RESOURCES_PROJECT}/:id`,
     component: LearningResourcesPage
   },
   {

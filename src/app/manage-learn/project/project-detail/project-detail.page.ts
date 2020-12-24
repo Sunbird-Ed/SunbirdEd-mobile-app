@@ -353,12 +353,13 @@ export class ProjectDetailPage implements OnInit {
         this.project._rev = success.rev;
         this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
         if (type == "newTask") {
-          // this.toast.openToast("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
+          this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
-          // this.toast.openToast("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
+          this.toast.showMessage("FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL", "success");
+          //TODO: add location service
           // this.location.back();
         } else if (type == "taskDelete") {
-          // this.toast.openToast("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
+          this.toast.showMessage("FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL", "success");
         }
         this.sortTasks();
       })
@@ -376,7 +377,7 @@ export class ProjectDetailPage implements OnInit {
         this.loader.stopLoader();
       })
       .catch((error) => {
-        // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+        this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
         this.loader.stopLoader();
       });
   }
@@ -400,12 +401,12 @@ export class ProjectDetailPage implements OnInit {
             }, 0);
           })
           .catch((deletError) => {
-            // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
             this.loader.stopLoader();
           });
       })
       .catch((error) => {
-        // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
+        this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
         this.loader.stopLoader();
       });
   }
@@ -427,7 +428,7 @@ export class ProjectDetailPage implements OnInit {
 
   openAttachments() {
     console.log("openAttachments");
-    this.router.navigate(["menu/attachment-list", this.project._id], { replaceUrl: true });
+    this.router.navigate(["project/attachment-list", this.project._id], { replaceUrl: true });
   }
 
   startAssessment(task) {
@@ -438,7 +439,7 @@ export class ProjectDetailPage implements OnInit {
       this.unnatiService.get(config).subscribe(
         (success) => {
           if (!success.result) {
-            // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
             return;
           }
           let data = success.result;
@@ -448,12 +449,12 @@ export class ProjectDetailPage implements OnInit {
           // this.iab.create(link, "_system");
         },
         (error) => {
-          // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+          this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
           console.log(error);
         }
       );
     } else {
-      // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
+      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
     }
   }
 
@@ -517,7 +518,7 @@ export class ProjectDetailPage implements OnInit {
       this.unnatiService.get(config).subscribe(
         (success) => {
           if (!success.result) {
-            // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+            this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
             return;
           }
           let data = success.result;
@@ -527,12 +528,12 @@ export class ProjectDetailPage implements OnInit {
           // this.iab.create(link, "_system");
         },
         (error) => {
-          // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
+          this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
           console.log(error);
         }
       );
     } else {
-      // this.toast.openToast(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
+      this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
     }
   }
 }

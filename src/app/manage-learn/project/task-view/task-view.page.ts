@@ -94,7 +94,7 @@ export class TaskViewPage implements OnInit {
           console.log(item._id, this.parameters.taskId, item)
           return item._id == this.parameters.taskId;
         });
-        task > -1 ? (this.task = this.project.tasks[task]) : '' //this.toast.showMessage("FRMELEMNTS_MSG_NO_TASK_FOUND", "danger");
+        task > -1 ? (this.task = this.project.tasks[task]) : this.toast.showMessage("FRMELEMNTS_MSG_NO_TASK_FOUND", "danger");
         this.enableMarkButton = this.task.status === 'completed' ? true : false;
         this.copyOfTaskDetails = JSON.stringify(this.task);
         this.attachments = [];
@@ -142,7 +142,7 @@ export class TaskViewPage implements OnInit {
       this.update();
     } else {
       this.task.name = this.copyOfSelectEditField;
-      // this.toast.openToast("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
+      this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
   }
 
@@ -153,7 +153,7 @@ export class TaskViewPage implements OnInit {
       this.update();
     } else {
       this.task.children[index].name = this.copyOfSelectEditField;
-      // this.toast.openToast("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
+      this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
   }
 
@@ -174,12 +174,12 @@ export class TaskViewPage implements OnInit {
           this.project._rev = success.rev;
           this.prepareSubTaskMeta();
           this.attachments = [];
-          // this.toast.openToast('FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED', 'success');
+          this.toast.showMessage('FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED', 'success');
           goBack ? this.location.back() : "";
         })
         .catch((error) => { });
     } else {
-      // this.toast.openToast("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
+      this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
     }
   }
 
@@ -198,6 +198,7 @@ export class TaskViewPage implements OnInit {
 
   openBodh(link) {
     console.log(link, "link");
+    // TODO: add service
     // this.networkService.isNetworkAvailable
     //   ? this.openResourceSrvc.openBodh(link)
     //   : this.toast.showMessage("FRMELEMNTS_MSG_OFFLINE", "danger");
@@ -335,7 +336,7 @@ export class TaskViewPage implements OnInit {
           handler: (data) => {
             console.log(data);
             if (data.field == "" && what != "assignName") {
-              // this.toast.openToast("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
+              this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
               return;
             }
 

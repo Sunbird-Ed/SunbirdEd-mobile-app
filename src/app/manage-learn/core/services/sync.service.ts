@@ -67,7 +67,7 @@ export class SyncService {
           if (status === 'ON' && this.network.isNetworkAvailable) {
             this.router.navigate(['/menu/sync']);
           } else if (status === 'ON' && !this.network.isNetworkAvailable) {
-            // this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
+            this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
           } else {
           }
         }).catch(error => {
