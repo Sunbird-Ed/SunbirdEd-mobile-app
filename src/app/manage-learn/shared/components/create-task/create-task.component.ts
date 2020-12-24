@@ -27,6 +27,7 @@ export class CreateTaskComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
   openAction() {
+    // TODO: add attachment service
     // this.attachmentService.selectImage().then(data => {
     //   !this.newTask.attachments ? this.newTask.attachments = [] : '';
     //   data.data ? this.newTask.attachments.push(data.data) : ''
