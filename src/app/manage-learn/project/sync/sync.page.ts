@@ -125,8 +125,6 @@ export class SyncPage implements OnInit, OnDestroy {
         this.attachments = this.syncServ.getAllAttachmentOfProject(this.allProjects[this.syncIndex]);
         this.attachments.length ? this.getImageUploadUrls() : this.doSyncCall();
       }
-      // this.allProjects[this.syncIndex].isNew ? this.createProjectCall() : this.getImageUploadUrls();
-      // this.doSyncCall();
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
@@ -162,8 +160,6 @@ export class SyncPage implements OnInit, OnDestroy {
     this.db.create(newObj).then(success => {
       this.allProjects[this.syncIndex]._rev = success.rev;
       this.db.delete(oldPrjstId, _rev).then(deleteSuccess => {
-        // this.doSyncCall()
-        // this.getImageUploadUrls();
         this.attachments = this.syncServ.getAllAttachmentOfProject(this.allProjects[this.syncIndex]);
         this.attachments.length ? this.getImageUploadUrls() : this.doSyncCall();
       }).catch(deletError => {
