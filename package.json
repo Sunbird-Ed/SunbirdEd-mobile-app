@@ -154,6 +154,7 @@
     "@types/node": "12.11.5",
     "babel-jest": "^25.4.0",
     "babel-polyfill": "^6.26.0",
+    "code-push": "^3.0.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
     "cordova-plugin-awesome-shared-preferences": "git+https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-fcm.git#release-3.4.0",
