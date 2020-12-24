@@ -44,7 +44,6 @@ export class ObservationHomeComponent implements OnInit {
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.handleBackButton();
   }
 
   ionViewWillLeave() {
@@ -53,12 +52,6 @@ export class ObservationHomeComponent implements OnInit {
     }
   }
 
-  private handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
-    });
-  }
 
   observationDetails(programIndex, solutionIndex) {
     this.observationService.setIndex(programIndex, solutionIndex);
