@@ -114,7 +114,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   headerObservable: any;
   unregisterBackButton: Subscription;
   primaryCategories: Array<string> = [];
-  audienceFilter = [];
   contentSearchResult: Array<any> = [];
   showLoader = false;
   searchFormSubscription?: Subscription;
@@ -170,7 +169,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.checkUserSession();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.EXPLORE_MORE_CONTENT,
@@ -240,21 +238,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
   }
 
-  checkUserSession() {
-    const isGuestUser = !this.appGlobalService.isUserLoggedIn();
-
-    if (isGuestUser) {
-      const userType = this.appGlobalService.getGuestUserType();
-      if (userType === ProfileType.STUDENT) {
-        this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
-        this.audienceFilter = AudienceFilter.GUEST_TEACHER;
-      }
-    } else {
-      this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
-    }
-  }
-
   union(arrA: { name: string }[], arrB: { name: string }[]): { name: string }[] {
     return [
       ...arrA, ...arrB.filter((bItem) => !arrA.find((aItem) => bItem.name === aItem.name))
@@ -274,7 +257,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           primaryCategories: this.selectedPrimartCategory === CsPrimaryCategory.DIGITAL_TEXTBOOK ?
             [CsPrimaryCategory.DIGITAL_TEXTBOOK] : this.primaryCategories,
           facets: Search.FACETS,
-          audience: this.audienceFilter,
+          audience: [],
           mode: 'soft',
           languageCode: this.translate.currentLang,
           fields: ExploreConstants.REQUIRED_FIELDS
