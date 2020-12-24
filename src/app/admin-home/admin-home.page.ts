@@ -1,15 +1,14 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
+import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import {
   FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
   Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType
+  CachedItemRequestSourceFrom, SearchType, InteractType
 } from '@project-sunbird/sunbird-sdk';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { ContentFilterConfig, ProfileConstants, RouterLinks } from '../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events } from '@ionic/angular';
@@ -43,11 +42,12 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
     private contentAggregatorHandler: ContentAggregatorHandler,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    private events: Events
+    private events: Events,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
   }
 
@@ -66,21 +66,18 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   async getUserProfileDetails() {
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .subscribe((profile: Profile) => {
         this.profile = profile;
         this.getFrameworkDetails();
         this.fetchDisplayElements();
       });
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appLabel = appName;
-      });
+    this.appLabel = await this.commonUtilService.getAppName();
   }
 
 
-  editProfileDetails() {
+  navigateToEditProfilePage() {
     if (!this.guestUser) {
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
@@ -94,7 +91,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
     }
   }
 
-  getFrameworkDetails(frameworkId?: string): void {
+  getFrameworkDetails(): void {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -115,9 +112,9 @@ export class AdminHomePage implements OnInit, OnDestroy {
       });
   }
 
-  getFieldDisplayValues(field: Array<any>, catIndex: number): string {
+  getFieldDisplayValues(field: Array<any>, index: number): string {
     const displayValues = [];
-    this.categories[catIndex].terms.forEach(element => {
+    this.categories[index].terms.forEach(element => {
       if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
@@ -138,59 +135,39 @@ export class AdminHomePage implements OnInit, OnDestroy {
     };
 
     this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.ADMIN_HOME);
-    const iconList = new Map();
-    iconList.set('Programs', 'assets/imgs/ic_program.svg');
-    iconList.set('Projects', 'assets/imgs/ic_project.svg');
-    iconList.set('Observations', 'assets/imgs/ic_observation.svg');
-    iconList.set('Surveys', 'assets/imgs/ic_survey.svg');
-    iconList.set('Reports', 'assets/imgs/ic_report.svg');
-    iconList.set('Courses', 'assets/imgs/ic_course_admin .svg');
-    this.displaySections.forEach((data) => {
-      if (data.dataSrc.name === 'CONTENT_FACETS_ADMIN' && data.data && data.data.length) {
-        data.data.forEach((e) => {
-          e['icon'] = iconList.get(this.commonUtilService.getTranslatedValue(e.title, ''));
-        });
-      }
-    });
-    console.log('adminnnn', this.displaySections);
+    this.displaySections = this.contentAggregatorHandler.populateIcons(this.displaySections);
   }
 
-  handlePillSelect(event) {
+  onPillClick(event) {
     console.log(event);
     debugger
-    const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
+    // const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
     // this.commonUtilService.showToast(title);
-    switch (title) {
-      case 'Programs':
+    switch (event.data[0].value.code) {
+      case 'programs':
         this.router.navigate([RouterLinks.PROGRAM], {})
         break
-      case 'Projects':
+      case 'projects':
         this.router.navigate([RouterLinks.PROJECT], {})
         break
-      case 'Observations':
+      case 'observations':
         this.router.navigate([RouterLinks.OBSERVATION], {})
         break
-      case 'Surveys':
+      case 'surveys':
         this.router.navigate([RouterLinks.SURVEY], {})
         break
       case 'Reports':
         // this.router.navigate([RouterLinks.PROGRAM], {})
 
         break
-      case 'Courses':
-        this.router.navigate([RouterLinks.SEARCH], {});
-        break
+      case 'course':
+        this.router.navigate([RouterLinks.SEARCH], {
+          state: {
+            source: PageId.ADMIN_HOME,
+            preAppliedFilter: event.data[0].value.search
+          }
+        });
     }
-    // if (title === 'Courses') {
-    //   this.router.navigate([RouterLinks.SEARCH], {});
-    // }
-    if (!event || !event.data || !event.data.length) {
-      return;
-    }
-    const params = {
-      formField: event.data[0].value
-    };
-    // this.router.navigate([RouterLinks.HOME_PAGE], { state: params });
   }
 
   navigateToViewMoreContentsPage(section, pageName) {
@@ -209,7 +186,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'search':
-        // this.search();
+        this.navigateToSearchPage();
         break;
       case 'download':
         // this.redirectToActivedownloads();
@@ -222,6 +199,22 @@ export class AdminHomePage implements OnInit, OnDestroy {
         break;
       default: console.warn('Use Proper Event name');
     }
+  }
+
+  private async navigateToSearchPage() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SEARCH_BUTTON_CLICKED,
+      Environment.HOME,
+      PageId.ADMIN_HOME);
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+      ContentFilterConfig.NAME_LIBRARY);
+    this.router.navigate([RouterLinks.SEARCH], {
+      state: {
+        primaryCategories,
+        source: PageId.ADMIN_HOME
+      }
+    });
   }
 
 
