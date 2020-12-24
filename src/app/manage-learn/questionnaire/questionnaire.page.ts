@@ -102,7 +102,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ngOnInit() {
     // this.loader.startLoader();
     this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-      debugger
       this.schoolData = data;
       const currentEvidences = this.schoolData['assessment']['evidences'];
       this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
@@ -112,7 +111,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
       this.localImageListKey = "images_" + this.selectedEvidenceId + "_" + this.submissionId;
       this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
-      debugger
 
       this.questions = currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].totalQuestions = this.questions.length;
