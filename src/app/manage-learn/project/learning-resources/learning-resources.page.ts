@@ -2,7 +2,17 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppHeaderService } from "@app/services";
 import { TranslateService } from "@ngx-translate/core";
+import { LoaderService, ToastService } from "../../core";
+import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
+
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
 
 @Component({
   selector: "app-learning-resources",
@@ -26,9 +36,9 @@ export class LearningResourcesPage implements OnInit {
     private headerService: AppHeaderService,
     private translate: TranslateService,
     private utils: UtilsService,
-    // private loader: LoaderService,
-    // private toast: ToastMessageService,
-    // private db: DbService,
+    private loader: LoaderService,
+    private toast: ToastService,
+    private db: DbService,
     // private openResources: OpenResourcesService
   ) {
     let data;
@@ -50,23 +60,23 @@ export class LearningResourcesPage implements OnInit {
 
   ngOnInit() {}
   getProjectFromLocal(projectId) {
-    // this.loader.startLoader();
-    // this.db.createPouchDB(environment.db.projects);
-    // this.db.query({ _id: projectId }).then(
-    //   (success) => {
+    this.loader.startLoader();
+    this.db.createPouchDB(environment.db.projects);
+    this.db.query({ _id: projectId }).then(
+      (success) => {
         // this.db.getById(id).then(success => {
-        // this.loader.stopLoader();
+        this.loader.stopLoader();
         this.list = this.utils.getProjectData();
         if (this.taskId) {
           // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
         console.log(this.list, "learningResources");
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
   openBodh(link) {
     console.log(link, "link");
