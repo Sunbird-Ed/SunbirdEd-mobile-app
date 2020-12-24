@@ -28,11 +28,11 @@ const routes: Routes = [
     component: TaskViewPage
   },
   {
-    path: `${RouterLinks.LEARNING_RESOURCES_TASK}/:id/:taskId`,
+    path: `${RouterLinks.LEARNING_RESOURCES}/:id/:taskId`,
     component: LearningResourcesPage
   },
   {
-    path: `${RouterLinks.LEARNING_RESOURCES_PROJECT}/:id`,
+    path: `${RouterLinks.LEARNING_RESOURCES}/:id`,
     component: LearningResourcesPage
   },
   {

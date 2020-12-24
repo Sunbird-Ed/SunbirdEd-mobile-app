@@ -56,7 +56,7 @@ export class ProjectListingComponent implements OnInit {
   }
 
   selectedProgram(id){
-    this.router.navigate([`/${RouterLinks.PROJECT_DETAILS}`]);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`]);
   }
 
   handleNavBackButton(){

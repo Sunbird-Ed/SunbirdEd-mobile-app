@@ -17,6 +17,7 @@ import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
 import { urlConstants } from '../../core/constants/urlConstants';
+import { RouterLinks } from '@app/app/app.constant';
 
 var environment = {
   db: {
@@ -258,11 +259,11 @@ export class ProjectDetailPage implements OnInit {
       case "sync": {
         this.project.isNew
           ? this.createNewProject()
-          : this.router.navigate(["/project/sync"], { queryParams: { projectId: this.projectId } });
+          : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
         break;
       }
       case "editTask": {
-        this.router.navigate(["/project/task-view", this.project._id, taskId]);
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, taskId]);
         break;
       }
       case "deleteTask": {
@@ -329,9 +330,9 @@ export class ProjectDetailPage implements OnInit {
       return;
     }
     if (task) {
-      this.router.navigate(["/project/learning-resources", this.project._id, task._id]);
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id, task._id]);
     } else {
-      this.router.navigate(["/project/learning-resources", this.project._id]);
+      this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.LEARNING_RESOURCES}`, this.project._id]);
     }
   }
   //open openBodh
@@ -395,9 +396,9 @@ export class ProjectDetailPage implements OnInit {
             this.loader.stopLoader();
             this.projectId = newObj._id;
             this.project = newObj;
-            this.router.navigate(["/menu/project-detail/" + this.projectId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}` + this.projectId], { replaceUrl: true });
             setTimeout(() => {
-              this.router.navigate(["/menu/sync"], { queryParams: { projectId: this.projectId } });
+              this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
             }, 0);
           })
           .catch((deletError) => {

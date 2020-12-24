@@ -555,11 +555,9 @@ export class RouterLinks {
     public static readonly PROGRAM = 'program';
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
-    public static readonly PROJECT_DETAILS = 'project/details';
     public static readonly DETAILS = 'details';
     public static readonly TASK_VIEW = 'task-view';
-    public static readonly LEARNING_RESOURCES_TASK = 'learning-resources';
-    public static readonly LEARNING_RESOURCES_PROJECT = 'learning-resources';
+    public static readonly LEARNING_RESOURCES = 'learning-resources';
     public static readonly SYNC = 'sync';
 
     public static readonly SOLUTIONS = 'solutions';
