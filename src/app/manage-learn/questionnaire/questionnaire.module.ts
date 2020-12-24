@@ -11,6 +11,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RemarksModalComponent } from './remarks-modal/remarks-modal.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatrixModalComponent } from './matrix-modal/matrix-modal.component';
+import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 
 const routes: Routes = [
   {
@@ -29,10 +30,10 @@ const routes: Routes = [
     SharedModule,
     TranslateModule
   ],
-  declarations: [QuestionnairePage, RemarksModalComponent, MatrixModalComponent],
+  declarations: [QuestionnairePage, RemarksModalComponent, MatrixModalComponent, QuestionMapModalComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
-  entryComponents: [RemarksModalComponent, MatrixModalComponent]
+  entryComponents: [RemarksModalComponent, MatrixModalComponent, QuestionMapModalComponent]
 })
 export class QuestionnairePageModule { }
