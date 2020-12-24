@@ -964,7 +964,15 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
 
     this.localStorage.setLocalStorage(key, obj).then(success => {
-      this.router.navigateByUrl(`${RouterLinks.QUESTIONNAIRE}/5fd9f2d0c91909226f7ec649/0/0`)
+      this.router.navigate([RouterLinks.QUESTIONNAIRE],
+        {
+          queryParams: {
+            submisssionId: '5fd9f2d0c91909226f7ec649',
+            evidenceIndex: 0,
+            sectionIndex: 0,
+            schoolName: "sample"
+          }
+        })
     })
   }
 

@@ -69,14 +69,17 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
     });
-    this.routerParam.params.subscribe((parameters) => {
-      this.submissionId = parameters.submisssionId;
-      this.selectedEvidenceIndex = parameters.evidenceIndex;
-      this.selectedSectionIndex = parameters.sectionIndex;
-    });
+    // this.routerParam.params.subscribe((parameters) => {
+    //   this.submissionId = parameters.submisssionId;
+    //   this.selectedEvidenceIndex = parameters.evidenceIndex;
+    //   this.selectedSectionIndex = parameters.sectionIndex;
+    // });
 
     this.routerParam.queryParams.subscribe((params) => {
-      this.schoolName = params.name;
+      this.submissionId = params.submisssionId;
+      this.selectedEvidenceIndex = params.evidenceIndex;
+      this.selectedSectionIndex = params.sectionIndex;
+      this.schoolName = params.schoolName;
     })
 
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
