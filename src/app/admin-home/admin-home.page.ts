@@ -139,26 +139,21 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   onPillClick(event) {
-    console.log(event);
-    debugger
-    // const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
-    // this.commonUtilService.showToast(title);
     switch (event.data[0].value.code) {
-      case 'programs':
+      case 'program':
         this.router.navigate([RouterLinks.PROGRAM], {})
         break
-      case 'projects':
+      case 'project':
         this.router.navigate([RouterLinks.PROJECT], {})
         break
-      case 'observations':
+      case 'observation':
         this.router.navigate([RouterLinks.OBSERVATION], {})
         break
-      case 'surveys':
+      case 'survey':
         this.router.navigate([RouterLinks.SURVEY], {})
         break
-      case 'Reports':
+      case 'report':
         // this.router.navigate([RouterLinks.PROGRAM], {})
-
         break
       case 'course':
         this.router.navigate([RouterLinks.SEARCH], {
