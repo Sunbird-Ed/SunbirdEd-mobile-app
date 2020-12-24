@@ -1,3 +1,47 @@
-<p>
-  survey-home works!
-</p>
+<ion-app>
+  <ion-content fullscreen>
+    <!-- <div *ngIf="surveyList">
+      <simple-list
+        *ngFor="let item of surveyList"
+        [heading]="item?.name"
+        [subheading]="item?.subheading"
+        [forwardIcon]="item?.status != 'completed' && item.submissionId"
+        [viewReport]="item?.status == 'completed' || !item.submissionId"
+        [status]="item?.status"
+        (reportAction)="checkReport(item)"
+        (click)="onSurveyClick(item)"
+      ></simple-list>
+    </div> -->
+    <app-common-header
+      title="{{ 'FRMELEMNTS_LBL_SURVEY' | translate }}"
+      subTitle="{{ 'FRMELEMNTS_LBL_SURVEY_DESC' | translate }}"
+    ></app-common-header>
+    <div *ngFor="let item of surveyList">
+      <app-item-list-card [title]="item?.name" (cardSelect)="onSurveyClick(item)">
+        <span
+          class="dot"
+          [style.background-color]="setStatusColor(item?.status)"
+          *ngIf="setStatusColor(item?.status)"
+          color
+        ></span>
+        <ion-icon
+          arrow
+          class="mg-popup-btn-icon"
+          name="ios-arrow-round-forward"
+          *ngIf="item?.status != 'completed' && item.submissionId"
+        ></ion-icon>
+        <ion-button
+          report
+          round
+          *ngIf="item?.status == 'completed' || !item.submissionId"
+          (click)="$event.stopPropagation(); onViewReport()"
+        >
+          {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
+        </ion-button>
+      </app-item-list-card>
+    </div>
+  </ion-content>
+  <!-- <ion-button class="view-more" expand="block" (click)="loadMore()">
+    {{ "VIEW_MORE" | translate }}
+  </ion-button> -->
+</ion-app>

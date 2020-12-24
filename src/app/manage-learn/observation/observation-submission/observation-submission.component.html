@@ -29,7 +29,7 @@
       (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)"
     >
       <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
-        <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward"></ion-icon>
+        <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
       </app-item-list-card>
     </div>
   </ion-content>

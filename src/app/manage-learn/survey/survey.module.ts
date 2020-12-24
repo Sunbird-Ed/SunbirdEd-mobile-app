@@ -4,6 +4,9 @@ import { SurveyHomeComponent } from './survey-home/survey-home.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
+import { SharedModule } from '../shared/shared.module';
+import { CoreModule } from '../core/core.module';
+import { SurveyProviderService } from './survey-provider.service';
 const routes: Routes = [
   {
     path: '',
@@ -14,6 +17,14 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [SurveyHomeComponent],
-  imports: [CommonModule, TranslateModule.forChild(), IonicModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    TranslateModule.forChild(),
+    IonicModule,
+    RouterModule.forChild(routes),
+    SharedModule,
+    CoreModule,
+  ],
+  providers:[SurveyProviderService]
 })
 export class SurveyModule {}
