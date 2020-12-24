@@ -90,6 +90,10 @@
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
         <ion-icon class="ion-float-end" name="ios-information-circle-outline"></ion-icon>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
+        (click)="emitEvent($event, 'questionMap');" style="font-size: 1.8rem;">
+        <ion-icon class="ion-float-end" name="map"></ion-icon>
+      </ion-button>
     </ion-buttons>
 
   </ion-toolbar>

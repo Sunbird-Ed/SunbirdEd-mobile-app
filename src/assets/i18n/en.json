@@ -512,6 +512,7 @@
   "FRMELEMNTS_MSG_SELFDECLARATION_SUCCESS_INFO": "You can edit this information from your profile if you need to",
   "FRMELEMNTS_MSG_UNABLE_TO_ENROLL": "Cannot un-enrol now. Try again later",
   "FRMELEMNTS_MSG_USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded",
+  "FRMELEMNTS_MSG_QUESTIONNAIRE_MSG":"This questions response is not required to complete the assessment.",
   "FROM": "From",
   "FULL_NAME": "Name",
   "GET_STARTED": "Get started",

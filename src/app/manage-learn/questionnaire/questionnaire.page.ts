@@ -1,18 +1,21 @@
 import { Location } from '@angular/common';
-import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ActionSheetController, AlertController, Events, IonContent } from '@ionic/angular';
+import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
 import { AppHeaderService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 
 @Component({
   selector: 'app-questionnaire',
   templateUrl: './questionnaire.page.html',
   styleUrls: ['./questionnaire.page.scss'],
 })
-export class QuestionnairePage implements OnInit {
+export class QuestionnairePage implements OnInit, OnDestroy {
   @ViewChild('sample') nameInputRef: ElementRef;
   @ViewChild('pageTop') pageTop: IonContent;
+  private _appHeaderSubscription?: Subscription;
 
 
   headerConfig = {
@@ -61,6 +64,7 @@ export class QuestionnairePage implements OnInit {
     private alertCtrl: AlertController,
     // private ngps: NetworkGpsProvider,
     private headerService: AppHeaderService,
+    private modalCtrl: ModalController
   ) {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
@@ -75,12 +79,24 @@ export class QuestionnairePage implements OnInit {
       this.schoolName = params.name;
     })
 
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      if (eventName.name === 'questionMap') {
+        this.openQuestionMap();
+      }
+    });
+
 
     // Online event
     this.events.subscribe('network:online', () => {
       this.networkAvailable = true;
     });
     // this.networkAvailable = this.ngps.getNetworkStatus();
+  }
+
+  ngOnDestroy() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
   }
 
   ngOnInit() {
@@ -120,13 +136,31 @@ export class QuestionnairePage implements OnInit {
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
-    this.headerConfig.actionButtons = [];
+    this.headerConfig.actionButtons = ['questionMap'];
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
   ionViewDidLoad() {
+  }
+
+  async openQuestionMap() {
+    debugger
+    const questionModal = await this.modalCtrl.create({
+      component: QuestionMapModalComponent,
+      componentProps: {
+        data: this.dashbordData
+      }
+    });
+    debugger
+    await questionModal.present();
+    const { data } = await questionModal.onDidDismiss();
+    if (data >= 0) {
+      this.start = data;
+      this.end = data + 1;
+      this.dashbordData.currentViewIndex = data;
+    }
   }
   // images_CO_5bebcfcf92ec921dcf114828
 
