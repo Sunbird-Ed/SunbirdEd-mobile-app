@@ -1,4 +1,4 @@
-// @import '../../../../theme/colors.scss';
+@import "src/assets/styles/_variables.scss";
 .custom-label{
     font-size: 20px;
     font-weight: 400;
@@ -11,7 +11,7 @@
 }
 
 .attachments-box{
-    // background: $trasperant-gray-color;
+    background: #a9a9a966;
     margin-bottom: 35px;
     height: auto;
     padding: 5px 10px;
@@ -21,7 +21,7 @@
             font-size: 23px;
         }
         .attach-label{
-        // color:$blue-color; 
+        color: #{$blue}; 
         text-align:right;
         float: right;
         margin: 10px 10px; 

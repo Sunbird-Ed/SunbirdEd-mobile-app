@@ -12,6 +12,7 @@ import { ProjectListingComponent } from './project-listing/project-listing.compo
 import { LearningResourcesPage } from './learning-resources/learning-resources.page';
 import { SyncPage } from './sync/sync.page';
 import { TaskViewPage } from './task-view/task-view.page';
+import { RouterLinks } from '@app/app/app.constant';
 
 const routes: Routes = [
   {
@@ -19,23 +20,23 @@ const routes: Routes = [
     component: ProjectListingComponent
   },
   {
-    path: 'details',
+    path: RouterLinks.DETAILS,
     component: ProjectDetailPage
   },
   {
-    path: "task-view/:id/:taskId",
+    path: RouterLinks.TASK_VIEW,
     component: TaskViewPage
   },
   {
-    path: "learning-resources/:id/:taskId",
+    path: RouterLinks.LEARNING_RESOURCES_TASK,
     component: LearningResourcesPage
   },
   {
-    path: "learning-resources/:id",
+    path: RouterLinks.LEARNING_RESOURCES_PROJECT,
     component: LearningResourcesPage
   },
   {
-    path: "sync",
+    path: RouterLinks.SYNC,
     component: SyncPage
   }
 ];

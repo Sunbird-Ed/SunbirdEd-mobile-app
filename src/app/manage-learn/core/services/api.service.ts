@@ -42,13 +42,13 @@ export class ApiService {
   private handleError(result) {
     switch (result.status) {
       case 0:
-        this.toast.openToast('MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN' , 'danger')
+        // this.toast.openToast('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN' , 'danger')
         break
       case 401:
         // this.auth.sessionExpired();
         break
       default:
-        this.toast.openToast(result.error ? result.error.message : 'MESSAGES.SOMETHING_WENT_WRONG' , 'danger')
+        // this.toast.openToast(result.error ? result.error.message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG' , 'danger')
 
     }
     return (error: any): Observable<any> => {
@@ -62,7 +62,7 @@ export class ApiService {
       // if (error.status === 401) {
       //   this.auth.sessionExpired();
       // } else {
-      //   this.toast.showMessage('MESSAGES.SOMETHING_WENT_WRONG', 'danger')
+      //   this.toast.showMessage('FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')
       // }
       return of(result);
     };

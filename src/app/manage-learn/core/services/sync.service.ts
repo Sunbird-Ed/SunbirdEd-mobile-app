@@ -42,7 +42,7 @@ export class SyncService {
     private platform: Platform
   ) {
 
-    this.translate.get(['MESSAGES.PLEASE_NETWORK']).subscribe(stringValues => {
+    this.translate.get(['FRMELEMNTS_MSG_PLEASE_NETWORK']).subscribe(stringValues => {
       this.allStrings = stringValues;
     })
     this.isIos = this.platform.is('ios');
@@ -67,7 +67,7 @@ export class SyncService {
           if (status === 'ON' && this.network.isNetworkAvailable) {
             this.router.navigate(['/menu/sync']);
           } else if (status === 'ON' && !this.network.isNetworkAvailable) {
-            this.toast.openToast(this.allStrings['MESSAGES.PLEASE_NETWORK'], 'danger')
+            // this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
           } else {
           }
         }).catch(error => {

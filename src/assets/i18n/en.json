@@ -1198,5 +1198,15 @@
   "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED": "Successfully synced the project",
   "FRMELEMNTS_MSG_SYNC_FAILED": "Sync Failed",
   "FRMELEMNTS_MSG_SYNCING_PROJECT": "Syncing Project",
-  "OFFLINE": "You are offline!"
+  "FRMELEMNTS_MSG_OFFLINE": "You are offline!",
+  "FRMELEMNTS_MSG_REQUIRED_FIELDS": "Please enter all required fields.",
+  "FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED": "Your changes are saved successfully.",
+  "FRMELEMNTS_MSG_NO_TASK_FOUND": "No Task found, please try with some other tasks.",
+  "FRMELEMNTS_MSG_COMING_SOON": "Coming soon",
+  "FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN": "You are working offline, please check your network connection and try again",
+  "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG": "Due to a technical problem, we are unable to process the request",
+  "FRMELEMNTS_MSG_PLEASE_NETWORK": "Please check your network connection and try again",
+  "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL": "New Task has been successfully created.",
+  "FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL": "Task Deleted successfully",
+  "FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL": "Project Deleted successfully"
 }

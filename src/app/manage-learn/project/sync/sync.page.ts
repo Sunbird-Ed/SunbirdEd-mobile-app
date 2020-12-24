@@ -64,7 +64,7 @@ export class SyncPage implements OnInit, OnDestroy {
         }
       })
     } else {
-      this.toast.openToast('FRMELEMNTS_MSG_OFFLINE', 'danger');
+      // this.toast.openToast('FRMELEMNTS_MSG_OFFLINE', 'danger');
       this.location.back();
     }
   }
@@ -91,7 +91,7 @@ export class SyncPage implements OnInit, OnDestroy {
         this.checkForActions();
       } else {
         this.location.back()
-        this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'], 'danger')
+        // this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'], 'danger')
       }
     }, error => { })
   }
@@ -111,7 +111,7 @@ export class SyncPage implements OnInit, OnDestroy {
         this.checkForActions();
       } else {
         this.location.back()
-        this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'])
+        // this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_PROJCET_ALREADY_UPTODATE'])
       };
     }, error => { })
   }
@@ -130,7 +130,7 @@ export class SyncPage implements OnInit, OnDestroy {
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
-      this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'])
+      // this.toast.openToast(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'])
       this.location.back()
     }
   }
@@ -145,7 +145,7 @@ export class SyncPage implements OnInit, OnDestroy {
     this.syncServ.createNewProject().then(success => {
       this.updateProjectDoc(success.result);
     }).catch(error => {
-      this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
+      // this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
       this.location.back();
     })
   }
@@ -167,11 +167,11 @@ export class SyncPage implements OnInit, OnDestroy {
         this.attachments = this.syncServ.getAllAttachmentOfProject(this.allProjects[this.syncIndex]);
         this.attachments.length ? this.getImageUploadUrls() : this.doSyncCall();
       }).catch(deletError => {
-        this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
+        // this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
         this.location.back();
       })
     }).catch(error => {
-      this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
+      // this.toast.openToast(this.allStrings['SOMETHING_WENT_WRONG'], 'danger');
       this.location.back();
 
     })
