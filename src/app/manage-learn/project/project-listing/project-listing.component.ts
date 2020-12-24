@@ -22,12 +22,12 @@ export class ProjectListingComponent implements OnInit {
   };
 
   result = [
-      {name: 'Project 1', description: 'Project 1 Desc', id: 1},
-      {name: 'Project 2', description: 'Project 2 Desc', id: 2},
-      {name: 'Project 3', description: 'Project 3 Desc', id: 3},
+    { name: 'Project 1', description: 'Project 1 Desc', id: 1 },
+    { name: 'Project 2', description: 'Project 2 Desc', id: 2 },
+    { name: 'Project 3', description: 'Project 3 Desc', id: 3 },
   ]
 
-  constructor(private router: Router, private location:Location,
+  constructor(private router: Router, private location: Location,
     private headerService: AppHeaderService, private platform: Platform) { }
 
   ngOnInit() {
@@ -55,15 +55,14 @@ export class ProjectListingComponent implements OnInit {
     });
   }
 
-  selectedProgram(id){
+  selectedProgram(id) {
     this.router.navigate([`/${RouterLinks.PROJECT}/details`]);
   }
-
-  handleNavBackButton(){
+  handleNavBackButton() {
     this.location.back();
   }
 
-  loadMore(){
+  loadMore() {
 
   }
 

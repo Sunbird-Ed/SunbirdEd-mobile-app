@@ -1,0 +1,94 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+.custom-padding {
+    padding: 0px 10px;
+}
+
+.skip-button {
+    text-align: right;
+    margin: -10px 5px;
+    z-index: 9999999;
+    // background: $white-color;
+}
+
+.project-title {
+    ion-input {
+        padding: 10px 0px !important;
+        --padding-start: 0px;
+    }
+}
+
+.program-block {
+    margin: 30px 0px;
+
+    ion-item {
+        // border: 1px solid $dark-grey-color;
+        border-radius: 6px;
+        margin: 10px 0px;
+
+        ion-icon {
+            font-size: 16px;
+        }
+    }
+}
+
+.program-data {
+    margin: 30px 0px;
+}
+
+.entity-block {
+    margin: 50px 0px;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+.rating-block {
+    ion-icon {
+        padding: 5px;
+        font-size: 24px;
+        // color: $yellow-color;
+    }
+}
+
+.data-list {
+    padding: 10px;
+    margin: 10px 0px;
+
+    ion-item {
+        --padding-start: 0px;
+    }
+
+    .remove-icon {
+        margin-top: -20px;
+        margin-right: -15px;
+    }
+}
+
+.footer-btn {
+    text-align: center;
+    padding: 15px;
+    /* min-height: 50px; */
+    background: var(--ion-color-primary);
+    // color: $white-color;
+}
+
+.secondary {
+    // background: $dark-brown-color;
+    // color: $white-color
+}
+
+.learningResources {
+    .text-center {
+        text-align: center;
+
+        span {
+            // color: $blue-color;
+        }
+    }
+}
+
+.padding {
+    padding: 0px 15px;
+}
