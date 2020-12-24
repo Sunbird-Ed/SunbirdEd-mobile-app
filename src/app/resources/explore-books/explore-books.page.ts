@@ -4,7 +4,7 @@ import {
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
-import { AudienceFilter, MimeType, Search, ExploreConstants } from 'app/app.constant';
+import { MimeType, Search, ExploreConstants } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
   Environment,
@@ -22,7 +22,6 @@ import {
   ContentService,
   CorrelationData,
   FilterValue,
-  ProfileType,
   SearchType
 } from 'sunbird-sdk';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
