@@ -85,8 +85,8 @@ export class TaskViewPage implements OnInit {
   }
 
   getTask() {
-    // this.db.query({ _id: this.parameters.projectId }).then(
-    //   (success) => {
+    this.db.query({ _id: this.parameters.projectId }).then(
+      (success) => {
         this.project =  this.utils.getProjectData()//success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         // this.copyOfProject = { ...this.project };
@@ -101,9 +101,9 @@ export class TaskViewPage implements OnInit {
         this.getSubtasksCount(this.task).then((data: number) => {
           this.subTaskCount = data;
         });
-    //   },
-    //   (error) => { }
-    // );
+      },
+      (error) => { }
+    );
   }
   selectedStatus(event) {
     this.enableTaskMarkButton();
