@@ -116,6 +116,7 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-newspaper-outline.svg',
                 'md-attach-outline.svg',
                 'md-image-outline.svg',
+                'md-map.svg',
                 'md-book.svg',
                 'md-checkmark-circle.svg',
                 'md-contrast.svg',

@@ -12,6 +12,14 @@ import { AggregatorPageType, Orientation } from './content-aggregator-namespaces
 
 export class ContentAggregatorHandler {
     aggregatorResponse: any;
+    private iconMap = {
+        program: 'assets/imgs/ic_program.svg',
+        project: 'assets/imgs/ic_project.svg',
+        observation: 'assets/imgs/ic_observation.svg',
+        survey: 'assets/imgs/ic_survey.svg',
+        report: 'assets/imgs/ic_report.svg',
+        course: 'assets/imgs/ic_course_admin.svg'
+    };
     constructor(
         @Inject('COURSE_SERVICE') private courseService: CourseService,
         @Inject('FORM_SERVICE') private formService: FormService,
@@ -86,5 +94,23 @@ export class ContentAggregatorHandler {
     private async aggregateContent(request, dataSrc, formRequest): Promise<ContentAggregatorResponse> {
         return this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
             .aggregate(request, dataSrc, formRequest).toPromise();
+    }
+
+    public populateIcons(aggregatorResponse) {
+        if (!aggregatorResponse) {
+            return aggregatorResponse;
+        }
+        aggregatorResponse.forEach((displaySection) => {
+            if (displaySection.dataSrc.name === 'CONTENT_FACETS_ADMIN' && displaySection.data && displaySection.data.length) {
+                displaySection.data.forEach((element) => {
+                    element['icon'] = this.iconMap[element.code];
+                });
+            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS') {
+                displaySection.data.sections[0].contents.forEach((value, index) => {
+                    value['cardImg'] = value['courseLogoUrl'];
+                });
+            }
+        });
+        return aggregatorResponse;
     }
 }
