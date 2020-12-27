@@ -1,16 +1,16 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, SunbirdQRScanner } from '@app/services';
 import { CourseCardGridTypes, PillShape, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
   Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
   CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ProfileConstants, RouterLinks } from '../../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events } from '@ionic/angular';
+import { Events, IonContent as ContentView } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -38,6 +38,7 @@ export class UserHomePage implements OnInit, OnDestroy {
   pillsViewType = PillsViewType;
   selectMode = SelectMode;
   pillShape = PillShape;
+  @ViewChild('contentView') contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -49,7 +50,8 @@ export class UserHomePage implements OnInit, OnDestroy {
     private contentAggregatorHandler: ContentAggregatorHandler,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    private events: Events
+    private events: Events,
+    private qrScanner: SunbirdQRScanner,
   ) {
   }
 
@@ -57,6 +59,12 @@ export class UserHomePage implements OnInit, OnDestroy {
     this.getUserProfileDetails();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.getUserProfileDetails();
+    });
+
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+      if (data === '') {
+        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+      }
     });
   }
 
@@ -237,5 +245,4 @@ export class UserHomePage implements OnInit, OnDestroy {
       this.headerObservable.unsubscribe();
     }
   }
-
 }

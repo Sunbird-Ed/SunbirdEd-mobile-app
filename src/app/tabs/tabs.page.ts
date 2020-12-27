@@ -29,6 +29,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appLabel: any;
   olderWebView = false;
+  initialTabs: string;
 
   constructor(
     private container: ContainerService,
@@ -46,7 +47,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
-    const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
@@ -71,6 +71,10 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
+    if (this.initialTabs) {
+      this.tabs[2].root = this.initialTabs;
+      this.initialTabs = undefined;
+    }
   }
 
   ngAfterViewInit() {
@@ -125,7 +129,11 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
-    this.tabs[2].root = event.tab;
+    if (!this.tabs || !this.tabs.length) {
+      this.initialTabs = event.tab;
+    } else {
+      this.tabs[2].root = event.tab;
+    }
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);

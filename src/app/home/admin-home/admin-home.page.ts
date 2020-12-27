@@ -1,15 +1,15 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, ProfileConstants, RouterLinks } from '../../app.constant';
+import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
     Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
     CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events } from '@ionic/angular';
+import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -33,6 +33,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
+  @ViewChild('contentView') contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -45,7 +46,8 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private events: Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private qrScanner: SunbirdQRScanner,
   ) {
   }
 
@@ -53,6 +55,11 @@ export class AdminHomePage implements OnInit, OnDestroy {
     this.getUserProfileDetails();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.getUserProfileDetails();
+    });
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+      if (data === '') {
+        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+      }
     });
   }
 
