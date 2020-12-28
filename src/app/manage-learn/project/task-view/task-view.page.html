@@ -54,18 +54,18 @@
     </ion-row>
   </div>
 
-  <div class="subtask-box" *ngFor="let subtask of task?.children; let subTaskIndex = index">
-    <div *ngIf="!subtask.isDeleted">
+  <div class="subtask-box " *ngFor="let subtask of task?.children; let subTaskIndex = index">
+    <ion-card class="ion-padding" style="background: #ffffff;" *ngIf="!subtask.isDeleted">
       <ion-row>
         <ion-col size="1">
-          <ion-icon name="radio-button-off-outline" color="primary"></ion-icon>
+          <ion-icon name="radio-button-off" color="primary"></ion-icon>
         </ion-col>
         <ion-col size="10" class="subtask-title" (click)="edit('subtask',subtask.name,subtask,subTaskIndex)"
           *ngIf="editField != 'subtaskName'">
           {{subtask.name}}
         </ion-col>
         <ion-col size="1" style="margin: auto; text-align: center">
-          <img src="assets/imgs/Delete.png" style="width: 30px" (click)="askPermissionToDelete(subtask,'subtask')" />
+          <img src="assets/imgs/Delete.png" style="width: 20px" (click)="askPermissionToDelete(subtask,'subtask')" />
         </ion-col>
       </ion-row>
       <ion-row>
@@ -85,7 +85,7 @@
           </ion-select>
         </ion-col>
       </ion-row>
-    </div>
+    </ion-card>
   </div>
 
   <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="markTaskAsCompleted()"

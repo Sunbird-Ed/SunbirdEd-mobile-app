@@ -9,7 +9,8 @@ import { UtilsService } from "../../core/services/utils.service";
 import { NetworkService } from "../../core/services/network.service";
 import { AppHeaderService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
-import { ToastService } from "../../core";
+import { AttachmentService, ToastService } from "../../core";
+
 
 var environment = {
   db: {
@@ -53,10 +54,10 @@ export class TaskViewPage implements OnInit {
     private toast: ToastService,
     private translate: TranslateService,
     private alert: AlertController,
-    // private attachmentService: AttachementService,
+    private attachmentService: AttachmentService,
     private location: Location,
     private networkService: NetworkService,
-    private headerService: AppHeaderService, 
+    private headerService: AppHeaderService,
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
@@ -71,7 +72,7 @@ export class TaskViewPage implements OnInit {
 
   ngOnInit() { }
 
-  
+
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -87,10 +88,10 @@ export class TaskViewPage implements OnInit {
   getTask() {
     this.db.query({ _id: this.parameters.projectId }).then(
       (success) => {
-        this.project =  this.utils.getProjectData()//success.docs.length ? success.docs[0] : success.docs;
+        this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         // this.copyOfProject = { ...this.project };
-        let task = _.findIndex(this.utils.getProjectData().tasks, (item) => {
+        let task = _.findIndex(this.projectCopy.tasks, (item) => {
           console.log(item._id, this.parameters.taskId, item)
           return item._id == this.parameters.taskId;
         });
@@ -295,9 +296,9 @@ export class TaskViewPage implements OnInit {
     this.update("goBack");
   }
   openAction() {
-    // this.attachmentService.selectImage().then((data) => {
-    //   data.data ? this.attachments.push(data.data) : "";
-    // });
+    this.attachmentService.selectImage().then((data) => {
+      data.data ? this.attachments.push(data.data) : "";
+    });
   }
 
   async edit(what, placeholder = "", subtask?, subTaskIndex?) {
