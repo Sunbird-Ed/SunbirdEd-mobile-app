@@ -35,7 +35,7 @@ var environment = {
 export class ProjectDetailPage implements OnInit {
   showDetails: boolean = true;
   statuses = statuses;
-  project:any = this.utils.getProjectData();
+  project: any = this.utils.getProjectData();
   projectId;
   categories = [];
   taskCount: number = 0;
@@ -79,7 +79,7 @@ export class ProjectDetailPage implements OnInit {
   locationChangeTriggered: boolean = false;
   allStrings;
   private _appHeaderSubscription?: Subscription;
-  
+
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -120,13 +120,13 @@ export class ProjectDetailPage implements OnInit {
   getProject() {
     // this.db.query({ _id: this.projectId }).then(
     //   (success) => {
-        // this.project = success.docs.length ? success.docs[0] : {};
-        this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
-        this.project.categories.forEach((category:any) => {
-          category.label ? this.categories.push(category.label) : this.categories.push(category.name);
-        });
-        this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
-        this.getProjectTaskStatus();
+    // this.project = success.docs.length ? success.docs[0] : {};
+    this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
+    this.project.categories.forEach((category: any) => {
+      category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+    });
+    this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+    this.getProjectTaskStatus();
     //   },
     //   (error) => { }
     // );
@@ -139,11 +139,11 @@ export class ProjectDetailPage implements OnInit {
     this.getDateFilters();
   }
 
-  initApp(){
+  initApp() {
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      if(eventName.name === 'more') {
+      if (eventName.name === 'more') {
         this.openPopover(eventName.event);
-      } else if(eventName.name === 'sync') {
+      } else if (eventName.name === 'sync') {
         this.action(eventName.name);
       }
     });
@@ -179,7 +179,7 @@ export class ProjectDetailPage implements OnInit {
     let completed = 0;
     let inProgress = 0;
     this.sortedTasks = JSON.parse(JSON.stringify(this.utils.getTaskSortMeta()));
-    this.project.tasks.forEach((task:any) => {
+    this.project.tasks.forEach((task: any) => {
 
       if (!task.isDeleted && task.endDate) {
         this.taskCount = this.taskCount + 1;
@@ -275,7 +275,7 @@ export class ProjectDetailPage implements OnInit {
         break;
       }
       case "editProject": {
-        this.router.navigate(["/menu/project-edit", this.project._id]);
+        this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.project._id]);
         break;
       }
       case "deleteProject": {
