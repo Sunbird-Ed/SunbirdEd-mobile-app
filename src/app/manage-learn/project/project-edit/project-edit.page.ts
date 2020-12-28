@@ -51,6 +51,6 @@ export class ProjectEditPage implements OnInit {
       //   }
       // })   This is not yet implemented
       '' :
-      this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`, this.project._id], { queryParams: { createdType: 'bySelf', isEdit: true } });
+      this.router.navigate([`${RouterLinks.PROJECT_OPERATION_PAGE}`, this.project._id], { queryParams: { createdType: 'bySelf', isEdit: true } });
   }
 }
