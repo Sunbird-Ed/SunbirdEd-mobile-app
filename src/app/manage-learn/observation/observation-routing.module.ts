@@ -18,15 +18,7 @@ const routes: Routes = [
   {
     path: RouterLinks.OBSERVATION_SUBMISSION,
     component: ObservationSubmissionComponent,
-  },
-  {
-    path: RouterLinks.SECTION_LISTING,
-    component: SectionListingComponent,
-  },
-  {
-    path: RouterLinks.ECM_LISTING,
-    component: SectionListingComponent,
-  },
+  }
 ];
 
 @NgModule({

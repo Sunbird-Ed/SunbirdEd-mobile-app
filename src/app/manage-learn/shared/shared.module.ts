@@ -25,6 +25,7 @@ import {
   PopoverComponent,
   EntityfilterComponent,
   TextTypeInputComponent,
+  ProgressBarComponent
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
 import { SectionListingComponent } from './components/section-listing/section-listing.component';
@@ -55,7 +56,6 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     PageQuestionsComponent,
     QuestionHeadingComponent,
     SliderTypeInputComponent,
-
     TextTypeInputComponent,
     CamelToTitlePipe,
     CommonListCardComponent,
@@ -64,7 +64,9 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     EntityfilterComponent,
     PopoverComponent,
     SectionListingComponent,
-    EcmListingComponent],
+    EcmListingComponent,
+    ProgressBarComponent],
+    
   imports: [
     CommonModule,
     FormsModule,
@@ -95,7 +97,8 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     PopoverComponent,
     SectionListingComponent,
     EcmListingComponent,
-    TextTypeInputComponent,],
+    TextTypeInputComponent,
+    ProgressBarComponent],
   providers: [
     Camera,
     ImagePicker,
