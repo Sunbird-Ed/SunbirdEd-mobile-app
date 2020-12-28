@@ -295,7 +295,7 @@ export class ProjectDetailPage implements OnInit {
         break;
       }
       case "editProject": {
-        this.router.navigate(["/menu/project-edit", this.project._id]);
+        this.router.navigate([`/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_EDIT}`, this.project._id]);
         break;
       }
       case "deleteProject": {

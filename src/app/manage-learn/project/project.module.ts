@@ -10,6 +10,8 @@ import { SharedModule } from '../shared/shared.module';
 import { ProjectDetailPage } from './project-detail/project-detail.page';
 import { ProjectListingComponent } from './project-listing/project-listing.component';
 import { LearningResourcesPage } from './learning-resources/learning-resources.page';
+import { ProjectEditPage } from './project-edit/project-edit.page';
+import { ProjectOperationPage } from './project-operation/project-operation.page';
 import { SyncPage } from './sync/sync.page';
 import { TaskViewPage } from './task-view/task-view.page';
 import { RouterLinks } from '@app/app/app.constant';
@@ -36,13 +38,21 @@ const routes: Routes = [
     component: LearningResourcesPage
   },
   {
+    path: `${RouterLinks.PROJECT_EDIT}/:id`,
+    component: ProjectEditPage
+  },
+  {
+    path: `${RouterLinks.PROJECT_OPERATION}/:id`,
+    component: ProjectOperationPage
+  }, {
     path: RouterLinks.SYNC,
     component: SyncPage
   }
+
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, LearningResourcesPage, SyncPage, TaskViewPage],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage],
   imports: [
     CommonModule,
     FormsModule,
