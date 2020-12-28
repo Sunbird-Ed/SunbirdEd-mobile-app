@@ -146,13 +146,13 @@ export class LoginHandlerService {
             that.profileService.getServerProfilesDetails(req).toPromise()
               .then(async (success: any) => {
                 const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-                const currentProfileType = (success && success.userType === ProfileType.OTHER.toUpperCase()) ?
-                ProfileType.NONE : success.userType.toLowerCase();
+                const currentProfileType = selectedUserType === ProfileType.ADMIN ? ProfileType.ADMIN :
+                ((success && success.userType === ProfileType.OTHER.toUpperCase()) ? ProfileType.NONE : success.userType.toLowerCase());
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
                   handle: success.id,
-                  profileType: selectedUserType === ProfileType.ADMIN ? ProfileType.ADMIN : currentProfileType,
+                  profileType: currentProfileType,
                   source: ProfileSource.SERVER,
                   serverProfile: success
                 };

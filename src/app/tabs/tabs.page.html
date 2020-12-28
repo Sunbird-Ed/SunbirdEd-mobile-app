@@ -1,4 +1,4 @@
-<ion-tabs (ionTabsDidChange)="ionTabsDidChange($event)" #myTabs>
+<ion-tabs (ionTabsDidChange)="ionTabsDidChange($event)" *ngIf="isPageInitialised" #myTabs>
   <ion-tab-bar slot="bottom" [ngClass]="{'rm-before': olderWebView}" >
     <ion-tab-button [tab]="tab.root" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled"
       [ngClass]="{'disabled': tab.disabled}" (click)="tab.label === '' ? openScanner(tab) : onTabClick(tab)">

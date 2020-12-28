@@ -29,7 +29,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appLabel: any;
   olderWebView = false;
-  initialTabs: string;
+  isPageInitialised = false;
 
   constructor(
     private container: ContainerService,
@@ -71,10 +71,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
-    if (this.initialTabs) {
-      this.tabs[2].root = this.initialTabs;
-      this.initialTabs = undefined;
-    }
+    this.isPageInitialised = true;
   }
 
   ngAfterViewInit() {
@@ -129,11 +126,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
-    if (!this.tabs || !this.tabs.length) {
-      this.initialTabs = event.tab;
-    } else {
-      this.tabs[2].root = event.tab;
-    }
+    this.tabs[2].root = event.tab;
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
