@@ -54,7 +54,6 @@ export class ObservationSubmissionComponent implements OnInit {
     this.headerConfig.showHeader = true;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
-    this.handleBackButton();
   }
 
   ionViewWillLeave() {
@@ -63,12 +62,7 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
 
-  private handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
-    });
-  }
+
 
   ngOnInit() {
     this.programIndex = this.observationService.getProgramIndex();

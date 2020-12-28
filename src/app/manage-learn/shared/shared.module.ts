@@ -38,9 +38,11 @@ import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Media } from '@ionic-native/media/ngx';
+import { CreateTaskComponent } from './components/create-task/create-task.component';
 
 @NgModule({
   declarations: [
+    CreateTaskComponent, 
     MultipleTypeInputComponent,
     RadioTypeInputComponent,
     RemarksComponent,
@@ -62,11 +64,17 @@ import { Media } from '@ionic-native/media/ngx';
     EntityfilterComponent,
     PopoverComponent,
     SectionListingComponent,
-    EcmListingComponent,
+    EcmListingComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    ReactiveFormsModule,
+    TranslateModule
   ],
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
+    CreateTaskComponent, 
     MultipleTypeInputComponent,
     RadioTypeInputComponent,
     RemarksComponent,
@@ -87,9 +95,7 @@ import { Media } from '@ionic-native/media/ngx';
     PopoverComponent,
     SectionListingComponent,
     EcmListingComponent,
-    TextTypeInputComponent,
-  ],
-
+    TextTypeInputComponent,],
   providers: [
     Camera,
     ImagePicker,
@@ -104,6 +110,6 @@ import { Media } from '@ionic-native/media/ngx';
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
   ],
-  entryComponents: [EntityfilterComponent, PopoverComponent],
+  entryComponents: [EntityfilterComponent, PopoverComponent, CreateTaskComponent],
 })
 export class SharedModule {}

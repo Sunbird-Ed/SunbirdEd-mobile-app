@@ -1,0 +1,84 @@
+@import "src/assets/styles/_variables.scss";
+.heading-name{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.status-label {
+    margin: auto;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.subtask-form {
+    margin: 0px;
+    padding: 5px;
+
+    .arrow-image {
+        width: 35%;
+        margin-top: 5px;
+    }
+
+    ion-button {
+        text-transform: none;
+    }
+}
+
+.subtask-box {
+    margin: 15px 0px;
+
+    ion-icon {
+        color: #{$blue};
+    }
+
+    .subtask-title {
+        font-family: 'SourceSansPro-Bold' !important;
+        font-weight: 600;
+    }
+
+    ion-row,
+    ion-col {
+        margin: 0px;
+        padding: 0px;
+    }
+}
+
+.custom-popup {
+    position: fixed;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: #a9a9a966;
+    display: flex;
+
+    .border-radius {
+        border-radius: 1em;
+    }
+
+    .pop-container {
+        margin: auto;
+        width: 80%;
+        box-shadow: 0px 1px 4px 1px #5a6779;
+        background: map-get($colors, white);
+        padding: 10px;
+    }
+}
+
+.roundedButton {
+    font-size: 12px;
+}
+.subtask-date-picker{
+    max-width: 25px;  
+    margin-right: 5px;
+}
+
+.assignee {
+    font-weight: normal;
+    margin-left: 20px;
+    font-size: 16px;
+}
+
+.iconAdj {
+    font-size: 20px;
+}

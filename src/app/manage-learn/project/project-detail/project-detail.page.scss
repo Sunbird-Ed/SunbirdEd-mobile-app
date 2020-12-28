@@ -14,7 +14,7 @@
 
     ion-label {
       font-weight: 600;
-      // color: $black-color;
+      color: #{$black-color};
     }
 
     ion-icon {
@@ -39,7 +39,7 @@
 }
 
 .tasks-box {
-  // background: $white-color;
+  background: #{$white-color};
   font-weight: 600;
 
   .left-border {
@@ -68,7 +68,7 @@ ion-button, ion-fab-button {
   padding: 5px 15px 0 15px;
 
   .task-endDate {
-    // color: $dark-brown-color;
+    color: #{$blue};
     font-size: 16px;
     margin-top: 5px;
   }
