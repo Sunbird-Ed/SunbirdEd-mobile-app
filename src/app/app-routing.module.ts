@@ -111,8 +111,10 @@ const routes: Routes = [
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
   },
   { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
-  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
-  { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' }
+  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule' },
+  { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
+  { path: RouterLinks.ECM_LISTING, loadChildren: './manage-learn/ecm-listing/ecm-listing.module#EcmListingPageModule' },
+  { path: RouterLinks.SECTION_LISTING, loadChildren: './manage-learn/section-listing/section-listing.module#SectionListingPageModule' }
 
 ];
 

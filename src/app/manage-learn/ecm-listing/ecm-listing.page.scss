@@ -1,0 +1,31 @@
+.doneIcon {
+    color: $green-color;
+}
+
+.startSurvey {
+    color: $blue-color;
+
+}
+
+ion-icon {
+    font-size: 2rem;
+}
+
+
+.headerText {
+    font-weight: 500 !important;
+    font-size: 1.5rem !important;
+    display: flex;
+    align-items: center;
+
+}
+
+.feedBack {
+    color: white !important;
+    font-size: 24px;
+    padding-right: 10px
+}
+
+.progressWidth {
+    min-width: 90px;
+}
