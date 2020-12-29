@@ -1121,5 +1121,6 @@
   "SEARCH_IN_APP_DESCRIPTION": "Search and find content on {{app_name}} from all boards, mediums, classes and subjects",
   "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile Number for State/ Org",
   "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email ID for State/ Org",
-  "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page"
+  "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page",
+  "LEADER": "Leader"
 }
