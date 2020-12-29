@@ -565,6 +565,10 @@ export class RouterLinks {
     public static readonly OBSERVATION = 'observation';
     public static readonly SECTION_LISTING = 'section-listing';
     public static readonly ECM_LISTING = 'ecm-listing';
+    public static readonly SUBMISSION_PREVIEW = 'submission_preview';
+    public static readonly IMAGE_LISTING= 'image-listing';
+    
+    
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';

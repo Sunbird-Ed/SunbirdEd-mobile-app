@@ -28,8 +28,6 @@ import {
   ProgressBarComponent
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
-import { SectionListingComponent } from './components/section-listing/section-listing.component';
-import { EcmListingComponent } from './components/ecm-listing/ecm-listing.component';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { PhotoLibrary } from '@ionic-native/photo-library/ngx';
@@ -40,6 +38,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { CreateTaskComponent } from './components/create-task/create-task.component';
+import { GetLabelsPipe } from './pipe/get-labels.pipe';
 
 @NgModule({
   declarations: [
@@ -63,9 +62,8 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     CommonHeaderComponent,
     EntityfilterComponent,
     PopoverComponent,
-    SectionListingComponent,
-    EcmListingComponent,
-    ProgressBarComponent],
+    ProgressBarComponent,
+    GetLabelsPipe],
     
   imports: [
     CommonModule,
@@ -95,10 +93,8 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     CommonHeaderComponent,
     EntityfilterComponent,
     PopoverComponent,
-    SectionListingComponent,
-    EcmListingComponent,
     TextTypeInputComponent,
-    ProgressBarComponent],
+    ProgressBarComponent,GetLabelsPipe],
   providers: [
     Camera,
     ImagePicker,
@@ -112,6 +108,7 @@ import { CreateTaskComponent } from './components/create-task/create-task.compon
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
+    
   ],
   entryComponents: [EntityfilterComponent, PopoverComponent, CreateTaskComponent],
 })

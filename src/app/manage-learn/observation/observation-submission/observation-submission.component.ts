@@ -210,7 +210,12 @@ export class ObservationSubmissionComponent implements OnInit {
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
         if (successData.assessment.evidences.length > 1) {
-          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.ECM_LISTING}`]);
+          this.router.navigate([RouterLinks.ECM_LISTING], {
+              queryParams: {
+                    submisssionId: submissionId,
+                    schoolName: heading
+                  }
+          });
 
           // this.navCtrl.push('EvidenceListPage', {
           //   _id: submissionId,
@@ -220,14 +225,6 @@ export class ObservationSubmissionComponent implements OnInit {
         } else {
           if (successData.assessment.evidences[0].startTime) {
             this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
-            let extras = {
-              _id: submissionId,
-              name: heading,
-              selectedEvidence: 0,
-              // recentlyUpdatedEntity: this.recentlyUpdatedEntity,
-            };
-            this.observationService.setSectionNavExtras(extras);
-            // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
             this.router.navigate([RouterLinks.SECTION_LISTING],
               {
                 queryParams: {
@@ -260,8 +257,6 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    this.observationService.setSectionNavExtras(options);
-
     this.evdnsServ.openActionSheet(options, 'Observation');
   }
 }

@@ -39,11 +39,11 @@ export class SectionListingPage implements OnInit {
 
 
   ngOnInit() {
-    debugger  
+  
   }
 
   ionViewWillEnter() {
-    debugger
+    
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
       .then((data) => {
