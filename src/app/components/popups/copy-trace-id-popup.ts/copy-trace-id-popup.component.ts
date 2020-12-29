@@ -12,7 +12,6 @@ export class CopyTraceIdPopoverComponent {
 
   constructor(
     private popOverCtrl: PopoverController,
-    private navParams: NavParams,
     private commonUtilService: CommonUtilService
   ) { }
 
