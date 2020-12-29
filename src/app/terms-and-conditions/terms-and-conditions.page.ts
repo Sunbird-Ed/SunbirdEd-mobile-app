@@ -169,9 +169,7 @@ export class TermsAndConditionsPage implements OnInit {
                 }
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
-                if (this.commonUtilService.isUserLocationAvalable(serverProfile) && selectedUserType === ProfileType.ADMIN) {
-                  this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
-                } else if (profile.profileType === ProfileType.NONE) {
+                if (profile.profileType === ProfileType.NONE) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: {categoriesProfileData}
                   });
@@ -206,7 +204,7 @@ export class TermsAndConditionsPage implements OnInit {
                 await this.consentService.getConsent(profile, true);
               }
               if (selectedUserType === ProfileType.ADMIN) {
-                this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
+                this.router.navigate([`/${RouterLinks.TABS}`]);
               } else if (profile.profileType === ProfileType.NONE) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}

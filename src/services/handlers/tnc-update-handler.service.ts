@@ -85,7 +85,7 @@ export class TncUpdateHandlerService {
     }
     if (selectedUserType === ProfileType.ADMIN) {
       this.sbProgressLoader.hide({id: 'login'});
-      this.checkDistrictMapping(profile, ProfileType.ADMIN);
+      this.checkDistrictMapping(profile);
     } else if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
         || (userDetails.profileType === ProfileType.NONE)) {
@@ -147,18 +147,14 @@ export class TncUpdateHandlerService {
     }
   }
 
-  private checkDistrictMapping(profile, userType?) {
+  private checkDistrictMapping(profile) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId
           && !this.commonUtilService.isUserLocationAvalable(profile)) {
-          userType === ProfileType.ADMIN ? this.navigateToDistrictMapping(ProfileType.ADMIN) :
           this.navigateToDistrictMapping();
         } else {
-          if (userType === ProfileType.ADMIN) {
-            this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
-          }
           this.externalIdVerificationService.showExternalIdVerificationPopup();
         }
       })
@@ -168,11 +164,10 @@ export class TncUpdateHandlerService {
       });
   }
 
-  private navigateToDistrictMapping(userType?) {
+  private navigateToDistrictMapping() {
     const navigationExtras: NavigationExtras = {
       state: {
-        isShowBackButton: false,
-        userType: userType ? ProfileType.ADMIN : undefined
+        isShowBackButton: false
       }
     };
     this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);

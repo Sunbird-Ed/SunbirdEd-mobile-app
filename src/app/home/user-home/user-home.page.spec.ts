@@ -1,4 +1,4 @@
-import { HomePage } from './home.page';
+import { UserHomePage } from './user-home.page';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events } from '@ionic/angular';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -13,8 +13,8 @@ import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
 
-describe('HomePage', () => {
-  let homePage: HomePage;
+describe('UserHomePage', () => {
+  let homePage: UserHomePage;
   const mockAppGlobalService: Partial<AppGlobalService> = {
   };
   const mockAppVersion: Partial<AppVersion> = {
@@ -39,7 +39,7 @@ describe('HomePage', () => {
  
 
   beforeAll(() => {
-    homePage = new HomePage(
+    homePage = new UserHomePage(
       mockFrameworkService as FrameWorkService,
       mockProfileService as ProfileService,
       mockCommonUtilService as CommonUtilService,

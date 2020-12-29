@@ -1,5 +1,5 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS, ADMIN_LOGIN_TABS } from '@app/app/module.service';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
@@ -29,6 +29,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appLabel: any;
   olderWebView = false;
+  isPageInitialised = false;
 
   constructor(
     private container: ContainerService,
@@ -46,7 +47,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
-    const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
@@ -64,7 +64,6 @@ export class TabsPage implements OnInit, AfterViewInit {
         }).toPromise();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      userType === ProfileType.ADMIN ? initTabs(this.container, ADMIN_LOGIN_TABS) :
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 
@@ -72,6 +71,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
+    this.isPageInitialised = true;
   }
 
   ngAfterViewInit() {
