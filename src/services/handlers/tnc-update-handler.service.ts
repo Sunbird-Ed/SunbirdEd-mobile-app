@@ -80,7 +80,7 @@ export class TncUpdateHandlerService {
   private async checkBmc(profile) {
     const selectedUserType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (await this.isSSOUser(userDetails) || (userDetails.serverProfile.declarations && userDetails.serverProfile.declarations.length)) {
+    if (await this.isSSOUser(userDetails)) {
       await this.consentService.getConsent(userDetails, true);
     }
     if (selectedUserType === ProfileType.ADMIN) {

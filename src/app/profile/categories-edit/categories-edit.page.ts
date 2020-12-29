@@ -18,14 +18,15 @@ import {
   ServerProfileDetailsRequest,
   CachedItemRequestSourceFrom,
   Channel,
-  FrameworkCategoryCode
+  FrameworkCategoryCode,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
@@ -75,6 +76,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   isRootPage = false;
   hasFilledLocation = false;
   public supportedProfileAttributes: { [key: string]: string } = {};
+  userType: string;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -120,6 +122,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -158,6 +161,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(false);
     const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
     this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
   }
 
   ngOnDestroy() {
