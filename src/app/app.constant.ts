@@ -446,8 +446,8 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
-     // ADMIN HOME Routes
-     public static readonly ADMIN_HOME = 'admin-home';
+    // ADMIN HOME Routes
+    public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -559,6 +559,9 @@ export class RouterLinks {
     public static readonly TASK_VIEW = 'task-view';
     public static readonly LEARNING_RESOURCES = 'learning-resources';
     public static readonly SYNC = 'sync';
+    public static readonly PROJECT_EDIT = 'project-edit';
+    public static readonly PROJECT_OPERATION = `project-operation`;
+    public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
 
     public static readonly SOLUTIONS = 'solutions';
     public static readonly QUESTIONNAIRE = 'questionnaire';
