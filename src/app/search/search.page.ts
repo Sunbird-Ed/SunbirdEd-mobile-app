@@ -975,7 +975,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
         enrollmentType: CourseEnrollmentType.OPEN,
-        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+        status: [CourseBatchStatus.IN_PROGRESS]
       },
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
@@ -1008,7 +1008,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatched,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });
