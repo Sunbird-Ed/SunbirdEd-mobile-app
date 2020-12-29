@@ -75,6 +75,7 @@ import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import {configuration} from '@app/configuration/configuration';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -286,6 +287,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
