@@ -28,13 +28,13 @@ export class AttachmentService {
   ) {
     this.translate
       .get([
-        "LABELS.SELECT_IMAGE_SOURCE",
-        "LABELS.LOAD_FROM_LIBRARY",
-        "LABELS.USE_CAMERA",
-        "LABELS.USE_FILE",
-        "LABELS.CANCEL",
-        "MESSAGES.ERROR_WHILE_STORING_FILE",
-        "MESSAGES.SUCCESSFULLY_ATTACHED",
+        "FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE",
+        "FRMELEMNTS_MSG_LOAD_FROM_LIBRARY",
+        "FRMELEMNTS_MSG_USE_CAMERA",
+        "FRMELEMNTS_MSG_USE_FILE",
+        "FRMELEMENTS_LBL_CANCEL",
+        "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
+        "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
       ])
       .subscribe((data) => {
         this.texts = data;
@@ -43,31 +43,31 @@ export class AttachmentService {
 
   async selectImage() {
     const actionSheet = await this.actionSheetController.create({
-      header: this.texts["LABELS.SELECT_IMAGE_SOURCE"],
+      header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
       buttons: [
         {
-          text: this.texts["LABELS.LOAD_FROM_LIBRARY"],
+          text: this.texts["FRMELEMNTS_MSG_LOAD_FROM_LIBRARY"],
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
             return false;
           },
         },
         {
-          text: this.texts["LABELS.USE_CAMERA"],
+          text: this.texts["FRMELEMNTS_MSG_USE_CAMERA"],
           handler: () => {
             this.takePicture(this.camera.PictureSourceType.CAMERA);
             return false;
           },
         },
         {
-          text: this.texts["LABELS.USE_FILE"],
+          text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
           handler: () => {
             this.openFile();
             return false;
           },
         },
         {
-          text: this.texts["LABELS.CANCEL"],
+          text: this.texts["FRMELEMENTS_LBL_CANCEL"],
           role: "cancel",
         },
       ],
@@ -114,7 +114,7 @@ export class AttachmentService {
           url: "",
         };
 
-        this.presentToast(this.texts["MESSAGES.SUCCESSFULLY_ATTACHED"], "success");
+        this.presentToast(this.texts["FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED"], "success");
         this.actionSheetController.dismiss(data);
       },
       (error) => {
