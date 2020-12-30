@@ -116,7 +116,8 @@ const routes: Routes = [
   { path: RouterLinks.ECM_LISTING, loadChildren: './manage-learn/ecm-listing/ecm-listing.module#EcmListingPageModule' },
   { path: RouterLinks.SECTION_LISTING, loadChildren: './manage-learn/section-listing/section-listing.module#SectionListingPageModule' },
   { path: RouterLinks.SUBMISSION_PREVIEW, loadChildren: './manage-learn/submission-preview/submission-preview.module#SubmissionPreviewModule' },
-  { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' }
+  { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' },
+  { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' }
 ];
 
 @NgModule({

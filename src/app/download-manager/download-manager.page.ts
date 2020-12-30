@@ -964,6 +964,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
 
     this.localStorage.setLocalStorage(key, obj).then(success => {
+        this.router.navigate([RouterLinks.ALL_EVIDENCE])    
+        return
       this.router.navigate([RouterLinks.QUESTIONNAIRE],
         {
           queryParams: {

@@ -570,6 +570,7 @@ export class RouterLinks {
     public static readonly ECM_LISTING = 'ecm-listing';
     public static readonly SUBMISSION_PREVIEW = 'submission_preview';
     public static readonly IMAGE_LISTING= 'image-listing';
+    public static readonly ALL_EVIDENCE= 'all-evidence';
     
     
     // Observation routes
