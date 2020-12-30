@@ -33,6 +33,7 @@
     "@ionic-native/android-permissions": "^5.30.0",
     "@ionic-native/app-version": "^5.15.1",
     "@ionic-native/camera": "^5.30.0",
+    "@ionic-native/chooser": "^5.30.0",
     "@ionic-native/core": "^5.15.1",
     "@ionic-native/device": "^5.15.1",
     "@ionic-native/diagnostic": "^5.30.0",

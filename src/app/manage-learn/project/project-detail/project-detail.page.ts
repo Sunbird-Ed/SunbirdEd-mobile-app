@@ -18,6 +18,7 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
+import { HttpClient } from '@angular/common/http';
 
 var environment = {
   db: {
@@ -99,9 +100,9 @@ export class ProjectDetailPage implements OnInit {
     private unnatiService: UnnatiDataService,
     // private iab: InAppBrowser,
     private event: Events,
-    private platform: Platform
+    private platform: Platform,
+    private http: HttpClient
   ) {
-    this.db.createPouchDB(environment.db.projects);
     params.params.subscribe((parameters) => {
       this.projectId = parameters.id;
     });
@@ -118,18 +119,37 @@ export class ProjectDetailPage implements OnInit {
   }
 
   getProject() {
-    // this.db.query({ _id: this.projectId }).then(
-    //   (success) => {
-    // this.project = success.docs.length ? success.docs[0] : {};
-    this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
-    this.project.categories.forEach((category: any) => {
-      category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+    this.db.query({ _id: this.projectId }).then(
+      (success) => {
+        if (success.docs.length) {
+          this.project = success.docs.length ? success.docs[0] : {};
+          this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
+          this.project.categories.forEach((category: any) => {
+            category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+          });
+          this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+          this.getProjectTaskStatus();
+        } else {
+          this.getProjectsApi();
+        }
+
+      },
+      (error) => {
+        this.getProjectsApi();
+      }
+    );
+  }
+
+  getProjectsApi() {
+    this.http.get('assets/dummy/projectDetails.json').subscribe((data: any) => {
+      console.log(data);
+      // this.project = data.result;
+      this.db.create(data.result).then(success => {
+        this.getProject();
+      }).catch(error => {
+
+      })
     });
-    this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
-    this.getProjectTaskStatus();
-    //   },
-    //   (error) => { }
-    // );
   }
 
   ngOnInit() { }

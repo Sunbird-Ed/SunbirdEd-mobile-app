@@ -1675,3 +1675,28 @@ app-discover{
     }
   }
 }
+
+
+._progressIcon {
+  font-size: 2rem;
+}
+
+._completed {
+  color: green;
+  font-size: 1rem;
+}
+
+._inProgress {
+  color: $orange;
+  font-size: 1rem;
+}
+
+._na {
+  font-size: 1.2rem;
+}
+
+._submitted {
+  color:$primary-color;
+  font-size: 1.2rem;
+}
+

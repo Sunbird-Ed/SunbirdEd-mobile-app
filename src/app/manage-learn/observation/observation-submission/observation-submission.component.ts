@@ -47,7 +47,7 @@ export class ObservationSubmissionComponent implements OnInit {
     private localStorage: LocalStorageService,
     private utils: UtilsService,
     private evdnsServ: EvidenceService
-  ) {}
+  ) { }
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -197,7 +197,7 @@ export class ObservationSubmissionComponent implements OnInit {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
 
   goToEcm(submission) {
@@ -227,8 +227,15 @@ export class ObservationSubmissionComponent implements OnInit {
               // recentlyUpdatedEntity: this.recentlyUpdatedEntity,
             };
             this.observationService.setSectionNavExtras(extras);
-            this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
-
+            // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+            this.router.navigate([RouterLinks.SECTION_LISTING],
+              {
+                queryParams: {
+                  submisssionId: submissionId,
+                  evidenceIndex: 0,
+                  schoolName: heading
+                }
+              })
             // this.navCtrl.push('SectionListPage', {
             //   _id: submissionId,
             //   name: heading,
@@ -241,7 +248,7 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
   openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
