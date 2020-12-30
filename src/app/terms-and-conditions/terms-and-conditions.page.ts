@@ -168,7 +168,7 @@ export class TermsAndConditionsPage implements OnInit {
                 }
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
-                if (profile.profileType === ProfileType.NONE) {
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: {categoriesProfileData}
                   });
@@ -203,7 +203,7 @@ export class TermsAndConditionsPage implements OnInit {
               }
               if (selectedUserType === ProfileType.ADMIN) {
                 this.router.navigate([`/${RouterLinks.TABS}`]);
-              } else if (profile.profileType === ProfileType.NONE) {
+              } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}
                 });
