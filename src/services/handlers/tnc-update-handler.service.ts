@@ -88,7 +88,7 @@ export class TncUpdateHandlerService {
       this.checkDistrictMapping(profile);
     } else if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
-        || (userDetails.profileType === ProfileType.NONE)) {
+        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId);
       } else {
         this.checkDistrictMapping(profile);
@@ -123,7 +123,7 @@ export class TncUpdateHandlerService {
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
-        } else if (userprofile.profileType === ProfileType.NONE) {
+        } else if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] = this.commonUtilService.isUserLocationAvalable(serverProfile);
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
