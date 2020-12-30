@@ -697,3 +697,4 @@ export const PrimaryCaregoryMapping = {
         icon: 'assets/imgs/all_content.svg'
     }
 }
+
