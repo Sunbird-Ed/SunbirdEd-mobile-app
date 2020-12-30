@@ -15,60 +15,21 @@
       <span class="error font-size-13" *ngIf="validateName()">{{'ERROR_NAME_INVALID' | translate}}</span>
     </div>
   </div>
-  <form class="ion-padding-start ion-padding-end">
-    <ion-item (click)="onCategoryCliked('state')">
-      <ion-label position="stacked" class="label-font">{{'STATE' | translate}} &lrm;<ion-text>
-          <span style="color: red;">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select #stateSelect
-                  [selectedText]="stateSelect?.value?.name"
-                  [disabled]="!stateList.length"
-                  [multiple]="false"
-                  [interfaceOptions]="{cssClass: 'select-box'}"
-                  [placeholder]="'STATE_OPTION_TEXT' | translate"
-                  [okText]="'BTN_SUBMIT' | translate"
-                  [cancelText]="'CANCEL' | translate"
-                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);" (ionCancel)="cancelEvent('state')">
-        <ion-select-option
-                *ngFor="let state of stateList"
-                [value]="state">
-          {{state?.name}}
-          &lrm;
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item (click)="onCategoryCliked('district')">
-      <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}} &lrm;<ion-text>
-          <span style="color: red;">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select #districtSelect
-                  [selectedText]="districtSelect?.value?.name"
-                  [disabled]="!districtList.length"
-                  [multiple]="false"
-                  [interfaceOptions]="{cssClass: 'select-box'}"
-                  [placeholder]="'DISTRICT_OPTION_TEXT' | translate"
-                  [okText]="'BTN_SUBMIT' | translate"
-                  [cancelText]="'CANCEL' | translate"
-                  (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);" (ionCancel)="cancelEvent('district')">
-        <ion-select-option
-                *ngFor="let district of districtList"
-                [value]="district">
-          {{district?.name}}
-          &lrm;
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-  </form>
+
+  <sb-form *ngIf="districtMappingFormConfig && districtMappingFormConfig.length"
+    [config]="districtMappingFormConfig"
+    (initialize)="locationFormValueChanges($event && $event.value); locationFormStatusChanges($event);" 
+    (valueChanges)="locationFormValueChanges($event)"
+    (statusChanges)="locationFormStatusChanges($event)">
+  </sb-form>
 
   <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
 </ion-content>
 <div class="footer" *ngIf="!(isKeyboardShown$ | async)">
   <button class="block-button"
-    [disabled]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') || disableSubmitButton"
-    [ngClass]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') ? 'disabled-button': ''"
+    [disabled]="!isLocationFormValid"
+    [ngClass]="!isLocationFormValid ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}
-    <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon>
+    <!-- <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon> -->
   </button>
 </div>

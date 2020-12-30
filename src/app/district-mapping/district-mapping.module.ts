@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { DistrictMappingPage } from './district-mapping.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
+import { CommonFormElementsModule } from 'common-form-elements';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    PipesModule
+    PipesModule,
+    CommonFormElementsModule
 
   ],
   declarations: [DistrictMappingPage]

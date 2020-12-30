@@ -35,6 +35,9 @@ import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { tap } from 'rxjs/operators';
 import { ContainerService } from '@app/services/container.services';
+import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
+import { FieldConfig } from 'common-form-elements';
+import { FormConstants } from '../form.constants';
 
 @Component({
   selector: 'app-district-mapping',
@@ -49,6 +52,7 @@ export class DistrictMappingPage {
   private _showDistrict?: boolean;
   private _stateName: string;
   private _districtName: string;
+  isLocationFormValid: boolean;
 
   get profile(): Profile | undefined {
     return window.history.state.profile;
@@ -133,6 +137,7 @@ export class DistrictMappingPage {
   isLocationChanged = false;
   disableSubmitButton = false;
   userType: any;
+  districtMappingFormConfig = []
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -150,7 +155,8 @@ export class DistrictMappingPage {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private changeDetectionRef: ChangeDetectorRef,
     private ngZone: NgZone,
-    private externalIdVerificationService: ExternalIdVerificationService
+    private externalIdVerificationService: ExternalIdVerificationService,
+    private formLocationFactory: FormLocationFactory
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
@@ -232,6 +238,7 @@ export class DistrictMappingPage {
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
+
     const correlationList: Array<CorrelationData> = [];
     if (this.stateName) {
       correlationList.push({ id: this.stateName || '', type: CorReleationDataType.STATE });
@@ -311,30 +318,71 @@ export class DistrictMappingPage {
         type: loc.TYPE_STATE
       }
     };
-    this.profileService.searchLocation(req).subscribe(async (success) => {
-      const locations = success;
-      this.ngZone.run(async () => {
-        if (locations && Object.keys(locations).length) {
-          this.stateList = locations;
-          if (this.availableLocationState) {
-            const state = this.stateList.find(s => s.name === this.availableLocationState);
-            if (state) {
-              await this.getState(state.name, state.id, state.code);
-            } else {
-              this.stateName = '';
-            }
-            this.generateAutoPopulatedTelemetry();
+
+    try {
+      const locations = await this.profileService.searchLocation(req).toPromise();
+      if (locations && Object.keys(locations).length) {
+        this.stateList = locations;
+        // const formConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_DETAILS);
+        const formConfig = [
+          {
+            "code": "state",
+            "type": "select",
+            "templateOptions": {
+              "label": "STATE",
+              "placeHolder": "Select State",
+              "multiple": false,
+              "dataSrc": {
+                "marker": "LOCATION_LIST",
+                "params": {
+                  "id": "state"
+                }
+              }
+            },
+            "validations": [
+              {
+                "type": "required",
+                "value": true,
+                "message": "select state"
+              }
+            ]
+          },
+          {
+            "code": "district",
+            "type": "nested_select",
+            "context": "state",
+            "default": null,
+            "templateOptions": {
+              "label": "DISTRICT",
+              "placeHolder": "Select district",
+              "multiple": false,
+              "dataSrc": {
+                "marker": "LOCATION_LIST",
+                "params": {
+                  "id": "district"
+                }
+              }
+            },
+            "validations": [
+              {
+                "type": "required",
+                "value": true,
+                "message": "select district"
+              }
+            ]
           }
-        } else {
-          this.districtList = [];
-          this.showDistrict = !this.showDistrict;
-          this.commonUtilService.showToast('NO_DATA_FOUND');
-        }
-        await loader.dismiss();
-      });
-    }, async (error) => {
+        ]
+        this.initializeFormData(formConfig, false);
+      } else {
+        this.districtList = [];
+        this.showDistrict = !this.showDistrict;
+        this.commonUtilService.showToast('NO_DATA_FOUND');
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
       await loader.dismiss();
-    });
+    }
   }
 
   async getDistrict(pid: string) {
@@ -455,7 +503,7 @@ export class DistrictMappingPage {
               window.history.go(-2);
             } else {
                 this.router.navigate([`/${RouterLinks.TABS}`]);
-            }
+              }
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
@@ -640,4 +688,44 @@ export class DistrictMappingPage {
       corRelationList
     );
   }
+
+
+  async initializeFormData(formConfig, isFormLoaded) {
+
+    this.districtMappingFormConfig = formConfig.map((config: FieldConfig<any>) => {
+
+          if (config.templateOptions['dataSrc'] && config.templateOptions['dataSrc'].marker === 'LOCATION_LIST') {
+            if (config.templateOptions['dataSrc'].params.id === 'state') {
+              // let stateCode;
+              // if (this.stateCode) {
+              //   stateCode = this.stateCode;
+              // }
+              config.templateOptions.options = this.formLocationFactory.buildStateListClosure(this.stateCode, this.stateList, this.availableLocationState);
+            } else if (config.templateOptions['dataSrc'].params.id === 'district') {
+              let districtDetails;
+              // if (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
+              //   this.profile.declarations[0].info[config.code]) {
+              //   districtDetails = this.profile.declarations[0].info[config.code]
+              // }
+              config.templateOptions.options = this.formLocationFactory.buildDistrictListClosure(this.districtCode, this.stateList,
+                this.availableLocationDistrict, isFormLoaded);
+            }
+            return config;
+          }
+
+          return config;
+
+    }).filter((formData) => formData);
+
+  }
+
+  locationFormValueChanges(event) {
+    // this.stateCode
+    console.log(event);
+  }
+
+  locationFormStatusChanges(event) {
+    this.isLocationFormValid = event.isValid || event.valid;
+  }
+
 }
