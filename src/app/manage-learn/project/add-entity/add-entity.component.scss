@@ -1,0 +1,30 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+
+.entity-name{
+    text-align: center;
+    color: var(--ion-color-primary);
+    text-transform: capitalize;
+}
+.enitity-list{
+    ion-label{
+        text-overflow: unset;
+        white-space: normal;
+    }
+    ion-checkbox{
+        margin-right: 15px;
+    }
+}
+.footer-btn{
+    text-align: center;
+    padding: 15px;
+    /* min-height: 50px; */
+    background: var(--ion-color-primary);
+    // color:$white;
+   }
+   .loadmore-btn{
+    text-align: center;
+    ion-button{
+        --border-radius:50px;
+    }
+}

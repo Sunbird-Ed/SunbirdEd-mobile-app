@@ -1,0 +1,32 @@
+<ion-toolbar>
+  <ion-title>
+    {{title | translate}}
+  </ion-title>
+  <ion-buttons (click)="close()" slot="start" class="padding">
+    <ion-icon name="arrow-back-outline" slot="icon-only"  style="padding-left: 10px;"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content class="ion-padding" >
+  <ion-button color="primary" expand="block" (click)="createProgram()" *ngIf="type== 'programs'">
+    {{'FRMELEMNTS_LBL_CREATE_NEW_PROGRAM' | translate}}
+  </ion-button>
+  <ion-list>
+    <ion-radio-group>
+      <ion-item *ngFor="let data of dataList">
+        <ion-label>{{data.name}}</ion-label>
+        <ion-radio slot="start" value="{{data._id}}" (click)="selectProgram(data)"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+  <!-- <ion-list>
+    <ion-item *ngFor="let program of dataList">
+      <ion-label>{{program.name}}</ion-label>
+      <ion-radio slot="start" [value]="program._id" ></ion-radio>
+    </ion-item>
+  </ion-list> -->
+</ion-content>
+<ion-footer *ngIf="dataList">
+  <ion-button expand="block" (click)="addProgram()">
+    {{button | translate}}
+  </ion-button>
+</ion-footer>

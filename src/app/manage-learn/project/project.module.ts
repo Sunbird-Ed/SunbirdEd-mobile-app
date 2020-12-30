@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -15,6 +15,11 @@ import { ProjectOperationPage } from './project-operation/project-operation.page
 import { SyncPage } from './sync/sync.page';
 import { TaskViewPage } from './task-view/task-view.page';
 import { RouterLinks } from '@app/app/app.constant';
+import { LinkLearningResourcesComponent } from './link-learning-resources/link-learning-resources.component';
+import { AddEntityComponent } from './add-entity/add-entity.component';
+import { AddProgramsComponent } from './add-programs/add-programs.component';
+import { CreateProjectPage } from './create-project/create-project.page';
+import { CategorySelectComponent } from './category-select/category-select.component';
 
 const routes: Routes = [
   {
@@ -44,6 +49,10 @@ const routes: Routes = [
   {
     path: `${RouterLinks.PROJECT_OPERATION}/:id`,
     component: ProjectOperationPage
+  },
+  {
+    path: `${RouterLinks.CREATE_PROJECT}`,
+    component: CreateProjectPage
   }, {
     path: RouterLinks.SYNC,
     component: SyncPage
@@ -52,10 +61,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
+  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CategorySelectComponent],
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     CoreModule,
     SharedModule,
