@@ -551,6 +551,8 @@ export class RouterLinks {
 
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
+    // filter-form-page
+    public static readonly FILTER_FORM_PAGE = 'filter-form-page';
 }
 
 export class ShareItemType {

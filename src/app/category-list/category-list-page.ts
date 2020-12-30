@@ -1,22 +1,31 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {
     AppHeaderService,
     CommonUtilService,
     CorReleationDataType,
-    Environment,
+    Environment, FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
 import {Router} from '@angular/router';
-import {ContentService, ContentsGroupedByPageSection, CourseService, FormService, ProfileService, SearchType} from 'sunbird-sdk';
+import {
+    ContentService,
+    ContentsGroupedByPageSection,
+    CourseService,
+    FilterValue,
+    FormService,
+    ProfileService,
+    SearchType
+} from 'sunbird-sdk';
 import {ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
 import {ContentData, ContentSearchCriteria} from 'sunbird-sdk/content';
 import {ContentUtil} from '@app/util/content-util';
 import {RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '@app/services/navigation-handler.service';
 import {ScrollToService} from '@app/services/scroll-to.service';
+import {FormConstants} from '@app/app/form.constants';
 
 
 @Component({
@@ -41,6 +50,20 @@ export class CategoryListPage {
     public imageSrcMap = new Map();
     defaultImg: string;
     showSheenAnimation = true;
+    mediumList = [];
+    gradeList = [];
+    mediumOptions = {
+        title: this.commonUtilService.translateMessage('MEDIUM_OPTION_TEXT'),
+        cssClass: 'select-box'
+    };
+    facetFilters: {
+        [code: string]: FilterValue []
+    } = {};
+    supportedFacets?: string [];
+    primaryFacetFilters: {
+        code: string
+    } [];
+
 
     constructor(
         public commonUtilService: CommonUtilService,
@@ -52,11 +75,13 @@ export class CategoryListPage {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private navService: NavigationService,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private scrollService: ScrollToService
+        private scrollService: ScrollToService,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     ) {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
         }
     }
@@ -67,11 +92,19 @@ export class CategoryListPage {
     }
 
     private async fetchAndSortData() {
-        this.sectionGroup = ((await this.contentService.buildContentAggregator
+        if (!this.supportedFacets) {
+            this.supportedFacets = (await this.formAndFrameworkUtilService
+                .getFormFields(FormConstants.SEARCH_FILTER)).reduce((acc, filterConfig) => {
+                acc.push(filterConfig.code);
+                return acc;
+            }, []);
+        }
+        const temp = ((await this.contentService.buildContentAggregator
         (this.formService, this.courseService, this.profileService)
             .aggregate({
                     interceptSearchCriteria: () => ({
                         ...this.formField.searchCriteria,
+                        facets: this.supportedFacets,
                         searchType: SearchType.SEARCH,
                         limit: 100
                     })
@@ -88,7 +121,12 @@ export class CategoryListPage {
                         },
                     },
                     theme: {}
-                }]).toPromise()).result[0] as ContentAggregation<'CONTENTS'>).data;
+                }]).toPromise()).result);
+        this.facetFilters = (temp[0].meta.filterCriteria.facetFilters).reduce((acc, f) => {
+            acc[f.name] = f.values;
+            return acc;
+        }, {});
+        this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
 
@@ -139,11 +177,11 @@ export class CategoryListPage {
         this.scrollService.scrollTo(id);
     }
 
-    valueChanged(event) {
+    cancelEvent($event) {
 
     }
 
-    statusChanged(event) {
-
+    navigateToFilterFormPage() {
+        this.router.navigate([RouterLinks.FILTER_FORM_PAGE]);
     }
 }

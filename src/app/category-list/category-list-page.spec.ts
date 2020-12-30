@@ -10,7 +10,9 @@ import {TelemetryGeneratorService} from '../../services';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        translateMessage: jest.fn()
+    };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({profileType: 'Student'} as any))
     };
