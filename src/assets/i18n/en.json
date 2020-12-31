@@ -1208,6 +1208,7 @@
   "FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED": "Successfully synced the project",
   "FRMELEMNTS_MSG_SYNC_FAILED": "Sync Failed",
   "FRMELEMNTS_MSG_SYNCING_PROJECT": "Syncing Project",
+  "FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE":"Select Image source",
   "FRMELEMNTS_MSG_OFFLINE": "You are offline!",
   "FRMELEMNTS_MSG_REQUIRED_FIELDS": "Please enter all required fields.",
   "FRMELEMNTS_MSG_YOUR_CHANGES_ARE_SAVED": "Your changes are saved successfully.",

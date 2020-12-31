@@ -36,7 +36,7 @@ var environment = {
 export class ProjectDetailPage implements OnInit {
   showDetails: boolean = true;
   statuses = statuses;
-  project: any = this.utils.getProjectData();
+  project: any ;
   projectId;
   categories = [];
   taskCount: number = 0;

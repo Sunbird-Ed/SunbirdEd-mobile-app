@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastService, UtilsService } from '@app/app/manage-learn/core';
+import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-create-task',
@@ -13,7 +13,7 @@ export class CreateTaskComponent implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,
-    // private attachmentService: AttachementService,
+    private attachmentService: AttachmentService,
     private toast: ToastService
   ) { }
 
@@ -27,11 +27,10 @@ export class CreateTaskComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
   openAction() {
-    // TODO: add attachment service
-    // this.attachmentService.selectImage().then(data => {
-    //   !this.newTask.attachments ? this.newTask.attachments = [] : '';
-    //   data.data ? this.newTask.attachments.push(data.data) : ''
-    // })
+    this.attachmentService.selectImage().then(data => {
+      !this.newTask.attachments ? this.newTask.attachments = [] : '';
+      data.data ? this.newTask.attachments.push(data.data) : ''
+    })
   }
 
   addTask() {
