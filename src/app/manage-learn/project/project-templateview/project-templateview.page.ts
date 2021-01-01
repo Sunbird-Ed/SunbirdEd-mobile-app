@@ -11,6 +11,8 @@ import { NetworkService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { actions } from '../../core/constants/actions.constants';
+
 @Component({
   selector: 'app-project-templateview',
   templateUrl: './project-templateview.page.html',
@@ -50,8 +52,8 @@ export class ProjectTemplateviewPage {
     pageTitle: '',
     actionButtons: [],
   };
-  numberTasksCompleted =0;
-  actionItems;
+  projectProgress;
+  actionItems=[];
   metaData:any;
   constructor(
     public params: ActivatedRoute,
@@ -68,15 +70,11 @@ export class ProjectTemplateviewPage {
     params.params.subscribe((parameters) => {
       this.id = parameters.id;
     });
-    this.id="6182745753a7580008790158";
-    this.isTargeted = true;
-    this.programId = '6182745790fe0d0007802755';
-    this.solutionId = "6182745790fe0d0007802758";
-    // params.queryParams.subscribe((parameters) => {
-    //   this.isTargeted = true;
-    //   this.programId = '6182745790fe0d0007802755';
-    //   this.solutionId = '6182745790fe0d0007802758';
-    // });
+    params.queryParams.subscribe((parameters) => {
+      this.isTargeted = true;
+      this.programId = '6182745790fe0d0007802755';
+      this.solutionId = '6182745790fe0d0007802758';
+    });
     this.translate
       .get([
         'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG',
@@ -90,14 +88,18 @@ export class ProjectTemplateviewPage {
       .subscribe((texts) => {
         this.allStrings = texts;
       });
-      this.headerConfig = this.headerService.getDefaultPageConfig();
-      console.log(this.headerConfig,"this.headerConfigt");
-      this.headerService.updatePageConfig(this.headerConfig);
      this.getProjectApi();
    }
 
+   ionViewWillEnter(){
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+   }
    async getProjectApi() {
-    this.actionItems = await this.utils.getMetaDataActions();
+    this.actionItems = await actions.PROJECTACTIONS;
     let payload = await this.utils.getProfileInfo();
 
     const config = {
@@ -115,6 +117,8 @@ export class ProjectTemplateviewPage {
       category.label ? this.categories.push(category.label) : this.categories.push(category.name);
     });
     this.sortTasks();
+    if(this.project.tasks &&this.project.tasks,length)
+    this.projectProgress = this.utils.getCompletedTaskCount(this.project.tasks);
   }
 
   async sortTasks() {
@@ -122,7 +126,6 @@ export class ProjectTemplateviewPage {
     this.project = projectData.project;
     this.sortedTasks = projectData.sortedTasks;
     this.taskCount = projectData.taskCount;
-    this.numberTasksCompleted = projectData.numberTasksCompleted
   }
 
   toggle() {

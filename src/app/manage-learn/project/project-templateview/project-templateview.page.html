@@ -1,22 +1,15 @@
 <ion-content  class="ion-padding">
 <app-metadata-details translucent="true" [data]="metaData">
   <div class="sb-dt-card-actions">
-    <div class="wrapper">
-      <div>
-        <button *ngFor="let actionBtn of actionItems" (click)="action(actionBtn.action)" slot="icon-only" class="card-button">
-          <ion-icon name="{{actionBtn.icon}}" class="card-icons">
-          </ion-icon>
-          <p class="card-text">{{actionBtn.title| translate}}
-          </p>
-        </button>
-      </div>
+    <div class="wrapper"> 
+      <app-metadata-actions *ngFor="let actionBtn of actionItems" (actionEvent)="action($event)" [actionItem]="actionBtn"></app-metadata-actions>
     </div>
     <div class="sb-course-progress-container">
       <p><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
       </p>
-      <p>{{numberTasksCompleted}} / {{taskCount}} {{'COMPLETED' | translate}}
+      <p>{{projectProgress?.completedTasks}} / {{taskCount}} {{'COMPLETED' | translate}}
       </p>
-        <ion-progress-bar value="0.5" class="progress-bar-style"></ion-progress-bar>
+        <ion-progress-bar [ngStyle]="{'--progress-background' : projectProgress?.completedTasks == taskCount ? 'var(--app-green)' : 'var(--app-quaternary-medium)'}" value="{{projectProgress?.progress}}" class="progress-bar-style"></ion-progress-bar>
     </div>
   </div>
 </app-metadata-details>

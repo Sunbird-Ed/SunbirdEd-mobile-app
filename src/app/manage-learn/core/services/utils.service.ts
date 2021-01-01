@@ -198,7 +198,6 @@ export class UtilsService {
     } else {
       projectData.status = statusType.notStarted;
     }
-    projectData.tasksCompleted =this.numberTasksCompleted;
     return projectData;
   }
 
@@ -221,7 +220,6 @@ export class UtilsService {
     } else {
       status = statusType.notStarted;
     }
-    this.numberTasksCompleted = completedList;
     return validchildArray.length ? status : statusType.notStarted;
   }
 
@@ -719,40 +717,15 @@ async getSortTasks(project:any) {
   return data;
 }
 
-
-getMetaDataActions(){
-  let data=[
-    {
-      title: "DOWNLOAD",
-      icon: "cloud-download",
-      action:"download",
-      color:'secondary'
-    },
-    {
-      title: "SHARE",
-      icon: "share",
-      action:"share",
-      color:'primary'
-    },
-    {
-      title: "EDIT",
-      icon: "create",
-      action:"edit",
-      color:'primary'
-    },
-    {
-      title: "FRMELEMNTS_LBL_FILES",
-      icon: "folder",
-      action:"files",
-      color:'primary'
-    },
-    {
-      title: "FRMELEMNTS_LBL_SYNC",
-      icon: "sync-circle",
-      action:"sync",
-      color:'primary'
-    },
-  ];
-  return data;
+getCompletedTaskCount(tasks){
+  // const completedList = _.filter(tasks, function(el) {
+  //   return !el.isDeleted && el.status === statusType.completed;
+  // });
+  let data ={
+    completedTasks : 3,
+    progress: 3 / 7
+  }
+  console.log(data,"data prgress");
+return data;
 }
 }

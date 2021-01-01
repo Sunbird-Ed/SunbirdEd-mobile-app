@@ -28,7 +28,8 @@ import {
   PrivacyPolicyAndTCComponent,
   ProjectMetadataCardComponent,
   ProjectTaskListComponent,
-  MetadataDetailsComponent
+  MetadataDetailsComponent,
+  MetadataActionsComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -68,8 +69,6 @@ import { ExpansionPanelComponent } from './components/expansion-panel/expansion-
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 import { GenericPopUpService } from './generic.popup';
 import { HTTP } from '@ionic-native/http/ngx';
-import { ComponentsModule } from '@app/app/components/components.module';
-
 
 @NgModule({
   declarations: [
@@ -120,10 +119,11 @@ import { ComponentsModule } from '@app/app/components/components.module';
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
-    MetadataDetailsComponent
+    MetadataDetailsComponent,
+    MetadataActionsComponent
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule,ComponentsModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,
@@ -172,7 +172,8 @@ import { ComponentsModule } from '@app/app/components/components.module';
     PrivacyPolicyAndTCComponent,
     ProjectMetadataCardComponent,
     ProjectTaskListComponent,
-    MetadataDetailsComponent
+    MetadataDetailsComponent,
+    MetadataActionsComponent
   ],
   providers: [
     Camera,
