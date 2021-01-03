@@ -1252,7 +1252,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
   }
 
-  private startContent() {
+  private async startContent() {
     if (this.courseHeirarchy && this.courseHeirarchy.children
       && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
       if (!this.nextContent) {
@@ -1262,6 +1262,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         pageId: PageId.COURSE_DETAIL,
         corRelationList: this.corRelationList
       };
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+
+      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (skipPlay) {
+        return;
+      }
       this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
@@ -1272,7 +1278,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   /**
    * Function gets executed when user click on resume course button.
    */
-  resumeContent(): void {
+  async resumeContent(): Promise<void> {
     if (!this.nextContent) {
       this.initNextContent();
     }
@@ -1280,6 +1286,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       pageId: PageId.COURSE_DETAIL,
       corRelationList: this.corRelationList
     };
+
+    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+
+    const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+    if (skipPlay) {
+      return;
+    }
+    
     this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
