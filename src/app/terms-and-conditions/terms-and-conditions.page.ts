@@ -163,13 +163,12 @@ export class TermsAndConditionsPage implements OnInit {
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
-                if (await tncUpdateHandlerService.isSSOUser(profile) ||
-                (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
+                if (await tncUpdateHandlerService.isSSOUser(profile)) {
                   await this.consentService.getConsent(profile, true);
                 }
                 categoriesProfileData['status'] = value['status'],
                 categoriesProfileData['isUserLocationAvalable'] = true;
-                if (profile.profileType === ProfileType.NONE) {
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: {categoriesProfileData}
                   });
@@ -199,13 +198,12 @@ export class TermsAndConditionsPage implements OnInit {
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
-              if (await tncUpdateHandlerService.isSSOUser(profile) ||
-              (profile.serverProfile.declarations && profile.serverProfile.declarations.length)) {
+              if (await tncUpdateHandlerService.isSSOUser(profile)) {
                 await this.consentService.getConsent(profile, true);
               }
               if (selectedUserType === ProfileType.ADMIN) {
                 this.router.navigate([`/${RouterLinks.TABS}`]);
-              } else if (profile.profileType === ProfileType.NONE) {
+              } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}
                 });

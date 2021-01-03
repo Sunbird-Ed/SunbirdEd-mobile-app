@@ -65,12 +65,12 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async getUserProfileDetails() {
@@ -176,38 +176,33 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'search':
-        this.navigateToSearchPage();
-        break;
       case 'download':
-        // this.redirectToActivedownloads();
+        this.redirectToActivedownloads();
         break;
-      // case 'notification':
-      //   this.redirectToNotifications();
-      //   break;
-      case 'information':
-        // this.appTutorialScreen();
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
   }
 
-  private async navigateToSearchPage() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SEARCH_BUTTON_CLICKED,
-      Environment.HOME,
-      PageId.ADMIN_HOME);
-    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-      ContentFilterConfig.NAME_LIBRARY);
-    this.router.navigate([RouterLinks.SEARCH], {
-      state: {
-        primaryCategories,
-        source: PageId.ADMIN_HOME
-      }
-    });
+  redirectToActivedownloads() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
+  redirectToNotifications() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.NOTIFICATION_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
 
   navigateToDetailPage(event, sectionName) {
     event.data = event.data.content ? event.data.content : event.data;

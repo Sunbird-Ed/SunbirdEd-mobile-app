@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class TabsPage implements OnInit, AfterViewInit {
 
   configData: any;
-  @ViewChild('myTabs') tabRef: IonTabs;
+  @ViewChild('tabRef') tabRef: IonTabs;
   tabIndex = 0;
   tabs = [];
   headerConfig = {
@@ -29,7 +29,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appLabel: any;
   olderWebView = false;
-  isPageInitialised = false;
 
   constructor(
     private container: ContainerService,
@@ -71,14 +70,14 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
-    this.isPageInitialised = true;
   }
 
   ngAfterViewInit() {
-    this.setQrStyles();
+    this.setQRStyles();
+    this.setQRTabRoot(this.tabRef.getSelected());
   }
 
-  setQrStyles() {
+  setQRStyles() {
     setTimeout(async () => {
       if (document.getElementById('qrScannerIcon') && document.getElementById('backdrop')) {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
@@ -89,7 +88,7 @@ export class TabsPage implements OnInit, AfterViewInit {
           `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
         );
       } else {
-        this.setQrStyles();
+        this.setQRStyles();
       }
 
     }, 2000);
@@ -126,7 +125,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
-    this.tabs[2].root = event.tab;
+    this.setQRTabRoot(event.tab);
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
@@ -154,6 +153,12 @@ export class TabsPage implements OnInit, AfterViewInit {
           hideBackButton: true
         }
       });
+    }
+  }
+
+  private setQRTabRoot(tab: string) {
+    if (this.tabs && this.tabs[2]) {
+      this.tabs[2].root = tab;
     }
   }
 
