@@ -1287,10 +1287,12 @@ describe('ContentDetailsPage', () => {
                 }
             });
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(10));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeTruthy();
                 done();
             });
@@ -1316,11 +1318,13 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
-            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({ progress: 100, contentStatusData: contentStatusData }));
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
                 expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
                 done();
@@ -1348,11 +1352,13 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
                 expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
                 done();
@@ -1380,11 +1386,13 @@ describe('ContentDetailsPage', () => {
                     }
                 ]
             }
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
                 expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
                 done();
@@ -2259,6 +2267,7 @@ describe('ContentDetailsPage', () => {
         });
 
         it('should invoked promotToLogIn page', (done) => {
+            // arrange
             contentDetailsPage.limitedShareContentFlag = true;
             contentDetailsPage.content = {
                 contentData: {
@@ -2266,12 +2275,14 @@ describe('ContentDetailsPage', () => {
                 }
             };
             contentDetailsPage['isLastAttempt'] = true;
-            mockCommonUtilService.showToast = jest.fn();
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            mockCommonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+            // act
             contentDetailsPage.handleContentPlay('');
+            // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+                expect(mockCommonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
                 done();
             }, 0);

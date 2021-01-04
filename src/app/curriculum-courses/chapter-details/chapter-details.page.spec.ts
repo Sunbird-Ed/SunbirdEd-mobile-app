@@ -887,12 +887,15 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
             chapterDetailsPage.isBatchNotStarted = false;
+            chapterDetailsPage.userId = 'sample-user-token';
             jest.spyOn(chapterDetailsPage, 'loadFirstChildren').mockImplementation(() => {
-                return;
+                return { identifier: 'do-123' };
             });
             mockContentPlayerHandler.playContent = jest.fn();
             mockPreferences.getBoolean = jest.fn(() => of(true));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false));
 
             // act
             chapterDetailsPage.startLearning();
@@ -908,6 +911,8 @@ describe('ChapterDetailsPage', () => {
                     undefined, undefined, undefined);
                 expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
                 expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 expect(mockContentPlayerHandler.playContent).toHaveBeenCalled();
                 expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
                     PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-sample-user-token');
@@ -921,6 +926,7 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
             chapterDetailsPage.isBatchNotStarted = false;
+            chapterDetailsPage.userId = 'sample-user-token';
             mockCommonUtilService.showToast = jest.fn();
             mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
 
@@ -951,6 +957,7 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
             chapterDetailsPage.isBatchNotStarted = true;
+            chapterDetailsPage.userId = 'sample-user-token';
             mockCommonUtilService.translateMessage = jest.fn(() => 'COURSE_WILL_BE_AVAILABLE');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
@@ -985,6 +992,7 @@ describe('ChapterDetailsPage', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.isBatchNotStarted = true;
             chapterDetailsPage.isCertifiedCourse = true;
+            chapterDetailsPage.userId = 'sample-user-token';
             mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');
