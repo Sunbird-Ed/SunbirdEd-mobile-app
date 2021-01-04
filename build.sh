@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Accepted CLI arguments
+while getopts a: flag
+do
+    case "${flag}" in
+        a) angularConfiguration=${OPTARG};;
+    esac
+done
+
 # Simple script to clean install
 rm -rf node_modules
 rm -rf platforms
@@ -46,5 +54,10 @@ NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@9.0.0
 
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --buildConfig ./buildConfig/build.json
 
-npm run ionic-build
+if [ -n "$angularConfiguration" ]; then
+  echo "$angularConfiguration"
+  npm run ionic-build --angular-configuration=$angularConfiguration
+else
+  npm run ionic-build --angular-configuration=production
+fi
 

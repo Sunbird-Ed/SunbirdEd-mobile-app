@@ -165,22 +165,21 @@ export class SignInCardComponent {
               requiredFields: ProfileConstants.REQUIRED_FIELDS
             };
             that.profileService.getServerProfilesDetails(req).toPromise()
-              .then(async (success) => {
-                const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
-                const currentProfile = allProfileDetais.find(ele => ele.uid === success.id);
-                const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
+              .then(async (success: any) => {
+                const currentProfileType = (success && success.userType === ProfileType.OTHER.toUpperCase()) ?
+                ProfileType.NONE : success.userType.toLowerCase();
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
                   handle: success.id,
-                  profileType: guestProfileType,
+                  profileType: currentProfileType,
                   source: ProfileSource.SERVER,
                   serverProfile: success
                 };
                 this.profileService.createProfile(profile, ProfileSource.SERVER)
                   .toPromise()
                   .then(async () => {
-                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfileType).toPromise();
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
                         /* Medatory for login flow

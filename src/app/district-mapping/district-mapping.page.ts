@@ -152,8 +152,6 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    const extrasState = this.router.getCurrentNavigation().extras.state;
-    this.userType = extrasState.userType;
     this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
       tap(() => this.changeDetectionRef.detectChanges())
@@ -456,11 +454,7 @@ export class DistrictMappingPage {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-              if (this.userType === ProfileType.ADMIN) {
-                this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
-              } else {
                 this.router.navigate([`/${RouterLinks.TABS}`]);
-              }
             }
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
@@ -470,11 +464,7 @@ export class DistrictMappingPage {
           if (this.profile) {
             this.location.back();
           } else {
-            if (this.userType === ProfileType.ADMIN) {
-              this.router.navigate([`/${RouterLinks.ADMIN_HOME_TAB}`]);
-            } else {
-              this.router.navigate([`/${RouterLinks.TABS}`]);
-            }
+            this.router.navigate([`/${RouterLinks.TABS}`]);
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });

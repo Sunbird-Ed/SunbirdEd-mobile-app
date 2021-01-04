@@ -212,7 +212,7 @@ export class SelfDeclaredTeacherEditPage {
         return config;
       }
 
-      if (config.code === 'tnc') {
+      if (config.code === 'tnc' || config.code === 'consentInfo') {
         if (this.editType === 'edit') {
           return undefined;
         }

@@ -1,22 +1,23 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler } from '@app/services';
-import { CourseCardGridTypes, PillShape, PillsViewType, SelectMode } from '@project-sunbird/common-consumption';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { NavigationExtras, Router } from '@angular/router';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria, CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ProfileConstants, RouterLinks } from '../app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TranslateService } from '@ngx-translate/core';
+import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
+import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events } from '@ionic/angular';
+import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  selector: 'app-admin-home',
+  templateUrl: './admin-home.page.html',
+  styleUrls: ['./admin-home.page.scss'],
 })
-export class HomePage implements OnInit, OnDestroy {
+export class AdminHomePage implements OnInit, OnDestroy {
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
@@ -32,10 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-
-  pillsViewType = PillsViewType;
-  selectMode = SelectMode;
-  pillShape = PillShape;
+  @ViewChild('contentView') contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -43,16 +41,26 @@ export class HomePage implements OnInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
-    private appVersion: AppVersion,
     private contentAggregatorHandler: ContentAggregatorHandler,
     private navService: NavigationService,
     private headerService: AppHeaderService,
-    private events: Events
+    private events: Events,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private qrScanner: SunbirdQRScanner,
   ) {
   }
 
   ngOnInit() {
     this.getUserProfileDetails();
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
+      this.getUserProfileDetails();
+    });
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+      if (data === '') {
+        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+      }
+    });
   }
 
   async ionViewWillEnter() {
@@ -66,21 +74,18 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   async getUserProfileDetails() {
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .subscribe((profile: Profile) => {
         this.profile = profile;
         this.getFrameworkDetails();
         this.fetchDisplayElements();
       });
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appLabel = appName;
-      });
+    this.appLabel = await this.commonUtilService.getAppName();
   }
 
 
-  editProfileDetails() {
+  navigateToEditProfilePage() {
     if (!this.guestUser) {
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
@@ -94,7 +99,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  getFrameworkDetails(frameworkId?: string): void {
+  getFrameworkDetails(): void {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -115,9 +120,9 @@ export class HomePage implements OnInit, OnDestroy {
       });
   }
 
-  getFieldDisplayValues(field: Array<any>, catIndex: number): string {
+  getFieldDisplayValues(field: Array<any>, index: number): string {
     const displayValues = [];
-    this.categories[catIndex].terms.forEach(element => {
+    this.categories[index].terms.forEach(element => {
       if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
@@ -137,18 +142,23 @@ export class HomePage implements OnInit, OnDestroy {
       }, from: CachedItemRequestSourceFrom.SERVER
     };
 
-    this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
+    this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.ADMIN_HOME);
+    this.displaySections = this.contentAggregatorHandler.populateIcons(this.displaySections);
   }
 
-  handlePillSelect(event) {
-    console.log(event);
-    if (!event || !event.data || !event.data.length) {
-      return;
+  onPillClick(event) {
+    const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
+    this.commonUtilService.showToast(title);
+    switch (event.data[0].value.code) {
+      case 'course':
+        this.router.navigate([RouterLinks.SEARCH], {
+          state: {
+            source: PageId.ADMIN_HOME,
+            preAppliedFilter: event.data[0].value.search
+          }
+        });
+        break;
     }
-    const params = {
-      formField: event.data[0].value
-    };
-    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
   navigateToViewMoreContentsPage(section, pageName) {
@@ -164,31 +174,6 @@ export class HomePage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
-  navigateToDetailPage(event, sectionName) {
-    event.data = event.data.content ? event.data.content : event.data;
-    const item = event.data;
-    const index = event.index;
-    const identifier = item.contentId || item.identifier;
-    // const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
-    const values = {};
-    values['sectionName'] = sectionName;
-    values['positionClicked'] = index;
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.CONTENT_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY,
-    //   ContentUtil.getTelemetryObject(item),
-    //   values,
-    //   ContentUtil.generateRollUp(undefined, identifier),
-    //   corRelationList);
-    if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item }); // TODO
-      // this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
-    } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
-    }
-  }
-
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'download':
@@ -197,7 +182,6 @@ export class HomePage implements OnInit, OnDestroy {
       case 'notification':
         this.redirectToNotifications();
         break;
-
       default: console.warn('Use Proper Event name');
     }
   }
@@ -218,6 +202,21 @@ export class HomePage implements OnInit, OnDestroy {
     //   Environment.HOME,
     //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
+
+  navigateToDetailPage(event, sectionName) {
+    event.data = event.data.content ? event.data.content : event.data;
+    const item = event.data;
+    const index = event.index;
+    const identifier = item.contentId || item.identifier;
+    const values = {};
+    values['sectionName'] = sectionName;
+    values['positionClicked'] = index;
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
+      this.navService.navigateToDetailPage(item, { content: item }); // TODO
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
   }
 
   ionViewWillLeave(): void {
