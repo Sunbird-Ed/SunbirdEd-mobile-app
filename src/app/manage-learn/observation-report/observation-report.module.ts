@@ -1,32 +1,30 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AllEvidenceListComponent } from './all-evidence-list/all-evidence-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
-const routes: Routes = [
+import { ObservationReportsComponent } from './observation-reports/observation-reports.component';
+import { RouterModule, Routes } from '@angular/router';
+const reportRoutes: Routes = [
   {
     path: '',
-    component: AllEvidenceListComponent,
+    component: ObservationReportsComponent,
   },
 ];
-
 @NgModule({
-  declarations: [ AllEvidenceListComponent],
+  declarations: [ObservationReportsComponent],
   imports: [
     CommonModule,
-    HttpClientModule, // TODO:remove after api integration
+    HttpClientModule, // TODO:Tremove after api integration
     TranslateModule.forChild(),
+    RouterModule.forChild(reportRoutes),
     SharedModule,
     IonicModule,
     FormsModule,
     CoreModule,
-    RouterModule.forChild(routes),
   ],
-  exports: [],
 })
-export class AllEvidenceListModule {}
+export class ObservationReportModule {}
