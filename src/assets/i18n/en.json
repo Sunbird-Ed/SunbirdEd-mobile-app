@@ -1192,6 +1192,8 @@
   "FRMELEMNTS_LBL_QUESTION_WISE":"Question wise",
   "FRMELEMNTS_LBL_CRITERIA_WISE":"Criteria wise",
   "FRMELEMNTS_LBL_AUDIOS":"Audios",
+  "FRMELEMENTS_LBL_SELECTED_STATE":"Selected state",
+  "FRMELEMENTS_LBL_SELECT_ENTITY":"Select Entity",
   "FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES":"View All Evidence",
   "FRMELEMENTS_LBL_TOTAL_SUBMISSIONS":"Total Submissions",
   "FRMELEMNTS_MSG_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
@@ -1245,5 +1247,6 @@
   "FRMELEMNTS_MSG_PLEASE_NETWORK": "Please check your network connection and try again",
   "FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL": "New Task has been successfully created.",
   "FRMELEMNTS_MSG_TASK_DELETED_SUCCESSFUL": "Task Deleted successfully",
-  "FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL": "Project Deleted successfully"
+  "FRMELEMNTS_MSG_PROJECT_DELETED_SUCCESSFUL": "Project Deleted successfully",
+  "FRMELEMNTS_MSG_NO_SCHOOL_FOUND": "No schools found"
 }
