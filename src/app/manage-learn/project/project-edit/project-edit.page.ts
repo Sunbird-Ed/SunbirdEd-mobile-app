@@ -50,6 +50,6 @@ export class ProjectEditPage implements OnInit {
           projectId: this.project._id, type: type
         }
       }) :
-      this.router.navigate([`${RouterLinks.PROJECT_OPERATION_PAGE}`, this.project._id], { queryParams: { createdType: 'bySelf', isEdit: true } });
+      this.router.navigate([`${RouterLinks.PROJECT_OPERATION_PAGE}`, this.project._id], { queryParams: { availableInLocal: true, isEdit: true } });
   }
 }

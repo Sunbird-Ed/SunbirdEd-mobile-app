@@ -19,7 +19,7 @@
             display-timezone="utc" value={{today}} [(ngModel)]="template.startDate" class="project-date"
             placeholder={{today}} (ionChange)="resetEndDate($event)">
           </ion-datetime>
-          <ion-icon name="caret-down-outline" slot="end"></ion-icon>
+          <ion-icon name="caret-down" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
       <ion-col size="6">
@@ -30,7 +30,7 @@
           <ion-datetime min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
             value={{today}} [(ngModel)]="template.endDate" class="project-date" placeholder={{today}}>
           </ion-datetime>
-          <ion-icon name="caret-down-outline" slot="end"></ion-icon>
+          <ion-icon name="caret-down" slot="end"></ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -42,7 +42,7 @@
     <ion-item lines="none">
       <ion-input (ionFocus)="openSearchModel('programs')" placeholder="{{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}}">
       </ion-input>
-      <ion-icon name="caret-down-outline" slot="end"></ion-icon>
+      <ion-icon name="caret-down" slot="end"></ion-icon>
     </ion-item>
   </div>
 
@@ -54,20 +54,20 @@
     <ion-card class="data-list">
       <ion-item lines="none">
         {{selectedProgram.name}}
-        <ion-icon name="close-outline" slot="end" class="remove-icon" (click)="remove(selectedProgram,'program')">
+        <ion-icon name="close" slot="end" class="remove-icon" (click)="remove(selectedProgram,'program')">
         </ion-icon>
       </ion-item>
     </ion-card>
   </div>
   <div class="entity-block">
     <h5 (click)="addEntity()">
-      <ion-icon name="location-outline"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
+      <ion-icon name="location"></ion-icon> {{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}} <span
         *ngIf="template.showProgramAndEntity">* </span>
     </h5>
     <ion-card *ngIf="selectedEntity" class="data-list">
       <ion-item lines="none">
         {{selectedEntity.name}}
-        <ion-icon name="close-outline" slot="end" class="remove-icon" (click)="remove(selectedEntity,'entity')">
+        <ion-icon name="close" slot="end" class="remove-icon" (click)="remove(selectedEntity,'entity')">
         </ion-icon>
       </ion-item>
     </ion-card>
@@ -84,13 +84,13 @@
       <ion-card class="data-list" *ngFor="let lr of selectedResources">
         <ion-item lines="none">
           {{lr.name}}
-          <ion-icon name="close-outline" slot="end" class="remove-icon" (click)="remove(lr,'resources')">
+          <ion-icon name="close" slot="end" class="remove-icon" (click)="remove(lr,'resources')">
           </ion-icon>
         </ion-item>
       </ion-card>
     </div>
     <div class="text-center">
-      <ion-icon name="link-outline"></ion-icon>
+      <ion-icon name="link"></ion-icon>
       <span (click)="addLearningResources()"> {{'FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY' | translate}} </span>
     </div>
   </div>

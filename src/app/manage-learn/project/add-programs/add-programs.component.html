@@ -3,10 +3,10 @@
     {{title | translate}}
   </ion-title>
   <ion-buttons (click)="close()" slot="start" class="padding">
-    <ion-icon name="arrow-back-outline" slot="icon-only"  style="padding-left: 10px;"></ion-icon>
+    <ion-icon name="arrow-back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
-<ion-content class="ion-padding" >
+<ion-content class="ion-padding">
   <ion-button color="primary" expand="block" (click)="createProgram()" *ngIf="type== 'programs'">
     {{'FRMELEMNTS_LBL_CREATE_NEW_PROGRAM' | translate}}
   </ion-button>

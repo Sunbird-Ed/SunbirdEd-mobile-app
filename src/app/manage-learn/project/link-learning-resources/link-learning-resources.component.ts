@@ -22,7 +22,7 @@ export class LinkLearningResourcesComponent implements OnInit {
     value: ["application/pdf", "application/epub"]
   }, {
     name: "video",
-    icon: 'play_circle_outline',
+    icon: 'play_circle',
     value: ["video/mp4", "video/x-youtube", "video/webm"]
   }, {
     name: "interactive",

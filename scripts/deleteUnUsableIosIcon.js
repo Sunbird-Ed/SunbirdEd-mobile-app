@@ -41,7 +41,7 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'ios-caret-down.svg',
                 'ios-caret-forward.svg',
                 'ios-cloud-done.svg',
-                'ios-cloud-offline-outline.svg',,
+                'ios-cloud-offline-outline.svg',
                 'ios-document.svg',
                 'ios-radio-button-off-outline.svg',
                 'ios-attach.svg',
@@ -127,9 +127,12 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-link-outline.svg',
                 'md-caret-down.svg',
                 'md-ellipsis-vertical.svg',
-                'md-radio-button-off.svg'
+                'md-radio-button-off.svg',
+                'md-location.svg',
+                'md-link.svg',
+                'md-funnel.svg'
             ].includes(file))) {
-                fs.unlinkSync(ionicIconFilePath+'/'+file);
+                fs.unlinkSync(ionicIconFilePath + '/' + file);
             }
         });
     } catch (e) {

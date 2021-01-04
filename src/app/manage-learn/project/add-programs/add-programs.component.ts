@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-add-programs',
   templateUrl: './add-programs.component.html',
@@ -9,15 +11,24 @@ import { TranslateService } from '@ngx-translate/core';
 export class AddProgramsComponent implements OnInit {
   dataList;
   selectedData;
-  button;
-  title = "FRMELEMNTS_BTN_MY_PROGRAMS";
+  button = "FRMELEMNTS_BTN_ADD_PROGRAM";
+  title = "FRMELEMNTS_LBL_MY_PROGRAMS";
   constructor(
     private alertCtrl: AlertController,
     private modal: ModalController,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private http: HttpClient
   ) { }
+  ngOnInit() {
+    this.getPrograms();
+  }
 
-  ngOnInit() { }
+  getPrograms() {
+    this.http.get('assets/dummy/projectList.json').subscribe((data: any) => {
+      console.log(data);
+      this.dataList = data.result.data;
+    });
+  }
   async createProgram() {
     let text;
     this.translate.get(['FRMELEMNTS_LBL_CREATE_PROGRAM', 'FRMELEMNTS_MSG_CREATE_PROGRAM_MESSAGE', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_BTN_SAVE', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_PLACEHOLDER', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_NAME']).subscribe(data => {
@@ -53,10 +64,15 @@ export class AddProgramsComponent implements OnInit {
     });
     await alert.present();
   }
+  selectProgram(data) {
+    this.selectedData = data;
+  }
   close(data?) {
     this.modal.dismiss(data);
-
   }
-
-
+  addProgram() {
+    if (this.selectedData) {
+      this.close(this.selectedData);
+    }
+  }
 }
