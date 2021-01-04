@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonFab, ModalController, Platform } from '@ionic/angular';
 import { LoaderService } from '../../core';
+import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 
 @Component({
@@ -180,6 +181,20 @@ export class ObservationReportsComponent implements OnInit {
   }
 
   getObservationCriteriaReports() {
+    //TODO:remove
+    // this.loader.startLoader();
+    this.httpClient.get('assets/dummy/criteriaReport.json').subscribe((success: any) => {
+      this.allCriterias = success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
+      if (success) {
+        this.reportObjCriteria = success;
+      } else {
+        this.error = 'No data found';
+      }
+      // this.loader.stopLoader();
+      !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
+    });
+    //TODO:till here
+
     // this.utils.startLoader();
     // let url;
     // if (this.entityType && this.reportType) {
@@ -245,6 +260,27 @@ export class ObservationReportsComponent implements OnInit {
       ) {
         this.filteredQuestions = response.filter;
         this.getObservationReports();
+      }
+    });
+  }
+
+  async openCriteriaFilter() {
+    const modal = await this.modal.create({
+      component: CriteriaListComponent,
+      componentProps: {
+        allCriterias: this.allCriterias,
+        filteredCriterias: JSON.parse(JSON.stringify(this.filteredCriterias)),
+      },
+    });
+    await modal.present();
+    await modal.onDidDismiss().then((response: any) => {
+      if (
+        response &&
+        response.action === 'updated' &&
+        JSON.stringify(response.filter) !== JSON.stringify(this.filteredCriterias)
+      ) {
+        this.filteredCriterias = response.filter;
+        this.getObservationCriteriaReports();
       }
     });
   }

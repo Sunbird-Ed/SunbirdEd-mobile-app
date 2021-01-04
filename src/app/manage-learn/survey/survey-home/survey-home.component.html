@@ -34,7 +34,7 @@
           report
           round
           *ngIf="item?.status == 'completed' || !item.submissionId"
-          (click)="$event.stopPropagation(); onViewReport()"
+          (click)="$event.stopPropagation(); checkReport(item)"
         >
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
         </ion-button>

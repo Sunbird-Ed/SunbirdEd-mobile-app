@@ -1,0 +1,65 @@
+<ion-content padding>
+  <div *ngIf="!error">
+    <h4 class="reportName">{{ reportObj?.observationName }} {{ reportObj?.solutionName }}</h4>
+    <p *ngIf="reportObj?.totalSubmissions">
+      {{ 'FRMELEMENTS_LBL_TOTAL_SUBMISSIONS' | translate }}:{{ reportObj?.totalSubmissions }}
+    </p>
+
+    <div *ngIf="allQuestions?.length" class="d-flex flex-jc-flex-end">
+      <ion-button ion-button icon-start (click)="openFilter()" margin>
+        <ion-icon name="options"></ion-icon>
+        {{ 'FRMELEMENTS_BTN_APPLY_FILTER' | translate }}
+      </ion-button>
+    </div>
+
+    <div *ngFor="let element of reportObj?.response; let i = index">
+      <ion-card [ngSwitch]="element?.responseType">
+        <reports-text
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchCase="'text'"
+          [isFeedBackSurvey]="true"
+          [solutionId]="solutionId"
+        ></reports-text>
+        <reports-text
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchCase="'number'"
+          [isFeedBackSurvey]="true"
+          [solutionId]="solutionId"
+        ></reports-text>
+        <reports-text
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchCase="'date'"
+          [isFeedBackSurvey]="true"
+          [solutionId]="solutionId"
+        ></reports-text>
+        <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'multiselect'"></bar-chart>
+        <matrix-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'matrix'"></matrix-chart>
+        <reports-text
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchDefault
+          [isFeedBackSurvey]="true"
+          [solutionId]="solutionId"
+        ></reports-text>
+      </ion-card>
+      <ion-grid>
+        <ion-row>
+          <ion-col col-4 *ngFor="let e of element.evidences">
+            <attachments [url]="e.url" [extension]="e.extension"></attachments>
+          </ion-col>
+          <ion-col col-12 *ngIf="element.evidence_count > 3">
+            <small class="pull-right text-ios-danger" (click)="allEvidence(i)">{{
+              'labels.viewAllEvidences' | translate
+            }}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+
+  <div class="_flex-box _justify-content-center _errorBox" *ngIf="!reportObj?.response">{{ error }}</div>
+</ion-content>

@@ -46,6 +46,7 @@ import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.com
 import { HighchartsChartModule } from 'highcharts-angular';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
+import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { QuestionListComponent } from './components/question-list/question-list.
     MatrixChartComponent,
     AttachmentComponent,
     QuestionListComponent,
+    CriteriaListComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -109,6 +111,7 @@ import { QuestionListComponent } from './components/question-list/question-list.
     BarChartComponent,
     MatrixChartComponent,
     QuestionListComponent,
+    CriteriaListComponent
   ],
   providers: [
     Camera,
@@ -130,6 +133,7 @@ import { QuestionListComponent } from './components/question-list/question-list.
     CreateTaskComponent,
     ScroreReportMenusComponent,
     QuestionListComponent,
+    CriteriaListComponent
   ],
 })
 export class SharedModule {}

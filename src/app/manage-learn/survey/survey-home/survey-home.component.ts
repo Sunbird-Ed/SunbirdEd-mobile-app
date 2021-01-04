@@ -58,8 +58,6 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
- 
-
   getSurveyListing(): void {
     this.httpClient.get('assets/dummy/surveylisting.json').subscribe((data: any) => {
       console.log(data);
@@ -182,21 +180,39 @@ export class SurveyHomeComponent implements OnInit {
 
   setStatusColor(status): string {
     switch (status) {
-      case "started":
+      case 'started':
         // this.color = "orange";
-        return "orange"
+        return 'orange';
         break;
-      case "completed":
+      case 'completed':
         // this.color = "lightgreen";
-        return "lightgreen"
+        return 'lightgreen';
         break;
-      case "expired":
+      case 'expired':
         // this.color = "grey";
-        return "grey"
+        return 'grey';
         break;
 
       default:
         break;
     }
+  }
+
+  checkReport(survey) {
+    if (survey.submissionId) {
+      // this.navCtrl.push(SurveyReportPage, { submissionId: survey.submissionId });
+      this.router.navigate([RouterLinks.SURVEY_REPORTS], {
+        queryParams: {
+          submissionId: survey.submissionId,
+        },
+      });
+      return;
+    }
+    // this.navCtrl.push(SurveyReportPage, { solutionId: survey.solutionId });
+    this.router.navigate([RouterLinks.SURVEY_REPORTS], {
+      queryParams: {
+        solutionId: survey.solutionId,
+      },
+    });
   }
 }

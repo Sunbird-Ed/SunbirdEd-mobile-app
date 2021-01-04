@@ -119,7 +119,8 @@ const routes: Routes = [
   { path: RouterLinks.SUBMISSION_PREVIEW, loadChildren: './manage-learn/submission-preview/submission-preview.module#SubmissionPreviewModule' },
   { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' },
   { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' },
-    { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
+  { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
+  { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' }
   
 ];
 

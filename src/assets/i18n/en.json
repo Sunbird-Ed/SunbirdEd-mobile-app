@@ -1193,6 +1193,7 @@
   "FRMELEMNTS_LBL_CRITERIA_WISE":"Criteria wise",
   "FRMELEMNTS_LBL_AUDIOS":"Audios",
   "FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES":"View All Evidence",
+  "FRMELEMENTS_LBL_TOTAL_SUBMISSIONS":"Total Submissions",
   "FRMELEMNTS_MSG_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
   "FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION": "You need network connection for this action.",
   "FRMELEMNTS_MSG_OF": "Of",
