@@ -1,6 +1,8 @@
 <ion-header class="sb-popover-header">
     <ion-toolbar class="sb-popover-toolbar">
-      <ion-title class="sb-popover-title">{{'COPY_TRACE_ID' | translate}}</ion-title>
+      <ion-title class="sb-popover-title">{{'COPY_TRACE_ID' | translate}}
+        <ion-icon name="close" class="sb-modal-close" (click)="close()"></ion-icon>
+      </ion-title>
     </ion-toolbar>
   </ion-header>
     
@@ -14,6 +16,6 @@
   
   <ion-footer>
     <div class="sb-popover-footer">
-      <button class="sb-popover-action-btn popover-color" (click)="continue()">{{'COPY' | translate}}</button>
+      <button class="sb-popover-action-btn popover-color" (click)="copy()">{{'COPY' | translate}}</button>
     </div>
   </ion-footer>
