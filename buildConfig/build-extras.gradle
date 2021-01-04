@@ -100,26 +100,25 @@ android {
     flavorDimensions "default"
 
     productFlavors {
-        //  dev {
-        //     applicationId "${dev_app_id}"
-        //     flavorDimensions "default"
-        //     resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
-        //     resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
-        //     resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
-        //     resValue("string", "custom_scheme_url", "${dev_custom_scheme}")
-        //     //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
-        //     buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
-        //     buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
-        //     buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
-        //     buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
-        //     buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
-        //     buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
-        //     buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
-        //     buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
-        //     buildConfigField 'String', 'OAUTH_SESSION', '"org.genie.KeycloakOAuthSessionService"'
-        //     buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
-        //     buildConfigField 'String', 'TOU_BASE_URL', "\"${dev_tou_base_url}\""
-        // }
+         dev {
+            applicationId "${dev_app_id}"
+            flavorDimensions "default"
+            resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
+            resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
+            resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
+            resValue("string", "custom_scheme_url", "${dev_custom_scheme}")
+            //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
+            buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
+            buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
+            buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
+            buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
+            buildConfigField 'String', 'TOU_BASE_URL', "\"${dev_tou_base_url}\""
+        }
 
         staging {
             applicationId "${staging_app_id}"
@@ -128,7 +127,6 @@ android {
             resValue("string", "deeplink_ncert_url", "${staging_deeplink_ncert_url}")
             resValue("string", "deeplink_igot_url", "${staging_deeplink_igot_url}")
             resValue("string", "custom_scheme_url", "${staging_custom_scheme}")
-            // resValue("string", "app_code_push_id", "${staging_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
@@ -137,31 +135,29 @@ android {
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${staging_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
-            buildConfigField 'String', 'OAUTH_SESSION', '"org.genie.KeycloakOAuthSessionService"'
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
             buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
         }
 
-        // production {
-        //     applicationId "${production_app_id}"
-        //     flavorDimensions "default"
-        //     resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
-        //     resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
-        //     resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
-        //     resValue("string", "custom_scheme_url", "${production_custom_scheme}")
-        //     //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
-        //     buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
-        //     buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
-        //     buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
-        //     buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
-        //     buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
-        //     buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
-        //     buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
-        //     buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
-        //     buildConfigField 'String', 'OAUTH_SESSION', '"org.genie.KeycloakOAuthSessionService"'
-        //     buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
-        //     buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
-        // }
+        production {
+            applicationId "${production_app_id}"
+            flavorDimensions "default"
+            resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
+            resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
+            resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
+            resValue("string", "custom_scheme_url", "${production_custom_scheme}")
+            //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
+            buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
+            buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
+            buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
+            buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
+            buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
+            buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
+            buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
+            buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
+            buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
+        }
     }
 
     task myclean(type: Delete) {

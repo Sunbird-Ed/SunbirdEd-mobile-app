@@ -21,7 +21,7 @@
     <ion-label position="stacked" class="custom-label">
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
-    <ion-icon name="calendar-outline" slot="start"></ion-icon>
+    <ion-icon name="calendar" slot="start"></ion-icon>
     <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"  displayFormat="DD/MM/YYYY" display-timezone="utc"
     value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date" placeholder={{today}}>
     </ion-datetime>
@@ -30,22 +30,22 @@
     <ion-label position="stacked" class="custom-label">
       {{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}<span class="reuired-field">* </span>
     </ion-label>
-    <ion-icon name="newspaper-outline" slot="start"></ion-icon>
+    <ion-icon name="newspaper" slot="start"></ion-icon>
     <ion-textarea type="text" [(ngModel)]="newTask.name">
     </ion-textarea>
   </ion-item>
   <div class="attachments-box">
     <div *ngIf="newTask.attachments.length > 0">
       <p *ngFor="let file of newTask.attachments">
-        <ion-icon name="attach-outline" class="img"></ion-icon>
+        <ion-icon name="attach" class="img"></ion-icon>
         {{file.name}}
       </p>
     </div>
     <ion-row class="file-box">
       <ion-col size="6" class="file-list">
         <div *ngIf="newTask.attachments.length == 0">
-          <ion-icon name="image-outline"></ion-icon>
-          <ion-icon name="attach-outline"></ion-icon>
+          <ion-icon name="image"></ion-icon>
+          <ion-icon name="attach"></ion-icon>
         </div>
       </ion-col>
       <ion-col size="6">
