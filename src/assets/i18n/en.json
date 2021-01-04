@@ -1122,5 +1122,7 @@
   "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile Number for State/ Org",
   "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email ID for State/ Org",
   "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page",
+  "COPY_TRACE_ID": "Copy trace id",
+  "COPY_TRACE_ID_DESC": "Copy trace id for support",
   "LEADER": "Leader"
 }

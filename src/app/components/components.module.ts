@@ -57,6 +57,7 @@ import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup
 import {
   ProfileNameConfirmationPopoverComponent
 } from './popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/copy-trace-id-popup.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import {
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -154,7 +156,8 @@ import {
     ExploreBooksSortComponent,
     ConsentPiiPopupComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -201,7 +204,8 @@ import {
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
