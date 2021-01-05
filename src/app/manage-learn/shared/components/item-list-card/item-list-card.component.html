@@ -1,17 +1,34 @@
 <ion-card (click)="programDetails(id)" class="card-container">
-  <ion-card-header>
-    <div class="d-flex flex-ai-center flex-jc-space-between">
-      <div class="title" text-capitalize>
+  <ion-card-content>
+    <div class="d-flex flex-jc-ai-center">
+      <div>
+        <ng-content select="[color]"></ng-content>
+      </div>
+      <div class="flex-dc d-flex flex-basis-1">
+        <div class="d-flex flex-ai-center flex-jc-space-between">
+          <div class="title w-90">
+            {{ title | titlecase }}
+          </div>
+          <ng-content select="[arrow]"></ng-content>
+          <ng-content select="[report]"></ng-content>
+        </div>
+        <div class="info">
+          <span>{{ subTitle | titlecase }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!--  -->
+    <!-- <div class="d-flex flex-ai-center flex-jc-space-between">
+      <div class="title d-flex flex-ai-center title" text-capitalize>
         <ng-content select="[color]"></ng-content>
         {{ title | titlecase }}
       </div>
       <ng-content select="[arrow]"></ng-content>
       <ng-content select="[report]"></ng-content>
     </div>
-  </ion-card-header>
-  <ion-card-content>
     <div class="info grade_ellipsis">
       <span>{{ subTitle | titlecase }}</span>
-    </div>
+    </div> -->
   </ion-card-content>
 </ion-card>
