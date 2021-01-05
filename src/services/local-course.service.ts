@@ -13,8 +13,8 @@ import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
-import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
-import { Events, PopoverController } from '@ionic/angular';
+import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
+import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
@@ -323,4 +323,25 @@ export class LocalCourseService {
     }
     return true;
   }
+
+  fetchAssessmentStatus(contentStatusData, identifier) {
+    const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
+      isLastAttempt: false,
+      isContentDisabled: false
+    }
+    if (contentStatusData && contentStatusData.contentList) {
+      contentStatusData.contentList.forEach((item) => {
+        if (item.contentId === identifier && item.bestScore) {
+          if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
+            assesmentsStatus.isLastAttempt = true;
+          }
+          if (AssessmentConstant.MAX_ATTEMPTS <= item.score.length) {
+            assesmentsStatus.isContentDisabled = true;
+          }
+        }
+      });
+    }
+    return assesmentsStatus;
+  }
+
 }
