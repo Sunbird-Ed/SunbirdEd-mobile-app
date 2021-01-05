@@ -657,4 +657,35 @@ export class CommonUtilService {
         }
     }
 
+    async handleAssessmentStatus(assessmentStatus) {
+        if (assessmentStatus.isContentDisabled) {
+            this.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+            return true;
+        }
+        if (assessmentStatus.isLastAttempt) {
+            return await this.showAssessmentLastAttemptPopup();
+        }
+        return false;
+    }
+
+    async showAssessmentLastAttemptPopup() {
+        const confirm = await this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                sbPopoverMainTitle: this.translateMessage('ASSESSMENT_LAST_ATTEMPT_MESSAGE'),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('CONTINUE'),
+                        btnClass: 'popover-color'
+                    },
+                ],
+            },
+            backdropDismiss: false,
+            cssClass: 'sb-popover warning',
+        });
+        await confirm.present();
+        await confirm.onDidDismiss();
+        return false;
+    }
+
 }

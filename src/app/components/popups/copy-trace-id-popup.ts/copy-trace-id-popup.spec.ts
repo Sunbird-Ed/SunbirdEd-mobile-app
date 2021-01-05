@@ -1,7 +1,8 @@
-import { Events, PopoverController, Platform } from '@ionic/angular';
+import { Events, PopoverController, Platform, NavParams } from '@ionic/angular';
 import { CopyTraceIdPopoverComponent } from './copy-trace-id-popup.component';
 import { CommonUtilService, UtilityService } from '@app/services';
 import { Location } from '@angular/common';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 describe('CopyTraceIdPopoverComponent', () => {
     let copyTraceIdPopoverComponent: CopyTraceIdPopoverComponent;
@@ -13,8 +14,8 @@ describe('CopyTraceIdPopoverComponent', () => {
         dismiss: jest.fn()
     };
 
-    const mockPlatform: Partial<Platform> = {};
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockNavParams: Partial<NavParams> = {};
+    const mockSocialSharing: Partial<SocialSharing> = {};
     const mockLocation: Partial<Location> = {
         back: jest.fn()
     };
@@ -22,7 +23,8 @@ describe('CopyTraceIdPopoverComponent', () => {
     beforeAll(() => {
         copyTraceIdPopoverComponent = new CopyTraceIdPopoverComponent(
             mockPopOverController as PopoverController,
-            mockCommonUtilService as CommonUtilService
+            mockSocialSharing as SocialSharing,
+            mockNavParams as NavParams,
         );
     });
 
@@ -34,17 +36,6 @@ describe('CopyTraceIdPopoverComponent', () => {
         expect(copyTraceIdPopoverComponent).toBeTruthy();
     });
 
-    it('should check network conectivity on ionview will enter', () => {
-        // arrange
-        mockCommonUtilService.networkInfo = {
-            isNetworkAvailable: true
-        }
-        // act
-        copyTraceIdPopoverComponent.ionViewWillEnter();
-        // assert
-        expect(copyTraceIdPopoverComponent.isOnline).toBe( true );
-    });
-
     it('should dismiss the popup on closePopOver', () => {
         // arrange
         // act
@@ -53,6 +44,16 @@ describe('CopyTraceIdPopoverComponent', () => {
         expect(mockPopOverController.dismiss).toHaveBeenCalledWith();
     });
 
+    it('should dismiss the popup and call social share on copy', () => {
+        // arrange
+        mockSocialSharing.share = jest.fn()
+        copyTraceIdPopoverComponent.traceId = 'some_trace_id'
+        // act
+        copyTraceIdPopoverComponent.copy();
+        // assert
+        expect(mockPopOverController.dismiss).toBeCalled();
+        expect(mockSocialSharing.share).toHaveBeenCalledWith('some_trace_id');
+    });
     
 
 });
