@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @Component({
   selector: 'app-copy-trace-id-popover',
@@ -8,19 +8,25 @@ import { CommonUtilService } from '@app/services';
 })
 export class CopyTraceIdPopoverComponent {
 
-  isOnline = true;
+  traceId: string;
 
   constructor(
     private popOverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService
+    private socialSharing: SocialSharing,
+    private navParams: NavParams
   ) { }
 
   ionViewWillEnter() {
-    this.isOnline = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.traceId = this.navParams.get('traceId');
   }
 
   close() {
     this.popOverCtrl.dismiss();
+  }
+
+  copy(){
+    this.popOverCtrl.dismiss();
+    this.socialSharing.share(this.traceId);
   }
 
 }
