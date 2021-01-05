@@ -1,11 +1,13 @@
 import { Location } from '@angular/common';
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
+import { TranslateService } from '@ngx-translate/core';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-questionnaire',
@@ -17,11 +19,10 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   @ViewChild('pageTop') pageTop: IonContent;
   private _appHeaderSubscription?: Subscription;
 
-
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: []
+    actionButtons: [],
   };
 
   questions: any;
@@ -64,7 +65,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     // private ngps: NetworkGpsProvider,
     private headerService: AppHeaderService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private translate: TranslateService,
+    private router: Router
   ) {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
@@ -80,14 +83,13 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.selectedEvidenceIndex = params.evidenceIndex;
       this.selectedSectionIndex = params.sectionIndex;
       this.schoolName = params.schoolName;
-    })
+    });
 
-    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe((eventName) => {
       if (eventName.name === 'questionMap') {
         this.openQuestionMap();
       }
     });
-
 
     // Online event
     this.events.subscribe('network:online', () => {
@@ -104,35 +106,43 @@ export class QuestionnairePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     // this.loader.startLoader();
-    this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-      this.schoolData = data;
-      const currentEvidences = this.schoolData['assessment']['evidences'];
-      this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
-      this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
-      this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions']);
+    this.localStorage
+      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
+      .then((data) => {
+        this.schoolData = data;
+        const currentEvidences = this.schoolData['assessment']['evidences'];
+        this.enableQuestionReadOut = this.schoolData['solution']['enableQuestionReadOut'];
+        this.captureGpsLocationAtQuestionLevel = this.schoolData['solution']['captureGpsLocationAtQuestionLevel'];
+        this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
+          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
+            'questions'
+          ]
+        );
 
-      this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
-      this.localImageListKey = "images_" + this.selectedEvidenceId + "_" + this.submissionId;
-      this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
+        this.selectedEvidenceId = currentEvidences[this.selectedEvidenceIndex].externalId;
+        this.localImageListKey = 'images_' + this.selectedEvidenceId + '_' + this.submissionId;
+        this.isViewOnly = !currentEvidences[this.selectedEvidenceIndex]['startTime'] ? true : false;
 
-      this.questions = currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
-      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].totalQuestions = this.questions.length;
-      this.dashbordData = {
-        questions: this.questions,
-        evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
-        sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
-        currentViewIndex: this.start
-      }
-      this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted
-      if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-        // document.getElementById('stop').style.pointerEvents = 'none';
-
-      }
-      // this.loader.stopLoader();
-    }).catch(error => {
-      // this.loader.stopLoader();
-
-    })
+        this.questions =
+          currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions'];
+        this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
+          this.selectedSectionIndex
+        ].totalQuestions = this.questions.length;
+        this.dashbordData = {
+          questions: this.questions,
+          evidenceMethod: currentEvidences[this.selectedEvidenceIndex]['name'],
+          sectionName: currentEvidences[this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].name,
+          currentViewIndex: this.start,
+        };
+        this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
+        if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
+          // document.getElementById('stop').style.pointerEvents = 'none';
+        }
+        // this.loader.stopLoader();
+      })
+      .catch((error) => {
+        // this.loader.stopLoader();
+      });
   }
 
   ionViewWillEnter() {
@@ -143,18 +153,16 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ionViewDidLoad() {
-  }
+  ionViewDidLoad() {}
 
   async openQuestionMap() {
-    debugger
+    
     const questionModal = await this.modalCtrl.create({
       component: QuestionMapModalComponent,
       componentProps: {
-        data: this.dashbordData
-      }
+        data: this.dashbordData,
+      },
     });
-    debugger
     await questionModal.present();
     const { data } = await questionModal.onDidDismiss();
     if (data >= 0) {
@@ -168,39 +176,54 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   next(status?: string) {
     this.pageTop.scrollToTop();
     if (this.questions[this.start].responseType === 'pageQuestions') {
-      this.questions[this.start].endTime = this.questions[this.start] ? Date.now() : "";
+      this.questions[this.start].endTime = this.questions[this.start] ? Date.now() : '';
       this.questions[this.start].isCompleted = this.utils.isPageQuestionComplete(this.questions[this.start]);
     }
     if (this.questions[this.start].children.length) {
-      this.updateTheChildrenQuestions(this.questions[this.start])
+      this.updateTheChildrenQuestions(this.questions[this.start]);
     }
     if (this.end < this.questions.length && !status) {
-      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData)
+      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
       this.start++;
-      this.end++;;
+      this.end++;
       this.dashbordData.currentViewIndex = this.start;
-      if (this.questions[this.start].visibleIf.length && this.questions[this.start].visibleIf[0] && !this.checkForQuestionDisplay(this.questions[this.start])) {
+      if (
+        this.questions[this.start].visibleIf.length &&
+        this.questions[this.start].visibleIf[0] &&
+        !this.checkForQuestionDisplay(this.questions[this.start])
+      ) {
         this.questions[this.start].isCompleted = true;
         this.next();
-      } else if (this.questions[this.start].visibleIf.length && this.questions[this.start].visibleIf[0] && this.checkForQuestionDisplay(this.questions[this.start])) {
+      } else if (
+        this.questions[this.start].visibleIf.length &&
+        this.questions[this.start].visibleIf[0] &&
+        this.checkForQuestionDisplay(this.questions[this.start])
+      ) {
       }
     } else if (status === 'completed') {
-      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].sections[this.selectedSectionIndex].progressStatus = this.getSectionStatus();
-      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData).then(success => {
-        this.schoolData.observation || this.schoolData.survey ? this.checkForAllEcmCompletion() : this.location.back();
-      })
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].sections[
+        this.selectedSectionIndex
+      ].progressStatus = this.getSectionStatus();
+      this.localStorage
+        .setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData)
+        .then((success) => {
+          this.schoolData.observation || this.schoolData.survey
+            ? this.checkForAllEcmCompletion()
+            : this.location.back();
+        });
     } else {
-      this.next('completed')
+      this.next('completed');
     }
     this.updateCompletedQuestionCount();
     // this.calculateCompletedQuestion();
   }
 
-
   getSectionStatus(): string {
     let allAnswered = true;
     let currentEcm = this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex];
-    let currentSection = this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].sections[this.selectedSectionIndex];
+    let currentSection = this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].sections[
+      this.selectedSectionIndex
+    ];
     for (const question of currentSection.questions) {
       if (!question.isCompleted) {
         allAnswered = false;
@@ -218,65 +241,69 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     } else if (!currentSection.progressStatus) {
       currentSection.progressStatus = '';
     }
-    return currentSection.progressStatus
+    return currentSection.progressStatus;
   }
 
-
   checkForAllEcmCompletion() {
-    this.localStorage.getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId)).then(data => {
-      let completedAllSections = true;
-      let currentEcm = data.assessment.evidences[this.selectedEvidenceIndex];
-      for (const section of currentEcm.sections) {
-        if (section.progressStatus !== 'completed') {
-          completedAllSections = false;
-          break
+    this.localStorage
+      .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
+      .then((data) => {
+        let completedAllSections = true;
+        let currentEcm = data.assessment.evidences[this.selectedEvidenceIndex];
+        for (const section of currentEcm.sections) {
+          if (section.progressStatus !== 'completed') {
+            completedAllSections = false;
+            break;
+          }
         }
-      }
-      if (completedAllSections && !currentEcm.isSubmitted) {
-        this.openActionSheet();
-      } else {
-        this.location.back();
-      }
-    }).catch(error => {
-
-    })
+        if (completedAllSections && !currentEcm.isSubmitted) {
+          this.openActionSheet();
+        } else {
+          this.location.back();
+        }
+      })
+      .catch((error) => {});
   }
 
   async openActionSheet() {
     let translateObject;
-    // this.translate.get(['actionSheet.submitForm', 'actionSheet.previewForm', 'actionSheet.saveForm']).subscribe(translations => {
-    //   translateObject = translations;
-    // })
+    this.translate
+      .get(['FRMELEMNTS_BTN_SUBMIT_FORM', 'FRMELEMNTS_BTN_PREVIEW_FORM', 'FRMELEMNTS_BTN_SAVE_FORM'])
+      .subscribe((translations) => {
+        translateObject = translations;
+      });
     let actionSheet = await this.actionSheetCtrl.create({
       // title: 'Modify your album',
       buttons: [
         {
-          text: translateObject['actionSheet.submitForm'],
+          text: translateObject['FRMELEMNTS_BTN_SUBMIT_FORM'],
           icon: 'cloud-upload',
           handler: () => {
             this.checkForNetworkTypeAlert();
-          }
+          },
         },
         {
-          text: translateObject['actionSheet.previewForm'],
+          text: translateObject['FRMELEMNTS_BTN_PREVIEW_FORM'],
           icon: 'clipboard',
           handler: () => {
-            const payload = {
-              _id: this.submissionId,
-              name: this.schoolName,
-              selectedEvidence: this.selectedEvidenceIndex
-            }
+            this.router.navigate([RouterLinks.SUBMISSION_PREVIEW], {
+              queryParams: {
+                submissionId: this.submissionId,
+                name: this.schoolName,
+                selectedEvidenceIndex: this.selectedEvidenceIndex,
+              },
+            });
             // this.navCtrl.push(PreviewPage, payload);
-          }
+          },
         },
         {
-          text: translateObject['actionSheet.saveForm'],
+          text: translateObject['FRMELEMNTS_BTN_SAVE_FORM'],
           icon: 'filing',
           handler: () => {
             this.location.back();
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     actionSheet.present();
   }
@@ -352,29 +379,41 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     //     this.toast.openToast(translations);
     //   })
     // }
-
-
   }
 
-
   updateCompletedQuestionCount() {
-    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex].completedQuestions = this.utils.getCompletedQuestionsCount(this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions']);
-    this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex]['questions']);
-
+    this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][
+      this.selectedSectionIndex
+    ].completedQuestions = this.utils.getCompletedQuestionsCount(
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
+        'questions'
+      ]
+    );
+    this.countCompletedQuestion = this.utils.getCompletedQuestionsCount(
+      this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex]['sections'][this.selectedSectionIndex][
+        'questions'
+      ]
+    );
   }
 
   updateLocalData(): void {
-    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData)
+    this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
   }
 
   checkForQuestionDisplay(qst): boolean {
-    return this.utils.checkForDependentVisibility(qst, this.questions)
+    return this.utils.checkForDependentVisibility(qst, this.questions);
   }
 
   updateTheChildrenQuestions(parentQuestion) {
     for (const child of parentQuestion.children) {
       for (const question of this.questions) {
-        if (child === question._id && (eval('"' + parentQuestion.value + '"' + question.visibleIf[0].operator + '"' + question.visibleIf[0].value + '"')) && !question.value) {
+        if (
+          child === question._id &&
+          eval(
+            '"' + parentQuestion.value + '"' + question.visibleIf[0].operator + '"' + question.visibleIf[0].value + '"'
+          ) &&
+          !question.value
+        ) {
           question.isCompleted = false;
         } else if (child === question._id && parentQuestion.value !== question.visibleIf[0].value) {
           question.isCompleted = true;
@@ -386,14 +425,14 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   back() {
     this.pageTop.scrollToTop();
     if (this.questions[this.start].responseType === 'pageQuestions') {
-      this.questions[this.start].endTime = this.questions[this.start] ? Date.now() : "";
+      this.questions[this.start].endTime = this.questions[this.start] ? Date.now() : '';
       this.questions[this.start].isCompleted = this.utils.isPageQuestionComplete(this.questions[this.start]);
     }
     if (this.questions[this.start].children.length) {
-      this.updateTheChildrenQuestions(this.questions[this.start])
+      this.updateTheChildrenQuestions(this.questions[this.start]);
     }
     if (this.start > 0) {
-      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData)
+      this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
       this.start--;
       this.dashbordData.currentViewIndex = this.start;
       this.end--;
@@ -410,13 +449,12 @@ export class QuestionnairePage implements OnInit, OnDestroy {
 
   setModalRefernc(refrc): void {
     this.modalRefrnc = refrc;
-    this.modalRefrnc.onDidDismiss(data => {
+    this.modalRefrnc.onDidDismiss((data) => {
       if (data >= 0) {
         this.start = data;
         this.end = data + 1;
         this.dashbordData.currentViewIndex = data;
       }
-    })
+    });
   }
-
 }

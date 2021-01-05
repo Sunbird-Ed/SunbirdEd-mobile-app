@@ -1,0 +1,25 @@
+{
+    "result": true,
+    "data": {
+        "images": [{
+            "filePath": "5f5615e6ff083c29b9153821/4267621e-903e-4934-8ed7-38121a4e3c99/1600762862562.jpg",
+            "url": "https://storage.googleapis.com/download/storage/v1/b/sl-prod-storage/o/5f5615e6ff083c29b9153821%2F4267621e-903e-4934-8ed7-38121a4e3c99%2F1600762862562.jpg?alt=media",
+            "extension": "jpg"
+        }, {
+            "filePath": "5f5615e6ff083c29b9153821/4267621e-903e-4934-8ed7-38121a4e3c99/tmp_2020-8-12-24852719077216280089.jpg",
+            "url": "https://storage.googleapis.com/download/storage/v1/b/sl-prod-storage/o/5f5615e6ff083c29b9153821%2F4267621e-903e-4934-8ed7-38121a4e3c99%2Ftmp_2020-8-12-24852719077216280089.jpg?alt=media",
+            "extension": "jpg"
+        }, {
+            "filePath": "5f5615e6ff083c29b9153821/4267621e-903e-4934-8ed7-38121a4e3c99/tmp_IMG_20200912_1421565733909776634202412.jpg",
+            "url": "https://storage.googleapis.com/download/storage/v1/b/sl-prod-storage/o/5f5615e6ff083c29b9153821%2F4267621e-903e-4934-8ed7-38121a4e3c99%2Ftmp_IMG_20200912_1421565733909776634202412.jpg?alt=media",
+            "extension": "jpg"
+        }, {
+            "filePath": "5f5615e6ff083c29b9153821/4267621e-903e-4934-8ed7-38121a4e3c99/tmp_2020-8-12-18426572216325117430.jpg",
+            "url": "https://storage.googleapis.com/download/storage/v1/b/sl-prod-storage/o/5f5615e6ff083c29b9153821%2F4267621e-903e-4934-8ed7-38121a4e3c99%2Ftmp_2020-8-12-18426572216325117430.jpg?alt=media",
+            "extension": "jpg"
+        }],
+        "videos": [],
+        "documents": [],
+        "remarks": []
+    }
+}

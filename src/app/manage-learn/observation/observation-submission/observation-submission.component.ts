@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { Platform } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
 import { Location } from '@angular/common';
@@ -10,6 +10,8 @@ import { RouterLinks } from '@app/app/app.constant';
 import { LocalStorageService, UtilsService } from '../../core';
 import { storageKeys } from '../../storageKeys';
 import { EvidenceService } from '../../core/services/evidence.service';
+import { ScroreReportMenusComponent } from '../../shared/components/scrore-report-menus/scrore-report-menus.component';
+import { ObservationReportsComponent } from '../../observation-report/observation-reports/observation-reports.component';
 
 @Component({
   selector: 'app-observation-submission',
@@ -46,8 +48,9 @@ export class ObservationSubmissionComponent implements OnInit {
     private router: Router,
     private localStorage: LocalStorageService,
     private utils: UtilsService,
-    private evdnsServ: EvidenceService
-  ) { }
+    private evdnsServ: EvidenceService,
+    private popoverCtrl: PopoverController
+  ) {}
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -61,8 +64,6 @@ export class ObservationSubmissionComponent implements OnInit {
       this.backButtonFunc.unsubscribe();
     }
   }
-
-
 
   ngOnInit() {
     this.programIndex = this.observationService.getProgramIndex();
@@ -197,7 +198,7 @@ export class ObservationSubmissionComponent implements OnInit {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }
 
   goToEcm(submission) {
@@ -210,7 +211,12 @@ export class ObservationSubmissionComponent implements OnInit {
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
         if (successData.assessment.evidences.length > 1) {
-          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.ECM_LISTING}`]);
+          this.router.navigate([RouterLinks.ECM_LISTING], {
+            queryParams: {
+              submisssionId: submissionId,
+              schoolName: heading,
+            },
+          });
 
           // this.navCtrl.push('EvidenceListPage', {
           //   _id: submissionId,
@@ -220,22 +226,13 @@ export class ObservationSubmissionComponent implements OnInit {
         } else {
           if (successData.assessment.evidences[0].startTime) {
             this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
-            let extras = {
-              _id: submissionId,
-              name: heading,
-              selectedEvidence: 0,
-              // recentlyUpdatedEntity: this.recentlyUpdatedEntity,
-            };
-            this.observationService.setSectionNavExtras(extras);
-            // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
-            this.router.navigate([RouterLinks.SECTION_LISTING],
-              {
-                queryParams: {
-                  submisssionId: submissionId,
-                  evidenceIndex: 0,
-                  schoolName: heading
-                }
-              })
+            this.router.navigate([RouterLinks.SECTION_LISTING], {
+              queryParams: {
+                submisssionId: submissionId,
+                evidenceIndex: 0,
+                schoolName: heading,
+              },
+            });
             // this.navCtrl.push('SectionListPage', {
             //   _id: submissionId,
             //   name: heading,
@@ -248,7 +245,7 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }
   openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
@@ -260,8 +257,33 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    this.observationService.setSectionNavExtras(options);
-
     this.evdnsServ.openActionSheet(options, 'Observation');
+  }
+  async openMenu(event, submission, index) {
+    if (submission.ratingCompletedAt) {
+      let popover = await this.popoverCtrl.create({
+        component: ScroreReportMenusComponent,
+        componentProps: {
+          submission: submission,
+          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        },
+        event: event,
+      });
+      popover.present();
+    } else {
+      this.router.navigate([
+        RouterLinks.OBSERVATION_REPORTS,
+        {
+          queryParams: {
+            submissionId: submission._id,
+            entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+          },
+        },
+      ]);
+      // this.navCtrl.push(ObservationReportsPage, {
+      //   submissionId: submission._id,
+      //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+      // });
+    }
   }
 }

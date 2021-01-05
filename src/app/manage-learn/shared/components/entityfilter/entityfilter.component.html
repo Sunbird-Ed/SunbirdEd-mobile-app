@@ -3,16 +3,16 @@
     <ion-item lines="none">
       <div style="margin-top: 15px">
         <ion-label>
-          <div class="title">{{ 'Select Entity' }}</div>
+          <div class="title">{{ 'FRMELEMENTS_LBL_SELECT_ENTITY' | translate }}</div>
         </ion-label>
       </div>
     </ion-item>
   </ion-list>
   <ion-toolbar>
     <!-- <div class="" *ngIf="!isProfileAssignedWithState"> -->
-    <div >
+    <div>
       <ion-item>
-        <ion-label>{{ 'Selected State' }}</ion-label>
+        <ion-label>{{ 'FRMELEMENTS_LBL_SELECTED_STATE' | translate }}</ion-label>
         <ion-select
           [(ngModel)]="selectedState"
           color="primary"
@@ -20,14 +20,8 @@
           #selectStateRef
           interface="action-sheet"
         >
-          <!-- <ion-option *ngFor="let state of allStates" [value]="state._id">
+          <ion-select-option *ngFor="let state of allStates" [value]="state._id">
             <b>{{ state?.name }}</b>
-          </ion-option> -->
-          <ion-select-option value="1">
-            Kerala
-          </ion-select-option>
-          <ion-select-option value="2">
-           Karnataka
           </ion-select-option>
         </ion-select>
       </ion-item>
@@ -36,15 +30,14 @@
     <div class="_flex-box searchCard">
       <ion-searchbar
         debounce="500"
-        color="primary"
         (keyup.enter)="searchEntity()"
         [(ngModel)]="searchQuery"
         placeholder="Search Entity "
         (ionClear)="searchQuery = ''; searchEntity()"
       ></ion-searchbar>
-      <!-- <button ion-button icon-only (click)="searchEntity()" class="serachBtn">
+      <ion-button ion-button icon-only (click)="searchEntity()" class="serachBtn">
         <ion-icon name="search" class="searchIcon"></ion-icon>
-      </button> -->
+      </ion-button>
     </div>
   </ion-toolbar>
 
@@ -83,7 +76,7 @@
     </div>
   </ion-toolbar> -->
 </ion-header>
-<!-- <ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
+<ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
   <div *ngIf="selectedState || profileMappedState">
     <ion-list *ngIf="selectableList" (ionScroll)="detectBottom()">
       <ng-container *ngFor="let listItem of selectableList">
@@ -95,7 +88,7 @@
     </ion-list>
     <ion-list *ngIf="!selectableList?.length && !loading">
       <div class="_flex-box _justify-content-center noDataMsg">
-        {{ 'message.noSchoolFound' | translate }}
+        {{ 'FRMELEMNTS_MSG_NO_SCHOOL_FOUND' | translate }}
       </div>
     </ion-list>
   </div>
@@ -109,22 +102,22 @@
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
-</ion-content> -->
-<!-- <ion-footer no-shadow>
+</ion-content>
+<ion-footer no-shadow>
   <ion-toolbar class="_toolbar-background-md" position="bottom">
     <ion-row>
       <ion-col>
-        <button ion-button full (click)="cancel()" class="btnText">
+        <ion-button ion-button full (click)="cancel()" class="w-100">
           <ion-icon name="close" margin-right></ion-icon>
-          {{ 'buttons.cancel' | translate }}
-        </button>
+          {{ 'FRMELEMENTS_BTN_CANCEL' | translate }}
+        </ion-button>
       </ion-col>
       <ion-col>
-        <button ion-button full (click)="addSchools()" class="btnText" [disabled]="selectedListCount.count === 0">
+        <ion-button ion-button full (click)="addSchools()" class="w-100" [disabled]="selectedListCount.count === 0">
           <ion-icon name="add" margin-right></ion-icon>
-          {{ 'buttons.add' | translate }}
-        </button>
+          {{ 'FRMELEMENTS_BTN_ADD' | translate }}
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-toolbar>
-</ion-footer> -->
+</ion-footer>
