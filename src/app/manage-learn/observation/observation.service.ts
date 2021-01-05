@@ -10,11 +10,7 @@ export class ObservationService {
   private programIndex;
   private solutionIndex;
   private entityIndex;
-  private sectionNavExtras = {
-    _id: null,
-    name: null,
-    selectedEvidence:null
-  };
+
 
   constructor(
     private httpClient: HttpClient,
@@ -28,11 +24,7 @@ export class ObservationService {
     this.solutionIndex = solutionIndex;
     this.entityIndex = entityIndex;
   }
-  public setSectionNavExtras(obj) {
-    this.sectionNavExtras._id = obj._id;
-    this.sectionNavExtras.name = obj.name;
-    this.sectionNavExtras.selectedEvidence = obj.selectedEvidence;
-  }
+
 
   public getProgramIndex() {
     return this.programIndex;
@@ -44,9 +36,7 @@ export class ObservationService {
   public getEntityIndex() {
     return this.entityIndex;
   }
-  public getSectionNavExtras() {
-    return this.sectionNavExtras;
-  }
+ 
 
   getAssessmentDetailsForObservation(event, programs) {
     return new Promise((resolve, reject) => {
@@ -57,7 +47,7 @@ export class ObservationService {
       let observationId = event.submission.observationId;
       this.httpClient.get('assets/dummy/obsAssessmentDetails.json').subscribe((success: any) => {
         console.log(success);
-        //  this.ulsdp.mapSubmissionDataToQuestion(success.result, true);//TODO:check if required
+         this.ulsdp.mapSubmissionDataToQuestion(success.result, true);
         const generalQuestions = success.result['assessment']['generalQuestions']
           ? success.result['assessment']['generalQuestions']
           : null;

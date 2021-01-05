@@ -1,0 +1,19 @@
+<div *ngIf="chartObj">
+  <div class="heading">
+    <h4>{{ questionNumber }}) {{ data?.question }}</h4>
+  </div>
+  <!-- <highcharts-chart
+    [(update)]="updateFlag"
+    [Highcharts]="Highcharts"
+    [options]="chartObj"
+    [constructorType]="chartConstructor"
+    [oneToOne]="oneToOneFlag"
+    [runOutsideAngular]="runOutsideAngularFlag"
+    *ngIf="data?.chart?.data"
+  >
+  </highcharts-chart> -->
+  <div *ngIf="data?.chart?.data">
+    <div id="{{'container'+ questionNumber }}"></div>
+  </div>
+  <div class="errorMsg" *ngIf="!data?.chart?.data">No data found</div>
+</div>

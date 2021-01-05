@@ -568,9 +568,16 @@ export class RouterLinks {
     public static readonly OBSERVATION = 'observation';
     public static readonly SECTION_LISTING = 'section-listing';
     public static readonly ECM_LISTING = 'ecm-listing';
+    public static readonly SUBMISSION_PREVIEW = 'submission_preview';
+    public static readonly IMAGE_LISTING= 'image-listing';
+    public static readonly ALL_EVIDENCE= 'all-evidence';
+    
+    
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
+    public static readonly OBSERVATION_REPORTS= 'observation-reports';
+    public static readonly SURVEY_REPORTS= 'survey-reports';
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
 }

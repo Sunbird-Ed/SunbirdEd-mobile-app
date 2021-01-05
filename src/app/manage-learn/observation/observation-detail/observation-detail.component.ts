@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { AppHeaderService } from '@app/services';
-import { Platform, PopoverController } from '@ionic/angular';
+import { ModalController, Platform, PopoverController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
@@ -32,7 +32,8 @@ export class ObservationDetailComponent implements OnInit {
     private httpClient: HttpClient,
     private observationService: ObservationService,
     private router: Router,
-    private popCtrl: PopoverController
+    private popCtrl: PopoverController,
+    private modalCtrl: ModalController
   ) {}
 
   ionViewWillEnter() {
@@ -48,8 +49,6 @@ export class ObservationDetailComponent implements OnInit {
       this.backButtonFunc.unsubscribe();
     }
   }
-
-
 
   ngOnInit() {
     this.programIndex = this.observationService.getProgramIndex();
@@ -131,10 +130,10 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   async openEntityFilter() {
-    const filterDialog = await this.popCtrl.create({
+    const filterDialog = await this.modalCtrl.create({
       component: EntityfilterComponent,
       componentProps: {},
-      cssClass: 'sb-popover',
+      // cssClass: 'sb-popover',
     });
     await filterDialog.present();
   }

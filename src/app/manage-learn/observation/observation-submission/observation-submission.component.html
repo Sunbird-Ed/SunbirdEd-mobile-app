@@ -30,7 +30,26 @@
     >
       <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
         <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
+        <ion-button
+          report
+          round
+          *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
+          (click)="$event.stopPropagation(); openMenu($event, submission, i)"
+        >
+          {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
+        </ion-button>
+        <!-- //TODO:Add report and more icon -->
       </app-item-list-card>
     </div>
+
+    <!-- //TODO REMOVE----------- -->
+    <div>
+      <app-item-list-card [title]="'Report'" subTitle="{{ '30 December-2020' }}">
+        <ion-button report round (click)="$event.stopPropagation(); openMenu($event, 1234, 1)">
+          {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
+        </ion-button>
+      </app-item-list-card>
+    </div>
+    <!-- //TODO Till Here---------- -->
   </ion-content>
 </ion-app>

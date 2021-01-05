@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { v4 as uuidv4 } from 'uuid'
-import * as moment from "moment";
-import * as _ from "underscore";
+import { Injectable } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
+import * as moment from 'moment';
+import * as _ from 'underscore';
 import { statusType } from '@app/app/manage-learn/core/constants/statuses.constant';
 
 @Injectable()
@@ -128,7 +128,6 @@ export class UtilsService {
            task.status = statusType.inProgress;
          } */
       }
-
     }
     projectData.status = this.calculateStatus(projectData.tasks);
 
@@ -211,7 +210,6 @@ export class UtilsService {
   }
 
   getAssessmentLocalStorageKey(entityId) {
-    
     return 'assessmentDetails_' + entityId;
   }
   setCurrentimageFolderName(evidenceId, schoolId) {
@@ -314,6 +312,23 @@ export class UtilsService {
       }
     }
     return count;
+  }
+
+  getImageNamesForQuestion(question) {
+    let imageArray = [];
+    if (question.responseType === 'matrix') {
+      for (const instance of question.value) {
+        for (const qst of instance) {
+          const newArray = qst.fileName.length ? imageArray.concat(qst.fileName) : imageArray;
+          imageArray = newArray;
+        }
+      }
+    } else {
+      // imageArray = [...imageArray, question.fileName]
+      const newArray = question.fileName.length ? imageArray.concat(question.fileName) : imageArray;
+      imageArray = newArray;
+    }
+    return imageArray;
   }
 
   getProjectData() {

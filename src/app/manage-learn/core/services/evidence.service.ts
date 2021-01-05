@@ -57,7 +57,13 @@ export class EvidenceService {
                 );
                 delete params.entityDetails;
                 // this.appCtrl.getRootNav().push('SectionListPage', params);
-                this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+                this.router.navigate([RouterLinks.SECTION_LISTING], {
+                  queryParams: {
+                    submisssionId: this.schoolId,
+                    evidenceIndex: this.evidenceIndex,
+                    schoolName: params.name,
+                  },
+                });
               },
             },
             {
@@ -66,7 +72,13 @@ export class EvidenceService {
               handler: () => {
                 delete params.entityDetails;
                 // this.appCtrl.getRootNav().push('SectionListPage', params);
-                this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
+                this.router.navigate([RouterLinks.SECTION_LISTING], {
+                  queryParams: {
+                    submisssionId: this.schoolId,
+                    evidenceIndex: this.evidenceIndex,
+                    schoolName: params.name,
+                  },
+                });
               },
             },
             {

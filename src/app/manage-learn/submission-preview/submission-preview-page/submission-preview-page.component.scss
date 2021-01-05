@@ -1,0 +1,23 @@
+@import 'src/assets/styles/base/_variables.scss';
+@import 'src/assets/styles/_custom-mixins.scss';
+@import 'src/assets/styles/_variables.scss';
+
+.question {
+  font-weight: 500;
+}
+
+.instanceQuest {
+  background: $gray-100;
+  border: 1px solid $gray-400;
+  padding: 10px;
+  margin: 2px 0;
+  border-radius: 2px;
+}
+.instacnce {
+  margin: 10px 0;
+  font-weight: 600 !important;
+}
+
+.matrixQuestion {
+  margin: 20px 0;
+}

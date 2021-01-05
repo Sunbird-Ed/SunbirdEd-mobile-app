@@ -79,6 +79,8 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Chooser } from '@ionic-native/chooser/ngx';
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
+import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -487,7 +489,9 @@ declare const sbutility;
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
     Camera,
     FilePath,
-    Chooser
+    Chooser,
+    PhotoViewer,
+    StreamingMedia
   ],
   bootstrap: [AppComponent],
   schemas: [
