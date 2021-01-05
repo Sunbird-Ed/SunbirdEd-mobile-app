@@ -71,6 +71,7 @@
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
     "common-form-elements": "1.0.8",
     "cordova-android": "^9.0.0",
+    "cordova-ios": "6.1.1",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-permissions": "^1.1.2",
     "cordova-plugin-androidx-adapter": "^1.1.3",

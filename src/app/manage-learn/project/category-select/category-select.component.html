@@ -1,0 +1,35 @@
+<div class="custom-popup">
+  <div class="pop-container" *ngIf="catgeoryForm">
+    <h5 style="text-align: center;">{{'FRMELEMNTS_LBL_CATEGORIES' | translate}}</h5>
+    <form [formGroup]="catgeoryForm">
+    <div *ngFor="let data of categoryData">
+      <div *ngIf="data.input == 'select'">
+        <ion-list>
+          <ion-item *ngFor="let category of data.options" (ionChange)="categorySelect($event,category)">
+            <ion-checkbox slot="start" [checked]="category.isChecked" value="{{category.value}}"
+              (ionChange)="categorySelect($event,category)">
+            </ion-checkbox>
+            <ion-label> {{ category.label}}</ion-label>
+          </ion-item>
+        </ion-list>
+        
+      </div>
+      <ion-item *ngIf="data.input == 'text' && data.show">
+        <ion-input type="text" name="{{data.field}}"  [formControlName]="data.field"  value="{{data.value}}"></ion-input>
+      </ion-item>
+    </div>
+    </form>
+    <ion-row class="bottom-buttons">
+      <ion-col size="6">
+        <ion-buttons (click)="close()" size="small" >
+          {{'FRMELEMNTS_BTN_CANCEL' | translate}} 
+        </ion-buttons>
+      </ion-col>
+      <ion-col size="6">
+        <ion-buttons (click)="submit()" size="small" >
+          {{'FRMELEMNTS_BTN_SUBMIT' | translate}}
+        </ion-buttons>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>

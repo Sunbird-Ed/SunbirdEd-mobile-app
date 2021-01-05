@@ -1,0 +1,57 @@
+<ion-toolbar>
+  <ion-title>
+    {{title | translate}}
+  </ion-title>
+  <ion-buttons (click)="close()" slot="start" class="padding">
+    <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+<ion-content>
+  <div *ngIf="subEntities ">
+    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)"></ion-searchbar>
+    <div class="ion-padding">
+      <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}}
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>{{'FRMELEMNTS_LBL_ENTITY' | translate}}</ion-label>
+              <ion-select interface="popover" value={{childEntity}} (ionChange)="selectSubEntity($event)">
+                <ion-select-option style="text-transform: capitalize !important;"  *ngFor="let subEntity of subEntities" value="{{subEntity.value}}">{{subEntity.name | titlecase}}</ion-select-option>
+                
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+      <!-- <ion-radio-group value=selectedEntity.value>
+        <ion-row style="margin: 0px -18px;">
+          <ion-col size="4" *ngFor="let subEntity of subEntities">
+            <ion-item lines="none">
+              <ion-label style="text-transform: capitalize;">{{subEntity.name}}</ion-label>
+              <ion-radio slot="start" color="success" value="{{subEntity.value}}"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-radio-group> -->
+
+      <h5 class="entity-name"> {{childEntity}}</h5>
+      <ion-radio-group>
+        <ion-card class="enitity-list" *ngFor="let entity of entities.content">
+          <ion-item lines="none">
+            <ion-label>{{entity.name}}</ion-label>
+            <ion-radio slot="start" (click)="selectEntity(entity)" value="{{entity.value}}">
+            </ion-radio>
+          </ion-item>
+        </ion-card>
+      </ion-radio-group>
+      <div class="loadmore-btn" *ngIf="entities.length && entityCount > entities.length">
+        <ion-button (click)="loadMoreEntities()">
+          {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer>
+  <div class="footer-btn" (click)="addEntity()">{{'FRMELEMNTS_BTN_ADD_ENTITY' | translate}}
+  </div>
+</ion-footer>

@@ -561,7 +561,9 @@ export class RouterLinks {
     public static readonly SYNC = 'sync';
     public static readonly PROJECT_EDIT = 'project-edit';
     public static readonly PROJECT_OPERATION = `project-operation`;
+    public static readonly CREATE_PROJECT = `create-project`;
     public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
+    public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
 
     public static readonly SOLUTIONS = 'solutions';
     public static readonly QUESTIONNAIRE = 'questionnaire';
