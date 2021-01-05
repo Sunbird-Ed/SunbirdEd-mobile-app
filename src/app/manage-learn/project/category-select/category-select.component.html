@@ -1,6 +1,6 @@
 <div class="custom-popup">
   <div class="pop-container" *ngIf="catgeoryForm">
-    <h5 style="text-align: center;">{{'LABELS.CATEGORY' | translate}}</h5>
+    <h5 style="text-align: center;">{{'FRMELEMNTS_LBL_CATEGORIES' | translate}}</h5>
     <form [formGroup]="catgeoryForm">
     <div *ngFor="let data of categoryData">
       <div *ngIf="data.input == 'select'">
@@ -22,12 +22,12 @@
     <ion-row class="bottom-buttons">
       <ion-col size="6">
         <ion-buttons (click)="close()" size="small" >
-          {{'LABELS.CANCEL' | translate}} 
+          {{'FRMELEMNTS_BTN_CANCEL' | translate}} 
         </ion-buttons>
       </ion-col>
       <ion-col size="6">
         <ion-buttons (click)="submit()" size="small" >
-          {{'LABELS.SUBMIT' | translate}}
+          {{'FRMELEMNTS_BTN_SUBMIT' | translate}}
         </ion-buttons>
       </ion-col>
     </ion-row>

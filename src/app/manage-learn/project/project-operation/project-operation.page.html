@@ -1,7 +1,7 @@
 <ion-content *ngIf="template" class="ion-padding">
   <div class="project-title">
     <ion-label position="floating" class="font-bold">
-      {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}}  
+      {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}}
     </ion-label>
     <ion-input type="text" [(ngModel)]="template.title" readonly="true" class="font-bold"> </ion-input>
   </div>
@@ -45,9 +45,6 @@
       <ion-icon name="caret-down" slot="end"></ion-icon>
     </ion-item>
   </div>
-
-  <!-- <ion-label position="stacked" class="font-bold" (click)="openSearchModel('programs')">
-    {{'LABELS.SELECT_PROGRAM' | translate}} <span *ngIf="template.showProgramAndEntity">* </span></ion-label> -->
   <div *ngIf="selectedProgram" class="program-data">
     <ion-label position="stacked" class="font-bold">
       {{'FRMELEMNTS_LBL_SELECT_PROGRAM' | translate}} <span *ngIf="template.showProgramAndEntity">* </span></ion-label>
