@@ -1124,5 +1124,8 @@
   "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page",
   "COPY_TRACE_ID": "Copy trace id",
   "COPY_TRACE_ID_DESC": "Copy trace id for support",
-  "LEADER": "Leader"
+  "LEADER": "Leader",
+  "ADD_BLOCK": "Add Block",
+  "ADD_CLUSTER": "Add Cluster",
+  "ADD_SCHOOL": "Add School"
 }
