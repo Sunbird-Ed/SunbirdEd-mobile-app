@@ -1,6 +1,5 @@
-import { Component, Inject, ChangeDetectorRef, NgZone, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
-  LocationSearchCriteria,
   ProfileService,
   SharedPreferences,
   Profile,
@@ -8,10 +7,7 @@ import {
   DeviceRegisterService,
   DeviceInfo,
   LocationSearchResult,
-  CachedItemRequestSourceFrom,
   CorrelationData,
-  AuditState,
-  ProfileType,
   FormService,
   FormRequest
 } from 'sunbird-sdk';
@@ -43,7 +39,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 import { FormGroup } from '@angular/forms';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { Location } from '@angular/common';
-import { FieldConfigOption } from '../components/common-forms/field-config';
+import { LocationHandler } from '@app/services/location-handler';
 
 @Component({
   selector: 'app-district-mapping',
@@ -63,9 +59,13 @@ export class DistrictMappingPage {
 
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
+  formGroup?: FormGroup;
+
   private backButtonFunc: Subscription;
   private profile: Profile;
+  private presetLocation: { [locationType: string]: LocationSearchResult } = {};
   private currentFormValue = {};
+  private loader?: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -83,7 +83,8 @@ export class DistrictMappingPage {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private locationHandler: LocationHandler
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -100,8 +101,14 @@ export class DistrictMappingPage {
   }
 
   async ionViewWillEnter() {
+    window['ref'] = this;
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    this.initialiseFormData();
+    this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
+      .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
+        acc[loc.type] = loc;
+        return acc;
+      }, {});
+    this.initialiseFormData(undefined, true);
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -150,6 +157,104 @@ export class DistrictMappingPage {
   }
 
   async submit() {
+    console.log(this.formGroup.value);
+    this.saveDeviceLocation();
+
+    if (this.appGlobalService.isUserLoggedIn()) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+        return;
+      }
+      const locationCodes = [];
+      const reqs: DeviceRegisterRequest = {
+        userDeclaredLocation: {
+          ...(Object.keys(this.formGroup.value).reduce((acc, key) => {
+            if (this.formGroup.value[key]) {
+              locationCodes.push((this.formGroup.value[key] as SbLocation).code);
+            }
+            return locationCodes;
+          }, {})),
+        }
+      } as any;
+      const req = {
+        userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
+        locationCodes
+      };
+      // if (this.profile) {
+      //   req['firstName'] = (this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
+      //   req['lastName'] = '';
+      // }
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      this.profileService.updateServerProfile(req).toPromise()
+        .then(async () => {
+          await loader.dismiss();
+
+          if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
+            await this.saveDeviceLocation();
+          }
+         // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
+          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+        //  this.disableSubmitButton = true;
+          this.events.publish('loggedInProfile:update', req);
+          if (this.profile) {
+            this.location.back();
+          } else {
+            if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+              window.history.go(-2);
+            } else {
+                this.router.navigate([`/${RouterLinks.TABS}`]);
+            }
+         //   this.externalIdVerificationService.showExternalIdVerificationPopup();
+          }
+        }).catch(async () => {
+          await loader.dismiss();
+          this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
+          if (this.profile) {
+            this.location.back();
+          } else {
+            this.router.navigate([`/${RouterLinks.TABS}`]);
+          //  this.externalIdVerificationService.showExternalIdVerificationPopup();
+          }
+        });
+    } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
+
+     // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
+
+      await this.saveDeviceLocation();
+      this.events.publish('refresh:profile');
+      this.location.back();
+    } else { // add or update the device loc
+      await this.saveDeviceLocation();
+      this.appGlobalService.setOnBoardingCompleted();
+      const navigationExtras: NavigationExtras = {
+        state: {
+          loginMode: 'guest'
+        }
+      };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    }
+  }
+
+  private async saveDeviceLocation() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const req: DeviceRegisterRequest = {
+      userDeclaredLocation: {
+        ...(Object.keys(this.formGroup.value).reduce((acc, key) => {
+          if (this.formGroup.value[key]) {
+            acc[key] = (this.formGroup.value[key] as SbLocation).name;
+            acc[key + 'Id'] = (this.formGroup.value[key] as SbLocation).id;
+          }
+          return acc;
+        }, {})),
+        declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
+      }
+    } as any;
+    this.deviceRegisterService.registerDevice(req).toPromise();
+    this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+    this.commonUtilService.handleToTopicBasedNotification();
+    await loader.dismiss();
   }
 
   private async checkLocationMandatory() {
@@ -198,47 +303,46 @@ export class DistrictMappingPage {
     );
   }
 
-  private async initialiseFormData(formRequest: FormRequest = {
-    type: 'profileConfig',
-    subType: 'default',
-    action: 'get'
-  }) {
+  private async initialiseFormData(
+    formRequest: FormRequest = FormConstants.LOCATION_MAPPING,
+    initial = false
+  ) {
     const personaLocationConfigs: {
       persona: string,
       config: FieldConfig<any>[]
-    }[] = await this.formService.getForm(formRequest).toPromise().then((v) => v['form']['data']['fields']);
+    }[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
     const personaLocationConfig = personaLocationConfigs.find((c) => c.persona === this.profile.profileType);
-    this.locationFormConfig = (personaLocationConfig.config || []).map((c) => {
-      if (!c.templateOptions['dataSrc']) {
-        return c;
+    this.locationFormConfig = (personaLocationConfig.config || []).map((config) => {
+      if (!config.templateOptions['dataSrc']) {
+        return config;
       }
-
-      switch (c.templateOptions['dataSrc']['marker']) {
+      config.default = this.setDefaultConfig(config);
+      switch (config.templateOptions['dataSrc']['marker']) {
         case 'STATE_LOCATION_LIST': {
-          c.templateOptions.options = this.formLocationFactory.buildStateListClosure();
+          config.templateOptions.options = this.formLocationFactory.buildStateListClosure(config, initial);
           break;
         }
         case 'LOCATION_LIST': {
-          c.templateOptions.options = this.formLocationFactory.buildLocationListClosure(c.templateOptions['dataSrc']['params']['id']);
+          config.templateOptions.options = this.formLocationFactory.buildLocationListClosure(config, initial);
           break;
         }
       }
-      c.default = this.buildFieldConfigDefault(c);
-      return c;
+      return config;
     });
   }
 
-  private buildFieldConfigDefault(fieldConfig: FieldConfig<any>): FieldConfigOption<any> {
-    // switch (fieldConfig.code) {
-    //   default
-    // }
+  private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
     if (this.currentFormValue[fieldConfig.code]) {
       return this.currentFormValue[fieldConfig.code];
+    }
+    if (this.presetLocation[fieldConfig.code]) {
+      return this.presetLocation[fieldConfig.code];
     }
     return null;
   }
 
   onFormInitialize(formGroup: FormGroup) {
+    this.formGroup = formGroup;
     formGroup.controls['state'].valueChanges.pipe(
       distinctUntilChanged(),
       take(1)
@@ -246,9 +350,8 @@ export class DistrictMappingPage {
       if (!value) { return; }
       this.locationFormConfig = undefined;
       this.initialiseFormData({
-        type: 'profileConfig',
+        ...FormConstants.LOCATION_MAPPING,
         subType: (value as SbLocation).id,
-        action: 'get'
       }).catch((e) => {
         console.error(e);
         this.initialiseFormData();
@@ -260,4 +363,14 @@ export class DistrictMappingPage {
     this.currentFormValue = value;
   }
 
+  async onDataLoadStatusChange($event) {
+    if (!this.loader) {
+      this.loader = await this.commonUtilService.getLoader();
+    }
+    if ('LOADING' === $event) {
+      this.loader.present();
+    } else {
+      this.loader.dismiss();
+    }
+  }
 }

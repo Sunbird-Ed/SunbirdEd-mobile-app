@@ -16,18 +16,20 @@
     </div> -->
   </div>
 
-  <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
+  <div class="px-4">
+    <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
     [config]="locationFormConfig"
     (initialize)="onFormInitialize($event)" 
-    (valueChanges)="onFormValueChange($event)">
+    (valueChanges)="onFormValueChange($event)"
+    (dataLoadStatus)="onDataLoadStatusChange($event)">
   </sb-form>
-
-  <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
+  </div>
+  
 </ion-content>
-<div class="footer" *ngIf="!(isKeyboardShown$ | async)">
+<div class="footer">
   <button class="block-button"
-    [disabled]="!isLocationFormValid"
-    [ngClass]="!isLocationFormValid ? 'disabled-button': ''"
+    [disabled]="formGroup?.invalid"
+    [ngClass]="formGroup?.invalid ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}
     <!-- <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon> -->
   </button>

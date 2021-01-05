@@ -7,6 +7,7 @@ import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { Location as LocationType } from '@app/app/app.constant';
 import { distinctUntilChanged, startWith, switchMap, tap } from 'rxjs/operators';
 import { Location } from '@project-sunbird/client-services/models/location';
+import { FieldConfig } from 'common-form-elements';
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
   constructor(
@@ -14,7 +15,7 @@ export class FormLocationFactory {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) { }
-  buildStateListClosure(): FieldConfigOptionsBuilder<Location> {
+  buildStateListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
     return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
       return defer(async () => {
         const req: LocationSearchCriteria = {
@@ -26,7 +27,14 @@ export class FormLocationFactory {
         notifyLoading();
         return await this.profileService.searchLocation(req).toPromise()
           .then((stateLocationList: Location[]) => {
-            return stateLocationList.map((s) => ({ label: s.name, value: s }));
+            const list = stateLocationList.map((s) => ({ label: s.name, value: s }));
+            if (config.default && initial) {
+              const option = list.find((o) => o.value.id === config.default.id);
+              formControl.patchValue(
+              option ? option.value : null, {emitEvent: false, onlySelf: true}
+              );
+            }
+            return list;
           })
           .catch((e) => {
             this.commonUtilService.showToast('NO_DATA_FOUND');
@@ -39,7 +47,8 @@ export class FormLocationFactory {
       });
     };
   }
-  buildLocationListClosure(locationType: string): FieldConfigOptionsBuilder<Location> {
+  buildLocationListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
+    const locationType = config.templateOptions['dataSrc']['params']['id'];
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
         return of([]);
@@ -48,7 +57,7 @@ export class FormLocationFactory {
         startWith(contextFormControl.value),
         distinctUntilChanged((a: Location, b: Location) => JSON.stringify(a) === JSON.stringify(b)),
         tap(() => {
-          if (formControl.value) {
+          if (formControl.value && !initial) {
             formControl.patchValue(null);
           }
         }),
@@ -66,7 +75,14 @@ export class FormLocationFactory {
           notifyLoading();
           return await this.profileService.searchLocation(req).toPromise()
             .then((locationList: Location[]) => {
-              return locationList.map((s) => ({ label: s.name, value: s }));
+              const list = locationList.map((s) => ({ label: s.name, value: s }));
+              if (config.default && initial) {
+                const option = list.find((o) => o.value.id === config.default.id);
+                formControl.patchValue(
+                option ? option.value : null, {emitEvent: false, onlySelf: true}
+                );
+              }
+              return list;
             })
             .catch((e) => {
               this.commonUtilService.showToast('NO_DATA_FOUND');
