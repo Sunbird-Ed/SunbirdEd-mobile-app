@@ -106,12 +106,13 @@ const routes: Routes = [
   { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule' },
   { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule' },
   { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule' },
+  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule'},
   {
     path: RouterLinks.QUESTIONNAIRE,
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
   },
 
-   { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
+  { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule' },
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.ECM_LISTING, loadChildren: './manage-learn/ecm-listing/ecm-listing.module#EcmListingPageModule' },
@@ -120,7 +121,8 @@ const routes: Routes = [
   { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' },
   { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' },
   { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
-  { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' }
+  { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
+  { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
   
 ];
 

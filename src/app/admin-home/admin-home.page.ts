@@ -153,7 +153,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
         this.router.navigate([RouterLinks.SURVEY], {})
         break
       case 'report':
-        // this.router.navigate([RouterLinks.PROGRAM], {})
+        this.router.navigate([RouterLinks.REPORTS], {})
         break
       case 'course':
         this.router.navigate([RouterLinks.SEARCH], {
