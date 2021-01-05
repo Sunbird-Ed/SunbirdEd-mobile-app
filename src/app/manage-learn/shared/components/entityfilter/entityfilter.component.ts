@@ -228,4 +228,15 @@ export class EntityfilterComponent implements OnInit {
   }
 
   ngOnInit() {}
+  addSchools() {
+    let selectedSchools = [];
+    this.selectableList.forEach((element) => {
+      if (element.selected && !element.preSelected) {
+        selectedSchools.push(element);
+      }
+    });
+
+    console.log(selectedSchools.length);
+    this.modalCtrl.dismiss(selectedSchools);
+  }
 }

@@ -33,7 +33,7 @@
         <ion-button
           report
           round
-           *ngIf="(submission?.status === 'completed') || (submission?.status === 'ratingPending')"
+          *ngIf="submission?.status === 'completed' || submission?.status === 'ratingPending'"
           (click)="$event.stopPropagation(); openMenu($event, submission, i)"
         >
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
@@ -43,14 +43,9 @@
     </div>
 
     <!-- //TODO REMOVE----------- -->
-    <div (click)="submission?.downloaded === true ? goToEcm(submission) : getAssessmentDetails(submission)">
+    <div>
       <app-item-list-card [title]="'Report'" subTitle="{{ '30 December-2020' }}">
-          <ion-button
-          report
-          round
-           
-          (click)="$event.stopPropagation(); openMenu($event, submission=1234, i=1)"
-        >
+        <ion-button report round (click)="$event.stopPropagation(); openMenu($event, 1234, 1)">
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
         </ion-button>
       </app-item-list-card>
