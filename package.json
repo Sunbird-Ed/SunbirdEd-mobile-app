@@ -94,7 +94,7 @@
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "cordova.plugins.diagnostic": "^5.0.2",
     "core-js": "^2.6.10",
-    "dayjs": "^1.8.17",
+    "dayjs": "1.9.8",
     "dom-to-image": "^2.6.0",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
