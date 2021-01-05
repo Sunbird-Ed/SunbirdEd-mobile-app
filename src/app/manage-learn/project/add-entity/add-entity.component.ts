@@ -167,4 +167,7 @@ export class AddEntityComponent implements OnInit {
    onSearch(event) { }
    selectSubEntity(event) { }
    selectEntity(entity) { }
+   addEntity() {
+      
+   }
 }

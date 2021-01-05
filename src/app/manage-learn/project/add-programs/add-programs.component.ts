@@ -13,6 +13,7 @@ export class AddProgramsComponent implements OnInit {
   selectedData;
   button = "FRMELEMNTS_BTN_ADD_PROGRAM";
   title = "FRMELEMNTS_LBL_MY_PROGRAMS";
+  type
   constructor(
     private alertCtrl: AlertController,
     private modal: ModalController,

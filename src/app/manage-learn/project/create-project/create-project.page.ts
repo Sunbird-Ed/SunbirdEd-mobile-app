@@ -216,4 +216,7 @@ export class CreateProjectPage implements OnInit {
     return await modal.present();
 
   }
+  next() {
+    
+  }
 }
