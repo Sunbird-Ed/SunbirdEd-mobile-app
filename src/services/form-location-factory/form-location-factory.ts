@@ -30,9 +30,8 @@ export class FormLocationFactory {
             const list = stateLocationList.map((s) => ({ label: s.name, value: s }));
             if (config.default && initial) {
               const option = list.find((o) => o.value.id === config.default.id);
-              formControl.patchValue(
-              option ? option.value : null, {emitEvent: false, onlySelf: true}
-              );
+              formControl.patchValue(option ? option.value : null, {emitEvent: false, onlySelf: true});
+              config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
             return list;
           })
@@ -78,9 +77,8 @@ export class FormLocationFactory {
               const list = locationList.map((s) => ({ label: s.name, value: s }));
               if (config.default && initial) {
                 const option = list.find((o) => o.value.id === config.default.id);
-                formControl.patchValue(
-                option ? option.value : null, {emitEvent: false, onlySelf: true}
-                );
+                formControl.patchValue(option ? option.value : null, {emitEvent: false, onlySelf: true});
+                config.default['code'] = option ? option.value['code'] : config.default['code'];
               }
               return list;
             })

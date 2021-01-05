@@ -31,11 +31,9 @@ import {
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { distinctUntilChanged, take, tap } from 'rxjs/operators';
-import { ContainerService } from '@app/services/container.services';
 import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
 import { FieldConfig } from 'common-form-elements';
 import { FormConstants } from '../form.constants';
-import { ProfileHandler } from '@app/services/profile-handler';
 import { FormGroup } from '@angular/forms';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { Location } from '@angular/common';
@@ -72,7 +70,6 @@ export class DistrictMappingPage {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
-    @Inject('FORM_SERVICE') private formService: FormService,
     public headerService: AppHeaderService,
     public commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
@@ -83,7 +80,6 @@ export class DistrictMappingPage {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
-    private profileHandler: ProfileHandler,
     private locationHandler: LocationHandler
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -101,7 +97,6 @@ export class DistrictMappingPage {
   }
 
   async ionViewWillEnter() {
-    window['ref'] = this;
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
