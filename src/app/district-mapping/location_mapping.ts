@@ -14,7 +14,24 @@ export const locationMapping = [
         "templateOptions": {
             "placeHolder": "Select Persona",
             "multiple": false,
-            "options": 
+            "options": [
+                {
+                    "label": "Administrator",
+                    "value": "administrator"
+                },
+                {
+                    "label": "Teacher",
+                    "value": "teacher"
+                },
+                {
+                    "label": "Student",
+                    "value": "student"
+                },
+                {
+                    "label": "Other",
+                    "value": "other"
+                },
+            ]
         },
         "validations": [
             {

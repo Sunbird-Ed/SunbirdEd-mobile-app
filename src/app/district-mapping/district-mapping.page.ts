@@ -303,59 +303,35 @@ export class DistrictMappingPage {
     formRequest: FormRequest = FormConstants.LOCATION_MAPPING,
     initial = false
   ) {
-    const personaLocationConfigs: {
-      persona: string,
-      config: FieldConfig<any>[]
-    }[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
-    this.locationFormConfig = [
-      {
-        "code": "name",
-        "type": "input",
-        "templateOptions": {
-            "placeHolder": "Enter Name",
-            "disabled": true,
-            "multiple": false
-        }
-      },
-      {
-        "code": "persona",
-        "type": "nested_select",
-        "templateOptions": {
-            "placeHolder": "Select Persona",
-            "multiple": false,
-            "options": personaLocationConfigs.map((c) => ({
-              label: c.persona,
-              value: c.persona
-            }))
-        },
-        "validations": [
-            {
-                "type": "required"
+    // const personaLocationConfigs: {
+    //   persona: string,
+    //   config: FieldConfig<any>[]
+    // }[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+
+    this.locationFormConfig = locationMapping.map((config) => {
+      if (config.code === 'persona') {
+        Object.keys(config.children).forEach((persona) => {
+          config.children[persona].map((personaConfig) => {
+            if (!personaConfig.templateOptions['dataSrc']) {
+              return personaConfig;
             }
-        ],
-        "children": personaLocationConfigs.reduce<{[persona: string]: FieldConfig<any>[]}>((acc, c) => {
-          acc[c.persona] = (c.config || []).map((config) => {
-            if (!config.templateOptions['dataSrc']) {
-              return config;
-            }
-            config.default = this.setDefaultConfig(config);
-            switch (config.templateOptions['dataSrc']['marker']) {
+            personaConfig.default = this.setDefaultConfig(personaConfig);
+            switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'STATE_LOCATION_LIST': {
-                config.templateOptions.options = this.formLocationFactory.buildStateListClosure(config, initial);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, initial);
                 break;
               }
               case 'LOCATION_LIST': {
-                config.templateOptions.options = this.formLocationFactory.buildLocationListClosure(config, initial);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial);
                 break;
               }
             }
-            return config;
+            return personaConfig;
           });
-
-          return acc;
-        }, {})
+        });
       }
-    ] as any;
+      return config;
+    }) as any;
   }
 
   private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
