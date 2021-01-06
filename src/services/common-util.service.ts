@@ -659,7 +659,7 @@ export class CommonUtilService {
 
     async handleAssessmentStatus(assessmentStatus) {
         if (assessmentStatus.isContentDisabled) {
-            this.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+            this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
             return true;
         }
         if (assessmentStatus.isLastAttempt) {
