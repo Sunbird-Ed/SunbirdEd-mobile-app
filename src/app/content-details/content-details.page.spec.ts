@@ -2306,7 +2306,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.handleContentPlay('');
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELMNTS_IMSG_LASTATTMPTEXCD');
                 done();
             }, 0);
         });
