@@ -952,7 +952,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async handleContentPlay(isStreaming) {
     if (this.isContentDisabled) {
-      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
       return;
     }
     if (this.isLastAttempt) {

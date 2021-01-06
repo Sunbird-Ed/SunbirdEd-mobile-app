@@ -1430,7 +1430,7 @@ describe('ChapterDetailsPage', () => {
             // act
             chapterDetailsPage.openContentDetails(event);
             // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELMNTS_IMSG_LASTATTMPTEXCD');
         });
 
         it('should show a toast message to the user that this will be his last attempt', () => {
