@@ -59,7 +59,7 @@ export class DistrictMappingPage {
   formGroup?: FormGroup;
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
-  profile: Profile;
+  profile?: Profile;
 
   private backButtonFunc: Subscription;
   private presetLocation: { [locationType: string]: LocationSearchResult } = {};
@@ -103,7 +103,7 @@ export class DistrictMappingPage {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
-        acc[loc.type] = loc;
+        if (loc) { acc[loc.type] = loc; }
         return acc;
       }, {});
     this.initialiseFormData(undefined, true);
@@ -163,11 +163,11 @@ export class DistrictMappingPage {
         this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
         return;
       }
-      const locationCodes = (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
-        if (this.formGroup.value.children['persona'][key]) {
-          locationCodes.push((this.formGroup.value.children['persona'][key] as SbLocation).code);
+      const locationCodes = [];
+      (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
+        if (this.formGroup.value.children['persona'][acc]) {
+          locationCodes.push((this.formGroup.value.children['persona'][acc] as SbLocation).code);
         }
-        return locationCodes;
       }, {}));
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
@@ -182,13 +182,13 @@ export class DistrictMappingPage {
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
-
+          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
           if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
             await this.saveDeviceLocation();
           }
-         // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
+          // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        //  this.disableSubmitButton = true;
+          //  this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
             this.location.back();
@@ -196,9 +196,9 @@ export class DistrictMappingPage {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-                this.router.navigate([`/${RouterLinks.TABS}`]);
+              this.router.navigate([`/${RouterLinks.TABS}`]);
             }
-         //   this.externalIdVerificationService.showExternalIdVerificationPopup();
+            //   this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
           await loader.dismiss();
@@ -207,12 +207,12 @@ export class DistrictMappingPage {
             this.location.back();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
-          //  this.externalIdVerificationService.showExternalIdVerificationPopup();
+            //  this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
 
-     // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
+      // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
@@ -308,11 +308,9 @@ export class DistrictMappingPage {
       }
 
       if (config.code === 'persona') {
+        config.default = this.profile.profileType;
         if (this.appGlobalService.isOnBoardingCompleted) {
           config.templateOptions.hidden = false;
-          config.default = this.profile.profileType;
-        } else {
-          // config.default == user-selection;
         }
       }
 
