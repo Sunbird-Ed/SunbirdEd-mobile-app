@@ -11,7 +11,7 @@ const LIBRARY_TAB = {
 
 const HOME_TAB = {
     root: 'home',
-    icon: 'resources',
+    icon: 'home',
     label: 'HOME_BNAV',
     index: 1,
     isSelected: true
@@ -34,7 +34,7 @@ const COURSE_TAB_DISABLED = {
 
 const DISCOVER_TAB = {
     root: 'discover',
-    icon: 'courses',
+    icon: 'discover',
     label: 'DISCOVER_BNAV',
     index: 2
 };

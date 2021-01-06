@@ -1,14 +1,22 @@
 <ion-content>
   <div class="user-profile">
-    <span>{{'WELCOME' | translate}},</span>
-    <strong>&nbsp;{{profile?.handle}}</strong>
+    <div class="welcome-text">{{'WELCOME' | translate}}</div>
+    <div>{{profile?.handle}}</div>
   </div>
-  <div class="p-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
-  </div>
-  <div class="p-8" (click)="editProfileDetails()" *ngIf="boards">
-    <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
-    <div class="d-inline">
-      <ion-icon name="arrow-dropdown"></ion-icon>
+
+  <div class="preference-container">
+    <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
+    <div class="user-preference" *ngIf="boards">
+      <div class="preference-data">
+        <div>
+          <span>{{'YOUR_PREFERENCES' | translate}}</span>
+          <img (click)="viewPreferenceInfo()" class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+        </div>
+        <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
+      </div>
+      <div class="change-btn">
+        <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
+      </div>
     </div>
   </div>
 

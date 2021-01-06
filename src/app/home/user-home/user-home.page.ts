@@ -39,6 +39,7 @@ export class UserHomePage implements OnInit, OnDestroy {
   selectMode = SelectMode;
   pillShape = PillShape;
   @ViewChild('contentView') contentView: ContentView;
+  showPreferenceInfo = false;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -244,5 +245,9 @@ export class UserHomePage implements OnInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+  }
+
+  viewPreferenceInfo() {
+    this.showPreferenceInfo = !this.showPreferenceInfo;
   }
 }

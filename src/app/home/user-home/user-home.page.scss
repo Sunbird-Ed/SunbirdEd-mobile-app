@@ -1,18 +1,46 @@
 @import "src/assets/styles/_variables.scss";
 .filter-style {
   font-size: 14px;
-  font-weight: 500;
-  color: $blue;
+  font-weight: bold;
+  color: var(--app-gray);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 45vh;
+  max-width: 38vh;
   display: inline-block;
 }
 
 .user-profile {
-  padding: 8px 8px 0;
+  padding: 0.5rem 1.5rem 0;
   font-size: 3.2vh;
+  color: var(--app-gray);
+  .welcome-text{
+    font-size: 18px;
+  }
+  .user-name-text{
+    font-size: 24px;
+    font-weight: bold;
+  }
+}
+
+.preference-container {
+  background-color: var(--app-primary-header);
+  margin: 0 1rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  font-size: 12px;
+  color: var(--app-gray);
+  .user-preference {
+    display: flex;
+    align-items: center;
+    .preference-data{
+      width: 70%;
+    }
+    .change-btn{
+      width: 30%;
+      text-align: center;
+    }
+  }
 }
 
 .label {
@@ -35,4 +63,8 @@
       max-width: calc(100vw - 32px);
     }
   }
+}
+
+.sb-btn-primary-outline{
+  border-color: var(--app-white);  
 }
