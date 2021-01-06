@@ -38,6 +38,7 @@ import { FormGroup } from '@angular/forms';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { Location } from '@angular/common';
 import { LocationHandler } from '@app/services/location-handler';
+import { locationMapping } from './location_mapping';
 
 @Component({
   selector: 'app-district-mapping',
@@ -306,24 +307,55 @@ export class DistrictMappingPage {
       persona: string,
       config: FieldConfig<any>[]
     }[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
-    const personaLocationConfig = personaLocationConfigs.find((c) => c.persona === this.profile.profileType);
-    this.locationFormConfig = (personaLocationConfig.config || []).map((config) => {
-      if (!config.templateOptions['dataSrc']) {
-        return config;
-      }
-      config.default = this.setDefaultConfig(config);
-      switch (config.templateOptions['dataSrc']['marker']) {
-        case 'STATE_LOCATION_LIST': {
-          config.templateOptions.options = this.formLocationFactory.buildStateListClosure(config, initial);
-          break;
+    this.locationFormConfig = [
+      {
+        "code": "name",
+        "type": "input",
+        "templateOptions": {
+            "placeHolder": "Enter Name",
+            "disabled": true,
+            "multiple": false
         }
-        case 'LOCATION_LIST': {
-          config.templateOptions.options = this.formLocationFactory.buildLocationListClosure(config, initial);
-          break;
-        }
+      },
+      {
+        "code": "persona",
+        "type": "nested_select",
+        "templateOptions": {
+            "placeHolder": "Select Persona",
+            "multiple": false,
+            "options": personaLocationConfigs.map((c) => ({
+              label: c.persona,
+              value: c.persona
+            }))
+        },
+        "validations": [
+            {
+                "type": "required"
+            }
+        ],
+        "children": personaLocationConfigs.reduce<{[persona: string]: FieldConfig<any>[]}>((acc, c) => {
+          acc[c.persona] = (c.config || []).map((config) => {
+            if (!config.templateOptions['dataSrc']) {
+              return config;
+            }
+            config.default = this.setDefaultConfig(config);
+            switch (config.templateOptions['dataSrc']['marker']) {
+              case 'STATE_LOCATION_LIST': {
+                config.templateOptions.options = this.formLocationFactory.buildStateListClosure(config, initial);
+                break;
+              }
+              case 'LOCATION_LIST': {
+                config.templateOptions.options = this.formLocationFactory.buildLocationListClosure(config, initial);
+                break;
+              }
+            }
+            return config;
+          });
+
+          return acc;
+        }, {})
       }
-      return config;
-    });
+    ] as any;
   }
 
   private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
@@ -338,20 +370,20 @@ export class DistrictMappingPage {
 
   onFormInitialize(formGroup: FormGroup) {
     this.formGroup = formGroup;
-    formGroup.controls['state'].valueChanges.pipe(
-      distinctUntilChanged(),
-      take(1)
-    ).subscribe((value) => {
-      if (!value) { return; }
-      this.locationFormConfig = undefined;
-      this.initialiseFormData({
-        ...FormConstants.LOCATION_MAPPING,
-        subType: (value as SbLocation).id,
-      }).catch((e) => {
-        console.error(e);
-        this.initialiseFormData();
-      });
-    });
+    // formGroup.controls['state'].valueChanges.pipe(
+    //   distinctUntilChanged(),
+    //   take(1)
+    // ).subscribe((value) => {
+    //   if (!value) { return; }
+    //   this.locationFormConfig = undefined;
+    //   this.initialiseFormData({
+    //     ...FormConstants.LOCATION_MAPPING,
+    //     subType: (value as SbLocation).id,
+    //   }).catch((e) => {
+    //     console.error(e);
+    //     this.initialiseFormData();
+    //   });
+    // });
   }
 
   onFormValueChange(value: any) {
