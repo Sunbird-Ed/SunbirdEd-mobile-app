@@ -447,25 +447,33 @@ export class CommonUtilService {
 
     getUserLocation(profile: any) {
         const userLocation = {
-            state: {},
-            district: {}
         };
         if (profile && profile.userLocations && profile.userLocations.length) {
-            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
-                if (profile.userLocations[i].type === 'state') {
-                    userLocation.state = profile.userLocations[i];
-                } else if (profile.userLocations[i].type === 'district') {
-                    userLocation.district = profile.userLocations[i];
-                }
-            }
+            profile.userLocations.forEach((d) => {
+                userLocation[d.type] = d;
+            });
         }
 
         return userLocation;
     }
 
-    isUserLocationAvalable(profile: any): boolean {
+    isUserLocationAvalable(profile: any, locationMappingConfig, userType): boolean {
         const location = this.getUserLocation(profile);
-        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
+        let isAvailable = false;
+        if (locationMappingConfig) {
+            const requiredFileds = this.findAllRequiredFields(locationMappingConfig, userType);
+            isAvailable = requiredFileds.every(key => Object.keys(location).includes(key));
+        }
+        return isAvailable;
+    }
+
+    private findAllRequiredFields(locationMappingConfig, userType) {
+        return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
+            if (config.validations && config.validations.find((v) => v.type === 'required')) {
+              acc.push(config.code);
+            }
+            return acc;
+          }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {

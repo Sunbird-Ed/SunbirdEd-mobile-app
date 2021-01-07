@@ -16,6 +16,8 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ConsentService } from '@app/services/consent-service';
+import { FieldConfig } from '../components/common-forms/field-config';
+import { FormConstants } from '../form.constants';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -151,15 +153,17 @@ export class TermsAndConditionsPage implements OnInit {
               this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
               await this.appGlobalService.signinOnboardingLoader.present();
             }
+            const locationMappingConfig: FieldConfig<any>[] =
+            await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
             this.disableSubmitButton = false;
             const categoriesProfileData = {
-              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
+              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType),
               showOnlyMandatoryFields: true,
               profile: value['profile'],
               isRootPage: true
             };
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile)
+              if (this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType)
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();

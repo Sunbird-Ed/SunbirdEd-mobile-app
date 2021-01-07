@@ -87,10 +87,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {
-    state: {},
-    district: {}
-  };
+  userLocation = {};
   appName = '';
 
   imageUri = 'assets/imgs/ic_profile_default.png';
