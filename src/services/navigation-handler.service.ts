@@ -79,7 +79,8 @@ export class NavigationService {
             const navigationExtras: NavigationExtras = {
                 state: {
                     profile,
-                    isShowBackButton: true
+                    isShowBackButton: true,
+                    source: pageId
                 }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
