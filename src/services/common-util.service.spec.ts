@@ -375,9 +375,7 @@ describe('CommonUtilService', () => {
       const profile = {
         userLocations: [
           { type: 'state', name: 'Odisha' },
-          { type: 'district', name: 'Cuttack' },
-          { type: 'block', name: 'Block-A' },
-          { type: 'sadar', name: 'Sadar' }
+          { type: 'district', name: 'Cuttack' }
         ]
       };
       // act
@@ -399,9 +397,21 @@ describe('CommonUtilService', () => {
           { type: 'district', name: 'Cuttack' },
         ]
       };
+      const locationConfig = [
+        {
+          code: 'persona',
+          children: {
+            teacher: [{
+              validations: [{
+                type: 'required'
+              }]
+            }]
+          }
+        }
+      ];
       // act
       // assert
-      expect(commonUtilService.isUserLocationAvalable(profile)).toBeTruthy();
+      expect(commonUtilService.isUserLocationAvalable(profile, locationConfig, 'teacher')).toBeFalsy();
     });
 
     it('should return false if user any of the state or distric is not available', () => {

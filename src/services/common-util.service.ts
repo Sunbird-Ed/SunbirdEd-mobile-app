@@ -467,7 +467,7 @@ export class CommonUtilService {
         return isAvailable;
     }
 
-    findAllRequiredFields(locationMappingConfig, userType) {
+    private findAllRequiredFields(locationMappingConfig, userType) {
         return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
             if (config.validations && config.validations.find((v) => v.type === 'required')) {
               acc.push(config.code);
