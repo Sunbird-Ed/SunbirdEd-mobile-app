@@ -60,7 +60,7 @@
         </p>
     </div>
    
-    <div class="location text-center">
+    <div *ngIf="userLocation" class="location text-center">
         <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
             <span class="bolder">{{'SCHOOL' | translate}}: </span>
             <span>{{userLocation.school.name}}</span>
