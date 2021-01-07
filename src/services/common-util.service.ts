@@ -679,6 +679,7 @@ export class CommonUtilService {
                         btnClass: 'popover-color'
                     },
                 ],
+                disableDeviceBackButton: true
             },
             backdropDismiss: false,
             cssClass: 'sb-popover warning',

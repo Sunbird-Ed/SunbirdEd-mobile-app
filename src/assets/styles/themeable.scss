@@ -877,6 +877,11 @@ html[data-theme="JOYFUL"]{
       background: var(--app-white) !important;
       box-shadow: var(--button-style-shadow);
     }
+
+    .disabled-toc-card {
+      background: var(--app-light-gray) !important;
+      border-color: var(--app-light-gray) !important;
+    }
   }
 
   // common-forms component

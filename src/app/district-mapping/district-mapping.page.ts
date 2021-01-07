@@ -38,6 +38,7 @@ import { FormGroup } from '@angular/forms';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { Location } from '@angular/common';
 import { LocationHandler } from '@app/services/location-handler';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-district-mapping',
@@ -55,15 +56,17 @@ export class DistrictMappingPage {
     return window.history.state.source;
   }
 
+  formGroup?: FormGroup;
   showNotNowFlag = false;
   locationFormConfig: FieldConfig<any>[] = [];
-  formGroup?: FormGroup;
+  profile?: Profile;
+  private name: string;
 
   private backButtonFunc: Subscription;
-  private profile: Profile;
   private presetLocation: { [locationType: string]: LocationSearchResult } = {};
   private currentFormValue = {};
   private loader?: any;
+  private stateChangeSubscription?: Subscription;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -80,7 +83,8 @@ export class DistrictMappingPage {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
-    private locationHandler: LocationHandler
+    private locationHandler: LocationHandler,
+    private profileHandler: ProfileHandler
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -98,9 +102,13 @@ export class DistrictMappingPage {
 
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    this.name = this.profile['firstName'];
+    if (this.profile['lastName']) {
+      this.name = this.profile['firstName'] + this.profile['lastName'];
+    }
     this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
-        acc[loc.type] = loc;
+        if (loc) { acc[loc.type] = loc; }
         return acc;
       }, {});
     this.initialiseFormData(undefined, true);
@@ -161,36 +169,32 @@ export class DistrictMappingPage {
         return;
       }
       const locationCodes = [];
-      const reqs: DeviceRegisterRequest = {
-        userDeclaredLocation: {
-          ...(Object.keys(this.formGroup.value).reduce((acc, key) => {
-            if (this.formGroup.value[key]) {
-              locationCodes.push((this.formGroup.value[key] as SbLocation).code);
-            }
-            return locationCodes;
-          }, {})),
+      (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
+        if (this.formGroup.value.children['persona'][acc]) {
+          locationCodes.push((this.formGroup.value.children['persona'][acc] as SbLocation).code);
         }
-      } as any;
+      }, {}));
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
-        locationCodes
+        locationCodes,
+        firstName : this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
+        lastName: '',
+        ...((this.formGroup.value['persona'] ? {userType: this.formGroup.value['persona']} : {})),
+        ...((this.formGroup.value.children['subPersona'] ? {subUserType: this.formGroup.value.children['subPersona']} : {}))
       };
-      // if (this.profile) {
-      //   req['firstName'] = (this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
-      //   req['lastName'] = '';
-      // }
+
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
-
+          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.formGroup.value.persona).toPromise().then();
           if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
             await this.saveDeviceLocation();
           }
-         // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
+          // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        //  this.disableSubmitButton = true;
+          //  this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
             this.location.back();
@@ -198,9 +202,8 @@ export class DistrictMappingPage {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
-                this.router.navigate([`/${RouterLinks.TABS}`]);
+              this.router.navigate([`/${RouterLinks.TABS}`]);
             }
-         //   this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
           await loader.dismiss();
@@ -209,12 +212,11 @@ export class DistrictMappingPage {
             this.location.back();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
-          //  this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
 
-     // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
+      // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
@@ -236,10 +238,10 @@ export class DistrictMappingPage {
     await loader.present();
     const req: DeviceRegisterRequest = {
       userDeclaredLocation: {
-        ...(Object.keys(this.formGroup.value).reduce((acc, key) => {
-          if (this.formGroup.value[key]) {
-            acc[key] = (this.formGroup.value[key] as SbLocation).name;
-            acc[key + 'Id'] = (this.formGroup.value[key] as SbLocation).id;
+        ...(Object.keys(this.formGroup.value.children['persona']).reduce((acc, key) => {
+          if (this.formGroup.value.children['persona'][key]) {
+            acc[key] = (this.formGroup.value.children['persona'][key] as SbLocation).name;
+            acc[key + 'Id'] = (this.formGroup.value.children['persona'][key] as SbLocation).id;
           }
           return acc;
         }, {})),
@@ -302,28 +304,344 @@ export class DistrictMappingPage {
     formRequest: FormRequest = FormConstants.LOCATION_MAPPING,
     initial = false
   ) {
-    const personaLocationConfigs: {
-      persona: string,
-      config: FieldConfig<any>[]
-    }[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
-    const personaLocationConfig = personaLocationConfigs.find((c) => c.persona === this.profile.profileType);
-    this.locationFormConfig = (personaLocationConfig.config || []).map((config) => {
-      if (!config.templateOptions['dataSrc']) {
-        return config;
-      }
-      config.default = this.setDefaultConfig(config);
-      switch (config.templateOptions['dataSrc']['marker']) {
-        case 'STATE_LOCATION_LIST': {
-          config.templateOptions.options = this.formLocationFactory.buildStateListClosure(config, initial);
-          break;
+    // const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+    const locationMappingConfig = [
+  {
+    "code": "name",
+    "type": "input",
+    "templateOptions": {
+      "labelHtml": {
+        "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+        "values": {
+          "$0": "Name"
         }
-        case 'LOCATION_LIST': {
-          config.templateOptions.options = this.formLocationFactory.buildLocationListClosure(config, initial);
-          break;
+      },
+      "hidden": true,
+      "placeHolder": "Enter Name",
+      "multiple": false
+    },
+    "validations": [
+      {
+        "type": "required"
+      }
+    ]
+  },
+  {
+    "code": "persona",
+    "type": "nested_select",
+    "templateOptions": {
+      "hidden": true,
+      "labelHtml": {
+        "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+        "values": {
+          "$0": "Persona"
+        }
+      },
+      "placeHolder": "Select Persona",
+      "multiple": false,
+      "dataSrc": {
+        "marker": "SUPPORTED_PERSONA_LIST"
+      }
+    },
+    "validations": [
+      {
+        "type": "required"
+      }
+    ],
+    "children": {
+      "administrator": [
+        {
+          "code": "state",
+          "type": "select",
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "State"
+              }
+            },
+            "placeHolder": "Select State",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "STATE_LOCATION_LIST"
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "district",
+          "type": "select",
+          "context": "state",
+          "default": null,
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "District"
+              }
+            },
+            "placeHolder": "Select District",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "district"
+              }
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "block",
+          "type": "select",
+          "context": "district",
+          "default": null,
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "Block"
+              }
+            },
+            "placeHolder": "Select Block",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "block"
+              }
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "cluster",
+          "type": "select",
+          "context": "block",
+          "default": null,
+          "templateOptions": {
+            "label": "Cluster",
+            "placeHolder": "Select Cluster",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "cluster"
+              }
+            }
+          }
+        },
+        {
+          "code": "school",
+          "type": "select",
+          "context": "cluster",
+          "default": null,
+          "templateOptions": {
+            "label": "School",
+            "placeHolder": "Select School",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "school"
+              }
+            }
+          }
+        }
+      ],
+      "teacher": [
+        {
+          "code": "state",
+          "type": "select",
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "State"
+              }
+            },
+            "placeHolder": "Select State",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "STATE_LOCATION_LIST"
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "district",
+          "type": "select",
+          "context": "state",
+          "default": null,
+          "templateOptions": {
+            "placeHolder": "Select District",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "district"
+              }
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        }
+      ],
+      "student": [
+        {
+          "code": "state",
+          "type": "select",
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "State"
+              }
+            },
+            "placeHolder": "Select State",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "STATE_LOCATION_LIST"
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "district",
+          "type": "select",
+          "context": "state",
+          "default": null,
+          "templateOptions": {
+            "labelHtml": {
+              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+              "values": {
+                "$0": "District"
+              }
+            },
+            "placeHolder": "Select District",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "district"
+              }
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        }
+      ],
+      "other": [
+        {
+          "code": "state",
+          "type": "select",
+          "templateOptions": {
+            "placeHolder": "Select State",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "STATE_LOCATION_LIST"
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        },
+        {
+          "code": "district",
+          "type": "select",
+          "context": "state",
+          "default": null,
+          "templateOptions": {
+            "placeHolder": "Select District",
+            "multiple": false,
+            "dataSrc": {
+              "marker": "LOCATION_LIST",
+              "params": {
+                "id": "district"
+              }
+            }
+          },
+          "validations": [
+            {
+              "type": "required"
+            }
+          ]
+        }
+      ]
+    }
+  }
+] as any;
+    for (const config of locationMappingConfig) {
+      if (config.code === 'name' && this.source === PageId.PROFILE) {
+        config.templateOptions.hidden = false;
+        config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
+      }
+
+      if (config.code === 'persona') {
+        config.default = this.profile.profileType;
+        if (this.source === PageId.PROFILE) {
+          config.templateOptions.hidden = false;
         }
       }
-      return config;
-    });
+
+      if (config.templateOptions['dataSrc'] && config.templateOptions['dataSrc']['marker'] === 'SUPPORTED_PERSONA_LIST') {
+        config.templateOptions.options = (await this.profileHandler.getSupportedUserTypes())
+          .map(p => ({
+            label: p.name,
+            value: p.code
+          }));
+
+        Object.keys(config.children).forEach((persona) => {
+          config.children[persona].map((personaConfig) => {
+            if (!personaConfig.templateOptions['dataSrc']) {
+              return personaConfig;
+            }
+            personaConfig.default = this.setDefaultConfig(personaConfig);
+            switch (personaConfig.templateOptions['dataSrc']['marker']) {
+              case 'STATE_LOCATION_LIST': {
+                personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, initial);
+                break;
+              }
+              case 'LOCATION_LIST': {
+                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial);
+                break;
+              }
+            }
+            return personaConfig;
+          });
+        });
+      }
+    }
+
+    this.locationFormConfig = locationMappingConfig;
   }
 
   private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
@@ -333,29 +651,23 @@ export class DistrictMappingPage {
     if (this.presetLocation[fieldConfig.code]) {
       return this.presetLocation[fieldConfig.code];
     }
+
     return null;
   }
 
-  onFormInitialize(formGroup: FormGroup) {
+  async onFormInitialize(formGroup: FormGroup) {
+    if (this.loader) {
+      this.loader.dismiss();
+      this.loader = undefined;
+    }
+
     this.formGroup = formGroup;
-    formGroup.controls['state'].valueChanges.pipe(
-      distinctUntilChanged(),
-      take(1)
-    ).subscribe((value) => {
-      if (!value) { return; }
-      this.locationFormConfig = undefined;
-      this.initialiseFormData({
-        ...FormConstants.LOCATION_MAPPING,
-        subType: (value as SbLocation).id,
-      }).catch((e) => {
-        console.error(e);
-        this.initialiseFormData();
-      });
-    });
   }
 
-  onFormValueChange(value: any) {
-    this.currentFormValue = value;
+  async onFormValueChange(value: any) {
+    if (value['children'] && value['children']['persona']) {
+      this.currentFormValue = value['children']['persona'];
+    }
   }
 
   async onDataLoadStatusChange($event) {
@@ -366,6 +678,31 @@ export class DistrictMappingPage {
       this.loader.present();
     } else {
       this.loader.dismiss();
+
+      if (!this.stateChangeSubscription) {
+        this.stateChangeSubscription = this.formGroup.get('children.persona.state').valueChanges.pipe(
+          distinctUntilChanged(),
+          take(1)
+        ).subscribe(async (newStateValue) => {
+          if (!newStateValue) { return; }
+
+          this.locationFormConfig = undefined;
+          this.stateChangeSubscription = undefined;
+
+          if (!this.loader) {
+            this.loader = await this.commonUtilService.getLoader();
+            this.loader.present();
+          }
+
+          this.initialiseFormData({
+            ...FormConstants.LOCATION_MAPPING,
+            subType: (newStateValue as SbLocation).id,
+          }).catch((e) => {
+            console.error(e);
+            this.initialiseFormData();
+          });
+        });
+      }
     }
   }
 }
