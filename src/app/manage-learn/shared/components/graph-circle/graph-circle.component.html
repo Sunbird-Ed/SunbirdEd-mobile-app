@@ -1,0 +1,10 @@
+<div *ngIf="chartOption">
+  <highcharts-chart
+    [Highcharts]="highcharts"
+    [runOutsideAngular]="runOutsideAngular"
+    [constructorType]="chartConstructor"
+    [options]="chartOption"
+    class="chart-layout"
+  >
+  </highcharts-chart>
+</div>

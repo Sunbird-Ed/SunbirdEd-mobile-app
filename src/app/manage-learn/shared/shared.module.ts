@@ -47,6 +47,9 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
+import { DownloadShareComponent } from './components/download-share/download-share.component';
+import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
+import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +81,10 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     MatrixChartComponent,
     AttachmentComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    GraphCircleComponent,
+    FilterModalComponent,
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -111,7 +117,10 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     BarChartComponent,
     MatrixChartComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    GraphCircleComponent,
+    FilterModalComponent,
   ],
   providers: [
     Camera,
@@ -133,7 +142,9 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     CreateTaskComponent,
     ScroreReportMenusComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    FilterModalComponent,
   ],
 })
 export class SharedModule {}

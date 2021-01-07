@@ -123,6 +123,7 @@ const routes: Routes = [
   { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
   { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
   { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
+  { path: RouterLinks.PROJECT_FULL_REPORT, loadChildren: './manage-learn/project-full-report/project-full-report.module#ProjectFullReportModule' },
   
 ];
 
