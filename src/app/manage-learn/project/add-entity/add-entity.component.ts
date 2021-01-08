@@ -27,31 +27,6 @@ export class AddEntityComponent implements OnInit {
             "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_3128812241620254721830"
          },
          {
-            "name": "\"Weaker section\" in Right To Education act, 2009 : Did You Know?",
-            "id": "do_3128812341787279361837",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_3128812341787279361837"
-         },
-         {
-            "name": "1 Becoming aware of areas of improvement",
-            "id": "do_312461433824493568113381",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312461433824493568113381"
-         },
-         {
-            "name": "1 Being a school leader in India",
-            "id": "do_312468653843972096217603",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312468653843972096217603"
-         },
-         {
-            "name": "1 Introducing the school development plan",
-            "id": "do_312473641958858752119711",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312473641958858752119711"
-         },
-         {
-            "name": "1 Introduction to change",
-            "id": "do_312471679947603968218870",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312471679947603968218870"
-         },
-         {
             "name": "1 Perspectives on teacher development",
             "id": "do_312465053341499392115349",
             "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312465053341499392115349"
@@ -82,16 +57,6 @@ export class AddEntityComponent implements OnInit {
             "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472448124387328219071"
          },
          {
-            "name": "1 The importance of addressing diversity issues - Activity 2",
-            "id": "do_312472449314750464119233",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472449314750464119233"
-         },
-         {
-            "name": "1 The importance of addressing diversity issues - Activity 3",
-            "id": "do_312472452692328448219073",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472452692328448219073"
-         },
-         {
             "name": "1 The importance of addressing diversity issues - Activity 4",
             "id": "do_312472459926659072219077",
             "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472459926659072219077"
@@ -110,36 +75,6 @@ export class AddEntityComponent implements OnInit {
             "name": "1 What a school self-review is, and its advantages and challenges",
             "id": "do_312473169978834944119574",
             "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312473169978834944119574"
-         },
-         {
-            "name": "1 What coaching and mentoring have in common",
-            "id": "do_312461560128339968113449",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312461560128339968113449"
-         },
-         {
-            "name": "1 What is school culture and its impact on learning",
-            "id": "do_312460929971642368113221",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312460929971642368113221"
-         },
-         {
-            "name": "1 What technology and skills do you have access to?",
-            "id": "do_312463871403139072114607",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312463871403139072114607"
-         },
-         {
-            "name": "1 Working collaboratively with your state",
-            "id": "do_312470917722218496218450",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312470917722218496218450"
-         },
-         {
-            "name": "1.2. Not and Very(M)",
-            "id": "do_31225409761605222412011",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_31225409761605222412011"
-         },
-         {
-            "name": "1.3  Section 1 Test(M)",
-            "id": "do_31225357049694617611963",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_31225357049694617611963"
          }
       ]
    }

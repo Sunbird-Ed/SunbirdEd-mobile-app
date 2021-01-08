@@ -39,7 +39,7 @@
             </div>
           </div>
         </div>
-        <div *ngIf="data.taskData && showTask">
+        <!-- <div *ngIf="data.taskData && showTask">
           <div *ngFor="let task of data.taskData">
             <ion-item *ngIf="task.input == 'text' && !enableInput">
               <ion-label position="fixed" class="label-hint"> {{'FRMELEMNTS_LBL_ADD_TASK' | translate}} </ion-label>
@@ -56,9 +56,9 @@
               </ion-item>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div *ngIf="tasks?.length && showTask">
+      <!-- <div *ngIf="tasks?.length && showTask">
         <ion-card *ngFor="let task of tasks" class="data-list">
           <ion-item lines="none">
             {{task.name}}
@@ -66,7 +66,7 @@
             </ion-icon>
           </ion-item>
         </ion-card>
-      </div>
+      </div> -->
     </form>
   </div>
   <!-- <div *ngIf="showCategories">
