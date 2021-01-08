@@ -16,3 +16,13 @@
   margin: 10px 15px;
   color: $gray-300;
 }
+
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1rem;
+}
+:host ::ng-deep h4 {
+  font-size: 1rem;
+}

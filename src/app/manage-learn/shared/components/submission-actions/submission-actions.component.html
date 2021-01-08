@@ -1,0 +1,11 @@
+<ion-list class="d-flex flex-ai-center flex-dc">
+  <ion-button fill="clear" ion-item (click)="presentAlert()">
+    {{ 'FRMELEMNTS_BTN_EDIT' | translate }}
+  </ion-button>
+  <ion-button fill="clear" ion-item (click)="viewCntrlr.dismiss({ action: 'delete' })">
+    {{ 'FRMELEMNTS_BTN_DELETE' | translate }}
+  </ion-button>
+  <ion-button fill="clear" ion-item (click)="presentModal()">
+    {{ 'FRMELEMNTS_BTN_VIEW_DETAILS' | translate }}
+  </ion-button>
+</ion-list>

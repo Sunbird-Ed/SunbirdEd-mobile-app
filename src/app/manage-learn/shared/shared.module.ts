@@ -47,6 +47,11 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
+import { DownloadShareComponent } from './components/download-share/download-share.component';
+import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
+import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
+import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
+import { ViewDetailComponent } from './components/view-detail/view-detail.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +83,12 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     MatrixChartComponent,
     AttachmentComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    GraphCircleComponent,
+    FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -111,7 +121,12 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     BarChartComponent,
     MatrixChartComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    GraphCircleComponent,
+    FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
   providers: [
     Camera,
@@ -133,7 +148,11 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
     CreateTaskComponent,
     ScroreReportMenusComponent,
     QuestionListComponent,
-    CriteriaListComponent
+    CriteriaListComponent,
+    DownloadShareComponent,
+    FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
 })
 export class SharedModule {}

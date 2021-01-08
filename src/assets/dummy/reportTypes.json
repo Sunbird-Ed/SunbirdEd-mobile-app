@@ -1,0 +1,14 @@
+{
+    "message": "Report types fetched successfully.",
+    "status": 200,
+    "result": [{
+        "label": "Weekly",
+        "value": 0
+    }, {
+        "label": "Monthly",
+        "value": 1
+    }, {
+        "label": "Quarterly",
+        "value": 2
+    }]
+}
