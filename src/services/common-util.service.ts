@@ -460,7 +460,7 @@ export class CommonUtilService {
     isUserLocationAvalable(profile: any, locationMappingConfig, userType): boolean {
         const location = this.getUserLocation(profile);
         let isAvailable = false;
-        if (locationMappingConfig) {
+        if (locationMappingConfig && userType !== ProfileType.NONE) {
             const requiredFileds = this.findAllRequiredFields(locationMappingConfig, userType);
             isAvailable = requiredFileds.every(key => Object.keys(location).includes(key));
         }

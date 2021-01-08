@@ -92,7 +92,7 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <ion-button shape="round" (click)="onEditProfileClicked()" class="custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="onEditProfileClicked()" *ngIf="userLocation?.state" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
