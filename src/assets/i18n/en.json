@@ -1133,6 +1133,7 @@
   "DOWNLOAD_CSV": "Download .CSV",
   "FRMELEMNTS_LBL_PROJECT_VIEW": "Project View",
   "FRMELEMNTS_LBL_PROGRAM_NAME": "Program Name",
+  "FRMELEMNTS_LBL_ATTACHMENTS": "Attachments",
   "FRMELEMNTS_LBL_PROJECT_TITLE": "Project Title",
   "FRMELEMNTS_LBL_OBJECTIVE": "Objective",
   "FRMELEMNTS_LBL_DURATION": "Duration",
@@ -1144,6 +1145,7 @@
   "FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY": "Click here to view library",
   "FRMELEMNTS_LBL_LINK_LEARNING_RESOURCES": "Link Learning Resources",
   "FRMELEMNTS_LBL_SET_DATE": "Set Date",
+  "FRMELEMNTS_BTN_ATTACH":"Attach",
   "FRMELEMNTS_LBL_TOTAL_TASKS": "Total Tasks",
   "FRMELEMNTS_LBL_ASSIGN_TASK": "Assign Task",
   "FRMELEMNTS_LBL_VIEW_RESOURCES": "View Resources",
@@ -1155,8 +1157,10 @@
   "FRMELEMNTS_LBL_THIS_WEEK": "This Week",
   "FRMELEMNTS_LBL_THIS_MONTH": "This Month",
   "FRMELEMNTS_LBL_FILTERS": "Filters",
+  "FRMELEMNTS_LBL_VIEW_PROJECT": "View Project",
   "FRMELEMNTS_LBL_ENTITY": "Entity",
   "FRMELEMNTS_BTN_LOAD_MORE": "Load More",
+  "FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS": "Your Project has been updated successfully",
   "FRMELEMNTS_BTN_ADD_ENTITY": "Add Entity",
   "FRMELEMNTS_LBL_PAST": "Past",
   "FRMELEMNTS_LBL_UPCOMING": "Upcoming",
@@ -1306,5 +1310,4 @@
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_WEEK": "Projects Undertaken this week",
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_MONTH": "Projects Undertaken this week",
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER": "Projects Undertaken this  quater"
-
 }

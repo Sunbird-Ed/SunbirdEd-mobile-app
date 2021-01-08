@@ -562,11 +562,14 @@ export class RouterLinks {
     public static readonly TASK_VIEW = 'task-view';
     public static readonly LEARNING_RESOURCES = 'learning-resources';
     public static readonly SYNC = 'sync';
+    public static readonly ATTACHMENTS = 'attachments'
     public static readonly PROJECT_EDIT = 'project-edit';
     public static readonly PROJECT_OPERATION = `project-operation`;
     public static readonly CREATE_PROJECT = `create-project`;
     public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
     public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
+    public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+
 
     public static readonly SOLUTIONS = 'solutions';
     public static readonly QUESTIONNAIRE = 'questionnaire';
@@ -574,15 +577,15 @@ export class RouterLinks {
     public static readonly SECTION_LISTING = 'section-listing';
     public static readonly ECM_LISTING = 'ecm-listing';
     public static readonly SUBMISSION_PREVIEW = 'submission_preview';
-    public static readonly IMAGE_LISTING= 'image-listing';
-    public static readonly ALL_EVIDENCE= 'all-evidence';
-    
-    
+    public static readonly IMAGE_LISTING = 'image-listing';
+    public static readonly ALL_EVIDENCE = 'all-evidence';
+
+
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
     public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
-    public static readonly OBSERVATION_REPORTS= 'observation-reports';
-    public static readonly SURVEY_REPORTS= 'survey-reports';
+    public static readonly OBSERVATION_REPORTS = 'observation-reports';
+    public static readonly SURVEY_REPORTS = 'survey-reports';
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
 }

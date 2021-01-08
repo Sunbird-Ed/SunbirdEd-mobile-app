@@ -11,17 +11,17 @@
     <ion-searchbar debounce="1000" (ionInput)="onSearch($event)"></ion-searchbar>
     <div class="ion-padding">
       <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}}
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-label>{{'FRMELEMNTS_LBL_ENTITY' | translate}}</ion-label>
-              <ion-select interface="popover" value={{childEntity}} (ionChange)="selectSubEntity($event)">
-                <ion-select-option style="text-transform: capitalize !important;"  *ngFor="let subEntity of subEntities" value="{{subEntity.value}}">{{subEntity.name | titlecase}}</ion-select-option>
-                
-              </ion-select>
-            </ion-item>
-          </ion-col>
-        </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label>{{'FRMELEMNTS_LBL_ENTITY' | translate}}</ion-label>
+            <ion-select interface="popover" value={{childEntity}} (ionChange)="selectSubEntity($event)">
+              <ion-select-option style="text-transform: capitalize !important;" *ngFor="let subEntity of subEntities"
+                value="{{subEntity.value}}">{{subEntity.name | titlecase}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
 
       <!-- <ion-radio-group value=selectedEntity.value>
         <ion-row style="margin: 0px -18px;">

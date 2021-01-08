@@ -39,26 +39,26 @@
             </div>
           </div>
         </div>
-        <div *ngIf="data.taskData && showTask">
+        <!-- <div *ngIf="data.taskData && showTask">
           <div *ngFor="let task of data.taskData">
             <ion-item *ngIf="task.input == 'text' && !enableInput">
               <ion-label position="fixed" class="label-hint"> {{'FRMELEMNTS_LBL_ADD_TASK' | translate}} </ion-label>
               <ion-input type="text" (ionFocus)="openInput($event)" name="{{task.field}}">
               </ion-input>
-              <ion-icon name="add-outline" slot="end"></ion-icon>
+              <ion-icon name="add" slot="end"></ion-icon>
             </ion-item>
             <div *ngIf="enableInput && task.input == 'text'">
               <ion-item>
                 <ion-input type="text" *ngIf="task.input == 'text'" [formControlName]="task.field"
                   [(ngModel)]="task.value" name="{{task.field}}" (keyup.enter)="saveTask(task)">
                 </ion-input>
-                <ion-icon name="add-outline" slot="end" (click)="saveTask(task)"></ion-icon>
+                <ion-icon name="add" slot="end" (click)="saveTask(task)"></ion-icon>
               </ion-item>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div *ngIf="tasks?.length && showTask">
+      <!-- <div *ngIf="tasks?.length && showTask">
         <ion-card *ngFor="let task of tasks" class="data-list">
           <ion-item lines="none">
             {{task.name}}
@@ -66,7 +66,7 @@
             </ion-icon>
           </ion-item>
         </ion-card>
-      </div>
+      </div> -->
     </form>
   </div>
   <!-- <div *ngIf="showCategories">
@@ -76,6 +76,6 @@
   </div> -->
 </ion-content>
 <ion-footer>
-  <ion-button (click)="next()" expand="block">{{button | translate}}
+  <ion-button (click)="next()" expand="block">{{'FRMELEMNTS_BTN_SAVE_EDITS' | translate}}
   </ion-button>
 </ion-footer>

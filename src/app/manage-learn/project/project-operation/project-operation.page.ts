@@ -1,12 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { AddEntityComponent } from '../add-entity/add-entity.component';
 import { LinkLearningResourcesComponent } from '../link-learning-resources/link-learning-resources.component';
 import { AddProgramsComponent } from '../add-programs/add-programs.component';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
+import { AppHeaderService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
+import { DbService } from '../../core/services/db.service';
+import { TranslateService } from '@ngx-translate/core';
+
+var environment = {
+  db: {
+    projects: "project.db",
+    categories: "categories.db",
+  },
+  deepLinkAppsUrl: ''
+};
 @Component({
   selector: 'app-project-operation',
   templateUrl: './project-operation.page.html',
@@ -14,6 +28,7 @@ import { UtilsService } from '@app/app/manage-learn/core/services/utils.service'
 })
 export class ProjectOperationPage implements OnInit {
   button = 'FRMELEMNTS_BTN_IMPORT_PROJECT';
+
   selectedProgram;
   selectedResources;
   today: any = new Date();
@@ -24,15 +39,28 @@ export class ProjectOperationPage implements OnInit {
   projectId;
   selectedEntity;
   template;
-
+  viewProjectAlert;
+  private backButtonFunc: Subscription;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    pageTitle: '',
+    actionButtons: []
+  };
   constructor(
     private routerparam: ActivatedRoute,
     private modalController: ModalController,
     private http: HttpClient,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private location: Location,
+    private headerService: AppHeaderService,
+    private platform: Platform,
+    private db: DbService,
+    private translate: TranslateService,
+    private alertController: AlertController
   ) {
     this.routerparam.queryParams.subscribe((params) => {
-      console.log(params,"params")
+      console.log(params, "params")
       if (params && params.availableInLocal) {
         this.button = params.isEdit ? 'FRMELEMNTS_BTN_SAVE_EDITS' : 'FRMELEMNTS_BTN_CREATE_PROJECT'
         this.showLearningResources = true;
@@ -45,10 +73,30 @@ export class ProjectOperationPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
+  ionViewWillEnter() {
+    let data;
+    this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+      data = text;
+      console.log(data,"data 81");
+    });
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+    this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
+  }
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
   getProjectFromLocal() {
     this.template = this.utils.getProjectData();
-    console.log('im getProjectFromLocal',this.template);
+    console.log('im getProjectFromLocal', this.template);
 
   }
 
@@ -140,6 +188,51 @@ export class ProjectOperationPage implements OnInit {
       this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
       this.template.endDate = this.template.endDate ? '' : '';
     }
+  }
+  isMandatoryFieldsFilled() {
+    const isProgramPresent = (this.selectedProgram && this.selectedProgram.name) || (this.selectedProgram && this.selectedProgram._id);
+    const isEntityAdded = (this.selectedEntity && this.selectedEntity._id)
+    if (this.template.showProgramAndEntity && (!isEntityAdded || !isProgramPresent)) {
+      // this.toast.showMessage('MESSAGES.REQUIRED_FIELDS', 'danger');
+      return false
+    }
+    return true
+  }
+
+  update(data) {
+    if (!this.isMandatoryFieldsFilled()) {
+      return
+    }
+    this.db.createPouchDB(environment.db.projects);
+    data.isEdit = true;
+    data.isDeleted = false;
+    this.db.update(data).then(success => {
+      this.createProjectModal(data, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
+    }).catch(error => {
+    })
+  }
+
+  async createProjectModal(data, header, button) {
+    let texts;
+    this.translate.get([header, button]).subscribe(data => {
+      texts = data;
+    })
+    let programName = data.programInformation ? data.programInformation.name : ''
+    this.viewProjectAlert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      subHeader: texts[header],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: texts[button],
+          cssClass: 'secondary',
+          handler: (blah) => {
+            this.location.back();
+          }
+        }
+      ]
+    });
+    await this.viewProjectAlert.present();
   }
 }
 
