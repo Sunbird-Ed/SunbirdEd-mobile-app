@@ -147,7 +147,9 @@ export class LoginHandlerService {
               .then(async (success: any) => {
                 const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
                 const currentProfileType = (() => {
-                  if (
+                  if (selectedUserType === ProfileType.ADMIN) {
+                    return selectedUserType;
+                  } else if (
                     (success.userType === ProfileType.OTHER.toUpperCase()) ||
                     (!success.userType)
                   ) {
