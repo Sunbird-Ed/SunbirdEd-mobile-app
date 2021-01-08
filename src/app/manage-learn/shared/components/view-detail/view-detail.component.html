@@ -1,0 +1,17 @@
+<ion-content>
+  <ion-card class="observationTitle">
+    <ion-card-content>
+      {{ submission?.entityName }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card-content>
+    <h5>{{ submission?.title }}</h5>
+    <p>Created On : {{ submission?.createdAt | date }}</p>
+    <p *ngIf="submission?.submissionDate">
+      Submitted On :
+
+      {{ submission?.submissionDate | date }}
+    </p>
+  </ion-card-content>
+</ion-content>

@@ -50,6 +50,8 @@ import { CriteriaListComponent } from './components/criteria-list/criteria-list.
 import { DownloadShareComponent } from './components/download-share/download-share.component';
 import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
 import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
+import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
+import { ViewDetailComponent } from './components/view-detail/view-detail.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +87,8 @@ import { FilterModalComponent } from './components/filter-modal/filter-modal.com
     DownloadShareComponent,
     GraphCircleComponent,
     FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -121,6 +125,8 @@ import { FilterModalComponent } from './components/filter-modal/filter-modal.com
     DownloadShareComponent,
     GraphCircleComponent,
     FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
   providers: [
     Camera,
@@ -145,6 +151,8 @@ import { FilterModalComponent } from './components/filter-modal/filter-modal.com
     CriteriaListComponent,
     DownloadShareComponent,
     FilterModalComponent,
+    SubmissionActionsComponent,
+    ViewDetailComponent
   ],
 })
 export class SharedModule {}
