@@ -20,6 +20,7 @@ import { AddEntityComponent } from './add-entity/add-entity.component';
 import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
+import { AttachmentListPage } from './attachment-list/attachment-list.page';
 
 const routes: Routes = [
   {
@@ -56,12 +57,16 @@ const routes: Routes = [
   }, {
     path: RouterLinks.SYNC,
     component: SyncPage
+  },
+  {
+    path: `${RouterLinks.ATTACHMENTS}/:id`,
+    component: AttachmentListPage
   }
 
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage,AttachmentListPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CategorySelectComponent],
   imports: [
     CommonModule,

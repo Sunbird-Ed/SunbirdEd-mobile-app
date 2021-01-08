@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ModalController, AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CategorySelectComponent } from '../category-select/category-select.component';
-
+import { AppHeaderService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'app-create-project',
   templateUrl: './create-project.page.html',
@@ -13,10 +15,11 @@ import { CategorySelectComponent } from '../category-select/category-select.comp
 export class CreateProjectPage implements OnInit {
   selectedCategories;
   showCategories;
+  enableInput: boolean = false;
   projectForm: FormGroup;
   projectFormData;
+  showTask: boolean = false;
   tasks;
-  button:'';
   project = {
     categories: [],
     createdAt: "2019-09-13T11:45:21.000Z",
@@ -44,18 +47,39 @@ export class CreateProjectPage implements OnInit {
     _id: "5fc54221cce64916855f6b84",
     _rev: "1-3718fdc86e773e7d7c7c5be38b294214"
   };
+  private backButtonFunc: Subscription;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: []
+  };
   constructor(
     private location: Location,
-    private modal :ModalController,
+    private modal: ModalController,
     private alert: AlertController,
     private translate: TranslateService,
     private fb: FormBuilder,
+    private headerService: AppHeaderService,
+    private platform: Platform,
   ) { }
 
   ngOnInit() {
     this.getForm();
   }
-
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
+  }
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
   getProjectFromLocal() {
     // this.db.query({ _id: this.parameters.projectId }).then(success => {
     //   this.project = success.docs.length ? success.docs[0] : {};
@@ -73,16 +97,18 @@ export class CreateProjectPage implements OnInit {
   }
   getForm() {
     this.projectFormData = [
-      { field: "title", label: "Title", value: "", visible: true, editable: true, input: "text", validation: { required: true }, max: 50, hint: "Name your project" }, 
-      { field: "description", label: "Description", value: "", visible: true, editable: true, input: "textarea", validation: { required: true }, max: 120, hint: "What is the Objective of your Project" }, 
-      { field: "categories", label: "Categories", value: "", visible: true, editable: true, input: "select",
-       options: [{_id: "5fc714ef94fda51a7fe90825", label: "Teachers", value: "teachers" }, 
-      { _id: "5fc714ef94fda51a7fe90826", label: "Students", value: "students" }, 
-      {_id: "5fc714ef94fda51a7fe90827", label: "Infrastructure", value: "infrastructure" }, 
-      {_id: "5fc714ef94fda51a7fe90828", label: "Community", value: "community" }, 
-      {_id: "5fc714ef94fda51a7fe90829", label: "Education Leader", value: "educationLeader" }, 
-      {_id: "5fc714ef94fda51a7fe9082a", label: "School Process", value: "schoolProcess" }, 
-      {_id: "", label: "Others", value: "others" }], validation: { required: false }, hint: "What does your project aim to improve?" }]
+      { field: "title", label: "Title", value: "", visible: true, editable: true, input: "text", validation: { required: true }, max: 50, hint: "Name your project" },
+      { field: "description", label: "Description", value: "", visible: true, editable: true, input: "textarea", validation: { required: true }, max: 120, hint: "What is the Objective of your Project" },
+      {
+        field: "categories", label: "Categories", value: "", visible: true, editable: true, input: "select",
+        options: [{ _id: "5fc714ef94fda51a7fe90825", label: "Teachers", value: "teachers" },
+        { _id: "5fc714ef94fda51a7fe90826", label: "Students", value: "students" },
+        { _id: "5fc714ef94fda51a7fe90827", label: "Infrastructure", value: "infrastructure" },
+        { _id: "5fc714ef94fda51a7fe90828", label: "Community", value: "community" },
+        { _id: "5fc714ef94fda51a7fe90829", label: "Education Leader", value: "educationLeader" },
+        { _id: "5fc714ef94fda51a7fe9082a", label: "School Process", value: "schoolProcess" },
+        { _id: "", label: "Others", value: "others" }], validation: { required: false }, hint: "What does your project aim to improve?"
+      }]
     let taskForm = {
       field: "name", label: "Name", value: "", visible: true, editable: true, input: "text", validation: { required: true }
     }
@@ -199,13 +225,15 @@ export class CreateProjectPage implements OnInit {
       this.tasks.splice(index, 1);
     }
   }
+
   async openCategoryModal(categories) {
+    console.log(categories,"categories 12");
     const modal = await this.modal.create({
       component: CategorySelectComponent,
       cssClass: 'transparentModal',
       componentProps: {
         'categories': JSON.parse(JSON.stringify(categories)),
-        'selectedCategories': JSON.parse(JSON.stringify(this.selectedCategories)),
+        'selectedCategories': this.selectedCategories ? JSON.parse(JSON.stringify(this.selectedCategories)) :'',
       },
     });
     modal.onWillDismiss().then(({ data }) => {
@@ -214,9 +242,8 @@ export class CreateProjectPage implements OnInit {
 
     })
     return await modal.present();
-
   }
   next() {
-    
+
   }
 }

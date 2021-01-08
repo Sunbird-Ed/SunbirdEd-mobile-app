@@ -17,7 +17,7 @@ export class CategorySelectComponent implements OnInit {
   constructor(
     private modal: ModalController
   ) { }
-
-  ngOnInit() { }
-
+  ngOnInit() { 
+    console.log(this.categories,"categories 22");
+  }
 }
