@@ -2,16 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { Platform, PopoverController } from '@ionic/angular';
+import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
-import { LocalStorageService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, UtilsService } from '../../core';
 import { storageKeys } from '../../storageKeys';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { ScroreReportMenusComponent } from '../../shared/components/scrore-report-menus/scrore-report-menus.component';
 import { ObservationReportsComponent } from '../../observation-report/observation-reports/observation-reports.component';
+import { SubmissionActionsComponent } from '../../shared/components/submission-actions/submission-actions.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-observation-submission',
@@ -49,7 +51,10 @@ export class ObservationSubmissionComponent implements OnInit {
     private localStorage: LocalStorageService,
     private utils: UtilsService,
     private evdnsServ: EvidenceService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private loader: LoaderService,
+    private translate: TranslateService,
+    private alertCntrl: AlertController
   ) {}
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -285,5 +290,179 @@ export class ObservationSubmissionComponent implements OnInit {
       //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
       // });
     }
+  }
+  //  entity actions
+  entityActions(e) {
+    let noScore: boolean = true;
+    this.submissions.forEach((submission) => {
+      submission.showActionsheet = false;
+      if (submission.ratingCompletedAt) {
+        // this.showActionsheet = true;
+        // this.showEntityActionsheet = true;
+        noScore = false;
+      }
+    });
+    if (noScore) {
+      this.viewEntityReports();
+    } else {
+      this.openEntityReportMenu(e);
+    }
+  }
+
+  // Menu for Entity reports
+  async openEntityReportMenu(event) {
+    let popover = await this.popoverCtrl.create({
+      component: ScroreReportMenusComponent,
+      componentProps: {
+        observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
+        entityId: this.selectedSolution.entities[this.entityIndex]._id,
+        entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        showEntityActionsheet: 'true',
+        showSubmissionAction: 'false',
+      },
+      event: event,
+    });
+    popover.present();
+  }
+
+  viewEntityReports() {
+    this.showEntityActionsheet = false;
+    this.showActionsheet = false;
+    // const payload = {
+    //   entityId: this.selectedSolution.entities[this.entityIndex]._id,
+    //   observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
+    //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+    // };
+    // this.navCtrl.push(ObservationReportsPage, payload);
+    this.router.navigate([
+      RouterLinks.OBSERVATION_REPORTS,
+      {
+        queryParams: {
+          entityId: this.selectedSolution.entities[this.entityIndex]._id,
+          observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
+          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        },
+      },
+    ]);
+  }
+  // Actions on submissions
+  async openActionMenu(event, submission, index) {
+    submission.entityName = this.selectedSolution.entities[this.entityIndex].name;
+    let popover = await this.popoverCtrl.create({
+      component: SubmissionActionsComponent,
+      componentProps: {
+        submission: submission,
+      },
+      event: event,
+    });
+    popover.onDidDismiss().then((data: any) => {
+      if (data && data.action === 'update') {
+        const payload = {
+          submissionId: submission._id,
+          title: data.name,
+        };
+        this.ediSubmissionName(payload, index);
+      } else if (data && data.action === 'delete') {
+        this.deleteSubmission(submission._id);
+      }
+    });
+    await popover.present();
+  }
+  async deleteSubmission(submissionId) {
+    let translateObject;
+    this.translate
+      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_MSG_DELETE_SUBMISSION', 'FRMELEMNTS_LBL_YES', 'FRMELEMNTS_LBL_NO'])
+      .subscribe((translations) => {
+        translateObject = translations;
+      });
+    let alert = await this.alertCntrl.create({
+      header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
+      message: translateObject['FRMELEMNTS_MSG_DELETE_SUBMISSION'],
+      buttons: [
+        {
+          text: translateObject['FRMELEMNTS_LBL_NO'],
+          role: 'cancel',
+          handler: () => {},
+        },
+        {
+          text: translateObject['FRMELEMNTS_LBL_YES'],
+          handler: () => {
+            //TODO:Implement
+            // this.utils.startLoader();
+            // this.apiProvider.httpGet(
+            //   AppConfigs.cro.obsrvationSubmissionDelete + submissionId,
+            //   (success) => {
+            //     console.log(success);
+            //     this.refreshLocalObservationList();
+            //   },
+            //   (error) => {
+            //     this.utils.stopLoader();
+            //   }
+            // );
+          },
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  ediSubmissionName(data, i) {
+    const payload = {
+      title: data.title,
+    };
+    // TODO:Implement
+    // this.utils.startLoader();
+    // this.apiProvider.httpPost(
+    //   AppConfigs.cro.editObservationName + data.submissionId,
+    //   payload,
+    //   (success) => {
+    //     console.log(success);
+    //     this.refreshLocalObservationList();
+    //   },
+    //   (error) => {
+    //     this.utils.stopLoader();
+    //   }
+    // );
+  }
+
+  observeAgain() {
+    this.loader.startLoader('Creating an Observation');
+
+    const entityId = this.selectedSolution.entities[this.entityIndex]._id;
+    const observationId = this.selectedSolution._id;
+    // TODO:Implement
+    // this.apiProvider.httpPost(
+    //   AppConfigs.cro.observationSubmissionCreate + observationId + "?entityId=" + entityId,
+    //   {},
+    //   (success) => {
+    //     console.log(success);
+    //     this.refreshLocalObservationList();
+    //   },
+    //   (error) => {
+    //     this.loader.stopLoader();
+    //   }
+    // );
+  }
+
+  refreshLocalObservationList(refreshEvent?, startLoader?) {
+    let event = {
+      programIndex: this.programIndex,
+      solutionIndex: this.solutionIndex,
+      entityIndex: this.entityIndex,
+    };
+    startLoader ? this.loader.startLoader() : null;
+    // TODO:Implement
+    // this.programService
+    //   .refreshObservationList(this.programList, event)
+    //   .then(async (data) => {
+    //     await this.getProgramFromStorage("stopLoader");
+    //     if (refreshEvent) refreshEvent.complete();
+    //     this.selectedSolution.entities[this.entityIndex].submissions.length > 0 ? null : this.navCtrl.pop();
+
+    //     this.pageTop.scrollToTop();
+    //   })
+    //   .catch((error) => {
+    //     this.loader.stopLoader();
+    //   });
   }
 }
