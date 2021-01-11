@@ -1125,8 +1125,13 @@
   "COPY_TRACE_ID": "Copy trace id",
   "COPY_TRACE_ID_DESC": "Copy trace id for support",
   "LEADER": "Leader",
-  "ADD_BLOCK": "Add Block",
-  "ADD_CLUSTER": "Add Cluster",
-  "ADD_SCHOOL": "Add School",
+  "FRMELEMNTS_LBL_BLOCK": "Block",
+  "FRMELEMNTS_LBL_CLUSTER": "Cluster",
+  "FRMELEMNTS_LBL_SCHOOL": "School",
+  "FRMELEMNTS_LBL_PERSONA": "Role",
+  "FRMELEMNTS_LBL_SUBPERSONA": "Subrole",
+  "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
+  "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
+  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
   "YOUR_PREFERENCES": "Your preferences"
 }

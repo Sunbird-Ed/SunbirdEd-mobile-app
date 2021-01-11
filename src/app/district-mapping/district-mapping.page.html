@@ -23,7 +23,7 @@
 <div class="footer">
   <button class="block-button"
     [disabled]="formGroup?.invalid"
-    [ngClass]="formGroup?.invalid ? 'disabled-button': ''"
+    [class.disabled-button]="formGroup?.invalid"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}
     <!-- <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon> -->
   </button>

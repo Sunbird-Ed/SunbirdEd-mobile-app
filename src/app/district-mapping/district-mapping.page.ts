@@ -102,16 +102,16 @@ export class DistrictMappingPage {
 
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    this.name = this.profile['firstName'];
-    if (this.profile['lastName']) {
-      this.name = this.profile['firstName'] + this.profile['lastName'];
-    }
-    this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
+    this.presetLocation = (await this.locationHandler.getAvailableLocation(
+      this.profile.serverProfile ? this.profile.serverProfile : this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
         if (loc) { acc[loc.type] = loc; }
         return acc;
       }, {});
-    this.initialiseFormData(undefined, true);
+    this.initialiseFormData({
+      ...FormConstants.LOCATION_MAPPING,
+      subType: this.presetLocation['state'] ? this.presetLocation['state'].id : FormConstants.LOCATION_MAPPING.subType
+    }, true);
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -177,10 +177,10 @@ export class DistrictMappingPage {
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes,
-        firstName : this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
+        firstName: this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
         lastName: '',
-        ...((this.formGroup.value['persona'] ? {userType: this.formGroup.value['persona']} : {})),
-        ...((this.formGroup.value.children['subPersona'] ? {subUserType: this.formGroup.value.children['subPersona']} : {}))
+        ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
+        ...((this.formGroup.value.children['subPersona'] ? { subUserType: this.formGroup.value.children['subPersona'] } : {}))
       };
 
       const loader = await this.commonUtilService.getLoader();
@@ -301,308 +301,18 @@ export class DistrictMappingPage {
   }
 
   private async initialiseFormData(
-    formRequest: FormRequest = FormConstants.LOCATION_MAPPING,
+    formRequest: FormRequest,
     initial = false
   ) {
-    // const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
-    const locationMappingConfig = [
-  {
-    "code": "name",
-    "type": "input",
-    "templateOptions": {
-      "labelHtml": {
-        "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-        "values": {
-          "$0": "Name"
-        }
-      },
-      "hidden": true,
-      "placeHolder": "Enter Name",
-      "multiple": false
-    },
-    "validations": [
-      {
-        "type": "required"
-      }
-    ]
-  },
-  {
-    "code": "persona",
-    "type": "nested_select",
-    "templateOptions": {
-      "hidden": true,
-      "labelHtml": {
-        "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-        "values": {
-          "$0": "Persona"
-        }
-      },
-      "placeHolder": "Select Persona",
-      "multiple": false,
-      "dataSrc": {
-        "marker": "SUPPORTED_PERSONA_LIST"
-      }
-    },
-    "validations": [
-      {
-        "type": "required"
-      }
-    ],
-    "children": {
-      "administrator": [
-        {
-          "code": "state",
-          "type": "select",
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "State"
-              }
-            },
-            "placeHolder": "Select State",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "STATE_LOCATION_LIST"
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "district",
-          "type": "select",
-          "context": "state",
-          "default": null,
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "District"
-              }
-            },
-            "placeHolder": "Select District",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "district"
-              }
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "block",
-          "type": "select",
-          "context": "district",
-          "default": null,
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "Block"
-              }
-            },
-            "placeHolder": "Select Block",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "block"
-              }
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "cluster",
-          "type": "select",
-          "context": "block",
-          "default": null,
-          "templateOptions": {
-            "label": "Cluster",
-            "placeHolder": "Select Cluster",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "cluster"
-              }
-            }
-          }
-        },
-        {
-          "code": "school",
-          "type": "select",
-          "context": "cluster",
-          "default": null,
-          "templateOptions": {
-            "label": "School",
-            "placeHolder": "Select School",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "school"
-              }
-            }
-          }
-        }
-      ],
-      "teacher": [
-        {
-          "code": "state",
-          "type": "select",
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "State"
-              }
-            },
-            "placeHolder": "Select State",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "STATE_LOCATION_LIST"
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "district",
-          "type": "select",
-          "context": "state",
-          "default": null,
-          "templateOptions": {
-            "placeHolder": "Select District",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "district"
-              }
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        }
-      ],
-      "student": [
-        {
-          "code": "state",
-          "type": "select",
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "State"
-              }
-            },
-            "placeHolder": "Select State",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "STATE_LOCATION_LIST"
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "district",
-          "type": "select",
-          "context": "state",
-          "default": null,
-          "templateOptions": {
-            "labelHtml": {
-              "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
-              "values": {
-                "$0": "District"
-              }
-            },
-            "placeHolder": "Select District",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "district"
-              }
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        }
-      ],
-      "other": [
-        {
-          "code": "state",
-          "type": "select",
-          "templateOptions": {
-            "placeHolder": "Select State",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "STATE_LOCATION_LIST"
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        },
-        {
-          "code": "district",
-          "type": "select",
-          "context": "state",
-          "default": null,
-          "templateOptions": {
-            "placeHolder": "Select District",
-            "multiple": false,
-            "dataSrc": {
-              "marker": "LOCATION_LIST",
-              "params": {
-                "id": "district"
-              }
-            }
-          },
-          "validations": [
-            {
-              "type": "required"
-            }
-          ]
-        }
-      ]
-    }
-  }
-] as any;
+    const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+    const useCaseList =
+      this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && this.source === PageId.PROFILE) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
+      } else if(config.code === 'name' && this.source !== PageId.PROFILE) {
+        config.validations   = [];
       }
 
       if (config.code === 'persona') {
@@ -621,6 +331,9 @@ export class DistrictMappingPage {
 
         Object.keys(config.children).forEach((persona) => {
           config.children[persona].map((personaConfig) => {
+            if (!useCaseList.includes(personaConfig.templateOptions['dataSrc']['params']['useCase'])) {
+              personaConfig.templateOptions['hidden'] = true;
+            }
             if (!personaConfig.templateOptions['dataSrc']) {
               return personaConfig;
             }
@@ -699,7 +412,7 @@ export class DistrictMappingPage {
             subType: (newStateValue as SbLocation).id,
           }).catch((e) => {
             console.error(e);
-            this.initialiseFormData();
+            this.initialiseFormData(FormConstants.LOCATION_MAPPING);
           });
         });
       }

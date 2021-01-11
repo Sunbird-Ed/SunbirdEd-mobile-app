@@ -118,6 +118,11 @@ var formRequestArray = [{
         'subType': 'userType',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'profileConfig',
+        'subType': 'default',
+        'action': 'get'
     }
 
 
