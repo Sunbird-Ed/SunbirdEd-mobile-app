@@ -331,6 +331,18 @@ export class UtilsService {
     return imageArray;
   }
 
+  getProfileInfo(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      resolve({
+        "state" :  "5f33c3d85f637784791cd831",
+        "district" : "5f33c56fb451f58478b36997",
+        "block" : "5f33c63ece438a849b4a17f4",
+        "school" : "5f33c6dcc1352f84a29f547a",
+        "role" : "DEO"
+    })
+    })
+  }
+
   getProjectData() {
     return {
       userId: '01c04166-a65e-4e92-a87b-a9e4194e771d',

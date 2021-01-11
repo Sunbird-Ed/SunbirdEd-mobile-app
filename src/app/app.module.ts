@@ -2,7 +2,7 @@
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // ionic cordova dependencies/plugins
@@ -81,6 +81,8 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
+import { ApiInterceptor } from './manage-learn/core/interceptor/apiInterceptor';
+
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -491,7 +493,12 @@ declare const sbutility;
     FilePath,
     Chooser,
     PhotoViewer,
-    StreamingMedia
+    StreamingMedia,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
   schemas: [
