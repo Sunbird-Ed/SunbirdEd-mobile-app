@@ -2742,7 +2742,7 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
         });
     });
-    fdescribe('checkUserRegistration', () => {
+    describe('checkUserRegistration', () => {
         it('should register user with apropriate request ', (done) => {
             // arrange
             const profileRes = {
