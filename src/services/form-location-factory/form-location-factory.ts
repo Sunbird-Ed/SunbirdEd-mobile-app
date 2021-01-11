@@ -1,161 +1,110 @@
 import { Injectable, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
-import { FieldConfigOption } from 'common-form-elements';
+import { FieldConfigOptionsBuilder } from 'common-form-elements';
 import { defer, of } from 'rxjs';
-import { CommonUtilService } from '../common-util.service';
-import { Location as loc } from '../../app/app.constant';
-import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-
+import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { Location as LocationType } from '@app/app/app.constant';
+import { distinctUntilChanged, startWith, switchMap, tap } from 'rxjs/operators';
+import { Location } from '@project-sunbird/client-services/models/location';
+import { FieldConfig } from 'common-form-elements';
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) { }
-
-  buildStateListClosure(stateCode?, stateList?, availableLocationState?): any {
+  buildStateListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
     return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
       return defer(async () => {
-
-        const formStateList: FieldConfigOption<string>[] = [];
-        let selectedState;
-
-        const loader = await this.commonUtilService.getLoader();
-        await loader.present();
         const req: LocationSearchCriteria = {
           from: CachedItemRequestSourceFrom.SERVER,
           filters: {
-            type: loc.TYPE_STATE
+            type: LocationType.TYPE_STATE
           }
         };
-        try {
-          if (!stateList) {
-            stateList = await this.profileService.searchLocation(req).toPromise();
-          }
-
-          if (stateList && Object.keys(stateList).length) {
-
-            stateList.forEach(stateData => {
-              formStateList.push({ label: stateData.name, value: stateData.code });
-            });
-
-            if (availableLocationState) {
-              selectedState = stateList.find(s =>
-                (s.name === availableLocationState)
-              );
+        notifyLoading();
+        return await this.profileService.searchLocation(req).toPromise()
+          .then((stateLocationList: Location[]) => {
+            const list = stateLocationList.map((s) => ({ label: s.name, value: s }));
+            if (config.default && initial) {
+              const option = list.find((o) => o.value.id === config.default.id);
+              formControl.patchValue(option ? option.value : null);
+              config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
-
-            setTimeout(() => {
-              formControl.patchValue(stateCode || (selectedState && selectedState.code) || null);
-            }, 0);
-
-          } else {
+            return list;
+          })
+          .catch((e) => {
             this.commonUtilService.showToast('NO_DATA_FOUND');
-          }
-        } catch (e) {
-          console.log(e);
-        } finally {
-          loader.dismiss();
-        }
-        return formStateList;
+            console.error(e);
+            return [];
+          })
+          .finally(() => {
+            notifyLoaded();
+          });
       });
     };
   }
-
-  buildDistrictListClosure(districtCode?, stateList?, availableLocationDistrict?, isFormLoaded?): any {
+  buildLocationListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
+    const locationType = config.templateOptions['dataSrc']['params']['id'];
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
         return of([]);
       }
-
       return contextFormControl.valueChanges.pipe(
-        distinctUntilChanged(),
+        startWith(contextFormControl.value),
+        distinctUntilChanged((a: Location, b: Location) => JSON.stringify(a) === JSON.stringify(b)),
         tap(() => {
-          formControl.patchValue(null);
+          if (formControl.value && !initial) {
+            formControl.patchValue(null);
+          }
         }),
-        switchMap((value) => {
-          return defer(async () => {
-            const formDistrictList: FieldConfigOption<string>[] = [];
-            let selectedDistrict;
-
-            const loader = await this.commonUtilService.getLoader();
-            await loader.present();
-
-            const selectdState = this.getStateIdFromCode(contextFormControl.value, stateList);
-
-            const req: LocationSearchCriteria = {
-              from: CachedItemRequestSourceFrom.SERVER,
-              filters: {
-                type: loc.TYPE_DISTRICT,
-                parentId: selectdState && selectdState.id
-              }
-            };
-            try {
-              const districtList = await this.profileService.searchLocation(req).toPromise();
-
-              if (districtList && Object.keys(districtList).length) {
-
-                districtList.forEach(districtData => {
-                  formDistrictList.push({ label: districtData.name, value: districtData.code });
-                });
-
-                if (!isFormLoaded) {
-                  if (availableLocationDistrict) {
-                    selectedDistrict = districtList.find(s =>
-                      (s.name === availableLocationDistrict)
-                    );
-                  }
-
-                  setTimeout(() => {
-                    formControl.patchValue(districtCode || (selectedDistrict && selectedDistrict.code) || null);
-                  }, 0);
-                } else {
-                  setTimeout(() => {
-                    formControl.patchValue(null);
-                  }, 0);
-                }
-
-              } else {
-                // this.availableLocationDistrict = '';
-                // this.districtList = [];
-                this.commonUtilService.showToast('NO_DATA_FOUND');
-              }
-            } catch (e) {
-              console.error(e);
-            } finally {
-              loader.dismiss();
+        switchMap(async (value) => {
+          if (!value) {
+            return [];
+          }
+          const req: LocationSearchCriteria = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            filters: {
+              type: locationType,
+              parentId: (contextFormControl.value as Location).id
             }
-            return formDistrictList;
-          });
+          };
+          notifyLoading();
+          return await this.profileService.searchLocation(req).toPromise()
+            .then((locationList: Location[]) => {
+              const list = locationList.map((s) => ({ label: s.name, value: s }));
+              if (config.default && initial) {
+                const option = list.find((o) => o.value.id === config.default.id);
+                formControl.patchValue(option ? option.value : null);
+                config.default['code'] = option ? option.value['code'] : config.default['code'];
+              }
+              return list;
+            })
+            .catch((e) => {
+              this.commonUtilService.showToast('NO_DATA_FOUND');
+              console.error(e);
+              return [];
+            })
+            .finally(() => {
+              notifyLoaded();
+            });
         })
       );
     };
   }
-
-  private getStateIdFromCode(code, stateList) {
-    if (stateList && stateList.length) {
-      const selectedState = stateList.find(state => state.code === code);
-      return selectedState;
-    }
-    return null;
-  }
-
-  private generateTelemetryInteract(telemetryData) {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      telemetryData.type,
-      telemetryData.subType,
-      telemetryData.env,
-      telemetryData.pageId,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      telemetryData.id
-    );
-  }
-
+  // private generateTelemetryInteract(telemetryData) {
+  //   this.telemetryGeneratorService.generateInteractTelemetry(
+  //     telemetryData.type,
+  //     telemetryData.subType,
+  //     telemetryData.env,
+  //     telemetryData.pageId,
+  //     undefined,
+  //     undefined,
+  //     undefined,
+  //     undefined,
+  //     telemetryData.id
+  //   );
+  // }
 }

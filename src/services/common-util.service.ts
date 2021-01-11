@@ -447,25 +447,33 @@ export class CommonUtilService {
 
     getUserLocation(profile: any) {
         const userLocation = {
-            state: {},
-            district: {}
         };
         if (profile && profile.userLocations && profile.userLocations.length) {
-            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
-                if (profile.userLocations[i].type === 'state') {
-                    userLocation.state = profile.userLocations[i];
-                } else if (profile.userLocations[i].type === 'district') {
-                    userLocation.district = profile.userLocations[i];
-                }
-            }
+            profile.userLocations.forEach((d) => {
+                userLocation[d.type] = d;
+            });
         }
 
         return userLocation;
     }
 
-    isUserLocationAvalable(profile: any): boolean {
+    isUserLocationAvalable(profile: any, locationMappingConfig, userType): boolean {
         const location = this.getUserLocation(profile);
-        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
+        let isAvailable = false;
+        if (locationMappingConfig && userType !== ProfileType.NONE) {
+            const requiredFileds = this.findAllRequiredFields(locationMappingConfig, userType);
+            isAvailable = requiredFileds.every(key => Object.keys(location).includes(key));
+        }
+        return isAvailable;
+    }
+
+    private findAllRequiredFields(locationMappingConfig, userType) {
+        return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
+            if (config.validations && config.validations.find((v) => v.type === 'required')) {
+              acc.push(config.code);
+            }
+            return acc;
+          }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -655,6 +663,38 @@ export class CommonUtilService {
         } catch {
             return [];
         }
+    }
+
+    async handleAssessmentStatus(assessmentStatus) {
+        if (assessmentStatus.isContentDisabled) {
+            this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+            return true;
+        }
+        if (assessmentStatus.isLastAttempt) {
+            return await this.showAssessmentLastAttemptPopup();
+        }
+        return false;
+    }
+
+    async showAssessmentLastAttemptPopup() {
+        const confirm = await this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                sbPopoverMainTitle: this.translateMessage('ASSESSMENT_LAST_ATTEMPT_MESSAGE'),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('CONTINUE'),
+                        btnClass: 'popover-color'
+                    },
+                ],
+                disableDeviceBackButton: true
+            },
+            backdropDismiss: false,
+            cssClass: 'sb-popover warning',
+        });
+        await confirm.present();
+        await confirm.onDidDismiss();
+        return false;
     }
 
 }

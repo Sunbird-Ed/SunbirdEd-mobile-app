@@ -120,8 +120,8 @@ var formRequestArray = [{
         'component': 'app'
     },
     {
-        'type': 'config',
-        'subType': 'locationDetails',
+        'type': 'profileConfig',
+        'subType': 'default',
         'action': 'get'
     }
 

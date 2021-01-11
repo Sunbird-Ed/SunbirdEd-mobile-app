@@ -456,13 +456,20 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  private startContent() {
+  private async startContent() {
     if (this.childContents && this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
       const telemetryDetails = {
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild.identifier);
+
+      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (skipPlay) {
+        return;
+      }
+
       this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(firstChild, 1), telemetryDetails, true);
     } else if (!this.childContents || !this.childContents.length) {
       this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
@@ -472,7 +479,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  continueLearning() {
+  async continueLearning() {
     this.isNextContentFound = false;
     this.isFirstContent = false;
     this.nextContent = undefined;
@@ -487,6 +494,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         undefined,
         this.objRollup,
       );
+
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+
+      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (skipPlay) {
+        return;
+      }
 
       const telemetryDetails = {
         pageId: PageId.CHAPTER_DETAILS,
@@ -548,7 +562,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       return;
     }
     if (event.event && event.event.isDisabled) {
-      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
       return;
     }
     if (event.event && event.event.isLastAttempt) {

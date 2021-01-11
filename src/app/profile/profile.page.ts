@@ -37,7 +37,8 @@ import {
   NetworkError,
   FormRequest,
   FormService,
-  FrameworkService
+  FrameworkService,
+  ProfileType
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router, NavigationExtras } from '@angular/router';
@@ -64,6 +65,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-profile',
@@ -87,10 +89,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {
-    state: {},
-    district: {}
-  };
+  userLocation = {};
   appName = '';
 
   imageUri = 'assets/imgs/ic_profile_default.png';
@@ -154,7 +153,8 @@ export class ProfilePage implements OnInit {
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
-    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
+    private profileHandler: ProfileHandler
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -281,6 +281,12 @@ export class ProfilePage implements OnInit {
                 that.profile = profileData;
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
+                const role: string = (!that.profile.userType ||
+                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
+                that.userLocation = that.commonUtilService.getUserLocation(that.profile);
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.subUserType,
+                      role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
@@ -303,7 +309,6 @@ export class ProfilePage implements OnInit {
                       });
                     that.formatRoles();
                     that.getOrgDetails();
-                    that.userLocation = that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();

@@ -161,7 +161,8 @@ describe('NavigationService', () => {
             {
                 state: {
                     profile: mockProfileData,
-                    isShowBackButton: true
+                    isShowBackButton: true,
+                    source: 'some-page-id'
                 }
             });
     });

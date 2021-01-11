@@ -375,9 +375,7 @@ describe('CommonUtilService', () => {
       const profile = {
         userLocations: [
           { type: 'state', name: 'Odisha' },
-          { type: 'district', name: 'Cuttack' },
-          { type: 'block', name: 'Block-A' },
-          { type: 'sadar', name: 'Sadar' }
+          { type: 'district', name: 'Cuttack' }
         ]
       };
       // act
@@ -399,9 +397,21 @@ describe('CommonUtilService', () => {
           { type: 'district', name: 'Cuttack' },
         ]
       };
+      const locationConfig = [
+        {
+          code: 'persona',
+          children: {
+            teacher: [{
+              validations: [{
+                type: 'required'
+              }]
+            }]
+          }
+        }
+      ];
       // act
       // assert
-      expect(commonUtilService.isUserLocationAvalable(profile)).toBeTruthy();
+      expect(commonUtilService.isUserLocationAvalable(profile, locationConfig, 'teacher')).toBeFalsy();
     });
 
     it('should return false if user any of the state or distric is not available', () => {
@@ -664,4 +674,50 @@ describe('CommonUtilService', () => {
       }, 0);
     });
   });
+
+  describe('handleAssessmentStatus()', () => {
+    it('should show assessment attempt exceeded toast message and return true', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: true,
+        isLastAttempt: false
+      }
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showToast).toHaveBeenCalled();
+    });
+
+    it('should show last attempt available popup and on click of continue return false', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: true
+      }
+      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
+    });
+
+    it('should return false if the assessment is available to play directly', () => {
+      // arrange
+      const assessmentStatus = {
+        isContentDisabled: false,
+        isLastAttempt: false
+      }
+      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+      commonUtilService.showToast = jest.fn();
+      // act
+      commonUtilService.handleAssessmentStatus(assessmentStatus);
+      // assert
+      expect(commonUtilService.showAssessmentLastAttemptPopup).not.toHaveBeenCalled();
+      expect(commonUtilService.showToast).not.toHaveBeenCalled();
+
+    });
+
+  });
+
 });

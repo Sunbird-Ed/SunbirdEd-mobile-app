@@ -1113,8 +1113,8 @@
   "WELCOME": "Welcome",
   "DISCOVER_BNAV": "Search",
   "HOME_BNAV": "Home",
-  "ASSESSMENT_LAST_ATTEMPT_MESSAGE": "This will be your last attempt.",
-  "ASSESSMENT_ATTEMPT_EXCEED_MESSAGE": "You have exceeded the number of attempts to consume this content.",
+  "ASSESSMENT_LAST_ATTEMPT_MESSAGE": "This is the last remaining attempt",
+  "FRMELMNTS_IMSG_LASTATTMPTEXCD": "You have exceeded the maximum number of attempts that can be submitted",
   "BEST_SCORE": "Best score",
   "APP_UPDATE": "Update {{%s}} app",
   "SEARCH_IN_APP": "Search {{app_name}}",
@@ -1122,5 +1122,15 @@
   "FRMELEMNTS_LBL_MOBILE_NUMBER_PLACEHOLDER": "Mobile Number for State/ Org",
   "FRMELEMNTS_LBL_EMAIL_ID_PLACEHOLDER": "Email ID for State/ Org",
   "FRMELEMNTS_MSG_CONSENT_DECLARATION_INFO": "You can edit your details from your Profile Page",
-  "LEADER": "Leader"
+  "COPY_TRACE_ID": "Copy trace id",
+  "COPY_TRACE_ID_DESC": "Copy trace id for support",
+  "LEADER": "Leader",
+  "FRMELEMNTS_LBL_BLOCK": "Block",
+  "FRMELEMNTS_LBL_CLUSTER": "Cluster",
+  "FRMELEMNTS_LBL_SCHOOL": "School",
+  "FRMELEMNTS_LBL_PERSONA": "Role",
+  "FRMELEMNTS_LBL_SUBPERSONA": "Subrole",
+  "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
+  "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
+  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School"
 }
