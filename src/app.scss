@@ -1143,6 +1143,25 @@ app-courses{
   }
 }
 
+sb-course-cards-hlist, sb-library-cards-hlist{
+  .view-all{
+    .sb-btn-oval{
+      color: var(--app-primary) !important;
+      border-radius: 50% !important;
+      border: none;
+    }
+  }
+}
+
+sb-library-cards-hlist {
+  .layout-course {
+    padding: 0 0.5rem;
+  }
+  .title {
+    font-size: 18px !important;
+  }
+}
+
 .card-section-secondary{
   color: map-get($colors, granite_gray);
   font-family: "Noto Sans";
@@ -1548,6 +1567,15 @@ sb-pills-grid{
   label{
     margin-bottom: 0 !important;
   }
+  .sb-view-more-less{
+    .view-all{
+      width: 90%;
+      height: 2.5rem;
+      background-color: var(--app-primary-light) !important;
+      color: var(--app-primary) !important;
+      border: none !important
+    }
+  }
 }
 
 app-home{
@@ -1561,6 +1589,7 @@ app-home{
       }
     }
   }
+
 }
 
 app-admin-home{
@@ -1569,6 +1598,25 @@ app-admin-home{
       padding: 12px;
       .sb-icon-img{
         width: 3.5rem!important;
+      }
+    }
+  }
+}
+
+app-user-home{
+  sb-library-cards-hlist{
+    sb-library-card{
+      .sb--card__main-area{
+        height: 7.5rem !important;
+        .sb--card__img, .img-container{
+          height: 6.5rem !important;
+        }
+      }
+    }
+    .view-all{
+      .sb-btn-oval{
+        height: 60% !important;
+        top: 20% !important;
       }
     }
   }
@@ -1587,4 +1635,28 @@ app-discover{
       grid-template-columns: repeat(auto-fill,minmax(110px,0fr)) !important;
     }
   }
+}
+
+.subject-list-popup{
+  .popover-content{
+    height: 90%;
+    width: 90%;
+    top: 5%;
+    left: 5%;
+    border-radius: 2rem;
+  }
+}
+
+.form-api-components{
+  sb-course-cards-hlist, sb-library-cards-hlist {
+    .title{
+      color: var(--app-gray) !important;
+      font-size: 16px !important;
+      font-weight: normal !important;
+      hr{
+        display: inline !important;
+        background-color: var(--app-primary-header);
+      }
+    }
+  } 
 }

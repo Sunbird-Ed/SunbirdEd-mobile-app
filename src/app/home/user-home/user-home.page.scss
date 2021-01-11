@@ -39,14 +39,24 @@
     .change-btn{
       width: 30%;
       text-align: center;
+      button{
+        color: var(--app-primary);
+      }
     }
   }
 }
 
-.label {
-  font-size: 18px;
-  font-weight: 700;
+.heading-label {
+  font-size: 16px;
+  color: var(--app-gray);
   padding-left: 8px;
+  display: flex;
+  align-items: center;
+  hr{
+    flex: 1;
+    margin-left: 1rem;
+    background-color: var(--app-primary-header);
+  }
 }
 
 .sb-card-scroll-container {
@@ -67,4 +77,10 @@
 
 .sb-btn-primary-outline{
   border-color: var(--app-white);  
+}
+
+.heading-ruler{
+  width: 100%;
+  margin-left: 1rem;
+  background-color: var(--app-primary-header);
 }

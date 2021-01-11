@@ -2,6 +2,7 @@
 html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
+  --app-primary-light:#C6E7FF;
   --app-primary-background:#E9E8D9;
   --app-primary-header:#FFD954;
   --app-secondary-background:#F2F2EA;
@@ -190,9 +191,9 @@ html[data-theme="JOYFUL"]{
     border-radius: 0.5rem;
   }
 
-  .sb--card--course{
-    margin: 0 0 1rem 0 !important;
-  }
+  // .sb--card--course{
+  //   margin: 0 0 1rem 0 !important;
+  // }
 
   sb-course-cards-hlist, sb-library-cards-stack{
     .title{
