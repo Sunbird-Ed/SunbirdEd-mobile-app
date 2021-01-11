@@ -333,6 +333,7 @@ export class DistrictMappingPage {
           config.children[persona].map((personaConfig) => {
             if (!useCaseList.includes(personaConfig.templateOptions['dataSrc']['params']['useCase'])) {
               personaConfig.templateOptions['hidden'] = true;
+              personaConfig.validations = [];
             }
             if (!personaConfig.templateOptions['dataSrc']) {
               return personaConfig;
