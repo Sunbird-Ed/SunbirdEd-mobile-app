@@ -304,14 +304,19 @@ export class DistrictMappingPage {
     formRequest: FormRequest,
     initial = false
   ) {
-    const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+    let locationMappingConfig: FieldConfig<any>[];
+    try {
+      locationMappingConfig = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+    } catch  (e) {
+      locationMappingConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
+    }
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && this.source === PageId.PROFILE) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
-      } else if(config.code === 'name' && this.source !== PageId.PROFILE) {
+      } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
         config.validations   = [];
       }
 

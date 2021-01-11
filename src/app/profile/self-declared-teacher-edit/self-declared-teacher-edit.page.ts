@@ -159,7 +159,7 @@ export class SelfDeclaredTeacherEditPage {
                 this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key], { '%appName': this.appName });
             }
             if (config.code === 'tnc' && key === '$url') {
-              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl;
+              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl || 'TNC_URL';
             }
             config.templateOptions.labelHtml.values[key] =
               this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
