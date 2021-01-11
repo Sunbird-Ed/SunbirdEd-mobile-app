@@ -49,16 +49,58 @@ export class LocationHandler {
                 type: Location.TYPE_DISTRICT
             });
 
+            if (location.blockId) {
+                locationResult.push({
+                    name: location.block,
+                    code: location.blockId,
+                    id: location.blockId,
+                    type: Location.TYPE_BLOCK
+                });
+            }
+
+            if (location.clusterId) {
+                locationResult.push({
+                    name: location.cluster,
+                    code: location.clusterId,
+                    id: location.clusterId,
+                    type: Location.TYPE_CLUSTER
+                });
+            }
+
+            if (location.schoolId) {
+                locationResult.push({
+                    name: location.school,
+                    code: location.schoolId,
+                    id: location.schoolId,
+                    type: Location.TYPE_SCHOOL
+                });
+            }
+
         } else {
             const state = await this.getLocationDetails(Location.TYPE_STATE, location.state);
             const district = await this.getLocationDetails(Location.TYPE_DISTRICT, location.district, state.id);
             locationResult.push(state);
             locationResult.push(district);
+            let block, cluster, school;
+            if (location.block) {
+                block = await this.getLocationDetails(Location.TYPE_BLOCK, location.block, district.id);
+                locationResult.push(block);
+            }
+
+            if (location.block && location.cluster) {
+                cluster = await this.getLocationDetails(Location.TYPE_CLUSTER, location.cluster, block.id);
+                locationResult.push(cluster);
+            }
+
+            if (location.block && location.cluster && location.school) {
+                school = await this.getLocationDetails(Location.TYPE_SCHOOL, location.school, cluster.id);
+                locationResult.push(school);
+            }
         }
         return locationResult;
     }
 
-    private async getLocationDetails(locationType: string, locationValue: string, parentLocationId?: string):
+    public async getLocationDetails(locationType: string, locationValue: string, parentLocationId?: string):
         Promise<LocationSearchResult> {
         const locationFilter = {
             type: locationType,

@@ -8,7 +8,16 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
+import {
+  Profile,
+  ProfileService,
+  ProfileSource,
+  ProfileType,
+  SharedPreferences,
+  CorrelationData,
+  AuditState,
+  UpdateServerProfileInfoRequest
+} from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -287,7 +296,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
         this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() :
-         this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+          this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
       }
     } else {
       this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
@@ -335,17 +344,17 @@ export class UserTypeSelectionPage implements OnDestroy {
           this.navigateToTabsAsLogInUser();
         } else {
           this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() : this.navigateToProfileSettingsPage(params);
-         // this.navigateToProfileSettingsPage(params);
+          // this.navigateToProfileSettingsPage(params);
         }
       }).catch(error => {
         console.error('Error=', error);
       });
     const request: UpdateServerProfileInfoRequest = {
-        userId: this.profile.uid,
-        userType: (this.selectedUserType.charAt(0).toUpperCase() + this.selectedUserType.slice(1))
-      };
+      userId: this.profile.uid,
+      userType: this.selectedUserType
+    };
     this.profileService.updateServerProfile(request).toPromise()
-    .then().catch((e) => console.log('server error for update profile', e));
+      .then().catch((e) => console.log('server error for update profile', e));
   }
 
   async navigateToTabsAsLogInUser() {
