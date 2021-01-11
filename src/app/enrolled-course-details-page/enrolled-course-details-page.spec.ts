@@ -2337,6 +2337,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.isGuestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockDiscussionService.getForumIds = jest.fn(() => throwError('some_err'));
             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
@@ -2376,6 +2377,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({}))
             });
+            mockDiscussionService.getForumIds = jest.fn(() => throwError('some_err'));
+            // jest.spyOn(enrolledCourseDetailsPage, 'fetchForumIds').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
@@ -2700,7 +2703,7 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
     describe('fetchForumIds', () => {
-        it('should fetch forumids with apropriate request ', () => {
+        it('should fetch forumids with apropriate request ', (done) => {
             // arrange
             const res = {
                 result: [
@@ -2709,18 +2712,30 @@ describe('EnrolledCourseDetailsPage', () => {
                     }
                 ]
             }
+            mockDiscussionService.getForumIds = jest.fn(() => of(res));
             enrolledCourseDetailsPage.course ={
                 createdBy: 'some_id'
             };
             enrolledCourseDetailsPage.userId = 'some_id';
             enrolledCourseDetailsPage.identifier = 'some_course_id'
-            mockDiscussionService.getForumIds = jest.fn(() => of(res));
+            
+            // jest.spyOn(enrolledCourseDetailsPage, 'prepareRequestBody').mockImplementation(() => {
+            //     return {
+            //         identifier: ['some_id'],
+            //         type: 'some_type'
+            //     }
+            // });
             // act
             enrolledCourseDetailsPage.fetchForumIds()
             // assert
-            expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+            setTimeout(() => {
+                expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+                // expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+                done()
+            });
+            
         });
-        it('should fetch forumids with apropriate request ', () => {
+        it('should fetch forumids with apropriate request ', (done) => {
             // arrange
             const res = {
                 result: [
@@ -2736,10 +2751,21 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.identifier = 'some_course_id';
             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
             mockDiscussionService.getForumIds = jest.fn(() => of(res));
+            // jest.spyOn(enrolledCourseDetailsPage, 'prepareRequestBody').mockImplementation(() => {
+            //     return {
+            //         identifier: ['some_id'],
+            //         type: 'some_type'
+            //     }
+            // });
             // act
             enrolledCourseDetailsPage.fetchForumIds()
             // assert
-            expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+            setTimeout(() => {
+                expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+                // expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+                done();
+            });
+            
         });
     });
     describe('checkUserRegistration', () => {
