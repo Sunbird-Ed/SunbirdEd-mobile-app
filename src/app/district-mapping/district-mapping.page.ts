@@ -102,11 +102,8 @@ export class DistrictMappingPage {
 
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    this.name = this.profile['firstName'];
-    if (this.profile['lastName']) {
-      this.name = this.profile['firstName'] + this.profile['lastName'];
-    }
-    this.presetLocation = (await this.locationHandler.getAvailableLocation(this.profile))
+    this.presetLocation = (await this.locationHandler.getAvailableLocation(
+      this.profile.serverProfile ? this.profile.serverProfile : this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
         if (loc) { acc[loc.type] = loc; }
         return acc;
@@ -180,10 +177,10 @@ export class DistrictMappingPage {
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes,
-        firstName : this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
+        firstName: this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
         lastName: '',
-        ...((this.formGroup.value['persona'] ? {userType: this.formGroup.value['persona']} : {})),
-        ...((this.formGroup.value.children['subPersona'] ? {subUserType: this.formGroup.value.children['subPersona']} : {}))
+        ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
+        ...((this.formGroup.value.children['subPersona'] ? { subUserType: this.formGroup.value.children['subPersona'] } : {}))
       };
 
       const loader = await this.commonUtilService.getLoader();
@@ -307,11 +304,15 @@ export class DistrictMappingPage {
     formRequest: FormRequest,
     initial = false
   ) {
-     const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
-     for (const config of locationMappingConfig) {
+    const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(formRequest);
+    const useCaseList =
+      this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
+    for (const config of locationMappingConfig) {
       if (config.code === 'name' && this.source === PageId.PROFILE) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
+      } else if(config.code === 'name' && this.source !== PageId.PROFILE) {
+        config.validations   = [];
       }
 
       if (config.code === 'persona') {
@@ -330,6 +331,10 @@ export class DistrictMappingPage {
 
         Object.keys(config.children).forEach((persona) => {
           config.children[persona].map((personaConfig) => {
+            if (!useCaseList.includes(personaConfig.templateOptions['dataSrc']['params']['useCase'])) {
+              personaConfig.templateOptions['hidden'] = true;
+              personaConfig.validations = [];
+            }
             if (!personaConfig.templateOptions['dataSrc']) {
               return personaConfig;
             }

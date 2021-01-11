@@ -29,6 +29,7 @@ import {of, throwError} from 'rxjs';
 import {mockFormData, mockProfileData} from './profile.page.spec.data';
 import {ContentFilterConfig, RouterLinks} from '@app/app/app.constant';
 import { NavigationService } from '../../services/navigation-handler.service';
+import { ProfileHandler } from '../../services/profile-handler';
 
 describe('Profile.page', () => {
     let profilePage: ProfilePage;
@@ -116,6 +117,11 @@ describe('Profile.page', () => {
         navigateToEditPersonalDetails: jest.fn()
     };
 
+    const mockProfileHandler: Partial<ProfileHandler> = {
+        getPersonaConfig: jest.fn(),
+        getSubPersona: jest.fn()
+    };
+
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
@@ -141,7 +147,8 @@ describe('Profile.page', () => {
             mockFileOpener as FileOpener,
             mockToastController as ToastController,
             mockTranslateService as TranslateService,
-            mockCertificateDownloadPdfService as CertificateDownloadAsPdfService
+            mockCertificateDownloadPdfService as CertificateDownloadAsPdfService,
+            mockProfileHandler as ProfileHandler
         );
     });
 

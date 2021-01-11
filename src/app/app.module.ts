@@ -76,6 +76,7 @@ import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.serv
 import {ConsentService} from '@app/services/consent-service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import {configuration} from '@app/configuration/configuration';
+import { LocationHandler } from '@app/services/location-handler';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -485,6 +486,7 @@ declare const sbutility;
     AliasBoardName,
     ConsentService,
     ProfileHandler,
+    LocationHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

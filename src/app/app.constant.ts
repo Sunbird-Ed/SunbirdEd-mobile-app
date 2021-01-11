@@ -347,6 +347,9 @@ export class ViewMore {
 export class Location {
     public static readonly TYPE_STATE = 'state';
     public static readonly TYPE_DISTRICT = 'district';
+    public static readonly TYPE_BLOCK = 'block';
+    public static readonly TYPE_CLUSTER = 'cluster';
+    public static readonly TYPE_SCHOOL = 'school';
 }
 
 export class FrameworkCategory {
