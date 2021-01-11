@@ -30,7 +30,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest,
+  UnenrollCourseRequest, DiscussionService
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -227,6 +227,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   lastUpdateOn: string;
   isConsentPopUp = false;
   skipCheckRetiredOpenBatch = false;
+  forumIds;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -236,6 +237,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -1389,6 +1391,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
     }
+    this.fetchForumIds();
   }
 
   ionViewDidEnter() {
@@ -1518,7 +1521,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           }
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
-            this.forumId = (event.payload.serverContentData && event.payload.serverContentData.forumId) || this.forumId;
+            // this.forumId = (event.payload.serverContentData && event.payload.serverContentData.forumId) || this.forumId;
             this.licenseDetails = event.payload.licenseDetails;
             if (event.payload.size) {
               this.content.contentData.size = event.payload.size;
@@ -2174,9 +2177,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   openDiscussionForum(forumId: string) {
-    this.courseService.displayDiscussionForum({
-      forumId
-    }).subscribe();
+    if(this.commonUtilService.networkInfo.isNetworkAvailable){
+      // this.courseService.displayDiscussionForum({
+      //   forumId
+      // }).subscribe();
+      // this.router.navigate([`/${RouterLinks.DISCUSSION}`]);
+      this.checkUserRegistration();
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
+    
   }
 
   private async showProfileNameConfirmationPopup() {
@@ -2313,5 +2323,71 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       // }
       // this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
+  }
+
+  async checkUserRegistration() {
+    // this.showLoader = true;
+    const data = {
+      username: '',
+      identifier: this.userId,
+    };
+    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      data.username = p.serverProfile['userName']
+    });
+    console.log()
+    this.discussionService.createUser(data).subscribe((response) => {
+      console.log('discussionService.createUser', response)
+      const userName = response.result.userName
+      const result = [this.forumIds];
+      // this.router.navigate(['/discussion-forum'], {
+        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
+        queryParams: {
+          categories: JSON.stringify({ result }),
+          userName: userName
+        }
+      });
+    }, error => {
+      console.log('err in discussionService.createUser', error)
+      // this.showLoader = false;
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+    });
+  }
+
+  fetchForumIds() {
+    const requestBody = this.prepareRequestBody();
+    console.log('requestBody --', requestBody)
+    if (requestBody) {
+      this.discussionService.getForumIds(requestBody).subscribe(forumDetails => {
+        console.log('forumDetails', forumDetails)
+        this.forumIds = forumDetails.result[0].cid;
+      }, error => {
+        console.log('error', error);
+      });
+    }
+  }
+
+  private prepareRequestBody() {
+    const request = {
+      identifier: [],
+      type: ''
+    };
+    const isCreator = this.course.createdBy === this.userId;
+    console.log('isCreator', isCreator)
+    // const isMentor = this.permissionService.checkRolesPermissions(['COURSE_MENTOR']);
+    if (isCreator) {
+      request.identifier = [this.identifier];
+      request.type = 'course';
+    } else if (this.isAlreadyEnrolled) {
+      request.identifier = [this.courseCardData.batchId];
+      request.type = 'batch';
+    // } else if (isMentor) {
+    //   // TODO: make getBatches() api call;
+    //   request.identifier = [this.courseId];
+    //   request.type = 'course';
+    // } else {
+    //   return;
+    }
+      return request;
+    // }	  
   }
 }
