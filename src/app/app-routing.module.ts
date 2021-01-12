@@ -106,7 +106,7 @@ const routes: Routes = [
   { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule' },
   { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule' },
   { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule' },
-  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule'},
+  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule' },
   {
     path: RouterLinks.QUESTIONNAIRE,
     loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
@@ -124,7 +124,7 @@ const routes: Routes = [
   { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
   { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
   { path: RouterLinks.PROJECT_FULL_REPORT, loadChildren: './manage-learn/project-full-report/project-full-report.module#ProjectFullReportModule' },
-  
+  { path: RouterLinks.DEEPLINK_REDIRECT, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule' }
 ];
 
 @NgModule({
