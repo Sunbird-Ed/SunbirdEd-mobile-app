@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AppHeaderService } from '@app/services';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-project-edit',
@@ -8,6 +13,13 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./project-edit.page.scss'],
 })
 export class ProjectEditPage implements OnInit {
+  private backButtonFunc: Subscription;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    pageTitle: '',
+    actionButtons: []
+  };
   project = {
     categories: [],
     createdAt: "2019-09-13T11:45:21.000Z",
@@ -36,12 +48,35 @@ export class ProjectEditPage implements OnInit {
     _rev: "1-3718fdc86e773e7d7c7c5be38b294214"
   };
   constructor(
-    private router: Router
+    private router: Router,
+    private location: Location,
+    private headerService: AppHeaderService,
+    private platform: Platform,
+    private translate: TranslateService
   ) {
 
   }
 
   ngOnInit() {
+  }
+  ionViewWillEnter() {
+    let data;
+    this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
+      data = text;
+    });
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
+    this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
+  }
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
   }
   edit(type) {
     type == "metaData" ?

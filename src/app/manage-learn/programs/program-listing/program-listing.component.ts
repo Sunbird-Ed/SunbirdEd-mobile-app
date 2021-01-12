@@ -5,23 +5,26 @@ import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import {
-  Events, Platform, PopoverController
+    Events, Platform, PopoverController
 } from '@ionic/angular';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { UtilsService } from '../../core';
 
 @Component({
-  selector: 'app-program-listing',
-  templateUrl: './program-listing.component.html',
-  styleUrls: ['./program-listing.component.scss'],
+    selector: 'app-program-listing',
+    templateUrl: './program-listing.component.html',
+    styleUrls: ['./program-listing.component.scss'],
 })
 export class ProgramListingComponent implements OnInit {
-  private backButtonFunc: Subscription;
-  headerConfig = {
-    showHeader: true,
-    showBurgerMenu: false,
-    actionButtons: []
-  };
+    private backButtonFunc: Subscription;
+    headerConfig = {
+        showHeader: true,
+        showBurgerMenu: false,
+        actionButtons: []
+    };
 
-  result = [
+    result = [
         {
             "_id": "5fc5202fbba21c7039176ad1",
             "name": "Test program",
@@ -874,44 +877,58 @@ export class ProgramListingComponent implements OnInit {
         }
     ]
 
-  constructor(private router: Router, private location:Location,
-    private headerService: AppHeaderService, private platform: Platform) { }
+    constructor(private router: Router, private location: Location, private utils: UtilsService,
+        private headerService: AppHeaderService, private platform: Platform, private kendraService: KendraApiService) { }
 
-  ngOnInit() {
-  }
-
-  ionViewWillEnter() {
-    this.headerConfig = this.headerService.getDefaultPageConfig();
-    this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
-    this.headerConfig.showBurgerMenu = false;
-    this.headerService.updatePageConfig(this.headerConfig);
-    this.handleBackButton();
-  }
-
-  ionViewWillLeave() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
+    ngOnInit() {
+        this.getPrograms();
     }
-  }
 
-  private handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
-    });
-  }
+    async getPrograms() {
+        let payload = await this.utils.getProfileInfo();
+        const config = {
+            url: urlConstants.API_URLS.PROGRAM_LISTING + `page=1&limit=10&search=`,
+            payload: payload
+        }
+        this.kendraService.post(config).subscribe(success => {
 
-  selectedProgram(id){
-    this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, id]);
-  }
+        }, error => {
 
-  handleNavBackButton(){
-    this.location.back();
-  }
+        })
+    }
 
-  loadMore(){
+    ionViewWillEnter() {
+        this.headerConfig = this.headerService.getDefaultPageConfig();
+        this.headerConfig.actionButtons = [];
+        this.headerConfig.showHeader = true;
+        this.headerConfig.showBurgerMenu = false;
+        this.headerService.updatePageConfig(this.headerConfig);
+        this.handleBackButton();
+    }
 
-  }
+    ionViewWillLeave() {
+        if (this.backButtonFunc) {
+            this.backButtonFunc.unsubscribe();
+        }
+    }
+
+    private handleBackButton() {
+        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+            this.location.back();
+            this.backButtonFunc.unsubscribe();
+        });
+    }
+
+    selectedProgram(id) {
+        this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, id]);
+    }
+
+    handleNavBackButton() {
+        this.location.back();
+    }
+
+    loadMore() {
+
+    }
 
 }

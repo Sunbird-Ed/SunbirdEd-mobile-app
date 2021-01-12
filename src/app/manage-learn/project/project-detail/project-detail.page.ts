@@ -291,7 +291,7 @@ export class ProjectDetailPage implements OnInit {
         break;
       }
       case "fileProject": {
-        this.openAttachments();
+        this.router.navigate([`${RouterLinks.ATTACHMENTS_LIST}`, this.project._id]);
         break;
       }
       case "editProject": {
@@ -445,11 +445,6 @@ export class ProjectDetailPage implements OnInit {
       }
     });
     return await modal.present();
-  }
-
-  openAttachments() {
-    console.log("openAttachments");
-    this.router.navigate(["project/attachment-list", this.project._id], { replaceUrl: true });
   }
 
   startAssessment(task) {

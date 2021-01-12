@@ -12,6 +12,7 @@
 }
 
 .project-title {
+    padding-top: 15px;
     ion-input {
         padding: 10px 0px !important;
         --padding-start: 0px;
@@ -70,8 +71,8 @@
     text-align: center;
     padding: 15px;
     /* min-height: 50px; */
-    background: var(--ion-color-primary);
-    // color: $white-color;
+    background:$primary-color;
+    color: $white;
 }
 
 .secondary {
