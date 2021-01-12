@@ -338,8 +338,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
-    const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
-    contentContextMap['leafNodeIds'] = leafNodeIds;
+    if (this.courseHeirarchy && this.courseHeirarchy.contentData && this.courseHeirarchy.contentData.leafNodes) {
+      const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+      contentContextMap['leafNodeIds'] = leafNodeIds;
+    }
 
     // store the contentContextMap in shared preference and access it from SDK
     this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
