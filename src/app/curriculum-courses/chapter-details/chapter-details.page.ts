@@ -102,6 +102,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   loader?: HTMLIonLoadingElement;
   maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
   isCertifiedCourse: boolean;
+  courseHeirarchy: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -141,6 +142,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
+    this.courseHeirarchy = this.courseHeirarchy;
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
@@ -336,6 +338,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
+    const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+    contentContextMap['leafNodeIds'] = leafNodeIds;
 
     // store the contentContextMap in shared preference and access it from SDK
     this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
