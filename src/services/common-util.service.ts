@@ -681,20 +681,22 @@ export class CommonUtilService {
             component: SbPopoverComponent,
             componentProps: {
                 sbPopoverMainTitle: this.translateMessage('ASSESSMENT_LAST_ATTEMPT_MESSAGE'),
+                showCloseBtn: true,
                 actionsButtons: [
                     {
                         btntext: this.translateMessage('CONTINUE'),
                         btnClass: 'popover-color'
                     },
                 ],
-                disableDeviceBackButton: true
             },
-            backdropDismiss: false,
             cssClass: 'sb-popover warning',
         });
         await confirm.present();
-        await confirm.onDidDismiss();
-        return false;
+        const { data } = await confirm.onDidDismiss();
+        if (data && data.canDelete) {
+            return false;
+        }
+        return true
     }
 
 }
