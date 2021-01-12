@@ -110,7 +110,7 @@ export class DistrictMappingPage {
       }, {});
     this.initialiseFormData({
       ...FormConstants.LOCATION_MAPPING,
-      subType: this.presetLocation['state'] ? this.presetLocation['state'].id : FormConstants.LOCATION_MAPPING.subType
+      subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
     }, true);
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
@@ -171,13 +171,14 @@ export class DistrictMappingPage {
       const locationCodes = [];
       (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
         if (this.formGroup.value.children['persona'][acc]) {
-          locationCodes.push((this.formGroup.value.children['persona'][acc] as SbLocation).code);
+          locationCodes.push((this.formGroup.value.children['persona'][acc] as SbLocation).id);
         }
       }, {}));
+      const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes,
-        firstName: this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim(),
+        ...((name ? { firstName: name } : {})),
         lastName: '',
         ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
         ...((this.formGroup.value.children['subPersona'] ? { subUserType: this.formGroup.value.children['subPersona'] } : {}))
@@ -415,7 +416,7 @@ export class DistrictMappingPage {
 
           this.initialiseFormData({
             ...FormConstants.LOCATION_MAPPING,
-            subType: (newStateValue as SbLocation).id,
+            subType: (newStateValue as SbLocation).code,
           }).catch((e) => {
             console.error(e);
             this.initialiseFormData(FormConstants.LOCATION_MAPPING);
@@ -423,5 +424,21 @@ export class DistrictMappingPage {
         });
       }
     }
+  }
+  generateTelemetryForCategorySelect(value, isState) {
+    const corRelationList: CorrelationData[] = [{ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI }];
+    corRelationList.push({
+      id: value || '',
+      type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT
+    });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_SUBMIT, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList
+    );
   }
 }
