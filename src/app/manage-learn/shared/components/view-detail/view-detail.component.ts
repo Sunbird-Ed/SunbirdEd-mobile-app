@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavParams } from '@ionic/angular';
+import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-view-detail',
@@ -9,8 +9,12 @@ import { NavParams } from '@ionic/angular';
 export class ViewDetailComponent implements OnInit {
   submission: any;
 
-  constructor(params: NavParams) {
+  constructor(params: NavParams, private modalCtrl: ModalController) {
     this.submission = params.get('submission');
   }
   ngOnInit() {}
+
+  close() {
+    this.modalCtrl.dismiss();
+  }
 }
