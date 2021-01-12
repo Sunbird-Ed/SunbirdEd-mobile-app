@@ -168,7 +168,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
-
+export const discussionService = () => {
+  return SunbirdSdk.instance.discussionService;
+};
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -263,6 +265,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  },
+  {
+    provide: 'DISCUSSION_SERVICE',
+    useFactory: discussionService
   }
   ];
 }
