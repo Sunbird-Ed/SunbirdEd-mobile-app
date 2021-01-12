@@ -30,7 +30,7 @@
         <hr>
       </div>
 
-      <ng-container *ngIf="section?.dataSrc?.name === 'TRACKABLE_CONTENTS'">
+      <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
         <ng-container *ngFor="let subSection of section?.data?.sections">
           <ng-container *ngIf="subSection?.contents?.length">
             <sb-course-cards-hlist 
@@ -66,7 +66,7 @@
       </ng-container>
 
       <!-- Recently viewed -->
-      <div class="sb-recently-viewed-container" *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.dataSrc?.name=== 'RECENTLY_VIEWED_CONTENTS'">
+      <div class="sb-recently-viewed-container" *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.theme?.component === 'sb-library-cards-hlist'">
         <sb-library-cards-hlist
           [title]="section?.title | translateJson"
           [contentList]="section?.data?.sections[0]?.contents"
