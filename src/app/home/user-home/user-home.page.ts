@@ -8254,11 +8254,17 @@ export class UserHomePage implements OnInit, OnDestroy {
   mapContentFacteTheme(displayItems) {
     if (displayItems && displayItems.length) {
       for (let count = 0; count < displayItems.length; count++){
-        if (displayItems[count].dataSrc && displayItems[count].dataSrc.facet === 'subject') {
+        if (!displayItems[count].data) {
+          continue;
+        }
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.name === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
           displayItems[count] = this.mapSubjectTheme(displayItems[count]);
         }
-        if (displayItems[count].dataSrc && displayItems[count].dataSrc.facet === 'primaryCategory') {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.name === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
           displayItems[count] = this.mapPrimaryCategoryTheme(displayItems[count]);
+        }
+        if (displayItems[count].dataSrc && displayItems[count].dataSrc.name === 'RECENTLY_VIEWED_CONTENTS') {
+          displayItems[count] = this.modifyContentData(displayItems[count]);
         }
       }
     }
@@ -8286,6 +8292,22 @@ export class UserHomePage implements OnInit, OnDestroy {
       const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping[item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
         PrimaryCaregoryMapping['default'];
         item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
+    });
+    return displayItems
+  }
+
+  modifyContentData(displayItems) {
+    if (!displayItems.data.sections && !displayItems.data.sections[0] && !displayItems.data.sections[0].contents) {
+      return;
+    }
+    displayItems.data.sections[0].contents.forEach(item => {
+      item['cardImg'] = item['cardImg'] || (item.contentData && item.contentData['cardImg']);
+      item['subject'] = item['subject'] || (item.contentData && item.contentData['subject']);
+      item['gradeLevel'] = item['gradeLevel'] || (item.contentData && item.contentData['gradeLevel']);
+      item['medium'] = item['medium'] || (item.contentData && item.contentData['medium']);
+      item['organisation'] = item['organisation'] || (item.contentData && item.contentData['organisation']);
+      item['badgeAssertions'] = item['badgeAssertions'] || (item.contentData && item.contentData['badgeAssertions']);
+      item['resourceType'] = item['resourceType'] || (item.contentData && item.contentData['resourceType']);
     });
     return displayItems
   }
