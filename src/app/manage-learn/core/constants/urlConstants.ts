@@ -2,7 +2,7 @@ export const urlConstants = {
   SERVICES: {
     UNNATI: "improvement-project/api/",
     KENDRA: "kendra/api/",
-    SAMIKSHA: "",
+    SAMIKSHA: "assessment/api/",
     DHITI: "",
     SUNBIRD: "sunbird/api/",
   },

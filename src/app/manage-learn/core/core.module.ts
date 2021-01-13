@@ -15,6 +15,7 @@ import { UpdateTrackerService } from './services/update-tracker.service';
 import { EvidenceService } from './services/evidence.service';
 import { ProjectReportService } from './services/project-report.service';
 import { ProgramService } from './services/program.service';
+import { AssessmentApiService } from './services/assessment-api.service';
 
 
 @NgModule({
@@ -24,7 +25,7 @@ import { ProgramService } from './services/program.service';
   ],
   providers: [
     UtilsService, NetworkService, SyncService, ApiService, KendraApiService, UnnatiDataService, SunbirdService,
-    ApiInterceptor, UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,ProgramService        
+    ApiInterceptor, UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,ProgramService,AssessmentApiService       
   ],
 })
 export class CoreModule {}
