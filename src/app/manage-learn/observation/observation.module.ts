@@ -16,13 +16,13 @@ import { CoreModule } from '../core/core.module';
   declarations: [ObservationHomeComponent, ObservationDetailComponent, ObservationSubmissionComponent],
   imports: [
     CommonModule,
+    CoreModule,
     ObservationRoutingModule,
-    HttpClientModule, // TODO:Tremove after api integration
+    // HttpClientModule, // TODO:Tremove after api integration
     TranslateModule.forChild(),
     SharedModule,
     IonicModule,
     FormsModule,
-    CoreModule
   ],
   providers: [ObservationService],
 })

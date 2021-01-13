@@ -7,6 +7,10 @@ import { Location } from '@angular/common';
 import { ObservationService } from '../observation.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-observation-home',
@@ -20,7 +24,8 @@ export class ObservationHomeComponent implements OnInit {
     showBurgerMenu: false,
     actionButtons: [],
   };
-  programList: any;
+  // programList: any;
+  solutionList: any;
   constructor(
     private httpClient: HttpClient,
     private location: Location,
@@ -28,14 +33,32 @@ export class ObservationHomeComponent implements OnInit {
     private platform: Platform,
     private router: Router,
     private observationService: ObservationService,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService // private kendraService: KendraApiService
   ) {}
 
   ngOnInit() {
-    this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-      console.log(data);
-      this.programList = data.result;
-    });
-  
+    this.getPrograms();
+
+    // this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
+    //   console.log(data);
+    //   this.programList = data.result;
+    // });
+  }
+  async getPrograms() {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10&search=`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        console.log(success);
+        // this.programList = success.result.data;
+        this.solutionList = success.result.data;
+      },
+      (error) => {}
+    );
   }
 
   ionViewWillEnter() {
@@ -52,10 +75,17 @@ export class ObservationHomeComponent implements OnInit {
     }
   }
 
-
-  observationDetails(programIndex, solutionIndex) {
-    this.observationService.setIndex(programIndex, solutionIndex);
-    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`]);
+  observationDetails(solution) {
+    let { programId, solutionId, _id: observationId, name: solutionName } = solution;
+    // this.observationService.setIndex(programIndex, solutionIndex);
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+      queryParams: {
+        programId: programId,
+        solutionId: solutionId,
+        observationId: observationId,
+        solutionName: solutionName,
+      },
+    });
     /*  this.navCtrl.push(ProgramSolutionObservationDetailPage, {
       programIndex: this.programIndex,
       solutionIndex: this.solutionIndex,

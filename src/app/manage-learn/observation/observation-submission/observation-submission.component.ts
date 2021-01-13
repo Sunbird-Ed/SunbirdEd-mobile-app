@@ -71,9 +71,9 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.programIndex = this.observationService.getProgramIndex();
-    this.solutionIndex = this.observationService.getSolutionIndex(); //
-    this.entityIndex = this.observationService.getEntityIndex(); //
+    // this.programIndex = this.observationService.getProgramIndex();
+    // this.solutionIndex = this.observationService.getSolutionIndex(); //
+    // this.entityIndex = this.observationService.getEntityIndex(); //
     this.getProgramFromStorage();
   }
 

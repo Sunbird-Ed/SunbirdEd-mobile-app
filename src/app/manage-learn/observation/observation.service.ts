@@ -17,25 +17,27 @@ export class ObservationService {
     private localStorage: LocalStorageService,
     private ulsdp: UpdateLocalSchoolDataService,
     private utils: UtilsService
-  ) {}
+  ) { }
+  
+  //TODO remove
 
-  public setIndex(programIndex = null, solutionIndex = null, entityIndex = null) {
-    this.programIndex = programIndex;
-    this.solutionIndex = solutionIndex;
-    this.entityIndex = entityIndex;
-  }
+  // public setIndex(programIndex = null, solutionIndex = null, entityIndex = null) {
+  //   this.programIndex = programIndex;
+  //   this.solutionIndex = solutionIndex;
+  //   this.entityIndex = entityIndex;
+  // }
 
 
-  public getProgramIndex() {
-    return this.programIndex;
-  }
+  // public getProgramIndex() {
+  //   return this.programIndex;
+  // }
 
-  public getSolutionIndex() {
-    return this.solutionIndex;
-  }
-  public getEntityIndex() {
-    return this.entityIndex;
-  }
+  // public getSolutionIndex() {
+  //   return this.solutionIndex;
+  // }
+  // public getEntityIndex() {
+  //   return this.entityIndex;
+  // }
  
 
   getAssessmentDetailsForObservation(event, programs) {

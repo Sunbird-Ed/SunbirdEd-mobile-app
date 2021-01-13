@@ -52,6 +52,10 @@ export const urlConstants = {
     ENTITY_MAPPING_FORM: "v1/users/entitiesMappingForm/",
     PROFILE_UPDATE: "v1/user-extension/updateProfileRoles",
     MARK_AS_READ: "v1/notifications/in-app/markAsRead/",
-    GET_PREVIOUS_PROFILE: "v1/users/search?search="
+    GET_PREVIOUS_PROFILE: "v1/users/search?search=",
+
+    // survey api
+    GET_PROG_SOL_FOR_OBSERVATION: "v1/observations/getObservation",
+    GET_OBSERVATION_ENTITIES:"v1/observations/entities/"
   },
 };

@@ -4,9 +4,16 @@
       title="{{ 'FRMELEMNTS_LBL_OBSERVATION' | translate }}"
       subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_DESC' | translate }}"
     ></app-common-header>
-    <div *ngFor="let program of programList; let programIndex = index">
-      <ng-container *ngFor="let data of program?.solutions; let solutionIndex = index">
-        <app-item-list-card
+    <div *ngFor="let solution of solutionList; let solutionIndex = index">
+      <app-item-list-card
+        [title]="solution?.name"
+        [subTitle]="solution?.description"
+        (cardSelect)="observationDetails(solution)"
+      >
+        <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
+      </app-item-list-card>
+      <!-- <ng-container *ngFor="let data of program?.solutions; let solutionIndex = index"> -->
+      <!-- <app-item-list-card
           *ngIf="data.type == 'observation'"
           [title]="data?.name"
           [subTitle]="data?.description"
@@ -14,8 +21,8 @@
           (cardSelect)="observationDetails(programIndex, solutionIndex)"
         >
           <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
-        </app-item-list-card>
-      </ng-container>
+        </app-item-list-card> -->
+      <!-- </ng-container> -->
     </div>
   </ion-content>
   <!-- <ion-button class="view-more" expand="block" (click)="loadMore()">
