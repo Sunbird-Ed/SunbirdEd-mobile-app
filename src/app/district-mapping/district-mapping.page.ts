@@ -204,7 +204,7 @@ export class DistrictMappingPage {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           //  this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
-          if (this.profile) {
+          if (this.profile && (this.source === PageId.PROFILE ||  this.source === PageId.GUEST_PROFILE)) {
             this.location.back();
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
