@@ -183,21 +183,17 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (selectedUserType === ProfileType.ADMIN) {
-                  const navigationExtras: NavigationExtras = {
-                    state: {
-                      isShowBackButton: false,
-                      userType: ProfileType.ADMIN
-                    }
-                  };
-                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-                } else {
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   categoriesProfileData['status'] = value['status'],
                     categoriesProfileData['isUserLocationAvalable'] = false;
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }
                 });
-                }
+                } else {
+                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                    state: categoriesProfileData
+               });
+              }
               }
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
@@ -205,9 +201,7 @@ export class TermsAndConditionsPage implements OnInit {
               if (await tncUpdateHandlerService.isSSOUser(profile)) {
                 await this.consentService.getConsent(profile, true);
               }
-              if (selectedUserType === ProfileType.ADMIN) {
-                this.router.navigate([`/${RouterLinks.TABS}`]);
-              } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+              if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}
                 });
