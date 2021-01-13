@@ -85,10 +85,7 @@ export class TncUpdateHandlerService {
     if (await this.isSSOUser(userDetails)) {
       await this.consentService.getConsent(userDetails, true);
     }
-    if (selectedUserType === ProfileType.ADMIN) {
-      this.sbProgressLoader.hide({id: 'login'});
-      this.checkDistrictMapping(profile, locationMappingConfig, selectedUserType);
-    } else if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
+    if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
         || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig, selectedUserType);
@@ -120,12 +117,7 @@ export class TncUpdateHandlerService {
           profile: value['profile'],
           isRootPage: true
         };
-        if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
-          !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length) {
-          this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
-            state: { categoriesProfileData }
-          });
-        } else if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
+        if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] =
           this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, userType);
