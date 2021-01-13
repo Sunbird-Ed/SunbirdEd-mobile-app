@@ -6,15 +6,15 @@
           <ion-label>
             <div class="title">{{'PROGRAMS' | translate }}</div>
             <div>
-              <div class="desc">{{'PROGRAM_DESCRIPTION' | translate}}</div>
+              <div class="desc">{{programs?.description}}</div>
             </div>
           </ion-label>
         </div>
       </ion-item>
     </ion-list>
     <!-- <ion-list *ngFor="let data of result"> -->
-      <app-common-list-card [title]="data?.name" [subTitle]="data?.description" [id]="data?._id"
-        (cardSelect)="selectedProgram($event)" *ngFor="let data of result"></app-common-list-card>
+    <app-common-list-card [title]="data?.name" [subTitle]="data?.solutions" [id]="data?._id"
+      (cardSelect)="selectedProgram($event)" *ngFor="let data of programs?.data"></app-common-list-card>
     <!-- </ion-list> -->
   </ion-content>
   <div class="px-5">

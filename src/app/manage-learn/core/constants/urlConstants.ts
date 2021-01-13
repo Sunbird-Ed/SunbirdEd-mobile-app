@@ -8,12 +8,12 @@ export const urlConstants = {
   },
   API_URLS: {
 
-    PROGRAM_LISTING:"v1/users/programs?",
+    PROGRAM_LISTING: "v1/users/programs?",
+    GET_PROJECTS: "v1/userProjects/getProject?page=",
+    SOLUTIONS_LISTING: "v1/users/solutions/",
+    GET_PROJECT: "v2/userProjects/details",
 
 
-
-
-    
     NOTIFICATIONs_LIST: "v1/notifications/in-app/list",
     NOTIFICATION_COUNT: "v1/notifications/in-app/unReadCount",
     PROJECTS_LIST: "v1/userProjects/list",

@@ -4,7 +4,11 @@ import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
 
+import { urlConstants } from '../../core/constants/urlConstants';
+import { UtilsService } from '../../core';
 import {
   Events, Platform, PopoverController
 } from '@ionic/angular';
@@ -18,13 +22,15 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProjectListingComponent implements OnInit {
   private backButtonFunc: Subscription;
+  page = 1;
+  limit = 25;
+  searchText: string = '';
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: []
   };
   projects;
-
   result = [
     { name: 'Project 1', description: 'Project 1 Desc', id: 1 },
     { name: 'Project 2', description: 'Project 2 Desc', id: 2 },
@@ -33,7 +39,8 @@ export class ProjectListingComponent implements OnInit {
 
   constructor(private router: Router, private location: Location,
     private headerService: AppHeaderService, private platform: Platform,
-    private db: DbService, private http: HttpClient) { }
+    private unnatiService: UnnatiDataService,
+    private db: DbService, private http: HttpClient, private utils: UtilsService, private kendraService: KendraApiService) { }
 
   ngOnInit() {
   }
@@ -48,12 +55,28 @@ export class ProjectListingComponent implements OnInit {
     this.handleBackButton();
   }
 
-  getProjectList() {
-    this.http.get('assets/dummy/projectList.json').subscribe((data: any) => {
-      console.log(data);
-      this.projects = data.result.data;
-    });
+  // getProjectList() {
+  //   this.http.get('assets/dummy/projectList.json').subscribe((data: any) => {
+  //     console.log(data);
+  //     this.projects = data.result.data;
+  //   });
+  // }
+
+  async getProjectList() {
+    let payload = await this.utils.getProfileInfo();
+    console.log(payload, "payload getProjectList");
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText,
+      payload: payload
+    }
+    this.unnatiService.post(config).subscribe(success => {
+      console.log(success, "success getProjectList");
+      this.projects = success.result;
+    }, error => {
+
+    })
   }
+
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
@@ -68,8 +91,8 @@ export class ProjectListingComponent implements OnInit {
     });
   }
 
-  selectedProgram(id) {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`]);
+  selectedProgram(id,project) {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`,id,project.programId,project.solutionId]);
   }
   handleNavBackButton() {
     this.location.back();

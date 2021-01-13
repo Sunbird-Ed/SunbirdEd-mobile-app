@@ -1,9 +1,9 @@
 <ion-app>
   <ion-content fullscreen>
-    <app-common-header title="{{'FRMELEMNTS_LBL_PROJECT' | translate}}" subTitle="{{'FRMELEMNTS_LBL_PROJECT_DESC' | translate}}"></app-common-header>
-    <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.description"
-      [id]="project?._id" (cardSelect)="selectedProgram($event)"></app-item-list-card>
-
+    <app-common-header title="{{'FRMELEMNTS_LBL_PROJECT' | translate}}" [subTitle]="projects?.description">
+    </app-common-header>
+    <app-item-list-card *ngFor="let project of result" [title]="project?.name" [subTitle]="project?.description"
+      [id]="project?._id" (cardSelect)="selectedProgram($event,project)"></app-item-list-card>
   </ion-content>
   <ion-button class="view-more" expand="block" (click)="loadMore();">
     {{ 'FRMELEMNTS_LBL_VIEW_MORE' | translate }}

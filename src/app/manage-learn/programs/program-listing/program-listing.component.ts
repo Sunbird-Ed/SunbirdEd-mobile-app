@@ -23,7 +23,7 @@ export class ProgramListingComponent implements OnInit {
         showBurgerMenu: false,
         actionButtons: []
     };
-
+    programs;
     result = [
         {
             "_id": "5fc5202fbba21c7039176ad1",
@@ -877,8 +877,8 @@ export class ProgramListingComponent implements OnInit {
         }
     ]
 
-    constructor(private router: Router, private location: Location, private utils: UtilsService,
-        private headerService: AppHeaderService, private platform: Platform, private kendraService: KendraApiService) { }
+    constructor(private router: Router, private location: Location, 
+        private headerService: AppHeaderService, private platform: Platform,private utils: UtilsService, private kendraService: KendraApiService) { }
 
     ngOnInit() {
         this.getPrograms();
@@ -891,7 +891,9 @@ export class ProgramListingComponent implements OnInit {
             payload: payload
         }
         this.kendraService.post(config).subscribe(success => {
-
+            if(success.result.data){
+                this.programs = success.result;
+            }
         }, error => {
 
         })
