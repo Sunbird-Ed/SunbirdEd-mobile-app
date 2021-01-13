@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class TabsPage implements OnInit, AfterViewInit {
 
   configData: any;
-  @ViewChild('tabRef') tabRef: IonTabs;
+  @ViewChild('tabRef', { static: false }) tabRef: IonTabs;
   tabIndex = 0;
   tabs = [];
   headerConfig = {

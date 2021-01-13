@@ -27,7 +27,7 @@ import {
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services/app-header.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -44,7 +44,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class CoursesPage implements OnInit, OnDestroy {
 
-  @ViewChild('courseRefresher') refresher: IonRefresher;
+  @ViewChild('courseRefresher', { static: false }) refresher: IonRefresher;
 
   /**
    * Contains enrolled course

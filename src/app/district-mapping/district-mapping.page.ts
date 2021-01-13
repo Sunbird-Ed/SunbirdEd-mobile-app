@@ -32,7 +32,7 @@ import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { distinctUntilChanged, take, tap } from 'rxjs/operators';
 import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 import { FormConstants } from '../form.constants';
 import { FormGroup } from '@angular/forms';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';

@@ -8,7 +8,7 @@ import { Events } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, ContentAggregatorRequest, ContentSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
