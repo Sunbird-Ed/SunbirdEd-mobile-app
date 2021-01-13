@@ -13,34 +13,16 @@ import { LoaderService } from '../../core';
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
-  solutions=[];
+  solutions = [];
   description;
   count = 0;
-  limit = 2;
+  limit = 25;
   page = 1;
-  result = [
-    {
-      name: "Aadhyaan Assesment SSIP Program",
-      description: "Course Completed",
-      image: "",
-      id: '111'
-    },
-    {
-      name: "Improvement project demo Program",
-      description: "Assesment Completed",
-      image: "",
-      id: '222'
-    },
-    {
-      name: "Africa Test  Program",
-      description: "Assesment",
-      image: "",
-      id: '333'
-    }
-  ]
+
   constructor(private activatedRoute: ActivatedRoute,
     private utils: UtilsService,
     private kendraService: KendraApiService,
+    private loader: LoaderService,
     private location: Location) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -55,20 +37,22 @@ export class SolutionListingComponent implements OnInit {
 
   }
   async getSolutions() {
+    this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
     const config = {
       url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + '?page=' + this.page + '&limit=' + this.limit + '&search=',
       payload: payload
     }
     this.kendraService.post(config).subscribe(success => {
+      this.loader.stopLoader();
       if (success.result.data) {
-        // this.solutions = success.result;
         this.solutions = this.solutions.concat(success.result.data);
         this.count = success.result.count;
         this.description = success.result.description;
       }
     }, error => {
-
+      this.loader.stopLoader();
+      this.solutions = [];
     })
   }
   goBack() {

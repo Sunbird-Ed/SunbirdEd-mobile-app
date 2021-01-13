@@ -79,6 +79,7 @@ export class ProjectListingComponent implements OnInit {
       this.count = success.result.count;
       this.description = success.result.description;
     }, error => {
+      this.projects =[];
       this.loader.stopLoader();
     })
   }

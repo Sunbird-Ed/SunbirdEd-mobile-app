@@ -4,6 +4,7 @@
     </app-common-header>
     <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.description"
       [id]="project?._id" (cardSelect)="selectedProgram($event,project)"></app-item-list-card>
+    <app-no-data *ngIf="!projects?.length"></app-no-data>
   </ion-content>
   <ion-button class="view-more" expand="block" (click)="loadMore();"
     *ngIf="projects?.length && count > projects?.length">

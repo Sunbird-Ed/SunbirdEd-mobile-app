@@ -15,6 +15,8 @@
     <!-- <ion-list *ngFor = "let data of result"> -->
     <app-common-list-card [title]="data?.name" [subTitle]="data?.description" [id]="data?.id"
       (cardSelect)="selectedSolution($event)" *ngFor="let data of solutions"></app-common-list-card>
+    <app-no-data *ngIf="!solutions?.length"></app-no-data>
+
     <!-- </ion-list> -->
   </ion-content>
   <div class="px-5">
