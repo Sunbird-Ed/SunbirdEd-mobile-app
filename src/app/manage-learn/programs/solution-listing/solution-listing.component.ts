@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UtilsService } from '../../core';
+import { LoaderService } from '../../core';
+
 @Component({
   selector: 'app-solution-listing',
   templateUrl: './solution-listing.component.html',
@@ -11,8 +13,10 @@ import { UtilsService } from '../../core';
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
-  solutions;
-  limit = 25;
+  solutions=[];
+  description;
+  count = 0;
+  limit = 2;
   page = 1;
   result = [
     {
@@ -53,13 +57,15 @@ export class SolutionListingComponent implements OnInit {
   async getSolutions() {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + 'page=' + this.page + '&limit=' + this.limit + '&search=',
+      url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + '?page=' + this.page + '&limit=' + this.limit + '&search=',
       payload: payload
     }
     this.kendraService.post(config).subscribe(success => {
-      console.log(success, "success");
       if (success.result.data) {
-        this.solutions = success.result;
+        // this.solutions = success.result;
+        this.solutions = this.solutions.concat(success.result.data);
+        this.count = success.result.count;
+        this.description = success.result.description;
       }
     }, error => {
 
@@ -68,5 +74,8 @@ export class SolutionListingComponent implements OnInit {
   goBack() {
     this.location.back();
   }
-
+  loadMore() {
+    this.page = this.page + 1;
+    this.getSolutions();
+  }
 }

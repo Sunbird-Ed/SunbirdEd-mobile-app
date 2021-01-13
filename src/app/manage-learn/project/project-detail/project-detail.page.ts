@@ -148,16 +148,15 @@ export class ProjectDetailPage implements OnInit {
   }
 
   async getProjectsApi() {
-
+    this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    console.log(payload, "payload getProjectList");
     let id = this.projectId ? +'/' + this.projectId : '';
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
       payload: payload
     }
     this.unnatiService.post(config).subscribe(success => {
-      console.log(success, "success getProjectList");
+      this.loader.stopLoader();
       // this.project = success.result;
       this.db.create(success.result).then(success => {
         this.getProject();
@@ -165,6 +164,7 @@ export class ProjectDetailPage implements OnInit {
 
       })
     }, error => {
+      this.loader.stopLoader();
     })
   }
 
