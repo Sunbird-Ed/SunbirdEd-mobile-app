@@ -12,6 +12,6 @@ export class AssessmentApiService extends ApiService {
   baseUrl: string;
   constructor(public http: HttpClient, public toast: ToastService, public modalController: ModalController) {
     super(http, toast, modalController);
-    this.baseUrl = urlConstants.SERVICES.UNNATI;
+    this.baseUrl = urlConstants.SERVICES.SAMIKSHA;
   }
 }
