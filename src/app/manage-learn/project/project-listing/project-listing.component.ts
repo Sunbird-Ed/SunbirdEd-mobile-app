@@ -75,8 +75,6 @@ export class ProjectListingComponent implements OnInit {
     }
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
-      this.projects = success.result;
-
       this.projects = this.projects.concat(success.result.data);
       this.count = success.result.count;
       this.description = success.result.description;
