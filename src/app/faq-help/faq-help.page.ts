@@ -45,7 +45,7 @@ export class FaqHelpPage implements OnInit {
   appName: string;
   loading?: any;
   private messageListener: (evt: Event) => void;
-  @ViewChild('f') iframe: ElementRef;
+  @ViewChild('f', { static: false }) iframe: ElementRef;
   backButtonFunc: Subscription;
   headerObservable: any;
   shownGroup: any;

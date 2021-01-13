@@ -43,9 +43,9 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class CategoriesEditPage implements OnInit, OnDestroy {
 
-  @ViewChild('boardSelect') boardSelect: IonSelect;
-  @ViewChild('mediumSelect') mediumSelect: IonSelect;
-  @ViewChild('gradeSelect') gradeSelect: IonSelect;
+  @ViewChild('boardSelect', { static: false }) boardSelect: IonSelect;
+  @ViewChild('mediumSelect', { static: false }) mediumSelect: IonSelect;
+  @ViewChild('gradeSelect', { static: false }) gradeSelect: IonSelect;
 
   private framework: Framework;
   private formControlSubscriptions: Subscription;

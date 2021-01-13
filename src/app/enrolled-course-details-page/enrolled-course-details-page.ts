@@ -194,7 +194,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   licenseDetails;
   forumId?: string;
 
-  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
   public objRollup: Rollup;
   pageName = '';
   contentId: string;
