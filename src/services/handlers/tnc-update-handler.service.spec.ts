@@ -48,15 +48,13 @@ describe('TncUpdateHandlerService', () => {
     tncUpdateHandlerService = new TncUpdateHandlerService(
       mockProfileService as ProfileService,
       mockAuthService as AuthService,
-      mockSharedPreferences as SharedPreferences,
       mockCommonUtilService as CommonUtilService,
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
       mockModalCtrl as ModalController,
       mockRouter as Router,
       mockExternalIdVerificationService as ExternalIdVerificationService,
       mockAppGlobalService as AppGlobalService,
-      mockConsentService as ConsentService,
-      mockSbProgressLoader as SbProgressLoader,
+      mockConsentService as ConsentService
     );
   });
 
