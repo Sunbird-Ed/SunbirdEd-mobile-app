@@ -171,7 +171,13 @@ export class DistrictMappingPage {
       const locationCodes = [];
       (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
         if (this.formGroup.value.children['persona'][acc]) {
-          locationCodes.push((this.formGroup.value.children['persona'][acc] as SbLocation).id);
+          const location: SbLocation = this.formGroup.value.children['persona'][acc] as SbLocation;
+          if (location.type) {
+            locationCodes.push({
+              type: location.type,
+              code: location.code
+            });
+          }
         }
       }, {}));
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
@@ -181,7 +187,8 @@ export class DistrictMappingPage {
         ...((name ? { firstName: name } : {})),
         lastName: '',
         ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
-        ...((this.formGroup.value.children['subPersona'] ? { subUserType: this.formGroup.value.children['subPersona'] } : {}))
+        ...((this.formGroup.value.children['persona']['subPersona'] ?
+                  { subUserType: this.formGroup.value.children['persona']['subPersona'] } : {}))
       };
 
       const loader = await this.commonUtilService.getLoader();
