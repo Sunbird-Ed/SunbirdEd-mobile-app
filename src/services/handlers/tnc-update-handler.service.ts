@@ -26,15 +26,13 @@ export class TncUpdateHandlerService {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
     private router: Router,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
-    private consentService: ConsentService,
-    private sbProgressLoader: SbProgressLoader
+    private consentService: ConsentService
   ) { }
 
   public async checkForTncUpdate() {
@@ -79,7 +77,6 @@ export class TncUpdateHandlerService {
   }
 
   private async checkBmc(profile) {
-    const selectedUserType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     if (await this.isSSOUser(userDetails)) {
@@ -88,13 +85,13 @@ export class TncUpdateHandlerService {
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
         || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
-        this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig, selectedUserType);
+        this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       } else {
-        this.checkDistrictMapping(profile, locationMappingConfig, selectedUserType);
+        this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
       }
     }
 
-  private async preRequirementToBmcNavigation(userId, locationMappingConfig, userType) {
+  private async preRequirementToBmcNavigation(userId, locationMappingConfig) {
     const serverProfile = await this.profileService.getServerProfilesDetails({
       userId,
       requiredFields: ProfileConstants.REQUIRED_FIELDS,
@@ -105,14 +102,14 @@ export class TncUpdateHandlerService {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.navigateToBmc(serverProfile, userprofile, locationMappingConfig, userType);
+    this.navigateToBmc(serverProfile, userprofile, locationMappingConfig);
   }
 
-  private async navigateToBmc(serverProfile, userprofile, locationMappingConfig, userType) {
+  private async navigateToBmc(serverProfile, userprofile, locationMappingConfig) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
       .then((value) => {
         const categoriesProfileData = {
-          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, userType),
+          hasFilledLocation: this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig),
           showOnlyMandatoryFields: true,
           profile: value['profile'],
           isRootPage: true
@@ -120,7 +117,7 @@ export class TncUpdateHandlerService {
         if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] =
-          this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, userType);
+          this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig);
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
@@ -142,11 +139,11 @@ export class TncUpdateHandlerService {
     }
   }
 
-  private checkDistrictMapping(profile, locationMappingConfig, userType) {
+  private checkDistrictMapping(profile, locationMappingConfig, userDetails) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
-        if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig, userType)) {
+        if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
           this.navigateToDistrictMapping();
         } else {
           this.externalIdVerificationService.showExternalIdVerificationPopup();
