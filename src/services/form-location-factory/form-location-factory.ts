@@ -10,6 +10,7 @@ import { Location } from '@project-sunbird/client-services/models/location';
 import { FieldConfig } from 'common-form-elements-v8';
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
+  private userLocationCache: {[request: string]: Location[] | undefined} = {};
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
@@ -25,23 +26,22 @@ export class FormLocationFactory {
           }
         };
         notifyLoading();
-        return await this.profileService.searchLocation(req).toPromise()
+        return this.fetchUserLocation(req)
           .then((stateLocationList: Location[]) => {
+            notifyLoaded();
             const list = stateLocationList.map((s) => ({ label: s.name, value: s }));
             if (config.default && initial) {
-              const option = list.find((o) => o.value.id === config.default.id);
-              formControl.patchValue(option ? option.value : null);
+              const option = list.find((o) => o.value.id === config.default.id || o.label === config.default.name);
+              formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
               config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
             return list;
           })
           .catch((e) => {
+            notifyLoaded();
             this.commonUtilService.showToast('NO_DATA_FOUND');
             console.error(e);
             return [];
-          })
-          .finally(() => {
-            notifyLoaded();
           });
       });
     };
@@ -54,10 +54,15 @@ export class FormLocationFactory {
       }
       return contextFormControl.valueChanges.pipe(
         startWith(contextFormControl.value),
-        distinctUntilChanged((a: Location, b: Location) => JSON.stringify(a) === JSON.stringify(b)),
+        distinctUntilChanged((a: Location, b: Location) => {
+          return !!(!a && !b ||
+            !a && b ||
+            !b && a ||
+            a.code === b.code);
+        }),
         tap(() => {
-          if (formControl.value && !initial) {
-            formControl.patchValue(null);
+          if (formControl.value) {
+            formControl.patchValue(null, { onlySelf: true, emitEvent: false });
           }
         }),
         switchMap(async (value) => {
@@ -72,10 +77,10 @@ export class FormLocationFactory {
             }
           };
           notifyLoading();
-          return await this.profileService.searchLocation(req).toPromise()
-            .then((locationList: Location[]) => {
+          return await this.fetchUserLocation(req).then((locationList: Location[]) => {
+              notifyLoaded();
               const list = locationList.map((s) => ({ label: s.name, value: s }));
-              if (config.default && initial) {
+              if (config.default && initial && !formControl.value) {
                 const option = list.find((o) => o.value.id === config.default.id);
                 formControl.patchValue(option ? option.value : null);
                 config.default['code'] = option ? option.value['code'] : config.default['code'];
@@ -83,16 +88,26 @@ export class FormLocationFactory {
               return list;
             })
             .catch((e) => {
+              notifyLoaded();
               this.commonUtilService.showToast('NO_DATA_FOUND');
               console.error(e);
               return [];
-            })
-            .finally(() => {
-              notifyLoaded();
             });
         })
       );
     };
+  }
+
+  private async fetchUserLocation(request: any): Promise<Location[]> {
+    const serialized = JSON.stringify(request);
+    if (this.userLocationCache[serialized]) {
+      return this.userLocationCache[serialized];
+    }
+    return this.profileService.searchLocation(request).toPromise()
+      .then((response) => {
+        this.userLocationCache[serialized] = response;
+        return response;
+      });
   }
   // private generateTelemetryInteract(telemetryData) {
   //   this.telemetryGeneratorService.generateInteractTelemetry(

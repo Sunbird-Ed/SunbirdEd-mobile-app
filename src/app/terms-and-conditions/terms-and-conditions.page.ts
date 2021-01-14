@@ -34,7 +34,6 @@ export class TermsAndConditionsPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private platform: Platform,
     private logoutHandlerService: LogoutHandlerService,
     private sanitizer: DomSanitizer,
@@ -145,7 +144,6 @@ export class TermsAndConditionsPage implements OnInit {
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
-        const selectedUserType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             this.dismissLoader(loader);
@@ -157,13 +155,13 @@ export class TermsAndConditionsPage implements OnInit {
             await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
             this.disableSubmitButton = false;
             const categoriesProfileData = {
-              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType),
+              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig),
               showOnlyMandatoryFields: true,
               profile: value['profile'],
               isRootPage: true
             };
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType)
+              if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
