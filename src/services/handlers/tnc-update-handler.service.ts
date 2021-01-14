@@ -87,7 +87,7 @@ export class TncUpdateHandlerService {
         || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       } else {
-        this.checkDistrictMapping(profile, locationMappingConfig);
+        this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
       }
     }
 
@@ -139,11 +139,11 @@ export class TncUpdateHandlerService {
     }
   }
 
-  private checkDistrictMapping(profile, locationMappingConfig) {
+  private checkDistrictMapping(profile, locationMappingConfig, userDetails) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
-        if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)) {
+        if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
           this.navigateToDistrictMapping();
         } else {
           this.externalIdVerificationService.showExternalIdVerificationPopup();
