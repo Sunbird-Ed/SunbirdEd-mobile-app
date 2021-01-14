@@ -94,6 +94,7 @@ export class DistrictMappingPage {
       isNavClicked);
     this.location.back();
   }
+
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
@@ -151,11 +152,13 @@ export class DistrictMappingPage {
       });
     }
   }
+
   ionViewWillLeave(): void {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
+
   async submit() {
     console.log(this.formGroup.value);
     this.saveDeviceLocation();
@@ -233,6 +236,7 @@ export class DistrictMappingPage {
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
   }
+
   private async saveDeviceLocation() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -253,6 +257,7 @@ export class DistrictMappingPage {
     this.commonUtilService.handleToTopicBasedNotification();
     await loader.dismiss();
   }
+
   private async checkLocationMandatory() {
     let skipValues = [];
     await this.formAndFrameworkUtilService.getLocationConfig()
@@ -274,12 +279,15 @@ export class DistrictMappingPage {
       }
     }
   }
+
   private skipLocation() {
     this.router.navigate([`/${RouterLinks.TABS}`]);
   }
+
   private getEnvironment(): string {
     return this.source === PageId.GUEST_PROFILE ? Environment.USER : Environment.ONBOARDING;
   }
+
   cancelEvent(category?: string) {
     const correlationList: Array<CorrelationData> = [];
     /* New Telemetry */
@@ -294,6 +302,7 @@ export class DistrictMappingPage {
       correlationList
     );
   }
+
   private async initialiseFormData(
     formRequest: FormRequest,
     initial = false
@@ -359,20 +368,24 @@ export class DistrictMappingPage {
     }
     this.locationFormConfig = locationMappingConfig;
   }
+
   private setDefaultConfig(fieldConfig: FieldConfig<any>): SbLocation {
     if (this.presetLocation[fieldConfig.code]) {
       return this.presetLocation[fieldConfig.code];
     }
     return null;
   }
+
   async onFormInitialize(formGroup: FormGroup) {
     this.formGroup = formGroup;
   }
+
   async onFormValueChange(value: any) {
     // if (value['children'] && value['children']['persona']) {
     //   this.currentFormValue = value['children']['persona'];
     // }
   }
+
   async onDataLoadStatusChange($event) {
     if ('LOADING' === $event) {
       await this.loader.present();
@@ -408,6 +421,7 @@ export class DistrictMappingPage {
       }
     }
   }
+
   generateTelemetryForCategorySelect(value, isState) {
     const corRelationList: CorrelationData[] = [{ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI }];
     corRelationList.push({
