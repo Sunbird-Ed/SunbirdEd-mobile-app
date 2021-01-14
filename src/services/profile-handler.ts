@@ -27,6 +27,9 @@ export class ProfileHandler {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
         const userTypeSpecificConfig = formFields.find(config => config.code === userType);
+        if(!userTypeSpecificConfig){
+            return {};
+        }
         let supportedAttribute = userTypeSpecificConfig['attributes']['mandatory'];
         const supportedOptionalAttribute = userTypeSpecificConfig['attributes']['optional'];
         if (showOptionalCategories) {
@@ -52,7 +55,7 @@ export class ProfileHandler {
     public async getAudience(userType: string): Promise<string[]> {
         const formFields = await this.getFormFields();
         const userTypeConfig = formFields.find(formField => formField.code === userType);
-        return userTypeConfig['searchFilter'];
+        return userTypeConfig ? userTypeConfig['searchFilter'] : [];
     }
 
     public async getSubPersona(subPersonaCode: string, persona: string, userLocation: any): Promise<string> {
