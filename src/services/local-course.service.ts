@@ -328,10 +328,10 @@ export class LocalCourseService {
     const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
       isLastAttempt: false,
       isContentDisabled: false
-    }
+    };
     if (contentStatusData && contentStatusData.contentList) {
       contentStatusData.contentList.forEach((item) => {
-        if (item.contentId === identifier && item.bestScore) {
+        if (item.contentId === identifier && item.score) {
           if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
             assesmentsStatus.isLastAttempt = true;
           }
