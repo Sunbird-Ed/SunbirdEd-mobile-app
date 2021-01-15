@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 import { FormConstants } from '@app/app/form.constants';
 import { ConsentService } from '@app/services/consent-service';
 import { ConsentStatus, Profile } from '@project-sunbird/client-services/models';

@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
   FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
@@ -33,7 +33,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-  @ViewChild('contentView') contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,

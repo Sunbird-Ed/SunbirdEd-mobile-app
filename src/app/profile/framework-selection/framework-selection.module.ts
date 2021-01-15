@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { FrameworkSelectionPage } from './framework-selection.page';
-import { CommonFormElementsModule } from 'common-form-elements';
+import { CommonFormElementsModule } from 'common-form-elements-v8';
 
 const routes: Routes = [
   {

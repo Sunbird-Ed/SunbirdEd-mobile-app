@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DiscussionUiModule } from '@project-sunbird/discussions-ui'
+import { DiscussionUiModule } from '@project-sunbird/discussions-ui-v8'
 
 @NgModule({
   declarations: [],

@@ -8,7 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelfDeclaredTeacherEditPage } from './self-declared-teacher-edit.page';
 import { ComponentsModule } from '@app/app/components/components.module';
-import { CommonFormElementsModule } from 'common-form-elements';
+import { CommonFormElementsModule } from 'common-form-elements-v8';
 
 const routes: Routes = [
   {

@@ -13,7 +13,7 @@ import { ComponentsModule } from '../components/components.module';
 import { ContentActionsComponent } from '../components';
 import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 
 const routes: Routes = [
   {

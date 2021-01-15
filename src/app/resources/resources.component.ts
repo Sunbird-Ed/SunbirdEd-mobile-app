@@ -8,7 +8,7 @@ import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { Subscription } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
@@ -68,7 +68,7 @@ import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import {
   FrameworkSelectionDelegateService,
   FrameworkSelectionActionsDelegate
@@ -121,7 +121,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
-  @ViewChild('libraryRefresher') refresher: IonRefresher;
+  @ViewChild('libraryRefresher', { static: false }) refresher: IonRefresher;
 
   pageLoadedSuccess = false;
   storyAndWorksheets: Array<any>;
@@ -185,7 +185,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   pageApiLoader = true;
   dynamicResponse: any;
   courseCardType = CourseCardGridTypes;
-  @ViewChild('contentView') contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;

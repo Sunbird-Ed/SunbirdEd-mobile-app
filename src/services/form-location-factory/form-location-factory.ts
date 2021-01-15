@@ -1,13 +1,13 @@
 import { Injectable, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
-import { FieldConfigOptionsBuilder } from 'common-form-elements';
+import { FieldConfigOptionsBuilder } from 'common-form-elements-v8';
 import { defer, of } from 'rxjs';
 import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { Location as LocationType } from '@app/app/app.constant';
 import { distinctUntilChanged, startWith, switchMap, tap } from 'rxjs/operators';
 import { Location } from '@project-sunbird/client-services/models/location';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
   private userLocationCache: {[request: string]: Location[] | undefined} = {};
