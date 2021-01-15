@@ -323,7 +323,8 @@ export class DistrictMappingPage {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = this.profile.serverProfile ? this.profile.serverProfile.userType : this.profile.profileType;
+        config.default = (this.profile.serverProfile && this.profile.serverProfile.userType) ?
+         this.profile.serverProfile.userType : this.profile.profileType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
