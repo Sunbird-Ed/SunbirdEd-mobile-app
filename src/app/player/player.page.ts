@@ -172,6 +172,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                     () => {},
                     () => {}
                 );
+              } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
+                this.closeIframe();
               }
             } else if (this.isJSON(resp.data)) {
               const response = JSON.parse(resp.data);
