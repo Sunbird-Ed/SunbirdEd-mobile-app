@@ -635,6 +635,9 @@ export class ProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .toPromise()
       .then((resp: any) => {
+        if (framework.userType) {
+          resp.profileType = framework.userType;
+        }
         this.formAndFrameworkUtilService.updateLoggedInUser(this.profile, resp)
           .then((success) => {
             console.log('updateLocalProfile-- ', success);

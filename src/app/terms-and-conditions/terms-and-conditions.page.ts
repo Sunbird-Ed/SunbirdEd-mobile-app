@@ -34,7 +34,6 @@ export class TermsAndConditionsPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private platform: Platform,
     private logoutHandlerService: LogoutHandlerService,
     private sanitizer: DomSanitizer,
@@ -145,7 +144,6 @@ export class TermsAndConditionsPage implements OnInit {
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
-        const selectedUserType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             this.dismissLoader(loader);
@@ -157,13 +155,13 @@ export class TermsAndConditionsPage implements OnInit {
             await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
             this.disableSubmitButton = false;
             const categoriesProfileData = {
-              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType),
+              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig),
               showOnlyMandatoryFields: true,
               profile: value['profile'],
               isRootPage: true
             };
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile, locationMappingConfig, selectedUserType)
+              if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
              || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
@@ -183,21 +181,17 @@ export class TermsAndConditionsPage implements OnInit {
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                if (selectedUserType === ProfileType.ADMIN) {
-                  const navigationExtras: NavigationExtras = {
-                    state: {
-                      isShowBackButton: false,
-                      userType: ProfileType.ADMIN
-                    }
-                  };
-                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-                } else {
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                   categoriesProfileData['status'] = value['status'],
                     categoriesProfileData['isUserLocationAvalable'] = false;
                   this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                     state: { categoriesProfileData }
                 });
-                }
+                } else {
+                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                    state: categoriesProfileData
+               });
+              }
               }
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
@@ -205,9 +199,7 @@ export class TermsAndConditionsPage implements OnInit {
               if (await tncUpdateHandlerService.isSSOUser(profile)) {
                 await this.consentService.getConsent(profile, true);
               }
-              if (selectedUserType === ProfileType.ADMIN) {
-                this.router.navigate([`/${RouterLinks.TABS}`]);
-              } else if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+              if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
                 this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
                   state: {categoriesProfileData}
                 });
