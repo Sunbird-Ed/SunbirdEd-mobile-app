@@ -6,8 +6,11 @@ import { ModalController, Platform, PopoverController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
+import { UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 
 @Component({
   selector: 'app-observation-detail',
@@ -21,10 +24,14 @@ export class ObservationDetailComponent implements OnInit {
     showBurgerMenu: false,
     actionButtons: [],
   };
-  programIndex: any;
-  solutionIndex: any;
+  // programIndex: any;
+  // solutionIndex: any;
+  observationId: any;
+  solutionId: any;
+  programId: any;
   selectedSolution: any;
   submissionCount: any;
+  solutionName: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
@@ -33,8 +40,18 @@ export class ObservationDetailComponent implements OnInit {
     private observationService: ObservationService,
     private router: Router,
     private popCtrl: PopoverController,
-    private modalCtrl: ModalController
-  ) {}
+    private modalCtrl: ModalController,
+    private routerParam: ActivatedRoute,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService
+  ) {
+    this.routerParam.queryParams.subscribe((params) => {
+      this.observationId = params.observationId;
+      this.solutionId = params.solutionId;
+      this.programId = params.programId;
+      this.solutionName = params.solutionName;
+    });
+  }
 
   ionViewWillEnter() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -51,29 +68,30 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.programIndex = this.observationService.getProgramIndex();
-    this.solutionIndex = this.observationService.getSolutionIndex(); //
-    this.getLocalStorageData();
+    // this.programIndex = this.observationService.getProgramIndex();
+    // this.solutionIndex = this.observationService.getSolutionIndex(); //
+    // this.getLocalStorageData();
+    this.getObservationEntities();
   }
 
-  getLocalStorageData() {
-    this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-      console.log(data);
-      let programList = data.result;
-      this.selectedSolution = programList[this.programIndex].solutions[this.solutionIndex];
-      this.checkForAnySubmissionsMade();
-    });
-
-    /*  this.localStorage
-       .getLocalStorage("programList")
-       .then((data) => {
-         this.programs = data;
-         this.selectedSolution = data[this.programIndex].solutions[this.solutionIndex];
-         this.checkForAnySubmissionsMade();
-       })
-       .catch((error) => {
-       });
-   } */
+  async getObservationEntities() {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url:
+        urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
+        `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        console.log(success);
+        if (success && success.result && success.result.entities) {
+          this.selectedSolution = success.result.entities;
+          //   this.checkForAnySubmissionsMade(); TODO:Implement
+        }
+      },
+      (error) => {}
+    );
   }
 
   checkForAnySubmissionsMade() {
@@ -98,14 +116,26 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   goToObservationSubmission(entity) {
-    let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
-    if (
-      this.selectedSolution.entities[entityIndex].submissions &&
-      this.selectedSolution.entities[entityIndex].submissions.length
-    ) {
-      this.observationService.setIndex(this.programIndex, this.solutionIndex, entityIndex);
-      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`]);
-    } /* else {
+    // TODO : Changed logic to call 1st submission in the submission page only .
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+      queryParams: {
+        programId: this.programId,
+        solutionId: this.solutionId,
+        observationId: this.observationId,
+        entityId: entity._id,
+        entityName: entity.name,
+      },
+    });
+    // TODO:till here
+    // let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
+    // if (
+    //   this.selectedSolution.entities[entityIndex].submissions &&
+    //   this.selectedSolution.entities[entityIndex].submissions.length
+    // ) {
+    //   // this.observationService.setIndex(this.programIndex, this.solutionIndex, entityIndex);
+    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`]);
+    // }
+    /* else {
       let event = {
         programIndex: this.programIndex,
         solutionIndex: this.solutionIndex,
