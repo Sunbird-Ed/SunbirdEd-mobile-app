@@ -28,7 +28,7 @@ const routes: Routes = [
     component: ProjectListingComponent
   },
   {
-    path: RouterLinks.DETAILS,
+    path: `${RouterLinks.DETAILS}/:projectId/:programId/:solutionId`,
     component: ProjectDetailPage
   },
   {
@@ -66,7 +66,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage,AttachmentListPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
   entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CategorySelectComponent],
   imports: [
     CommonModule,

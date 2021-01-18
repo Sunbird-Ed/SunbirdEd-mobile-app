@@ -7,7 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from '../../core';
 import { ProjectReportService } from '../../core/services/project-report.service';
 import { FilterModalComponent } from '../../shared/components/filter-modal/filter-modal.component';
-
+import { urlConstants } from '../../core/constants/urlConstants';
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
 @Component({
   selector: 'app-project-report',
   templateUrl: './project-report.component.html',
@@ -27,7 +28,9 @@ export class ProjectReportComponent implements OnInit {
     public alertController: AlertController,
     private router: Router,
     private reportSrvc: ProjectReportService,
-    public modalController: ModalController
+    public modalController: ModalController,
+    public unnatiService: UnnatiDataService,
+
   ) {
     this.translate
       .get([
@@ -69,7 +72,7 @@ export class ProjectReportComponent implements OnInit {
     this.loadFilterType();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   loadFilterType() {
     //TODO:remove
@@ -99,10 +102,26 @@ export class ProjectReportComponent implements OnInit {
     // );
   }
 
-  getReports(preFilter?) {
-    //TODO:remove
-    this.httpClient.get('assets/dummy/projectOverAllReports.json').subscribe(
-      (data: any) => {
+  async getReports(preFilter?) {
+    const entityId = this.filter.entity ? this.filter.entity._id : null;
+    let url;
+    if (entityId) {
+      url = urlConstants.API_URLS.GET_REPORT + entityId; // to get entity report
+    } else {
+      url = urlConstants.API_URLS.GET_REPORT; // overall report
+    }
+    const query = {
+      reportType: this.filter.type,
+      programId: this.filter.program ? this.filter.program._id : null,
+    };
+    url = this.utils.queryUrl(url, query);
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: url,
+      payload: payload
+    };
+    this.unnatiService.post(config).subscribe(
+      (data) => {
         if (data.result && !data.result.dataAvailable) {
           this.presentAlert(
             this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE'],
@@ -117,42 +136,8 @@ export class ProjectReportComponent implements OnInit {
         this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
         this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
       },
-      (err) => {}
+      (err) => { }
     );
-    //TODO till here
-    // const entityId = this.filter.entity ? this.filter.entity._id : null;
-    // let url;
-    // if (entityId) {
-    //   url = urlConstants.API_URLS.GET_REPORT + entityId; // to get entity report
-    // } else {
-    //   url = urlConstants.API_URLS.GET_REPORT; // overall report
-    // }
-    // const query = {
-    //   reportType: this.filter.type,
-    //   programId: this.filter.program ? this.filter.program._id : null,
-    // };
-    // url = this.utils.queryUrl(url, query);
-    // const config = {
-    //   url: url,
-    // };
-    // this.unnatiSrvc.get(config).subscribe(
-    //   (data) => {
-    //     if (data.result && !data.result.dataAvailable) {
-    //       this.presentAlert(
-    //         this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE'],
-    //         this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE_FOR_ENTITY_OR_PROGRAM']
-    //       );
-    //       preFilter ? (this.filter = JSON.parse(preFilter)) : null;
-    //       if (this.reportData) {
-    //         return;
-    //       }
-    //     }
-    //     this.reportData = data.result ? data.result.data : {};
-    //     this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
-    //     this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
-    //   },
-    //   (err) => {}
-    // );
   }
 
   generateCircleData(obj, innerRadius) {

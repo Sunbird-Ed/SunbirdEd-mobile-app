@@ -6,7 +6,8 @@ import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
 const environment = {
-  apiBaseUrl:'https://survey.preprod.ntp.net.in/'
+  // apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
+  apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
 }
 @Injectable()
 export class ApiService {
@@ -27,10 +28,12 @@ export class ApiService {
   }
 
   post(requestParam: RequestParams): Observable<any> {
+    console.log(requestParam, "requestParam");
     return this.http.post(environment.apiBaseUrl + this.baseUrl + requestParam.url, requestParam.payload).pipe(
       tap(data => {
         return data
       }, error => {
+        console.log(error, "error 35");
         catchError(this.handleError(error))
       }),
     )
@@ -42,13 +45,13 @@ export class ApiService {
   private handleError(result) {
     switch (result.status) {
       case 0:
-        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN' , 'danger')
+        this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
         break
       case 401:
         // this.auth.sessionExpired();
         break
       default:
-        this.toast.showMessage(result.error ? result.error.message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG' , 'danger')
+        this.toast.showMessage(result.error ? result.error.message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')
 
     }
     return (error: any): Observable<any> => {
