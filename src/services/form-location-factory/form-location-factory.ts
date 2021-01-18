@@ -10,7 +10,7 @@ import { Location } from '@project-sunbird/client-services/models/location';
 import { FieldConfig } from 'common-form-elements';
 @Injectable({ providedIn: 'root' })
 export class FormLocationFactory {
-  private userLocationCache: {[request: string]: Location[] | undefined} = {};
+  private userLocationCache: { [request: string]: Location[] | undefined } = {};
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
@@ -35,6 +35,7 @@ export class FormLocationFactory {
               formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
               config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
+            initial = false;
             return list;
           })
           .catch((e) => {
@@ -46,7 +47,7 @@ export class FormLocationFactory {
       });
     };
   }
-  buildLocationListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
+  buildLocationListClosure(config: FieldConfig<any>, initial = false, profile?): FieldConfigOptionsBuilder<Location> {
     const locationType = config.templateOptions['dataSrc']['params']['id'];
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
@@ -78,15 +79,21 @@ export class FormLocationFactory {
           };
           notifyLoading();
           return await this.fetchUserLocation(req).then((locationList: Location[]) => {
-              notifyLoaded();
-              const list = locationList.map((s) => ({ label: s.name, value: s }));
-              if (config.default && initial && !formControl.value) {
-                const option = list.find((o) => o.value.id === config.default.id);
-                formControl.patchValue(option ? option.value : null);
-                config.default['code'] = option ? option.value['code'] : config.default['code'];
-              }
-              return list;
-            })
+            notifyLoaded();
+            const list = locationList.map((s) => ({ label: s.name, value: s }));
+            if (config.code === 'school' && initial && !formControl.value) {
+              const option = list.find((o) => {
+                return (profile.serverProfile ? profile.serverProfile.organisations : profile.organisations)
+                .find((org) => org.orgName === o.label);
+              });
+              formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
+            } else if (config.default && initial && !formControl.value) {
+              const option = list.find((o) => o.value.id === config.default.id);
+              formControl.patchValue(option ? option.value : null);
+              config.default['code'] = option ? option.value['code'] : config.default['code'];
+            }
+            return list;
+          })
             .catch((e) => {
               notifyLoaded();
               this.commonUtilService.showToast('NO_DATA_FOUND');

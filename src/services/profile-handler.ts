@@ -66,7 +66,7 @@ export class ProfileHandler {
         try {
             // const state = await this.locationHandler.getLocationDetails(Location.TYPE_STATE, userLocation.name);
             const state = userLocation.state;
-            formFields = await this.getProfileFormConfig(state && state.id ? state.id : 'default');
+            formFields = await this.getProfileFormConfig(state && state.code ? state.code : 'default');
         } catch (e) {
             formFields = await this.getProfileFormConfig('default');
         }
