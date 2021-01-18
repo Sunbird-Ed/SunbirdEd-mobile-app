@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
 import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
@@ -14,6 +14,8 @@ import { ScroreReportMenusComponent } from '../../shared/components/scrore-repor
 import { ObservationReportsComponent } from '../../observation-report/observation-reports/observation-reports.component';
 import { SubmissionActionsComponent } from '../../shared/components/submission-actions/submission-actions.component';
 import { TranslateService } from '@ngx-translate/core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 
 @Component({
   selector: 'app-observation-submission',
@@ -27,9 +29,9 @@ export class ObservationSubmissionComponent implements OnInit {
     showBurgerMenu: false,
     actionButtons: [],
   };
-  programIndex: any;
-  solutionIndex: any;
-  entityIndex: any;
+  // programIndex: any;
+  // solutionIndex: any;
+  // entityIndex: any;
   submissionList: any;
   inProgressObservations = [];
   completedObservations = [];
@@ -41,6 +43,14 @@ export class ObservationSubmissionComponent implements OnInit {
   showEntityActionsheet: boolean;
   showActionsheet: boolean;
   submissionIdArr: any;
+  observationId: any;
+  solutionId: any;
+  programId: any;
+  entityId: any;
+  entityName: any;
+  programIndex: any;
+  solutionIndex: any;
+  entityIndex: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
@@ -54,51 +64,101 @@ export class ObservationSubmissionComponent implements OnInit {
     private popoverCtrl: PopoverController,
     private loader: LoaderService,
     private translate: TranslateService,
-    private alertCntrl: AlertController
-  ) {}
-  ionViewWillEnter() {
-    this.headerConfig = this.headerService.getDefaultPageConfig();
-    this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
-    this.headerConfig.showBurgerMenu = false;
-    this.headerService.updatePageConfig(this.headerConfig);
+    private alertCntrl: AlertController,
+    private routerParam: ActivatedRoute,
+    private assessmentService: AssessmentApiService
+  ) {
+    this.routerParam.queryParams.subscribe((params) => {
+      this.observationId = params.observationId;
+      this.solutionId = params.solutionId;
+      this.programId = params.programId;
+      this.entityId = params.entityId;
+      this.entityName = params.entityName;
+    });
   }
+  // ionViewWillEnter() {
+  //   this.headerConfig = this.headerService.getDefaultPageConfig();
+  //   this.headerConfig.actionButtons = [];
+  //   this.headerConfig.showHeader = true;
+  //   this.headerConfig.showBurgerMenu = false;
+  //   this.headerService.updatePageConfig(this.headerConfig);
+  // }
 
-  ionViewWillLeave() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
-  }
+  // ionViewWillLeave() {
+  //   if (this.backButtonFunc) {
+  //     this.backButtonFunc.unsubscribe();
+  //   }
+  // }
 
   ngOnInit() {
-    this.programIndex = this.observationService.getProgramIndex();
-    this.solutionIndex = this.observationService.getSolutionIndex(); //
-    this.entityIndex = this.observationService.getEntityIndex(); //
+    // this.programIndex = this.observationService.getProgramIndex();
+    // this.solutionIndex = this.observationService.getSolutionIndex(); //
+    // this.entityIndex = this.observationService.getEntityIndex(); //
     this.getProgramFromStorage();
   }
 
-  getProgramFromStorage(stopLoader?, noLoader?) {
-    this.localStorage
-      .getLocalStorage(storageKeys.observationSubmissionIdArr)
-      .then((ids) => {
-        this.submissionIdArr = ids;
-      })
-      .catch((err) => {
-        this.submissionIdArr = [];
-      })
-      .finally(() => {
-        this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-          console.log(data);
-          this.programList = data.result;
-          this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-          this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-            this.entityIndex
-          ].submissions;
-          this.applyDownloadedflag();
-          this.splitCompletedAndInprogressObservations();
-          this.tabChange(this.currentTab ? this.currentTab : 'all');
-        });
-      });
+  async getProgramFromStorage(stopLoader?, noLoader?) {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.localStorage
+          .getLocalStorage(storageKeys.observationSubmissionIdArr)
+          .then((ids) => {
+            this.submissionIdArr = ids;
+          })
+          .catch((err) => {
+            this.submissionIdArr = [];
+          })
+          .finally(() => {
+            this.submissionList = success.result;
+            this.applyDownloadedflag();
+
+            this.splitCompletedAndInprogressObservations();
+
+            this.tabChange(this.currentTab ? this.currentTab : 'all');
+          });
+      },
+      (error) => {
+        if (error.error.status === 400) {
+          let event = {
+            entityId: this.entityId,
+            observationId: this.observationId,
+            submission: {
+              submissionNumber: 1,
+            },
+          };
+          this.observationService.getAssessmentDetailsForObservation(event).then((res) => {
+            this.getProgramFromStorage();
+          });
+        }
+        console.log(error);
+      }
+    );
+    // this.localStorage
+    //   .getLocalStorage(storageKeys.observationSubmissionIdArr)
+    //   .then((ids) => {
+    //     this.submissionIdArr = ids;
+    //   })
+    //   .catch((err) => {
+    //     this.submissionIdArr = [];
+    //   })
+    //   .finally(() => {
+    //     this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
+    //       console.log(data);
+    //       this.programList = data.result;
+    //       this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
+    //       this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
+    //         this.entityIndex
+    //       ].submissions;
+    //       this.applyDownloadedflag();
+    //       this.splitCompletedAndInprogressObservations();
+    //       this.tabChange(this.currentTab ? this.currentTab : 'all');
+    //     });
+    //   });
 
     /* await this.localStorage
       .getLocalStorage(storageKeys.observationSubmissionIdArr)
@@ -198,7 +258,7 @@ export class ObservationSubmissionComponent implements OnInit {
       submission: submission,
     };
     this.observationService
-      .getAssessmentDetailsForObservation(event, this.programList)
+      .getAssessmentDetailsForObservation(event)
       .then(async (programList) => {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
@@ -210,7 +270,8 @@ export class ObservationSubmissionComponent implements OnInit {
     // TODO: Remove
     // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
     let submissionId = submission._id;
-    let heading = this.selectedSolution.entities[this.entityIndex].name;
+    // let heading = this.selectedSolution.entities[this.entityIndex].name;
+    let heading = this.entityName;
 
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
