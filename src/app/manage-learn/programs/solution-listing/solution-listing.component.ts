@@ -1,6 +1,10 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { UtilsService } from '../../core';
+import { LoaderService } from '../../core';
 
 @Component({
   selector: 'app-solution-listing',
@@ -9,42 +13,53 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class SolutionListingComponent implements OnInit {
   programId: any;
-  result = [
-    {
-      name: "Aadhyaan Assesment SSIP Program",
-      description: "Course Completed",
-      image: "",
-      id: '111'
-    },
-    {
-      name: "Improvement project demo Program",
-      description: "Assesment Completed",
-      image: "",
-      id: '222'
-    },
-    {
-      name: "Africa Test  Program",
-      description: "Assesment",
-      image: "",
-      id: '333'
-    }
-  ]
+  solutions = [];
+  description;
+  count = 0;
+  limit = 25;
+  page = 1;
+
   constructor(private activatedRoute: ActivatedRoute,
-    private location: Location) { 
+    private utils: UtilsService,
+    private kendraService: KendraApiService,
+    private loader: LoaderService,
+    private location: Location) {
     activatedRoute.params.subscribe((param) => {
-     this.programId = param.id;
+      this.programId = param.id;
+      this.getSolutions();
     });
 
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  selectedSolution(data){
+  selectedSolution(data) {
 
   }
-
+  async getSolutions() {
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + '?page=' + this.page + '&limit=' + this.limit + '&search=',
+      payload: payload
+    }
+    this.kendraService.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      if (success.result.data) {
+        this.solutions = this.solutions.concat(success.result.data);
+        this.count = success.result.count;
+        this.description = success.result.description;
+      }
+    }, error => {
+      this.loader.stopLoader();
+      this.solutions = [];
+    })
+  }
   goBack() {
     this.location.back();
   }
-
+  loadMore() {
+    this.page = this.page + 1;
+    this.getSolutions();
+  }
 }
