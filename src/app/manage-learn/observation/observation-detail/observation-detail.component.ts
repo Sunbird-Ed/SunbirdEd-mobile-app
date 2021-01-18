@@ -71,7 +71,7 @@ export class ObservationDetailComponent implements OnInit {
     // this.programIndex = this.observationService.getProgramIndex();
     // this.solutionIndex = this.observationService.getSolutionIndex(); //
     // this.getLocalStorageData();
-    this.getObservationEntities()
+    this.getObservationEntities();
   }
 
   async getObservationEntities() {
@@ -85,7 +85,7 @@ export class ObservationDetailComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (success) => {
         console.log(success);
-        this.selectedSolution = success.result;
+        this.selectedSolution = success.result.entities;
       },
       (error) => {}
     );
@@ -130,14 +130,26 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   goToObservationSubmission(entity) {
-    let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
-    if (
-      this.selectedSolution.entities[entityIndex].submissions &&
-      this.selectedSolution.entities[entityIndex].submissions.length
-    ) {
-      // this.observationService.setIndex(this.programIndex, this.solutionIndex, entityIndex);
-      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`]);
-    } /* else {
+    // TODO : Changed logic to call 1st submission in the submission page only .
+    this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+      queryParams: {
+        programId: this.programId,
+        solutionId: this.solutionId,
+        observationId: this.observationId,
+        entityId: entity._id,
+        entityName:entity.name
+      },
+    });
+    // TODO:till here
+    // let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
+    // if (
+    //   this.selectedSolution.entities[entityIndex].submissions &&
+    //   this.selectedSolution.entities[entityIndex].submissions.length
+    // ) {
+    //   // this.observationService.setIndex(this.programIndex, this.solutionIndex, entityIndex);
+    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`]);
+    // }
+    /* else {
       let event = {
         programIndex: this.programIndex,
         solutionIndex: this.solutionIndex,
