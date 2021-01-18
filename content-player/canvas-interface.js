@@ -56,6 +56,10 @@ if (!window.genieservice) {
     });
   };
 
+  var checkMaxLimit = function checkMaxLimit(request) {
+    return window.parent.handleAction('checkMaxLimit', [request]);
+  };
+
   var showExitConfirmPopup = function showExitConfirmPopup() {
     return window.parent.handleAction('showExitConfirmPopup');
   }
@@ -74,6 +78,7 @@ if (!window.genieservice) {
       endContent: endContent,
       launchContent: launchContent,
       sendTelemetry: sendTelemetry,
+      checkMaxLimit: checkMaxLimit,
       showExitConfirmPopup: showExitConfirmPopup
     };
   }();
