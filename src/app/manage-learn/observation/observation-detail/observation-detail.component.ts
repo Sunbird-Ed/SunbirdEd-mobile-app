@@ -85,27 +85,13 @@ export class ObservationDetailComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (success) => {
         console.log(success);
-        this.selectedSolution = success.result.entities;
+        if (success && success.result && success.result.entities) {
+          this.selectedSolution = success.result.entities;
+          //   this.checkForAnySubmissionsMade(); TODO:Implement
+        }
       },
       (error) => {}
     );
-    // this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-    //   console.log(data);
-    //   let programList = data.result;
-    //   this.selectedSolution = programList[this.programIndex].solutions[this.solutionIndex];
-    //   this.checkForAnySubmissionsMade();
-    // });
-
-    /*  this.localStorage
-       .getLocalStorage("programList")
-       .then((data) => {
-         this.programs = data;
-         this.selectedSolution = data[this.programIndex].solutions[this.solutionIndex];
-         this.checkForAnySubmissionsMade();
-       })
-       .catch((error) => {
-       });
-   } */
   }
 
   checkForAnySubmissionsMade() {
@@ -137,7 +123,7 @@ export class ObservationDetailComponent implements OnInit {
         solutionId: this.solutionId,
         observationId: this.observationId,
         entityId: entity._id,
-        entityName:entity.name
+        entityName: entity.name,
       },
     });
     // TODO:till here

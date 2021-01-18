@@ -39,11 +39,6 @@ export class ObservationHomeComponent implements OnInit {
 
   ngOnInit() {
     this.getPrograms();
-
-    // this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-    //   console.log(data);
-    //   this.programList = data.result;
-    // });
   }
   async getPrograms() {
     let payload = await this.utils.getProfileInfo();
@@ -54,8 +49,9 @@ export class ObservationHomeComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (success) => {
         console.log(success);
-        // this.programList = success.result.data;
-        this.solutionList = success.result.data;
+        if (success && success.result && success.result.data) {
+          this.solutionList = success.result.data;
+        }
       },
       (error) => {}
     );
