@@ -1,5 +1,5 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS, ADMIN_LOGIN_TABS } from '@app/app/module.service';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class TabsPage implements OnInit, AfterViewInit {
 
   configData: any;
-  @ViewChild('myTabs') tabRef: IonTabs;
+  @ViewChild('tabRef', { static: false }) tabRef: IonTabs;
   tabIndex = 0;
   tabs = [];
   headerConfig = {
@@ -46,7 +46,6 @@ export class TabsPage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
-    const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
       if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
@@ -64,7 +63,6 @@ export class TabsPage implements OnInit, AfterViewInit {
         }).toPromise();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      userType === ProfileType.ADMIN ? initTabs(this.container, ADMIN_LOGIN_TABS) :
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 
@@ -75,10 +73,11 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.setQrStyles();
+    this.setQRStyles();
+    this.setQRTabRoot(this.tabRef.getSelected());
   }
 
-  setQrStyles() {
+  setQRStyles() {
     setTimeout(async () => {
       if (document.getElementById('qrScannerIcon') && document.getElementById('backdrop')) {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
@@ -89,7 +88,7 @@ export class TabsPage implements OnInit, AfterViewInit {
           `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
         );
       } else {
-        this.setQrStyles();
+        this.setQRStyles();
       }
 
     }, 2000);
@@ -126,7 +125,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionTabsDidChange(event: any) {
-    this.tabs[2].root = event.tab;
+    this.setQRTabRoot(event.tab);
     if (event.tab === 'resources') {
       event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
@@ -154,6 +153,12 @@ export class TabsPage implements OnInit, AfterViewInit {
           hideBackButton: true
         }
       });
+    }
+  }
+
+  private setQRTabRoot(tab: string) {
+    if (this.tabs && this.tabs[2]) {
+      this.tabs[2].root = tab;
     }
   }
 

@@ -9,7 +9,7 @@ import { ExploreBooksPage } from './explore-books.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 
 const routes: Routes = [
   {

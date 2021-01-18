@@ -347,6 +347,9 @@ export class ViewMore {
 export class Location {
     public static readonly TYPE_STATE = 'state';
     public static readonly TYPE_DISTRICT = 'district';
+    public static readonly TYPE_BLOCK = 'block';
+    public static readonly TYPE_CLUSTER = 'cluster';
+    public static readonly TYPE_SCHOOL = 'school';
 }
 
 export class FrameworkCategory {
@@ -446,8 +449,6 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
-     // ADMIN HOME Routes
-     public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -525,7 +526,6 @@ export class RouterLinks {
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
     public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
-    public static readonly ADMIN_HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.ADMIN_HOME}`;
 
 
     // TEXTBOOK view more page Routes
@@ -554,6 +554,7 @@ export class RouterLinks {
 
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
+    public static readonly DISCUSSION = 'discussion-forum';
 }
 
 export class ShareItemType {

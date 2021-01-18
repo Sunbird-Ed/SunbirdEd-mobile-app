@@ -37,7 +37,8 @@ import {
   NetworkError,
   FormRequest,
   FormService,
-  FrameworkService
+  FrameworkService,
+  ProfileType
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router, NavigationExtras } from '@angular/router';
@@ -58,12 +59,13 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-profile',
@@ -73,7 +75,7 @@ import { FormConstants } from '../form.constants';
 })
 export class ProfilePage implements OnInit {
 
-  @ViewChild('refresher') refresher: IonRefresher;
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
 
   profile: any = {};
   userId = '';
@@ -87,10 +89,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {
-    state: {},
-    district: {}
-  };
+  userLocation = {};
   appName = '';
 
   imageUri = 'assets/imgs/ic_profile_default.png';
@@ -154,7 +153,8 @@ export class ProfilePage implements OnInit {
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
-    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
+    private profileHandler: ProfileHandler
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -281,6 +281,12 @@ export class ProfilePage implements OnInit {
                 that.profile = profileData;
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
+                const role: string = (!that.profile.userType ||
+                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
+                that.userLocation = that.commonUtilService.getUserLocation(that.profile);
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.subUserType,
+                      role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
@@ -303,7 +309,6 @@ export class ProfilePage implements OnInit {
                       });
                     that.formatRoles();
                     that.getOrgDetails();
-                    that.userLocation = that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
@@ -630,6 +635,9 @@ export class ProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .toPromise()
       .then((resp: any) => {
+        if (framework.userType) {
+          resp.profileType = framework.userType;
+        }
         this.formAndFrameworkUtilService.updateLoggedInUser(this.profile, resp)
           .then((success) => {
             console.log('updateLocalProfile-- ', success);

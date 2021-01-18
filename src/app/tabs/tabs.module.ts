@@ -42,15 +42,6 @@ const routes: Routes = [
         ]
       },
       {
-        path: RouterLinks.ADMIN_HOME,
-        children: [
-          {
-            path: '',
-            loadChildren: '../admin-home/admin-home.module#AdminHomePageModule'
-          }
-        ]
-      },
-      {
         path: RouterLinks.COURSES,
         children: [
           {
@@ -88,7 +79,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: RouterLinks.HOME,
+        redirectTo: RouterLinks.RESOURCES,
         pathMatch: 'full'
       }
     ]

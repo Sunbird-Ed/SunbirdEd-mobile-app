@@ -7,7 +7,7 @@ import {
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { TocCardType } from '@project-sunbird/common-consumption';
+import { TocCardType } from '@project-sunbird/common-consumption-v8';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
@@ -102,6 +102,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   loader?: HTMLIonLoadingElement;
   maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
   isCertifiedCourse: boolean;
+  courseHeirarchy: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -141,6 +142,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
+    this.courseHeirarchy = this.courseHeirarchy;
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
@@ -207,8 +209,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       }
       if (this.isFromDeeplink) {
         this.getContentState(true);
-        this.getBatchDetails();
       }
+      this.getBatchDetails();
       console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
     }
@@ -336,6 +338,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
+    if (this.courseContentData && this.courseContentData.contentData && this.courseContentData.contentData.leafNodes) {
+      const leafNodeIds = this.courseContentData.contentData.leafNodes;
+      contentContextMap['leafNodeIds'] = leafNodeIds;
+    }
 
     // store the contentContextMap in shared preference and access it from SDK
     this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
@@ -456,13 +462,20 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  private startContent() {
+  private async startContent() {
     if (this.childContents && this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
       const telemetryDetails = {
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild.identifier);
+
+      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (skipPlay) {
+        return;
+      }
+
       this.contentPlayerHandler.playContent(firstChild, this.generateContentNavExtras(firstChild, 1), telemetryDetails, true);
     } else if (!this.childContents || !this.childContents.length) {
       this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
@@ -472,7 +485,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     }
   }
 
-  continueLearning() {
+  async continueLearning() {
     this.isNextContentFound = false;
     this.isFirstContent = false;
     this.nextContent = undefined;
@@ -487,6 +500,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         undefined,
         this.objRollup,
       );
+
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+
+      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (skipPlay) {
+        return;
+      }
 
       const telemetryDetails = {
         pageId: PageId.CHAPTER_DETAILS,
@@ -548,7 +568,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       return;
     }
     if (event.event && event.event.isDisabled) {
-      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
       return;
     }
     if (event.event && event.event.isLastAttempt) {

@@ -110,7 +110,6 @@ describe('TermsAndConditionsPage', () => {
     beforeAll(() => {
         termsAndConditionsPage = new TermsAndConditionsPage(
             mockProfileService as ProfileService,
-            mockSharedPreferences as SharedPreferences,
             mockPlatform as Platform,
             mockLogoutHandlerService as LogoutHandlerService,
             mockSanitizer as DomSanitizer,

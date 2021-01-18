@@ -447,25 +447,33 @@ export class CommonUtilService {
 
     getUserLocation(profile: any) {
         const userLocation = {
-            state: {},
-            district: {}
         };
         if (profile && profile.userLocations && profile.userLocations.length) {
-            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
-                if (profile.userLocations[i].type === 'state') {
-                    userLocation.state = profile.userLocations[i];
-                } else if (profile.userLocations[i].type === 'district') {
-                    userLocation.district = profile.userLocations[i];
-                }
-            }
+            profile.userLocations.forEach((d) => {
+                userLocation[d.type] = d;
+            });
         }
 
         return userLocation;
     }
 
-    isUserLocationAvalable(profile: any): boolean {
-        const location = this.getUserLocation(profile);
-        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
+    isUserLocationAvalable(profile: any, locationMappingConfig): boolean {
+        const location = this.getUserLocation(profile.serverProfile ? profile.serverProfile : profile);
+        let isAvailable = false;
+        if (locationMappingConfig && profile && profile.profileType !== ProfileType.NONE) {
+            const requiredFileds = this.findAllRequiredFields(locationMappingConfig, profile.profileType);
+            isAvailable = requiredFileds.every(key => Object.keys(location).includes(key));
+        }
+        return isAvailable;
+    }
+
+    private findAllRequiredFields(locationMappingConfig, userType) {
+        return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
+            if (config.validations && config.validations.find((v) => v.type === 'required')) {
+              acc.push(config.code);
+            }
+            return acc;
+          }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -493,9 +501,11 @@ export class CommonUtilService {
                     });
                 });
                 await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
-                    subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
-                    subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
-                    subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    if (data) {
+                        subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                        subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
+                        subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    }
                 });
                 await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
                     const previuslySubscribeTopics = JSON.parse(data);
@@ -655,6 +665,40 @@ export class CommonUtilService {
         } catch {
             return [];
         }
+    }
+
+    async handleAssessmentStatus(assessmentStatus) {
+        if (assessmentStatus.isContentDisabled) {
+            this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+            return true;
+        }
+        if (assessmentStatus.isLastAttempt) {
+            return await this.showAssessmentLastAttemptPopup();
+        }
+        return false;
+    }
+
+    async showAssessmentLastAttemptPopup() {
+        const confirm = await this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                sbPopoverMainTitle: this.translateMessage('ASSESSMENT_LAST_ATTEMPT_MESSAGE'),
+                showCloseBtn: true,
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('CONTINUE'),
+                        btnClass: 'popover-color'
+                    },
+                ],
+            },
+            cssClass: 'sb-popover warning',
+        });
+        await confirm.present();
+        const { data } = await confirm.onDidDismiss();
+        if (data && data.canDelete) {
+            return false;
+        }
+        return true
     }
 
 }

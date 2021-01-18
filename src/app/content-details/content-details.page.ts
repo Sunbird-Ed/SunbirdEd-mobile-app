@@ -950,13 +950,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  handleContentPlay(isStreaming) {
+  async handleContentPlay(isStreaming) {
     if (this.isContentDisabled) {
-      this.commonUtilService.showToast('ASSESSMENT_ATTEMPT_EXCEED_MESSAGE');
+      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
       return;
     }
     if (this.isLastAttempt) {
-      this.commonUtilService.showToast('ASSESSMENT_LAST_ATTEMPT_MESSAGE');
+      await this.commonUtilService.showAssessmentLastAttemptPopup();
       this.isLastAttempt = false;
     }
     if (this.limitedShareContentFlag) {
@@ -1388,20 +1388,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.showCourseCompletePopup = true;
         }
 
-        if (contentStatusData.contentList) {
-          contentStatusData.contentList.forEach((item) => {
-            if (item.contentId === this.identifier && item.bestScore) {
-              console.log('AssessmentConstant.MAX_ATTEMPTS', AssessmentConstant.MAX_ATTEMPTS)
-              console.log(item.score && item.score.length)
-              if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
-                this.isLastAttempt = true;
-              }
-              if (AssessmentConstant.MAX_ATTEMPTS <= item.score.length) {
-                this.isContentDisabled = true;
-              }
-            }
-          });
-        }
+        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.identifier);
+        this.isLastAttempt = assesmentsStatus.isLastAttempt;
+        this.isContentDisabled = assesmentsStatus.isContentDisabled;
       }
       resolve();
     });

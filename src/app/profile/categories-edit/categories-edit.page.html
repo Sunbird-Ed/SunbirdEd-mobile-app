@@ -51,7 +51,7 @@
         </ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item *ngIf="!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']">
+    <ion-item *ngIf="(!showOnlyMandatoryFields || !!supportedProfileAttributes['subject']) && userType!='administrator'">
       <ion-label position="stacked" class="label-font">{{'SUBJECTS' | translate}}</ion-label>
       <ion-select formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
         placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
