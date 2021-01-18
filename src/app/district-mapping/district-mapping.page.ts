@@ -187,7 +187,7 @@ export class DistrictMappingPage {
         lastName: '',
         ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
         ...((this.formGroup.value.children['persona']['subPersona'] ?
-          { subUserType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+          { userSubType: this.formGroup.value.children['persona']['subPersona'] } : {}))
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -198,9 +198,9 @@ export class DistrictMappingPage {
           if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
             await this.saveDeviceLocation();
           }
-          // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          //  this.disableSubmitButton = true;
+          // telemetry
+          this.generateSubmitInteractEvent(locationCodes);
           this.events.publish('loggedInProfile:update', req);
           if (this.profile && (this.source === PageId.PROFILE || this.source === PageId.GUEST_PROFILE)) {
             this.location.back();
@@ -349,12 +349,19 @@ export class DistrictMappingPage {
             }
             personaConfig.default = this.setDefaultConfig(personaConfig);
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
+              case 'SUBPERSONA_LIST': {
+                if (this.profile.serverProfile) {
+                  personaConfig.default = this.profile.serverProfile.userSubType;
+                }
+                break;
+              }
               case 'STATE_LOCATION_LIST': {
                 personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, initial);
                 break;
               }
               case 'LOCATION_LIST': {
-                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial,
+                   this.profile);
                 break;
               }
             }
@@ -439,4 +446,26 @@ export class DistrictMappingPage {
       corRelationList
     );
   }
+
+  clearUserLocationSelections() {
+    const stateFormControl = this.formGroup.get('children.persona.state');
+    /* istanbul ignore else */
+    if (stateFormControl) {
+      stateFormControl.patchValue(null);
+    }
+  }
+
+  generateSubmitInteractEvent(location) {
+    const corReletionList: CorrelationData[] = [location];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_SUBMIT, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      corReletionList
+    );
+  }
+
 }

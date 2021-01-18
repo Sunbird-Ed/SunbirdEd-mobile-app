@@ -973,6 +973,7 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.popularAndLatestCourses = val.data && val.data.sections;
           }
         });
+        this.dynamicCourses = this.contentAggregatorHandler.populateIcons(this.dynamicCourses);
       }
       this.spinner(false);
     } catch (e) {
