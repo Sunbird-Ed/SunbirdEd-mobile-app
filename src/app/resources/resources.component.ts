@@ -496,6 +496,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
             this.searchGroupingContents = val.data;
           }
         });
+        this.dynamicResponse = this.contentAggregatorHandler.populateIcons(this.dynamicResponse);
       }
       const newSections = [];
       this.getCategoryData();
