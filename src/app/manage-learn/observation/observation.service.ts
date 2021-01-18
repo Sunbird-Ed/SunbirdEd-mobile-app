@@ -21,25 +21,8 @@ export class ObservationService {
     private assessmentService: AssessmentApiService
   ) {}
 
-  //TODO remove
 
-  // public setIndex(programIndex = null, solutionIndex = null, entityIndex = null) {
-  //   this.programIndex = programIndex;
-  //   this.solutionIndex = solutionIndex;
-  //   this.entityIndex = entityIndex;
-  // }
-
-  // public getProgramIndex() {
-  //   return this.programIndex;
-  // }
-
-  // public getSolutionIndex() {
-  //   return this.solutionIndex;
-  // }
-  // public getEntityIndex() {
-  //   return this.entityIndex;
-  // }
-
+ 
   getAssessmentDetailsForObservation(event) {
     return new Promise(async (resolve, reject) => {
       let entityId = event.entityId;

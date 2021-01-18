@@ -54,5 +54,9 @@ export const urlConstants = {
     GET_OBSERVATION_ENTITIES: 'v1/observations/entities/',
     GET_OBSERVATION_SUBMISSIONS: 'v1/observationSubmissions/list/',
     GET_OBSERVATION_DETAILS: 'v1/observations/assessment/',
-  },
-};
+    EDIT_OBSERVATION_NAME: 'v1/observationSubmissions/title/',
+    OBSERVATION_SUBMISSION_DELETE: 'v1/observationSubmissions/delete/',
+    OBSERVATION_SUBMISSION_CREATE: 'v1/observationSubmissions/create/',
+    ENTITY_LIST_BASED_ON_ENTITY_TYPE:'v1/entities/listByEntityType/'
+  }
+}

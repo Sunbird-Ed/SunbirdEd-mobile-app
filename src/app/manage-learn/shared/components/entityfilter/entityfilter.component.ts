@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LoaderService, LocalStorageService } from '@app/app/manage-learn/core';
+import { LoaderService, LocalStorageService, UtilsService } from '@app/app/manage-learn/core';
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
+import { AssessmentApiService } from '@app/app/manage-learn/core/services/assessment-api.service';
+import { UtilityService } from '@app/services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { ModalController, NavParams } from '@ionic/angular';
 
@@ -37,7 +40,9 @@ export class EntityfilterComponent implements OnInit {
     private navParams: NavParams,
     private loader: LoaderService,
     private httpClient: HttpClient,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private assessmentService: AssessmentApiService,
+    private utils: UtilsService
   ) {
     // this.searchUrl = AppConfigs.cro.searchEntity;//TODO:uncomment
     this.observationId = this.navParams.get('data');
@@ -88,19 +93,30 @@ export class EntityfilterComponent implements OnInit {
       });
   }
 
-  getAllStatesApi() {
-    //TODO remove
-    this.httpClient.get('assets/dummy/allStates.json').subscribe((success: any) => {
-      this.loader.stopLoader();
-      this.allStates = success.result;
-
-      if (this.allStates && this.allStates.length) {
-        this.selectedState = this.profileData.stateSelected ? this.profileData.stateSelected : this.profileMappedState;
-        this.openSelect();
+  async getAllStatesApi() {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.ENTITY_LIST_BASED_ON_ENTITY_TYPE + 'state',
+      payload: payload,
+    };
+    this.loader.startLoader()
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        this.allStates = success.result;
+        if (this.allStates && this.allStates.length) {
+          this.selectedState = this.profileData.stateSelected
+            ? this.profileData.stateSelected
+            : this.profileMappedState;
+          this.openSelect();
+        }
+        this.localStorage.setLocalStorage('allStates', this.allStates);
+      },
+      (error) => {
+        this.loader.stopLoader();
+        this.allStates = [];
       }
-      this.localStorage.setLocalStorage('allStates', this.allStates);
-    });
-    //TODO tll here
+    )
     // this.apiProviders.httpGet(
     //   AppConfigs.cro.entityListBasedOnEntityType + 'state',
     //   (success) => {
