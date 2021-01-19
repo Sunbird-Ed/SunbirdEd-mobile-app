@@ -1,46 +1,69 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of as observableOf } from 'rxjs';
+import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
+import { AuthService } from 'sunbird-sdk';
 const environment = {
+  apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
   // apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
-  apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
+  // apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
 }
 @Injectable()
 export class ApiService {
   baseUrl: string;
+  tokens;
   constructor(public http: HttpClient,
     public toast: ToastService,
-    public modalController: ModalController
+    public modalController: ModalController,
+    @Inject('AUTH_SERVICE') public authService: AuthService,
+
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
-    return this.http.get(environment.apiBaseUrl + this.baseUrl + requestParam.url).pipe(
-      tap(data => {
-        return data
-      }, error => {
-        catchError(this.handleError(error))
-      }),
-    )
+    return this.authService.getSession().pipe(
+      mergeMap((session) => {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'x-auth-token': session ? session.access_token + "tt" : "",
+            'x-authenticated-user-token': session ? session.access_token + "ii" : "",
+          })
+        };
+        return this.http.get(environment.apiBaseUrl + this.baseUrl + requestParam.url).pipe(
+          tap(data => {
+            return observableOf(data)
+          }, error => {
+            catchError(this.handleError(error))
+          }),
+        );
+      })
+    );
   }
 
   post(requestParam: RequestParams): Observable<any> {
-    console.log(requestParam, "requestParam");
-    return this.http.post(environment.apiBaseUrl + this.baseUrl + requestParam.url, requestParam.payload).pipe(
-      tap(data => {
-        return data
-      }, error => {
-        console.log(error, "error 35");
-        catchError(this.handleError(error))
-      }),
-    )
+    return this.authService.getSession().pipe(
+      mergeMap((session) => {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'x-auth-token': session ? session.access_token + "tt" : "",
+            'x-authenticated-user-token': session ? session.access_token + "ii" : "",
+          })
+        };
+        return this.http.post(environment.apiBaseUrl + this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
+          tap(data => {
+            return data
+          }, error => {
+            catchError(this.handleError(error))
+          }),
+        );
+      })
+    );
   }
-  // post(): Observable<any> {
 
-  // }
+
+  
 
   private handleError(result) {
     switch (result.status) {
@@ -67,7 +90,7 @@ export class ApiService {
       // } else {
       //   this.toast.showMessage('FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')
       // }
-      return of(result);
+      return observableOf(result);
     };
   }
 }
