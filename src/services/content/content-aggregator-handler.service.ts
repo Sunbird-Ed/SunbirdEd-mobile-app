@@ -105,9 +105,10 @@ export class ContentAggregatorHandler {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS') {
+            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS' ||
+                         displaySection.dataSrc.name === 'TRACKABLE_COURSE_CONTENTS') {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
-                    value['cardImg'] = value['courseLogoUrl'];
+                    value['cardImg'] = value['courseLogoUrl'] || 'assets/imgs/ic_launcher.png';
                 });
             }
         });

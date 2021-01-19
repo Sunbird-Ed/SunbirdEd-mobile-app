@@ -285,7 +285,7 @@ export class ProfilePage implements OnInit {
                   (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.subUserType,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
