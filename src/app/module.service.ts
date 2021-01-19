@@ -78,7 +78,7 @@ const PROFILE_TAB = {
 // todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
 
 export const GUEST_TEACHER_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -86,7 +86,7 @@ export const GUEST_TEACHER_TABS = [
 ];
 
 export const LOGIN_TEACHER_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
@@ -94,7 +94,7 @@ export const LOGIN_TEACHER_TABS = [
 ];
 
 export const GUEST_STUDENT_TABS = [
-    LIBRARY_TAB,
+    HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
