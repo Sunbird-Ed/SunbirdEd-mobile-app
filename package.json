@@ -201,6 +201,7 @@
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-statusbar": {},
+      "cordova-plugin-streaming-media": {},
       "cordova-plugin-awesome-shared-preferences": {},
       "cordova-plugin-advanced-http": {},
       "cordova-plugin-android-permissions": {},
