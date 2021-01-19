@@ -1264,7 +1264,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         pageId: PageId.COURSE_DETAIL,
         corRelationList: this.corRelationList
       };
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {
@@ -1289,7 +1289,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       corRelationList: this.corRelationList
     };
 
-    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
     const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
     if (skipPlay) {
