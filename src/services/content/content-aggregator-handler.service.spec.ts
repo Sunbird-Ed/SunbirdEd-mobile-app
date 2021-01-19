@@ -1,4 +1,3 @@
-import { restoreView } from '@angular/core/src/render3';
 import {
     CourseService, FormService, ProfileService, ContentService, ContentAggregatorRequest,
     ContentSearchCriteria, FormRequest
@@ -93,9 +92,9 @@ describe('ContentAggregatorHandler', () => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(1,
-                JSON.stringify({ en: 'sample-enrolled-course' }), '');
+                JSON.stringify({ en: 'sample-enrolled-course' }), 'sample-enrolled-course');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
-                JSON.stringify({ en: 'sample-course' }), '');
+                JSON.stringify({ en: 'sample-course' }), 'sample-course');
             expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
@@ -146,7 +145,7 @@ describe('ContentAggregatorHandler', () => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(1,
-                JSON.stringify({ en: 'sample-course' }), '');
+                JSON.stringify({ en: 'sample-course' }), 'sample-course');
             expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
@@ -208,9 +207,9 @@ describe('ContentAggregatorHandler', () => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(1,
-                JSON.stringify({ en: 'sample-learning-course' }), '');
+                JSON.stringify({ en: 'sample-learning-course' }), 'sample-learning-course');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
-                JSON.stringify({ en: 'sample-textbook' }), '');
+                JSON.stringify({ en: 'sample-textbook' }), 'sample-textbook');
             expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
@@ -272,9 +271,9 @@ describe('ContentAggregatorHandler', () => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(1,
-                JSON.stringify({ en: 'sample-learning-course' }), '');
+                JSON.stringify({ en: 'sample-learning-course' }), 'sample-learning-course');
             expect(mockcommonUtilService.getTranslatedValue).toHaveBeenNthCalledWith(2,
-                JSON.stringify({ en: 'sample-textbook' }), '');
+                JSON.stringify({ en: 'sample-textbook' }), 'sample-textbook');
             expect(data).toHaveBeenCalled();
             expect(mockcommonUtilService.getContentImg).toHaveBeenCalled();
             done();
