@@ -45,7 +45,7 @@ export class ContentAggregatorHandler {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
-                    val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
+                    val['name'] = this.commonUtilService.getTranslatedValue(val.title, JSON.parse(val.title)['en']);
                     if (val.orientation === Orientation.HORIZONTAL) {
                         for (let count = 0; count < val.section.sections[0].contents.length; count++) {
                             val.section.sections[0].contents[count]['cardImg'] =
