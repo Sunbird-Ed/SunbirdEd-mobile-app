@@ -146,7 +146,8 @@
     "sb-svg2pdf": "0.0.9",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "uuid": "^3.4.0"
   },
   "config": {
     "ionic_source_map_type": "inline-source-map",
