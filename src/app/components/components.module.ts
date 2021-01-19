@@ -41,7 +41,7 @@ import { ImportPopoverComponent } from './popups/import-popover/import-popover.c
 import { SbProgressLoaderPage } from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-groups-popover.component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
 import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
@@ -57,6 +57,7 @@ import { GroupGuideLinesPopoverComponent } from './popups/group-guidelines-popup
 import {
   ProfileNameConfirmationPopoverComponent
 } from './popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
+import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/copy-trace-id-popup.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import {
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -154,7 +156,8 @@ import {
     ExploreBooksSortComponent,
     ConsentPiiPopupComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -201,7 +204,8 @@ import {
     ConsentPiiPopupComponent,
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
-    ProfileNameConfirmationPopoverComponent
+    ProfileNameConfirmationPopoverComponent,
+    CopyTraceIdPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

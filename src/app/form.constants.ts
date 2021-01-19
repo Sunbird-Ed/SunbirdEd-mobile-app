@@ -29,4 +29,17 @@ export class FormConstants {
         action: 'filter',
         component: 'app'
     };
+
+    public static  LOCATION_DETAILS: FormRequest = {
+        type: 'config',
+        subType: 'locationDetails',
+        action: 'get'
+    };
+
+    public static LOCATION_MAPPING: FormRequest = {
+        type: 'profileConfig',
+        subType: 'default',
+        action: 'get'
+    };
+
 }

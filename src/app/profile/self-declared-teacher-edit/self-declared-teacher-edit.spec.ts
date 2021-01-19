@@ -25,7 +25,7 @@ import { Location } from '@angular/common';
 import { PreferenceKey } from '../../app.constant';
 import { mockTenantPersonaInfoForm, mockSelfDeclarationForm } from '../../../services/formandframeworkutil.service.spec.data';
 import { FormConstants } from '../../form.constants';
-import { FieldConfigValidationType } from 'common-form-elements';
+import { FieldConfigValidationType } from 'common-form-elements-v8';
 import { ConsentService } from '../../../services/consent-service';
 
 describe('SelfDeclaredTeacherEditPage', () => {

@@ -1,17 +1,15 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
-import {
-  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType, InteractType
-} from '@project-sunbird/sunbird-sdk';
-import { ContentFilterConfig, ProfileConstants, RouterLinks } from '../app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
+import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events } from '@ionic/angular';
+import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -35,6 +33,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -47,22 +46,31 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private events: Events,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private qrScanner: SunbirdQRScanner,
   ) {
   }
 
   ngOnInit() {
     this.getUserProfileDetails();
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
+      this.getUserProfileDetails();
+    });
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
+      if (data === '') {
+        this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
+      }
+    });
   }
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async getUserProfileDetails() {
@@ -180,38 +188,33 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'search':
-        this.navigateToSearchPage();
-        break;
       case 'download':
-        // this.redirectToActivedownloads();
+        this.redirectToActivedownloads();
         break;
-      // case 'notification':
-      //   this.redirectToNotifications();
-      //   break;
-      case 'information':
-        // this.appTutorialScreen();
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
   }
 
-  private async navigateToSearchPage() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SEARCH_BUTTON_CLICKED,
-      Environment.HOME,
-      PageId.ADMIN_HOME);
-    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-      ContentFilterConfig.NAME_LIBRARY);
-    this.router.navigate([RouterLinks.SEARCH], {
-      state: {
-        primaryCategories,
-        source: PageId.ADMIN_HOME
-      }
-    });
+  redirectToActivedownloads() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
+  redirectToNotifications() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.NOTIFICATION_CLICKED,
+    //   Environment.HOME,
+    //   PageId.LIBRARY);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
 
   navigateToDetailPage(event, sectionName) {
     event.data = event.data.content ? event.data.content : event.data;
