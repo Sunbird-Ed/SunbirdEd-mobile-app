@@ -60,7 +60,6 @@
               "styles": true,
               "vendor": true
             },
-            
             "styles": [
               "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               {
