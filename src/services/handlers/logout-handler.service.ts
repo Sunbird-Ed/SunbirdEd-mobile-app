@@ -82,7 +82,9 @@ export class LogoutHandlerService {
 
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
       true : false;
-    if (isOnboardingCompleted) {
+    if (selectedUserType === ProfileType.ADMIN) {
+      this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN]);
+    } else if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {

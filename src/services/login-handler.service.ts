@@ -17,7 +17,7 @@ import {
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 
-import { ADMIN_LOGIN_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import {ProfileConstants, PreferenceKey, RouterLinks, EventTopics, IgnoreTelemetryPatters} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -109,7 +109,6 @@ export class LoginHandlerService {
             this.appGlobalService.redirectUrlAfterLogin = skipNavigation.redirectUrlAfterLogin;
           }
           this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
-          selectedUserType === ProfileType.ADMIN ? initTabs(that.container, ADMIN_LOGIN_TABS) :
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
@@ -145,25 +144,32 @@ export class LoginHandlerService {
               requiredFields: ProfileConstants.REQUIRED_FIELDS
             };
             that.profileService.getServerProfilesDetails(req).toPromise()
-              .then(async (success) => {
-                const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+              .then(async (success: any) => {
                 const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
-                const currentProfile = allProfileDetais.find(ele => ele.uid === success.id);
-                const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
+                const currentProfileType = (() => {
+                  if (selectedUserType === ProfileType.ADMIN) {
+                    return selectedUserType;
+                  } else if (
+                    (success.userType === ProfileType.OTHER.toUpperCase()) ||
+                    (!success.userType)
+                  ) {
+                    return ProfileType.NONE;
+                  }
+
+                  return success.userType.toLowerCase();
+                })();
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
                   handle: success.id,
-                  profileType: selectedUserType === ProfileType.ADMIN ? ProfileType.ADMIN : guestProfileType,
+                  profileType: currentProfileType,
                   source: ProfileSource.SERVER,
                   serverProfile: success
                 };
                 this.profileService.createProfile(profile, ProfileSource.SERVER)
                   .toPromise()
                   .then(async () => {
-                    selectedUserType === ProfileType.ADMIN ?
-                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise() :
-                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfile.profileType).toPromise();
+                    await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfileType).toPromise();
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
                         that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)

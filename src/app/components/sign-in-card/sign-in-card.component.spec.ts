@@ -109,6 +109,7 @@ describe('SignInCardComponent', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.TEACHER,
                 source: ProfileSource.SERVER,
+                userType: 'OTHER',
                 serverProfile: {
                     uid: 'sample_id',
                     handle: 'sample_name',
@@ -188,6 +189,7 @@ describe('SignInCardComponent', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.TEACHER,
                 source: ProfileSource.SERVER,
+                userType: 'Teacher',
                 serverProfile: {
                     uid: 'sample_id',
                     handle: 'sample_name',
@@ -423,6 +425,7 @@ describe('SignInCardComponent', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.TEACHER,
                 source: ProfileSource.SERVER,
+                userType: 'Teacher',
                 serverProfile: {
                     uid: 'sample_id',
                     handle: 'sample_name',

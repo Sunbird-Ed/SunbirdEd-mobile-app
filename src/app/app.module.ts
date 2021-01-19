@@ -75,6 +75,8 @@ import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import {configuration} from '@app/configuration/configuration';
+import { LocationHandler } from '@app/services/location-handler';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -166,7 +168,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
-
+export const discussionService = () => {
+  return SunbirdSdk.instance.discussionService;
+};
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -261,6 +265,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  },
+  {
+    provide: 'DISCUSSION_SERVICE',
+    useFactory: discussionService
   }
   ];
 }
@@ -286,6 +294,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -477,6 +486,7 @@ declare const sbutility;
     AliasBoardName,
     ConsentService,
     ProfileHandler,
+    LocationHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

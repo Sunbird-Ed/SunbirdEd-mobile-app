@@ -20,11 +20,13 @@ import { CommonFormsComponent } from '@app/app/components/common-forms/common-fo
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { ProfileConstants } from '@app/app/app.constant';
+import {LocationHandler} from '@app/services/location-handler';
 
 @Component({
   selector: 'app-sub-profile-edit',
   templateUrl: './sub-profile-edit.page.html',
   styleUrls: ['./sub-profile-edit.page.scss'],
+  providers: [LocationHandler]
 })
 export class SubProfileEditPage {
 
@@ -38,7 +40,7 @@ export class SubProfileEditPage {
 
   formInitilized = false;
 
-  @ViewChild('commonForms') commonForms: CommonFormsComponent;
+  @ViewChild('commonForms', { static: false }) commonForms: CommonFormsComponent;
 
   managedUserFormList: any = [];
 
@@ -52,6 +54,7 @@ export class SubProfileEditPage {
     private location: Location,
     private platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private locationHandler: LocationHandler
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
 
@@ -159,11 +162,14 @@ export class SubProfileEditPage {
       const userDetails: AddManagedProfileRequest = {
         firstName: this.formValue.name,
         managedBy: parentProfile.userId,
-        framework: parentProfile['framework'] || undefined,
-        locationCodes: (parentProfile['userLocations'] && parentProfile['userLocations'].map(i => i.code)) || undefined,
+        framework: parentProfile['framework'] || undefined
       };
+      const locationCodes = (await this.locationHandler.getAvailableLocation(parentProfile)).map(i =>  i.code );
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
+      }
+      if (locationCodes && locationCodes.length) {
+        userDetails.locationCodes =  locationCodes;
       }
       const response = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
       if (response) {

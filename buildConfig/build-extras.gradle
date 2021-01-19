@@ -118,6 +118,8 @@ android {
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${dev_oauth_redirect_url}\""
             buildConfigField 'String', 'TOU_BASE_URL', "\"${dev_tou_base_url}\""
+            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${dev_survey_base_url}\""
+            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${dev_projects_base_url}\""
         }
 
         staging {
@@ -137,6 +139,8 @@ android {
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
             buildConfigField 'String', 'TOU_BASE_URL', "\"${staging_tou_base_url}\""
+            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${staging_survey_base_url}\""
+            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${staging_projects_base_url}\""
         }
 
         production {
@@ -157,6 +161,8 @@ android {
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
             buildConfigField 'String', 'TOU_BASE_URL', "\"${production_tou_base_url}\""
+            buildConfigField 'String', 'SURVEY_BASE_URL', "\"${production_survey_base_url}\""
+            buildConfigField 'String', 'PROJECTS_BASE_URL', "\"${production_projects_base_url}\""
         }
     }
 

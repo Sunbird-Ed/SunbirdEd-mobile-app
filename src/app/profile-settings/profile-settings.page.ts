@@ -51,10 +51,10 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   public pageId = 'ProfileSettingsPage';
-  @ViewChild('boardSelect') boardSelect: any;
-  @ViewChild('mediumSelect') mediumSelect: any;
-  @ViewChild('gradeSelect') gradeSelect: any;
-  @ViewChild('animatedQRImage') animatedQRImageRef: ElementRef;
+  @ViewChild('boardSelect', { static: false }) boardSelect: any;
+  @ViewChild('mediumSelect', { static: false }) mediumSelect: any;
+  @ViewChild('gradeSelect', { static: false }) gradeSelect: any;
+  @ViewChild('animatedQRImage', { static: false }) animatedQRImageRef: ElementRef;
 
   private framework: Framework;
   private navParams: any;

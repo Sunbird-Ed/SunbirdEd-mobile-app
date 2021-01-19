@@ -119,13 +119,10 @@ describe('LocalCourseService', () => {
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
-        setTimeout(() => {
           expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
           expect(mockCourseService.enrollCourse).toHaveBeenCalled();
           expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-          expect(mockConsentService.showConsentPopup).toHaveBeenCalled();
-        }, 200);
-        done();
+          done();
       });
     });
 
@@ -830,4 +827,43 @@ describe('LocalCourseService', () => {
       expect(data).toBeTruthy();
     });
   });
+
+  describe('fetchAssessmentStatus()', () => {
+
+    it('return default assessment status data', () => {
+      // arrange
+      const contentStatusData = null;
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(false);
+      expect(data.isContentDisabled).toEqual(false);
+    });
+
+    it('return assessment status isLastAttempt as true if its the final attempt', () => {
+      // arrange
+      const contentStatusData = {
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2] }]
+      };
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(true);
+      expect(data.isContentDisabled).toEqual(false);
+    });
+
+    it('return assessment status isContentDisabled as true if the user has exceeded the number of attempts', () => {
+      // arrange
+      const contentStatusData = {
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2,3] }]
+      };
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(false);
+      expect(data.isContentDisabled).toEqual(true);
+    });
+
+  });
+
 });
