@@ -25,6 +25,7 @@ import {
   EntityfilterComponent,
   TextTypeInputComponent,
   ProgressBarComponent,
+  NoDataComponent,
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -88,7 +89,8 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     GraphCircleComponent,
     FilterModalComponent,
     SubmissionActionsComponent,
-    ViewDetailComponent
+    ViewDetailComponent,
+    NoDataComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -126,7 +128,8 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     GraphCircleComponent,
     FilterModalComponent,
     SubmissionActionsComponent,
-    ViewDetailComponent
+    ViewDetailComponent,
+    NoDataComponent
   ],
   providers: [
     Camera,
@@ -155,4 +158,4 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     ViewDetailComponent
   ],
 })
-export class SharedModule {}
+export class SharedModule { }

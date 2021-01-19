@@ -18,3 +18,4 @@ export * from './text-type-input/text-type-input.component';
 export * from './popover/popover.component';
 export * from './entityfilter/entityfilter.component';
 export * from './progress-bar/progress-bar.component';
+export * from './no-data/no-data.component';

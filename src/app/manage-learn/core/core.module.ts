@@ -13,6 +13,8 @@ import { IonicStorageModule } from '@ionic/storage';
 import { UpdateTrackerService } from './services/update-tracker.service';
 import { EvidenceService } from './services/evidence.service';
 import { ProjectReportService } from './services/project-report.service';
+import { ProgramService } from './services/program.service';
+import { AssessmentApiService } from './services/assessment-api.service';
 
 
 @NgModule({
@@ -22,7 +24,7 @@ import { ProjectReportService } from './services/project-report.service';
   ],
   providers: [
     UtilsService, NetworkService, SyncService, ApiService, KendraApiService, UnnatiDataService, SunbirdService,
-    UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService        
+    UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,ProgramService,AssessmentApiService       
   ],
 })
 export class CoreModule {}

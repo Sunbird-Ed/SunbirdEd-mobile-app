@@ -19,6 +19,7 @@ import { CreateTaskComponent } from '../../shared/components/create-task/create-
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 var environment = {
   db: {
@@ -36,7 +37,7 @@ var environment = {
 export class ProjectDetailPage implements OnInit {
   showDetails: boolean = true;
   statuses = statuses;
-  project: any ;
+  project: any;
   projectId;
   categories = [];
   taskCount: number = 0;
@@ -68,6 +69,8 @@ export class ProjectDetailPage implements OnInit {
     },
   ];
   sortedTasks;
+  programId;
+  solutionId;
   // header
   private _headerConfig = {
     showHeader: true,
@@ -101,10 +104,14 @@ export class ProjectDetailPage implements OnInit {
     // private iab: InAppBrowser,
     private event: Events,
     private platform: Platform,
-    private http: HttpClient
+    private http: HttpClient,
+    private kendraService: KendraApiService
   ) {
     params.params.subscribe((parameters) => {
-      this.projectId = parameters.id;
+      this.projectId = parameters.projectId;
+      this.solutionId = parameters.solutionId;
+      this.programId = parameters.programId;
+      console.log(parameters, "parameters");
     });
     this.translate
       .get(["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG", "FRMELEMNTS_MSG_NO_ENTITY_MAPPED", "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"])
@@ -140,16 +147,25 @@ export class ProjectDetailPage implements OnInit {
     );
   }
 
-  getProjectsApi() {
-    this.http.get('assets/dummy/projectDetails.json').subscribe((data: any) => {
-      console.log(data);
-      // this.project = data.result;
-      this.db.create(data.result).then(success => {
+  async getProjectsApi() {
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    let id = this.projectId ? +'/' + this.projectId : '';
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
+      payload: payload
+    }
+    this.unnatiService.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      // this.project = success.result;
+      this.db.create(success.result).then(success => {
         this.getProject();
       }).catch(error => {
 
       })
-    });
+    }, error => {
+      this.loader.stopLoader();
+    })
   }
 
   ngOnInit() { }

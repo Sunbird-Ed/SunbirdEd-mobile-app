@@ -8,6 +8,8 @@ import { ToastService } from './toast/toast.service';
 import { AuthService } from 'sunbird-sdk';
 const environment = {
   apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
+  // apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
+  // apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
 }
 @Injectable()
 export class ApiService {
@@ -64,7 +66,6 @@ export class ApiService {
   
 
   private handleError(result) {
-    debugger
     switch (result.status) {
       case 0:
         this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')

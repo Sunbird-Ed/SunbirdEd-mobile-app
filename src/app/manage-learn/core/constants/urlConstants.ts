@@ -1,19 +1,18 @@
 export const urlConstants = {
   SERVICES: {
-    UNNATI: "improvement-project/api/",
-    KENDRA: "kendra/api/",
-    SAMIKSHA: "",
-    DHITI: "",
-    SUNBIRD: "sunbird/api/",
+    UNNATI: 'improvement-project/api/',
+    KENDRA: 'kendra/api/',
+    SAMIKSHA: 'assessment/api/',
+    DHITI: '',
+    SUNBIRD: 'sunbird/api/',
   },
   API_URLS: {
+    PROGRAM_LISTING: 'v1/users/programs?',
 
-    PROGRAM_LISTING:"v1/users/programs?",
+    GET_PROJECTS: "v1/userProjects/getProject?page=",
+    SOLUTIONS_LISTING: "v1/users/solutions/",
+    GET_PROJECT: "v2/userProjects/details",
 
-
-
-
-    
     NOTIFICATIONs_LIST: "v1/notifications/in-app/list",
     NOTIFICATION_COUNT: "v1/notifications/in-app/unReadCount",
     PROJECTS_LIST: "v1/userProjects/list",
@@ -42,16 +41,22 @@ export const urlConstants = {
     GET_LEARNING_RESOURCES_FILTERS: "v1/learning-resources/filters",
     PROFILE_INFO: "v1/users/getProfile",
     SYNC_PROJECT: 'v1/userProjects/sync/',
-    CREATE_PROJECT_DOC: "v1/userProjects/create",
-    GET_IMAGE_UPLOAD_URLS: "v1/userProjects/getFileUploadUrl",
+    CREATE_PROJECT_DOC: 'v1/userProjects/create',
+    GET_IMAGE_UPLOAD_URLS: 'v1/userProjects/getFileUploadUrl',
     START_ASSESSMENT: 'v1/userProjects/solutionDetails/',
-    PROJCET_TASK_STATUS: "v1/userProjects/tasksStatus/",
-    LIBRARY_SEARCH: "v1/library/categories/projects?search=",
-    STATE_LIST: "v1/entities/listByEntityType/state",
-    STATE_ROLES: "v1/entities/subEntitiesRoles/",
-    ENTITY_MAPPING_FORM: "v1/users/entitiesMappingForm/",
-    PROFILE_UPDATE: "v1/user-extension/updateProfileRoles",
-    MARK_AS_READ: "v1/notifications/in-app/markAsRead/",
-    GET_PREVIOUS_PROFILE: "v1/users/search?search="
+    PROJCET_TASK_STATUS: 'v1/userProjects/tasksStatus/',
+    LIBRARY_SEARCH: 'v1/library/categories/projects?search=',
+    STATE_LIST: 'v1/entities/listByEntityType/state',
+    STATE_ROLES: 'v1/entities/subEntitiesRoles/',
+    ENTITY_MAPPING_FORM: 'v1/users/entitiesMappingForm/',
+    PROFILE_UPDATE: 'v1/user-extension/updateProfileRoles',
+    MARK_AS_READ: 'v1/notifications/in-app/markAsRead/',
+    GET_PREVIOUS_PROFILE: 'v1/users/search?search=',
+
+    // survey api
+    GET_PROG_SOL_FOR_OBSERVATION: 'v1/observations/getObservation',
+    GET_OBSERVATION_ENTITIES: 'v1/observations/entities/',
+    GET_OBSERVATION_SUBMISSIONS: 'v1/observationSubmissions/list/',
+    GET_OBSERVATION_DETAILS: 'v1/observations/assessment/',
   },
 };
