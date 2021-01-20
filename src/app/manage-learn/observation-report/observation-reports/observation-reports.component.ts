@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonFab, ModalController, Platform } from '@ionic/angular';
-import { LoaderService } from '../../core';
+import { LoaderService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 
@@ -40,7 +43,10 @@ export class ObservationReportsComponent implements OnInit {
     private platform: Platform,
     private loader: LoaderService,
     private httpClient: HttpClient,
-    private modal: ModalController
+    private modal: ModalController,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService,
+    private dhiti :DhitiApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -94,45 +100,77 @@ export class ObservationReportsComponent implements OnInit {
     // this.getObservationReports();
   }
 
-  getObservationReports(download = false) {
+  async getObservationReports(download = false) {
     //TODO:remove
     // this.loader.startLoader();
-    this.httpClient.get('assets/dummy/observationInstanceReport.json').subscribe((success: any) => {
-      this.allQuestions = success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
-      if (success) {
-        this.reportObj = success;
-      } else {
-        this.error = 'No data found';
-      }
-      // this.loader.stopLoader();
-      !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
-    });
+    // this.httpClient.get('assets/dummy/observationInstanceReport.json').subscribe((success: any) => {
+    //   this.allQuestions = success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
+    //   if (success) {
+    //     this.reportObj = success;
+    //   } else {
+    //     this.error = 'No data found';
+    //   }
+    //   // this.loader.stopLoader();
+    //   !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
+    // });
     //TODO:till here
 
-    // this.utils.startLoader();
-    //  this.loader.startLoader()
-    // let url;
-    // if (this.entityType && this.reportType) {
-    //   this.payload = {
-    //     entityId: this.entityId,
-    //     entityType: this.entityType,
-    //     solutionId: this.solutionId,
-    //     immediateChildEntityType: this.immediateChildEntityType,
-    //     reportType: this.reportType,
-    //   };
-    //   url = AppConfigs.observationReports.entitySolutionReport;
-    // } else if (this.submissionId) {
-    //   url = AppConfigs.observationReports.instanceReport;
-    // } else if (!this.submissionId && !this.entityId) {
-    //   url = AppConfigs.observationReports.observationReport;
-    // } else {
-    //   url = AppConfigs.observationReports.entityReport;
-    // }
+    this.loader.startLoader();
+    let url;
+    if (this.entityType && this.reportType) {
+      this.payload = {
+        entityId: this.entityId,
+        entityType: this.entityType,
+        solutionId: this.solutionId,
+        immediateChildEntityType: this.immediateChildEntityType,
+        reportType: this.reportType,
+      };
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_SOLUTION_REPORT;
+    } else if (this.submissionId) {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.INSTANCE_REPORT;
+    } else if (!this.submissionId && !this.entityId) {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.OBSERVATION_REPORT;
+    } else {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_REPORT;
+    }
+    if (this.entityType && this.reportType) {
+      url = 'v2' + url;
+    } else {
+      url = 'v1' + url;
+    }
 
-    // this.payload.filter = {
-    //   questionId: this.filteredQuestions,
-    // };
+    this.payload.filter = {
+      questionId: this.filteredQuestions,
+    };
     // console.log(JSON.stringify(this.payload));
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...this.payload };
+
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.loader.startLoader();
+
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        //this will be initialized only on page load
+        this.allQuestions =
+          success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
+        if (success) {
+          this.reportObj = success;
+        } else {
+          this.error = 'No data found';
+        }
+        this.loader.stopLoader();
+        !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
+      },
+      (error) => {
+        this.error = 'No data found';
+        this.loader.stopLoader();
+      }
+    );
+
     // this.apiService.httpPost(
     //   url,
     //   this.payload,

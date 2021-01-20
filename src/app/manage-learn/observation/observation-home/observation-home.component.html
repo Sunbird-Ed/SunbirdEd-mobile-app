@@ -7,7 +7,7 @@
     <div *ngFor="let solution of solutionList; let solutionIndex = index">
       <app-item-list-card
         [title]="solution?.name"
-        [subTitle]="solution?.description"
+        [subTitle]="solution?.prgramName"
         (cardSelect)="observationDetails(solution)"
       >
         <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>

@@ -3,11 +3,12 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { QuestionMapModalComponent } from './question-map-modal/question-map-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLinks } from '@app/app/app.constant';
+import { Network } from '@ionic-native/network/ngx';
 
 @Component({
   selector: 'app-questionnaire',
@@ -61,13 +62,14 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private routerParam: ActivatedRoute,
     // private diagnostic: Diagnostic,
     // private translate: TranslateService,
-    // private network: Network,
+    private network: Network,
     private alertCtrl: AlertController,
     // private ngps: NetworkGpsProvider,
     private headerService: AppHeaderService,
     private modalCtrl: ModalController,
     private translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private commonUtilService:CommonUtilService
   ) {
     this.events.subscribe('network:offline', () => {
       this.networkAvailable = false;
@@ -156,7 +158,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
   ionViewDidLoad() {}
 
   async openQuestionMap() {
-    
     const questionModal = await this.modalCtrl.create({
       component: QuestionMapModalComponent,
       componentProps: {
@@ -308,77 +309,93 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     actionSheet.present();
   }
 
-  checkForNetworkTypeAlert() {
-    // if (this.network.type === 'cellular' || this.network.type === 'unknown' || this.network.type === '2g' || this.network.type === 'ethernet') {
-    //   let translateObject;
-    //   this.translate.get(['actionSheet.confirm', 'actionSheet.yes', 'actionSheet.no', 'actionSheet.slowInternet']).subscribe(translations => {
-    //     translateObject = translations;
-    //   })
-    //   let alert = this.alertCtrl.create({
-    //     title: translateObject['actionSheet.confirm'],
-    //     message: translateObject['actionSheet.slowInternet'],
-    //     buttons: [
-    //       {
-    //         text: translateObject['actionSheet.no'],
-    //         role: 'cancel',
-    //         handler: () => {
-    //           //console.log('Cancel clicked');
-    //         }
-    //       },
-    //       {
-    //         text: translateObject['actionSheet.yes'],
-    //         handler: () => {
-    //           this.goToImageListing();
-    //         }
-    //       }
-    //     ]
-    //   });
-    //   alert.present();
-    // } else if (this.network.type === 'wifi' || this.network.type === '3g' || this.network.type === '4g') {
-    //   this.goToImageListing()
-    // } else if (this.network.type === 'none') {
-    //   let noInternetMsg;
-    //   this.translate.get(['toastMessage.networkConnectionForAction']).subscribe(translations => {
-    //     noInternetMsg = translations['toastMessage.networkConnectionForAction'];
-    //     this.toast.openToast(noInternetMsg);
-    //   })
-    // }
+  async checkForNetworkTypeAlert() {
+    if (
+      this.network.type === 'cellular' ||
+      this.network.type === 'unknown' ||
+      this.network.type === '2g' ||
+      this.network.type === 'ethernet'
+    ) {
+      let translateObject;
+      this.translate
+        .get(['actionSheet.confirm', 'actionSheet.yes', 'actionSheet.no', 'actionSheet.slowInternet'])
+        .subscribe((translations) => {
+          translateObject = translations;
+        });
+      let alert = await this.alertCtrl.create({
+        header: translateObject['actionSheet.confirm'],
+        message: translateObject['actionSheet.slowInternet'],
+        buttons: [
+          {
+            text: translateObject['actionSheet.no'],
+            role: 'cancel',
+            handler: () => {
+              //console.log('Cancel clicked');
+            },
+          },
+          {
+            text: translateObject['actionSheet.yes'],
+            handler: () => {
+              this.goToImageListing();
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else if (this.network.type === 'wifi' || this.network.type === '3g' || this.network.type === '4g') {
+      this.goToImageListing();
+    } else if (this.network.type === 'none') {
+      let noInternetMsg;
+      this.translate.get(['toastMessage.networkConnectionForAction']).subscribe((translations) => {
+        noInternetMsg = translations['toastMessage.networkConnectionForAction'];
+        this.toast.openToast(noInternetMsg);
+      });
+    }
   }
 
   goToImageListing() {
     // if (this.networkAvailable) {
-    //   this.diagnostic
-    //     .isLocationAuthorized()
-    //     .then((authorized) => {
-    //       if (!AppConfigs.enableGps) {
-    //         return true;
-    //       }
-    //       if (authorized) {
-    //         return this.diagnostic.isLocationEnabled();
-    //       } else {
-    //         this.toast.openToast("Please enable location permission to continue.");
-    //       }
-    //     })
-    //     .then((success) => {
-    //       if (success) {
-    //         const params = {
-    //           _id: this.submissionId,
-    //           name: this.schoolName,
-    //           selectedEvidence: this.selectedEvidenceIndex,
-    //         };
-    //         this.navCtrl.push(ImageListingPage, params);
-    //       } else {
-    //         this.ngps.checkForLocationPermissions();
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       this.ngps.checkForLocationPermissions();
-    //     });
-    // } else {
-    //   this.translate.get('toastMessage.connectToInternet').subscribe(translations => {
-    //     this.toast.openToast(translations);
-    //   })
-    // }
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.router.navigate([RouterLinks.IMAGE_LISTING], {
+        queryParams: {
+          submissionId: this.submissionId,
+          name: this.schoolName,
+          selectedEvidenceIndex: this.selectedEvidenceIndex,
+        },
+      });
+      // TODO:Remove gps check
+      // this.diagnostic
+      //   .isLocationAuthorized()
+      //   .then((authorized) => {
+      //     if (!AppConfigs.enableGps) {
+      //       return true;
+      //     }
+      //     if (authorized) {
+      //       return this.diagnostic.isLocationEnabled();
+      //     } else {
+      //       this.toast.openToast("Please enable location permission to continue.");
+      //     }
+      //   })
+      //   .then((success) => {
+      //     if (success) {
+      //       const params = {
+      //         _id: this.submissionId,
+      //         name: this.schoolName,
+      //         selectedEvidence: this.selectedEvidenceIndex,
+      //       };
+      //       this.navCtrl.push(ImageListingPage, params);
+      //     } else {
+      //       this.ngps.checkForLocationPermissions();
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     this.ngps.checkForLocationPermissions();
+      //   });
+    } else {
+      this.translate.get('toastMessage.connectToInternet').subscribe((translations) => {
+        this.toast.openToast(translations);
+      });
+    }
   }
 
   updateCompletedQuestionCount() {

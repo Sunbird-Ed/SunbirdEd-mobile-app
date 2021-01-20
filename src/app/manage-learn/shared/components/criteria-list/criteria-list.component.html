@@ -12,7 +12,7 @@
       <ion-checkbox
         *ngIf="criteria?.criteriaName"
         [checked]="filteredCriterias?.includes(criteria?.criteriaId)"
-        (click)="onCriteriaClick(criteria?.criteriaId)"
+        (ionChange)="onCriteriaClick(criteria?.criteriaId)"
       ></ion-checkbox>
       <!-- TODO Remove when backend is changed to give id and name only instead of criteriaId and criteriaName in both  apis-->
       <ion-checkbox

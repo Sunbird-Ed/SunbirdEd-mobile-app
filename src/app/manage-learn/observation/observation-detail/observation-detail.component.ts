@@ -159,12 +159,58 @@ export class ObservationDetailComponent implements OnInit {
     } */
   }
 
-  async openEntityFilter() {
-    const filterDialog = await this.modalCtrl.create({
-      component: EntityfilterComponent,
-      componentProps: {},
-      // cssClass: 'sb-popover',
+  async addEntity(...params) {
+    // console.log(JSON.stringify(params))
+    const type = this.selectedSolution.entityType;
+    let entityListModal;
+    if (type == 'state') {
+      // TODO:implement
+      // entityListModal = await this.modalCtrl.create({
+      //   component: StateModalComponent, componentProps: {
+      //     data: this.observationId,
+      //     solutionId: this.solutionId
+      //   }
+      // });
+    } else {
+      entityListModal = await this.modalCtrl.create({
+        component: EntityfilterComponent,
+        componentProps: {
+          data: this.observationId,
+          solutionId: this.solutionId,
+        },
+      });
+    }
+    await entityListModal.present();
+
+    await entityListModal.onDidDismiss().then(async (entityList) => {
+      if (entityList) {
+        let payload = await this.utils.getProfileInfo();
+
+        payload.data = [];
+        entityList.forEach((element) => {
+          //if coming from state list page
+          if (type == 'state') {
+            element.selected ? payload.data.push(element._id) : null;
+            return;
+          }
+
+          payload.data.push(element._id); // if coming from EntityListPage
+        });
+
+        const config = {
+          url: urlConstants.API_URLS.MAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
+          payload: payload,
+        };
+        this.assessmentService.post(config).subscribe(
+          (success) => {
+            console.log(success);
+            if (success) {
+              this.getObservationEntities();
+            }
+          },
+          (error) => {}
+        );
+      }
     });
-    await filterDialog.present();
   }
 }

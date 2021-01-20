@@ -6,7 +6,9 @@ import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { LocalStorageService } from '../../core';
+import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../survey-provider.service';
 
@@ -33,7 +35,10 @@ export class SurveyHomeComponent implements OnInit {
     private router: Router,
     // private observationService: ObservationService,
     private localStorage: LocalStorageService,
-    private surveyProvider: SurveyProviderService
+    private surveyProvider: SurveyProviderService,
+    private loader: LoaderService,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService
   ) {}
 
   ngOnInit() {}
@@ -58,22 +63,37 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
-  getSurveyListing(): void {
-    this.httpClient.get('assets/dummy/surveylisting.json').subscribe((data: any) => {
-      console.log(data);
-      this.surveyList = data.result;
-      this.getSubmissionArr();
-    });
-    //   this.utils.startLoader();
+  async getSurveyListing() {
+    this.loader.startLoader();
+
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        if (success.result) {
+          this.surveyList = success.result;
+          this.getSubmissionArr();
+          this.loader.stopLoader();
+        }
+      },
+      (error) => {
+        this.loader.stopLoader();
+        console.log(error);
+      }
+    );
+
     //   this.surveyProvider.getSurveyListing().then(
     //     (list) => {
     //       this.surveyList = list;
     //       console.log(list);
     //       this.getSubmissionArr();
-    //       this.utils.stopLoader();
+    //       this.loader.stopLoader();
     //     },
     //     (err) => {
-    //       this.utils.stopLoader();
+    //       this.loader.stopLoader();
     //       console.log(err);
     //     }
     //   );

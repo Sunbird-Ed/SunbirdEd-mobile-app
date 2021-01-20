@@ -256,8 +256,8 @@ export class ObservationSubmissionComponent implements OnInit {
       // solutionIndex: this.solutionIndex,
       // entityIndex: this.entityIndex,
       submission: submission,
-      entityId : this.entityId,
-      observationId : this.observationId,
+      entityId: this.entityId,
+      observationId: this.observationId,
     };
     this.observationService
       .getAssessmentDetailsForObservation(event)
@@ -333,21 +333,18 @@ export class ObservationSubmissionComponent implements OnInit {
         component: ScroreReportMenusComponent,
         componentProps: {
           submission: submission,
-          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+          entityType: submission.entityType,
         },
         event: event,
       });
       popover.present();
     } else {
-      this.router.navigate([
-        RouterLinks.OBSERVATION_REPORTS,
-        {
-          queryParams: {
-            submissionId: submission._id,
-            entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-          },
+      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+        queryParams: {
+          submissionId: submission._id,
+          entityType: submission.entityType,
         },
-      ]);
+      });
       // this.navCtrl.push(ObservationReportsPage, {
       //   submissionId: submission._id,
       //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
@@ -397,16 +394,13 @@ export class ObservationSubmissionComponent implements OnInit {
     //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
     // };
     // this.navCtrl.push(ObservationReportsPage, payload);
-    this.router.navigate([
-      RouterLinks.OBSERVATION_REPORTS,
-      {
-        queryParams: {
-          entityId: this.selectedSolution.entities[this.entityIndex]._id,
-          observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-        },
+    this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+      queryParams: {
+        entityId: this.selectedSolution.entities[this.entityIndex]._id,
+        observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
+        entityType: this.selectedSolution.entities[this.entityIndex].entityType,
       },
-    ]);
+    });
   }
   // Actions on submissions
   async openActionMenu(event, submission, index) {

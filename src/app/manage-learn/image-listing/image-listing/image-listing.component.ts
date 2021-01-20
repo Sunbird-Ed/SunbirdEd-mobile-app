@@ -3,8 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { FileTransfer, FileTransferObject, FileUploadOptions } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
-import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import cloneDeep from 'lodash/cloneDeep';
+import { TranslateService } from '@ngx-translate/core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 
 declare var cordova: any;
 
@@ -23,7 +26,10 @@ export class ImageListingComponent implements OnInit {
     private utils: UtilsService,
     private loader: LoaderService,
     private file: File,
-    private fileTransfer: FileTransfer
+    private fileTransfer: FileTransfer,
+    private toast: ToastService,
+    private translate: TranslateService,
+    private assessmentService: AssessmentApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -109,26 +115,59 @@ export class ImageListingComponent implements OnInit {
     this.checkIfEcmSumittedByUser();
   }
 
-  checkIfEcmSumittedByUser() {
-    //TODO: remove
-    if (this.uploadImages.length) {
-      this.createImageFromName(this.uploadImages);
-    } else {
-      this.submitEvidence();
-    }
-    //TODO: till here
+  async checkIfEcmSumittedByUser() {
+    this.loader.startLoader();
+    const submissionId = this.submissionId;
+    let url = this.schoolData.survey
+      ? urlConstants.API_URLS.IS_SURVEY_SUBMISSION_ALLOWED
+      : this.schoolData.observation
+      ? urlConstants.API_URLS.IS_OBSERVATION_SUBMISSION_ALLOWED
+      : urlConstants.API_URLS.CHECK_IF_SUBMITTED;
 
-    // this.utils.startLoader()
-    // const submissionId = this.submissionId;
-    // const url = this.schoolData.survey
-    //   ? AppConfigs.surveyFeedback.isSubmissionAllowed
-    //   : this.schoolData.observation
-    //   ? AppConfigs.cro.isSubmissionAllowed
-    //   : AppConfigs.survey.checkIfSubmitted;
+    let payload = await this.utils.getProfileInfo();
+    url = url + submissionId + '?evidenceId=' + this.currentEvidence.externalId;
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        if (success.result.allowed) {
+          if (this.uploadImages.length) {
+            this.createImageFromName(this.uploadImages);
+          } else {
+            this.submitEvidence();
+          }
+        } else {
+          this.translate.get('toastMessage.submissionCompleted').subscribe((translations) => {
+            this.toast.openToast(translations);
+          });
+          this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
+          this.localStorage.setLocalStorage(
+            this.utils.getAssessmentLocalStorageKey(this.submissionId),
+            this.schoolData
+          );
+          const options = {
+            _id: this.submissionId,
+            name: this.schoolName,
+          };
+          // this.navCtrl.remove(2, 1);
+          // this.navCtrl.pop();
+          // TODO:Check
+          window.history.go(-2);
+        }
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
+
     // this.apiService.httpGet(
     //   url + submissionId + '?evidenceId=' + this.currentEvidence.externalId,
     //   (success) => {
-    //     this.utils.stopLoader();
+    //     this.loader.stopLoader();
     //     if (success.result.allowed) {
     //       if (this.uploadImages.length) {
     //         this.createImageFromName(this.uploadImages);
@@ -137,11 +176,9 @@ export class ImageListingComponent implements OnInit {
     //       }
     //     } else {
     //       this.translate.get('toastMessage.submissionCompleted').subscribe((translations) => {
-    //         this.utils.openToast(translations);
+    //         this.toast.openToast(translations);
     //       });
-
     //       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
-
     //       this.localStorage.setLocalStorage(
     //         this.utils.getAssessmentLocalStorageKey(this.submissionId),
     //         this.schoolData
@@ -155,34 +192,59 @@ export class ImageListingComponent implements OnInit {
     //     }
     //   },
     //   (error) => {
-    //     this.utils.stopLoader();
+    //     this.loader.stopLoader();
     //   }
     // );
   }
 
   createImageFromName(imageList) {
-    // this.utils.startLoader();
-    // this.loader.startLoader();
-    // for (const image of imageList) {
-    //   this.imageList.push({ uploaded: false, file: image, url: '' });
-    // }
-    // this.getImageUploadUrls();
+    this.loader.startLoader();
+    for (const image of imageList) {
+      this.imageList.push({ uploaded: false, file: image, url: '' });
+    }
+    this.getImageUploadUrls();
   }
 
-  getImageUploadUrls() {
-    // const submissionId = this.submissionId;
-    // const files = {
-    //   files: [],
-    //   submissionId: submissionId,
-    // };
-    // for (const image of this.uploadImages) {
-    //   files.files.push(image);
-    // }
+  async getImageUploadUrls() {
+    const submissionId = this.submissionId;
+    const files = {
+      files: [],
+      submissionId: submissionId,
+    };
+    for (const image of this.uploadImages) {
+      files.files.push(image);
+    }
+
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...files };
+    const config = {
+      url: urlConstants.API_URLS.ENTITY_LIST_BASED_ON_ENTITY_TYPE + 'state',
+      payload: payload,
+    };
+
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        for (let i = 0; i < success.result.length; i++) {
+          this.imageList[i]['url'] = success.result[i].url;
+          this.imageList[i]['sourcePath'] = success.result[i].payload.sourcePath;
+          success.result[i].cloudStorage ? (this.imageList[i]['cloudStorage'] = success.result[i].cloudStorage) : null;
+        }
+        this.checkForLocalFolder();
+      },
+      (error) => {
+        this.loader.stopLoader();
+        this.translate.get('toastMessage.enableToGetGoogleUrls').subscribe((translations) => {
+          this.toast.openToast(translations);
+        });
+      }
+    );
+
     // this.apiService.httpPost(
     //   AppConfigs.survey.getImageUploadUr,
     //   files,
     //   (success) => {
-    //     this.utils.stopLoader();
+    //     this.loader.stopLoader();
     //     for (let i = 0; i < success.result.length; i++) {
     //       this.imageList[i]["url"] = success.result[i].url;
     //       this.imageList[i]["sourcePath"] = success.result[i].payload.sourcePath;
@@ -191,9 +253,9 @@ export class ImageListingComponent implements OnInit {
     //     this.checkForLocalFolder();
     //   },
     //   (error) => {
-    //     this.utils.stopLoader();
+    //     this.loader.stopLoader();
     //     this.translate.get("toastMessage.enableToGetGoogleUrls").subscribe((translations) => {
-    //       this.utils.openToast(translations);
+    //       this.toast.openToast(translations);
     //     });
     //   }
     // );
@@ -220,65 +282,66 @@ export class ImageListingComponent implements OnInit {
   }
 
   cloudImageUpload() {
-    // var options: FileUploadOptions = {
-    //   fileKey: this.imageList[this.uploadIndex].file,
-    //   fileName: this.imageList[this.uploadIndex].file,
-    //   chunkedMode: false,
-    //   mimeType: 'image/jpeg',
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     'x-ms-blob-type':
-    //       this.imageList[this.uploadIndex].cloudStorage && this.imageList[this.uploadIndex].cloudStorage === 'AZURE'
-    //         ? 'BlockBlob'
-    //         : null,
-    //   },
-    //   httpMethod: 'PUT',
-    // };
-    // let targetPath = this.pathForImage(this.imageList[this.uploadIndex].file);
-    // let fileTrns: FileTransferObject = this.fileTransfer.create();
-    // this.file
-    //   .checkFile(
-    //     (this.platform.is('ios') ? this.file.documentsDirectory : this.file.externalDataDirectory) + 'images/',
-    //     this.imageList[this.uploadIndex].file
-    //   )
-    //   .then((success) => {
-    //     fileTrns
-    //       .upload(targetPath, this.imageList[this.uploadIndex].url, options)
-    //       .then((result) => {
-    //         this.retryCount = 0;
-    //         this.imageList[this.uploadIndex].uploaded = true;
-    //         if (this.uploadIndex < this.imageList.length - 1) {
-    //           this.uploadIndex++;
-    //           this.cloudImageUpload();
-    //         } else {
-    //           this.submitEvidence();
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         const errorObject = { ...this.errorObj };
-    //         this.retryCount++;
-    //         if (this.retryCount > 3) {
-    //           this.translate.get('toastMessage.someThingWentWrongTryLater').subscribe((translations) => {
-    //             this.utils.openToast(translations);
-    //           });
-    //           errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
-    //         Details: ${JSON.stringify(err)}`;
-    //           this.slack.pushException(errorObject);
-    //           this.navCtrl.pop();
-    //         } else {
-    //           this.cloudImageUpload();
-    //         }
-    //       });
-    //   })
-    //   .catch((error) => {
-    //     this.failedUploadImageNames.push(this.imageList[this.uploadIndex].file);
-    //     if (this.uploadIndex < this.imageList.length - 1) {
-    //       this.uploadIndex++;
-    //       this.cloudImageUpload();
-    //     } else {
-    //       this.submitEvidence();
-    //     }
-    //   });
+    var options: FileUploadOptions = {
+      fileKey: this.imageList[this.uploadIndex].file,
+      fileName: this.imageList[this.uploadIndex].file,
+      chunkedMode: false,
+      mimeType: 'image/jpeg',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'x-ms-blob-type':
+          this.imageList[this.uploadIndex].cloudStorage && this.imageList[this.uploadIndex].cloudStorage === 'AZURE'
+            ? 'BlockBlob'
+            : null,
+      },
+      httpMethod: 'PUT',
+    };
+    let targetPath = this.pathForImage(this.imageList[this.uploadIndex].file);
+    let fileTrns: FileTransferObject = this.fileTransfer.create();
+    this.file
+      .checkFile(
+        (this.platform.is('ios') ? this.file.documentsDirectory : this.file.externalDataDirectory) + 'images/',
+        this.imageList[this.uploadIndex].file
+      )
+      .then((success) => {
+        fileTrns
+          .upload(targetPath, this.imageList[this.uploadIndex].url, options)
+          .then((result) => {
+            this.retryCount = 0;
+            this.imageList[this.uploadIndex].uploaded = true;
+            if (this.uploadIndex < this.imageList.length - 1) {
+              this.uploadIndex++;
+              this.cloudImageUpload();
+            } else {
+              this.submitEvidence();
+            }
+          })
+          .catch((err) => {
+            const errorObject = { ...this.errorObj };
+            this.retryCount++;
+            if (this.retryCount > 3) {
+              this.translate.get('toastMessage.someThingWentWrongTryLater').subscribe((translations) => {
+                this.toast.openToast(translations);
+              });
+              errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
+            Details: ${JSON.stringify(err)}`;
+              // this.slack.pushException(errorObject);//TODO:implement
+              // this.navCtrl.pop();
+              history.go(-1);
+            } else {
+              this.cloudImageUpload();
+            }
+          });
+      })
+      .catch((error) => {
+        this.failedUploadImageNames.push(this.imageList[this.uploadIndex].file);
+        if (this.uploadIndex < this.imageList.length - 1) {
+          this.uploadIndex++;
+          this.cloudImageUpload();
+        } else {
+          this.submitEvidence();
+        }
+      });
   }
 
   pathForImage(img) {
@@ -289,25 +352,58 @@ export class ImageListingComponent implements OnInit {
       return path + 'images/' + img;
     }
   }
-  submitEvidence() {
+  async submitEvidence() {
     this.loader.startLoader('Please wait while submitting');
     //TODO:Remove
-    setTimeout(() => {
-      this.loader.stopLoader();
-      history.go(-4);
-    }, 1500);
+    // setTimeout(() => {
+    //   this.loader.stopLoader();
+    //   history.go(-4);
+    // }, 1500);
     //TODO:till here
-    // console.log('submitting');
-    // const payload = this.constructPayload();
-    // const submissionId = this.submissionId;
-    // const url =
-    //   (this.schoolData.survey
-    //     ? AppConfigs.surveyFeedback.makeSubmission
-    //     : this.schoolData.observation
-    //     ? AppConfigs.cro.makeSubmission
-    //     : AppConfigs.survey.submission) +
-    //   submissionId +
-    //   '/';
+    console.log('submitting');
+    const constructPayload = this.constructPayload();
+    const submissionId = this.submissionId;
+    const url =
+      (this.schoolData.survey
+        ? urlConstants.API_URLS.SURVEY_FEEDBACK_MAKE_SUBMISSION
+        : this.schoolData.observation
+        ? urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION
+        : urlConstants.API_URLS.SUBMISSION) +
+      submissionId +
+      '/';
+
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...constructPayload };
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    this.assessmentService.post(config).subscribe(
+      (response) => {
+        if (this.schoolData.observation) {
+          // this.observetionProvider.markObservationAsCompleted(submissionId);//TODO:Not storing in local now
+        }
+        this.toast.openToast(response.message);
+        this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
+        this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
+        const options = {
+          _id: this.submissionId,
+          name: this.schoolName,
+        };
+        this.loader.stopLoader();
+        // this.schoolData.observation ? this.events.publish('updateSubmissionStatus') : null;
+        // TODO:Check if required above line
+        // this.programService.refreshObservationList().then(() => {
+        //   this.navCtrl.remove(this.navCtrl.getActive().index - 1, 1);
+        //   this.navCtrl.pop();
+        // });
+        history.go(-4);
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
 
     // this.apiService.httpPost(
     //   url,

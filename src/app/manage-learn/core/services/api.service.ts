@@ -6,8 +6,8 @@ import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
 const environment = {
-  // apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
-  apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
+  apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
+  // apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
 }
 @Injectable()
 export class ApiService {
