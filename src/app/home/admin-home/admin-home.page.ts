@@ -11,6 +11,7 @@ import { AggregatorPageType } from '@app/services/content/content-aggregator-nam
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { UtilsService } from '@app/app/manage-learn/core';
 
 @Component({
   selector: 'app-admin-home',
@@ -48,6 +49,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
+    private utils: UtilsService
   ) {
   }
 
@@ -64,6 +66,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
+    this.utils.initilizeML()
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });

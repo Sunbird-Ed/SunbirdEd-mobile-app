@@ -6,12 +6,11 @@ import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
 import { AuthService } from 'sunbird-sdk';
-const environment = {
-  apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
-  // apiBaseUrl: 'https://survey.preprod.ntp.net.in/'
-  // apiBaseUrl: 'https://projects.preprod.ntp.net.in/'
-}
-@Injectable()
+
+
+@Injectable({
+  providedIn: 'root'
+})
 export class ApiService {
   baseUrl: string;
   tokens;
@@ -19,7 +18,6 @@ export class ApiService {
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
-
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
@@ -27,11 +25,11 @@ export class ApiService {
       mergeMap((session) => {
         const httpOptions = {
           headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token + "tt" : "",
-            'x-authenticated-user-token': session ? session.access_token + "ii" : "",
+            'x-auth-token': session ? session.access_token : "",
+            'x-authenticated-user-token': session ? session.access_token : "",
           })
         };
-        return this.http.get(environment.apiBaseUrl + this.baseUrl + requestParam.url).pipe(
+        return this.http.get(this.baseUrl + requestParam.url).pipe(
           tap(data => {
             return observableOf(data)
           }, error => {
@@ -47,11 +45,11 @@ export class ApiService {
       mergeMap((session) => {
         const httpOptions = {
           headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token + "tt" : "",
-            'x-authenticated-user-token': session ? session.access_token + "ii" : "",
+            'x-auth-token': session ? session.access_token : "",
+            'x-authenticated-user-token': session ? session.access_token : "",
           })
         };
-        return this.http.post(environment.apiBaseUrl + this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
+        return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
           tap(data => {
             return data
           }, error => {
@@ -63,7 +61,6 @@ export class ApiService {
   }
 
 
-  
 
   private handleError(result) {
     switch (result.status) {

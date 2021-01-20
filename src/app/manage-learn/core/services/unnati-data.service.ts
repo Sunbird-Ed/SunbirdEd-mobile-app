@@ -5,8 +5,12 @@ import { ApiService } from './api.service';
 import { urlConstants } from '../constants/urlConstants';
 import { ToastService } from './toast/toast.service';
 import { AuthService } from 'sunbird-sdk';
+import { UtilsService } from './utils.service';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UnnatiDataService extends ApiService {
 
   baseUrl: string;
@@ -14,9 +18,10 @@ export class UnnatiDataService extends ApiService {
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    private utils: UtilsService
   ) {
     super(http, toast, modalController, authService);
-    this.baseUrl = urlConstants.SERVICES.UNNATI;
+    this.baseUrl = this.utils.getBaseUrl('projectsBaseUrl') + urlConstants.SERVICES.UNNATI;
   }
 
 }

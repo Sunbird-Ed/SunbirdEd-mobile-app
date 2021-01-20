@@ -82,6 +82,7 @@ import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
 import {configuration} from '@app/configuration/configuration';
 import { LocationHandler } from '@app/services/location-handler';
+import { CoreModule } from './manage-learn/core/core.module';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -443,7 +444,8 @@ declare const sbutility;
     PageFilterPageModule,
     PageFilterOptionsPageModule,
     TermsAndConditionsPageModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
+    CoreModule
   ],
   providers: [
     StatusBar,
