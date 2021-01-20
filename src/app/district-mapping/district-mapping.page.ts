@@ -160,7 +160,6 @@ export class DistrictMappingPage {
   }
 
   async submit() {
-    console.log(this.formGroup.value);
     this.saveDeviceLocation();
     if (this.appGlobalService.isUserLoggedIn()) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -202,7 +201,8 @@ export class DistrictMappingPage {
           // telemetry
           this.generateSubmitInteractEvent(locationCodes);
           this.events.publish('loggedInProfile:update', req);
-          if (this.profile && (this.source === PageId.PROFILE || this.source === PageId.GUEST_PROFILE)) {
+          if (this.profile && (this.source === PageId.PROFILE ||
+                this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
             this.location.back();
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
