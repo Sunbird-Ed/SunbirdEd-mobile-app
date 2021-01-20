@@ -1700,3 +1700,15 @@ app-discover{
   font-size: 1.2rem;
 }
 
+sb-form{
+  .multi-select-container{
+    .list-border{
+      ul{
+        width: 90%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+  }
+}
