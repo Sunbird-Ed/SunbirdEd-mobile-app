@@ -3,11 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { statusType } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { UtilityService } from '@app/services';
 
 @Injectable()
 export class UtilsService {
   imagePath: string;
-  constructor() { }
+  assessmentBaseUrl
+  constructor(
+    private utility: UtilityService
+  ) { }
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -346,6 +350,10 @@ export class UtilsService {
 
       })
     })
+  }
+
+  initilizeML() {
+
   }
 
   getProjectData() {

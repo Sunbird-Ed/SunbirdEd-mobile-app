@@ -10,7 +10,7 @@ import { ModalController, NavParams } from '@ionic/angular';
   styleUrls: ['./entityfilter.component.scss'],
 })
 export class EntityfilterComponent implements OnInit {
-  @ViewChild('selectStateRef') selectStateRef;
+  @ViewChild('selectStateRef',  {static: false}) selectStateRef;
   entityList;
   observationId;
   searchUrl;
