@@ -21,7 +21,8 @@ import {
     SystemSettingsService,
     WebviewSessionProviderConfig,
     SignInError,
-    FrameworkCategoryCode
+    FrameworkCategoryCode,
+    ProfileType
 } from 'sunbird-sdk';
 
 import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
@@ -501,6 +502,12 @@ export class FormAndFrameworkUtilService {
                             });
                     } else {
                         keysLength++;
+                        if (categoryKeysLen === keysLength && (profileData.profileType === ProfileType.ADMIN)) {
+                            this.updateProfileInfo(profile, profileData, eventParams)
+                                .then((response) => {
+                                    resolve(response);
+                                });
+                        }
                     }
                 }
             } else {

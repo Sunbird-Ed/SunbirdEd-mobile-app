@@ -53,7 +53,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   public objRollup: Rollup;
 
 
-  @ViewChild('preview') previewElement: ElementRef;
+  @ViewChild('preview', { static: false }) previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private canvasPlayerService: CanvasPlayerService,
@@ -172,6 +172,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
                     () => {},
                     () => {}
                 );
+              } else if (resp.data && resp.data.event === 'renderer:maxLimitExceeded') {
+                this.closeIframe();
               }
             } else if (this.isJSON(resp.data)) {
               const response = JSON.parse(resp.data);

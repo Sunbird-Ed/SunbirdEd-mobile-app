@@ -37,7 +37,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     isDownloadStarted = false;
     isTextbookTocPage = false;
     stckyUnitTitle?: string;
-    @ViewChild(IonContent) content: IonContent;
+    @ViewChild(IonContent, { static: false }) content: IonContent;
     stckyindex: any;
     latestParentNodes: any;
     latestParentName: any;

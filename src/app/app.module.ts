@@ -2,9 +2,8 @@
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 // ionic cordova dependencies/plugins
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -81,7 +80,9 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { Chooser } from '@ionic-native/chooser/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
-import { ApiInterceptor } from './manage-learn/core/interceptor/apiInterceptor';
+import {configuration} from '@app/configuration/configuration';
+import { LocationHandler } from '@app/services/location-handler';
+import { CoreModule } from './manage-learn/core/core.module';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -173,7 +174,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
-
+export const discussionService = () => {
+  return SunbirdSdk.instance.discussionService;
+};
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -268,6 +271,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  },
+  {
+    provide: 'DISCUSSION_SERVICE',
+    useFactory: discussionService
   }
   ];
 }
@@ -293,6 +300,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -436,7 +444,8 @@ declare const sbutility;
     PageFilterPageModule,
     PageFilterOptionsPageModule,
     TermsAndConditionsPageModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
+    CoreModule
   ],
   providers: [
     StatusBar,
@@ -485,6 +494,7 @@ declare const sbutility;
     AliasBoardName,
     ConsentService,
     ProfileHandler,
+    LocationHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
@@ -494,11 +504,6 @@ declare const sbutility;
     Chooser,
     PhotoViewer,
     StreamingMedia,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ApiInterceptor,
-      multi: true,
-    },
   ],
   bootstrap: [AppComponent],
   schemas: [

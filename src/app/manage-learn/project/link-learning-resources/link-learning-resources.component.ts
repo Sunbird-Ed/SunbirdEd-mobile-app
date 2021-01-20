@@ -54,6 +54,7 @@ export class LinkLearningResourcesComponent implements OnInit {
          element.name == filter.name ? element.isActive = true : element.isActive = false;
          if (element.isActive) {
             this.selectedFilter = element;
+            this.resources = [];
             this.getLearningResources();
          }
       });
@@ -97,16 +98,18 @@ export class LinkLearningResourcesComponent implements OnInit {
          this.loaderService.stopLoader();
       })
    }
+
    search(event) {
-      console.log(event, "event search");
       this.page = 1;
       this.resources = [];
       this.getLearningResources(event.detail.value);
    }
+
    loadMoreData() {
       this.page = this.page + 1;
       this.getLearningResources();
    }
+
    addResources() {
       let selected = [];
       this.resources.forEach(list => {
@@ -114,11 +117,11 @@ export class LinkLearningResourcesComponent implements OnInit {
             selected.push(list);
          }
       })
-      console.log(selected,"selected 117");
       if (selected) {
          this.close(selected);
       }
    }
+   
    selectData(item) {
       item.isChecked = !item.isChecked;
    }

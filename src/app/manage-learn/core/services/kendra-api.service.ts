@@ -1,19 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { ApiService } from './api.service';
 import { urlConstants } from '../constants/urlConstants';
 import { ToastService } from './toast/toast.service';
+import { AuthService } from 'sunbird-sdk';
+import { UtilsService } from './utils.service';
 
-@Injectable()
-export class KendraApiService  extends ApiService {
+@Injectable({
+  providedIn: 'root'
+})
+export class KendraApiService extends ApiService {
   baseUrl: string;
-  constructor(public http: HttpClient,
+   constructor(public http: HttpClient,
     public toast: ToastService,
-    public modalController: ModalController
-
+    public modalController: ModalController,
+    @Inject('AUTH_SERVICE') public authService: AuthService,
+    private utils: UtilsService
   ) {
-    super(http, toast, modalController);
-    this.baseUrl = urlConstants.SERVICES.KENDRA;
+    super(http, toast, modalController, authService);
+    debugger
+    this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
   }
 }

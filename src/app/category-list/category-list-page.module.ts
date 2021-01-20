@@ -6,10 +6,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { CategoryListPage } from './category-list-page';
-import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
+import {CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '@app/app/components/components.module';
-import {CommonFormElementsModule} from 'common-form-elements';
+import {CommonFormElementsModule} from 'common-form-elements-v8';
 import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [

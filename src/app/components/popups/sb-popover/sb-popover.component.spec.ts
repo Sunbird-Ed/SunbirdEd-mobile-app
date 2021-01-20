@@ -162,6 +162,23 @@ describe('SbPopoverComponent', () => {
             expect(mockPopOverController.dismiss).toHaveBeenCalled();
             expect(unsubscribeFn).toHaveBeenCalled();
         });
+
+        it('should not dismiss the popup when backButton is clicked', () => {
+            // arrange
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((_, fn) => fn()),
+            } as any;
+            sbPopoverComponent.disableDeviceBackButton = true;
+            const unsubscribeFn = jest.fn();
+            sbPopoverComponent.backButtonFunc = {
+                unsubscribe: unsubscribeFn
+            } as any;
+            // act
+            sbPopoverComponent.ionViewWillEnter();
+            // assert
+            expect(mockPopOverController.dismiss).not.toHaveBeenCalled();
+            expect(unsubscribeFn).not.toHaveBeenCalled();
+        });
     });
 
     describe('ngOnDestroy()', () => {

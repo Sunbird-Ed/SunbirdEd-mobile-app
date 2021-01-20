@@ -33,7 +33,7 @@ export class ObservationReportsComponent implements OnInit {
   allCriterias: any = [];
   filteredCriterias: any = [];
   // @ViewChild(FabContainer) fab: FabContainer //TODO:check fab action
-  @ViewChild(IonFab) fab; //TODO check fab with this.
+  @ViewChild(IonFab,  {static: false}) fab; //TODO check fab with this.
   from: any;
   constructor(
     private routerParam: ActivatedRoute,
