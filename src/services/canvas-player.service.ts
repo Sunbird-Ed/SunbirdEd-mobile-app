@@ -68,7 +68,7 @@ export class CanvasPlayerService {
                 case 'send':
                     return SunbirdSdk.instance.telemetryService.saveTelemetry(params[0]).subscribe();
                 case 'checkMaxLimit':
-                    const identifier = params[0].identifier;
+                    const content = params[0];
                     return this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise()
                         .then(async (context: string) => {
                             const courseContext = JSON.parse(context);
@@ -85,7 +85,7 @@ export class CanvasPlayerService {
                                 const contentStateResponse: ContentStateResponse = await SunbirdSdk.instance.courseService
                                     .getContentState(getContentStateRequest).toPromise();
 
-                                const assessmentStatus = this.localCourseService.fetchAssessmentStatus(contentStateResponse, identifier);
+                                const assessmentStatus = this.localCourseService.fetchAssessmentStatus(contentStateResponse, content);
 
                                 const skipPlay = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
                                 return skipPlay;
