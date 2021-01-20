@@ -32,11 +32,17 @@
       <ion-label position="fixed"> {{'FRMELEMNTS_LBL_STATUS' | translate}} </ion-label>
     </ion-col>
     <ion-col size="8">
+      
       <ion-select [(ngModel)]="task.status" class="custom-select" [disabled]="checkDisabled()"
+      [interfaceOptions]="{
+        cssClass: 'select-box',
+        animated: false
+      }"
         placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedTaskStatus($event)">
         <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
           selected="status.title === task.status">{{status.title | camelToTitle}}</ion-select-option>
       </ion-select>
+
     </ion-col>
   </ion-row>
   <div class="subtask-form">

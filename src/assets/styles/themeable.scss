@@ -57,6 +57,7 @@ html[data-theme="JOYFUL"]{
   button{
     border-radius: 20px !important;
     color: var(--app-white) !important;
+    background-color: var(--app-primary) !important;
   }
 
   input, textarea, ion-input, ion-textarea {
@@ -147,6 +148,7 @@ html[data-theme="JOYFUL"]{
     }
     .alert-tappable {
       box-shadow: none !important;
+      background-color: transparent !important;
     }
   }
 
@@ -1538,4 +1540,18 @@ html[data-theme="JOYFUL"]{
    padding: .75em 2.5rem !important;
   }
 
+  ion-picker {
+      button{
+        color: var(--app-primary) !important;
+        background-color:transparent !important;
+        box-shadow: none !important;
+      }
+  }
+  .action-sheet-container{
+    button{
+      color: var(--app-primary) !important;
+      background-color:transparent !important;
+      box-shadow: none !important;
+    }
+  }
 }
