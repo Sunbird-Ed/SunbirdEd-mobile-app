@@ -316,7 +316,7 @@ export class DistrictMappingPage {
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
-      if (config.code === 'name' && this.source === PageId.PROFILE) {
+      if (config.code === 'name' && (this.source === PageId.PROFILE  || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
@@ -399,6 +399,10 @@ export class DistrictMappingPage {
       await this.loader.present();
     } else {
       await this.loader.dismiss();
+      const subPersonaFormControl = this.formGroup.get('children.persona.subPersona');
+      if (subPersonaFormControl && !subPersonaFormControl.value) {
+        subPersonaFormControl.patchValue(this.profile.serverProfile.userSubType || null);
+      }
       if (!this.stateChangeSubscription) {
         this.stateChangeSubscription = concat(
           of(this.formGroup.get('persona').value),
