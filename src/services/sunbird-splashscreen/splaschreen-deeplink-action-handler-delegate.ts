@@ -144,7 +144,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
-    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number }[] = [
+    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number, isUserLoggedIn?: boolean }[] = [
       {
         name: 'Dialcode parser',
         code: 'dialcode',
@@ -204,6 +204,26 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         code: 'library',
         values: '\\/(resources|explore)$',
         route: 'tabs/resources'
+      },
+      {
+        name: 'Profile',
+        code: 'profile',
+        values: '\\/(profile)$',
+        route: 'tabs/profile',
+        isUserLoggedIn: true
+      },
+      {
+        name: 'Profile',
+        code: 'profile',
+        values: '\\/(profile)$',
+        route: 'tabs/guest-profile',
+        isUserLoggedIn: false
+      },
+      {
+        name: 'FAQ',
+        code: 'faq',
+        values: '\\/(faq)$',
+        route: 'faq-help'
       }
     ];
 
@@ -213,12 +233,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     deepLinkUrlConfig.forEach(config => {
       const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
       if (!!urlRegexMatch) {
-        if (!matchedDeeplinkConfig ||
-          (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
-          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-            && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
-          matchedDeeplinkConfig = config;
-          urlMatch = urlRegexMatch;
+        if ((!config.hasOwnProperty('isUserLoggedIn')) || config.isUserLoggedIn === this.appGlobalServices.isUserLoggedIn()) {
+          if (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config)) {
+            matchedDeeplinkConfig = config;
+            urlMatch = urlRegexMatch;
+          }
         }
       }
     });
@@ -261,6 +280,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route);
     }
+  }
+
+  private validateDeeplinkPriority(matchedDeeplinkConfig, config){
+    return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
+    (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
+      && config.priority && matchedDeeplinkConfig.priority > config.priority)
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
