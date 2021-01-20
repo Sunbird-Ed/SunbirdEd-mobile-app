@@ -1388,7 +1388,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.showCourseCompletePopup = true;
         }
 
-        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.identifier);
+        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
         this.isLastAttempt = assesmentsStatus.isLastAttempt;
         this.isContentDisabled = assesmentsStatus.isContentDisabled;
       }

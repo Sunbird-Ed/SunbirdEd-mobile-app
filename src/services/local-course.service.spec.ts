@@ -119,10 +119,10 @@ describe('LocalCourseService', () => {
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
-          expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-          expect(mockCourseService.enrollCourse).toHaveBeenCalled();
-          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
-          done();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
+        done();
       });
     });
 
@@ -843,10 +843,10 @@ describe('LocalCourseService', () => {
     it('return assessment status isLastAttempt as true if its the final attempt', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', contentData: { maxAttempts: 3 } });
       // assert
       expect(data.isLastAttempt).toEqual(true);
       expect(data.isContentDisabled).toEqual(false);
@@ -855,15 +855,14 @@ describe('LocalCourseService', () => {
     it('return assessment status isContentDisabled as true if the user has exceeded the number of attempts', () => {
       // arrange
       const contentStatusData = {
-        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2,3] }]
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1, 2, 3] }]
       };
       // act
-      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, { identifier: 'do_id', maxAttempts: 2 });
       // assert
       expect(data.isLastAttempt).toEqual(false);
       expect(data.isContentDisabled).toEqual(true);
     });
-
   });
 
 });
