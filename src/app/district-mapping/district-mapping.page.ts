@@ -160,7 +160,6 @@ export class DistrictMappingPage {
   }
 
   async submit() {
-    console.log(this.formGroup.value);
     this.saveDeviceLocation();
     if (this.appGlobalService.isUserLoggedIn()) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -187,7 +186,7 @@ export class DistrictMappingPage {
         lastName: '',
         ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
         ...((this.formGroup.value.children['persona']['subPersona'] ?
-          { subUserType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+          { userSubType: this.formGroup.value.children['persona']['subPersona'] } : {}))
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -198,11 +197,12 @@ export class DistrictMappingPage {
           if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
             await this.saveDeviceLocation();
           }
-          // this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          //  this.disableSubmitButton = true;
+          // telemetry
+          this.generateSubmitInteractEvent(locationCodes);
           this.events.publish('loggedInProfile:update', req);
-          if (this.profile && (this.source === PageId.PROFILE || this.source === PageId.GUEST_PROFILE)) {
+          if (this.profile && (this.source === PageId.PROFILE ||
+                this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
             this.location.back();
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
@@ -316,7 +316,7 @@ export class DistrictMappingPage {
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
-      if (config.code === 'name' && this.source === PageId.PROFILE) {
+      if (config.code === 'name' && (this.source === PageId.PROFILE  || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
@@ -349,12 +349,19 @@ export class DistrictMappingPage {
             }
             personaConfig.default = this.setDefaultConfig(personaConfig);
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
+              case 'SUBPERSONA_LIST': {
+                if (this.profile.serverProfile) {
+                  personaConfig.default = this.profile.serverProfile.userSubType;
+                }
+                break;
+              }
               case 'STATE_LOCATION_LIST': {
                 personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, initial);
                 break;
               }
               case 'LOCATION_LIST': {
-                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial,
+                   this.profile);
                 break;
               }
             }
@@ -392,6 +399,10 @@ export class DistrictMappingPage {
       await this.loader.present();
     } else {
       await this.loader.dismiss();
+      const subPersonaFormControl = this.formGroup.get('children.persona.subPersona');
+      if (subPersonaFormControl && !subPersonaFormControl.value) {
+        subPersonaFormControl.patchValue(this.profile.serverProfile.userSubType || null);
+      }
       if (!this.stateChangeSubscription) {
         this.stateChangeSubscription = concat(
           of(this.formGroup.get('persona').value),
@@ -439,4 +450,26 @@ export class DistrictMappingPage {
       corRelationList
     );
   }
+
+  clearUserLocationSelections() {
+    const stateFormControl = this.formGroup.get('children.persona.state');
+    /* istanbul ignore else */
+    if (stateFormControl) {
+      stateFormControl.patchValue(null);
+    }
+  }
+
+  generateSubmitInteractEvent(location) {
+    const corReletionList: CorrelationData[] = [location];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_SUBMIT, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      corReletionList
+    );
+  }
+
 }

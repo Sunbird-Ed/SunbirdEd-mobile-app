@@ -496,6 +496,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
             this.searchGroupingContents = val.data;
           }
         });
+        this.dynamicResponse = this.contentAggregatorHandler.populateIcons(this.dynamicResponse);
       }
       const newSections = [];
       this.getCategoryData();
@@ -584,12 +585,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information', 'notification']);
 
     this.getCategoryData();
 
@@ -902,9 +903,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       case 'download':
         this.redirectToActivedownloads();
         break;
-      // case 'notification':
-      //   this.redirectToNotifications();
-      //   break;
+      case 'notification':
+        this.redirectToNotifications();
+        break;
       case 'information':
         this.appTutorialScreen();
         break;
