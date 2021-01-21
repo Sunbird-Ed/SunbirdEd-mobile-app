@@ -49,6 +49,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
+import { UtilsService } from './manage-learn/core';
 
 declare const cordova;
 
@@ -116,6 +117,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private utils: UtilsService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -162,6 +164,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
+      this.utils.initilizeML();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
