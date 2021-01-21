@@ -3,7 +3,7 @@ import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, SharedPreferences,
   FetchEnrolledCourseRequest, TelemetryObject, HttpClientError,
-  NetworkError, GetContentStateRequest, ContentStateResponse, ContentData, ProfileService
+  NetworkError, GetContentStateRequest, ContentStateResponse
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -68,15 +68,15 @@ export class LocalCourseService {
             enrollCourse.corRelationList
           );
           if (enrollCourse.userConsent === UserConsent.YES) {
-          if (consentPopoverActionsDelegate) {
-            consentPopoverActionsDelegate.onConsentPopoverShow();
-          }
-          await this.sbProgressLoader.hide({id: 'login'});
-          await this.consentService.showConsentPopup(enrollCourse);
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverShow();
+            }
+            await this.sbProgressLoader.hide({ id: 'login' });
+            await this.consentService.showConsentPopup(enrollCourse);
 
-          if (consentPopoverActionsDelegate) {
-            consentPopoverActionsDelegate.onConsentPopoverDismiss();
-          }
+            if (consentPopoverActionsDelegate) {
+              consentPopoverActionsDelegate.onConsentPopoverDismiss();
+            }
           }
         } else {
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -101,7 +101,7 @@ export class LocalCourseService {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
             if (enrollCourse.userConsent === UserConsent.YES) {
-              await this.sbProgressLoader.hide({id: 'login'});
+              await this.sbProgressLoader.hide({ id: 'login' });
               await this.consentService.getConsent(enrollCourse);
             }
           } else {
@@ -273,9 +273,9 @@ export class LocalCourseService {
           progress = Math.round((viewedContents.length / courseContext.leafNodeIds.length) * 100);
 
         }
-        resolve({progress, contentStatusData});
+        resolve({ progress, contentStatusData });
       } catch (err) {
-        resolve({progress});
+        resolve({ progress });
       }
     });
   }
@@ -285,17 +285,14 @@ export class LocalCourseService {
     const showEnrollmentEndedMessage = () => {
       this.commonUtilService.showToast(
         'ENROLLMENT_ENDED_ON',
-        null,
-        null,
-        null,
-        null,
+        null, null, null, null,
         this.datePipe.transform(latestBatch.enrollmentEndDate)
       );
     };
     const showFutureBatchMessage = () => {
       this.commonUtilService.showToast(
         this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_BATCH_AVAILABILITY_DATE', course,
-        {'batch_start_date': this.datePipe.transform(latestBatch.startDate)}
+          { 'batch_start_date': this.datePipe.transform(latestBatch.startDate) }
         )
       );
     };
@@ -305,7 +302,7 @@ export class LocalCourseService {
         return true;
       }
       if (batches[i].startDate &&
-          (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
+        (new Date(batches[i].startDate) > new Date(latestBatch.startDate))) {
         latestBatch = batches[i];
       }
     }
@@ -324,18 +321,22 @@ export class LocalCourseService {
     return true;
   }
 
-  fetchAssessmentStatus(contentStatusData, identifier) {
+  fetchAssessmentStatus(contentStatusData, content) {
+    let maxAttempts = content.contentData ? content.contentData.maxAttempts : content.maxAttempts;
+    if (!maxAttempts) {
+      maxAttempts = AssessmentConstant.MAX_ATTEMPTS;
+    }
     const assesmentsStatus: { isLastAttempt: boolean, isContentDisabled: boolean } = {
       isLastAttempt: false,
       isContentDisabled: false
     };
     if (contentStatusData && contentStatusData.contentList) {
       contentStatusData.contentList.forEach((item) => {
-        if (item.contentId === identifier && item.score) {
-          if (AssessmentConstant.MAX_ATTEMPTS - item.score.length === 1) {
+        if (item.contentId === content.identifier && item.score) {
+          if (maxAttempts - item.score.length === 1) {
             assesmentsStatus.isLastAttempt = true;
           }
-          if (AssessmentConstant.MAX_ATTEMPTS <= item.score.length) {
+          if (maxAttempts <= item.score.length) {
             assesmentsStatus.isContentDisabled = true;
           }
         }

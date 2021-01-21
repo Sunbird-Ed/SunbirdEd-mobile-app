@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
+import { LoaderService, UtilsService } from '../../core';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { urlConstants } from '../../core/constants/urlConstants';
 
 @Component({
   selector: 'app-add-programs',
@@ -13,22 +16,40 @@ export class AddProgramsComponent implements OnInit {
   selectedData;
   button = "FRMELEMNTS_BTN_ADD_PROGRAM";
   title = "FRMELEMNTS_LBL_MY_PROGRAMS";
-  type
+  type;
   constructor(
     private alertCtrl: AlertController,
     private modal: ModalController,
     private translate: TranslateService,
-    private http: HttpClient
+    private http: HttpClient,
+    private loaderService: LoaderService,
+    private kendraApiService: KendraApiService,
+    private utils: UtilsService
+
   ) { }
   ngOnInit() {
     this.getPrograms();
   }
 
-  getPrograms() {
-    this.http.get('assets/dummy/projectList.json').subscribe((data: any) => {
-      console.log(data);
-      this.dataList = data.result.data;
-    });
+  async getPrograms() {
+    this.loaderService.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.PRIVATE_PROGRAMS,
+      payload:payload
+    }
+    this.kendraApiService.get(config).subscribe(data => {
+      this.loaderService.stopLoader();
+      if (data.result && data.result.length) {
+        this.dataList = data.result;
+      }
+    }, error => {
+      this.loaderService.stopLoader();
+    })
+
+
+
+
   }
   async createProgram() {
     let text;

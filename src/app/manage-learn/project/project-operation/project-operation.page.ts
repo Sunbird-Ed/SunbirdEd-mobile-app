@@ -14,13 +14,13 @@ import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 
-var environment = {
-  db: {
-    projects: "project.db",
-    categories: "categories.db",
-  },
-  deepLinkAppsUrl: ''
-};
+// var environment = {
+//   db: {
+//     projects: "project.db",
+//     categories: "categories.db",
+//   },
+//   deepLinkAppsUrl: ''
+// };
 @Component({
   selector: 'app-project-operation',
   templateUrl: './project-operation.page.html',
@@ -71,6 +71,10 @@ export class ProjectOperationPage implements OnInit {
         // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
       }
     });
+    this.routerparam.params.subscribe(data =>{
+      console.log(data,"data"); 
+      this.projectId = data.id;
+    })
   }
 
   ngOnInit() { }
@@ -78,7 +82,7 @@ export class ProjectOperationPage implements OnInit {
     let data;
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
-      console.log(data,"data 81");
+      console.log(data, "data 81");
     });
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -95,9 +99,15 @@ export class ProjectOperationPage implements OnInit {
     });
   }
   getProjectFromLocal() {
-    this.template = this.utils.getProjectData();
-    console.log('im getProjectFromLocal', this.template);
-
+    this.db.query({ _id: this.projectId }).then(
+      (success) => {
+        if (success.docs.length) {
+          this.template = success.docs.length ? success.docs[0] : {};
+        }
+      },
+      (error) => {
+      }
+    );
   }
 
   async openSearchModel(type, url?) {
@@ -203,7 +213,7 @@ export class ProjectOperationPage implements OnInit {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
-    this.db.createPouchDB(environment.db.projects);
+    // this.db.createPouchDB(environment.db.projects);
     data.isEdit = true;
     data.isDeleted = false;
     this.db.update(data).then(success => {
@@ -217,7 +227,7 @@ export class ProjectOperationPage implements OnInit {
     this.translate.get([header, button]).subscribe(data => {
       texts = data;
     })
-    let programName = data.programInformation ? data.programInformation.name : ''
+    let programName = data.programInformation ? data.programInformation.name : '';
     this.viewProjectAlert = await this.alertController.create({
       cssClass: 'my-custom-class',
       subHeader: texts[header],
@@ -233,6 +243,19 @@ export class ProjectOperationPage implements OnInit {
       ]
     });
     await this.viewProjectAlert.present();
+  }
+  createProject() {
+    if (this.selectedEntity) {
+      this.template.entityId = this.selectedEntity._id;
+      this.template.entityName = this.selectedEntity.name;
+    }
+    if (this.selectedProgram) {
+      !this.selectedProgram.created ? this.template.programId = this.selectedProgram._id : delete this.template.programId
+      this.template.programName = this.selectedProgram.name;
+      this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
+    }
+    this.template.learningResources = this.selectedResources;
+    this.update(this.template);
   }
 }
 

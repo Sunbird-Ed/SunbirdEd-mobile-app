@@ -30,7 +30,7 @@ export class LoaderService {
       .create({
         // duration: 5000,
 
-        cssClass: 'my-custom-class',
+        cssClass: 'custom-loader-message-class',
         spinner: 'circular',
         message: message ? message : 'Please wait while loading ...',
         translucent: true,
