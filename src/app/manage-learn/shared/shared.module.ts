@@ -53,6 +53,7 @@ import { GraphCircleComponent } from './components/graph-circle/graph-circle.com
 import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
 import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
 import { ViewDetailComponent } from './components/view-detail/view-detail.component';
+import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     ReportsTextComponent,
     PieChartComponent,
     BarChartComponent,
+    ScatterChartComponent,
     MatrixChartComponent,
     AttachmentComponent,
     QuestionListComponent,
@@ -121,6 +123,7 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     ReportsTextComponent,
     PieChartComponent,
     BarChartComponent,
+    ScatterChartComponent,
     MatrixChartComponent,
     QuestionListComponent,
     CriteriaListComponent,

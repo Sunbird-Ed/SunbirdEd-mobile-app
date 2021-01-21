@@ -7,7 +7,7 @@ import { NavController, NavParams, Platform, ModalController, IonFab } from '@io
 import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
-import { File } from '@ionic-native/file';
+import { File } from '@ionic-native/file/ngx';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
@@ -44,7 +44,7 @@ export class ReportWithScoreComponent implements OnInit {
     private routerParam: ActivatedRoute,
     public navCtrl: NavController,
     private dap: DownloadAndPreviewService,
-    public navParams: NavParams,
+    // public navParams: NavParams,
     private platform: Platform,
     private fileTransfer: FileTransfer,
     private utils: UtilsService,
@@ -59,13 +59,13 @@ export class ReportWithScoreComponent implements OnInit {
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.selectedTab = 'questionwise';
-      this.submissionId = this.navParams.get('submissionId');
-      this.observationId = this.navParams.get('observationId');
-      this.entityId = this.navParams.get('entityId');
-      this.solutionId = this.navParams.get('solutionId');
-      this.entityType = this.navParams.get('entityType');
-      this.reportType = this.navParams.get('reportType');
-      this.from = this.navParams.get('from');
+      this.submissionId = params.submissionId;
+      this.observationId = params.observationId;
+      this.entityId = params.entityId;
+      this.solutionId = params.solutionId;
+      this.entityType = params.entityType;
+      this.reportType = params.reportType;
+      this.from = params.from;
     });
   }
 

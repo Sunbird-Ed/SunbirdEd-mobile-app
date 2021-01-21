@@ -1,63 +1,42 @@
-<ion-content style="background-color: #fff !important;">
+<ion-content style="background-color: #fff !important">
   <div *ngIf="!error">
     <div
       padding
-      style="
-        text-transform: capitalize;
-        border: 1px solid #ccc;
-        margin: 10px 10px;
-      "
+      style="text-transform: capitalize; border: 1px solid #ccc; margin: 10px 10px"
       *ngIf="reportObj?.observationName"
     >
-      {{reportObj?.observationName}} {{reportObj?.entityName ? ' > ' : ''}}
-      {{reportObj.entityName?reportObj.entityName: reportObj?.schoolName}}
+      {{ reportObj?.observationName }} {{ reportObj?.entityName ? ' > ' : '' }}
+      {{ reportObj.entityName ? reportObj.entityName : reportObj?.schoolName }}
     </div>
 
     <!-- Scores details bar -->
     <ion-grid *ngIf="reportObj?.totalScore && reportObj?.scoreAchieved">
-      <ion-row style="text-align: center;">
-        <ion-col>
-          {{'labels.totalScore' | translate}} :
-          {{reportObj?.totalScore}}</ion-col
-        >
-        <ion-col>
-          {{'labels.scoreAchieved' | translate}} :
-          {{reportObj?.scoreAchieved}}</ion-col
-        >
+      <ion-row style="text-align: center">
+        <ion-col> {{ 'labels.totalScore' | translate }} : {{ reportObj?.totalScore }}</ion-col>
+        <ion-col> {{ 'labels.scoreAchieved' | translate }} : {{ reportObj?.scoreAchieved }}</ion-col>
       </ion-row>
     </ion-grid>
 
     <ion-grid *ngIf="reportObj?.schoolsObserved && reportObj?.totalSchools">
-      <ion-row style="text-align: center;">
-        <ion-col>
-          {{'labels.totalSchools' | translate}} :
-          {{reportObj?.totalSchools}}</ion-col
-        >
-        <ion-col>
-          {{'labels.schoolsObserved' | translate}} :
-          {{reportObj?.schoolsObserved}}</ion-col
-        >
+      <ion-row style="text-align: center">
+        <ion-col> {{ 'labels.totalSchools' | translate }} : {{ reportObj?.totalSchools }}</ion-col>
+        <ion-col> {{ 'labels.schoolsObserved' | translate }} : {{ reportObj?.schoolsObserved }}</ion-col>
       </ion-row>
     </ion-grid>
 
     <ion-grid *ngIf="reportObj?.entityType && reportObj?.totalEntities">
-      <ion-row style="text-align: center;">
-        <ion-col>
-          {{'Total ' + reportObj?.entityType}} :
-          {{reportObj?.totalEntities}}</ion-col
-        >
+      <ion-row style="text-align: center">
+        <ion-col> {{ 'Total ' + reportObj?.entityType }} : {{ reportObj?.totalEntities }}</ion-col>
         <ion-col>
           {{ reportObj?.entityType + ' observed' }} :
-          {{reportObj.schoolsObserved ?
-          reportObj.schoolsObserved:reportObj.entitiesObserved}}</ion-col
+          {{ reportObj.schoolsObserved ? reportObj.schoolsObserved : reportObj.entitiesObserved }}</ion-col
         >
       </ion-row>
     </ion-grid>
     <ion-grid *ngIf="reportObj?.totalObservations">
       <ion-row>
-        <ion-col style="margin-left: 15px;">
-          {{'labels.totalObservations' | translate}} :
-          {{reportObj?.totalObservations}}</ion-col
+        <ion-col style="margin-left: 15px">
+          {{ 'labels.totalObservations' | translate }} : {{ reportObj?.totalObservations }}</ion-col
         >
       </ion-row>
     </ion-grid>
@@ -66,70 +45,46 @@
     <!-- ....................................... -->
     <div padding *ngIf="!from">
       <ion-segment [(ngModel)]="selectedTab">
-        <ion-segment-button
-          value="questionwise"
-          (click)="onTabChange('questionwise',fab)"
-        >
-          {{'buttons.questionWise' | translate}}
+        <ion-segment-button value="questionwise" (click)="onTabChange('questionwise', fab)">
+          {{ 'buttons.questionWise' | translate }}
         </ion-segment-button>
-        <ion-segment-button
-          value="criteriawise"
-          (click)="onTabChange('criteriawise',fab)"
-        >
-          {{'buttons.criteriaWise' | translate}}
+        <ion-segment-button value="criteriawise" (click)="onTabChange('criteriawise', fab)">
+          {{ 'buttons.criteriaWise' | translate }}
         </ion-segment-button>
       </ion-segment>
     </div>
 
     <div [ngSwitch]="selectedTab">
       <div *ngSwitchCase="'questionwise'">
-        <div
-          *ngIf="allQuestions?.length && !from"
-          class="_flex-box _justify-content-end"
-        >
-          <button
-            ion-button
-            icon-start
-            (click)="openFilter()"
-            margin
-            style="float: right;"
-          >
+        <div *ngIf="allQuestions?.length && !from" class="_flex-box _justify-content-end">
+          <button ion-button icon-start (click)="openFilter()" margin style="float: right">
             <ion-icon name="options"></ion-icon>
-            {{'buttons.filter'|translate}}
+            {{ 'buttons.filter' | translate }}
           </button>
         </div>
-        <div *ngFor="let element of reportObj?.response;let i = index">
+        <div *ngFor="let element of reportObj?.response; let i = index">
           <ion-card>
-            <pie-chart
-              [data]="element"
-              [questionNumber]="i+1"
-              *ngIf="element.chart.type == 'pie'"
-            ></pie-chart>
+            <pie-chart [data]="element" [questionNumber]="i + 1" *ngIf="element.chart.type == 'pie'"></pie-chart>
             <scatter-chart
               [data]="element"
-              [questionNumber]="i+1"
+              [questionNumber]="i + 1"
               *ngIf="element.chart.type == 'scatter'"
             ></scatter-chart>
             <bar-chart
               [data]="element"
-              [questionNumber]="i+1"
+              [questionNumber]="i + 1"
               *ngIf="element.chart.type === 'bar' || element.chart.type === 'column'"
             ></bar-chart>
 
             <ion-grid>
               <ion-row>
                 <ion-col col-4 *ngFor="let e of element.evidences">
-                  <attachments
-                    [url]="e.url"
-                    [extension]="e.extension"
-                  ></attachments>
+                  <attachments [url]="e.url" [extension]="e.extension"></attachments>
                 </ion-col>
-                <ion-col col-12 *ngIf="element.evidence_count>3">
-                  <small
-                    class="pull-right text-ios-danger"
-                    (click)="allEvidence(i)"
-                    >{{'labels.viewAllEvidences' | translate}}</small
-                  >
+                <ion-col col-12 *ngIf="element.evidence_count > 3">
+                  <small class="pull-right text-ios-danger" (click)="allEvidence(i)">{{
+                    'labels.viewAllEvidences' | translate
+                  }}</small>
                 </ion-col>
               </ion-row>
             </ion-grid>
@@ -137,51 +92,39 @@
         </div>
       </div>
       <div *ngSwitchCase="'criteriawise'">
-        <div
-          *ngIf="allCriterias?.length"
-          class="_flex-box _justify-content-end"
-        >
+        <div *ngIf="allCriterias?.length" class="_flex-box _justify-content-end">
           <button ion-button icon-start (click)="openCriteriaFilter()" margin>
             <ion-icon name="options"></ion-icon>
-            {{'buttons.filter'|translate}}
+            {{ 'buttons.filter' | translate }}
           </button>
         </div>
         <div *ngFor="let criteria of reportObjCriteria?.response">
           <ion-card-content>
-            <h3>{{criteria.criteriaName}}</h3>
+            <h3>{{ criteria.criteriaName }}</h3>
           </ion-card-content>
-          <div *ngFor="let element of criteria.questionArray;let i = index">
+          <div *ngFor="let element of criteria.questionArray; let i = index">
             <ion-card>
-              <pie-chart
-                [data]="element"
-                [questionNumber]="i+1"
-                *ngIf="element.chart.type == 'pie'"
-              ></pie-chart>
+              <pie-chart [data]="element" [questionNumber]="i + 1" *ngIf="element.chart.type == 'pie'"></pie-chart>
               <scatter-chart
                 [data]="element"
-                [questionNumber]="i+1"
+                [questionNumber]="i + 1"
                 *ngIf="element.chart.type == 'scatter'"
               ></scatter-chart>
               <bar-chart
                 [data]="element"
-                [questionNumber]="i+1"
+                [questionNumber]="i + 1"
                 *ngIf="element.chart.type === 'bar' || element.chart.type === 'column'"
               ></bar-chart>
 
               <ion-grid>
                 <ion-row>
                   <ion-col col-4 *ngFor="let e of element.evidences">
-                    <attachments
-                      [url]="e.url"
-                      [extension]="e.extension"
-                    ></attachments>
+                    <attachments [url]="e.url" [extension]="e.extension"></attachments>
                   </ion-col>
-                  <ion-col col-12 *ngIf="element.evidence_count>3">
-                    <small
-                      class="pull-right text-ios-danger"
-                      (click)="allEvidence(i)"
-                      >{{'labels.viewAllEvidences' | translate}}</small
-                    >
+                  <ion-col col-12 *ngIf="element.evidence_count > 3">
+                    <small class="pull-right text-ios-danger" (click)="allEvidence(i)">{{
+                      'labels.viewAllEvidences' | translate
+                    }}</small>
                   </ion-col>
                 </ion-row>
               </ion-grid>
@@ -193,11 +136,8 @@
 
     <!-- ...................................................................... -->
   </div>
-  <div
-    class="_flex-box _justify-content-center _errorBox"
-    *ngIf="!reportObj?.response"
-  >
-    {{error}}
+  <div class="_flex-box _justify-content-center _errorBox" *ngIf="!reportObj?.response">
+    {{ error }}
   </div>
 
   <ion-fab bottom right *ngIf="reportObj?.response" #fab>
@@ -213,4 +153,4 @@
       </button>
     </ion-fab-list>
   </ion-fab>
-</ion-content
+</ion-content>
