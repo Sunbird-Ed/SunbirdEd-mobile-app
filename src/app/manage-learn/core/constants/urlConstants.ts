@@ -67,9 +67,12 @@ export const urlConstants = {
     IS_SURVEY_SUBMISSION_ALLOWED: 'v1/surveySubmissions/isAllowed/',
     IS_OBSERVATION_SUBMISSION_ALLOWED: 'v1/observationSubmissions/isAllowed/',
     CHECK_IF_SUBMITTED: 'v1/submissions/isAllowed/',
-    SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/make',
+    SURVEY_FEEDBACK_MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
     OBSERVATION_MAKE_SUBMISSION: 'v1/observationSubmissions/make/',
     SUBMISSION: 'v1/submissions/make/',
+    GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
+    GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
+
 
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',
@@ -81,6 +84,27 @@ export const urlConstants = {
       SOLUTIOIN_LIST: '/observations/listObservationSolutions',
       ENTITY_SOLUTION_REPORT: '/observations/entitySolutionReport',
       ALL_EVIDENCE: '/observations/listAllEvidences',
+    },
+    OBSERVATION_REPORTS_WITH_SCORE: {
+      INSTANCE_REPORT: '/observations/instanceObservationScoreReport',
+      ENTITY_REPORT: '/observations/entityScoreReport',
+      OBSERVATION_REPORT: '/observations/scoreReport',
+      GET_REPORTS_PDF_URLS: '/observations/observationScorePdfReport',
+      OBSERVATION_LIST: '/observations/listObservationNames',
+      SOLUTION_REPORT: '/observations/entitySolutionScoreReport',
+    },
+    CRITERIA_REPORTS_WITH_SCORE: {
+      INSTANCE_REPORT: 'v1/observations/instanceScoreReportByCriteria',
+      ENTITY_REPORT: 'v1/observations/entityScoreReportByCriteria',
+      OBSERVATION_REPORT: 'v1/observations/observationScoreReportByCriteria',
+      GET_REPORTS_PDF_URLS: 'v1/observations/scorePdfReportsByCriteria?',
+    },
+
+    CRITERIA_REPORTS: {
+      INSTANCE_REPORT: 'v1/observations/instanceReportByCriteria',
+      ENTITY_REPORT: 'v1/observations/entityReportByCriteria',
+      OBSERVATION_REPORT: 'v1/observations/observationReportByCriteria',
+      GET_REPORTS_PDF_URLS: 'v1/observations/pdfReportsByCriteria?',
     },
     SURVEY_FEEDBACK: {
       SURVEY_LISTING: 'v1/surveySubmissions/list',

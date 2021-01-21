@@ -21,6 +21,8 @@ import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of } from 'rxjs';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
+import { PreferenceKey } from '../../app.constant';
 
 describe('CategoryEditPage', () => {
     let categoryEditPage: CategoriesEditPage;
@@ -80,12 +82,14 @@ describe('CategoryEditPage', () => {
     const mockProfileHandler: Partial<ProfileHandler> = {
         getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
 
     beforeAll(() => {
         categoryEditPage = new CategoriesEditPage(
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
+            mockSharedPreferences as SharedPreferences,
             mockCommonUtilService as CommonUtilService,
             mockFb as FormBuilder,
             mockTranslate as TranslateService,
@@ -126,9 +130,11 @@ describe('CategoryEditPage', () => {
             categoryEditPage['onSyllabusChange'] = jest.fn(() => of({} as any));
             categoryEditPage['onMediumChange'] = jest.fn(() => of({} as any));
             categoryEditPage['onGradeChange'] = jest.fn(() => of({} as any));
+            mockSharedPreferences.getString = jest.fn(() => of('userType'));
             // act
             categoryEditPage.ngOnInit().then(() => {
                 // assert
+                expect(mockSharedPreferences.getString).toHaveBeenCalledWith(PreferenceKey.SELECTED_USER_TYPE);
                 expect(categoryEditPage.supportedProfileAttributes).toEqual({
                     board: 'board',
                     medium: 'medium',

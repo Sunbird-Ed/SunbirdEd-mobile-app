@@ -3,11 +3,19 @@ import { v4 as uuidv4 } from 'uuid';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { statusType } from '@app/app/manage-learn/core/constants/statuses.constant';
+import { UtilityService } from '@app/services';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UtilsService {
   imagePath: string;
-  constructor() { }
+  public assessmentBaseUrl: string;
+  public projectsBaseUrl: string;
+  constructor(
+    private utility: UtilityService
+  ) {
+  }
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -346,6 +354,17 @@ export class UtilsService {
 
       })
     })
+  }
+
+  async initilizeML() {
+
+    this.assessmentBaseUrl = !this.assessmentBaseUrl ? await this.utility.getBuildConfigValue("SURVEY_BASE_URL") : this.assessmentBaseUrl;
+    this.projectsBaseUrl = !this.projectsBaseUrl ? await this.utility.getBuildConfigValue('PROJECTS_BASE_URL') : this.projectsBaseUrl;
+    debugger
+  }
+
+  getBaseUrl(key) {
+    return this[key]
   }
 
   getProjectData() {

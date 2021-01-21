@@ -22,7 +22,7 @@
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
-        <p class="MT0 MB30">
+        <p class="MT0 MB15">
             <span class="app-name"> {{appName}} </span>
             <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
@@ -30,6 +30,18 @@
                 <ion-icon md="md-share" class="share-icon"></ion-icon>
             </span>
         </p>
+        <div *ngIf="profile?.persona?.name" class="text-center">
+            <div>
+                <span class="bolder">{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
+                <span>{{profile?.persona?.name}}</span>
+            </div>
+        </div>
+        <div *ngIf="profile?.subPersona" class="text-center">
+            <div>
+                <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
+                <span>{{profile?.subPersona}}</span>
+            </div>
+        </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
@@ -58,44 +70,45 @@
                 <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
-        <div *ngIf="!isCustodianOrgId && orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
-        <div *ngIf="(organisationName !== profile.rootOrgName) && !isDefaultChannelProfile && orgDetails">
-            <div><span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
-                    {{orgDetails?.district?.name}}</span></div>
-            <div><span *ngIf="orgDetails?.state?.name">{{'STATE' | translate}}: {{orgDetails?.state?.name}}</span></div>
-        </div>
     </div>
-    <div class="school-recent" *ngIf="(organisationName == profile.rootOrgName) && !isDefaultChannelProfile">
-        <div *ngIf="orgDetails">
-            <div><span *ngIf="orgDetails && orgDetails?.district?.name" class="bolder">{{'DISTRICT' | translate}}:
-                </span>
-                <span>{{orgDetails?.district?.name}}</span></div>
-            <div><span *ngIf="orgDetails && orgDetails?.state?.name" class="bolder">{{'STATE' | translate}}: </span>
-                <span>{{orgDetails?.state?.name}}</span></div>
+   
+    <div *ngIf="userLocation" class="location text-center">
+        <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
+            <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
+            <span>{{userLocation.school.name}}</span>
+            <span *ngIf="!(userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length)"
+            class="lighter">{{'FRMELEMNTS_LBL_ADD_SCHOOL' | translate}}</span>
         </div>
-    </div>
-    <div class="location text-center" *ngIf="isCustodianOrgId">
-        <div>
+        <div *ngIf="userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length">
+            <span class="bolder">{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
+            <span>{{userLocation.cluster.name}}</span>
+            <span *ngIf="!(userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length)"
+            class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
+        </div>
+        <div *ngIf="userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length">
+            <span class="bolder">{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
+            <span>{{userLocation.block.name}}</span>
+            <span *ngIf="!(userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length)"
+            class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
+        </div>
+        <div *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">
             <span class="bolder">{{'DISTRICT' | translate}}: </span>
-            <span
-                *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">{{userLocation.district.name}}</span>
-            <span
-                *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
-                class="lighter">{{'ADD_DISTRICT' | translate}}</span>
+            <span>{{userLocation.district.name}}</span>
+            <span *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
+            class="lighter">{{'ADD_DISTRICT' | translate}}</span>
         </div>
-        <div>
+        <div *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">
             <span class="bolder">{{'STATE' | translate}}: </span>
-            <span
-                *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">{{userLocation.state.name}}</span>
+            <span>{{userLocation.state.name}}</span>
             <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <ion-button shape="round" (click)="onEditProfileClicked()" class="custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="onEditProfileClicked()" *ngIf="userLocation?.state" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
-            <div class="self-declare-btn" *ngIf="!profile?.declarations?.length">
+            <div class="self-declare-btn" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
                 <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
                     {{'SUBMIT_MY_DETAILS' | translate}}
                 </ion-button>
@@ -140,8 +153,8 @@
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
-                <span class="value align-middle"
-                    *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
+                <span class="value align-middle" *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail
+                    }}</span>
                 <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">
                     +91 {{ profile?.recoveryPhone }}
                 </span>

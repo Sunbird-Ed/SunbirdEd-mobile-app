@@ -187,7 +187,7 @@ export class ObservationDetailComponent implements OnInit {
         let payload = await this.utils.getProfileInfo();
 
         payload.data = [];
-        entityList.forEach((element) => {
+        entityList.data.forEach((element) => {
           //if coming from state list page
           if (type == 'state') {
             element.selected ? payload.data.push(element._id) : null;

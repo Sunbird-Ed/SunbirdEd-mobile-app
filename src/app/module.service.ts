@@ -77,26 +77,9 @@ const PROFILE_TAB = {
 
 // todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
 
-const ADMIN_HOME_TAB = {
-    root: 'admin-home',
-    icon: 'resources',
-    label: 'HOME_BNAV',
-    index: 1,
-    isSelected: true
-};
-
-export const ADMIN_LOGIN_TABS = [
-    ADMIN_HOME_TAB,
-    COURSE_TAB,
-    SCANNER_TAB,
-    DOWNLOADS_TAB,
-    PROFILE_TAB
-];
-
-
 export const GUEST_TEACHER_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
@@ -104,7 +87,7 @@ export const GUEST_TEACHER_TABS = [
 
 export const LOGIN_TEACHER_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB
@@ -112,13 +95,13 @@ export const LOGIN_TEACHER_TABS = [
 
 export const GUEST_STUDENT_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    COURSE_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
-// todo name 
+// todo name
 export const GUEST_HOME_DISCOVER_TABS = [
     HOME_TAB,
     DISCOVER_TAB,

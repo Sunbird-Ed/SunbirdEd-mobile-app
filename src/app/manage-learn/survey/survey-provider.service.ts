@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LocalStorageService, UtilsService } from '../core';
+import { rejects } from 'assert';
+import { LoaderService, LocalStorageService, UtilsService } from '../core';
+import { urlConstants } from '../core/constants/urlConstants';
+import { AssessmentApiService } from '../core/services/assessment-api.service';
 import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
 import { storageKeys } from '../storageKeys';
 
@@ -12,7 +15,9 @@ export class SurveyProviderService {
     private localStorage: LocalStorageService,
     private ulsdp: UpdateLocalSchoolDataService,
     private utils: UtilsService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private loader: LoaderService,
+    private assessmentService: AssessmentApiService
   ) {}
 
   // get all list
@@ -32,20 +37,37 @@ export class SurveyProviderService {
   // }
 
   // pass the link which is present in deeplink(deeplink last param)
-  // getDetailsByLink(link): Promise<any> {
-  //   const url = AppConfigs.surveyFeedback.getDetailsByLink + link;
-  //   return new Promise((resolve, reject) => {
-  //     this.apiProvider.httpGet(
-  //       url,
-  //       (success) => {
-  //         resolve(success);
-  //       },
-  //       (err) => {
-  //         reject(err);
-  //       }
-  //     );
-  //   });
-  // }
+  async getDetailsByLink(link): Promise<any> {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_LINK + link,
+      payload: payload,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          resolve(success);
+        },
+        (error) => {
+          rejects(error);
+        }
+      );
+    });
+    // TODO:Remove
+    // const url = AppConfigs.surveyFeedback.getDetailsByLink + link;
+    // return new Promise((resolve, reject) => {
+    //   this.apiProvider.httpGet(
+    //     url,
+    //     (success) => {
+    //       resolve(success);
+    //     },
+    //     (err) => {
+    //       reject(err);
+    //     }
+    //   );
+    // });
+  }
 
   getDetailsById(surveyId): Promise<any> {
     return this.httpClient.get('assets/dummy/surveydetails.json').toPromise();

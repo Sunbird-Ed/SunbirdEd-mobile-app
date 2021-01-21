@@ -7,7 +7,7 @@ import { CommonUtilService } from '../common-util.service';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
-import { FieldConfig, AsyncValidatorFactory } from 'common-form-elements';
+import { FieldConfig, AsyncValidatorFactory } from 'common-form-elements-v8';
 
 @Injectable({ providedIn: 'root' })
 export class FormValidationAsyncFactory {

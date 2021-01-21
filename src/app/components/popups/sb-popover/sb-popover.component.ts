@@ -28,6 +28,7 @@ export class SbPopoverComponent implements OnDestroy {
   pageName = '';
   showFlagMenu = true;
   img: any;
+  disableDeviceBackButton: boolean;
   showCloseBtn = true;
   public objRollup: Rollup;
 
@@ -64,6 +65,7 @@ export class SbPopoverComponent implements OnDestroy {
     this.objRollup = this.navParams.get('objRollup');
     this.corRelationList = this.navParams.get('corRelationList');
     this.img = this.navParams.get('img');
+    this.disableDeviceBackButton = this.navParams.get('disableDeviceBackButton');
 
     // Dynamic
     this.sbPopoverDynamicMainTitle$ = this.navParams.get('sbPopoverDynamicMainTitle');
@@ -113,6 +115,9 @@ export class SbPopoverComponent implements OnDestroy {
 
   ionViewWillEnter() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      if (this.disableDeviceBackButton) {
+        return;
+      }
       this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });

@@ -16,8 +16,8 @@ import { Network } from '@ionic-native/network/ngx';
   styleUrls: ['./questionnaire.page.scss'],
 })
 export class QuestionnairePage implements OnInit, OnDestroy {
-  @ViewChild('sample') nameInputRef: ElementRef;
-  @ViewChild('pageTop') pageTop: IonContent;
+  @ViewChild('sample',  {static: false}) nameInputRef: ElementRef;
+  @ViewChild('pageTop',  {static: false}) pageTop: IonContent;
   private _appHeaderSubscription?: Subscription;
 
   headerConfig = {

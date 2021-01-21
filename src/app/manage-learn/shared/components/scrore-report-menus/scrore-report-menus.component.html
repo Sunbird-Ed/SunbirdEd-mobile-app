@@ -1,3 +1,24 @@
-<p>
-  scrore-report-menus works!
-</p>
+<ion-list class="wrapper">
+  <ion-button
+    fill="clear"
+    ion-item
+    clear
+    small
+    padding-left
+    class="_flex-box _justify-content-center"
+    (click)="navigateToScoreReport()"
+  >
+    {{ 'actionSheet.reportWithScore' | translate }}
+  </ion-button>
+  <ion-button
+    fill="clear"
+    ion-item
+    clear
+    small
+    padding-left
+    class="_flex-box _justify-content-center"
+    (click)="navigateToWithoutScoreReport()"
+  >
+    {{ 'actionSheet.reportWithoutScore' | translate }}
+  </ion-button>
+</ion-list>

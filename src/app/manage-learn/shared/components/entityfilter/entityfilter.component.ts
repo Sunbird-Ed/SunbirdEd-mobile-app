@@ -13,8 +13,8 @@ import { IonInfiniteScroll, ModalController, NavParams } from '@ionic/angular';
   styleUrls: ['./entityfilter.component.scss'],
 })
 export class EntityfilterComponent implements OnInit {
-  @ViewChild('selectStateRef') selectStateRef;
-  @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
+  @ViewChild('selectStateRef', { static: true }) selectStateRef;
+  @ViewChild(IonInfiniteScroll, { static: true }) infiniteScroll: IonInfiniteScroll;
   entityList;
   observationId;
   searchUrl;
@@ -206,23 +206,23 @@ export class EntityfilterComponent implements OnInit {
       payload: payload,
     };
     this.loader.startLoader();
-    // this.assessmentService.post(config).subscribe(
-    //   (success) => {
-    //     this.loading = false;
-    //     this.selectableList = !event ? [] : this.selectableList;
-    //     for (let i = 0; i < success.result[0].data.length; i++) {
-    //       success.result[0].data[i].isSelected = success.result[0].data[i].selected;
-    //       success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
-    //     }
-    //     this.totalCount = success.result[0].count;
-    //     this.selectableList = [...this.selectableList, ...success.result[0].data];
-    //     !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
-    //   },
-    //   (error) => {
-    //     this.loading = false;
-    //     !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
-    //   }
-    // );
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.loading = false;
+        this.selectableList = !event ? [] : this.selectableList;
+        for (let i = 0; i < success.result[0].data.length; i++) {
+          success.result[0].data[i].isSelected = success.result[0].data[i].selected;
+          success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
+        }
+        this.totalCount = success.result[0].count;
+        this.selectableList = [...this.selectableList, ...success.result[0].data];
+        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
+      },
+      (error) => {
+        this.loading = false;
+        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
+      }
+    );
     //TODO:uncomment
     // this.apiProviders.httpGet(
     //   apiUrl,
@@ -243,20 +243,7 @@ export class EntityfilterComponent implements OnInit {
     //   },
     //   { version: 'v2' }
     // );
-    //TODO:remove
-    this.httpClient.get('assets/dummy/entity.json').subscribe((success: any) => {
-      this.loading = false;
-      this.selectableList = !event ? [] : this.selectableList;
-      for (let i = 0; i < success.result[0].data.length; i++) {
-        success.result[0].data[i].isSelected = success.result[0].data[i].selected;
-        success.result[0].data[i].preSelected = success.result[0].data[i].selected ? true : false;
-      }
-      this.totalCount = success.result[0].count;
-      this.selectableList = [...this.selectableList, ...success.result[0].data];
-      // !event ? this.utils.stopLoader() : event.complete();
-      !event ? this.loader.stopLoader() : event.complete();
-    });
-    //TODO:till here
+  
   }
 
   toggleInfiniteScroll() {

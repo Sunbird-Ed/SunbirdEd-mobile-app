@@ -218,7 +218,7 @@ export class ImageListingComponent implements OnInit {
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...files };
     const config = {
-      url: urlConstants.API_URLS.ENTITY_LIST_BASED_ON_ENTITY_TYPE + 'state',
+      url: urlConstants.API_URLS.GET_SURVEY_IMAGE_UPLOAD_URLS,
       payload: payload,
     };
 

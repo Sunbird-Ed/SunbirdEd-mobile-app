@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 import { FormConstants } from '@app/app/form.constants';
 import { ConsentService } from '@app/services/consent-service';
 import { ConsentStatus, Profile } from '@project-sunbird/client-services/models';
@@ -159,7 +159,7 @@ export class SelfDeclaredTeacherEditPage {
                 this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key], { '%appName': this.appName });
             }
             if (config.code === 'tnc' && key === '$url') {
-              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl;
+              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl || 'TNC_URL';
             }
             config.templateOptions.labelHtml.values[key] =
               this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
@@ -212,7 +212,7 @@ export class SelfDeclaredTeacherEditPage {
         return config;
       }
 
-      if (config.code === 'tnc') {
+      if (config.code === 'tnc' || config.code === 'consentInfo') {
         if (this.editType === 'edit') {
           return undefined;
         }

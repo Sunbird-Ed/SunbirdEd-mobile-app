@@ -5,14 +5,14 @@ import {
 import { NgZone } from '@angular/core';
 import {
     TelemetryGeneratorService, CommonUtilService, LocalCourseService,
-    InteractSubtype, InteractType, PageId, AppGlobalService
+    InteractSubtype, InteractType, PageId, AppGlobalService, Environment
 } from '../../../services';
 import { SharedPreferences } from 'sunbird-sdk';
-import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from './enrollment-details.component';
 import { of } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from '../../app.constant';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { NavigationService } from '../../../services/navigation-handler.service';
 describe('enrollmentdetailcomponent', () => {
 
     let enrollmentDetails: EnrollmentDetailsComponent;
@@ -42,8 +42,8 @@ describe('enrollmentdetailcomponent', () => {
         translateMessage: jest.fn(),
         showToast: jest.fn()
     };
-    const mockRouter: Partial<Router> = {
-        navigate: jest.fn()
+    const mockNavService: Partial<NavigationService> = {
+        navigateToDetailPage: jest.fn()
     };
     const mockLocalCourseService: Partial<LocalCourseService> = {
         prepareEnrollCourseRequest: jest.fn(),
@@ -66,7 +66,7 @@ describe('enrollmentdetailcomponent', () => {
             mockPopoverController as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockCommonUtilServiceas as CommonUtilService,
-            mockRouter as Router,
+            mockNavService as NavigationService,
             mockLocalCourseService as LocalCourseService,
             mockCategoryKeyTranslator as CategoryKeyTranslator
         );
@@ -133,7 +133,6 @@ describe('enrollmentdetailcomponent', () => {
             enrollmentDetails.resumeCourse(content);
             // assert
             expect(enrollmentDetails.saveContentContext).toBeCalled();
-            expect(mockEvents.publish).toBeCalledWith('course:resume', { content });
             expect(enrollmentDetails.close).toBeCalled();
             expect(mockSharedPreferences.putString).toBeCalledWith(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
         });
@@ -144,13 +143,17 @@ describe('enrollmentdetailcomponent', () => {
                 userId: 'userId',
                 courseId: 'courseId',
                 batchId: 'batchId',
+                content: {
+                    identifier: 'do_id'
+                }
             };
             spyOn(enrollmentDetails, 'saveContentContext').and.stub();
             // act
             enrollmentDetails.resumeCourse(content);
             // assert
             setTimeout(() => {
-                expect(mockRouter.navigate).toBeCalled();
+                expect(mockNavService.navigateToDetailPage).toBeCalledWith(
+                    content.content, { content, skipCheckRetiredOpenBatch: true });
                 done();
             }, 0);
         });
@@ -195,7 +198,7 @@ describe('enrollmentdetailcomponent', () => {
 
         it('should go to navigateToDetailPage and call navigate, content.contentId to "contentId"', (done) => {
             // arrange
-            const content = {
+            const batch = {
                 userId: 'userId',
                 courseId: 'courseId',
                 batchId: 'batchId',
@@ -207,33 +210,25 @@ describe('enrollmentdetailcomponent', () => {
                 present: jest.fn(),
                 dismiss: jest.fn()
             };
-            const telemetryObj = {
-                id: content.contentId,
-                type: 'Learning Resource',
-                version: ''
-            };
-            const values = new Map();
-            values['sectionName'] = undefined;
-            values['positionClicked'] = undefined;
+
             enrollmentDetails.layoutInProgress = 'layout';
             mockTelemetryGeneratorService.isCollection = jest.fn(() => false);
             jest.spyOn(mockCommonUtilServiceas, 'getLoader').mockReturnValue(loader);
             jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.resolve(true)));
             mockNgZone.run = jest.fn((callback) => callback());
             // act
-            enrollmentDetails.enrollIntoBatch(content);
+            enrollmentDetails.enrollIntoBatch(batch);
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalledWith(
                     InteractType.TOUCH,
-                    InteractSubtype.CONTENT_CLICKED,
+                    InteractSubtype.ENROLL_CLICKED, Environment.HOME, PageId.CONTENT_DETAIL,
                     undefined,
-                    undefined,
-                    telemetryObj,
-                    values
+                    undefined
                 );
-                expect(mockRouter.navigate).toBeCalledWith([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
-                expect(content.contentId).toEqual('contentId');
+                expect(mockNavService.navigateToDetailPage).toBeCalledWith(
+                    enrollmentDetails.content, { content: enrollmentDetails.content });
+                expect(enrollmentDetails.content.identifier).toEqual(undefined);
                 done();
             }, 0);
         });
@@ -257,7 +252,7 @@ describe('enrollmentdetailcomponent', () => {
             enrollmentDetails.enrollIntoBatch(content);
             // assert
             setTimeout(() => {
-                expect(content['contentId']).toEqual('courseId');
+                expect(content['identifier']).toEqual(undefined);
                 done();
             }, 0);
         });

@@ -36,7 +36,7 @@ export class ObservationReportsComponent implements OnInit {
   allCriterias: any = [];
   filteredCriterias: any = [];
   // @ViewChild(FabContainer) fab: FabContainer //TODO:check fab action
-  @ViewChild(IonFab) fab; //TODO check fab with this.
+  @ViewChild(IonFab, { static: false }) fab; //TODO check fab with this.
   from: any;
   constructor(
     private routerParam: ActivatedRoute,
@@ -46,7 +46,7 @@ export class ObservationReportsComponent implements OnInit {
     private modal: ModalController,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
-    private dhiti :DhitiApiService
+    private dhiti: DhitiApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -218,66 +218,78 @@ export class ObservationReportsComponent implements OnInit {
     !this.allCriterias.length ? this.getObservationCriteriaReports() : null;
   }
 
-  getObservationCriteriaReports() {
-    //TODO:remove
-    // this.loader.startLoader();
-    this.httpClient.get('assets/dummy/criteriaReport.json').subscribe((success: any) => {
-      this.allCriterias = success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
-      if (success) {
-        this.reportObjCriteria = success;
-      } else {
-        this.error = 'No data found';
-      }
-      // this.loader.stopLoader();
-      !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
-    });
-    //TODO:till here
+  async getObservationCriteriaReports() {
+    this.loader.startLoader();
+    let url;
+    if (this.entityType && this.reportType) {
+      this.payload = {
+        entityId: this.entityId,
+        entityType: this.entityType,
+        solutionId: this.solutionId,
+        immediateChildEntityType: this.immediateChildEntityType,
+        reportType: this.reportType,
+      };
+      // url = AppConfigs.criteriaReports.entitySolutionReport;
+    } else if (this.submissionId) {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.INSTANCE_REPORT;
+    } else if (!this.submissionId && !this.entityId) {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.OBSERVATION_REPORT;
+    } else {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.ENTITY_REPORT;
+    }
+    this.payload.filter = {
+      criteria: this.filteredCriterias,
+    };
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...this.payload };
 
-    // this.utils.startLoader();
-    // let url;
-    // if (this.entityType && this.reportType) {
-    //   this.payload = {
-    //     entityId: this.entityId,
-    //     entityType: this.entityType,
-    //     solutionId: this.solutionId,
-    //     immediateChildEntityType: this.immediateChildEntityType,
-    //     reportType: this.reportType,
-    //   };
-    //   // url = AppConfigs.criteriaReports.entitySolutionReport;
-    // } else if (this.submissionId) {
-    //   url = AppConfigs.criteriaReports.instanceReport;
-    // } else if (!this.submissionId && !this.entityId) {
-    //   url = AppConfigs.criteriaReports.observationReport;
-    // } else {
-    //   url = AppConfigs.criteriaReports.entityReport;
-    // }
-    // this.payload.filter = {
-    //   criteria: this.filteredCriterias,
-    // };
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    this.dhiti.post(config).subscribe(
+      (success) => {
+       //this will be initialized only on page load
+        this.allCriterias =
+          success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
+        if (success) {
+          this.reportObjCriteria = success;
+        } else {
+          this.error = 'No data found';
+        }
+        this.loader.stopLoader();
+        !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
+      },
+      (error) => {
+        this.error = 'No data found';
+        this.loader.stopLoader();
+      }
+    );
+
+
     // this.apiService.httpPost(
     //   url,
     //   this.payload,
     //   (success) => {
     //     //this will be initialized only on page load
     //     this.allCriterias =
-    //       success.allCriterias && !this.allCriterias.length
-    //         ? success.allCriterias
-    //         : this.allCriterias;
+    //       success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
     //     if (success) {
     //       this.reportObjCriteria = success;
     //     } else {
-    //       this.error = "No data found";
+    //       this.error = 'No data found';
     //     }
     //     this.utils.stopLoader();
     //     !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
     //   },
     //   (error) => {
-    //     this.error = "No data found";
+    //     this.error = 'No data found';
     //     this.utils.stopLoader();
     //   },
     //   {
-    //     baseUrl: "dhiti",
-    //     version: "v1",
+    //     baseUrl: 'dhiti',
+    //     version: 'v1',
     //   }
     // );
   }
@@ -292,11 +304,11 @@ export class ObservationReportsComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredQuestions)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredQuestions)
       ) {
-        this.filteredQuestions = response.filter;
+        this.filteredQuestions = response.data.filter;
         this.getObservationReports();
       }
     });
@@ -313,11 +325,11 @@ export class ObservationReportsComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredCriterias)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredCriterias)
       ) {
-        this.filteredCriterias = response.filter;
+        this.filteredCriterias = response.data.filter;
         this.getObservationCriteriaReports();
       }
     });

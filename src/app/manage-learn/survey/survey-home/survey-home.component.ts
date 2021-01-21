@@ -118,25 +118,25 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   deepLinkRedirect(): void {
-    //   let survey;
-    //   this.surveyProvider
-    //     .getDetailsByLink(this.link)
-    //     .then((data) => {
-    //       if (data.result == false) {
-    //         this.surveyProvider.showMsg("surveyExpired", true);
-    //         return;
-    //       }
-    //       if (data.result.status && data.result.status == "completed") {
-    //         this.surveyProvider.showMsg("surveyCompleted", true);
-    //         return;
-    //       }
-    //       survey = data.result;
-    //       this.storeRedirect(survey);
-    //     })
-    //     .catch((err) => {
-    //       this.utils.stopLoader();
-    //       console.log(err);
-    //     });
+      let survey;
+      this.surveyProvider
+        .getDetailsByLink(this.link)
+        .then((data) => {
+          if (data.result == false) {
+            // this.surveyProvider.showMsg("surveyExpired", true);//TODO
+            return;
+          }
+          if (data.result.status && data.result.status == "completed") {
+            // this.surveyProvider.showMsg("surveyCompleted", true);//TODO
+            return;
+          }
+          survey = data.result;
+          this.storeRedirect(survey);
+        })
+        .catch((err) => {
+          this.loader.stopLoader();
+          console.log(err);
+        });
   }
 
   onSurveyClick(survey) {
