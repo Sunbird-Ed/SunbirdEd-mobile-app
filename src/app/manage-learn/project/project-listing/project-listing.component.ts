@@ -50,6 +50,7 @@ export class ProjectListingComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.projects = [];
     this.getProjectList();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -79,7 +80,7 @@ export class ProjectListingComponent implements OnInit {
       this.count = success.result.count;
       this.description = success.result.description;
     }, error => {
-      this.projects =[];
+      this.projects = [];
       this.loader.stopLoader();
     })
   }

@@ -23,7 +23,7 @@ export class LearningResourcesPage implements OnInit {
   projectId;
   taskId: any;
   list;
-  
+
   private _headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -58,20 +58,19 @@ export class LearningResourcesPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
   getProjectFromLocal(projectId) {
     this.loader.startLoader();
     this.db.createPouchDB(environment.db.projects);
     this.db.query({ _id: projectId }).then(
       (success) => {
-        // this.db.getById(id).then(success => {
+        // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
-        this.list = this.utils.getProjectData();
+        this.list = success;
         if (this.taskId) {
           // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
-        console.log(this.list, "learningResources");
       },
       (error) => {
         this.loader.stopLoader();

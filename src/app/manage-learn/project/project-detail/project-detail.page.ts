@@ -150,7 +150,10 @@ export class ProjectDetailPage implements OnInit {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    let id = this.projectId ? +'/' + this.projectId : '';
+    console.log('/' + this.projectId, "'/'+this.projectId :");
+    let id = this.projectId ? '/' + this.projectId : '';
+    console.log(id, "id 154", this.projectId);
+    console.log(urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId, "urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId");
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
       payload: payload
