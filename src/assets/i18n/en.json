@@ -473,6 +473,7 @@
   "FRMELEMENTS_LBL_DATE": "Date",
   "FRMELEMENTS_LBL_CAPTURE": "Capture",
   "FRMELEMENTS_LBL_TODAY": "Today",
+  "FRMELEMNTS_LBL_ENTITIES":"Entities",
   "FRMELEMENTS_LBL_DEACTIVATEGRPQUES": "Deactivate group?",
   "FRMELEMENTS_MSG_ACTIVATEGRPFAILED": "Could not activate group, try again later",
   "FRMELEMENTS_MSG_ACTIVATEGRPMSG": "Activating the group enables you to add members and activities. You can also track member progress",

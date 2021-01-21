@@ -4,3 +4,4 @@ export * from './loader/loader.service';
 export * from './toast/toast.service';
 export * from './db.service';
 export * from './attachment/attachment.service';
+export * from './network.service';
