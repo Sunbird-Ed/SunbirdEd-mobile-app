@@ -6,13 +6,14 @@
     <ion-icon name="arrow-back" slot="icon-only" style="padding-left: 10px;"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
-<ion-content *ngIf="dataList">
+<ion-content *ngIf="resources">
   <!-- <ion-item class="search-bar-custom">
     <ion-icon name="search" item-left color="dark"></ion-icon>
     <ion-input type="text" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}" (ionInput)="search($event)">
     </ion-input>
   </ion-item> -->
-  <ion-searchbar debounce="1000" (ionInput)="search($event)" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}"></ion-searchbar>
+  <ion-searchbar debounce="1000" (ionInput)="search($event)" placeholder="{{'FRMELEMNTS_LBL_SEARCH' | translate }}">
+  </ion-searchbar>
   <div class="ion-padding">
     <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTERS' | translate}} <ion-icon
       name="chevron-forward" color="primary"></ion-icon>
@@ -24,7 +25,7 @@
         </span> {{filter.name}}
       </ion-button>
     </div>
-    <ion-row *ngFor="let data of dataList" class="data-list">
+    <ion-row *ngFor="let data of resources" class="data-list">
       <ion-col size="2">
         <ion-item lines="none">
           <ion-checkbox slot="start" ([ngModel])="data.isChecked" [checked]="data.isChecked"
@@ -37,13 +38,13 @@
         </ion-item>
       </ion-col>
     </ion-row>
-    <div class="loadmore-btn" *ngIf="dataList.length && dataCount > dataList.length">
+    <div class="loadmore-btn" *ngIf="resources.length && dataCount > resources.length">
       <ion-button (click)="loadMoreData()">
         {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
     </div>
   </div>
 </ion-content>
-<ion-footer *ngIf="dataList">
+<ion-footer *ngIf="resources">
   <ion-button expand="block" (click)="addResources()" color="primary">
     {{'FRMELEMNTS_BTN_ATTACH' | translate}}
   </ion-button>

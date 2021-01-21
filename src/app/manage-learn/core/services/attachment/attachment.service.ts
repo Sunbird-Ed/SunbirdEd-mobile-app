@@ -44,6 +44,7 @@ export class AttachmentService {
   async selectImage() {
     const actionSheet = await this.actionSheetController.create({
       header: this.texts["FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE"],
+      cssClass: 'sb-popover',
       buttons: [
         {
           text: this.texts["FRMELEMNTS_MSG_LOAD_FROM_LIBRARY"],

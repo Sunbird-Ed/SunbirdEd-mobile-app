@@ -29,7 +29,7 @@ export class ApiService {
             'x-authenticated-user-token': session ? session.access_token : "",
           })
         };
-        return this.http.get(this.baseUrl + requestParam.url).pipe(
+        return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
           tap(data => {
             return observableOf(data)
           }, error => {
