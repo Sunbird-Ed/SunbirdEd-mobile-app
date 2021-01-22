@@ -43,8 +43,8 @@
       </div>
     </div>
   </div>
-  <div class="send-email">
-    <button class="report-button" (click)="navigateToReportIssue()">
+  <div class="send-email" (click)="navigateToReportIssue()">
+    <button class="report-button">
       <img src="../../assets/faq/resources/images/Report.png" alt="navigate to report issue.">
       <span class="report-text">{{ data?.constants?.reportIssueMsg }}</span>
     </button>
