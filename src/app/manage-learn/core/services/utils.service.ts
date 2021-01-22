@@ -355,20 +355,22 @@ export class UtilsService {
     // console.log(profile)
     return new Promise(async (resolve, reject) => {
       const profile = await this.getProfileData()
-      // debugger
-      // this.getOrgDetails();
-      resolve({
-        // "state" :  "5f33c3d85f637784791cd831",
-        // "district" : "5f33c56fb451f58478b36997",
-        // "block" : "5f33c63ece438a849b4a17f4",
-        // "school" : "5f33c6dcc1352f84a29f547a",
-        // "role" : "DEO"
-        "role": "DEO",
-        "state": "a10623c3-cc97-4971-a7fe-2f6d4e6883f7",
-        "district": "5a27983c-5cfd-4fbb-89d5-8f45742a77d1",
-        "school": "1"
+      resolve(profile)
+      // resolve({
+      //   "state" :  "5f33c3d85f637784791cd831",
+      //   "district" : "5f33c56fb451f58478b36997",
+      //   "block" : "5f33c63ece438a849b4a17f4",
+      //   "school" : "5f33c6dcc1352f84a29f547a",
+      //   "role" : "DEO"
 
-      })
+      // })
+      // resolve({
+      //   "role": "DEO",
+      //   "state": "a10623c3-cc97-4971-a7fe-2f6d4e6883f7",
+      //   "district": "5a27983c-5cfd-4fbb-89d5-8f45742a77d1",
+      //   "school": "1"
+
+      // })
     })
 
   }
