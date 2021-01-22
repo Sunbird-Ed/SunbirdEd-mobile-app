@@ -144,7 +144,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
-    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number, isUserLoggedIn?: boolean }[] = [
+    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number }[] = [
       {
         name: 'Dialcode parser',
         code: 'dialcode',
@@ -210,14 +210,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         code: 'profile',
         values: '\\/(profile)$',
         route: 'tabs/profile',
-        isUserLoggedIn: true
-      },
-      {
-        name: 'Profile',
-        code: 'profile',
-        values: '\\/(profile)$',
-        route: 'tabs/guest-profile',
-        isUserLoggedIn: false
       },
       {
         name: 'FAQ',
@@ -232,14 +224,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     deepLinkUrlConfig.forEach(config => {
       const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
-      if (!!urlRegexMatch) {
-        if ((!config.hasOwnProperty('isUserLoggedIn')) || config.isUserLoggedIn === this.appGlobalServices.isUserLoggedIn()) {
-          if (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config)) {
-            matchedDeeplinkConfig = config;
-            urlMatch = urlRegexMatch;
+      if (!!urlRegexMatch && (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config))) {
+          if (config.code === 'profile' && !this.appGlobalServices.isUserLoggedIn()) {
+            config.route = 'tabs/guest-profile';
           }
+          matchedDeeplinkConfig = config;
+          urlMatch = urlRegexMatch;
         }
-      }
     });
 
     if (!matchedDeeplinkConfig) {
@@ -282,6 +273,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
+  // Lesser the value higher the priority
   private validateDeeplinkPriority(matchedDeeplinkConfig, config){
     return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
     (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
