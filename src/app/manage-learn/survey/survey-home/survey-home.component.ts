@@ -1,12 +1,14 @@
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { LocalStorageService } from '../../core';
+import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../survey-provider.service';
 
@@ -33,14 +35,24 @@ export class SurveyHomeComponent implements OnInit {
     private router: Router,
     // private observationService: ObservationService,
     private localStorage: LocalStorageService,
-    private surveyProvider: SurveyProviderService
-  ) {}
+    private surveyProvider: SurveyProviderService,
+    private loader: LoaderService,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService,
+    private routerParam: ActivatedRoute
+  ) {
+    // this.routerParam.queryParams.subscribe((params) => {
+    //  this.link=params.surveyId
+    // });
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.link = extrasState.data.survey_id;
+    }
+  }
 
   ngOnInit() {}
 
-  ionViewDidLoad(): void {
-    // this.link = this.navParams.get("surveyId");
-  }
+  ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
@@ -58,22 +70,37 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
-  getSurveyListing(): void {
-    this.httpClient.get('assets/dummy/surveylisting.json').subscribe((data: any) => {
-      console.log(data);
-      this.surveyList = data.result;
-      this.getSubmissionArr();
-    });
-    //   this.utils.startLoader();
+  async getSurveyListing() {
+    this.loader.startLoader();
+
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=1&limit=10&search=`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        if (success.result && success.result.data) {
+          this.surveyList = success.result.data;
+          this.getSubmissionArr();
+          this.loader.stopLoader();
+        }
+      },
+      (error) => {
+        this.loader.stopLoader();
+        console.log(error);
+      }
+    );
+
     //   this.surveyProvider.getSurveyListing().then(
     //     (list) => {
     //       this.surveyList = list;
     //       console.log(list);
     //       this.getSubmissionArr();
-    //       this.utils.stopLoader();
+    //       this.loader.stopLoader();
     //     },
     //     (err) => {
-    //       this.utils.stopLoader();
+    //       this.loader.stopLoader();
     //       console.log(err);
     //     }
     //   );
@@ -98,25 +125,25 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   deepLinkRedirect(): void {
-    //   let survey;
-    //   this.surveyProvider
-    //     .getDetailsByLink(this.link)
-    //     .then((data) => {
-    //       if (data.result == false) {
-    //         this.surveyProvider.showMsg("surveyExpired", true);
-    //         return;
-    //       }
-    //       if (data.result.status && data.result.status == "completed") {
-    //         this.surveyProvider.showMsg("surveyCompleted", true);
-    //         return;
-    //       }
-    //       survey = data.result;
-    //       this.storeRedirect(survey);
-    //     })
-    //     .catch((err) => {
-    //       this.utils.stopLoader();
-    //       console.log(err);
-    //     });
+    let survey;
+    this.surveyProvider
+      .getDetailsByLink(this.link)
+      .then((data) => {
+        if (data.result == false) {
+          // this.surveyProvider.showMsg("surveyExpired", true);//TODO
+          return;
+        }
+        if (data.result.status && data.result.status == 'completed') {
+          // this.surveyProvider.showMsg("surveyCompleted", true);//TODO
+          return;
+        }
+        survey = data.result;
+        this.storeRedirect(survey);
+      })
+      .catch((err) => {
+        this.loader.stopLoader();
+        console.log(err);
+      });
   }
 
   onSurveyClick(survey) {
@@ -124,7 +151,8 @@ export class SurveyHomeComponent implements OnInit {
       // this.surveyProvider.showMsg("surveyCompleted");//TODO
       return;
     }
-    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey.surveyId);
+    // surveyId changed to _id
+    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey._id,survey.solutionId);
   }
 
   redirect(submissionId: any): void {
@@ -149,26 +177,13 @@ export class SurveyHomeComponent implements OnInit {
       .then((survey) => this.redirect(survey.assessment.submissionId));
   }
 
-  getDetailsById(surveyId) {
-    // const url = AppConfigs.surveyFeedback.getDetailsById + surveyId;
-    // return new Promise((resolve, reject) => {
-    //   this.apiProvider.httpGet(
-    //     url,
-    //     (success) => {
-    //       resolve(success);
-    //     },
-    //     (err) => {
-    //       reject(err);
-    //     }
-    //   );
-    // });
-  }
-  getSurveyById(surveyId) {
+  getSurveyById(surveyId, solutionId) {
+    //passing solution id in v2
     if (!surveyId) {
       return;
     }
     this.surveyProvider
-      .getDetailsById(surveyId)
+      .getDetailsById(surveyId,solutionId)
       .then((res) => {
         const survey = res.result;
         this.storeRedirect(survey);

@@ -1,0 +1,76 @@
+{
+    "result": true,
+    "totalScore": "9",
+    "scoreAchieved": "5",
+    "observationName": "Observation Scoring Feature Automation Test May 2020",
+    "response": [{
+        "order": "TESTSCOQUES001_1597649279420-1611166979046",
+        "question": "is electrical wiring / boards closed and insulated?",
+        "chart": {
+            "type": "pie",
+            "credits": {
+                "enabled": false
+            },
+            "plotOptions": {
+                "pie": {
+                    "allowPointSelect": true,
+                    "cursor": "pointer",
+                    "dataLabels": {
+                        "enabled": false
+                    },
+                    "showInLegend": true,
+                    "borderColor": "#000000"
+                }
+            },
+            "data": [{
+                "data": [{
+                    "name": "2 out of 4",
+                    "y": 50,
+                    "color": "#6c4fa1"
+                }, {
+                    "name": "",
+                    "y": 50,
+                    "color": "#fff"
+                }]
+            }]
+        }
+    }, {
+        "order": "TESTSCOQUES003_1597649279420-1611166979039",
+        "question": "Grade?",
+        "chart": {
+            "type": "pie",
+            "credits": {
+                "enabled": false
+            },
+            "plotOptions": {
+                "pie": {
+                    "allowPointSelect": true,
+                    "cursor": "pointer",
+                    "dataLabels": {
+                        "enabled": false
+                    },
+                    "showInLegend": true,
+                    "borderColor": "#000000"
+                }
+            },
+            "data": [{
+                "data": [{
+                    "name": "3 out of 5",
+                    "y": 60,
+                    "color": "#6c4fa1"
+                }, {
+                    "name": "",
+                    "y": 40,
+                    "color": "#fff"
+                }]
+            }]
+        }
+    }],
+    "allQuestions": [{
+        "questionName": "is electrical wiring / boards closed and insulated?",
+        "questionExternalId": "TESTSCOQUES001_1597649279420-1611166979046"
+    }, {
+        "questionName": "Grade?",
+        "questionExternalId": "TESTSCOQUES003_1597649279420-1611166979039"
+    }]
+}

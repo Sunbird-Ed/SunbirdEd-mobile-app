@@ -8,7 +8,6 @@
       <ion-label>{{ question?.questionName }}</ion-label>
       <ion-checkbox
         [checked]="filteredQuestions?.includes(question?.questionExternalId)"
-        (click)="onQuestionClick(question?.questionExternalId)"
       ></ion-checkbox>
     </ion-item>
   </ion-list>

@@ -44,9 +44,9 @@
         >
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
         </ion-button>
-        <!-- //TODO:Add report and more icon -->
       </app-item-list-card>
     </div>
+    <app-no-data *ngIf="!submissions?.length"></app-no-data>
   </ion-content>
 
   <ion-footer no-shadow>

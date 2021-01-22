@@ -20,7 +20,7 @@ export class ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
   ) { }
 
-  get(requestParam: RequestParams): Observable<any> {
+ get(requestParam: RequestParams): Observable<any> {
     return this.authService.getSession().pipe(
       mergeMap((session) => {
         const httpOptions = {

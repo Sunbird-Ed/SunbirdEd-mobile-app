@@ -1,10 +1,20 @@
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLinks } from '@app/app/app.constant';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { IonFab, ModalController, Platform } from '@ionic/angular';
-import { LoaderService } from '../../core';
+import { LoaderService, ToastService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { DhitiApiService } from '../../core/services/dhiti-api.service';
+import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
+import { File } from "@ionic-native/file/ngx";
+
 
 @Component({
   selector: 'app-observation-reports',
@@ -33,14 +43,24 @@ export class ObservationReportsComponent implements OnInit {
   allCriterias: any = [];
   filteredCriterias: any = [];
   // @ViewChild(FabContainer) fab: FabContainer //TODO:check fab action
-  @ViewChild(IonFab,  {static: false}) fab; //TODO check fab with this.
+  @ViewChild(IonFab, { static: false }) fab; //TODO check fab with this.
   from: any;
   constructor(
     private routerParam: ActivatedRoute,
     private platform: Platform,
     private loader: LoaderService,
     private httpClient: HttpClient,
-    private modal: ModalController
+    private modal: ModalController,
+    private utils: UtilsService,
+    private assessmentService: AssessmentApiService,
+    private dhiti: DhitiApiService,
+    private router: Router,
+    private androidPermissions: AndroidPermissions,
+    private datepipe: DatePipe,
+    private toast: ToastService,
+    private fileTransfer: FileTransfer,
+    private dap: DownloadAndPreviewService,
+    private file: File
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -94,45 +114,76 @@ export class ObservationReportsComponent implements OnInit {
     // this.getObservationReports();
   }
 
-  getObservationReports(download = false) {
+  async getObservationReports(download = false) {
     //TODO:remove
     // this.loader.startLoader();
-    this.httpClient.get('assets/dummy/observationInstanceReport.json').subscribe((success: any) => {
-      this.allQuestions = success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
-      if (success) {
-        this.reportObj = success;
-      } else {
-        this.error = 'No data found';
-      }
-      // this.loader.stopLoader();
-      !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
-    });
+    // this.httpClient.get('assets/dummy/observationInstanceReport.json').subscribe((success: any) => {
+    //   this.allQuestions = success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
+    //   if (success) {
+    //     this.reportObj = success;
+    //   } else {
+    //     this.error = 'No data found';
+    //   }
+    //   // this.loader.stopLoader();
+    //   !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
+    // });
     //TODO:till here
 
-    // this.utils.startLoader();
-    //  this.loader.startLoader()
-    // let url;
-    // if (this.entityType && this.reportType) {
-    //   this.payload = {
-    //     entityId: this.entityId,
-    //     entityType: this.entityType,
-    //     solutionId: this.solutionId,
-    //     immediateChildEntityType: this.immediateChildEntityType,
-    //     reportType: this.reportType,
-    //   };
-    //   url = AppConfigs.observationReports.entitySolutionReport;
-    // } else if (this.submissionId) {
-    //   url = AppConfigs.observationReports.instanceReport;
-    // } else if (!this.submissionId && !this.entityId) {
-    //   url = AppConfigs.observationReports.observationReport;
-    // } else {
-    //   url = AppConfigs.observationReports.entityReport;
-    // }
+    let url;
+    if (this.entityType && this.reportType) {
+      this.payload = {
+        entityId: this.entityId,
+        entityType: this.entityType,
+        solutionId: this.solutionId,
+        immediateChildEntityType: this.immediateChildEntityType,
+        reportType: this.reportType,
+      };
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_SOLUTION_REPORT;
+    } else if (this.submissionId) {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.INSTANCE_REPORT;
+    } else if (!this.submissionId && !this.entityId) {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.OBSERVATION_REPORT;
+    } else {
+      url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_REPORT;
+    }
+    if (this.entityType && this.reportType) {
+      url = 'v2' + url;
+    } else {
+      url = 'v1' + url;
+    }
 
-    // this.payload.filter = {
-    //   questionId: this.filteredQuestions,
-    // };
+    this.payload.filter = {
+      questionId: this.filteredQuestions,
+    };
     // console.log(JSON.stringify(this.payload));
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...this.payload };
+
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.loader.startLoader();
+
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        //this will be initialized only on page load
+        this.allQuestions =
+          success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
+        if (success) {
+          this.reportObj = success;
+        } else {
+          this.error = 'No data found';
+        }
+        this.loader.stopLoader();
+        !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
+      },
+      (error) => {
+        this.error = 'No data found';
+        this.loader.stopLoader();
+      }
+    );
+
     // this.apiService.httpPost(
     //   url,
     //   this.payload,
@@ -180,66 +231,77 @@ export class ObservationReportsComponent implements OnInit {
     !this.allCriterias.length ? this.getObservationCriteriaReports() : null;
   }
 
-  getObservationCriteriaReports() {
-    //TODO:remove
-    // this.loader.startLoader();
-    this.httpClient.get('assets/dummy/criteriaReport.json').subscribe((success: any) => {
-      this.allCriterias = success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
-      if (success) {
-        this.reportObjCriteria = success;
-      } else {
-        this.error = 'No data found';
-      }
-      // this.loader.stopLoader();
-      !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
-    });
-    //TODO:till here
+  async getObservationCriteriaReports() {
+    this.loader.startLoader();
+    let url;
+    if (this.entityType && this.reportType) {
+      this.payload = {
+        entityId: this.entityId,
+        entityType: this.entityType,
+        solutionId: this.solutionId,
+        immediateChildEntityType: this.immediateChildEntityType,
+        reportType: this.reportType,
+      };
+      // url = AppConfigs.criteriaReports.entitySolutionReport;
+    } else if (this.submissionId) {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.INSTANCE_REPORT;
+    } else if (!this.submissionId && !this.entityId) {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.OBSERVATION_REPORT;
+    } else {
+      url = urlConstants.API_URLS.CRITERIA_REPORTS.ENTITY_REPORT;
+    }
+    this.payload.filter = {
+      criteria: this.filteredCriterias,
+    };
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...this.payload };
 
-    // this.utils.startLoader();
-    // let url;
-    // if (this.entityType && this.reportType) {
-    //   this.payload = {
-    //     entityId: this.entityId,
-    //     entityType: this.entityType,
-    //     solutionId: this.solutionId,
-    //     immediateChildEntityType: this.immediateChildEntityType,
-    //     reportType: this.reportType,
-    //   };
-    //   // url = AppConfigs.criteriaReports.entitySolutionReport;
-    // } else if (this.submissionId) {
-    //   url = AppConfigs.criteriaReports.instanceReport;
-    // } else if (!this.submissionId && !this.entityId) {
-    //   url = AppConfigs.criteriaReports.observationReport;
-    // } else {
-    //   url = AppConfigs.criteriaReports.entityReport;
-    // }
-    // this.payload.filter = {
-    //   criteria: this.filteredCriterias,
-    // };
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        //this will be initialized only on page load
+        this.allCriterias =
+          success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
+        if (success) {
+          this.reportObjCriteria = success;
+        } else {
+          this.error = 'No data found';
+        }
+        this.loader.stopLoader();
+        !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
+      },
+      (error) => {
+        this.error = 'No data found';
+        this.loader.stopLoader();
+      }
+    );
+
     // this.apiService.httpPost(
     //   url,
     //   this.payload,
     //   (success) => {
     //     //this will be initialized only on page load
     //     this.allCriterias =
-    //       success.allCriterias && !this.allCriterias.length
-    //         ? success.allCriterias
-    //         : this.allCriterias;
+    //       success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
     //     if (success) {
     //       this.reportObjCriteria = success;
     //     } else {
-    //       this.error = "No data found";
+    //       this.error = 'No data found';
     //     }
     //     this.utils.stopLoader();
     //     !this.filteredCriterias.length ? this.markAllCriteriaSelected() : null;
     //   },
     //   (error) => {
-    //     this.error = "No data found";
+    //     this.error = 'No data found';
     //     this.utils.stopLoader();
     //   },
     //   {
-    //     baseUrl: "dhiti",
-    //     version: "v1",
+    //     baseUrl: 'dhiti',
+    //     version: 'v1',
     //   }
     // );
   }
@@ -254,11 +316,11 @@ export class ObservationReportsComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredQuestions)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredQuestions)
       ) {
-        this.filteredQuestions = response.filter;
+        this.filteredQuestions = response.data.filter;
         this.getObservationReports();
       }
     });
@@ -275,13 +337,154 @@ export class ObservationReportsComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredCriterias)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredCriterias)
       ) {
-        this.filteredCriterias = response.filter;
+        this.filteredCriterias = response.data.filter;
         this.getObservationCriteriaReports();
       }
     });
+  }
+  allEvidence(index) {
+    console.log(this.allQuestions[index]);
+
+    this.router.navigate([RouterLinks.ALL_EVIDENCE], {
+      queryParams: {
+        submissionId: this.submissionId,
+        observationId: this.observationId,
+        entityId: this.entityId,
+        questionExternalId: this.allQuestions[index]['questionExternalId'],
+        entityType: this.entityType,
+      },
+    });
+    // this.navCtrl.push(EvidenceAllListComponent, {
+    //   submissionId: this.submissionId,
+    //   observationId: this.observationId,
+    //   entityId: this.entityId,
+    //   questionExternalId: this.allQuestions[index]['questionExternalId'],
+    //   entityType: this.entityType,
+    // });
+  }
+
+  downloadSharePdf(action) {
+    this.action = action;
+    this.androidPermissions
+      .checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
+      .then((status) => {
+        if (status.hasPermission) {
+          this.getObservationReportUrl();
+        } else {
+          this.androidPermissions
+            .requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
+            .then((success) => {
+              if (success.hasPermission) {
+                this.getObservationReportUrl();
+              }
+            })
+            .catch((error) => {});
+        }
+      });
+  }
+
+  async getObservationReportUrl() {
+    this.loader.startLoader();
+    let url =
+      this.selectedTab == 'questionwise'
+        ? urlConstants.API_URLS.OBSERVATION_REPORTS.GET_REPORTS_PDF_URLS
+        : urlConstants.API_URLS.CRITERIA_REPORTS.GET_REPORTS_PDF_URLS;
+    const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
+
+    if (this.submissionId) {
+      this.fileName = this.submissionId + timeStamp + '.pdf';
+    } else if (!this.submissionId && !this.entityId) {
+      this.fileName = this.observationId + timeStamp + '.pdf';
+    } else {
+      this.fileName = this.entityId + '_' + this.observationId + timeStamp + '.pdf';
+    }
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        console.log(JSON.stringify(success));
+        if (success.status === 'success' && success.pdfUrl) {
+          this.downloadSubmissionDoc(success.pdfUrl);
+        } else {
+          this.toast.openToast(success.message);
+        }
+      },
+      (error) => {
+        this.toast.openToast(error.message);
+
+        this.loader.stopLoader();
+      }
+    );
+
+    // this.apiService.httpPost(
+    //   url,
+    //   this.payload,
+    //   (success) => {
+    //     this.utils.stopLoader();
+    //     console.log(JSON.stringify(success));
+    //     if (success.status === "success" && success.pdfUrl) {
+    //       this.downloadSubmissionDoc(success.pdfUrl);
+    //     } else {
+    //       this.utils.openToast(success.message);
+    //     }
+    //   },
+    //   (error) => {
+    //     this.utils.openToast(error.message);
+
+    //     this.utils.stopLoader();
+    //   },
+    //   {
+    //     baseUrl: "dhiti",
+    //     version: this.selectedTab == "questionwise" ? "v2" : "v1",
+    //   }
+    // );
+  }
+
+  downloadSubmissionDoc(fileRemoteUrl) {
+    this.loader.startLoader();
+    if (this.isIos) {
+      this.checkForDowloadDirectory(fileRemoteUrl);
+    } else {
+      this.filedownload(fileRemoteUrl);
+    }
+  }
+
+  checkForDowloadDirectory(fileRemoteUrl) {
+    this.file
+      .checkDir(this.file.documentsDirectory, 'Download')
+      .then((success) => {
+        this.filedownload(fileRemoteUrl);
+      })
+      .catch((err) => {
+        this.file.createDir(cordova.file.documentsDirectory, 'Download', false).then(
+          (success) => {
+            this.filedownload(fileRemoteUrl);
+          },
+          (error) => {}
+        );
+      });
+  }
+
+  filedownload(fileRemoteUrl) {
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+    fileTransfer
+      .download(fileRemoteUrl, this.appFolderPath + this.fileName)
+      .then((success) => {
+        this.action === 'share'
+          ? this.dap.shareSubmissionDoc(this.appFolderPath + this.fileName)
+          : this.dap.previewSubmissionDoc(this.appFolderPath + this.fileName);
+        this.loader.stopLoader();
+      })
+      .catch((error) => {
+        this.loader.stopLoader();
+      });
   }
 }

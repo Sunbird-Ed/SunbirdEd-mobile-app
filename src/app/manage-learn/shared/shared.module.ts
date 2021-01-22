@@ -53,6 +53,9 @@ import { GraphCircleComponent } from './components/graph-circle/graph-circle.com
 import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
 import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
 import { ViewDetailComponent } from './components/view-detail/view-detail.component';
+import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.component';
+import { StateModalComponent } from './components/state-modal/state-modal.component';
+import { SearchPipe } from './pipe/search.pipe';
 
 @NgModule({
   declarations: [
@@ -81,6 +84,7 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     ReportsTextComponent,
     PieChartComponent,
     BarChartComponent,
+    ScatterChartComponent,
     MatrixChartComponent,
     AttachmentComponent,
     QuestionListComponent,
@@ -90,7 +94,9 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     FilterModalComponent,
     SubmissionActionsComponent,
     ViewDetailComponent,
-    NoDataComponent
+    NoDataComponent,
+    StateModalComponent,
+    SearchPipe,
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -121,6 +127,7 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     ReportsTextComponent,
     PieChartComponent,
     BarChartComponent,
+    ScatterChartComponent,
     MatrixChartComponent,
     QuestionListComponent,
     CriteriaListComponent,
@@ -129,7 +136,9 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     FilterModalComponent,
     SubmissionActionsComponent,
     ViewDetailComponent,
-    NoDataComponent
+    NoDataComponent,
+    StateModalComponent,
+    SearchPipe,
   ],
   providers: [
     Camera,
@@ -155,7 +164,8 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
     DownloadShareComponent,
     FilterModalComponent,
     SubmissionActionsComponent,
-    ViewDetailComponent
+    ViewDetailComponent,
+    StateModalComponent,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}

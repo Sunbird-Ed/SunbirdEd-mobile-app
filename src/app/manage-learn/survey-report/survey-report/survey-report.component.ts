@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { ModalController, NavController, NavParams } from '@ionic/angular';
 import { LoaderService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 
 @Component({
@@ -27,7 +29,8 @@ export class SurveyReportComponent implements OnInit {
     private routerParam: ActivatedRoute,
     private loader: LoaderService,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    private dhiti: DhitiApiService
   ) {}
 
   ngOnInit() {
@@ -40,32 +43,40 @@ export class SurveyReportComponent implements OnInit {
     this.getObservationReports();
   }
 
-  getObservationReports() {
-    //TODO:remove
-    this.httpClient.get('assets/dummy/surveyReport.json').subscribe((success: any) => {
-      this.allQuestions = success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
-      if (success.result == false) {
-        this.error = success.message;
-      } else {
-        this.reportObj = success;
-      }
-      // this.loader.stopLoader();
-      !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
-    });
-    //TODO:till here
+  async getObservationReports() {
+    let payload = {};
+    payload['filter'] = {
+      questionId: this.filteredQuestions,
+    };
+    let url;
+    if (this.submissionId) {
+      url = urlConstants.API_URLS.SURVEY_FEEDBACK.SUBMISSION_REPORT + this.submissionId;
+    } else {
+      url = urlConstants.API_URLS.SURVEY_FEEDBACK.SOLUTION_REPORT + this.solutionId;
+    }
+    payload = { ...(await this.utils.getProfileInfo()), ...payload };
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.loader.startLoader();
 
-    // let payload = {};
-    // payload['filter'] = {
-    //   questionId: this.filteredQuestions,
-    // };
-    // let url;
-    // if (this.submissionId) {
-    //   url = AppConfigs.surveyFeedback.submissionReport + this.submissionId;
-    // } else {
-    //   url = AppConfigs.surveyFeedback.solutionReport + this.solutionId;
-    // }
-    // // this.utils.startLoader();
-    // this.loader.startLoader();
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        this.allQuestions =
+          success.allQuestions && !this.allQuestions.length ? success.allQuestions : this.allQuestions;
+        if (success.result == false) {
+          this.error = success.message;
+        } else {
+          this.reportObj = success;
+        }
+        this.loader.stopLoader();
+        !this.filteredQuestions.length ? this.markAllQuestionSelected() : null;
+      },
+      (error) => {
+        this.error = 'No data found';
+      }
+    );
     // this.apiService.httpPost(
     //   url,
     //   payload,
@@ -108,11 +119,11 @@ export class SurveyReportComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredQuestions)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredQuestions)
       ) {
-        this.filteredQuestions = response.filter;
+        this.filteredQuestions = response.data.filter;
         this.getObservationReports();
       }
     });

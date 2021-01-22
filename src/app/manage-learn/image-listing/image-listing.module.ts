@@ -18,7 +18,6 @@ const routes: Routes = [
   declarations: [ImageListingComponent],
   imports: [
     CommonModule,
-    HttpClientModule, // TODO:Tremove after api integration
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
     SharedModule,

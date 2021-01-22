@@ -103,6 +103,7 @@ export class ObservationSubmissionComponent implements OnInit {
       url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
       payload: payload,
     };
+    this.loader.startLoader()
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.localStorage
@@ -114,6 +115,7 @@ export class ObservationSubmissionComponent implements OnInit {
             this.submissionIdArr = [];
           })
           .finally(() => {
+            this.loader.stopLoader()
             this.submissionList = success.result;
             this.applyDownloadedflag();
 
@@ -252,10 +254,12 @@ export class ObservationSubmissionComponent implements OnInit {
 
   getAssessmentDetailsApi(submission) {
     let event = {
-      programIndex: this.programIndex,
-      solutionIndex: this.solutionIndex,
-      entityIndex: this.entityIndex,
+      // programIndex: this.programIndex,
+      // solutionIndex: this.solutionIndex,
+      // entityIndex: this.entityIndex,
       submission: submission,
+      entityId: this.entityId,
+      observationId: this.observationId,
     };
     this.observationService
       .getAssessmentDetailsForObservation(event)
@@ -331,21 +335,18 @@ export class ObservationSubmissionComponent implements OnInit {
         component: ScroreReportMenusComponent,
         componentProps: {
           submission: submission,
-          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+          entityType: submission.entityType,
         },
         event: event,
       });
       popover.present();
     } else {
-      this.router.navigate([
-        RouterLinks.OBSERVATION_REPORTS,
-        {
-          queryParams: {
-            submissionId: submission._id,
-            entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-          },
+      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+        queryParams: {
+          submissionId: submission._id,
+          entityType: submission.entityType,
         },
-      ]);
+      });
       // this.navCtrl.push(ObservationReportsPage, {
       //   submissionId: submission._id,
       //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
@@ -375,9 +376,9 @@ export class ObservationSubmissionComponent implements OnInit {
     let popover = await this.popoverCtrl.create({
       component: ScroreReportMenusComponent,
       componentProps: {
-        observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-        entityId: this.selectedSolution.entities[this.entityIndex]._id,
-        entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        observationId: this.observationId,
+        entityId: this.entityId,
+        entityType: this.submissionList[0].entityType,
         showEntityActionsheet: 'true',
         showSubmissionAction: 'false',
       },
@@ -395,20 +396,18 @@ export class ObservationSubmissionComponent implements OnInit {
     //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
     // };
     // this.navCtrl.push(ObservationReportsPage, payload);
-    this.router.navigate([
-      RouterLinks.OBSERVATION_REPORTS,
-      {
-        queryParams: {
-          entityId: this.selectedSolution.entities[this.entityIndex]._id,
-          observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-          entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-        },
+    this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+      queryParams: {
+        entityId: this.entityId,
+        observationId: this.observationId,
+        entityType: this.submissionList[0].entityType,
       },
-    ]);
+    });
   }
   // Actions on submissions
   async openActionMenu(event, submission, index) {
-    submission.entityName = this.selectedSolution.entities[this.entityIndex].name;
+    // submission.entityName = this.selectedSolution.entities[this.entityIndex].name;
+    submission.entityName = this.entityName;
     let popover = await this.popoverCtrl.create({
       component: SubmissionActionsComponent,
       componentProps: {
@@ -417,13 +416,13 @@ export class ObservationSubmissionComponent implements OnInit {
       event: event,
     });
     popover.onDidDismiss().then((data: any) => {
-      if (data && data.action === 'update') {
+      if (data.data && data.data.action === 'update') {
         const payload = {
           submissionId: submission._id,
-          title: data.name,
+          title: data.data.name,
         };
         this.ediSubmissionName(payload, index);
-      } else if (data && data.action === 'delete') {
+      } else if (data.data && data.data.action === 'delete') {
         this.deleteSubmission(submission._id);
       }
     });
@@ -447,19 +446,27 @@ export class ObservationSubmissionComponent implements OnInit {
         },
         {
           text: translateObject['FRMELEMNTS_LBL_YES'],
-          handler: () => {
-            //TODO:Implement
-            // this.utils.startLoader();
-            // this.apiProvider.httpGet(
-            //   AppConfigs.cro.obsrvationSubmissionDelete + submissionId,
-            //   (success) => {
-            //     console.log(success);
-            //     this.refreshLocalObservationList();
-            //   },
-            //   (error) => {
-            //     this.utils.stopLoader();
-            //   }
-            // );
+          handler: async () => {
+            let payload = await this.utils.getProfileInfo();
+
+            const config = {
+              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_DELETE + `${submissionId}`,
+              payload: payload,
+            };
+            this.loader.startLoader();
+
+            this.assessmentService.post(config).subscribe(
+              (success) => {
+                this.loader.stopLoader();
+
+                if (success && success.status == 200) {
+                  this.getProgramFromStorage();
+                }
+              },
+              (error) => {
+                this.loader.stopLoader();
+              }
+            );
           },
         },
       ],
@@ -467,42 +474,50 @@ export class ObservationSubmissionComponent implements OnInit {
     alert.present();
   }
 
-  ediSubmissionName(data, i) {
-    const payload = {
-      title: data.title,
+  async ediSubmissionName(data, i) {
+    let payload = await this.utils.getProfileInfo();
+    payload.title = data.title;
+
+    const config = {
+      url: urlConstants.API_URLS.EDIT_OBSERVATION_NAME + `${data.submissionId}`,
+      payload: payload,
     };
-    // TODO:Implement
-    // this.utils.startLoader();
-    // this.apiProvider.httpPost(
-    //   AppConfigs.cro.editObservationName + data.submissionId,
-    //   payload,
-    //   (success) => {
-    //     console.log(success);
-    //     this.refreshLocalObservationList();
-    //   },
-    //   (error) => {
-    //     this.utils.stopLoader();
-    //   }
-    // );
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        console.log(success);
+        if (success && success.status == 200) {
+          this.getProgramFromStorage();
+        }
+      },
+      (error) => {}
+    );
   }
 
-  observeAgain() {
+  async observeAgain() {
     this.loader.startLoader('Creating an Observation');
 
-    const entityId = this.selectedSolution.entities[this.entityIndex]._id;
-    const observationId = this.selectedSolution._id;
-    // TODO:Implement
-    // this.apiProvider.httpPost(
-    //   AppConfigs.cro.observationSubmissionCreate + observationId + "?entityId=" + entityId,
-    //   {},
-    //   (success) => {
-    //     console.log(success);
-    //     this.refreshLocalObservationList();
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+    const entityId = this.entityId;
+    const observationId = this.observationId;
+
+    let payload = await this.utils.getProfileInfo();
+
+    const config = {
+      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_CREATE + `${observationId}?entityId=${entityId}`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+
+        console.log(success);
+        if (success && success.status == 200) {
+          this.getProgramFromStorage();
+        }
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
 
   refreshLocalObservationList(refreshEvent?, startLoader?) {

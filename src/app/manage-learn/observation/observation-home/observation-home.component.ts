@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { ObservationService } from '../observation.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { UtilsService } from '../../core';
+import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
@@ -34,7 +34,8 @@ export class ObservationHomeComponent implements OnInit {
     private router: Router,
     private observationService: ObservationService,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService // private kendraService: KendraApiService
+    private assessmentService: AssessmentApiService, // private kendraService: KendraApiService
+    private loader: LoaderService
   ) {}
 
   ngOnInit() {
@@ -42,18 +43,23 @@ export class ObservationHomeComponent implements OnInit {
   }
   async getPrograms() {
     let payload = await this.utils.getProfileInfo();
+    this.loader.startLoader();
     const config = {
-      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10&search=`,
+      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(
       (success) => {
+        this.loader.stopLoader();
         console.log(success);
         if (success && success.result && success.result.data) {
           this.solutionList = success.result.data;
         }
       },
-      (error) => {}
+      (error) => {
+        this.solutionList=[]
+        this.loader.stopLoader();
+      }
     );
   }
 

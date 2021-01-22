@@ -426,8 +426,10 @@ export class UtilsService {
   }
 
   async initilizeML() {
+
     this.assessmentBaseUrl = !this.assessmentBaseUrl ? await this.utility.getBuildConfigValue("SURVEY_BASE_URL") : this.assessmentBaseUrl;
     this.projectsBaseUrl = !this.projectsBaseUrl ? await this.utility.getBuildConfigValue('PROJECTS_BASE_URL') : this.projectsBaseUrl;
+    debugger
   }
 
   getBaseUrl(key) {
