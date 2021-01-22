@@ -152,22 +152,27 @@ export class ProjectDetailPage implements OnInit {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    let id = this.projectId ? '/' + this.projectId : '';
-    const config = {
-      url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
-      payload: payload
-    }
-    this.unnatiService.post(config).subscribe(success => {
-      this.loader.stopLoader();
-      this.projectId = success.result._id;
-      this.db.create(success.result).then(success => {
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
-      }).catch(error => {
+    if (payload) {
+      let id = this.projectId ? '/' + this.projectId : '';
+      const config = {
+        url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
+        payload: payload
+      }
+      this.unnatiService.post(config).subscribe(success => {
+        this.loader.stopLoader();
+        this.projectId = success.result._id;
+        this.db.create(success.result).then(success => {
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+        }).catch(error => {
 
+        })
+      }, error => {
+        this.loader.stopLoader();
       })
-    }, error => {
+    } else {
       this.loader.stopLoader();
-    })
+    }
+
   }
 
   ngOnInit() { }

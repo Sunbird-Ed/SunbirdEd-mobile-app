@@ -81,31 +81,34 @@ export class ObservationDetailComponent implements OnInit {
 
   async getObservationEntities() {
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url:
-        urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
-        `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
-      payload: payload,
-    };
-    this.loader.startLoader();
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        console.log(success);
-        if (success && success.result && success.result.entities) {
-          this.selectedSolution = success.result.entities;
-          this.entityType = success.result.entityType;
-          if (!this.observationId) {
-            this.observationId = success.result._id; // for autotargeted if get observationId
+    if (payload) {
+      const config = {
+        url:
+          urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
+          `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
+        payload: payload,
+      };
+      this.loader.startLoader();
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          this.loader.stopLoader();
+          console.log(success);
+          if (success && success.result && success.result.entities) {
+            this.selectedSolution = success.result.entities;
+            this.entityType = success.result.entityType;
+            if (!this.observationId) {
+              this.observationId = success.result._id; // for autotargeted if get observationId
+            }
+            //   this.checkForAnySubmissionsMade(); TODO:Implement
           }
-          //   this.checkForAnySubmissionsMade(); TODO:Implement
+        },
+        (error) => {
+          this.selectedSolution = [];
+          this.loader.stopLoader();
         }
-      },
-      (error) => {
-        this.selectedSolution = [];
-        this.loader.stopLoader();
-      }
-    );
+      );
+    }
+
   }
 
   async checkForAnySubmissionsMade() {
@@ -120,7 +123,7 @@ export class ObservationDetailComponent implements OnInit {
       (success) => {
         this.submissionCount = success.data.noOfSubmissions;
       },
-      (error) => {}
+      (error) => { }
     );
 
     //   this.apiProviders.httpPost(
@@ -230,7 +233,7 @@ export class ObservationDetailComponent implements OnInit {
               this.getObservationEntities();
             }
           },
-          (error) => {}
+          (error) => { }
         );
       }
     });

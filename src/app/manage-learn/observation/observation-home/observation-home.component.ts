@@ -36,31 +36,33 @@ export class ObservationHomeComponent implements OnInit {
     private utils: UtilsService,
     private assessmentService: AssessmentApiService, // private kendraService: KendraApiService
     private loader: LoaderService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getPrograms();
   }
   async getPrograms() {
     let payload = await this.utils.getProfileInfo();
-    this.loader.startLoader();
-    const config = {
-      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        console.log(success);
-        if (success && success.result && success.result.data) {
-          this.solutionList = success.result.data;
+    if (payload) {
+      this.loader.startLoader();
+      const config = {
+        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10`,
+        payload: payload,
+      };
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          this.loader.stopLoader();
+          console.log(success);
+          if (success && success.result && success.result.data) {
+            this.solutionList = success.result.data;
+          }
+        },
+        (error) => {
+          this.solutionList = []
+          this.loader.stopLoader();
         }
-      },
-      (error) => {
-        this.solutionList=[]
-        this.loader.stopLoader();
-      }
-    );
+      );
+    }
   }
 
   ionViewWillEnter() {

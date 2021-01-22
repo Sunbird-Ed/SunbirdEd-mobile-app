@@ -19,7 +19,7 @@ export class ProjectReportComponent implements OnInit {
   showFilter: boolean = false;
   filterType: { label: string; value: number }[];
   filter = { type: 1, entity: undefined, program: undefined };
-  @ViewChild('mySelect',  {static: false}) selectRef: IonSelect;
+  @ViewChild('mySelect', { static: false }) selectRef: IonSelect;
   texts: any;
   constructor(
     private translate: TranslateService,
@@ -116,28 +116,32 @@ export class ProjectReportComponent implements OnInit {
     };
     url = this.utils.queryUrl(url, query);
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: url,
-      payload: payload
-    };
-    this.unnatiService.post(config).subscribe(
-      (data) => {
-        if (data.result && !data.result.dataAvailable) {
-          this.presentAlert(
-            this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE'],
-            this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE_FOR_ENTITY_OR_PROGRAM']
-          );
-          preFilter ? (this.filter = JSON.parse(preFilter)) : null;
-          if (this.reportData) {
-            return;
+    if (payload) {
+      const config = {
+        url: url,
+        payload: payload
+      };
+      this.unnatiService.post(config).subscribe(
+        (data) => {
+          if (data.result && !data.result.dataAvailable) {
+            this.presentAlert(
+              this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE'],
+              this.texts['FRMELEMNTS_MSG_NO_DATA_AVAILABLE_FOR_ENTITY_OR_PROGRAM']
+            );
+            preFilter ? (this.filter = JSON.parse(preFilter)) : null;
+            if (this.reportData) {
+              return;
+            }
           }
-        }
-        this.reportData = data.result ? data.result.data : {};
-        this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
-        this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
-      },
-      (err) => { }
-    );
+          this.reportData = data.result ? data.result.data : {};
+          this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
+          this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
+        },
+        (err) => { }
+      );
+    } else {
+    }
+
   }
 
   generateCircleData(obj, innerRadius) {

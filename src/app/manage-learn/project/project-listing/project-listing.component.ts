@@ -70,19 +70,24 @@ export class ProjectListingComponent implements OnInit {
   async getProjectList() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText,
-      payload: payload
+    if (payload) {
+      const config = {
+        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText,
+        payload: payload
+      }
+      this.unnatiService.post(config).subscribe(success => {
+        this.loader.stopLoader();
+        this.projects = this.projects.concat(success.result.data);
+        this.count = success.result.count;
+        this.description = success.result.description;
+      }, error => {
+        this.projects = [];
+        this.loader.stopLoader();
+      })
+    } else {
+      this.loader.stopLoader();
     }
-    this.unnatiService.post(config).subscribe(success => {
-      this.loader.stopLoader();
-      this.projects = this.projects.concat(success.result.data);
-      this.count = success.result.count;
-      this.description = success.result.description;
-    }, error => {
-      this.projects = [];
-      this.loader.stopLoader();
-    })
+
   }
 
 

@@ -41,21 +41,25 @@ export class ProgramListingComponent implements OnInit {
     async getPrograms() {
         this.loader.startLoader();
         let payload = await this.utils.getProfileInfo();
-        const config = {
-            url: urlConstants.API_URLS.PROGRAM_LISTING + 'page=' + this.page + '&limit=' + this.limit + '&search=',
-            payload: payload
-        }
-        this.kendraService.post(config).subscribe(success => {
-            this.loader.stopLoader();
-            if (success.result.data) {
-                this.programs = this.programs.concat(success.result.data);
-                this.count = success.result.count;
-                this.description = success.result.description;
+        if (payload) {
+            const config = {
+                url: urlConstants.API_URLS.PROGRAM_LISTING + 'page=' + this.page + '&limit=' + this.limit + '&search=',
+                payload: payload
             }
-        }, error => {
+            this.kendraService.post(config).subscribe(success => {
+                this.loader.stopLoader();
+                if (success.result.data) {
+                    this.programs = this.programs.concat(success.result.data);
+                    this.count = success.result.count;
+                    this.description = success.result.description;
+                }
+            }, error => {
+                this.loader.stopLoader();
+                this.programs = [];
+            })
+        } else {
             this.loader.stopLoader();
-            this.programs = [];
-        })
+        }
     }
 
     ionViewWillEnter() {

@@ -39,21 +39,26 @@ export class SolutionListingComponent implements OnInit {
   async getSolutions() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + '?page=' + this.page + '&limit=' + this.limit + '&search=',
-      payload: payload
-    }
-    this.kendraService.post(config).subscribe(success => {
-      this.loader.stopLoader();
-      if (success.result.data) {
-        this.solutions = this.solutions.concat(success.result.data);
-        this.count = success.result.count;
-        this.description = success.result.description;
+    if (payload) {
+      const config = {
+        url: urlConstants.API_URLS.SOLUTIONS_LISTING + this.programId + '?page=' + this.page + '&limit=' + this.limit + '&search=',
+        payload: payload
       }
-    }, error => {
+      this.kendraService.post(config).subscribe(success => {
+        this.loader.stopLoader();
+        if (success.result.data) {
+          this.solutions = this.solutions.concat(success.result.data);
+          this.count = success.result.count;
+          this.description = success.result.description;
+        }
+      }, error => {
+        this.loader.stopLoader();
+        this.solutions = [];
+      })
+    } else {
       this.loader.stopLoader();
-      this.solutions = [];
-    })
+    }
+
   }
   goBack() {
     this.location.back();
