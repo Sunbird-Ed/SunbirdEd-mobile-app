@@ -469,7 +469,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {
@@ -501,7 +501,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.objRollup,
       );
 
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {
