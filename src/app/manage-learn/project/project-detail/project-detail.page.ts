@@ -164,9 +164,13 @@ export class ProjectDetailPage implements OnInit {
         this.db.create(success.result).then(success => {
           this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-
+          if (error.status = 409) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+          }
+          
         })
       }, error => {
+         
         this.loader.stopLoader();
       })
     } else {
