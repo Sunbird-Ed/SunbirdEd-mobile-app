@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { LoaderService, LocalStorageService, NetworkService, ToastService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import * as _ from 'underscore';
 
 @Component({
    selector: 'app-add-entity',
@@ -7,102 +11,167 @@ import { ModalController } from '@ionic/angular';
    styleUrls: ['./add-entity.component.scss'],
 })
 export class AddEntityComponent implements OnInit {
-   title;
    subEntities;
+   noSubEntity: boolean = false;
+   entities = [];
+   page = 1;
+   limit = 20;
    childEntity;
-   entityCount;
+   searchText = "";
+   profileData;
+   stateId;
    selectedEntity;
-   noSubEntity;
-   entities = {
-      "count": 34,
-      "content": [
-         {
-            "name": " Practice time_Hindi ",
-            "id": "do_31302446154579968014349",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_31302446154579968014349"
-         },
-         {
-            "name": "\"Disadvantaged group\" in Right To Education act (RTE) : Did You Know?",
-            "id": "do_3128812241620254721830",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_3128812241620254721830"
-         },
-         {
-            "name": "1 Perspectives on teacher development",
-            "id": "do_312465053341499392115349",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312465053341499392115349"
-         },
-         {
-            "name": "1 Prioritising your work and managing your time effectively as a school leader",
-            "id": "do_312470257401192448118336",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312470257401192448118336"
-         },
-         {
-            "name": "1 Promoting equity and inclusion through leadership",
-            "id": "do_312461472596566016113394",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312461472596566016113394"
-         },
-         {
-            "name": "1 The change context",
-            "id": "do_31247931680157696011191",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_31247931680157696011191"
-         },
-         {
-            "name": "1 The importance of addressing diversity issues",
-            "id": "do_312472438186647552219068",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472438186647552219068"
-         },
-         {
-            "name": "1 The importance of addressing diversity issues - Activity 1",
-            "id": "do_312472448124387328219071",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472448124387328219071"
-         },
-         {
-            "name": "1 The importance of addressing diversity issues - Activity 4",
-            "id": "do_312472459926659072219077",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312472459926659072219077"
-         },
-         {
-            "name": "1 Types of resources within and outside the school",
-            "id": "do_312461634252070912213326",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312461634252070912213326"
-         },
-         {
-            "name": "1 Understanding formative and summative assessment",
-            "id": "do_312460764300263424113062",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312460764300263424113062"
-         },
-         {
-            "name": "1 What a school self-review is, and its advantages and challenges",
-            "id": "do_312473169978834944119574",
-            "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_312473169978834944119574"
-         }
-      ]
-   }
+   title;
+   entityCount
+   @Input() entityType: any;
    constructor(
-      private modal: ModalController
-   ) { }
+      private loader: LoaderService,
+      private toast: ToastService,
+      private storage: LocalStorageService,
+      private kendraApiService: KendraApiService,
+      private modalCtrl: ModalController,
+      private networkService: NetworkService,
+      private utils: UtilsService
+   ) {
+      this.onSearch = _.debounce(this.onSearch, 500);
+   }
 
    ngOnInit() {
-      let subEntities = ["district", "block", "cluster", "school"];
-      let selist = [];
-      subEntities.forEach((se) => {
+      this.checkUserMapping();
+   }
+
+   selectEntity(event) {
+      this.selectedEntity = event;
+   }
+   selectSubEntity(subEntity) {
+      this.childEntity = subEntity.detail.value;
+      this.entities = [];
+      this.page = 1;
+      this.getEntities(subEntity.detail.value);
+   }
+   getEntities(entityType) {
+      if (this.networkService.isNetworkAvailable) {
+         // this.loader.startLoader();
+         const config = {
+            url:
+               urlConstants.API_URLS.GET_ENTITY_LIST +
+               this.stateId +
+               "?type=" +
+               entityType +
+               "&search=" +
+               this.searchText +
+               "&page=" +
+               this.page +
+               "&limit=" +
+               this.limit,
+         };
+         this.kendraApiService.get(config).subscribe(
+            (data) => {
+               // this.loader.stopLoader();
+               if (data.result.data && data.result.data.length) {
+                  this.entities = this.entities.concat(data.result.data);
+                  this.entityCount = data.result.count;
+                  this.noSubEntity = false;
+               } else {
+                  this.noSubEntity = true;
+               }
+            },
+            (error) => {
+               // this.loader.stopLoader();
+            }
+         );
+      } else {
+         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+      }
+   }
+   checkUserMapping() {
+      // this.storage.getLocalStorage("profileData").then((data) => {
+      //    this.profileData = data;
+      //    this.stateId = this.profileData.state._id;
+      //    this.title = this.profileData.state.name;
+      //    this.getSubEntities(this.profileData.state._id);
+      // });
+
+      this.utils.getProfileData().then(profileData => {
+         this.profileData = profileData;
+         this.stateId = this.profileData.state;
+         this.getSubEntities(this.stateId);
+      }).catch(error => {
+
+      })
+
+   }
+
+   loadMoreEntities() {
+      this.page++;
+      this.getEntities(this.childEntity);
+   }
+   getSubEntities(stateId) {
+
+      // to select entityType if already provided
+      if (this.entityType) {
+         let selist = [];
          let entity = {
-            name: se,
-            value: se,
+            name: this.entityType,
+            value: this.entityType,
          };
          selist.push(entity);
-      });
-      this.subEntities = selist.reverse();
-      this.selectedEntity = this.subEntities[0];
-      this.childEntity = this.subEntities[0].value;
+         this.subEntities = selist.reverse();
+         this.selectedEntity = this.subEntities[0];
+         this.childEntity = this.subEntities[0].value;
+         this.getEntities(this.subEntities[0].value);
+
+         return
+      }
+
+      if (this.networkService.isNetworkAvailable) {
+         // this.loader.startLoader();
+         const config = {
+            url: urlConstants.API_URLS.GET_SUBENTITIES + stateId,
+         };
+         this.kendraApiService.get(config).subscribe(
+            (data) => {
+               // this.loader.stopLoader();
+               if (data.result) {
+                  let selist = [];
+                  data.result.forEach((se) => {
+                     let entity = {
+                        name: se,
+                        value: se,
+                     };
+                     selist.push(entity);
+                  });
+                  this.subEntities = selist.reverse();
+                  this.selectedEntity = this.subEntities[0];
+                  this.childEntity = this.subEntities[0].value;
+                  this.getEntities(this.subEntities[0].value);
+               }
+            },
+            (error) => {
+               // this.loader.stopLoader();
+            }
+         );
+      } else {
+         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+      }
+   }
+
+   onSearch(event) {
+      this.entities = [];
+      this.page = 1;
+      this.searchText = event.detail ? event.detail.data : "";
+      if (event.detail && event.detail.data == null) {
+         this.searchText = "";
+      }
+      this.getEntities(this.childEntity);
    }
    close() {
-      this.modal.dismiss();
+      this.modalCtrl.dismiss();
    }
-   onSearch(event) { }
-   selectSubEntity(event) { }
-   selectEntity(entity) { }
    addEntity() {
-      
+      if (this.selectedEntity) {
+         this.modalCtrl.dismiss(this.selectedEntity);
+      }
    }
+
 }

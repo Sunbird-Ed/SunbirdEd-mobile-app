@@ -22,7 +22,6 @@ export class QuestionMapModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    debugger
     this.questions = this.data['questions'];
     this.evidenceMethod = this.data['evidenceMethod'];
     this.sectionName = this.data['sectionName'];

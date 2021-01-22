@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -34,7 +34,7 @@ var environment = {
   templateUrl: "./project-detail.page.html",
   styleUrls: ["./project-detail.page.scss"],
 })
-export class ProjectDetailPage implements OnInit {
+export class ProjectDetailPage implements OnInit, OnDestroy {
   showDetails: boolean = true;
   statuses = statuses;
   project: any;
@@ -160,9 +160,10 @@ export class ProjectDetailPage implements OnInit {
       }
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
-        this.projectId = success.result._id;
+        // this.projectId = success.result._id;
         this.db.create(success.result).then(success => {
-          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+          this.projectId ? this.getProject() :
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
 
         })
@@ -176,7 +177,7 @@ export class ProjectDetailPage implements OnInit {
   }
 
   ngOnInit() { }
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.initApp();
     this.getProject();
     this.getDateFilters();
@@ -202,6 +203,12 @@ export class ProjectDetailPage implements OnInit {
   }
 
   ngOnDestroy() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
+  }
+
+  ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
     }
@@ -485,6 +492,23 @@ export class ProjectDetailPage implements OnInit {
 
           let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
           let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
+          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
+            queryParams: {
+              programId: data.programId,
+              solutionId: data.solutionId,
+              observationId: data.observationId,
+              entityId: data.entityId,
+              entityName: data.entityName,
+            },
+          });
+          // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+          //   queryParams: {
+          //     programId: data.programId,
+          //     solutionId: data.solutionId,
+          //     observationId: data.observationId,
+          //     solutionName: data.solutionName,
+          //   },
+          // });
           // this.iab.create(link, "_system");
         },
         (error) => {
@@ -575,4 +599,5 @@ export class ProjectDetailPage implements OnInit {
       this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
     }
   }
+
 }

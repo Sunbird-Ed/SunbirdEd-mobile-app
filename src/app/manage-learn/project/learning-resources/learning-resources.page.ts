@@ -61,12 +61,11 @@ export class LearningResourcesPage implements OnInit {
   ngOnInit() { }
   getProjectFromLocal(projectId) {
     this.loader.startLoader();
-    this.db.createPouchDB(environment.db.projects);
     this.db.query({ _id: projectId }).then(
       (success) => {
         // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
-        this.list = success;
+        this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
           // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
@@ -79,6 +78,7 @@ export class LearningResourcesPage implements OnInit {
   }
   openBodh(link) {
     console.log(link, "link");
+    this.toast.openToast('Coming soon');
     // this.networkService.isNetworkAvailable
     //   ? this.openResources.openBodh(link)
     //   : this.toast.showMessage("MESSAGES.OFFLINE", "danger");

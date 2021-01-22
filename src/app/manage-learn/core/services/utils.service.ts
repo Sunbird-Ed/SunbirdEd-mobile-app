@@ -395,7 +395,7 @@ export class UtilsService {
   async openProfileUpdateAlert() {
     const alert = await this.aleryCtrl.create({
       header: 'Alert',
-      message: `Please update   ${(this.requiredFields && this.requiredFields.length) ? this.requiredFields + 'in' : ""}   your profile to access the feature.`,
+      message: `Please update   ${(this.requiredFields && this.requiredFields.length) ? this.requiredFields + ' in' : ""}   your profile to access the feature.`,
       buttons: [{
         text: 'Update Profile',
         role: 'cancel',
@@ -448,7 +448,6 @@ export class UtilsService {
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationName = orgList[0].orgName;
       this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
-      debugger
     }
   }
 
@@ -461,13 +460,12 @@ export class UtilsService {
           const serverProfileDetailsRequest = {
             userId: session.userToken,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER
+            from: CachedItemRequestSourceFrom.CACHE
           };
           this.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
               this.zone.run(async () => {
                 console.log(profileData);
-                debugger
                 this.profile = profileData;
                 const obj = {}
                 for (const location of profileData['userLocations']) {
