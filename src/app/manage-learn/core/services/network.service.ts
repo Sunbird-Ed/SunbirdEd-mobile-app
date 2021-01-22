@@ -3,7 +3,9 @@ import { Network } from '@ionic-native/network/ngx';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class NetworkService {
   connectSubscription;
   disconnectSubscription;

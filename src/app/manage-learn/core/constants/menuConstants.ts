@@ -8,19 +8,23 @@ export const menuConstants = {
         VALUE: 'editTask',
         ICON: 'create'
     }],
-    PROJECT: [{
-        TITLE: 'FRMELEMNTS_LBL_SHARE_PROJECT',
-        VALUE: 'shareProject',
-        ICON: 'share'
-    },{
+    PROJECT: [
+    //     {
+    //     TITLE: 'FRMELEMNTS_LBL_SHARE_PROJECT',
+    //     VALUE: 'shareProject',
+    //     ICON: 'share'
+    // },
+    {
         TITLE: 'EDIT',
         VALUE: 'editProject',
         ICON: 'create'
-    },{
-        TITLE: 'DELETE',
-        VALUE: 'deleteProject',
-        ICON: 'trash'
-    },{
+    },
+    // {
+    //     TITLE: 'DELETE',
+    //     VALUE: 'deleteProject',
+    //     ICON: 'trash'
+    // },
+    {
         TITLE: 'FRMELEMNTS_LBL_FILES',
         VALUE: 'fileProject',
         ICON: 'document'

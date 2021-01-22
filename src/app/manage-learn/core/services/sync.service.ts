@@ -20,7 +20,9 @@ var environment = {
     categories: "categories.db",
   }
 };
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SyncService {
 
   allStrings;
@@ -62,17 +64,25 @@ export class SyncService {
       }
     }).then(success => {
       if (success['docs'].length) {
+
         //check the sync settings
-        this.localStorage.getLocalStorage(localStorageConstants.SYNC_VARIABLE).then(status => {
-          if (status === 'ON' && this.network.isNetworkAvailable) {
-            this.router.navigate(['/menu/sync']);
-          } else if (status === 'ON' && !this.network.isNetworkAvailable) {
-            this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
-          } else {
-          }
-        }).catch(error => {
+        if(!this.network.isNetworkAvailable){
+          this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
+        } else {
           this.router.navigate(['/menu/sync']);
-        })
+
+        }
+
+        // this.localStorage.getLocalStorage(localStorageConstants.SYNC_VARIABLE).then(status => {
+        //   if (status === 'ON' && this.network.isNetworkAvailable) {
+        //     this.router.navigate(['/menu/sync']);
+        //   } else if (status === 'ON' && !this.network.isNetworkAvailable) {
+        //     this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_PLEASE_NETWORK'], 'danger')
+        //   } else {
+        //   }
+        // }).catch(error => {
+        //   this.router.navigate(['/menu/sync']);
+        // })
       }
     })
   }

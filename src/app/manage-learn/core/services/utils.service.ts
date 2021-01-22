@@ -1,9 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, NgZone } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { statusType } from '@app/app/manage-learn/core/constants/statuses.constant';
 import { UtilityService } from '@app/services';
+import { ProfileService, AuthService, CachedItemRequestSourceFrom } from 'sunbird-sdk';
+import { ProfileConstants } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services/common-util.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +16,15 @@ export class UtilsService {
   imagePath: string;
   public assessmentBaseUrl: string;
   public projectsBaseUrl: string;
+  profile;
+  organisationName;
+  orgDetails;
   constructor(
-    private utility: UtilityService
+    private utility: UtilityService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('AUTH_SERVICE') public authService: AuthService,
+    private zone: NgZone,
+    private commonUtilService: CommonUtilService,
   ) {
   }
 
@@ -339,8 +350,13 @@ export class UtilsService {
     return imageArray;
   }
 
-  getProfileInfo(): Promise<any> {
-    return new Promise((resolve, reject) => {
+  async getProfileInfo(): Promise<any> {
+    //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    // console.log(profile)
+    return new Promise(async (resolve, reject) => {
+      const profile = await this.getProfileData()
+      // debugger
+      // this.getOrgDetails();
       resolve({
         // "state" :  "5f33c3d85f637784791cd831",
         // "district" : "5f33c56fb451f58478b36997",
@@ -354,6 +370,57 @@ export class UtilsService {
 
       })
     })
+
+  }
+
+  getOrgDetails() {
+    const orgList = [];
+    let orgItemList;
+    orgItemList = this.profile.organisations;
+    if (orgItemList.length > 1) {
+      orgItemList.map((org) => {
+        if (this.profile.rootOrgId !== org.organisationId) {
+          orgList.push(org);
+        }
+      });
+      orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
+      this.organisationName = orgList[0].orgName;
+      this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
+      debugger
+    } 
+  }
+
+  getProfileData(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.authService.getSession().toPromise().then((session) => {
+        if (session === null || session === undefined) {
+          reject('session is null');
+        } else {
+          const serverProfileDetailsRequest = {
+            userId: session.userToken,
+            requiredFields: ProfileConstants.REQUIRED_FIELDS,
+            from: CachedItemRequestSourceFrom.SERVER
+          };
+
+          this.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
+            .then((profileData) => {
+              this.zone.run(async () => {
+                console.log(profileData);
+                debugger
+                this.profile = profileData;
+                const obj = {}
+                for (const location of profileData['userLocations']) {
+                  obj[location.type] = location.id
+                }
+                obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null ;
+                resolve(obj)
+              });
+            }).catch(err => {
+              resolve({})
+            });
+        }
+      });
+    });
   }
 
   async initilizeML() {

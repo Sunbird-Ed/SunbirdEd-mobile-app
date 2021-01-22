@@ -80,7 +80,7 @@
       </ion-buttons>
       <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-offline') >=0"
         (click)="emitEvent($event, 'sync');" style="font-size: 1.8rem;">
-        <ion-icon name="cloud-offline-outline" class="ion-float-right"></ion-icon>
+        <ion-icon name="cloud-upload" class="ion-float-right"></ion-icon>
       </ion-buttons>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">

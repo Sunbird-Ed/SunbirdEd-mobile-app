@@ -79,7 +79,7 @@ export class ProjectDetailPage implements OnInit {
     actionButtons: [] as string[]
   };
 
-  isSynced: boolean;
+  isNotSynced: boolean;
   locationChangeTriggered: boolean = false;
   allStrings;
   private _appHeaderSubscription?: Subscription;
@@ -130,7 +130,9 @@ export class ProjectDetailPage implements OnInit {
       (success) => {
         if (success.docs.length) {
           this.project = success.docs.length ? success.docs[0] : {};
-          this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
+          this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+          this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+          this.headerService.updatePageConfig(this._headerConfig);
           this.project.categories.forEach((category: any) => {
             category.label ? this.categories.push(category.label) : this.categories.push(category.name);
           });
@@ -150,19 +152,16 @@ export class ProjectDetailPage implements OnInit {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    console.log('/' + this.projectId, "'/'+this.projectId :");
     let id = this.projectId ? '/' + this.projectId : '';
-    console.log(id, "id 154", this.projectId);
-    console.log(urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId, "urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId");
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
       payload: payload
     }
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
-      // this.project = success.result;
+      this.projectId = success.result._id;
       this.db.create(success.result).then(success => {
-        this.getProject();
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
       }).catch(error => {
 
       })
@@ -181,7 +180,7 @@ export class ProjectDetailPage implements OnInit {
   initApp() {
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
       if (eventName.name === 'more') {
-        this.openPopover(eventName.event);
+        this.openPopover(eventName.event, null, false);
       } else if (eventName.name === 'sync') {
         this.action(eventName.name);
       }
@@ -191,7 +190,7 @@ export class ProjectDetailPage implements OnInit {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = ['more', 'sync-done'];
+    this._headerConfig.actionButtons = ['more'];
     this._headerConfig.showBurgerMenu = false;
     this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this._headerConfig);
@@ -391,7 +390,7 @@ export class ProjectDetailPage implements OnInit {
       .update(this.project)
       .then((success) => {
         this.project._rev = success.rev;
-        this.isSynced = this.project ? this.project.isNew || this.project.isEdit : true;
+        this.isNotSynced = this.project ? this.project.isNew || this.project.isEdit : false;
         if (type == "newTask") {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
