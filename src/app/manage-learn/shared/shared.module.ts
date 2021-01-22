@@ -54,6 +54,8 @@ import { FilterModalComponent } from './components/filter-modal/filter-modal.com
 import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
 import { ViewDetailComponent } from './components/view-detail/view-detail.component';
 import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.component';
+import { StateModalComponent } from './components/state-modal/state-modal.component';
+import { SearchPipe } from './pipe/search.pipe';
 
 @NgModule({
   declarations: [
@@ -92,7 +94,9 @@ import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.
     FilterModalComponent,
     SubmissionActionsComponent,
     ViewDetailComponent,
-    NoDataComponent
+    NoDataComponent,
+    StateModalComponent,
+    SearchPipe,
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -132,7 +136,9 @@ import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.
     FilterModalComponent,
     SubmissionActionsComponent,
     ViewDetailComponent,
-    NoDataComponent
+    NoDataComponent,
+    StateModalComponent,
+    SearchPipe,
   ],
   providers: [
     Camera,
@@ -158,7 +164,8 @@ import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.
     DownloadShareComponent,
     FilterModalComponent,
     SubmissionActionsComponent,
-    ViewDetailComponent
+    ViewDetailComponent,
+    StateModalComponent,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}

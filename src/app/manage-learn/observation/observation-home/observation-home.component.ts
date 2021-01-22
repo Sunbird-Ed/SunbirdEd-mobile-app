@@ -43,7 +43,7 @@ export class ObservationHomeComponent implements OnInit {
   async getPrograms() {
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10&search=`,
+      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(

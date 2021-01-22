@@ -209,13 +209,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'TakeSurvey',
         code: 'takeSurvey',
         values: '\\/manage-learn\\/take-survey\\/(?<survey_id>\\w+)',
-        route: 'content-details'
+        route: RouterLinks.SURVEY
       },
       {
         name: 'Create Observation',
         code: 'createObservation',
         values: '\\/manage-learn\\/create-observation\\/(?<create_observation_id>\\w+)',
-        route: 'content-details'
+        route: `${RouterLinks.DEEPLINK_REDIRECT}/observationLink`
       },
       {
         name: 'Observation',
@@ -537,6 +537,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async handleNavigation(payloadUrl, identifier, dialCode, route, urlMatchGroup) {
+    debugger
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();

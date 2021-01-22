@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
@@ -38,14 +38,21 @@ export class SurveyHomeComponent implements OnInit {
     private surveyProvider: SurveyProviderService,
     private loader: LoaderService,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService
-  ) {}
+    private assessmentService: AssessmentApiService,
+    private routerParam: ActivatedRoute
+  ) {
+    // this.routerParam.queryParams.subscribe((params) => {
+    //  this.link=params.surveyId
+    // });
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.link = extrasState.data.survey_id;
+    }
+  }
 
   ngOnInit() {}
 
-  ionViewDidLoad(): void {
-    // this.link = this.navParams.get("surveyId");
-  }
+  ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
@@ -68,13 +75,13 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING,
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=1&limit=10&search=`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(
       (success) => {
-        if (success.result) {
-          this.surveyList = success.result;
+        if (success.result && success.result.data) {
+          this.surveyList = success.result.data;
           this.getSubmissionArr();
           this.loader.stopLoader();
         }
@@ -118,25 +125,25 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   deepLinkRedirect(): void {
-      let survey;
-      this.surveyProvider
-        .getDetailsByLink(this.link)
-        .then((data) => {
-          if (data.result == false) {
-            // this.surveyProvider.showMsg("surveyExpired", true);//TODO
-            return;
-          }
-          if (data.result.status && data.result.status == "completed") {
-            // this.surveyProvider.showMsg("surveyCompleted", true);//TODO
-            return;
-          }
-          survey = data.result;
-          this.storeRedirect(survey);
-        })
-        .catch((err) => {
-          this.loader.stopLoader();
-          console.log(err);
-        });
+    let survey;
+    this.surveyProvider
+      .getDetailsByLink(this.link)
+      .then((data) => {
+        if (data.result == false) {
+          // this.surveyProvider.showMsg("surveyExpired", true);//TODO
+          return;
+        }
+        if (data.result.status && data.result.status == 'completed') {
+          // this.surveyProvider.showMsg("surveyCompleted", true);//TODO
+          return;
+        }
+        survey = data.result;
+        this.storeRedirect(survey);
+      })
+      .catch((err) => {
+        this.loader.stopLoader();
+        console.log(err);
+      });
   }
 
   onSurveyClick(survey) {
@@ -169,20 +176,6 @@ export class SurveyHomeComponent implements OnInit {
       .then((survey) => this.redirect(survey.assessment.submissionId));
   }
 
-  getDetailsById(surveyId) {
-    // const url = AppConfigs.surveyFeedback.getDetailsById + surveyId;
-    // return new Promise((resolve, reject) => {
-    //   this.apiProvider.httpGet(
-    //     url,
-    //     (success) => {
-    //       resolve(success);
-    //     },
-    //     (err) => {
-    //       reject(err);
-    //     }
-    //   );
-    // });
-  }
   getSurveyById(surveyId) {
     if (!surveyId) {
       return;

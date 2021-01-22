@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLinks } from '@app/app/app.constant';
 import { IonFab, ModalController, Platform } from '@ionic/angular';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -46,7 +47,8 @@ export class ObservationReportsComponent implements OnInit {
     private modal: ModalController,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
-    private dhiti: DhitiApiService
+    private dhiti: DhitiApiService,
+    private router: Router
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -115,7 +117,6 @@ export class ObservationReportsComponent implements OnInit {
     // });
     //TODO:till here
 
-    this.loader.startLoader();
     let url;
     if (this.entityType && this.reportType) {
       this.payload = {
@@ -250,7 +251,7 @@ export class ObservationReportsComponent implements OnInit {
 
     this.dhiti.post(config).subscribe(
       (success) => {
-       //this will be initialized only on page load
+        //this will be initialized only on page load
         this.allCriterias =
           success.allCriterias && !this.allCriterias.length ? success.allCriterias : this.allCriterias;
         if (success) {
@@ -266,7 +267,6 @@ export class ObservationReportsComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
-
 
     // this.apiService.httpPost(
     //   url,
@@ -333,5 +333,25 @@ export class ObservationReportsComponent implements OnInit {
         this.getObservationCriteriaReports();
       }
     });
+  }
+  allEvidence(index) {
+    console.log(this.allQuestions[index]);
+
+    this.router.navigate([RouterLinks.ALL_EVIDENCE], {
+      queryParams: {
+        submissionId: this.submissionId,
+        observationId: this.observationId,
+        entityId: this.entityId,
+        questionExternalId: this.allQuestions[index]['questionExternalId'],
+        entityType: this.entityType,
+      },
+    });
+    // this.navCtrl.push(EvidenceAllListComponent, {
+    //   submissionId: this.submissionId,
+    //   observationId: this.observationId,
+    //   entityId: this.entityId,
+    //   questionExternalId: this.allQuestions[index]['questionExternalId'],
+    //   entityType: this.entityType,
+    // });
   }
 }

@@ -1,6 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LoaderService, ToastService, UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { DhitiApiService } from '../../core/services/dhiti-api.service';
 
 @Component({
   selector: 'app-all-evidence-list',
@@ -17,7 +21,14 @@ export class AllEvidenceListComponent implements OnInit {
   audios: any;
   data: any;
 
-  constructor(private routerParam: ActivatedRoute, private httpClient: HttpClient) {}
+  constructor(
+    private routerParam: ActivatedRoute,
+    private httpClient: HttpClient,
+    private dhiti: DhitiApiService,
+    private utils: UtilsService,
+    private loader: LoaderService,
+    private toast: ToastService
+  ) {}
 
   ngOnInit() {
     this.selectedTab = 'evidence';
@@ -85,22 +96,31 @@ export class AllEvidenceListComponent implements OnInit {
     this.remarks = this.data.remarks;
     this.audios = this.data.audios;
   }
-  getAllEvidence() {
-    //TODO:remove
-    this.httpClient.get('assets/dummy/allEvidenceList.json').subscribe((success: any) => {
-      if (success.result === true && success.data) {
-        this.images = success.data.images;
-        this.videos = success.data.videos;
-        this.documents = success.data.documents;
-        this.remarks = success.data.remarks;
-        this.audios = success.data.audios;
-      } else {
-        // this.utils.openToast(success.data);
+  async getAllEvidence() {
+    let url = urlConstants.API_URLS.OBSERVATION_REPORTS.ALL_EVIDENCE;
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        if (success.result === true && success.data) {
+          this.images = success.data.images;
+          this.videos = success.data.videos;
+          this.documents = success.data.documents;
+          this.remarks = success.data.remarks;
+          this.audios = success.data.audios;
+        } else {
+          this.toast.openToast(success.data);
+        }
+      },
+      (error) => {
+        this.toast.openToast(error.message);
+        this.loader.stopLoader();
       }
-    });
-    //TODO:till here
-    // let url = AppConfigs.observationReports.allEvidence;
-    // this.utils.startLoader();
+    );
 
     // this.apiService.httpPost(
     //   url,
@@ -129,7 +149,34 @@ export class AllEvidenceListComponent implements OnInit {
   }
 
   //for surveyEvidence
-  getSurveyEvidence() {
+  async getSurveyEvidence() {
+    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.LIST_ALL_EVIDENCES;
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        console.log(JSON.stringify(success));
+        if (success.result === true && success.data) {
+          this.images = success.data.images;
+          this.videos = success.data.videos;
+          this.documents = success.data.documents;
+          this.remarks = success.data.remarks;
+          this.audios = success.data.audios;
+        } else {
+          this.toast.openToast(success.data);
+        }
+      },
+      (error) => {
+        this.toast.openToast(error.message);
+        this.loader.stopLoader();
+      }
+    );
+
     //TODO:uncomment
     //   const url = AppConfigs.surveyFeedback.listAllEvidences;
     //   this.utils.startLoader();

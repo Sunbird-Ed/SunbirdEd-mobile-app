@@ -121,7 +121,7 @@ const routes: Routes = [
   { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
   { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
   { path: RouterLinks.PROJECT_FULL_REPORT, loadChildren: './manage-learn/project-full-report/project-full-report.module#ProjectFullReportModule' },
-  { path: RouterLinks.DEEPLINK_REDIRECT, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule' },
+  { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule' },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
 

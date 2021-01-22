@@ -73,7 +73,6 @@ export const urlConstants = {
     GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
     GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
 
-
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',
       ENTITY_REPORT: '/observations/entity',
@@ -83,7 +82,7 @@ export const urlConstants = {
       ENTITY_OBSERVATION_REPORT: '/observations/entityObservationReport',
       SOLUTIOIN_LIST: '/observations/listObservationSolutions',
       ENTITY_SOLUTION_REPORT: '/observations/entitySolutionReport',
-      ALL_EVIDENCE: '/observations/listAllEvidences',
+      ALL_EVIDENCE: 'v1/observations/listAllEvidences',
     },
     OBSERVATION_REPORTS_WITH_SCORE: {
       INSTANCE_REPORT: '/observations/instanceObservationScoreReport',
@@ -107,7 +106,8 @@ export const urlConstants = {
       GET_REPORTS_PDF_URLS: 'v1/observations/pdfReportsByCriteria?',
     },
     SURVEY_FEEDBACK: {
-      SURVEY_LISTING: 'v1/surveySubmissions/list',
+      // SURVEY_LISTING: 'v1/surveySubmissions/list',
+      SURVEY_LISTING: 'v1/surveys/getSurvey',
       GET_DETAILS_BY_LINK: 'v1/surveys/getDetailsByLink/' /* + link */,
       GET_DETAILS_BY_ID: 'v1/surveys/details/' /* + surveyId */,
       MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
@@ -116,6 +116,10 @@ export const urlConstants = {
       IS_SUBMISSION_ALLOWED: 'v1/surveySubmissions/isAllowed/',
       LIST_ALL_EVIDENCES: 'v1/surveys/listAllEvidences',
       GET_ALL_ANSWERS: 'v1/surveys/getAllResponsesOfQuestion/',
+    },
+
+    DEEPLINK: {
+      VERIFY_OBSERVATION_LINK: 'v1/solutions/verifyLink/' /* + link */,
     },
   },
 };

@@ -119,11 +119,11 @@ export class SurveyReportComponent implements OnInit {
     await modal.present();
     await modal.onDidDismiss().then((response: any) => {
       if (
-        response &&
-        response.action === 'updated' &&
-        JSON.stringify(response.filter) !== JSON.stringify(this.filteredQuestions)
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(this.filteredQuestions)
       ) {
-        this.filteredQuestions = response.filter;
+        this.filteredQuestions = response.data.filter;
         this.getObservationReports();
       }
     });

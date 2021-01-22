@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { UtilsService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { AssessmentApiService } from '../../core/services/assessment-api.service';
 
 @Component({
   selector: 'app-deeplink-redirect',
@@ -12,34 +15,47 @@ import { TranslateService } from '@ngx-translate/core';
 export class DeeplinkRedirectComponent implements OnInit {
   data: any;
   translateObject: any;
+  link: any;
+  extra: string;
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams,
+    // public navParams: NavParams,
     // public deeplinkProvider: DeeplinkProvider,
     // public programSrvc: ProgramServiceProvider,
     // public viewCtrl: ViewController,
     // public utils: UtilsProvider,
     private translate: TranslateService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute,
+    private assessmentService: AssessmentApiService,
+    private utils: UtilsService
+  ) {
+    this.extra = this.route.snapshot.paramMap.get('extra');
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.data = extrasState.data;
+      debugger;
+    }
+  }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad DeepLinkRedirectPage');
-    this.data = this.navParams.data;
-    let key = Object.keys(this.data)[0];
-    this.switch(key);
+    // console.log('ionViewDidLoad DeepLinkRedirectPage');
+    // this.data = this.navParams.data;
+    // let key = Object.keys(this.data)[0];
+    // this.switch(this.extra);
   }
   ngOnInit() {
     this.translate.get(['message.canNotOpenLink']).subscribe((translations) => {
       this.translateObject = translations;
     });
+    this.switch(this.extra);
   }
 
   switch(key) {
     switch (key) {
       case 'observationLink':
-        this.redirectObservation(this.data[key]);
+        this.redirectObservation(this.data.create_observation_id);
         break;
       case 'observationParams':
         this.redirectWithParams(this.data[key], 'observation');
@@ -98,9 +114,33 @@ export class DeeplinkRedirectComponent implements OnInit {
     //   });
   }
 
-  redirectObservation(link) {
-    let pId, sId, oId;
-    //TODO:Implement
+  async redirectObservation(link) {
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.DEEPLINK.VERIFY_OBSERVATION_LINK + link,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        if (success.result) {
+          console.log(success);
+          let data=success.result
+          this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
+            queryParams: {
+              programId: data.programId,
+              solutionId: data.solutionId,
+              observationId: data._id,
+              solutionName: data.name,
+            },
+          });
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    // let pId, sId, oId;
     // this.deeplinkProvider
     //   .createObsFromLink(link)
     //   .then((res: any) => {

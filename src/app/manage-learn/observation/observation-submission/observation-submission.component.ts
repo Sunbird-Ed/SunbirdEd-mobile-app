@@ -374,9 +374,9 @@ export class ObservationSubmissionComponent implements OnInit {
     let popover = await this.popoverCtrl.create({
       component: ScroreReportMenusComponent,
       componentProps: {
-        observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-        entityId: this.selectedSolution.entities[this.entityIndex]._id,
-        entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        observationId: this.observationId,
+        entityId: this.entityId,
+        entityType: this.submissionList[0].entityType,
         showEntityActionsheet: 'true',
         showSubmissionAction: 'false',
       },
@@ -396,9 +396,9 @@ export class ObservationSubmissionComponent implements OnInit {
     // this.navCtrl.push(ObservationReportsPage, payload);
     this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
       queryParams: {
-        entityId: this.selectedSolution.entities[this.entityIndex]._id,
-        observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-        entityType: this.selectedSolution.entities[this.entityIndex].entityType,
+        entityId: this.entityId,
+        observationId: this.observationId,
+        entityType: this.submissionList[0].entityType,
       },
     });
   }

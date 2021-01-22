@@ -11,6 +11,7 @@ import { EntityfilterComponent } from '../../shared/components/entityfilter/enti
 import { UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
 
 @Component({
   selector: 'app-observation-detail',
@@ -32,6 +33,7 @@ export class ObservationDetailComponent implements OnInit {
   selectedSolution: any;
   submissionCount: any;
   solutionName: any;
+  entityType: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
@@ -87,6 +89,10 @@ export class ObservationDetailComponent implements OnInit {
         console.log(success);
         if (success && success.result && success.result.entities) {
           this.selectedSolution = success.result.entities;
+          this.entityType=success.result.entityType
+          if (!this.observationId) {
+            this.observationId = success.result._id;// for autotargeted if get observationId 
+          }
           //   this.checkForAnySubmissionsMade(); TODO:Implement
         }
       },
@@ -161,16 +167,17 @@ export class ObservationDetailComponent implements OnInit {
 
   async addEntity(...params) {
     // console.log(JSON.stringify(params))
-    const type = this.selectedSolution.entityType;
+    // const type = this.selectedSolution.entityType
+    const type = this.entityType
     let entityListModal;
     if (type == 'state') {
       // TODO:implement
-      // entityListModal = await this.modalCtrl.create({
-      //   component: StateModalComponent, componentProps: {
-      //     data: this.observationId,
-      //     solutionId: this.solutionId
-      //   }
-      // });
+      entityListModal = await this.modalCtrl.create({
+        component: StateModalComponent, componentProps: {
+          data: this.observationId,
+          solutionId: this.solutionId
+        }
+      });
     } else {
       entityListModal = await this.modalCtrl.create({
         component: EntityfilterComponent,

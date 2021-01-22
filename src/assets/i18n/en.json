@@ -1269,6 +1269,8 @@
   "FRMELEMNTS_BTN_FILTER": "Filter",
   "FRMELEMNTS_BTN_REPORT_WITH_SCORE": "Report with score",
   "FRMELEMNTS_BTN_REPORT_WITHOUT_SCORE": "Report without score",
+  "FRMELEMNTS_BTN_SELECT_ALL": "Select All",
+  "FRMELEMNTS_BTN_UNDO": "Undo",
   "BROWES_RELEVANT_CONTENT": "Browse {{app_name}} Library to find relevant content based on your preferences (Board, Medium, Class)",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
   "SUBJECT_DESCRIPTION": "Text is indicating the below cards combination oof textbooks from all classes(for teachers)",

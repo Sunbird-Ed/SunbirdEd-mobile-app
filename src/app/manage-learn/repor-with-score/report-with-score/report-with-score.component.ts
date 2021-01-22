@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { NavController, NavParams, Platform, ModalController, IonFab } from '@ionic/angular';
@@ -11,6 +11,7 @@ import { File } from '@ionic-native/file/ngx';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-report-with-score',
@@ -55,7 +56,8 @@ export class ReportWithScoreComponent implements OnInit {
     private modal: ModalController,
     private loader: LoaderService,
     private toast: ToastService,
-    private dhiti: DhitiApiService
+    private dhiti: DhitiApiService,
+    private router: Router
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.selectedTab = 'questionwise';
@@ -430,6 +432,16 @@ export class ReportWithScoreComponent implements OnInit {
 
   allEvidence(index) {
     console.log(this.allQuestions[index]);
+
+    this.router.navigate([RouterLinks.ALL_EVIDENCE], {
+      queryParams: {
+        submissionId: this.submissionId,
+        observationId: this.observationId,
+        entityId: this.entityId,
+        questionExternalId: this.allQuestions[index]['questionExternalId'],
+        entityType: this.entityType,
+      },
+    });
     //TODO:uncomment
     // this.navCtrl.push(EvidenceAllListComponent, {
     //   submissionId: this.submissionId,
