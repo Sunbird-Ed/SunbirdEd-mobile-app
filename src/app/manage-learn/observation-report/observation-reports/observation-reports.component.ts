@@ -1,14 +1,20 @@
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { IonFab, ModalController, Platform } from '@ionic/angular';
-import { LoaderService, UtilsService } from '../../core';
+import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
+import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
+import { File } from "@ionic-native/file";
+
 
 @Component({
   selector: 'app-observation-reports',
@@ -48,7 +54,13 @@ export class ObservationReportsComponent implements OnInit {
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
     private dhiti: DhitiApiService,
-    private router: Router
+    private router: Router,
+    private androidPermissions: AndroidPermissions,
+    private datepipe: DatePipe,
+    private toast: ToastService,
+    private fileTransfer: FileTransfer,
+    private dap: DownloadAndPreviewService,
+    private file: File
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -353,5 +365,126 @@ export class ObservationReportsComponent implements OnInit {
     //   questionExternalId: this.allQuestions[index]['questionExternalId'],
     //   entityType: this.entityType,
     // });
+  }
+
+  downloadSharePdf(action) {
+    this.action = action;
+    this.androidPermissions
+      .checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
+      .then((status) => {
+        if (status.hasPermission) {
+          this.getObservationReportUrl();
+        } else {
+          this.androidPermissions
+            .requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
+            .then((success) => {
+              if (success.hasPermission) {
+                this.getObservationReportUrl();
+              }
+            })
+            .catch((error) => {});
+        }
+      });
+  }
+
+  async getObservationReportUrl() {
+    this.loader.startLoader();
+    let url =
+      this.selectedTab == 'questionwise'
+        ? urlConstants.API_URLS.OBSERVATION_REPORTS.GET_REPORTS_PDF_URLS
+        : urlConstants.API_URLS.CRITERIA_REPORTS.GET_REPORTS_PDF_URLS;
+    const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
+
+    if (this.submissionId) {
+      this.fileName = this.submissionId + timeStamp + '.pdf';
+    } else if (!this.submissionId && !this.entityId) {
+      this.fileName = this.observationId + timeStamp + '.pdf';
+    } else {
+      this.fileName = this.entityId + '_' + this.observationId + timeStamp + '.pdf';
+    }
+    let payload = await this.utils.getProfileInfo();
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        console.log(JSON.stringify(success));
+        if (success.status === 'success' && success.pdfUrl) {
+          this.downloadSubmissionDoc(success.pdfUrl);
+        } else {
+          this.toast.openToast(success.message);
+        }
+      },
+      (error) => {
+        this.toast.openToast(error.message);
+
+        this.loader.stopLoader();
+      }
+    );
+
+    // this.apiService.httpPost(
+    //   url,
+    //   this.payload,
+    //   (success) => {
+    //     this.utils.stopLoader();
+    //     console.log(JSON.stringify(success));
+    //     if (success.status === "success" && success.pdfUrl) {
+    //       this.downloadSubmissionDoc(success.pdfUrl);
+    //     } else {
+    //       this.utils.openToast(success.message);
+    //     }
+    //   },
+    //   (error) => {
+    //     this.utils.openToast(error.message);
+
+    //     this.utils.stopLoader();
+    //   },
+    //   {
+    //     baseUrl: "dhiti",
+    //     version: this.selectedTab == "questionwise" ? "v2" : "v1",
+    //   }
+    // );
+  }
+
+  downloadSubmissionDoc(fileRemoteUrl) {
+    this.loader.startLoader();
+    if (this.isIos) {
+      this.checkForDowloadDirectory(fileRemoteUrl);
+    } else {
+      this.filedownload(fileRemoteUrl);
+    }
+  }
+
+  checkForDowloadDirectory(fileRemoteUrl) {
+    this.file
+      .checkDir(this.file.documentsDirectory, 'Download')
+      .then((success) => {
+        this.filedownload(fileRemoteUrl);
+      })
+      .catch((err) => {
+        this.file.createDir(cordova.file.documentsDirectory, 'Download', false).then(
+          (success) => {
+            this.filedownload(fileRemoteUrl);
+          },
+          (error) => {}
+        );
+      });
+  }
+
+  filedownload(fileRemoteUrl) {
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+    fileTransfer
+      .download(fileRemoteUrl, this.appFolderPath + this.fileName)
+      .then((success) => {
+        this.action === 'share'
+          ? this.dap.shareSubmissionDoc(this.appFolderPath + this.fileName)
+          : this.dap.previewSubmissionDoc(this.appFolderPath + this.fileName);
+        this.loader.stopLoader();
+      })
+      .catch((error) => {
+        this.loader.stopLoader();
+      });
   }
 }

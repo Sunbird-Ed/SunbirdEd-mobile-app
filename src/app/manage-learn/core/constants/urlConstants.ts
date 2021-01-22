@@ -109,7 +109,7 @@ export const urlConstants = {
       // SURVEY_LISTING: 'v1/surveySubmissions/list',
       SURVEY_LISTING: 'v1/surveys/getSurvey',
       GET_DETAILS_BY_LINK: 'v1/surveys/getDetailsByLink/' /* + link */,
-      GET_DETAILS_BY_ID: 'v1/surveys/details/' /* + surveyId */,
+      GET_DETAILS_BY_ID: 'v2/surveys/details/' /* + surveyId?solutionId=5f5b38ec45365677f64b2843*/,
       MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
       SUBMISSION_REPORT: 'v1/surveys/submissionReport?submissionId=',
       SOLUTION_REPORT: 'v1/surveys/solutionReport?solutionId=',

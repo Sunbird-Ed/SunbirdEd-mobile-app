@@ -151,7 +151,8 @@ export class SurveyHomeComponent implements OnInit {
       // this.surveyProvider.showMsg("surveyCompleted");//TODO
       return;
     }
-    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey.surveyId);
+    // surveyId changed to _id
+    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey._id,survey.solutionId);
   }
 
   redirect(submissionId: any): void {
@@ -176,12 +177,13 @@ export class SurveyHomeComponent implements OnInit {
       .then((survey) => this.redirect(survey.assessment.submissionId));
   }
 
-  getSurveyById(surveyId) {
+  getSurveyById(surveyId, solutionId) {
+    //passing solution id in v2
     if (!surveyId) {
       return;
     }
     this.surveyProvider
-      .getDetailsById(surveyId)
+      .getDetailsById(surveyId,solutionId)
       .then((res) => {
         const survey = res.result;
         this.storeRedirect(survey);

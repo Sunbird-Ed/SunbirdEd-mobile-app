@@ -69,8 +69,26 @@ export class SurveyProviderService {
     // });
   }
 
-  getDetailsById(surveyId): Promise<any> {
-    return this.httpClient.get('assets/dummy/surveydetails.json').toPromise();
+  async getDetailsById(surveyId, solutionId): Promise<any> {
+    let payload = await this.utils.getProfileInfo();
+    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_ID + surveyId + `?solutionId=${solutionId}`;
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          resolve(success);
+        },
+        (error) => {
+          rejects(error);
+        }
+      );
+    });
+
+    // return this.httpClient.get('assets/dummy/surveydetails.json').toPromise();
     //  const url = AppConfigs.surveyFeedback.getDetailsById + surveyId;
     //  return new Promise((resolve, reject) => {
     //    this.apiProvider.httpGet(
