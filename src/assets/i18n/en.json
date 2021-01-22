@@ -1328,6 +1328,7 @@
   "FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM": "Please select the entity to select your program",
   "FRMELEMNTS_MSG_NO_DATA_AVAILABLE": "No Data available",
   "FRMELEMNTS_MSG_NO_DATA_AVAILABLE_FOR_ENTITY_OR_PROGRAM": "Sorry there is no data available for entity or program you selected",
+  "FRMELEMNTS_MSG_PLEASE_ADD_OTHERCATEGORIES":"Please add other categories.",
   "FRMELEMNTS_LBL_PROJECT_OVERVIEW": "Project Overview",
   "FRMELEMNTS_LBL_VIEW_FULL_REPORT": "View Full Report",
   "FRMELEMNTS_LBL_TASK_OVERVIEW": "Task Overview",

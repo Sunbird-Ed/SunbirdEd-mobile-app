@@ -165,9 +165,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           this.projectId ? this.getProject() :
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-
+          if (error.status = 409) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+          }
+          
         })
       }, error => {
+         
         this.loader.stopLoader();
       })
     } else {
