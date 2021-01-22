@@ -8,9 +8,11 @@ import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
-import { UtilsService } from '../../core';
+import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
+import { DhitiApiService } from '../../core/services/dhiti-api.service';
 
 @Component({
   selector: 'app-observation-detail',
@@ -32,6 +34,7 @@ export class ObservationDetailComponent implements OnInit {
   selectedSolution: any;
   submissionCount: any;
   solutionName: any;
+  entityType: any;
   constructor(
     private location: Location,
     private headerService: AppHeaderService,
@@ -43,7 +46,9 @@ export class ObservationDetailComponent implements OnInit {
     private modalCtrl: ModalController,
     private routerParam: ActivatedRoute,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService
+    private assessmentService: AssessmentApiService,
+    private loader: LoaderService,
+    private dhiti: DhitiApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -83,27 +88,43 @@ export class ObservationDetailComponent implements OnInit {
           `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
         payload: payload,
       };
+      this.loader.startLoader();
       this.assessmentService.post(config).subscribe(
         (success) => {
+          this.loader.stopLoader();
           console.log(success);
           if (success && success.result && success.result.entities) {
             this.selectedSolution = success.result.entities;
+            this.entityType = success.result.entityType;
+            if (!this.observationId) {
+              this.observationId = success.result._id; // for autotargeted if get observationId
+            }
             //   this.checkForAnySubmissionsMade(); TODO:Implement
           }
         },
-        (error) => { }
+        (error) => {
+          this.selectedSolution = [];
+          this.loader.stopLoader();
+        }
       );
     }
 
   }
-  checkForAnySubmissionsMade() {
-    const payload = {
-      observationId: this.selectedSolution._id,
+
+  async checkForAnySubmissionsMade() {
+    let payload = await this.utils.getProfileInfo();
+    payload.observationId = this.observationId;
+    let url = urlConstants.API_URLS.GET_OBSERVATION_SUBMISSION_COUNT;
+    const config = {
+      url: url,
+      payload: payload,
     };
-    this.httpClient.post('assets/dummy/submissionCount.json', payload).subscribe((success: any) => {
-      console.log(success);
-      this.submissionCount = success.data.noOfSubmissions;
-    });
+    this.dhiti.post(config).subscribe(
+      (success) => {
+        this.submissionCount = success.data.noOfSubmissions;
+      },
+      (error) => { }
+    );
 
     //   this.apiProviders.httpPost(
     //     AppConfigs.cro.observationSubmissionCount,
@@ -161,12 +182,60 @@ export class ObservationDetailComponent implements OnInit {
     } */
   }
 
-  async openEntityFilter() {
-    const filterDialog = await this.modalCtrl.create({
-      component: EntityfilterComponent,
-      componentProps: {},
-      // cssClass: 'sb-popover',
+  async addEntity(...params) {
+    // console.log(JSON.stringify(params))
+    // const type = this.selectedSolution.entityType
+    const type = this.entityType;
+    let entityListModal;
+    if (type == 'state') {
+      // TODO:implement
+      entityListModal = await this.modalCtrl.create({
+        component: StateModalComponent,
+        componentProps: {
+          data: this.observationId,
+          solutionId: this.solutionId,
+        },
+      });
+    } else {
+      entityListModal = await this.modalCtrl.create({
+        component: EntityfilterComponent,
+        componentProps: {
+          data: this.observationId,
+          solutionId: this.solutionId,
+        },
+      });
+    }
+    await entityListModal.present();
+
+    await entityListModal.onDidDismiss().then(async (entityList) => {
+      if (entityList) {
+        let payload = await this.utils.getProfileInfo();
+
+        payload.data = [];
+        entityList.data.forEach((element) => {
+          //if coming from state list page
+          if (type == 'state') {
+            element.selected ? payload.data.push(element._id) : null;
+            return;
+          }
+
+          payload.data.push(element._id); // if coming from EntityListPage
+        });
+
+        const config = {
+          url: urlConstants.API_URLS.MAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
+          payload: payload,
+        };
+        this.assessmentService.post(config).subscribe(
+          (success) => {
+            console.log(success);
+            if (success) {
+              this.getObservationEntities();
+            }
+          },
+          (error) => { }
+        );
+      }
     });
-    await filterDialog.present();
   }
 }

@@ -118,10 +118,11 @@ const routes: Routes = [
   { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' },
   { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' },
   { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
+   { path: RouterLinks.REPORT_WITH_SCORE, loadChildren: './manage-learn/repor-with-score/report-with-score.module#ReportWithScoreModule' },
   { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
   { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
   { path: RouterLinks.PROJECT_FULL_REPORT, loadChildren: './manage-learn/project-full-report/project-full-report.module#ProjectFullReportModule' },
-  { path: RouterLinks.DEEPLINK_REDIRECT, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule', canActivate:[MlGuard] },
+  { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule', canActivate:[MlGuard] },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
 
