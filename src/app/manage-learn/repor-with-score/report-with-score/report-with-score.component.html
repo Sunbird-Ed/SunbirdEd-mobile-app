@@ -12,15 +12,15 @@
     <!-- Scores details bar -->
     <ion-grid *ngIf="reportObj?.totalScore && reportObj?.scoreAchieved">
       <ion-row style="text-align: center">
-        <ion-col> {{ 'labels.totalScore' | translate }} : {{ reportObj?.totalScore }}</ion-col>
-        <ion-col> {{ 'labels.scoreAchieved' | translate }} : {{ reportObj?.scoreAchieved }}</ion-col>
+        <ion-col> {{ 'FRMELEMENTS_LBL_TOTAL_SCORE' | translate }} : {{ reportObj?.totalScore }}</ion-col>
+        <ion-col> {{ 'FRMELEMENTS_LBL_TOTAL_SCORE_ACHIEVED' | translate }} : {{ reportObj?.scoreAchieved }}</ion-col>
       </ion-row>
     </ion-grid>
 
     <ion-grid *ngIf="reportObj?.schoolsObserved && reportObj?.totalSchools">
       <ion-row style="text-align: center">
-        <ion-col> {{ 'labels.totalSchools' | translate }} : {{ reportObj?.totalSchools }}</ion-col>
-        <ion-col> {{ 'labels.schoolsObserved' | translate }} : {{ reportObj?.schoolsObserved }}</ion-col>
+        <ion-col> {{ 'FRMELEMENTS_LBL_TOTAL_SCHOOL' | translate }} : {{ reportObj?.totalSchools }}</ion-col>
+        <ion-col> {{ 'FRMELEMENTS_LBL_TOTAL_SCHOOL_OBSERVED' | translate }} : {{ reportObj?.schoolsObserved }}</ion-col>
       </ion-row>
     </ion-grid>
 
@@ -46,10 +46,10 @@
     <div padding *ngIf="!from">
       <ion-segment [(ngModel)]="selectedTab">
         <ion-segment-button value="questionwise" (click)="onTabChange('questionwise', fab)">
-          {{ 'buttons.questionWise' | translate }}
+          {{ 'FRMELEMNTS_LBL_QUESTION_WISE' | translate }}
         </ion-segment-button>
         <ion-segment-button value="criteriawise" (click)="onTabChange('criteriawise', fab)">
-          {{ 'buttons.criteriaWise' | translate }}
+          {{ 'FRMELEMNTS_LBL_CRITERIA_WISE' | translate }}
         </ion-segment-button>
       </ion-segment>
     </div>
@@ -59,7 +59,7 @@
         <div *ngIf="allQuestions?.length && !from" class="_flex-box _justify-content-end">
           <button ion-button icon-start (click)="openFilter()" margin style="float: right">
             <ion-icon name="options"></ion-icon>
-            {{ 'buttons.filter' | translate }}
+            {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
           </button>
         </div>
         <div *ngFor="let element of reportObj?.response; let i = index">
@@ -95,7 +95,7 @@
         <div *ngIf="allCriterias?.length" class="_flex-box _justify-content-end">
           <button ion-button icon-start (click)="openCriteriaFilter()" margin>
             <ion-icon name="options"></ion-icon>
-            {{ 'buttons.filter' | translate }}
+            {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
           </button>
         </div>
         <div *ngFor="let criteria of reportObjCriteria?.response">

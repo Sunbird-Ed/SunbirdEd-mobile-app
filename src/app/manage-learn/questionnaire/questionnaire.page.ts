@@ -346,8 +346,8 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       this.goToImageListing();
     } else if (this.network.type === 'none') {
       let noInternetMsg;
-      this.translate.get(['toastMessage.networkConnectionForAction']).subscribe((translations) => {
-        noInternetMsg = translations['toastMessage.networkConnectionForAction'];
+      this.translate.get(['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION']).subscribe((translations) => {
+        noInternetMsg = translations['FRMELEMNTS_MSG_NETWORK_CONNECTION_FOR_ACTION'];
         this.toast.openToast(noInternetMsg);
       });
     }
@@ -392,7 +392,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
       //     this.ngps.checkForLocationPermissions();
       //   });
     } else {
-      this.translate.get('toastMessage.connectToInternet').subscribe((translations) => {
+      this.translate.get('FRMELEMNTS_MSG_CONNECT_TO_INTERNET').subscribe((translations) => {
         this.toast.openToast(translations);
       });
     }
