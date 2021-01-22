@@ -9,7 +9,8 @@ import {
   LocationSearchResult,
   CorrelationData,
   FormService,
-  FormRequest
+  FormRequest,
+  AuditState
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks, LocationConfig, RegexPatterns, ProfileConstants } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -64,6 +65,7 @@ export class DistrictMappingPage {
   private loader?: any;
   private stateChangeSubscription?: Subscription;
   private prevFormValue: any = {};
+  prevLocationDetails: any = {};
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -161,23 +163,25 @@ export class DistrictMappingPage {
 
   async submit() {
     this.saveDeviceLocation();
+    const locationCodes = [];
+    (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
+      if (this.formGroup.value.children['persona'][acc]) {
+        const location: SbLocation = this.formGroup.value.children['persona'][acc] as SbLocation;
+        if (location.type) {
+          locationCodes.push({
+            type: location.type,
+            code: location.code
+          });
+        }
+      }
+    }, {}));
+    const corReletionList: CorrelationData[] = locationCodes;
+    this.generateSubmitInteractEvent(corReletionList);
     if (this.appGlobalService.isUserLoggedIn()) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
         return;
       }
-      const locationCodes = [];
-      (Object.keys(this.formGroup.value.children['persona']).map((acc, key) => {
-        if (this.formGroup.value.children['persona'][acc]) {
-          const location: SbLocation = this.formGroup.value.children['persona'][acc] as SbLocation;
-          if (location.type) {
-            locationCodes.push({
-              type: location.type,
-              code: location.code
-            });
-          }
-        }
-      }, {}));
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
@@ -198,8 +202,6 @@ export class DistrictMappingPage {
             await this.saveDeviceLocation();
           }
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          // telemetry
-          this.generateSubmitInteractEvent(locationCodes);
           this.events.publish('loggedInProfile:update', req);
           if (this.profile && (this.source === PageId.PROFILE ||
                 this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
@@ -233,6 +235,16 @@ export class DistrictMappingPage {
           loginMode: 'guest'
         }
       };
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        this.getEnvironment(),
+        AuditState.AUDIT_UPDATED,
+        undefined,
+        AuditType.SET_PROFILE,
+        undefined,
+        undefined,
+        undefined,
+        corReletionList
+      );
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
   }
@@ -285,7 +297,7 @@ export class DistrictMappingPage {
   }
 
   private getEnvironment(): string {
-    return this.source === PageId.GUEST_PROFILE ? Environment.USER : Environment.ONBOARDING;
+    return (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE) ? Environment.USER : Environment.ONBOARDING;
   }
 
   cancelEvent(category?: string) {
@@ -457,10 +469,20 @@ export class DistrictMappingPage {
     if (stateFormControl) {
       stateFormControl.patchValue(null);
     }
+    const correlationList: Array<CorrelationData> = [];
+    correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CANCEL, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
+    );
   }
 
-  generateSubmitInteractEvent(location) {
-    const corReletionList: CorrelationData[] = [location];
+  generateSubmitInteractEvent(corReletionList) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       this.getEnvironment(),
