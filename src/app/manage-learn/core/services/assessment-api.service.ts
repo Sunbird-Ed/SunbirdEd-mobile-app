@@ -5,7 +5,7 @@ import { ToastService } from '.';
 import { urlConstants } from '../constants/urlConstants';
 import { ApiService } from './api.service';
 import { AuthService } from 'sunbird-sdk';
-import { UtilsService } from './utils.service';
+import { ApiUtilsService } from './api-utils.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,7 @@ export class AssessmentApiService extends ApiService {
   baseUrl: string;
   constructor(public http: HttpClient, public toast: ToastService, public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
-    private utils: UtilsService
+    private utils: ApiUtilsService
     ) {
     super(http, toast, modalController, authService);
     debugger

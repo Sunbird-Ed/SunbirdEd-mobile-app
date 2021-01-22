@@ -5,9 +5,12 @@ import * as _ from 'underscore';
 import { statusType } from '@app/app/manage-learn/core/constants/statuses.constant';
 import { UtilityService } from '@app/services';
 import { ProfileService, AuthService, CachedItemRequestSourceFrom } from 'sunbird-sdk';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
-
+import { KendraApiService } from './kendra-api.service';
+import { urlConstants } from '../constants/urlConstants';
+import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +22,16 @@ export class UtilsService {
   profile;
   organisationName;
   orgDetails;
+  requiredFields;
   constructor(
     private utility: UtilityService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
+    private kendra: KendraApiService,
+    private aleryCtrl: AlertController,
+    private router: Router
   ) {
   }
 
@@ -350,12 +357,65 @@ export class UtilsService {
     return imageArray;
   }
 
+
+
+  async getMandatoryEntities(): Promise<any> {
+    // const profile = await this.getProfileData();
+    return new Promise((resolve, reject) => {
+      const config = {
+        url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+      }
+      this.kendra.get(config).subscribe(data => {
+        if (data.result && data.result.length) {
+          this.requiredFields = data.result;
+          let allFieldsPresent = true;
+          for (const field of this.requiredFields) {
+            if (!this.profile[field]) {
+              allFieldsPresent = false;
+              break
+            }
+          }
+          if (!allFieldsPresent) {
+            this.openProfileUpdateAlert()
+            resolve(false)
+          } else {
+            resolve(true);
+          }
+        } else {
+          this.openProfileUpdateAlert();
+          resolve(false)
+        }
+      }, error => {
+        resolve(false)
+        // reject()
+      })
+    })
+  }
+
+  async openProfileUpdateAlert() {
+    const alert = await this.aleryCtrl.create({
+      header: 'Alert',
+      message: `Please update   ${(this.requiredFields && this.requiredFields.length) ? this.requiredFields + 'in' : ""}   your profile to access the feature.`,
+      buttons: [{
+        text: 'Update Profile',
+        role: 'cancel',
+        handler: (blah) => {
+          this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.PROFILE}`]);
+        }
+      }],
+      backdropDismiss: false
+    });
+    await alert.present();
+  }
+
   async getProfileInfo(): Promise<any> {
     //     const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     // console.log(profile)
     return new Promise(async (resolve, reject) => {
-      const profile = await this.getProfileData()
-      resolve(profile)
+      this.profile = await this.getProfileData();
+      const mandatoryFields = await this.getMandatoryEntities();
+      mandatoryFields ? resolve(this.profile) : resolve(null);
+      // resolve(this.profile)
       // resolve({
       //   "state" :  "5f33c3d85f637784791cd831",
       //   "district" : "5f33c56fb451f58478b36997",
@@ -389,7 +449,7 @@ export class UtilsService {
       this.organisationName = orgList[0].orgName;
       this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
       debugger
-    } 
+    }
   }
 
   getProfileData(): Promise<any> {
@@ -403,7 +463,6 @@ export class UtilsService {
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
             from: CachedItemRequestSourceFrom.SERVER
           };
-
           this.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
               this.zone.run(async () => {
@@ -414,7 +473,7 @@ export class UtilsService {
                 for (const location of profileData['userLocations']) {
                   obj[location.type] = location.id
                 }
-                obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null ;
+                obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null;
                 resolve(obj)
               });
             }).catch(err => {
@@ -425,166 +484,4 @@ export class UtilsService {
     });
   }
 
-  async initilizeML() {
-    this.assessmentBaseUrl = !this.assessmentBaseUrl ? await this.utility.getBuildConfigValue("SURVEY_BASE_URL") : this.assessmentBaseUrl;
-    this.projectsBaseUrl = !this.projectsBaseUrl ? await this.utility.getBuildConfigValue('PROJECTS_BASE_URL') : this.projectsBaseUrl;
-  }
-
-  getBaseUrl(key) {
-    return this[key]
-  }
-
-  getProjectData() {
-    return {
-      userId: '01c04166-a65e-4e92-a87b-a9e4194e771d',
-      status: 'notStarted',
-      isDeleted: false,
-      categories: [{ value: '5fc48155b9335656a106c06a', label: 'Infrastructure' }],
-      tasks: [
-        {
-          _id: '668fd6e2-9c06-458d-a286-6d4f642d3605',
-          createdBy: 'f449823a-06bb-4a3f-9d49-edbe1524ebbb',
-          updatedBy: '01c04166-a65e-4e92-a87b-a9e4194e771d',
-          isDeleted: false,
-          isDeleteable: false,
-          taskSequence: [],
-          children: [
-            {
-              _id: 'e08afef0-3857-42d5-9850-8ee882bf8631',
-              status: 'notStarted',
-              name: 'te',
-              endDate: '',
-              assignee: '',
-              type: 'simple',
-              attachments: [],
-              startDate: '',
-              isDeleted: false,
-              externalId: 'tesstostyurssdtyureany ',
-              isDeleteable: false,
-              createdAt: '2020-12-01T15:29:07.334Z',
-              updatedAt: '2020-12-01T17:20:04.953Z',
-              isImportedFromLibrary: false,
-              lastSync: '2020-12-01T17:20:04.953Z',
-              children: [],
-            },
-          ],
-          visibleIf: [],
-          hasSubTasks: false,
-          learningResources: [],
-          deleted: false,
-          type: 'assessment',
-          solutionDetails: {
-            type: 'assessment',
-            subType: 'institutional',
-            _id: '5d0a0cf11e724f059a0d8f10',
-            isReusable: true,
-            externalId: 'EF-DCPCR-2018-001-TEMPLATE',
-            name: 'DCPCR Assessment Framework 2018',
-          },
-          projectTemplateId: '5fc4f056ed1ae1783770692f',
-          name: 'REJNEESH ASSESSMENT1',
-          externalId: 'REJNEESH-ASSESSMENT1',
-          description: 'Task-1 Description',
-          updatedAt: '2020-12-01T17:20:04.953Z',
-          createdAt: '2020-11-30T13:23:33.880Z',
-          __v: 0,
-          status: 'notStarted',
-          isImportedFromLibrary: false,
-          lastSync: '2020-12-01T17:20:04.953Z',
-        },
-        {
-          _id: '67fb7c47-44e2-437f-97f2-e367ec9c4ea8',
-          createdBy: 'f449823a-06bb-4a3f-9d49-edbe1524ebbb',
-          updatedBy: 'f449823a-06bb-4a3f-9d49-edbe1524ebbb',
-          isDeleted: false,
-          isDeleteable: false,
-          taskSequence: [],
-          children: [],
-          visibleIf: [],
-          hasSubTasks: false,
-          learningResources: [],
-          deleted: false,
-          type: 'assessment',
-          solutionDetails: {
-            type: 'assessment',
-            subType: 'institutional',
-            _id: '5b98fa069f664f7e1ae7498c',
-            isReusable: false,
-            externalId: 'EF-DCPCR-2018-001',
-            name: 'DCPCR Assessment Framework 2018',
-          },
-          projectTemplateId: '5fc4f056ed1ae1783770692f',
-          name: 'REJNEESH ASSESSMENT2',
-          externalId: 'REJNEESH-ASSESSMENT2',
-          description: 'Task-3 Description',
-          updatedAt: '2020-11-30T14:18:46.647Z',
-          createdAt: '2020-11-30T13:23:33.886Z',
-          __v: 0,
-          status: 'notStarted',
-          isImportedFromLibrary: true,
-          lastSync: '2020-11-30T14:18:46.647Z',
-          submissionDetails: {
-            entityId: '5beaa888af0065f0e0a10515',
-            programId: '5fc4ad7a4f96e8623deacda9',
-            solutionId: '5b98fa069f664f7e1ae7498c',
-          },
-        },
-        {
-          _id: '4f61c97a-571c-4dcc-b58e-1872230940dc',
-          createdBy: 'f449823a-06bb-4a3f-9d49-edbe1524ebbb',
-          updatedBy: 'f449823a-06bb-4a3f-9d49-edbe1524ebbb',
-          isDeleted: false,
-          isDeleteable: false,
-          taskSequence: [],
-          children: [],
-          visibleIf: [],
-          hasSubTasks: false,
-          learningResources: [],
-          deleted: false,
-          type: 'observation',
-          solutionDetails: {
-            type: 'observation',
-            subType: 'school',
-            _id: '5d0a0cf11e724f059a0d8f11',
-            isReusable: false,
-            externalId: 'CRO-2019-TEMPLATE',
-            name: 'CRO-2019',
-          },
-          projectTemplateId: '5fc4f056ed1ae1783770692f',
-          name: 'REJNEESH OBSERVATION2',
-          externalId: 'REJNEESH-OBSERVATION2',
-          description: 'Task-2 Description',
-          updatedAt: '2020-11-30T14:18:46.647Z',
-          createdAt: '2020-11-30T13:23:33.890Z',
-          __v: 0,
-          status: 'notStarted',
-          isImportedFromLibrary: true,
-          lastSync: '2020-11-30T14:18:46.647Z',
-        },
-      ],
-      learningResources: [
-        {
-          name: 'Copy Feature',
-          link: 'https://dev.bodh.shikshalokam.org/resources/play/content/do_113059727462957056137',
-          app: 'bodh',
-          id: 'do_113059727462957056137',
-        },
-      ],
-      deleted: false,
-      title: 'REJNEESH-TEST',
-      description: 'improving community library',
-      updatedAt: '2020-12-01T17:20:04.954Z',
-      createdAt: '2020-11-30T13:15:02.824Z',
-      lastDownloadedAt: '2020-12-11T04:10:37.799Z',
-      lastSync: '2020-12-01T17:20:04.953Z',
-      entityId: '5beaa888af0065f0e0a10515',
-      entityName: 'Apple School',
-      programId: '5fc4ad7a4f96e8623deacda9',
-      programName: 'Project -30-nov',
-      rationale: '',
-      primaryAudience: ['teachers', 'head master'],
-      _id: '5fc4ff46ed1ae17837706937',
-      _rev: '1-28270c873915239807bd35fde4d4157f',
-    };
-  }
 }

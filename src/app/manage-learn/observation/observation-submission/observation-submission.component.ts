@@ -99,45 +99,48 @@ export class ObservationSubmissionComponent implements OnInit {
 
   async getProgramFromStorage(stopLoader?, noLoader?) {
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        this.localStorage
-          .getLocalStorage(storageKeys.observationSubmissionIdArr)
-          .then((ids) => {
-            this.submissionIdArr = ids;
-          })
-          .catch((err) => {
-            this.submissionIdArr = [];
-          })
-          .finally(() => {
-            this.submissionList = success.result;
-            this.applyDownloadedflag();
+    if (payload) {
+      const config = {
+        url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
+        payload: payload,
+      };
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          this.localStorage
+            .getLocalStorage(storageKeys.observationSubmissionIdArr)
+            .then((ids) => {
+              this.submissionIdArr = ids;
+            })
+            .catch((err) => {
+              this.submissionIdArr = [];
+            })
+            .finally(() => {
+              this.submissionList = success.result;
+              this.applyDownloadedflag();
 
-            this.splitCompletedAndInprogressObservations();
+              this.splitCompletedAndInprogressObservations();
 
-            this.tabChange(this.currentTab ? this.currentTab : 'all');
-          });
-      },
-      (error) => {
-        if (error.error.status === 400) {
-          let event = {
-            entityId: this.entityId,
-            observationId: this.observationId,
-            submission: {
-              submissionNumber: 1,
-            },
-          };
-          this.observationService.getAssessmentDetailsForObservation(event).then((res) => {
-            this.getProgramFromStorage();
-          });
+              this.tabChange(this.currentTab ? this.currentTab : 'all');
+            });
+        },
+        (error) => {
+          if (error.error.status === 400) {
+            let event = {
+              entityId: this.entityId,
+              observationId: this.observationId,
+              submission: {
+                submissionNumber: 1,
+              },
+            };
+            this.observationService.getAssessmentDetailsForObservation(event).then((res) => {
+              this.getProgramFromStorage();
+            });
+          }
+          console.log(error);
         }
-        console.log(error);
-      }
-    );
+      );
+    }
+
     // this.localStorage
     //   .getLocalStorage(storageKeys.observationSubmissionIdArr)
     //   .then((ids) => {
@@ -263,7 +266,7 @@ export class ObservationSubmissionComponent implements OnInit {
         await this.getProgramFromStorage();
         this.goToEcm(submission);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
 
   goToEcm(submission) {
@@ -311,7 +314,7 @@ export class ObservationSubmissionComponent implements OnInit {
           }
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
   openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
@@ -443,7 +446,7 @@ export class ObservationSubmissionComponent implements OnInit {
         {
           text: translateObject['FRMELEMNTS_LBL_NO'],
           role: 'cancel',
-          handler: () => {},
+          handler: () => { },
         },
         {
           text: translateObject['FRMELEMNTS_LBL_YES'],

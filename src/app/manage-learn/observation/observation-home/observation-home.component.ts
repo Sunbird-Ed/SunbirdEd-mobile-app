@@ -35,26 +35,28 @@ export class ObservationHomeComponent implements OnInit {
     private observationService: ObservationService,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService // private kendraService: KendraApiService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getPrograms();
   }
   async getPrograms() {
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10&search=`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        console.log(success);
-        if (success && success.result && success.result.data) {
-          this.solutionList = success.result.data;
-        }
-      },
-      (error) => {}
-    );
+    if (payload) {
+      const config = {
+        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10&search=`,
+        payload: payload,
+      };
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          console.log(success);
+          if (success && success.result && success.result.data) {
+            this.solutionList = success.result.data;
+          }
+        },
+        (error) => { }
+      );
+    }
   }
 
   ionViewWillEnter() {

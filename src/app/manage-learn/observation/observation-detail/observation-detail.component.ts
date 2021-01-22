@@ -76,24 +76,26 @@ export class ObservationDetailComponent implements OnInit {
 
   async getObservationEntities() {
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url:
-        urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
-        `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
-      payload: payload,
-    };
-    this.assessmentService.post(config).subscribe(
-      (success) => {
-        console.log(success);
-        if (success && success.result && success.result.entities) {
-          this.selectedSolution = success.result.entities;
-          //   this.checkForAnySubmissionsMade(); TODO:Implement
-        }
-      },
-      (error) => {}
-    );
-  }
+    if (payload) {
+      const config = {
+        url:
+          urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
+          `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
+        payload: payload,
+      };
+      this.assessmentService.post(config).subscribe(
+        (success) => {
+          console.log(success);
+          if (success && success.result && success.result.entities) {
+            this.selectedSolution = success.result.entities;
+            //   this.checkForAnySubmissionsMade(); TODO:Implement
+          }
+        },
+        (error) => { }
+      );
+    }
 
+  }
   checkForAnySubmissionsMade() {
     const payload = {
       observationId: this.selectedSolution._id,
