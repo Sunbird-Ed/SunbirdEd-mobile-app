@@ -13,7 +13,7 @@ import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
-import { File } from "@ionic-native/file";
+import { File } from "@ionic-native/file/ngx";
 
 
 @Component({

@@ -1260,6 +1260,10 @@
   "FRMELEMNTS_MSG_DONOT_CLOSE_APP": "Please don't close the app or go back.",
   "FRMELEMENTS_MSG_QUESTION_FILTER": "Select the questions to filter Reports",
   "FRMELEMENTS_MSG_REDIRECTING": "Redirecting...",
+  "FRMELEMENTS_MSG_SUBMISSION_COMPLETED": "Submission completed successfully",
+  "FRMELEMENTS_MSG_ENABLE_TO_GET_GOOGLE_URLS": "Unable to get google urls",
+  "FRMELEMENTS_MSG_SOMETHING_WENT_WRONG ": "Something went Wrong , Please Try after sometime.",
+  "FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING ": "Please wait while submitting",
   "FRMELEMENTS_BTN_CANCEL": "Cancel",
 
   "FRMELEMNTS_BTN_SUBMIT_FORM": "Submit the form",

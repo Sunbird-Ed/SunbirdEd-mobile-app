@@ -35,7 +35,6 @@ export class DeeplinkRedirectComponent implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.data = extrasState.data;
-      debugger;
     }
   }
 
@@ -124,7 +123,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       (success) => {
         if (success.result) {
           console.log(success);
-          let data=success.result
+          let data = success.result;
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
             queryParams: {
               programId: data.programId,

@@ -79,13 +79,12 @@ export class EntityfilterComponent implements OnInit {
   }
 
   getAllStatesFromLocal() {
-    // this.utils.startLoader();
-    this.loader.startLoader();
+    // this.loader.startLoader();
     this.localStorage
       .getLocalStorage('allStates')
       .then((data) => {
         // this.utils.stopLoader();
-        this.loader.stopLoader();
+        // this.loader.stopLoader();
         data ? (this.allStates = data) : this.getAllStatesApi();
         if (data && data.length) {
           this.selectedState = this.profileData.stateSelected
@@ -205,7 +204,7 @@ export class EntityfilterComponent implements OnInit {
       url: apiUrl,
       payload: payload,
     };
-    this.loader.startLoader();
+    // this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.loading = false;

@@ -141,7 +141,7 @@ export class ImageListingComponent implements OnInit {
             this.submitEvidence();
           }
         } else {
-          this.translate.get('toastMessage.submissionCompleted').subscribe((translations) => {
+          this.translate.get('FRMELEMENTS_MSG_SUBMISSION_COMPLETED').subscribe((translations) => {
             this.toast.openToast(translations);
           });
           this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
@@ -234,7 +234,7 @@ export class ImageListingComponent implements OnInit {
       },
       (error) => {
         this.loader.stopLoader();
-        this.translate.get('toastMessage.enableToGetGoogleUrls').subscribe((translations) => {
+        this.translate.get('FRMELEMENTS_MSG_ENABLE_TO_GET_GOOGLE_URLS').subscribe((translations) => {
           this.toast.openToast(translations);
         });
       }
@@ -320,7 +320,7 @@ export class ImageListingComponent implements OnInit {
             const errorObject = { ...this.errorObj };
             this.retryCount++;
             if (this.retryCount > 3) {
-              this.translate.get('toastMessage.someThingWentWrongTryLater').subscribe((translations) => {
+              this.translate.get('FRMELEMENTS_MSG_SOMETHING_WENT_WRONG').subscribe((translations) => {
                 this.toast.openToast(translations);
               });
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
@@ -353,7 +353,7 @@ export class ImageListingComponent implements OnInit {
     }
   }
   async submitEvidence() {
-    this.loader.startLoader('Please wait while submitting');
+    this.loader.startLoader('FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING');
     //TODO:Remove
     // setTimeout(() => {
     //   this.loader.stopLoader();

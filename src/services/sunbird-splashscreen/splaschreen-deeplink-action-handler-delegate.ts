@@ -537,7 +537,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async handleNavigation(payloadUrl, identifier, dialCode, route, urlMatchGroup) {
-    debugger
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();

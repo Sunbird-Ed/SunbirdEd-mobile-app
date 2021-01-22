@@ -13,6 +13,7 @@
         <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
       </app-item-list-card>
     </div>
+    <app-no-data *ngIf="!solutionList?.length"></app-no-data>
   </ion-content>
   <!-- <ion-button class="view-more" expand="block" (click)="loadMore()">
     {{ "VIEW_MORE" | translate }}

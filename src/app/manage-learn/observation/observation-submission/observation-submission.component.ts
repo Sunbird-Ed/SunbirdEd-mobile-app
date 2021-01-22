@@ -103,6 +103,7 @@ export class ObservationSubmissionComponent implements OnInit {
       url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
       payload: payload,
     };
+    this.loader.startLoader()
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.localStorage
@@ -114,6 +115,7 @@ export class ObservationSubmissionComponent implements OnInit {
             this.submissionIdArr = [];
           })
           .finally(() => {
+            this.loader.stopLoader()
             this.submissionList = success.result;
             this.applyDownloadedflag();
 
