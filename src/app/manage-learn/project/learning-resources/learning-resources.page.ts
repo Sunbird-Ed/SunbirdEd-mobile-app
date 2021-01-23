@@ -5,7 +5,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { LoaderService, ToastService } from "../../core";
 import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
-
+import { ContentDetailRequest, ContentService, Content } from 'sunbird-sdk';
 var environment = {
   db: {
     projects: "project.db",
@@ -39,6 +39,7 @@ export class LearningResourcesPage implements OnInit {
     private loader: LoaderService,
     private toast: ToastService,
     private db: DbService,
+    private contentService: ContentService
     // private openResources: OpenResourcesService
   ) {
     let data;
@@ -64,12 +65,16 @@ export class LearningResourcesPage implements OnInit {
     this.db.createPouchDB(environment.db.projects);
     this.db.query({ _id: projectId }).then(
       (success) => {
+        console.log(success, "success 67");
         // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
         this.list = success;
+        console.log(this.list, "this.list 70");
         if (this.taskId) {
+          console.log(this.taskId, "this.taskId");
           // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
+          console.log(this.list, "this.list");
         }
       },
       (error) => {
@@ -79,8 +84,37 @@ export class LearningResourcesPage implements OnInit {
   }
   openBodh(link) {
     console.log(link, "link");
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResources.openBodh(link)
-    //   : this.toast.showMessage("MESSAGES.OFFLINE", "danger");
+    let identifier = link.split("/").pop();
+    console.log(identifier, "identifier");
+    const req: ContentDetailRequest = {
+      contentId: identifier,
+      attachFeedback: false,
+      attachContentAccess: false,
+      emitUpdateIfAny: false
+    };
+    this.contentService.getContentDetails(req).toPromise()
+      .then(async (data: Content) => {
+        if (data) {
+          console.log(data, "data 98");
+          if (data.contentData.size) {
+            console.log(data.contentData.size, "data.contentData.size");
+          }
+        } else {
+        }
+
+      })
+      .catch(async (error: any) => {
+        if (error.hasOwnProperty('CONNECTION_ERROR')) {
+          console.log('CONNECTION_ERROR');
+          // this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        } else if (error.hasOwnProperty('SERVER_ERROR') || error.hasOwnProperty('SERVER_AUTH_ERROR')) {
+          // this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+          console.log('ERROR_FETCHING_DATA');
+        } else {
+          console.log('ERROR_CONTENT_NOT_AVAILABLE');
+          // this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        }
+        // this.location.back();
+      });
   }
 }

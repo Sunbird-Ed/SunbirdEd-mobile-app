@@ -19,7 +19,6 @@ export class KendraApiService extends ApiService {
     private utils: UtilsService
   ) {
     super(http, toast, modalController, authService);
-    debugger
     this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
   }
 }

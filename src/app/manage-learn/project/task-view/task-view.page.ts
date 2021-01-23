@@ -148,7 +148,6 @@ export class TaskViewPage implements OnInit {
   }
 
   saveSubTaskChanges(subtask, index) {
-    debugger;
     if (subtask.name) {
       this.editField = ""; // removed as it closing the edit field as one letter is entered
       this.update();

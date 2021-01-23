@@ -388,7 +388,6 @@ export class UtilsService {
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationName = orgList[0].orgName;
       this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
-      debugger
     } 
   }
 
@@ -407,8 +406,6 @@ export class UtilsService {
           this.profileService.getServerProfilesDetails(serverProfileDetailsRequest).toPromise()
             .then((profileData) => {
               this.zone.run(async () => {
-                console.log(profileData);
-                debugger
                 this.profile = profileData;
                 const obj = {}
                 for (const location of profileData['userLocations']) {
