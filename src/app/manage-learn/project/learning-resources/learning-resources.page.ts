@@ -68,7 +68,7 @@ export class LearningResourcesPage implements OnInit {
         console.log(success, "success 67");
         // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
-        this.list = success;
+        this.list = success.docs[0];
         console.log(this.list, "this.list 70");
         if (this.taskId) {
           console.log(this.taskId, "this.taskId");
