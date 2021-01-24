@@ -53,13 +53,12 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.surveyList=[]
-  }
+  ngOnInit() {}
 
   ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
+    this.surveyList = [];
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
 
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -164,7 +163,7 @@ export class SurveyHomeComponent implements OnInit {
   redirect(submissionId: any): void {
     // const navParams = { _id: submissionId, selectedEvidence: 0, selectedSection: 0 };
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
-      replaceUrl:true,
+      replaceUrl: this.link ? true : false,
       queryParams: {
         submisssionId: submissionId,
         evidenceIndex: 0,
