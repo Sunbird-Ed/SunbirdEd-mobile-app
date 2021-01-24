@@ -162,12 +162,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
-        this.projectId = success.result._id;
+        // this.projectId = success.result._id;
         this.db.create(success.result).then(success => {
           this.projectId ? this.getProject() :
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-          this.location.back();
+          if(error.status === 409) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
+          } 
         })
       }, error => {
          

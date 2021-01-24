@@ -1349,5 +1349,7 @@
   "FRMELEMNTS_LBL_SUBPERSONA": "Subrole",
   "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
   "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
-  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School"
+  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
+  "FRMELEMNTS_LBL_PLEASE_ADD_OTHERCATEGORIES":"Please add other categories",
+  "FRMELEMNTS_LBL_COFIRM_DELETE":"Do you want to delete this file?"
 }

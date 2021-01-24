@@ -7,7 +7,5 @@
     <app-downloads-tab #downloadsTab *ngIf="downloadedContents.length" [downloadedContents]="downloadedContents"
       (deleteContents)="deleteContents($event)" (sortCriteriaChanged)="onSortCriteriaChange($event)">
     </app-downloads-tab>
-
-    <ion-button (click)="setQuestions()">Questionnaire</ion-button>
   </div>
 </ion-content>
