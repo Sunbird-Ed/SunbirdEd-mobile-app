@@ -2,7 +2,7 @@
   <div class="container">
     <ion-card class="innerContainer">
       <ion-card-header>
-        <ion-card-title>{{"MESSAGES.SYNCING_PROJECT" | translate}}</ion-card-title>
+        <ion-card-title>{{"FRMELEMNTS_LBL_SYNCING_PROJECT" | translate}}</ion-card-title>
       </ion-card-header>
       <div class="flexBox">
         <div style="flex:1" class="flexBox centerAlign">
@@ -10,7 +10,7 @@
         </div>
         <div style="flex:2">
           <div class="middleSection">
-            {{"MESSAGES.SYNCING_PROJECT" | translate}} <span *ngIf="progressPercentage"> ( {{progressPercentage}} % completed)</span>
+            {{"FRMELEMNTS_LBL_SYNCING_PROJECT" | translate}} <span *ngIf="progressPercentage"> ( {{progressPercentage}} % completed)</span>
           </div>
           <div *ngIf="allProjects?.length">
             {{syncIndex+1}} out of {{allProjects?.length}} Syncing

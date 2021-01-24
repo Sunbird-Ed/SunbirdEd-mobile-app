@@ -19,7 +19,6 @@ const routes: Routes = [
   declarations: [ AllEvidenceListComponent],
   imports: [
     CommonModule,
-    HttpClientModule, // TODO:remove after api integration
     TranslateModule.forChild(),
     SharedModule,
     IonicModule,

@@ -67,6 +67,8 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'ios-more.svg',
                 'ios-download.svg',
                 'ios-share.svg',
+                'ios-ellipsis-vertical.svg',
+                'ios-caret-down.svg',
                 'md-add.svg',
                 'md-trash.svg',
                 'md-share.svg',
@@ -134,14 +136,12 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-location-outline.svg',
                 'md-link-outline.svg',
                 'md-caret-down.svg',
-                'md-ellipsis-vertical.svg',
                 'md-radio-button-off.svg',
                 'md-location.svg',
                 'md-link.svg',
                 'md-funnel.svg',
                 'md-clipboard.svg',
                 'md-caret-down.svg',
-                'md-ellipsis-vertical.svg',
                 'md-radio-button-off.svg',
                 'md-document.svg',
                 'md-volume-medium.svg',
@@ -151,7 +151,6 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-more.svg',
                 'md-share.svg',
                 'md-caret-down.svg',
-                'md-ellipsis-vertical.svg',
                 'md-person.svg',
                 'md-share-social.svg',
                 'md-calendar.svg',
@@ -162,7 +161,9 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-chevron-forward.svg',
                 'md-cloud-offline.svg',
                 'md-cloud-outline.svg',
-                'md-cloud-upload.svg'
+                'md-cloud-upload.svg',
+                'md-ellipsis-vertical.svg',
+                'md-caret-down.svg',
             ].includes(file))) {
                 fs.unlinkSync(ionicIconFilePath + '/' + file);
             }

@@ -1,11 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AppHeaderService } from "@app/services";
 import { TranslateService } from "@ngx-translate/core";
 import { LoaderService, ToastService } from "../../core";
 import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
-import { ContentDetailRequest, ContentService, Content } from 'sunbird-sdk';
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
+
 var environment = {
   db: {
     projects: "project.db",
@@ -39,7 +41,8 @@ export class LearningResourcesPage implements OnInit {
     private loader: LoaderService,
     private toast: ToastService,
     private db: DbService,
-    private contentService: ContentService
+    private navigateService: NavigationService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService
     // private openResources: OpenResourcesService
   ) {
     let data;
@@ -62,14 +65,12 @@ export class LearningResourcesPage implements OnInit {
   ngOnInit() { }
   getProjectFromLocal(projectId) {
     this.loader.startLoader();
-    this.db.createPouchDB(environment.db.projects);
     this.db.query({ _id: projectId }).then(
       (success) => {
         console.log(success, "success 67");
         // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
-        this.list = success.docs[0];
-        console.log(this.list, "this.list 70");
+        this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
           console.log(this.taskId, "this.taskId");
           // to show  learnign resources of task
@@ -84,6 +85,8 @@ export class LearningResourcesPage implements OnInit {
   }
   openBodh(link) {
     console.log(link, "link");
+    // this.toast.openToast('Coming soon');
+    console.log(link, "link");
     let identifier = link.split("/").pop();
     console.log(identifier, "identifier");
     const req: ContentDetailRequest = {
@@ -94,27 +97,11 @@ export class LearningResourcesPage implements OnInit {
     };
     this.contentService.getContentDetails(req).toPromise()
       .then(async (data: Content) => {
-        if (data) {
-          console.log(data, "data 98");
-          if (data.contentData.size) {
-            console.log(data.contentData.size, "data.contentData.size");
-          }
-        } else {
-        }
-
-      })
-      .catch(async (error: any) => {
-        if (error.hasOwnProperty('CONNECTION_ERROR')) {
-          console.log('CONNECTION_ERROR');
-          // this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        } else if (error.hasOwnProperty('SERVER_ERROR') || error.hasOwnProperty('SERVER_AUTH_ERROR')) {
-          // this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          console.log('ERROR_FETCHING_DATA');
-        } else {
-          console.log('ERROR_CONTENT_NOT_AVAILABLE');
-          // this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        }
-        // this.location.back();
+        console.log(data, "data 96");
+        this.navigateService.navigateToDetailPage(data, { data });
       });
+    // this.networkService.isNetworkAvailable
+    //   ? this.openResources.openBodh(link)
+    //   : this.toast.showMessage("MESSAGES.OFFLINE", "danger");
   }
 }

@@ -37,8 +37,7 @@ export class CriteriaListComponent implements OnInit {
   applyFilter() {
     !this.filteredCriterias.length
       ? this.toast.openToast('Select at least one criteria')
-      : //
-        this.modalCtrl.dismiss({
+      : this.modalCtrl.dismiss({
           filter: this.filteredCriterias,
           action: 'updated',
         });

@@ -1,9 +1,11 @@
 export const menuConstants = {
-    TASK: [{
-        TITLE: 'FRMELEMNTS_LBL_SHARE_TASK',
-        VALUE: 'shareTask',
-        ICON: 'share'
-    },{
+    TASK: [
+    //     {
+    //     TITLE: 'FRMELEMNTS_LBL_SHARE_TASK',
+    //     VALUE: 'shareTask',
+    //     ICON: 'share'
+    // },
+    {
         TITLE: 'EDIT',
         VALUE: 'editTask',
         ICON: 'create'

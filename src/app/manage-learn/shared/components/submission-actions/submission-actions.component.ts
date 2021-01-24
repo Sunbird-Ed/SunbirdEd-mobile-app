@@ -17,7 +17,7 @@ export class SubmissionActionsComponent implements OnInit {
     private navParams: NavParams,
     private alertCntrler: AlertController,
     // private viewCntrlr: ViewController,
-    private popover:PopoverController,
+    public popover: PopoverController,
     private translateService: TranslateService,
     private modalCtrl: ModalController,
     private datepipe: DatePipe
@@ -25,9 +25,11 @@ export class SubmissionActionsComponent implements OnInit {
 
   ngOnInit() {
     this.submission = this.navParams.get('submission');
-    this.translateService.get(['FRMELEMNTS_BTN_UPDATE', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_LBL_INSTANCE_NAME']).subscribe((translations) => {
-      this.translateObject = translations;
-    });
+    this.translateService
+      .get(['FRMELEMNTS_BTN_UPDATE', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_LBL_INSTANCE_NAME'])
+      .subscribe((translations) => {
+        this.translateObject = translations;
+      });
   }
 
   async presentAlert() {
@@ -64,13 +66,13 @@ export class SubmissionActionsComponent implements OnInit {
     alert.present();
   }
 
- async presentModal() {
+  async presentModal() {
     this.popover.dismiss();
     const modal = await this.modalCtrl.create({
-      component:ViewDetailComponent,
+      component: ViewDetailComponent,
       componentProps: {
         submission: this.submission,
-      }
+      },
     });
     modal.present();
   }

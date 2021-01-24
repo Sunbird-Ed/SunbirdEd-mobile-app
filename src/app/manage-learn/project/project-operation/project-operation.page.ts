@@ -65,7 +65,7 @@ export class ProjectOperationPage implements OnInit {
         this.button = params.isEdit ? 'FRMELEMNTS_BTN_SAVE_EDITS' : 'FRMELEMNTS_BTN_CREATE_PROJECT'
         this.showLearningResources = true;
         this.showRatings = false;
-        this.getProjectFromLocal();
+        this.getProjectFromLocal(this.projectId);
       } else {
         this.showRatings = true;
         // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
@@ -98,16 +98,28 @@ export class ProjectOperationPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
-  getProjectFromLocal() {
-    this.db.query({ _id: this.projectId }).then(
-      (success) => {
-        if (success.docs.length) {
-          this.template = success.docs.length ? success.docs[0] : {};
+
+  getProjectFromLocal(projectId) {
+    this.db.query({ _id: projectId }).then(success => {
+      this.template = success.docs[0];
+      console.log(this.template, "this.template");
+      if (this.template.entityName) {
+        this.selectedEntity = {
+          name: this.template.entityName ? this.template.entityName : '',
+          _id: this.template.entityId ? this.template.entityId : '',
         }
-      },
-      (error) => {
       }
-    );
+      this.selectedResources = this.template.learningResources && this.template.learningResources.length ? this.template.learningResources : [];
+      if (this.template.programName) {
+        this.selectedProgram = {
+          _id: this.template.programId ? this.template.programId : '',
+          name: this.template.programName ? this.template.programName : '',
+          isAPrivateProgram: this.template.isAPrivateProgram 
+        }
+      }
+    }, error => {
+      // this.loader.stopLoader();
+    })
   }
 
   async openSearchModel(type, url?) {
@@ -170,7 +182,7 @@ export class ProjectOperationPage implements OnInit {
       // cssClass: 'my-custom-class'
     });
     modal.onDidDismiss().then(data => {
-      this.selectedResources = data.data ? data.data : [];
+      this.selectedResources = data.data ? data.data : this.selectedResources;
     })
     return await modal.present();
   }
@@ -182,9 +194,11 @@ export class ProjectOperationPage implements OnInit {
         this.template.entityId ? delete this.template.entityId : '';
       }
     } else if (type == 'program') {
-      this.selectedProgram = '';
-      this.template.programId ? delete this.template.programId : '';
-      this.template.programName ? delete this.template.programName : '';
+      if (this.template.isAPrivateProgram) {
+        this.selectedProgram = '';
+        this.template.programId ? delete this.template.programId : '';
+        this.template.programName ? delete this.template.programName : '';
+      }
     } else if (type == 'resources') {
       const index = this.selectedResources.indexOf(data, 0);
       if (index > -1) {

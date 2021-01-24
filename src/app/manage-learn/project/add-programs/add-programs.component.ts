@@ -34,18 +34,23 @@ export class AddProgramsComponent implements OnInit {
   async getPrograms() {
     this.loaderService.startLoader();
     let payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.PRIVATE_PROGRAMS,
-      payload:payload
-    }
-    this.kendraApiService.get(config).subscribe(data => {
-      this.loaderService.stopLoader();
-      if (data.result && data.result.length) {
-        this.dataList = data.result;
+    if (payload) {
+      const config = {
+        url: urlConstants.API_URLS.PRIVATE_PROGRAMS,
+        payload: payload
       }
-    }, error => {
+      this.kendraApiService.get(config).subscribe(data => {
+        this.loaderService.stopLoader();
+        if (data.result && data.result.length) {
+          this.dataList = data.result;
+        }
+      }, error => {
+        this.loaderService.stopLoader();
+      })
+    } else {
       this.loaderService.stopLoader();
-    })
+    }
+
 
 
 

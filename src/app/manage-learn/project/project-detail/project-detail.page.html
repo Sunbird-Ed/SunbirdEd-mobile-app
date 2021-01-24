@@ -1,7 +1,7 @@
 <ion-content *ngIf="project">
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-down" (click)="toggle()"></ion-icon>
+      <ion-icon name="arrow-dropdown" (click)="toggle()"></ion-icon>
       <ion-label>{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
@@ -46,7 +46,7 @@
   </ion-card>
   <ion-card class="project-box" *ngIf="!showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-forward" color="primary" (click)="toggle()"></ion-icon>
+      <ion-icon name="arrow-dropdown" (click)="toggle()"></ion-icon>
       <ion-label> {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}} : </ion-label>
       {{project?.title}}
     </ion-card-header>
@@ -66,9 +66,9 @@
     <ion-col size="6" class="text-left">
       {{'FRMELEMNTS_LBL_TOTAL_TASKS' | translate}} : {{taskCount}}
     </ion-col>
-    <!-- <ion-col size="6" class="text-right">
+    <ion-col size="6" class="text-right">
       {{categories}}
-    </ion-col> -->
+    </ion-col>
   </ion-row>
   <div *ngIf="sortedTasks" class="task-list">
     <div *ngFor="let schedule of schedules">
@@ -83,13 +83,13 @@
               <h5>{{task.name}}</h5>
               <div class="date_button-container">
                 <h5 class="task-endDate">
-                  {{'FRMELEMNTS_LBL_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
+                  {{'FRMELEMNTS_LBL_END_DATE' | translate}} :
+                  {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
                 </h5>
               </div>
             </ion-col>
             <ion-col size="1">
-              <ion-icon name="ellipsis-vertical" color="primary"
-                (click)="openPopover($event,task._id,task.isDeletable)"></ion-icon>
+              <ion-icon name="more" (click)="openPopover($event,task._id,task.isDeletable)"></ion-icon>
             </ion-col>
           </ion-row>
           <div class="viewBtn">

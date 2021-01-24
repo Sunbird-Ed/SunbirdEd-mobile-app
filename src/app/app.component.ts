@@ -49,7 +49,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
-import { UtilsService, NetworkService } from './manage-learn/core';
+import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
 
 declare const cordova;
 
@@ -117,8 +117,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private utils: UtilsService,
-    private networkServ: NetworkService
+    private utils: ApiUtilsService,
+    private networkServ: NetworkService,
+    private localStorage: LocalStorageService,
+    private db: DbService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -825,6 +827,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
           this.logoutHandlerService.onLogout();
+          this.localStorage.deleteAllStorage();
+          this.db.dropDb();
         }
         break;
 

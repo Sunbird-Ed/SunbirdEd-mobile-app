@@ -20,7 +20,7 @@ export class ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
   ) { }
 
-  get(requestParam: RequestParams): Observable<any> {
+ get(requestParam: RequestParams): Observable<any> {
     return this.authService.getSession().pipe(
       mergeMap((session) => {
         const httpOptions = {
@@ -68,7 +68,7 @@ export class ApiService {
         this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger')
         break
       case 401:
-        // this.auth.sessionExpired();
+        this.toast.showMessage('Session expired', 'danger')
         break
       default:
         this.toast.showMessage(result.error ? result.error.message : 'FRMELEMNTS_MSG_SOMETHING_WENT_WRONG', 'danger')

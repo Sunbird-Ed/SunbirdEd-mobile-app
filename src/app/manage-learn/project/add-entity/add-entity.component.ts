@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, NetworkService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import * as _ from 'underscore';
 
 @Component({
    selector: 'app-add-entity',
@@ -10,40 +11,103 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
    styleUrls: ['./add-entity.component.scss'],
 })
 export class AddEntityComponent implements OnInit {
-   title;
    subEntities;
-   limit = 25;
-   searchText;
+   noSubEntity: boolean = false;
+   entities = [];
    page = 1;
+   limit = 20;
+   childEntity;
+   searchText = "";
    profileData;
    stateId;
-   entityType;
-   childEntity;
-   entityCount;
    selectedEntity;
-   noSubEntity;
-   entities = [];
+   title;
+   entityCount
+   @Input() entityType: any;
    constructor(
-      private modal: ModalController,
-      private utils: UtilsService,
-      private kendraApiService: KendraApiService
-   ) { }
+      private loader: LoaderService,
+      private toast: ToastService,
+      private storage: LocalStorageService,
+      private kendraApiService: KendraApiService,
+      private modalCtrl: ModalController,
+      private networkService: NetworkService,
+      private utils: UtilsService
+   ) {
+      this.onSearch = _.debounce(this.onSearch, 500);
+   }
 
    ngOnInit() {
       this.checkUserMapping();
    }
-   selectSubEntity(event) { }
-   selectEntity(entity) { }
 
-   async checkUserMapping() {
-      let payload = await this.utils.getProfileInfo();
-      console.log(payload, "payload");
-      this.profileData = payload;
-      this.stateId = this.profileData.state._id;
-      this.title = this.profileData.state.name;
-      this.getSubEntities(this.profileData.state._id);
+   selectEntity(event) {
+      this.selectedEntity = event;
+   }
+   selectSubEntity(subEntity) {
+      this.childEntity = subEntity.detail.value;
+      this.entities = [];
+      this.page = 1;
+      this.getEntities(subEntity.detail.value);
+   }
+   getEntities(entityType) {
+      if (this.networkService.isNetworkAvailable) {
+         // this.loader.startLoader();
+         const config = {
+            url:
+               urlConstants.API_URLS.GET_ENTITY_LIST +
+               this.stateId +
+               "?type=" +
+               entityType +
+               "&search=" +
+               this.searchText +
+               "&page=" +
+               this.page +
+               "&limit=" +
+               this.limit,
+         };
+         this.kendraApiService.get(config).subscribe(
+            (data) => {
+               // this.loader.stopLoader();
+               if (data.result.data && data.result.data.length) {
+                  this.entities = this.entities.concat(data.result.data);
+                  this.entityCount = data.result.count;
+                  this.noSubEntity = false;
+               } else {
+                  this.noSubEntity = true;
+               }
+            },
+            (error) => {
+               // this.loader.stopLoader();
+            }
+         );
+      } else {
+         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+      }
+   }
+   checkUserMapping() {
+      // this.storage.getLocalStorage("profileData").then((data) => {
+      //    this.profileData = data;
+      //    this.stateId = this.profileData.state._id;
+      //    this.title = this.profileData.state.name;
+      //    this.getSubEntities(this.profileData.state._id);
+      // });
+
+      this.utils.getProfileData().then(profileData => {
+         this.profileData = profileData;
+         this.stateId = this.profileData.state;
+         this.getSubEntities(this.stateId);
+      }).catch(error => {
+
+      })
+
+   }
+
+   loadMoreEntities() {
+      this.page++;
+      this.getEntities(this.childEntity);
    }
    getSubEntities(stateId) {
+
       // to select entityType if already provided
       if (this.entityType) {
          let selist = [];
@@ -60,63 +124,36 @@ export class AddEntityComponent implements OnInit {
          return
       }
 
-      // this.loader.startLoader();
-      const config = {
-         url: urlConstants.API_URLS.GET_SUBENTITIES + stateId,
-      };
-      this.kendraApiService.get(config).subscribe(
-         (data) => {
-            // this.loader.stopLoader();
-            if (data.result) {
-               let selist = [];
-               data.result.forEach((se) => {
-                  let entity = {
-                     name: se,
-                     value: se,
-                  };
-                  selist.push(entity);
-               });
-               this.subEntities = selist.reverse();
-               this.selectedEntity = this.subEntities[0];
-               this.childEntity = this.subEntities[0].value;
-               this.getEntities(this.subEntities[0].value);
+      if (this.networkService.isNetworkAvailable) {
+         // this.loader.startLoader();
+         const config = {
+            url: urlConstants.API_URLS.GET_SUBENTITIES + stateId,
+         };
+         this.kendraApiService.get(config).subscribe(
+            (data) => {
+               // this.loader.stopLoader();
+               if (data.result) {
+                  let selist = [];
+                  data.result.forEach((se) => {
+                     let entity = {
+                        name: se,
+                        value: se,
+                     };
+                     selist.push(entity);
+                  });
+                  this.subEntities = selist.reverse();
+                  this.selectedEntity = this.subEntities[0];
+                  this.childEntity = this.subEntities[0].value;
+                  this.getEntities(this.subEntities[0].value);
+               }
+            },
+            (error) => {
+               // this.loader.stopLoader();
             }
-         },
-         (error) => {
-            // this.loader.stopLoader();
-         }
-      );
-   }
-
-   getEntities(entityType) {
-      const config = {
-         url:
-            urlConstants.API_URLS.GET_ENTITY_LIST +
-            this.stateId +
-            "?type=" +
-            entityType +
-            "&search=" +
-            this.searchText +
-            "&page=" +
-            this.page +
-            "&limit=" +
-            this.limit,
-      };
-      this.kendraApiService.get(config).subscribe(
-         (data) => {
-            // this.loader.stopLoader();
-            if (data.result.data && data.result.data.length) {
-               this.entities = this.entities.concat(data.result.data);
-               this.entityCount = data.result.count;
-               this.noSubEntity = false;
-            } else {
-               this.noSubEntity = true;
-            }
-         },
-         (error) => {
-            // this.loader.stopLoader();
-         }
-      );
+         );
+      } else {
+         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+      }
    }
 
    onSearch(event) {
@@ -129,11 +166,12 @@ export class AddEntityComponent implements OnInit {
       this.getEntities(this.childEntity);
    }
    close() {
-      this.modal.dismiss();
+      this.modalCtrl.dismiss();
    }
    addEntity() {
       if (this.selectedEntity) {
-         this.modal.dismiss(this.selectedEntity);
+         this.modalCtrl.dismiss(this.selectedEntity);
       }
    }
+
 }
