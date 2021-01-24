@@ -20,6 +20,7 @@ export class SolutionListingComponent implements OnInit {
   count = 0;
   limit = 25;
   page = 1;
+  programName: any;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -131,6 +132,7 @@ export class SolutionListingComponent implements OnInit {
             this.solutions = this.solutions.concat(success.result.data);
             this.count = success.result.count;
             this.description = success.result.description;
+            this.programName=success.result.programName
           }
         },
         (error) => {
