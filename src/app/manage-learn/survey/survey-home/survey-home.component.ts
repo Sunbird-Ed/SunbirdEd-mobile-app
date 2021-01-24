@@ -24,9 +24,12 @@ export class SurveyHomeComponent implements OnInit {
     showBurgerMenu: false,
     actionButtons: [],
   };
+  page = 1;
+  limit = 10;
   link: any;
   surveyList: any;
   submissionArr: any;
+  count: any;
   constructor(
     private httpClient: HttpClient,
     private location: Location,
@@ -50,7 +53,9 @@ export class SurveyHomeComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.surveyList=[]
+  }
 
   ionViewDidLoad(): void {}
 
@@ -75,13 +80,14 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=1&limit=10&search=`,
+      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=${this.page}&limit=${this.limit}`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(
       (success) => {
         if (success.result && success.result.data) {
-          this.surveyList = success.result.data;
+          this.count = success.result.count;
+          this.surveyList = [...this.surveyList, ...success.result.data];
           this.getSubmissionArr();
           this.loader.stopLoader();
         }
@@ -152,12 +158,13 @@ export class SurveyHomeComponent implements OnInit {
       return;
     }
     // surveyId changed to _id
-    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey._id,survey.solutionId);
+    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey._id, survey.solutionId);
   }
 
   redirect(submissionId: any): void {
     // const navParams = { _id: submissionId, selectedEvidence: 0, selectedSection: 0 };
     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+      replaceUrl:true,
       queryParams: {
         submisssionId: submissionId,
         evidenceIndex: 0,
@@ -180,10 +187,12 @@ export class SurveyHomeComponent implements OnInit {
   getSurveyById(surveyId, solutionId) {
     //passing solution id in v2
     if (!surveyId) {
-      return;
+      // return;
+      // for auto targeted _id will be blank
+      // so creator also no will be able to submit
     }
     this.surveyProvider
-      .getDetailsById(surveyId,solutionId)
+      .getDetailsById(surveyId, solutionId)
       .then((res) => {
         const survey = res.result;
         this.storeRedirect(survey);
@@ -229,5 +238,9 @@ export class SurveyHomeComponent implements OnInit {
         solutionId: survey.solutionId,
       },
     });
+  }
+  loadMore() {
+    this.page = this.page + 1;
+    this.getSurveyListing();
   }
 }

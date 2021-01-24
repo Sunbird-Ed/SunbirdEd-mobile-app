@@ -26,6 +26,9 @@ export class ObservationHomeComponent implements OnInit {
   };
   // programList: any;
   solutionList: any;
+  page = 1;
+  limit = 10;
+  count: any;
   constructor(
     private httpClient: HttpClient,
     private location: Location,
@@ -36,9 +39,10 @@ export class ObservationHomeComponent implements OnInit {
     private utils: UtilsService,
     private assessmentService: AssessmentApiService, // private kendraService: KendraApiService
     private loader: LoaderService
-  ) { }
+  ) {}
 
   ngOnInit() {
+    this.solutionList=[]
     this.getPrograms();
   }
   async getPrograms() {
@@ -46,7 +50,7 @@ export class ObservationHomeComponent implements OnInit {
     if (payload) {
       this.loader.startLoader();
       const config = {
-        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=1&limit=10`,
+        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=${this.page}&limit=${this.limit}`,
         payload: payload,
       };
       this.assessmentService.post(config).subscribe(
@@ -54,11 +58,13 @@ export class ObservationHomeComponent implements OnInit {
           this.loader.stopLoader();
           console.log(success);
           if (success && success.result && success.result.data) {
-            this.solutionList = success.result.data;
+            this.count = success.result.count;
+
+            this.solutionList = [...this.solutionList , ...success.result.data] ;
           }
         },
         (error) => {
-          this.solutionList = []
+          this.solutionList = [];
           this.loader.stopLoader();
         }
       );
@@ -94,5 +100,9 @@ export class ObservationHomeComponent implements OnInit {
       programIndex: this.programIndex,
       solutionIndex: this.solutionIndex,
     }); */
+  }
+  loadMore() {
+    this.page = this.page + 1;
+    this.getPrograms()
   }
 }

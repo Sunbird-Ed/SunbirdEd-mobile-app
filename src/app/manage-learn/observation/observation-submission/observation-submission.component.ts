@@ -97,13 +97,13 @@ export class ObservationSubmissionComponent implements OnInit {
     this.getProgramFromStorage();
   }
 
-  async getProgramFromStorage(stopLoader?, noLoader?) {
+  async getProgramFromStorage(isDeleted = false) {
     let payload = await this.utils.getProfileInfo();
     const config = {
       url: urlConstants.API_URLS.GET_OBSERVATION_SUBMISSIONS + `${this.observationId}?entityId=${this.entityId}`,
       payload: payload,
     };
-    this.loader.startLoader()
+    this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.localStorage
@@ -115,7 +115,7 @@ export class ObservationSubmissionComponent implements OnInit {
             this.submissionIdArr = [];
           })
           .finally(() => {
-            this.loader.stopLoader()
+            this.loader.stopLoader();
             this.submissionList = success.result;
             this.applyDownloadedflag();
 
@@ -125,6 +125,11 @@ export class ObservationSubmissionComponent implements OnInit {
           });
       },
       (error) => {
+        if (isDeleted) {
+          this.loader.stopLoader();
+          history.go(-1);
+          return;
+        }
         if (error.error.status === 400) {
           let event = {
             entityId: this.entityId,
@@ -133,9 +138,16 @@ export class ObservationSubmissionComponent implements OnInit {
               submissionNumber: 1,
             },
           };
-          this.observationService.getAssessmentDetailsForObservation(event).then((res) => {
-            this.getProgramFromStorage();
-          });
+          this.observationService.getAssessmentDetailsForObservation(event).then(
+            (res) => {
+              this.loader.stopLoader();
+
+              this.getProgramFromStorage();
+            },
+            (err) => {
+              this.loader.stopLoader();
+            }
+          );
         }
         console.log(error);
       }
@@ -460,7 +472,7 @@ export class ObservationSubmissionComponent implements OnInit {
                 this.loader.stopLoader();
 
                 if (success && success.status == 200) {
-                  this.getProgramFromStorage();
+                  this.getProgramFromStorage(true);
                 }
               },
               (error) => {

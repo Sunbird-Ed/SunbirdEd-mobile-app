@@ -190,6 +190,7 @@ export class DeeplinkRedirectComponent implements OnInit {
       setTimeout(() => {
         // will go call entity report
         this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+          replaceUrl: true,
           queryParams: {
             entityId: eId,
             entityType: etype,
