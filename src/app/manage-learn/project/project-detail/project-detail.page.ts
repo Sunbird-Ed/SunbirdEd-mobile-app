@@ -20,14 +20,15 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { Location } from '@angular/common';
 
-var environment = {
-  db: {
-    projects: "project.db",
-    categories: "categories.db",
-  },
-  deepLinkAppsUrl: ''
-};
+// var environment = {
+//   db: {
+//     projects: "project.db",
+//     categories: "categories.db",
+//   },
+//   deepLinkAppsUrl: ''
+// };
 
 @Component({
   selector: "app-project-detail",
@@ -105,7 +106,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private event: Events,
     private platform: Platform,
     private http: HttpClient,
-    private kendraService: KendraApiService
+    private kendraService: KendraApiService,
+    private location: Location
   ) {
     params.params.subscribe((parameters) => {
       this.projectId = parameters.projectId;
@@ -160,15 +162,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
-        // this.projectId = success.result._id;
+        this.projectId = success.result._id;
         this.db.create(success.result).then(success => {
           this.projectId ? this.getProject() :
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-          if (error.status = 409) {
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
-          }
-          
+          this.location.back();
         })
       }, error => {
          
@@ -400,7 +399,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   //Update the project
   update(type) {
     this.project.isEdit = true;
-    this.db.createPouchDB(environment.db.projects);
     this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
@@ -495,7 +493,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let data = success.result;
 
           let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
-          let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
+          // let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
             queryParams: {
               programId: data.programId,
@@ -591,7 +589,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let data = success.result;
           let entityType = data.entityType
           let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
-          let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
+          // let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
           // this.iab.create(link, "_system");
         },
         (error) => {
