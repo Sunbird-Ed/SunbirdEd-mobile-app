@@ -15,7 +15,12 @@
     </div>
     <app-no-data *ngIf="!solutionList?.length"></app-no-data>
   </ion-content>
-  <!-- <ion-button class="view-more" expand="block" (click)="loadMore()">
-    {{ "VIEW_MORE" | translate }}
-  </ion-button> -->
+  <ion-button
+    class="view-more"
+    expand="block"
+    (click)="loadMore()"
+    *ngIf="solutionList?.length && count > solutionList?.length"
+  >
+    {{ 'VIEW_MORE' | translate }}
+  </ion-button>
 </ion-app>
