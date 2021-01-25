@@ -1212,8 +1212,8 @@
   "FRMELEMNTS_LBL_OBSERVATION_REPORTS_DEC": "View Observation Reports",
   "FRMELEMNTS_LBL_SURVEY_REPORTS_DESC": "View Survey Reports",
   "FRMELEMNTS_LBL_IMPROVEMENT_REPORTS_DESC": "View Projects Reports",
-  "FRMELEMNTS_LBL_OBSERVATION_DESC": "Obseration Listing",
-  "FRMELEMNTS_LBL_SURVEY_DESC": "Survey Listing",
+  "FRMELEMNTS_LBL_OBSERVATION_DESC": "Access and record your classroom and school observations easily and plan your improvement journeys.",
+  "FRMELEMNTS_LBL_SURVEY_DESC": "Provide information and feedback through quick and easy surveys",
   "FRMELEMNTS_LBL_REPORTS_DESC": "Reports Listing",
   "FRMELEMNTS_LBL_IN_PROGRESS": "In Progress",
   "FRMELEMNTS_LBL_SUBMIT": "Submit",
@@ -1245,6 +1245,7 @@
   "FRMELEMNTS_LBL_OBSERVE_AGAIN": "Observe Again",
   "FRMELEMNTS_LBL_NO_DATA_FOUND":"No Data found",
   "FRMELEMNTS_LBL_VIEW_ENTITY_REPORT": "View Entity Report",
+  "FRMELEMNTS_LBL_DELETE_ENTITY": "Are you sure to remove the entity form observation?",
   "FRMELEMNTS_BTN_UPDATE": "Update",
   "FRMELEMNTS_BTN_EDIT": "Edit",
   "FRMELEMNTS_BTN_VIEW_DETAILS": "View Details",
@@ -1273,7 +1274,8 @@
   "FRMELEMENTS_MSG_SOMETHING_WENT_WRONG ": "Something went Wrong , Please Try after sometime.",
   "FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING ": "Please wait while submitting",
   "FRMELEMENTS_BTN_CANCEL": "Cancel",
-
+  "FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING": "Error while downloading ",
+  "FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED": "Successfully Downloaded",
   "FRMELEMNTS_BTN_SUBMIT_FORM": "Submit the form",
   "FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT": "Upload And Submit",
   "FRMELEMENTS_BTN_APPLY_FILTER": "Apply Filter",
@@ -1349,5 +1351,7 @@
   "FRMELEMNTS_LBL_SUBPERSONA": "Subrole",
   "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
   "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
-  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School"
+  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
+  "FRMELEMNTS_LBL_PLEASE_ADD_OTHERCATEGORIES":"Please add other categories",
+  "FRMELEMNTS_LBL_COFIRM_DELETE":"Do you want to delete this file?"
 }

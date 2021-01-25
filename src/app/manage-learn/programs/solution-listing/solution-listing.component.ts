@@ -7,6 +7,9 @@ import { UtilsService } from '../../core';
 import { LoaderService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../survey/survey-provider.service';
+import { Subscription } from 'rxjs';
+import { AppHeaderService } from '@app/services';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-solution-listing',
@@ -20,6 +23,14 @@ export class SolutionListingComponent implements OnInit {
   count = 0;
   limit = 25;
   page = 1;
+  programName: any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: []
+};
+private backButtonFunc: Subscription;
+
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -28,7 +39,9 @@ export class SolutionListingComponent implements OnInit {
     private loader: LoaderService,
     private location: Location,
     private router: Router,
-    private surveyProvider: SurveyProviderService
+    private surveyProvider: SurveyProviderService,
+    private headerService: AppHeaderService,
+    private platform: Platform
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -38,6 +51,29 @@ export class SolutionListingComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
+}
+
+ionViewWillLeave() {
+  if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+  }
+}
+
+private handleBackButton() {
+  this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+  });
+}
 
   selectedSolution(data) {
     switch (data.type) {
@@ -92,7 +128,7 @@ export class SolutionListingComponent implements OnInit {
     if (data.projectId) {
       projectId = data.projectId;
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, projectId, this.programId, data._id]);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, "", this.programId, data._id]);
   }
   redirectObservaiton(data) {
     let observationId = '';
@@ -131,6 +167,7 @@ export class SolutionListingComponent implements OnInit {
             this.solutions = this.solutions.concat(success.result.data);
             this.count = success.result.count;
             this.description = success.result.description;
+            this.programName=success.result.programName
           }
         },
         (error) => {

@@ -1,6 +1,5 @@
 import { from } from 'rxjs';
 
-export * from './common-list-card/common-list-card.component';
 export * from './audio-list/audio-list.component';
 export * from './common-header/common-header.component';
 export * from './date-type-input/date-type-input.component';

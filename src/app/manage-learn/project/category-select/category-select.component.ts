@@ -137,13 +137,15 @@ export class CategorySelectComponent implements OnInit {
               } else {
                 valid = false;
               }
+            } else {
+              option.name = option.label;
             }
             this.selectedCategories.push(option);
           }
         });
       }
     });
-    valid ? this.modal.dismiss(this.selectedCategories) : this.toast.showMessage('MESSAGES.PLEASE_ADD_OTHERCATEGORIES', 'danger')
+    valid ? this.modal.dismiss(this.selectedCategories) : this.toast.showMessage('FRMELEMNTS_LBL_PLEASE_ADD_OTHERCATEGORIES', 'danger')
   }
   close() {
     // this.onSubmit.emit();

@@ -18,6 +18,7 @@ declare var cordova: any;
 })
 export class ImageListingComponent implements OnInit {
   tempevidenceSections: any;
+  allStrings: any;
 
   constructor(
     private routerParam: ActivatedRoute,
@@ -36,6 +37,12 @@ export class ImageListingComponent implements OnInit {
       this.selectedEvidenceIndex = params.selectedEvidenceIndex;
       this.schoolName = params.name;
     });
+
+      this.translate
+      .get(["FRMELEMENTS_MSG_SOMETHING_WENT_WRONG"])
+      .subscribe((texts) => {
+        this.allStrings = texts;
+      });
   }
 
   ngOnInit() {
@@ -353,7 +360,7 @@ export class ImageListingComponent implements OnInit {
     }
   }
   async submitEvidence() {
-    this.loader.startLoader('FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING');
+    this.loader.startLoader(this.allStrings['FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING']);
     //TODO:Remove
     // setTimeout(() => {
     //   this.loader.stopLoader();

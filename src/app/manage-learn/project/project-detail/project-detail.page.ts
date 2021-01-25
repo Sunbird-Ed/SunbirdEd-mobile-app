@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -20,14 +20,15 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { Location } from '@angular/common';
 
-var environment = {
-  db: {
-    projects: "project.db",
-    categories: "categories.db",
-  },
-  deepLinkAppsUrl: ''
-};
+// var environment = {
+//   db: {
+//     projects: "project.db",
+//     categories: "categories.db",
+//   },
+//   deepLinkAppsUrl: ''
+// };
 
 @Component({
   selector: "app-project-detail",
@@ -105,7 +106,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private event: Events,
     private platform: Platform,
     private http: HttpClient,
-    private kendraService: KendraApiService
+    private kendraService: KendraApiService,
+    private location: Location,
+    private ref: ChangeDetectorRef
+
   ) {
     params.params.subscribe((parameters) => {
       this.projectId = parameters.projectId;
@@ -160,15 +164,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
-        this.projectId = success.result._id;
-        this.db.create(success.result).then(success => {
+        // this.projectId = success.result._id;
+        this.db.create(success.result).then(successData => {
           this.projectId ? this.getProject() :
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-          if (error.status = 409) {
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, this.projectId, this.programId, this.solutionId], { replaceUrl: true });
-          }
-          
+          if(error.status === 409) {
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
+          } 
         })
       }, error => {
          
@@ -400,7 +403,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   //Update the project
   update(type) {
     this.project.isEdit = true;
-    this.db.createPouchDB(environment.db.projects);
     this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
@@ -495,7 +497,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let data = success.result;
 
           let params = `${data.programId}-${data.solutionId}-${data.entityId}`;
-          let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
+          // let link = `${environment.deepLinkAppsUrl}/${task.type}/${params}`;
           this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], {
             queryParams: {
               programId: data.programId,
@@ -554,19 +556,29 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     );
   }
 
-  updateAssessmentStatus(data) {
+ updateAssessmentStatus(data) {
     // if task type is assessment or observation then check if it is submitted and change the status and update in db
     let isChnaged = false
     this.project.tasks.map((t) => {
       data.map((d) => {
-        if (d._id == t._id && d.status != t.status) {
-          t.status = d.status;
-          isChnaged = true
+        if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
+          if (d._id == t._id && d.submissionDetails.status) {
+            // check id matches and task details has submissionDetails
+            if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
+              t.submissionDetails = d.submissionDetails;
+              isChnaged = true;
+            }
+          }
         }
+
+        /*   if (d._id == t._id && d.submissionStatus != t.submissionDetails.submissionStatus) {
+            t.status = d.status;
+            isChnaged = true;
+          } */
       });
     });
     isChnaged ? this.update('taskStatusUpdated') : null// if any assessment/observatiom task status is changed then only update 
-    console.log(this.project);
+    this.ref.detectChanges();
   }
 
   getAssessmentTypeTaskId() {
@@ -577,10 +589,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     return assessmentTypeTaskIds;
   }
 
-  checkReport(task) {
+  async checkReport(task) {
     if (this.project.entityId) {
+      let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+        payload:payload
+        
       };
       this.unnatiService.get(config).subscribe(
         (success) => {
@@ -591,8 +606,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let data = success.result;
           let entityType = data.entityType
           let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
-          let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
+          // let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
           // this.iab.create(link, "_system");
+           this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+          queryParams: {
+            entityId: data.entityId,
+            entityType: entityType,
+            observationId: data.observationId,
+          },
+        });
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");

@@ -344,25 +344,25 @@ export class ImageUploadComponent implements OnInit {
     let translateObject;
     this.translate
       .get([
-        "actionSheet.confirmDelete",
+        "FRMELEMNTS_LBL_COFIRM_DELETE",
         "actionSheet.confirmDeleteInstance",
-        "actionSheet.no",
-        "actionSheet.yes",
+        "FRMELEMNTS_LBL_NO",
+        "FRMELEMNTS_LBL_YES",
       ])
       .subscribe((translations) => {
         translateObject = translations;
       });
     let alert = await this.alertCtrl.create({
-      header: translateObject["actionSheet.confirmDelete"],
-      message: translateObject["actionSheet.confirmDeleteInstance"],
+      // header: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
+      message: translateObject["FRMELEMNTS_LBL_COFIRM_DELETE"],
       buttons: [
         {
-          text: translateObject["actionSheet.no"],
+          text: translateObject["FRMELEMNTS_LBL_NO"],
           role: "cancel",
           handler: () => { },
         },
         {
-          text: translateObject["actionSheet.yes"],
+          text: translateObject["FRMELEMNTS_LBL_YES"],
           handler: () => {
             this.removeImgFromList(index);
           },

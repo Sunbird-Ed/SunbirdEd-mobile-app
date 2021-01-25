@@ -6,7 +6,6 @@ import { ModalController } from '@ionic/angular';
 import * as _ from "underscore";
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 
-
 @Component({
   selector: 'app-filter-modal',
   templateUrl: './filter-modal.component.html',
@@ -53,41 +52,44 @@ export class FilterModalComponent implements OnInit {
 
     this.type == 'entity' ? this.serachEntity(searchText) : this.searchProgramByEntity(searchText);
   }
-  searchProgramByEntity(searchText: any) {
+  async searchProgramByEntity(searchText: any) {
     //TODO
-    // this.loader.startLoader();
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
 
-    // const config = {
-    //   url:
-    //     urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
-    //     this.entityId +
-    //     `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
-    // };
-    // this.unnatiSrvc.get(config).subscribe(
-    //   (data) => {
-    //     this.loader.stopLoader();
-    //     this.dataList = data.result.data;
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+    const config = {
+      url:
+        urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
+        this.entityId +
+        `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
+      payload: payload,
+    };
+    this.unnatiSrvc.get(config).subscribe(
+      (data) => {
+        this.loader.stopLoader();
+        this.dataList = data.result.data;
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
-  serachEntity(searchText: any) {
+  async serachEntity(searchText: any) {
+    // TODO
+    let payload = await this.utils.getProfileInfo();
+
     this.loader.startLoader();
     const config = {
       url:
         urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
         `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
+      payload: payload,
     };
     this.kendraSrvc.get(config).subscribe(
       (data) => {
-        console.log(data, "data 85");
         this.loader.stopLoader();
         this.dataList = [...this.dataList, ...data.result.data];
         this.count = data.result.count;
-        console.log(this.dataList, "this.dataList 89", this.count);
-
       },
       (error) => {
         this.loader.stopLoader();

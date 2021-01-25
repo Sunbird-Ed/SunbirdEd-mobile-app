@@ -34,10 +34,10 @@ export class CreateTaskComponent implements OnInit {
   }
 
   addTask() {
-    this.newTask.name ? this.modalCtrl.dismiss(this.newTask) : this.toast.openToast('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
+    this.newTask.name ? this.modalCtrl.dismiss(this.newTask) : this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
   }
 
   share() {
-    this.toast.openToast('FRMELEMNTS_MSG_COMING_SOON', 'danger');
+    this.toast.showMessage('FRMELEMNTS_MSG_COMING_SOON', 'danger');
   }
 }

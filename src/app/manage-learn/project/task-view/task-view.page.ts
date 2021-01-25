@@ -86,7 +86,7 @@ export class TaskViewPage implements OnInit {
   }
 
   getTask() {
-    this.db.query({ _id: this.parameters.projectId }).then(
+    this.db.query({ _id: this.parameters.id }).then(
       (success) => {
         this.project = success.docs.length ? success.docs[0] : success.docs;
         this.projectCopy = JSON.parse(JSON.stringify(this.project));

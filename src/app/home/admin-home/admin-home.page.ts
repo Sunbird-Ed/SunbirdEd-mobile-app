@@ -11,7 +11,7 @@ import { AggregatorPageType } from '@app/services/content/content-aggregator-nam
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { LocalStorageService } from '@app/app/manage-learn/core';
+import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
 import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
@@ -53,7 +53,8 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
     private storage: LocalStorageService,
-    private unnatiService: UnnatiDataService
+    private unnatiService: UnnatiDataService,
+    private db: DbService
   ) {
   }
 
@@ -68,6 +69,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
       }
     });
     this.getCreateProjectForm();
+    this.db.createDb();
   }
 
   async ionViewWillEnter() {
@@ -207,12 +209,14 @@ export class AdminHomePage implements OnInit, OnDestroy {
         this.router.navigate([RouterLinks.REPORTS], {})
         break
       case 'course':
-        this.router.navigate([RouterLinks.SEARCH], {
-          state: {
-            source: PageId.ADMIN_HOME,
-            preAppliedFilter: event.data[0].value.search
-          }
-        });
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
+
+        // this.router.navigate([RouterLinks.SEARCH], {
+        //   state: {
+        //     source: PageId.ADMIN_HOME,
+        //     preAppliedFilter: event.data[0].value.search
+        //   }
+        // });
     }
   }
 

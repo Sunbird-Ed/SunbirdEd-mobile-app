@@ -129,7 +129,10 @@ export class UtilsService {
   setStatusForProject(project) {
     const projectData = { ...project };
     for (const task of projectData.tasks) {
-      task.status = task.children.length ? this.calculateStatus(task.children) : task.status;
+      const activeSubTask = _.filter(task.children, function (el) {
+        return !el.isDeleted;
+      });
+      task.status = activeSubTask.length ? this.calculateStatus(task.children) : task.status;
 
       // added for assessment or observation submission statuses
       if (task.type == 'assessment' || task.type == 'observation') {

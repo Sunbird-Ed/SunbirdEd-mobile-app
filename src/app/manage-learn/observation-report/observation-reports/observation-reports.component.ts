@@ -13,8 +13,7 @@ import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
-import { File } from "@ionic-native/file/ngx";
-
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-observation-reports',
@@ -394,7 +393,11 @@ export class ObservationReportsComponent implements OnInit {
         ? urlConstants.API_URLS.OBSERVATION_REPORTS.GET_REPORTS_PDF_URLS
         : urlConstants.API_URLS.CRITERIA_REPORTS.GET_REPORTS_PDF_URLS;
     const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
-
+    if (this.selectedTab == 'questionwise') {
+      url = 'v2' + url;
+    } else {
+      url = 'v1' + url;
+    }
     if (this.submissionId) {
       this.fileName = this.submissionId + timeStamp + '.pdf';
     } else if (!this.submissionId && !this.entityId) {
@@ -403,6 +406,7 @@ export class ObservationReportsComponent implements OnInit {
       this.fileName = this.entityId + '_' + this.observationId + timeStamp + '.pdf';
     }
     let payload = await this.utils.getProfileInfo();
+    payload = { ...this.payload, ...payload };
     const config = {
       url: url,
       payload: payload,
