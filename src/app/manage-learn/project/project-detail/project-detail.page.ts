@@ -163,7 +163,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
         // this.projectId = success.result._id;
-        this.db.create(success.result).then(success => {
+        this.db.create(success.result).then(successData => {
           this.projectId ? this.getProject() :
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {

@@ -21,10 +21,11 @@ export class MlGuard implements CanActivate {
           if (data.role) {
             resolve(true)
           } else {
+            this.toast.showMessage("You do not have access. Please update you profile", 'danger');
             resolve(false);
           }
         }).catch(error => {
-          this.toast.openToast("You do not have access", 'danger');
+          this.toast.showMessage("You do not have access.Please update you profile", 'danger');
           resolve(false)
         })
       }
