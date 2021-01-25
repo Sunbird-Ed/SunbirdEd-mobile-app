@@ -103,6 +103,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
   isCertifiedCourse: boolean;
   courseHeirarchy: any;
+  private hasInit = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -181,7 +182,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.appGlobalService.generateCourseUnitCompleteTelemetry = false;
       this.location.back();
     });
-    this.getContentState(true);
+    if (this.hasInit) {
+      this.getContentState(false);
+    } else {
+      this.hasInit = !this.hasInit;
+      this.getContentState(true);
+    }
 
     if (!this.guestUser) {
       this.updatedCourseCardData = await this.courseService.getEnrolledCourses({ userId: this.userId, returnFreshCourses: false })
@@ -274,9 +280,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async getContentState(returnRefresh: boolean) {
-    // const loader = await this.commonUtilService.getLoader();
     if (this.courseContent.batchId) {
-      // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
         courseId: this.courseContentData.identifier,
@@ -291,11 +295,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
           this.zone.run(() => {
             this.contentStatusData = res;
             this.checkChapterCompletion();
-          });
-          // await loader.dismiss();
-        }).catch(async (err) => {
-          // await loader.dismiss();
-        });
+          }); }).catch(async () => {});
     }
   }
 
@@ -417,9 +417,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async subscribeUtilityEvents() {
-
-    const loader = await this.commonUtilService.getLoader();
-
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
       console.log('enrol succ event');
       this.isAlreadyEnrolled = true;
@@ -432,7 +429,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.courseContent.batchId = res.batchId;
       console.log('enrol succ event -->', this.courseContent);
       await this.getBatchDetails();
-      // this.getCourseProgress();
       this.getContentState(true);
     });
 

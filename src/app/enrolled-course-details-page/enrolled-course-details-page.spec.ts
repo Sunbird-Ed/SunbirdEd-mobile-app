@@ -978,7 +978,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockContentService.getContentHeirarchy).toBeCalled();
-                expect(enrolledCourseDetailsPage.getContentState).toBeCalled();
                 expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
                 done();
             }, 0);

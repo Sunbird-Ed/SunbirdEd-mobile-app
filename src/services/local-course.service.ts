@@ -256,7 +256,7 @@ export class LocalCourseService {
         userId: this.appGlobalService.getUserId(),
         courseId: courseContext.courseId,
         contentIds: courseContext.leafNodeIds,
-        returnRefreshedContentStates: true,
+        returnRefreshedContentStates: false,
         batchId: courseContext.batchId,
         fields: ['progress', 'score']
       };
