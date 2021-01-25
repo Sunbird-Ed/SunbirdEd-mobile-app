@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LoaderService } from '@app/app/manage-learn/core';
+import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { ModalController } from '@ionic/angular';
-import * as _ from "underscore";
-
+import * as _ from 'underscore';
 
 @Component({
   selector: 'app-filter-modal',
@@ -26,7 +26,8 @@ export class FilterModalComponent implements OnInit {
     // public reportSrvc: ReportsService,
     public kendraSrvc: KendraApiService,
     public unnatiSrvc: UnnatiDataService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private utils: UtilsService
   ) {
     this.search = _.debounce(this.search, 500);
   }
@@ -51,58 +52,66 @@ export class FilterModalComponent implements OnInit {
 
     this.type == 'entity' ? this.serachEntity(searchText) : this.searchProgramByEntity(searchText);
   }
-  searchProgramByEntity(searchText: any) {
+  async searchProgramByEntity(searchText: any) {
     //TODO
-    // this.loader.startLoader();
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
 
-    // const config = {
-    //   url:
-    //     urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
-    //     this.entityId +
-    //     `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
-    // };
-    // this.unnatiSrvc.get(config).subscribe(
-    //   (data) => {
-    //     this.loader.stopLoader();
-    //     this.dataList = data.result.data;
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+    const config = {
+      url:
+        urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
+        this.entityId +
+        `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
+      payload: payload,
+    };
+    this.unnatiSrvc.get(config).subscribe(
+      (data) => {
+        this.loader.stopLoader();
+        this.dataList = data.result.data;
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
-  serachEntity(searchText: any) {
+  async serachEntity(searchText: any) {
     // TODO
-    // this.loader.startLoader();
-    // const config = {
-    //   url:
-    //     urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
-    //     `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
-    // };
-    // this.kendraSrvc.get(config).subscribe(
-    //   (data) => {
-    //     this.loader.stopLoader();
-    //     this.dataList = [...this.dataList, ...data.result.data];
-    //     this.count = data.result.count;
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+    let payload = await this.utils.getProfileInfo();
+
+    this.loader.startLoader();
+    const config = {
+      url:
+        urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
+        `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
+      payload: payload,
+    };
+    this.kendraSrvc.get(config).subscribe(
+      (data) => {
+        this.loader.stopLoader();
+        this.dataList = [...this.dataList, ...data.result.data];
+        this.count = data.result.count;
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
-  getEntityTypes() {
+  async getEntityTypes() {
+    let payload = await this.utils.getProfileInfo();
+
     // TODO
-    // const config = {
-    //   url: urlConstants.API_URLS.GET_ENTITY_TYPES,
-    // };
-    // this.kendraSrvc.get(config).subscribe(
-    //   (res) => {
-    //     this.entityTypes = res.result;
-    //   },
-    //   (err) => {
-    //     console.log(err);
-    //   }
-    // );
+    const config = {
+      url: urlConstants.API_URLS.GET_ENTITY_TYPES,
+      payload: payload,
+    };
+    this.kendraSrvc.get(config).subscribe(
+      (res) => {
+        this.entityTypes = res.result;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   dismissModal(data) {

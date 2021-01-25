@@ -5,6 +5,8 @@ import { LoaderService, UtilsService } from '../../core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { ProjectReportService } from '../../core/services/project-report.service';
 import { HttpClient } from '@angular/common/http';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-full-report',
@@ -28,11 +30,14 @@ export class ProjectFullReportComponent implements OnInit {
     public screenOrientation: ScreenOrientation,
     public reportService: ProjectReportService,
     public utils: UtilsService,
-    public httpClient: HttpClient
-  ) {}
+    public httpClient: HttpClient,
+    private router: Router
+  ) {
+    this.filter = this.router.getCurrentNavigation().extras.state;
+  }
 
   ngOnInit() {
-    this.filter = this.reportService.filterForReport;
+    // this.filter = this.reportService.filterForReport;
     try {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     } catch (error) {}
@@ -40,11 +45,26 @@ export class ProjectFullReportComponent implements OnInit {
     this.loadFullData();
   }
 
-  loadFullData() {
+  async loadFullData() {
     this.loader.startLoader();
 
-    //TODO:remove
-    this.httpClient.get('assets/dummy/projectFullReport.json').subscribe(
+    let payload = await this.utils.getProfileInfo();
+
+    let url = urlConstants.API_URLS.GET_FULL_REPORT;
+    if (this.filter.entity) {
+      url = urlConstants.API_URLS.GET_FULL_REPORT + this.filter.entity._id;
+    }
+    const query = {
+      programId: this.filter.program ? this.filter.program._id : null,
+      reportType: this.filter.type,
+    };
+
+    url = this.utils.queryUrl(url, query);
+    const config = {
+      url: url,
+      payload: payload,
+    };
+    this.unnatiSrvc.post(config).subscribe(
       (data: any) => {
         this.loader.stopLoader();
         if (data.result) {
@@ -61,7 +81,6 @@ export class ProjectFullReportComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
-    //TODO:Till here
 
     // this.loader.startLoader();
 
@@ -135,29 +154,28 @@ export class ProjectFullReportComponent implements OnInit {
   }
 
   fileName() {
-    return 'file-name';
-    // let arr = ['report'];
-    // this.filter.program ? arr.push(this.filter.program.name) : null;
-    // return arr;
+    // return 'file-name';
+    let arr = ['report'];
+    this.filter.program ? arr.push(this.filter.program.name) : null;
+    return arr;
   }
 
   downloadUrl() {
-    return 'String -xyc';
-    // TODO:remove
-    // let url = urlConstants.API_URLS.GET_FULL_REPORT;
-    // if (this.filter.entity) {
-    //   url = url + this.filter.entity._id;
-    // }
+    // return 'String -xyc';
+    let url = urlConstants.API_URLS.GET_FULL_REPORT;
+    if (this.filter.entity) {
+      url = url + this.filter.entity._id;
+    }
 
-    // let query = {
-    //   reportType: this.filter.type,
-    //   programId: this.filter.program ? this.filter.program._id : null,
-    //   requestPdf: true,
-    // };
+    let query = {
+      reportType: this.filter.type,
+      programId: this.filter.program ? this.filter.program._id : null,
+      requestPdf: true,
+    };
 
-    // url = this.utils.queryUrl(url, query);
+    url = this.utils.queryUrl(url, query);
 
-    // return url;
+    return url;
   }
 
   ngOnDestroy() {

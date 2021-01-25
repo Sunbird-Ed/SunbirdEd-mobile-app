@@ -36,7 +36,7 @@ export class DownloadShareComponent implements OnInit {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions
   ) {
-    this.translate.get(['MESSAGES.ERROR_WHILE_DOWNLOADING', 'MESSAGES.SUCCESSFULLY DOWNLOADED']).subscribe((data) => {
+    this.translate.get(['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING', 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED']).subscribe((data) => {
       this.texts = data;
     });
   }
@@ -66,7 +66,7 @@ export class DownloadShareComponent implements OnInit {
     let res = await this.unnatiSrvc.get(config).toPromise();
 
     if (res.result && !res.result.data && !res.result.data.downloadUrl) {
-      this.toast.showMessage(this.texts['MESSAGES.ERROR_WHILE_DOWNLOADING'], 'danger');
+      this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
       this.loader.stopLoader();
       return;
     }
@@ -78,11 +78,11 @@ export class DownloadShareComponent implements OnInit {
     ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
       .then(
         (res) => {
-          share ? this.share(res.nativeURL) : this.toast.showMessage(this.texts['MESSAGES.SUCCESSFULLY DOWNLOADED']);
+          share ? this.share(res.nativeURL) : this.toast.showMessage(this.texts['FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED']);
         },
         (err) => {
           console.log(err);
-          this.toast.showMessage(this.texts['MESSAGES.ERROR_WHILE_DOWNLOADING'], 'danger');
+          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
           this.requestPermission();
         }
       )

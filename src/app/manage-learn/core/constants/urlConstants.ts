@@ -66,6 +66,7 @@ export const urlConstants = {
     ENTITY_LIST_BASED_ON_ENTITY_TYPE: 'v1/entities/listByEntityType/',
     SEARCH_ENTITY: 'v2/observations/searchEntities',
     MAP_ENTITY_TO_OBSERVATION: 'v1/observations/addEntityToObservation/',
+    UNMAP_ENTITY_TO_OBSERVATION: 'v1/observations/removeEntityFromObservation/',
     IS_SURVEY_SUBMISSION_ALLOWED: 'v1/surveySubmissions/isAllowed/',
     IS_OBSERVATION_SUBMISSION_ALLOWED: 'v1/observationSubmissions/isAllowed/',
     CHECK_IF_SUBMITTED: 'v1/submissions/isAllowed/',
