@@ -1,7 +1,7 @@
 <ion-content *ngIf="project">
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-down" (click)="toggle()"></ion-icon>
+      <ion-icon name="arrow-dropdown" (click)="toggle()"></ion-icon>
       <ion-label>{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
@@ -46,7 +46,7 @@
   </ion-card>
   <ion-card class="project-box" *ngIf="!showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-forward" color="primary" (click)="toggle()"></ion-icon>
+      <ion-icon name="arrow-dropright" color="primary" (click)="toggle()"></ion-icon>
       <ion-label> {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}} : </ion-label>
       {{project?.title}}
     </ion-card-header>
@@ -88,7 +88,7 @@
               </div>
             </ion-col>
             <ion-col size="1">
-              <ion-icon name="ellipsis-vertical" color="primary"
+              <ion-icon name="md-more" color="primary"
                 (click)="openPopover($event,task._id,task.isDeletable)"></ion-icon>
             </ion-col>
           </ion-row>

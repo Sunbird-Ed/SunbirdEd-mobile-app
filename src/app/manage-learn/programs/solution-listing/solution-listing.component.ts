@@ -93,7 +93,7 @@ export class SolutionListingComponent implements OnInit {
     if (data.projectId) {
       projectId = data.projectId;
     }
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, projectId, this.programId, data._id]);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, "", this.programId, data._id]);
   }
   redirectObservaiton(data) {
     let observationId = '';
