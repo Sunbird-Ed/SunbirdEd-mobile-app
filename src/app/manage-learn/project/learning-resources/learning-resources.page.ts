@@ -89,16 +89,20 @@ export class LearningResourcesPage implements OnInit {
     console.log(link, "link");
     let identifier = link.split("/").pop();
     console.log(identifier, "identifier");
+
+
+
     const req: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: false,
       attachContentAccess: false,
       emitUpdateIfAny: false
     };
+
     this.contentService.getContentDetails(req).toPromise()
       .then(async (data: Content) => {
         console.log(data, "data 96");
-        this.navigateService.navigateToDetailPage(data, { data });
+        this.navigateService.navigateToDetailPage(data, { content: data });
       });
     // this.networkService.isNetworkAvailable
     //   ? this.openResources.openBodh(link)

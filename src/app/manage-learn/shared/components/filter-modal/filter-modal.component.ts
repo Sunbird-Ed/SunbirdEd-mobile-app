@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LoaderService } from '@app/app/manage-learn/core';
+import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { ModalController } from '@ionic/angular';
 import * as _ from "underscore";
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class FilterModalComponent implements OnInit {
     // public reportSrvc: ReportsService,
     public kendraSrvc: KendraApiService,
     public unnatiSrvc: UnnatiDataService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private utils: UtilsService
   ) {
     this.search = _.debounce(this.search, 500);
   }
@@ -72,37 +74,43 @@ export class FilterModalComponent implements OnInit {
     // );
   }
   serachEntity(searchText: any) {
-    // TODO
-    // this.loader.startLoader();
-    // const config = {
-    //   url:
-    //     urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
-    //     `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
-    // };
-    // this.kendraSrvc.get(config).subscribe(
-    //   (data) => {
-    //     this.loader.stopLoader();
-    //     this.dataList = [...this.dataList, ...data.result.data];
-    //     this.count = data.result.count;
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+    this.loader.startLoader();
+    const config = {
+      url:
+        urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
+        `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
+    };
+    this.kendraSrvc.get(config).subscribe(
+      (data) => {
+        console.log(data, "data 85");
+        this.loader.stopLoader();
+        this.dataList = [...this.dataList, ...data.result.data];
+        this.count = data.result.count;
+        console.log(this.dataList, "this.dataList 89", this.count);
+
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
   }
   getEntityTypes() {
-    // TODO
     // const config = {
-    //   url: urlConstants.API_URLS.GET_ENTITY_TYPES,
+    //   url: urlConstants.API_URLS.GET_ENTITY_TYPES+'?entityType='+this.selectedType+'&search=&page=1&limit=15'
     // };
     // this.kendraSrvc.get(config).subscribe(
     //   (res) => {
+    //     console.log(res.result,"res.result");
     //     this.entityTypes = res.result;
     //   },
     //   (err) => {
     //     console.log(err);
     //   }
     // );
+    this.utils.getMandatoryEntitiesList().then(data => {
+      console.log(data, "data 109");
+      this.entityTypes = data;
+    })
   }
 
   dismissModal(data) {
