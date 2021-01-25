@@ -13,12 +13,12 @@ import { CoreModule } from '../core/core.module';
 const routes: Routes = [
   {
     path: '',
-    component: ProgramListingComponent
+    component: ProgramListingComponent,
   },
   {
     path: `${RouterLinks.SOLUTIONS}/:id`,
-    component: SolutionListingComponent
-  }
+    component: SolutionListingComponent,
+  },
 ];
 
 @NgModule({
@@ -27,10 +27,10 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
+    SharedModule,
     IonicModule,
     FormsModule,
     CoreModule,
-    SharedModule,
   ],
 })
 export class ProgramsModule {}

@@ -12,15 +12,15 @@ export class ItemListCardComponent implements OnInit {
   @Input() subTitle: any;
   @Input() id: any;
   @Output() cardSelect = new EventEmitter();
-  
-  constructor(private commonUtilService: CommonUtilService) { }
 
-  ngOnInit() {
+  constructor(private commonUtilService: CommonUtilService) {}
+
+  ngOnInit() {}
+  isNumber(val): boolean {
+    return typeof val === 'number';
   }
 
-
-  programDetails(id){
-   this.cardSelect.emit(id);
+  programDetails(id) {
+    this.cardSelect.emit(id);
   }
-
 }

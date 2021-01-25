@@ -29,8 +29,7 @@ export class ProjectReportComponent implements OnInit {
     private router: Router,
     private reportSrvc: ProjectReportService,
     public modalController: ModalController,
-    public unnatiService: UnnatiDataService,
-
+    public unnatiService: UnnatiDataService
   ) {
     this.translate
       .get([
@@ -72,7 +71,7 @@ export class ProjectReportComponent implements OnInit {
     this.loadFilterType();
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   loadFilterType() {
     //TODO:remove
@@ -119,7 +118,7 @@ export class ProjectReportComponent implements OnInit {
     if (payload) {
       const config = {
         url: url,
-        payload: payload
+        payload: payload,
       };
       this.unnatiService.post(config).subscribe(
         (data) => {
@@ -137,11 +136,10 @@ export class ProjectReportComponent implements OnInit {
           this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
           this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
         },
-        (err) => { }
+        (err) => {}
       );
     } else {
     }
-
   }
 
   generateCircleData(obj, innerRadius) {
@@ -194,8 +192,11 @@ export class ProjectReportComponent implements OnInit {
   }
 
   viewFullReport() {
-    this.reportSrvc.filterForReport = this.filter;
-    this.router.navigate([RouterLinks.PROJECT_FULL_REPORT]);
+    // this.reportSrvc.filterForReport = this.filter;
+    // this.router.navigate([RouterLinks.PROJECT_FULL_REPORT]);
+    this.router.navigate([RouterLinks.PROJECT_FULL_REPORT], {
+      state: this.filter,
+    });
   }
 
   fileName() {

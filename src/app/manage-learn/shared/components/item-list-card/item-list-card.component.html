@@ -13,7 +13,8 @@
           <ng-content select="[report]"></ng-content>
         </div>
         <div class="info">
-          <span>{{ subTitle | titlecase }}</span>
+          <span *ngIf="isNumber(subTitle)">{{ subTitle }}</span>
+          <span *ngIf="!isNumber(subTitle)">{{ subTitle | titlecase }}</span>
         </div>
       </div>
     </div>

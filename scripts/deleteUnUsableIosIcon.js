@@ -67,6 +67,7 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'ios-more.svg',
                 'ios-download.svg',
                 'ios-share.svg',
+                'ios-arrow-dropup-circle.svg',
                 'md-add.svg',
                 'md-trash.svg',
                 'md-share.svg',
@@ -162,7 +163,8 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-chevron-forward.svg',
                 'md-cloud-offline.svg',
                 'md-cloud-outline.svg',
-                'md-cloud-upload.svg'
+                'md-cloud-upload.svg',
+                'md-arrow-dropup-circle.svg'
             ].includes(file))) {
                 fs.unlinkSync(ionicIconFilePath + '/' + file);
             }
