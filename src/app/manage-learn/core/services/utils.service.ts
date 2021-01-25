@@ -395,6 +395,42 @@ export class UtilsService {
     })
   }
 
+
+  async getMandatoryEntitiesList(): Promise<any> {
+    // const profile = await this.getProfileData();
+    return new Promise((resolve, reject) => {
+      const config = {
+        url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+      }
+      this.kendra.get(config).subscribe(data => {
+        if (data.result && data.result.length) {
+          this.requiredFields = data.result;
+          // let allFieldsPresent = true;
+          resolve(data.result);
+          // for (const field of this.requiredFields) {
+          //   if (!this.profile[field]) {
+          //     allFieldsPresent = false;
+          //     break
+          //   }
+          // }
+          // if (!allFieldsPresent) {
+          //   this.openProfileUpdateAlert()
+          //   resolve(false)
+          // } else {
+          //   resolve(true);
+          // }
+        } 
+        else {
+          // this.openProfileUpdateAlert();
+          resolve(false)
+        }
+      }, error => {
+        resolve(false)
+        // reject()
+      })
+    })
+  }
+
   async openProfileUpdateAlert() {
     const alert = await this.aleryCtrl.create({
       header: 'Alert',
