@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -107,7 +107,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private platform: Platform,
     private http: HttpClient,
     private kendraService: KendraApiService,
-    private location: Location
+    private location: Location,
+    private ref: ChangeDetectorRef
+
   ) {
     params.params.subscribe((parameters) => {
       this.projectId = parameters.projectId;
@@ -554,19 +556,29 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     );
   }
 
-  updateAssessmentStatus(data) {
+ updateAssessmentStatus(data) {
     // if task type is assessment or observation then check if it is submitted and change the status and update in db
     let isChnaged = false
     this.project.tasks.map((t) => {
       data.map((d) => {
-        if (d._id == t._id && d.status != t.status) {
-          t.status = d.status;
-          isChnaged = true
+        if (d.type == 'assessment' || d.type == 'observation') {//check if type is observation or assessment 
+          if (d._id == t._id && d.submissionDetails.status) {
+            // check id matches and task details has submissionDetails
+            if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
+              t.submissionDetails = d.submissionDetails;
+              isChnaged = true;
+            }
+          }
         }
+
+        /*   if (d._id == t._id && d.submissionStatus != t.submissionDetails.submissionStatus) {
+            t.status = d.status;
+            isChnaged = true;
+          } */
       });
     });
     isChnaged ? this.update('taskStatusUpdated') : null// if any assessment/observatiom task status is changed then only update 
-    console.log(this.project);
+    this.ref.detectChanges();
   }
 
   getAssessmentTypeTaskId() {
@@ -577,10 +589,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     return assessmentTypeTaskIds;
   }
 
-  checkReport(task) {
+  async checkReport(task) {
     if (this.project.entityId) {
+      let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
+        payload:payload
+        
       };
       this.unnatiService.get(config).subscribe(
         (success) => {
@@ -593,6 +608,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
           // let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
           // this.iab.create(link, "_system");
+           this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+          queryParams: {
+            entityId: data.entityId,
+            entityType: entityType,
+            observationId: data.observationId,
+          },
+        });
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
