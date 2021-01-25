@@ -99,14 +99,14 @@ export const urlConstants = {
       INSTANCE_REPORT: 'v1/observations/instanceScoreReportByCriteria',
       ENTITY_REPORT: 'v1/observations/entityScoreReportByCriteria',
       OBSERVATION_REPORT: 'v1/observations/observationScoreReportByCriteria',
-      GET_REPORTS_PDF_URLS: 'v1/observations/scorePdfReportsByCriteria?',
+      GET_REPORTS_PDF_URLS: '/observations/scorePdfReportsByCriteria?',
     },
 
     CRITERIA_REPORTS: {
       INSTANCE_REPORT: 'v1/observations/instanceReportByCriteria',
       ENTITY_REPORT: 'v1/observations/entityReportByCriteria',
       OBSERVATION_REPORT: 'v1/observations/observationReportByCriteria',
-      GET_REPORTS_PDF_URLS: 'v1/observations/pdfReportsByCriteria?',
+      GET_REPORTS_PDF_URLS: '/observations/pdfReportsByCriteria?',
     },
     SURVEY_FEEDBACK: {
       // SURVEY_LISTING: 'v1/surveySubmissions/list',

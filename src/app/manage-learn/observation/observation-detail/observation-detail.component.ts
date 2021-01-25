@@ -247,7 +247,7 @@ export class ObservationDetailComponent implements OnInit {
     let entityId = entity._id;
     let translateObject;
     this.translate
-      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_VIEW_DELETE_ENTITY', 'FRMELEMNTS_LBL_NO', 'FRMELEMNTS_LBL_YES'])
+      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_DELETE_ENTITY', 'FRMELEMNTS_LBL_NO', 'FRMELEMNTS_LBL_YES'])
       .subscribe((translations) => {
         translateObject = translations;
         console.log(JSON.stringify(translations));

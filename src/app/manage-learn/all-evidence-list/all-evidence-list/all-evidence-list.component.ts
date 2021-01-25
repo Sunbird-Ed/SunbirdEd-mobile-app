@@ -100,12 +100,14 @@ export class AllEvidenceListComponent implements OnInit {
     let url = urlConstants.API_URLS.OBSERVATION_REPORTS.ALL_EVIDENCE;
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
+    payload = { ...this.payload, ...payload };
     const config = {
       url: url,
       payload: payload,
     };
     this.dhiti.post(config).subscribe(
       (success) => {
+        this.loader.stopLoader();
         if (success.result === true && success.data) {
           this.images = success.data.images;
           this.videos = success.data.videos;
@@ -153,6 +155,7 @@ export class AllEvidenceListComponent implements OnInit {
     let url = urlConstants.API_URLS.SURVEY_FEEDBACK.LIST_ALL_EVIDENCES;
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
+    this.payload = { ...payload, ...payload };
     const config = {
       url: url,
       payload: payload,

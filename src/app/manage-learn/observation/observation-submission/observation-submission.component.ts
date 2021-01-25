@@ -106,6 +106,30 @@ export class ObservationSubmissionComponent implements OnInit {
     this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
       (success) => {
+        if (isDeleted) {
+          this.loader.stopLoader();
+          history.go(-1);
+          return;
+        }
+        if (success.result && success.result.length == 0) {
+          let event = {
+            entityId: this.entityId,
+            observationId: this.observationId,
+            submission: {
+              submissionNumber: 1,
+            },
+          };
+          this.observationService.getAssessmentDetailsForObservation(event).then(
+            (res) => {
+              this.loader.stopLoader();
+
+              this.getProgramFromStorage();
+            },
+            (err) => {
+              this.loader.stopLoader();
+            }
+          );
+        }
         this.localStorage
           .getLocalStorage(storageKeys.observationSubmissionIdArr)
           .then((ids) => {
@@ -125,30 +149,30 @@ export class ObservationSubmissionComponent implements OnInit {
           });
       },
       (error) => {
-        if (isDeleted) {
-          this.loader.stopLoader();
-          history.go(-1);
-          return;
-        }
-        if (error.error.status === 400) {
-          let event = {
-            entityId: this.entityId,
-            observationId: this.observationId,
-            submission: {
-              submissionNumber: 1,
-            },
-          };
-          this.observationService.getAssessmentDetailsForObservation(event).then(
-            (res) => {
-              this.loader.stopLoader();
+        // if (isDeleted) {
+        //   this.loader.stopLoader();
+        //   history.go(-1);
+        //   return;
+        // }
+        // if (error.error.status === 400) {
+        //   let event = {
+        //     entityId: this.entityId,
+        //     observationId: this.observationId,
+        //     submission: {
+        //       submissionNumber: 1,
+        //     },
+        //   };
+        //   this.observationService.getAssessmentDetailsForObservation(event).then(
+        //     (res) => {
+        //       this.loader.stopLoader();
 
-              this.getProgramFromStorage();
-            },
-            (err) => {
-              this.loader.stopLoader();
-            }
-          );
-        }
+        //       this.getProgramFromStorage();
+        //     },
+        //     (err) => {
+        //       this.loader.stopLoader();
+        //     }
+        //   );
+        // }
         console.log(error);
       }
     );

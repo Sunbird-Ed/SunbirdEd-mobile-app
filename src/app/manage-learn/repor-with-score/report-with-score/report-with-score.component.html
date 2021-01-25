@@ -57,10 +57,10 @@
     <div [ngSwitch]="selectedTab">
       <div *ngSwitchCase="'questionwise'">
         <div *ngIf="allQuestions?.length && !from" class="_flex-box _justify-content-end">
-          <button ion-button icon-start (click)="openFilter()" margin style="float: right">
+          <ion-button ion-button icon-start (click)="openFilter()" margin style="float: right">
             <ion-icon name="options"></ion-icon>
             {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
-          </button>
+          </ion-button>
         </div>
         <div *ngFor="let element of reportObj?.response; let i = index">
           <ion-card>
@@ -93,10 +93,10 @@
       </div>
       <div *ngSwitchCase="'criteriawise'">
         <div *ngIf="allCriterias?.length" class="_flex-box _justify-content-end">
-          <button ion-button icon-start (click)="openCriteriaFilter()" margin>
+          <ion-button ion-button icon-start (click)="openCriteriaFilter()" margin>
             <ion-icon name="options"></ion-icon>
             {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
-          </button>
+          </ion-button>
         </div>
         <div *ngFor="let criteria of reportObjCriteria?.response">
           <ion-card-content>
@@ -140,17 +140,17 @@
     {{ error }}
   </div>
 
-  <ion-fab bottom right *ngIf="reportObj?.response" #fab>
-    <button ion-fab mini>
+  <ion-fab vertical="bottom" horizontal="end" bottom right *ngIf="reportObj?.response" #fab slot="fixed">
+    <ion-fab-button ion-fab size="small">
       <ion-icon name="more"></ion-icon>
-    </button>
-    <ion-fab-list side="left">
-      <button ion-fab (click)="downloadSharePdf('download')">
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button ion-fab (click)="downloadSharePdf('download')">
         <ion-icon name="download"></ion-icon>
-      </button>
-      <button ion-fab (click)="downloadSharePdf('share')">
+      </ion-fab-button>
+      <ion-fab-button ion-fab (click)="downloadSharePdf('share')">
         <ion-icon name="share"></ion-icon>
-      </button>
+      </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
 </ion-content>
