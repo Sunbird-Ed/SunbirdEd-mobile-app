@@ -7,7 +7,6 @@ import { UtilsService } from '../core/services/utils.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  CommonListCardComponent,
   MultipleTypeInputComponent,
   AudioListComponent,
   CommonHeaderComponent,
@@ -73,7 +72,6 @@ import { SearchPipe } from './pipe/search.pipe';
     SliderTypeInputComponent,
     TextTypeInputComponent,
     CamelToTitlePipe,
-    CommonListCardComponent,
     ItemListCardComponent,
     CommonHeaderComponent,
     EntityfilterComponent,
@@ -115,7 +113,6 @@ import { SearchPipe } from './pipe/search.pipe';
     QuestionHeadingComponent,
     SliderTypeInputComponent,
     CamelToTitlePipe,
-    CommonListCardComponent,
     ItemListCardComponent,
     CommonHeaderComponent,
     EntityfilterComponent,

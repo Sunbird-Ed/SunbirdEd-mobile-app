@@ -37,6 +37,6 @@
 <app-footer-buttons *ngIf="questions" [updatedData]="questions[start]" [data]="questions[start]" [isFirst]="!start"
   [enableGps]="captureGpsLocationAtQuestionLevel" [isSubmitted]="isCurrentEvidenceSubmitted"
   [isLast]="questions?.length === end" [completedQuestionCount]="countCompletedQuestion"
-  [questionCount]="questions?.length" (nextAction)="next()" (backAction)="back()" (openSheetAction)="openActionSheet()">
+  [questionCount]="questions?.length" [showSubmit]="checkForEvidenceCompletion()" (nextAction)="next($event)" (backAction)="back()" (openSheetAction)="openActionSheet()" >
 
 </app-footer-buttons>

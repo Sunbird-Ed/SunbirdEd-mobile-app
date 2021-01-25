@@ -41,7 +41,7 @@
       </app-item-list-card>
     </div>
   </ion-content>
-  <ion-button class="view-more" expand="block" (click)="loadMore()">
+  <ion-button class="view-more" expand="block" (click)="loadMore()"   *ngIf="surveyList?.length && count > surveyList?.length">
     {{ "VIEW_MORE" | translate }}
   </ion-button>
 </ion-app>

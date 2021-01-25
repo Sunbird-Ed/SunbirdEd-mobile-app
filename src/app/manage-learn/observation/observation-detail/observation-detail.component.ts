@@ -2,17 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { AppHeaderService } from '@app/services';
-import { ModalController, Platform, PopoverController } from '@ionic/angular';
+import { AlertController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
 import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
-import { LoaderService, UtilsService } from '../../core';
+import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-observation-detail',
@@ -48,7 +49,10 @@ export class ObservationDetailComponent implements OnInit {
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
     private loader: LoaderService,
-    private dhiti: DhitiApiService
+    private dhiti: DhitiApiService,
+    private translate: TranslateService,
+    private alertCntrl: AlertController,
+    private toast: ToastService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -59,6 +63,7 @@ export class ObservationDetailComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.getObservationEntities();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
@@ -76,7 +81,7 @@ export class ObservationDetailComponent implements OnInit {
     // this.programIndex = this.observationService.getProgramIndex();
     // this.solutionIndex = this.observationService.getSolutionIndex(); //
     // this.getLocalStorageData();
-    this.getObservationEntities();
+    // this.getObservationEntities();
   }
 
   async getObservationEntities() {
@@ -108,7 +113,6 @@ export class ObservationDetailComponent implements OnInit {
         }
       );
     }
-
   }
 
   async checkForAnySubmissionsMade() {
@@ -123,7 +127,7 @@ export class ObservationDetailComponent implements OnInit {
       (success) => {
         this.submissionCount = success.data.noOfSubmissions;
       },
-      (error) => { }
+      (error) => {}
     );
 
     //   this.apiProviders.httpPost(
@@ -233,9 +237,88 @@ export class ObservationDetailComponent implements OnInit {
               this.getObservationEntities();
             }
           },
-          (error) => { }
+          (error) => {}
         );
       }
     });
+  }
+  async removeEntity(entity) {
+    // let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
+    let entityId = entity._id;
+    let translateObject;
+    this.translate
+      .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_DELETE_ENTITY', 'FRMELEMNTS_LBL_NO', 'FRMELEMNTS_LBL_YES'])
+      .subscribe((translations) => {
+        translateObject = translations;
+        console.log(JSON.stringify(translations));
+      });
+    let alert = await this.alertCntrl.create({
+      header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
+      message: translateObject['FRMELEMNTS_LBL_DELETE_ENTITY'],
+      buttons: [
+        {
+          text: translateObject['FRMELEMNTS_LBL_NO'],
+          role: 'cancel',
+          handler: () => {},
+        },
+        {
+          text: translateObject['FRMELEMNTS_LBL_YES'],
+          handler: async () => {
+            // let obj = {
+            //   data: [this.selectedSolution.entities[entityIndex]._id],
+            // };
+            this.loader.startLoader();
+            let payload = await this.utils.getProfileInfo();
+            payload.data = entityId;
+
+            const config = {
+              url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.solutionId}`,
+              payload: payload,
+            };
+            this.assessmentService.post(config).subscribe(
+              (success) => {
+                let okMessage;
+                this.translate.get('FRMELEMNTS_LBL_OK').subscribe((translations) => {
+                  okMessage = translations;
+                });
+                this.toast.openToast(success.message);
+
+                this.loader.stopLoader();
+                this.getObservationEntities();
+              },
+              (error) => {
+                this.loader.stopLoader();
+                console.log(JSON.stringify(error));
+              }
+            );
+            // this.apiProviders.httpPost(
+            //   AppConfigs.cro.unMapEntityToObservation + this.selectedSolution._id,
+            //   obj,
+            //   async (success) => {
+            //     let okMessage;
+            //     this.translate.get("toastMessage.ok").subscribe((translations) => {
+
+            //       okMessage = translations;
+            //     });
+            //     this.toast.openToast(success.message);
+
+            //     this.loader.stopLoader();
+            //     console.log(JSON.stringify(success));
+
+            //     await this.programService.refreshObservationList();
+            //     this.getLocalStorageData();
+            //   },
+            //   (error) => {
+            //     this.loader.stopLoader();
+
+            //     console.log(JSON.stringify(error));
+            //     console.log("error");
+            //   }
+            // );
+          },
+        },
+      ],
+    });
+    alert.present();
   }
 }
