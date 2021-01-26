@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
-import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { ModalController } from '@ionic/angular';
-import * as _ from 'underscore';
+import * as _ from "underscore";
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 
 @Component({
   selector: 'app-filter-modal',
@@ -96,22 +96,23 @@ export class FilterModalComponent implements OnInit {
       }
     );
   }
-  async getEntityTypes() {
-    let payload = await this.utils.getProfileInfo();
-
-    // TODO
-    const config = {
-      url: urlConstants.API_URLS.GET_ENTITY_TYPES,
-      payload: payload,
-    };
-    this.kendraSrvc.get(config).subscribe(
-      (res) => {
-        this.entityTypes = res.result;
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+  getEntityTypes() {
+    // const config = {
+    //   url: urlConstants.API_URLS.GET_ENTITY_TYPES+'?entityType='+this.selectedType+'&search=&page=1&limit=15'
+    // };
+    // this.kendraSrvc.get(config).subscribe(
+    //   (res) => {
+    //     console.log(res.result,"res.result");
+    //     this.entityTypes = res.result;
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   }
+    // );
+    this.utils.getMandatoryEntitiesList().then(data => {
+      console.log(data, "data 109");
+      this.entityTypes = data;
+    })
   }
 
   dismissModal(data) {

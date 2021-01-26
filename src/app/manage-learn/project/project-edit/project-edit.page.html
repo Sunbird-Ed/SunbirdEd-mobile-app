@@ -30,7 +30,7 @@
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
         <!-- {{categories}} -->
         <span *ngFor="let category of project?.categories">
-            {{category?.name}} ,
+            {{category?.label}}{{category?.name}} ,
         </span>
       </div>
     </ion-card-content>

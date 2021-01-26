@@ -175,10 +175,9 @@ export class ProjectOperationPage implements OnInit {
   async openAddResourcesModal() {
     const modal = await this.modalController.create({
       component: LinkLearningResourcesComponent,
-      // componentProps: {
-      //   url: url,
-      //   selectedResources: this.selectedResources
-      // }
+      componentProps: {
+        selectedResources: this.selectedResources
+      }
       // cssClass: 'my-custom-class'
     });
     modal.onDidDismiss().then(data => {

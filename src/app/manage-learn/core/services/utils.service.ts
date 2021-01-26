@@ -129,7 +129,10 @@ export class UtilsService {
   setStatusForProject(project) {
     const projectData = { ...project };
     for (const task of projectData.tasks) {
-      task.status = task.children.length ? this.calculateStatus(task.children) : task.status;
+      const activeSubTask = _.filter(task.children, function (el) {
+        return !el.isDeleted;
+      });
+      task.status = activeSubTask.length ? this.calculateStatus(task.children) : task.status;
 
       // added for assessment or observation submission statuses
       if (task.type == 'assessment' || task.type == 'observation') {
@@ -383,6 +386,42 @@ export class UtilsService {
           }
         } else {
           this.openProfileUpdateAlert();
+          resolve(false)
+        }
+      }, error => {
+        resolve(false)
+        // reject()
+      })
+    })
+  }
+
+
+  async getMandatoryEntitiesList(): Promise<any> {
+    // const profile = await this.getProfileData();
+    return new Promise((resolve, reject) => {
+      const config = {
+        url: urlConstants.API_URLS.MANDATORY_ENTITY_TYPES_FOR_ROLES + `${this.profile.state}?role=${this.profile.role}`,
+      }
+      this.kendra.get(config).subscribe(data => {
+        if (data.result && data.result.length) {
+          this.requiredFields = data.result;
+          // let allFieldsPresent = true;
+          resolve(data.result);
+          // for (const field of this.requiredFields) {
+          //   if (!this.profile[field]) {
+          //     allFieldsPresent = false;
+          //     break
+          //   }
+          // }
+          // if (!allFieldsPresent) {
+          //   this.openProfileUpdateAlert()
+          //   resolve(false)
+          // } else {
+          //   resolve(true);
+          // }
+        } 
+        else {
+          // this.openProfileUpdateAlert();
           resolve(false)
         }
       }, error => {

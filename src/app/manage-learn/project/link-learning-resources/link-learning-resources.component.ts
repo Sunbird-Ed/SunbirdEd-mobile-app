@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Platform, ModalController } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { LoaderService } from '../../core';
+import * as _ from 'underscore';
+import { remove } from 'immutable';
 
 @Component({
    selector: 'app-link-learning-resources',
@@ -14,7 +16,7 @@ import { LoaderService } from '../../core';
 export class LinkLearningResourcesComponent implements OnInit {
    private backButtonFunc: Subscription;
    selectedFilter;
-   selectedResources;
+   @Input() selectedResources =[];
    dataCount;
    page = 1;
    limit = 25;
@@ -27,7 +29,9 @@ export class LinkLearningResourcesComponent implements OnInit {
       private modal: ModalController,
       private kendraApiService: KendraApiService,
       private loaderService: LoaderService
-   ) { }
+   ) {
+      this.search = _.debounce(this.search, 500)
+   }
 
    ngOnInit() {
       this.getFilters();
@@ -71,7 +75,6 @@ export class LinkLearningResourcesComponent implements OnInit {
          if (data.result && data.result.length) {
             this.filters = data.result;
             this.setFilter(this.filters[0]);
-            // this.selectedResources ? this.validateCheckbox(data.result.content) : this.dataList = this.dataList.concat(data.result.content);
          }
       }, error => {
          this.loaderService.stopLoader();
@@ -79,6 +82,7 @@ export class LinkLearningResourcesComponent implements OnInit {
    }
 
    getLearningResources(searchText?) {
+      console.log(searchText, "searchText");
       searchText = searchText ? searchText : '';
       this.loaderService.startLoader();
       let type = {
@@ -92,17 +96,30 @@ export class LinkLearningResourcesComponent implements OnInit {
          this.loaderService.stopLoader();
          if (data.result && data.result.count) {
             this.dataCount = data.result.count;
-            this.resources = this.resources.concat(data.result.content);
+            console.log(this.selectedResources, " this.selectedResources ");
+            this.selectedResources ? this.validateCheckbox(data.result.content) : this.resources = this.resources.concat(data.result.content);
          }
       }, error => {
          this.loaderService.stopLoader();
       })
    }
 
+   validateCheckbox(data) {
+      this.selectedResources.forEach(selectedResource => {
+         data.forEach(resource => {
+            if (selectedResource.name == resource.name) {
+               resource.isChecked = true;
+            }
+         });
+      });
+      this.resources = this.resources.concat(data);
+   }
    search(event) {
+      console.log(event, "event");
+      console.log(event.detail.data, "eveevent.detail.valuent");
       this.page = 1;
       this.resources = [];
-      this.getLearningResources(event.detail.value);
+      this.getLearningResources(event.detail.data);
    }
 
    loadMoreData() {
@@ -112,7 +129,7 @@ export class LinkLearningResourcesComponent implements OnInit {
 
    addResources() {
       let selected = [];
-      this.resources.forEach(list => {
+      this.selectedResources.forEach(list => {
          if (list.isChecked) {
             selected.push(list);
          }
@@ -121,8 +138,12 @@ export class LinkLearningResourcesComponent implements OnInit {
          this.close(selected);
       }
    }
-   
+
    selectData(item) {
       item.isChecked = !item.isChecked;
+      let index = _.findIndex(this.selectedResources, (resource) => {
+         return resource.id == item.id;
+      });
+      index > -1 ? this.selectedResources[index].isChecked : this.selectedResources.push(item);
    }
 }

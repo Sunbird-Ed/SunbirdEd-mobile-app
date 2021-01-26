@@ -11,6 +11,10 @@ export class DbService {
   pdb: any;
 
   constructor() {
+    this.createDb();
+  }
+
+  createDb() {
     PouchDB.plugin(cordovaSqlitePlugin);
     PouchDB.plugin(PouchDBFind);
     this.pdb = new PouchDB('projects',
@@ -18,7 +22,6 @@ export class DbService {
         adapter: 'cordova-sqlite',
         location: 'default',
       });
-
   }
 
   createPouchDB(dbName: string) {

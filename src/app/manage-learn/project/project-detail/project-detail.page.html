@@ -66,9 +66,9 @@
     <ion-col size="6" class="text-left">
       {{'FRMELEMNTS_LBL_TOTAL_TASKS' | translate}} : {{taskCount}}
     </ion-col>
-    <!-- <ion-col size="6" class="text-right">
+    <ion-col size="6" class="text-right">
       {{categories}}
-    </ion-col> -->
+    </ion-col>
   </ion-row>
   <div *ngIf="sortedTasks" class="task-list">
     <div *ngFor="let schedule of schedules">
@@ -83,7 +83,8 @@
               <h5>{{task.name}}</h5>
               <div class="date_button-container">
                 <h5 class="task-endDate">
-                  {{'FRMELEMNTS_LBL_END_DATE' | translate}} : {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
+                  {{'FRMELEMNTS_LBL_END_DATE' | translate}} :
+                  {{(task?.endDate) ? (task.endDate | date : 'dd/MM/yyyy') : "__"}}
                 </h5>
               </div>
             </ion-col>

@@ -225,6 +225,8 @@ export class ProjectReportComponent implements OnInit {
   }
 
   async openFilterModal(type) {
+    console.log(type, "type");
+    console.log(this.filter.entity, "this.filter.entity");
     if (type == 'program' && this.filter.entity == undefined) {
       this.presentAlert(
         this.texts['FRMELEMENTS_LBL_SELECT_ENTITY'],
