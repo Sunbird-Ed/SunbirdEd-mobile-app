@@ -1,10 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { ModalController } from '@ionic/angular';
 import { rejects } from 'assert';
 import { LoaderService, LocalStorageService, UtilsService } from '../core';
 import { urlConstants } from '../core/constants/urlConstants';
 import { AssessmentApiService } from '../core/services/assessment-api.service';
 import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
+import { SurveyMsgComponent } from '../shared/components/survey-msg/survey-msg.component';
 import { storageKeys } from '../storageKeys';
 
 @Injectable({
@@ -17,7 +20,9 @@ export class SurveyProviderService {
     private utils: UtilsService,
     private httpClient: HttpClient,
     private loader: LoaderService,
-    private assessmentService: AssessmentApiService
+    private assessmentService: AssessmentApiService,
+    private router: Router,
+    private modalCtrl: ModalController
   ) {}
 
   // get all list
@@ -71,7 +76,11 @@ export class SurveyProviderService {
 
   async getDetailsById(surveyId, solutionId): Promise<any> {
     let payload = await this.utils.getProfileInfo();
-    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_ID + surveyId + `?solutionId=${solutionId}`;
+    let url = urlConstants.API_URLS.SURVEY_FEEDBACK.GET_DETAILS_BY_ID;
+    if (surveyId) {
+      url = `${url}/${surveyId}`;
+    }
+    url = url + `?solutionId=${solutionId}`;
     const config = {
       url: url,
       payload: payload,
@@ -127,12 +136,15 @@ export class SurveyProviderService {
       });
   }
 
-  //TODO
-  // showMsg(option, popToRoot = false): void {
-  //   popToRoot ? this.app.getRootNav().popToRoot() : null;
-  //   const modal = this.modalCtrl.create(SurveyMsgComponent, { option: option });
-  //   modal.present();
-  // }
+  async showMsg(option, popToRoot = false) {
+    // popToRoot ? this.app.getRootNav().popToRoot() : null;
+    popToRoot ? this.router.navigate(['']) : null;
+    const modal =await  this.modalCtrl.create({
+      component: SurveyMsgComponent,
+      componentProps: { option: option },
+    });
+    await modal.present();
+  }
 
   //TODO
   // viewAllAns(payload) {
