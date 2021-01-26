@@ -33,7 +33,7 @@ export class FilterModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getEntityTypes();
+    // this.getEntityTypes();
     this.search('');
   }
 
@@ -60,11 +60,11 @@ export class FilterModalComponent implements OnInit {
     const config = {
       url:
         urlConstants.API_URLS.GET_PROGRAM_BY_ENTITY +
-        this.entityId +
+        // this.entityId +
         `?search=${searchText}&page=${this.page}&limit=${this.limit}`,
       payload: payload,
     };
-    this.unnatiSrvc.get(config).subscribe(
+    this.unnatiSrvc.post(config).subscribe(
       (data) => {
         this.loader.stopLoader();
         this.dataList = data.result.data;

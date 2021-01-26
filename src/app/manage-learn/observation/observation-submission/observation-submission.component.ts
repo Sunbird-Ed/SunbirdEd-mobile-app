@@ -97,6 +97,10 @@ export class ObservationSubmissionComponent implements OnInit {
     this.getProgramFromStorage();
   }
 
+  ionViewWillEnter() {
+    this.getProgramFromStorage();
+  }
+
   async getProgramFromStorage(isDeleted = false) {
     let payload = await this.utils.getProfileInfo();
     const config = {

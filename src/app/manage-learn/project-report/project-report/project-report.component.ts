@@ -206,34 +206,32 @@ export class ProjectReportComponent implements OnInit {
   }
 
   downloadUrl() {
-    return 'url';
-    // TODO:uncomment
-    // let url = urlConstants.API_URLS.GET_REPORT;
-    // if (this.filter.entity) {
-    //   url = url + this.filter.entity._id;
-    // }
+    let url = urlConstants.API_URLS.GET_REPORT;
+    if (this.filter.entity) {
+      url = url + this.filter.entity._id;
+    }
 
-    // let query = {
-    //   requestPdf: true,
-    //   reportType: this.filter.type,
-    //   programId: this.filter.program ? this.filter.program._id : null,
-    // };
+    let query = {
+      requestPdf: true,
+      reportType: this.filter.type,
+      programId: this.filter.program ? this.filter.program._id : null,
+    };
 
-    // url = this.utils.queryUrl(url, query);
+    url = this.utils.queryUrl(url, query);
 
-    // return url;
+    return url;
   }
 
   async openFilterModal(type) {
     console.log(type, "type");
     console.log(this.filter.entity, "this.filter.entity");
-    if (type == 'program' && this.filter.entity == undefined) {
-      this.presentAlert(
-        this.texts['FRMELEMENTS_LBL_SELECT_ENTITY'],
-        this.texts['FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM']
-      );
-      return;
-    }
+    // if (type == 'program' && this.filter.entity == undefined) {
+    //   this.presentAlert(
+    //     this.texts['FRMELEMENTS_LBL_SELECT_ENTITY'],
+    //     this.texts['FRMELEMNTS_MSG_SELECT_ENTITY_TO_SELECT_PROGRAM']
+    //   );
+    //   return;
+    // }
     let preFilter = JSON.stringify(this.filter);
 
     const modal = await this.modalController.create({

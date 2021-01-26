@@ -71,7 +71,6 @@ ionViewWillLeave() {
 private handleBackButton() {
   this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.location.back();
-      this.backButtonFunc.unsubscribe();
   });
 }
 
