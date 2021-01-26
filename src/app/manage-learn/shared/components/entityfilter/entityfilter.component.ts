@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { LoaderService, LocalStorageService, UtilsService } from '@app/app/manage-learn/core';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { AssessmentApiService } from '@app/app/manage-learn/core/services/assessment-api.service';
+import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UtilityService } from '@app/services';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { IonInfiniteScroll, ModalController, NavParams } from '@ionic/angular';
@@ -44,58 +45,14 @@ export class EntityfilterComponent implements OnInit {
     private modalCtrl: ModalController,
     private assessmentService: AssessmentApiService,
     private utils: UtilsService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private kendra: KendraApiService
   ) {
     this.searchUrl = urlConstants.API_URLS.SEARCH_ENTITY;
     this.observationId = this.navParams.get('data');
     this.solutionId = this.navParams.get('solutionId');
     // this.localStorage
     //   .getLocalStorage('profileRole')
-    //TODO:changed logic to get profile need test all case
-    this.utils
-      .getProfileInfo()
-      .then((success) => {
-        this.profileData = success;
-        if (success && success.relatedEntities && success.relatedEntities.length) {
-          // this condition always fails as of now
-          for (const entity of success.relatedEntities) {
-            if (entity.entityType === 'state') {
-              this.profileMappedState = entity._id;
-              this.selectedState = entity._id;
-              this.isProfileAssignedWithState = true;
-              break;
-            }
-          }
-          this.isProfileAssignedWithState = this.profileMappedState ? true : false;
-        } else {
-          this.isProfileAssignedWithState = false;
-        }
-        this.getAllStatesFromLocal();
-      })
-      .catch((error) => {
-        this.getAllStatesFromLocal();
-      });
-    console.log(this.observationId);
-  }
-
-  getAllStatesFromLocal() {
-    // this.loader.startLoader();
-    this.localStorage
-      .getLocalStorage('allStates')
-      .then((data) => {
-        // this.utils.stopLoader();
-        // this.loader.stopLoader();
-        data ? (this.allStates = data) : this.getAllStatesApi();
-        if (data && data.length) {
-          this.selectedState = this.profileData.stateSelected
-            ? this.profileData.stateSelected
-            : this.profileMappedState;
-          this.openSelect();
-        }
-      })
-      .catch((error) => {
-        this.getAllStatesApi();
-      });
   }
 
   async getAllStatesApi() {
@@ -105,41 +62,21 @@ export class EntityfilterComponent implements OnInit {
       payload: payload,
     };
     this.loader.startLoader();
-    this.assessmentService.post(config).subscribe(
+    this.kendra.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
         this.allStates = success.result;
         if (this.allStates && this.allStates.length) {
-          this.selectedState = this.profileData.stateSelected
-            ? this.profileData.stateSelected
-            : this.profileMappedState;
-          this.openSelect();
+          this.selectedState = this.allStates.filter((s: any) => s.locationId == payload.state)[0];
+          this.selectedState = this.selectedState._id;
+          this.search();
         }
-        this.localStorage.setLocalStorage('allStates', this.allStates);
       },
       (error) => {
         this.loader.stopLoader();
         this.allStates = [];
       }
     );
-    // this.apiProviders.httpGet(
-    //   AppConfigs.cro.entityListBasedOnEntityType + 'state',
-    //   (success) => {
-    //     this.utils.stopLoader();
-    //     this.allStates = success.result;
-    //     if (this.allStates && this.allStates.length) {
-    //       this.selectedState = this.profileData.stateSelected
-    //         ? this.profileData.stateSelected
-    //         : this.profileMappedState;
-    //       this.openSelect();
-    //     }
-    //     this.localStorage.setLocalStorage('allStates', this.allStates);
-    //   },
-    //   (error) => {
-    //     this.utils.stopLoader();
-    //     this.allStates = [];
-    //   }
-    // );
   }
 
   openSelect() {
@@ -152,9 +89,9 @@ export class EntityfilterComponent implements OnInit {
   }
 
   onStateChange(event) {
-    this.profileData.stateSelected = event;
-    //TODO slected state is not stored in profile , need to check
-    // this.localStorage.setLocalStorage('profileRole', this.profileData);
+    if (this.profileData) {
+      this.profileData.stateSelected = event;
+    }
     this.searchQuery = '';
   }
   addSchools() {
@@ -180,8 +117,11 @@ export class EntityfilterComponent implements OnInit {
   }
 
   async search(event?) {
+    let payload = await this.utils.getProfileInfo();
+
     !event ? this.loader.startLoader() : '';
     this.page = !event ? 1 : this.page + 1;
+
     let apiUrl =
       this.searchUrl +
       '?observationId=' +
@@ -199,7 +139,6 @@ export class EntityfilterComponent implements OnInit {
       )}`;
     this.loading = true;
 
-    let payload = await this.utils.getProfileInfo();
     const config = {
       url: apiUrl,
       payload: payload,
@@ -242,7 +181,6 @@ export class EntityfilterComponent implements OnInit {
     //   },
     //   { version: 'v2' }
     // );
-  
   }
 
   toggleInfiniteScroll() {
@@ -259,5 +197,7 @@ export class EntityfilterComponent implements OnInit {
     this.search();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getAllStatesApi();
+  }
 }

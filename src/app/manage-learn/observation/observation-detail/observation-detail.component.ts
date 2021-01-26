@@ -86,11 +86,14 @@ export class ObservationDetailComponent implements OnInit {
 
   async getObservationEntities() {
     let payload = await this.utils.getProfileInfo();
+    let url = urlConstants.API_URLS.GET_OBSERVATION_ENTITIES;
+    if (this.observationId) {
+      url = `${url}/${this.observationId}`;
+    }
+    url = url + `?solutionId=${this.solutionId}`;
     if (payload) {
       const config = {
-        url:
-          urlConstants.API_URLS.GET_OBSERVATION_ENTITIES +
-          `${this.observationId}?solutionId=${this.solutionId}&programId=${this.programId}`,
+        url: url,
         payload: payload,
       };
       this.loader.startLoader();
@@ -212,7 +215,7 @@ export class ObservationDetailComponent implements OnInit {
     await entityListModal.present();
 
     await entityListModal.onDidDismiss().then(async (entityList) => {
-      if (entityList) {
+      if (entityList.data) {
         let payload = await this.utils.getProfileInfo();
 
         payload.data = [];
