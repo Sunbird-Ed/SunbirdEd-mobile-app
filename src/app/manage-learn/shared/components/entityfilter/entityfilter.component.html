@@ -20,6 +20,7 @@
           (ionChange)="searchQuery = ''; search(); onStateChange($event)"
           #selectStateRef
           interface="action-sheet"
+          [disabled]="true"
         >
           <ion-select-option *ngFor="let state of allStates" [value]="state._id">
             <b>{{ state?.name }}</b>

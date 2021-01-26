@@ -135,11 +135,11 @@ export class SurveyHomeComponent implements OnInit {
       .getDetailsByLink(this.link)
       .then((data) => {
         if (data.result == false) {
-          // this.surveyProvider.showMsg("surveyExpired", true);//TODO
+          this.surveyProvider.showMsg('surveyExpired', true);
           return;
         }
         if (data.result.status && data.result.status == 'completed') {
-          // this.surveyProvider.showMsg("surveyCompleted", true);//TODO
+          this.surveyProvider.showMsg('surveyCompleted', true);
           return;
         }
         survey = data.result;
@@ -153,7 +153,7 @@ export class SurveyHomeComponent implements OnInit {
 
   onSurveyClick(survey) {
     if (survey.status == 'completed') {
-      // this.surveyProvider.showMsg("surveyCompleted");//TODO
+      this.surveyProvider.showMsg('surveyCompleted');
       return;
     }
     // surveyId changed to _id
