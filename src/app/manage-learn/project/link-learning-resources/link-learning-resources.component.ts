@@ -150,21 +150,21 @@ export class LinkLearningResourcesComponent implements OnInit {
    }
 
    openResource(link) {
-      this.loaderService.startLoader();
-      let identifier = link.split("/").pop();
-      const req: ContentDetailRequest = {
-         contentId: identifier,
-         attachFeedback: false,
-         attachContentAccess: false,
-         emitUpdateIfAny: false
-      };
+      // this.loaderService.startLoader();
+      // let identifier = link.split("/").pop();
+      // const req: ContentDetailRequest = {
+      //    contentId: identifier,
+      //    attachFeedback: false,
+      //    attachContentAccess: false,
+      //    emitUpdateIfAny: false
+      // };
 
-      this.contentService.getContentDetails(req).toPromise()
-         .then(async (data: Content) => {
-            this.loaderService.stopLoader();
-            this.navigateService.navigateToDetailPage(data, { content: data });
-         }, error => {
-            this.loaderService.stopLoader();
-         });
+      // this.contentService.getContentDetails(req).toPromise()
+      //    .then(async (data: Content) => {
+      //       this.loaderService.stopLoader();
+      //       this.navigateService.navigateToDetailPage(data, { content: data });
+      //    }, error => {
+      //       this.loaderService.stopLoader();
+      //    });
    }
 }
