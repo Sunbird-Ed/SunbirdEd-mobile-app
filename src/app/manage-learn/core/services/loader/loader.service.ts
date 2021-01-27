@@ -7,47 +7,32 @@ import { LoadingController } from '@ionic/angular';
 export class LoaderService {
   loaderRef: any;
   isLoading: boolean = false;
+  loaderCounter = 0;
+  loading: HTMLIonLoadingElement;
 
-  constructor(private loader: LoadingController) {}
-
-  // async startLoader(message?: string) {
-  //   this.loaderRef = await this.loader.create({
-  //     cssClass: 'my-custom-class',
-  //     spinner: 'circular',
-  //     message: message ? message : 'Please wait while loading ...',
-  //     translucent: true,
-  //     backdropDismiss: false
-  //   });
-  //   await this.loaderRef.present()
-  // }
-  // async stopLoader() {
-  //   this.loaderRef ? await this.loaderRef.dismiss() : null;
-  // }
+  constructor(private loadingController: LoadingController) {}
 
   async startLoader(message?) {
-    this.isLoading = true;
-    return await this.loader
-      .create({
-        // duration: 5000,
+    this.loaderCounter = this.loaderCounter + 1;
 
+    if (this.loaderCounter === 1) {
+      this.isLoading = true;
+      this.loading = await this.loadingController.create({
         cssClass: 'custom-loader-message-class',
         spinner: 'circular',
         message: message ? message : 'Please wait while loading ...',
         translucent: true,
         backdropDismiss: false,
-      })
-      .then((a) => {
-        a.present().then(() => {
-          console.log('presented');
-          if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
-          }
-        });
       });
+      await this.loading.present();
+    }
   }
 
   async stopLoader() {
-    this.isLoading = false;
-    return await this.loader.dismiss().then(() => console.log('dismissed'));
+    this.loaderCounter = this.loaderCounter - 1;
+    if (this.loaderCounter === 0) {
+      this.isLoading = false;
+      await this.loading.dismiss();
+    }
   }
 }
