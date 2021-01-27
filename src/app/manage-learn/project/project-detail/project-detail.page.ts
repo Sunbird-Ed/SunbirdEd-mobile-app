@@ -285,13 +285,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
     });
     this.project = this.utils.setStatusForProject(this.project);
-    if (inProgress > 0 || completed != this.taskCount) {
-      this.project.status = this.statuses[1].title;
-    } else if (this.taskCount && this.taskCount == completed) {
-      this.project.status = this.statuses[2].title;
-    } else {
-      this.project.status = this.statuses[0].title;
-    }
   }
   syn() { }
 

@@ -56,7 +56,9 @@
           <ion-label position="stacked"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
         </ion-col>
         <ion-col size="5" class="status-bar">
-          <ion-progress-bar value="1" color="medium"> </ion-progress-bar>
+          <ion-progress-bar value="1" color="success" *ngIf="project.status == statuses[2].title"></ion-progress-bar>
+          <ion-progress-bar value="0.5" color="warning" *ngIf="project.status == statuses[1].title"></ion-progress-bar>
+          <ion-progress-bar value="1" color="medium" *ngIf="project.status == statuses[0].title"></ion-progress-bar>
           {{project.status | camelToTitle}}
         </ion-col>
       </ion-row>

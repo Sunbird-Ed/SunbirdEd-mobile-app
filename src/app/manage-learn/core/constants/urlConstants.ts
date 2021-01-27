@@ -33,7 +33,7 @@ export const urlConstants = {
     GET_ENTITY_TYPES: 'v1/user-extension/getEntityTypes',
     GET_ENTITIES_BY_TYPE: 'v1/user-extension/getEntities',
     GET_FULL_REPORT: 'v1/reports/detailView/',
-    GET_PROGRAM_BY_ENTITY: 'v1/reports/getProgramsByEntity/',
+    GET_PROGRAM_BY_ENTITY: 'v1/reports/getProgramsByEntity',
     GET_TASK_META_FORM: 'v1/userProjects/tasksMetaForm',
     GET_LEARNING_RESOURCES: 'v1/learningResources/list',
     LEARNING_RESOURCES_LIST: 'v1/learning-resources/list?',
