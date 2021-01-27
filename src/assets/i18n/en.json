@@ -1305,7 +1305,7 @@
   "FRMELEMNTS_LBL_ADD_TASK": "Add Task",
   "FRMELEMNTS_BTN_DISCARD": "Discard",
   "FRMELEMNTS_BTN_CONTINUE": "Continue",
-  "FRMELEMNTS_MSG_DELETE_CONFIRM": "Are you sure? you want to delete ",
+  "FRMELEMNTS_MSG_DELETE_CONFIRM": "Are you sure you want to delete ",
   "FRMELEMNTS_LBL_DISCARD_PROJECT": "Discard Project",
   "FRMELEMNTS_MSG_DISCARD_PROJECT": "Would you like to discard your project?",
   "FRMELEMNTS_MSG_NO_ENTITY_MAPPED": " No entity mapped to the Project",

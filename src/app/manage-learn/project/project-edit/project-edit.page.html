@@ -12,7 +12,7 @@
       </div>
       <div class="custom-filed _capitalize">
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_OBJECTIVE' | translate}} : </ion-label>
-        {{project?.goal}}
+        {{project?.description}}
       </div>
       <div class="custom-filed _capitalize" *ngIf="project?.duration">
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
@@ -30,7 +30,7 @@
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
         <!-- {{categories}} -->
         <span *ngFor="let category of project?.categories">
-            {{category?.label}}{{category?.name}} ,
+          {{category?.label || category?.name}} ,
         </span>
       </div>
     </ion-card-content>
