@@ -152,15 +152,24 @@
         background: map-get($colors, gray_ba);
     }
 
-    .block-button {
-        text-align: center;
-        padding: 16px 0 16px 0;
-        width: 92%;
-        margin: 0 4% 32px 4%;
+    .block-button-save{
         color: white;
-        background-color: map-get($colors, vived_blue_fe);
-        text-transform: uppercase;
-    }
+        background-color: $blue;
+        font-size: 16px;
+        padding: 8px 0;
+        margin-left: 18px;
+        border: 2px solid $blue;
+        width: 45%;
+      }
+      .block-button-clear{
+        color: $blue;
+        background-color: white;
+        font-size: 16px;
+        padding: 8px 0;
+        border: 2px solid $blue;
+        width: 45%;
+        margin-left: 0.7rem;
+      }
     .arrow-icon {
         right: 15px;
         top: 50%;
@@ -175,6 +184,9 @@
             animation: upDownAnimate 5s linear infinite;
             animation-duration: 0.9s;
         }
+    }
+    .btn-info{
+        padding: 20px
     }
 }
 

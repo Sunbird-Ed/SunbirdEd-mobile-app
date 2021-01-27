@@ -17,7 +17,7 @@
       </ng-container>
     </div>
     <div *ngFor="let result of dynamicResponse; let i=index;">
-      <div *ngIf="result?.theme?.orientation === 'horizontal'">
+      <div *ngIf="result?.theme && result?.theme?.orientation === 'horizontal'">
         <div *ngFor="let section of result?.data?.sections">
           <div *ngIf="result?.dataSrc?.name === 'TRACKABLE_CONTENTS'" style="padding-top: 5px;">
             <ng-container *ngIf="section.contents && section.contents.length">
@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="!theme || result?.theme?.orientation === 'vertical'">
+      <div *ngIf="!result?.theme || result?.theme?.orientation === 'vertical'">
         <div class="section-header-style" *ngIf="result.data.sections.length">{{result.name}}</div>
         <div *ngFor="let section of result.data.sections">
           <div class="sb-textbook-container" *ngIf="section?.contents && section?.contents?.length">

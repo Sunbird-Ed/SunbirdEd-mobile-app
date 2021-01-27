@@ -45,7 +45,7 @@ export class ContentAggregatorHandler {
             this.aggregatorResponse = await this.aggregateContent(request, dataSrc, formRequest);
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
-                    val['name'] = this.commonUtilService.getTranslatedValue(val.title, '');
+                    val['name'] = this.commonUtilService.getTranslatedValue(val.title, JSON.parse(val.title)['en']);
                     if (val.orientation === Orientation.HORIZONTAL) {
                         for (let count = 0; count < val.section.sections[0].contents.length; count++) {
                             val.section.sections[0].contents[count]['cardImg'] =
@@ -105,9 +105,10 @@ export class ContentAggregatorHandler {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS') {
+            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS' ||
+                         displaySection.dataSrc.name === 'TRACKABLE_COURSE_CONTENTS') {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
-                    value['cardImg'] = value['courseLogoUrl'];
+                    value['cardImg'] = value['courseLogoUrl'] || 'assets/imgs/ic_launcher.png';
                 });
             }
         });
