@@ -11,20 +11,21 @@
   </div>
 
   <div class="px-16">
-    <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
-      [config]="locationFormConfig"
-      (initialize)="onFormInitialize($event)"
-      (valueChanges)="onFormValueChange($event)"
+    <sb-form *ngIf="locationFormConfig && locationFormConfig.length" [config]="locationFormConfig"
+      (initialize)="onFormInitialize($event)" (valueChanges)="onFormValueChange($event)"
       (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
   </div>
-  
+
 </ion-content>
 <div class="footer">
-  <button class="block-button"
-    [disabled]="formGroup?.invalid"
-    [class.disabled-button]="formGroup?.invalid"
-    (click)="submit()">{{'BTN_SUBMIT' | translate}}
-    <!-- <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon> -->
-  </button>
+  <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
+    <button class="block-button-clear" [disabled]="formGroup?.invalid" [class.disabled-button]="formGroup?.invalid"
+      (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
+    </button>
+    <button class="block-button-save" [disabled]="formGroup?.invalid" [class.disabled-button]="formGroup?.invalid"
+      (click)="submit()">{{'BTN_SUBMIT' | translate}}
+    </button>
+  </div>
+
 </div>
