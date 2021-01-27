@@ -57,30 +57,42 @@ export class ConsentPiiPopupComponent {
         const dataSrc = ele.templateOptions.dataSrc;
         switch (dataSrc.marker) {
             case 'SERVER_PROFILE':
-                return this.profile.serverProfile[dataSrc.params.categoryCode] ?
+                if (ele.code === 'emailId' || ele.code === 'phoneNumber') {
+                    if (ele.code === 'emailId') {
+                        return this.profile.serverProfile['email'] ?  this.profile.serverProfile['email'] :
+                        (this.profile.serverProfile['maskedEmail'] ? this.profile.serverProfile['maskedEmail'] : '-');
+                    } else {
+                      return this.profile.serverProfile['phone'] ?  this.profile.serverProfile['phone'] :
+                      (this.profile.serverProfile['maskedPhone'] ? this.profile.serverProfile['maskedPhone'] : '-');
+                    }
+                  } else {
+                    return this.profile.serverProfile[dataSrc.params.categoryCode] ?
                     this.profile.serverProfile[dataSrc.params.categoryCode] : '-';
+                  }
             case 'SERVER_PROFILE_LOCATIONS':
                 let location = '-';
                 if (this.profile.serverProfile.userLocations && this.profile.serverProfile.userLocations.length) {
                     this.profile.serverProfile.userLocations.forEach(element => {
                         if (element.type === ele.code) {
                             location = element.name;
+                        } else if (ele.code === 'schoolId' && element.type === 'school' ) {
+                            location = element.code;
                         }
                     });
                 }
                 return location;
-            case 'SERVER_PROFILE_DECLARED':
-                if (this.profile.serverProfile.declarations.length && this.profile.serverProfile.declarations[0].info) {
-                   return this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] ?
-                   this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] : '-';
-                } else if (ele.code === 'emailId' || ele.code === 'phoneNumber') {
-                  if (ele.code === 'emailId') {
-                      return this.profile.serverProfile['maskedEmail'] ? this.profile.serverProfile['maskedEmail'] : '-';
-                  } else {
-                    return this.profile.serverProfile['maskedPhone'] ? this.profile.serverProfile['maskedPhone'] : '-';
-                  }
-                }
-                return '-';
+                case 'SERVER_PROFILE_DECLARED':
+                    if (this.profile.serverProfile.declarations.length && this.profile.serverProfile.declarations[0].info) {
+                       return this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] ?
+                       this.profile.serverProfile.declarations[0].info[dataSrc.params.categoryCode] : '-';
+                    } else if (ele.code === 'emailId' || ele.code === 'phoneNumber') {
+                      if (ele.code === 'emailId') {
+                          return this.profile.serverProfile['maskedEmail'] ? this.profile.serverProfile['maskedEmail'] : '-';
+                      } else {
+                        return this.profile.serverProfile['maskedPhone'] ? this.profile.serverProfile['maskedPhone'] : '-';
+                      }
+                    }
+                    return '-';
             default:
                 return '-';
         }
