@@ -71,8 +71,7 @@ export class ProjectOperationPage implements OnInit {
         // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
       }
     });
-    this.routerparam.params.subscribe(data =>{
-      console.log(data,"data"); 
+    this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
     })
   }
@@ -114,7 +113,7 @@ export class ProjectOperationPage implements OnInit {
         this.selectedProgram = {
           _id: this.template.programId ? this.template.programId : '',
           name: this.template.programName ? this.template.programName : '',
-          isAPrivateProgram: this.template.isAPrivateProgram 
+          isAPrivateProgram: this.template.isAPrivateProgram
         }
       }
     }, error => {
@@ -226,6 +225,7 @@ export class ProjectOperationPage implements OnInit {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
+
     // this.db.createPouchDB(environment.db.projects);
     data.isEdit = true;
     data.isDeleted = false;

@@ -20,9 +20,10 @@
     <div class="filters">
       <ion-button *ngFor="let filter of filters" shape="round" [color]="filter.isActive ? 'primary' : 'light'"
         (click)="setFilter(filter);">
-        <span class="material-icons" *ngIf="filter.icon">
+        <!-- <span class="material-icons" *ngIf="filter.icon">
           {{filter.icon}}
-        </span> {{filter.name}}
+        </span>  -->
+        {{filter.name}}
       </ion-button>
     </div>
     <ion-row *ngFor="let data of resources" class="data-list">
@@ -32,14 +33,14 @@
             (ionChange)="selectData(data)"></ion-checkbox>
         </ion-item>
       </ion-col>
-      <ion-col size="10" (click)="openBodh(data.link)">
+      <ion-col size="10" (click)="openResource(data.link)">
         <ion-item>
           <ion-label>{{data.name}}</ion-label>
         </ion-item>
       </ion-col>
     </ion-row>
     <div class="loadmore-btn" *ngIf="resources.length && dataCount > resources.length">
-      <ion-button (click)="loadMoreData()">
+      <ion-button (click)="loadMoreData()" expand="block">
         {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
     </div>
   </div>

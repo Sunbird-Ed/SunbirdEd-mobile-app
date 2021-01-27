@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Platform, ModalController } from '@ionic/angular';
 import { Location } from '@angular/common';
@@ -7,7 +7,8 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
 import { LoaderService } from '../../core';
 import * as _ from 'underscore';
 import { remove } from 'immutable';
-
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
 @Component({
    selector: 'app-link-learning-resources',
    templateUrl: './link-learning-resources.component.html',
@@ -16,7 +17,7 @@ import { remove } from 'immutable';
 export class LinkLearningResourcesComponent implements OnInit {
    private backButtonFunc: Subscription;
    selectedFilter;
-   @Input() selectedResources =[];
+   @Input() selectedResources = [];
    dataCount;
    page = 1;
    limit = 25;
@@ -28,7 +29,9 @@ export class LinkLearningResourcesComponent implements OnInit {
       private platform: Platform,
       private modal: ModalController,
       private kendraApiService: KendraApiService,
-      private loaderService: LoaderService
+      private loaderService: LoaderService,
+      private navigateService: NavigationService,
+      @Inject('CONTENT_SERVICE') private contentService: ContentService
    ) {
       this.search = _.debounce(this.search, 500)
    }
@@ -106,8 +109,9 @@ export class LinkLearningResourcesComponent implements OnInit {
 
    validateCheckbox(data) {
       this.selectedResources.forEach(selectedResource => {
+         selectedResource.isChecked = true;
          data.forEach(resource => {
-            if (selectedResource.name == resource.name) {
+            if (selectedResource.id == resource.id) {
                resource.isChecked = true;
             }
          });
@@ -115,8 +119,6 @@ export class LinkLearningResourcesComponent implements OnInit {
       this.resources = this.resources.concat(data);
    }
    search(event) {
-      console.log(event, "event");
-      console.log(event.detail.data, "eveevent.detail.valuent");
       this.page = 1;
       this.resources = [];
       this.getLearningResources(event.detail.data);
@@ -144,6 +146,25 @@ export class LinkLearningResourcesComponent implements OnInit {
       let index = _.findIndex(this.selectedResources, (resource) => {
          return resource.id == item.id;
       });
-      index > -1 ? this.selectedResources[index].isChecked : this.selectedResources.push(item);
+      index > -1 ? this.selectedResources[index].isChecked = item.isChecked : this.selectedResources.push(item);
+   }
+
+   openResource(link) {
+      // this.loaderService.startLoader();
+      // let identifier = link.split("/").pop();
+      // const req: ContentDetailRequest = {
+      //    contentId: identifier,
+      //    attachFeedback: false,
+      //    attachContentAccess: false,
+      //    emitUpdateIfAny: false
+      // };
+
+      // this.contentService.getContentDetails(req).toPromise()
+      //    .then(async (data: Content) => {
+      //       this.loaderService.stopLoader();
+      //       this.navigateService.navigateToDetailPage(data, { content: data });
+      //    }, error => {
+      //       this.loaderService.stopLoader();
+      //    });
    }
 }

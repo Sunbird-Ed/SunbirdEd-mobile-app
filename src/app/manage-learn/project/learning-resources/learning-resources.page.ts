@@ -7,7 +7,9 @@ import { DbService } from "../../core/services/db.service";
 import { UtilsService } from "../../core/services/utils.service";
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
-
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { Platform } from '@ionic/angular';
 var environment = {
   db: {
     projects: "project.db",
@@ -25,7 +27,7 @@ export class LearningResourcesPage implements OnInit {
   projectId;
   taskId: any;
   list;
-
+  private backButtonFunc: Subscription;
   private _headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -42,19 +44,12 @@ export class LearningResourcesPage implements OnInit {
     private toast: ToastService,
     private db: DbService,
     private navigateService: NavigationService,
+    private platform: Platform,
+    private location: Location,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
     // private openResources: OpenResourcesService
   ) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_LEARNING_RESOURCES"]).subscribe((text) => {
-      data = text;
-    });
-    this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = [];
-    this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
-    this.headerService.updatePageConfig(this._headerConfig);
-
     routerparam.params.subscribe((param) => {
       this.projectId = param.id;
       this.taskId = param.taskId;
@@ -63,6 +58,28 @@ export class LearningResourcesPage implements OnInit {
   }
 
   ngOnInit() { }
+
+
+  ionViewWillEnter() {
+    let data;
+    this.translate.get(["FRMELEMNTS_LBL_LEARNING_RESOURCES"]).subscribe((text) => {
+      data = text;
+    });
+    this._headerConfig = this.headerService.getDefaultPageConfig();
+    this._headerConfig.actionButtons = [];
+    this._headerConfig.showHeader = true;
+    this._headerConfig.showBurgerMenu = false;
+    this._headerConfig.pageTitle =  data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
+    this.headerService.updatePageConfig(this._headerConfig);
+    this.handleBackButton();
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
   getProjectFromLocal(projectId) {
     this.loader.startLoader();
     this.db.query({ _id: projectId }).then(
@@ -84,14 +101,7 @@ export class LearningResourcesPage implements OnInit {
     );
   }
   openBodh(link) {
-    console.log(link, "link");
-    // this.toast.openToast('Coming soon');
-    console.log(link, "link");
     let identifier = link.split("/").pop();
-    console.log(identifier, "identifier");
-
-
-
     const req: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: false,
