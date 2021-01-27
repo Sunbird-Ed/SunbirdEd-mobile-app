@@ -73,8 +73,10 @@ export class ConsentPiiPopupComponent {
                 let location = '-';
                 if (this.profile.serverProfile.userLocations && this.profile.serverProfile.userLocations.length) {
                     this.profile.serverProfile.userLocations.forEach(element => {
-                        if (element.type === ele.code || (ele.code).includes(element.type)) {
-                            location = ele.code === 'schoolId' ? element.code : element.name;
+                        if (element.type === ele.code) {
+                            location = element.name;
+                        } else if (ele.code === 'schoolId' && element.type === 'school' ) {
+                            location = element.code;
                         }
                     });
                 }
