@@ -108,6 +108,11 @@ export class ObservationDetailComponent implements OnInit {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
             //   this.checkForAnySubmissionsMade(); TODO:Implement
+          } else {
+            this.selectedSolution = [];
+            if (!this.observationId) {
+              this.observationId = success.result._id; // for autotargeted if get observationId
+            }
           }
         },
         (error) => {
@@ -272,10 +277,10 @@ export class ObservationDetailComponent implements OnInit {
             // };
             this.loader.startLoader();
             let payload = await this.utils.getProfileInfo();
-            payload.data = entityId;
+            payload.data = [entityId];
 
             const config = {
-              url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.solutionId}`,
+              url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
               payload: payload,
             };
             this.assessmentService.post(config).subscribe(

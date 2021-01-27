@@ -138,7 +138,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         };
         this.isCurrentEvidenceSubmitted = currentEvidences[this.selectedEvidenceIndex].isSubmitted;
         if (this.isCurrentEvidenceSubmitted || this.isViewOnly) {
-          // document.getElementById('stop').style.pointerEvents = 'none';
+          document.getElementById('stop').style.pointerEvents = 'none';
         }
         // this.loader.stopLoader();
       })
