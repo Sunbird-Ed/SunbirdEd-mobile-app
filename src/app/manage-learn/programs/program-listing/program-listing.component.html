@@ -13,7 +13,7 @@
       </ion-item>
     </ion-list>
     <!-- <ion-list *ngFor="let data of result"> -->
-    <app-item-list-card [title]="data?.name" [subTitle]="data?.solutions" [id]="data?._id"
+    <app-item-list-card [title]="data?.name"  [id]="data?._id"
       (cardSelect)="selectedProgram($event)" *ngFor="let data of programs"></app-item-list-card>
     <app-no-data *ngIf="!programs?.length"></app-no-data>
 

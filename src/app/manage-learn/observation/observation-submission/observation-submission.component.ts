@@ -106,12 +106,12 @@ export class ObservationSubmissionComponent implements OnInit {
     this.loader.startLoader();
     this.assessmentService.post(config).subscribe(
       (success) => {
-        if (isDeleted) {
-          this.loader.stopLoader();
-          history.go(-1);
-          return;
-        }
         if (success.result && success.result.length == 0) {
+          if (isDeleted) {
+            this.loader.stopLoader();
+            history.go(-1);
+            return;
+          }
           let event = {
             entityId: this.entityId,
             observationId: this.observationId,

@@ -165,6 +165,22 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
         // this.projectId = success.result._id;
+        // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
+        let data = success.result
+        if (data.tasks) {
+          
+          data.tasks.map(t => {
+            if ((t.type == 'observation' || t.type == 'assessment' ) && t.submissionDetails && t.submissionDetails.status) {
+              if (t.submissionDetails.status != t.status) {
+                t.status = t.submissionDetails.status
+                t.isEdit = true;
+                data.isEdit=true
+              }
+            }
+          })
+        
+        }
+        // TODO:till here
         this.db.create(success.result).then(successData => {
           this.projectId ? this.getProject() :
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
@@ -409,6 +425,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       .then((success) => {
         this.project._rev = success.rev;
         this.isNotSynced = this.project ? this.project.isNew || this.project.isEdit : false;
+         this.ref.detectChanges();
         if (type == "newTask") {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
@@ -566,7 +583,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             // check id matches and task details has submissionDetails
             if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
               t.submissionDetails = d.submissionDetails;
+              t.isEdit= true
               isChnaged = true;
+              t.isEdit = true
+              this.project.isEdit = true 
             }
           }
         }
