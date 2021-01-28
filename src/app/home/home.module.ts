@@ -10,23 +10,24 @@ import { UserHomePage } from './user-home/user-home.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
-import {UserTypeGuard} from './user-type.guard';
+import { HomePage } from './home.page';
 
 const routes: Routes = [
   {
     path: '',
-    children: [],
-    pathMatch: 'full',
-    canActivate: [UserTypeGuard]
+    component: HomePage,
+    children: [
+      {
+        path: 'user',
+        component: UserHomePage
+      },
+      {
+        path: 'admin',
+        component: AdminHomePage
+      }
+    ]
   },
-  {
-    path: 'user',
-    component: UserHomePage
-  },
-  {
-    path: 'admin',
-    component: AdminHomePage
-  }
+  
 ];
 
 @NgModule({
@@ -39,7 +40,6 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule
   ],
-  declarations: [UserHomePage, AdminHomePage],
-  providers: [UserTypeGuard]
+  declarations: [HomePage, UserHomePage, AdminHomePage],
 })
 export class HomePageModule {}

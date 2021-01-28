@@ -524,6 +524,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
       } else if (formVal.profileType === ProfileType.TEACHER) {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
+      } else if (formVal.profileType === ProfileType.ADMIN) {
+        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
+        initTabs(this.container, GUEST_TEACHER_TABS);
       } else {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.OTHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
