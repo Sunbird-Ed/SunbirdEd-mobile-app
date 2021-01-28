@@ -6,7 +6,6 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { LoaderService } from '../../core';
 import * as _ from 'underscore';
-import { remove } from 'immutable';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 @Component({

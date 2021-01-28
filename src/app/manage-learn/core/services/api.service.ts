@@ -6,6 +6,8 @@ import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
 import { AuthService } from 'sunbird-sdk';
+import * as jwt_decode from "jwt-decode";
+import * as moment from 'moment';
 
 
 @Injectable({
@@ -20,9 +22,27 @@ export class ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
   ) { }
 
- get(requestParam: RequestParams): Observable<any> {
-    return this.authService.getSession().pipe(
-      mergeMap((session) => {
+  get(requestParam: RequestParams): Observable<any> {
+    // return this.authService.getSession().pipe(
+    //   mergeMap((session) => {
+    //     const httpOptions = {
+    //       headers: new HttpHeaders({
+    //         'x-auth-token': session ? session.access_token : "",
+    //         'x-authenticated-user-token': session ? session.access_token : "",
+    //       })
+    //     };
+    //     return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
+    //       tap(data => {
+    //         return observableOf(data)
+    //       }, error => {
+    //         catchError(this.handleError(error))
+    //       }),
+    //     );
+    //   })
+    // );
+
+    return this.checkTokenValidation().pipe(
+      mergeMap(session => {
         const httpOptions = {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
@@ -37,12 +57,53 @@ export class ApiService {
           }),
         );
       })
-    );
+    )
+  }
+
+
+  checkTokenValidation(): Observable<any> {
+    return this.authService.getSession().pipe(
+      mergeMap(tokens => {
+        const token = jwt_decode(tokens.access_token);
+        const tokenExpiryTime = moment(token.exp * 1000);
+        const currentTime = moment(Date.now());
+        const duration = moment.duration(tokenExpiryTime.diff(currentTime));
+        const hourDifference = duration.asHours();
+        if (hourDifference < 2) {
+          return this.authService.refreshSession().pipe(
+            mergeMap(refreshData => {
+              return this.authService.getSession()
+            })
+          )
+        } else {
+          return this.authService.getSession()
+        }
+      })
+    )
   }
 
   post(requestParam: RequestParams): Observable<any> {
-    return this.authService.getSession().pipe(
-      mergeMap((session) => {
+    // return this.authService.getSession().pipe(
+    //   mergeMap((session) => {
+    //     const httpOptions = {
+    //       headers: new HttpHeaders({
+    //         'x-auth-token': session ? session.access_token : "",
+    //         'x-authenticated-user-token': session ? session.access_token : "",
+    //       })
+    //     };
+    //     return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
+    //       tap(data => {
+    //         return data
+    //       }, error => {
+    //         catchError(this.handleError(error))
+    //       }),
+    //     );
+    //   })
+    // );
+
+
+    return this.checkTokenValidation().pipe(
+      mergeMap(session => {
         const httpOptions = {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
@@ -57,7 +118,7 @@ export class ApiService {
           }),
         );
       })
-    );
+    )
   }
 
 
