@@ -4,9 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
-import { Platform } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { LoaderService, LocalStorageService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
@@ -42,7 +42,8 @@ export class SurveyHomeComponent implements OnInit {
     private loader: LoaderService,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
-    private routerParam: ActivatedRoute
+    private routerParam: ActivatedRoute,
+    private toast:ToastService
   ) {
     // this.routerParam.queryParams.subscribe((params) => {
     //  this.link=params.surveyId
@@ -142,6 +143,11 @@ export class SurveyHomeComponent implements OnInit {
           this.surveyProvider.showMsg('surveyCompleted', true);
           return;
         }
+        if (data.result.isCreator) {
+          this.toast.openToast(data.message)
+          this.router.navigate([''])
+          return
+        }
         survey = data.result;
         this.storeRedirect(survey);
       })
@@ -157,7 +163,9 @@ export class SurveyHomeComponent implements OnInit {
       return;
     }
     // surveyId changed to _id
-    survey.downloaded ? this.redirect(survey.submissionId) : this.getSurveyById(survey._id, survey.solutionId);
+    survey.downloaded
+      ? this.redirect(survey.submissionId)
+      : this.getSurveyById(survey._id, survey.solutionId, survey.isCreator);
   }
 
   redirect(submissionId: any): void {
@@ -183,12 +191,15 @@ export class SurveyHomeComponent implements OnInit {
       .then((survey) => this.redirect(survey.assessment.submissionId));
   }
 
-  getSurveyById(surveyId, solutionId) {
+  getSurveyById(surveyId, solutionId, isCreator?) {
     //passing solution id in v2
     if (!surveyId) {
       // return;
       // for auto targeted _id will be blank
       // so creator also no will be able to submit
+    }
+    if (isCreator) {
+      return;
     }
     this.surveyProvider
       .getDetailsById(surveyId, solutionId)
