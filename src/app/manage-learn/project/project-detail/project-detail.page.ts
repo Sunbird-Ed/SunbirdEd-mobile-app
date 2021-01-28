@@ -418,6 +418,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       .then((success) => {
         this.project._rev = success.rev;
         this.isNotSynced = this.project ? this.project.isNew || this.project.isEdit : false;
+        this._headerConfig.actionButtons.pop()
+        this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+        this.headerService.updatePageConfig(this._headerConfig);
          this.ref.detectChanges();
         if (type == "newTask") {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
