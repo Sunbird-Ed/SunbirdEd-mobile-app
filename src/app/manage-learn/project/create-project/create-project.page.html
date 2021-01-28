@@ -32,7 +32,7 @@
                 <ion-label>{{'FRMELEMNTS_LBL_SELECT_CATEGORIES' | translate}}</ion-label>
               </ion-chip>
               <ion-chip *ngFor="let category of selectedCategories">
-                <ion-label *ngIf="category.label != 'Others'">{{category?.name}}</ion-label>
+                <ion-label *ngIf="category.label != 'Others'">{{category?.name || category?.label}}</ion-label>
                 <ion-label *ngIf="category.label == 'Others'">{{category.value}}</ion-label>
                 <ion-icon name="close-circle" (click)="confirmToDelete(category,'category')"></ion-icon>
               </ion-chip>

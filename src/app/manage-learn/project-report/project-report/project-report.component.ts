@@ -75,22 +75,8 @@ export class ProjectReportComponent implements OnInit {
 
   loadFilterType() {
     //TODO:remove
-    this.httpClient.get('assets/dummy/reportTypes.json').subscribe(
-      (res: any) => {
-        if (res.result) {
-          this.filterType = res.result;
-        }
-      },
-      (err) => {
-        this.filterType = [];
-      }
-    );
-    //TODO:Till here
-    // const config = {
-    //   url: urlConstants.API_URLS.GET_REPORT_TYPES,
-    // };
-    // this.unnatiSrvc.get(config).subscribe(
-    //   (res) => {
+    // this.httpClient.get('assets/dummy/reportTypes.json').subscribe(
+    //   (res: any) => {
     //     if (res.result) {
     //       this.filterType = res.result;
     //     }
@@ -99,6 +85,20 @@ export class ProjectReportComponent implements OnInit {
     //     this.filterType = [];
     //   }
     // );
+    //TODO:Till here
+    const config = {
+      url: urlConstants.API_URLS.GET_REPORT_TYPES,
+    };
+    this.unnatiService.get(config).subscribe(
+      (res) => {
+        if (res.result) {
+          this.filterType = res.result;
+        }
+      },
+      (err) => {
+        this.filterType = [];
+      }
+    );
   }
 
   async getReports(preFilter?) {
