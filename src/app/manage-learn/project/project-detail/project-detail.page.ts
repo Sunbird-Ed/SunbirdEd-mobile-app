@@ -239,7 +239,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   getDateFilters() {
     let currentDate = moment();
-    this.filters.today = moment();
+    this.filters.today = moment(currentDate).format("YYYY-MM-DD");
     this.filters.thisWeek = currentDate.endOf("week").format("YYYY-MM-DD");
     this.filters.thisMonth = currentDate.endOf("month").format("YYYY-MM-DD");
     const quarter = Math.floor((new Date().getMonth() / 3));
@@ -248,6 +248,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
   }
   sortTasks() {
+    console.log(this.filters,"this.filters");
     this.taskCount = 0;
     let completed = 0;
     let inProgress = 0;
@@ -258,6 +259,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.taskCount = this.taskCount + 1;
         let ed = JSON.parse(JSON.stringify(task.endDate));
         ed = moment(ed).format("YYYY-MM-DD");
+
         if (ed < this.filters.today) {
           this.sortedTasks["past"].tasks.push(task);
         } else if (ed == this.filters.today) {

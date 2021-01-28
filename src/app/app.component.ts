@@ -492,6 +492,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
+      debugger
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
         || this.router.url === RouterLinks.HOME_TAB || this.router.url === RouterLinks.DISCOVER_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||

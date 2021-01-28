@@ -178,7 +178,7 @@ export class CreateProjectPage implements OnInit {
     const alert = await this.alert.create({
       cssClass: 'my-custom-class',
       // header: text['LABELS.DISCARD_PROJECT'],
-      message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type,
+      message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type + ' ?',
       buttons: [
         {
           text: text['FRMELEMNTS_BTN_CANCEL'],
