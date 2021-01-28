@@ -123,10 +123,9 @@ export class AttachmentListPage implements OnInit {
 
           }
         };
-        console.log(this.attachments, "  this.attachments 82");
       }
-      function compare(fileType, tabType): boolean {
-        tabType = tabType.substr(0, tabType.indexOf("/"));
+      function compare(fileType,tabType): boolean{
+        tabType = tabType.substr(0, tabType.indexOf("/")); 
         fileType = fileType.substr(0, fileType.indexOf("/"));
         return tabType == fileType;
       }
