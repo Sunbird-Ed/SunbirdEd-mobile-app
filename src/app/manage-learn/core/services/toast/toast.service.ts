@@ -17,7 +17,7 @@ export class ToastService {
   async openToast(msg, closeBtn?: string) {
     let toast = await this.toastCtrl.create({
       message: msg,
-      duration: closeBtn ? 0 : 3000,
+      duration: closeBtn ? 0 : 2000,
       position: 'bottom',
       closeButtonText: closeBtn,
       showCloseButton: closeBtn ? true : false
@@ -35,7 +35,7 @@ export class ToastService {
       message: text[msg],
       color: color,
       cssClass: 'custom-toast',
-      duration: 5000,
+      duration: 2000,
       position: 'top',
       buttons: [
         {

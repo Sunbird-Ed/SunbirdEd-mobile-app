@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -21,7 +21,8 @@ import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
-
+import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
+import { NavigationService } from '@app/services/navigation-handler.service';
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -108,14 +109,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private http: HttpClient,
     private kendraService: KendraApiService,
     private location: Location,
-    private ref: ChangeDetectorRef
-
+    private ref: ChangeDetectorRef,
+    private navigateService: NavigationService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     params.params.subscribe((parameters) => {
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
-      console.log(parameters, "parameters");
+      this.getProject();
     });
     this.translate
       .get(["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG", "FRMELEMNTS_MSG_NO_ENTITY_MAPPED", "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"])
@@ -133,6 +135,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.db.query({ _id: this.projectId }).then(
       (success) => {
         if (success.docs.length) {
+          this.categories = [];
           this.project = success.docs.length ? success.docs[0] : {};
           this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
           this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
@@ -169,12 +172,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           this.projectId ? this.getProject() :
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
         }).catch(error => {
-          if(error.status === 409) {
+          if (error.status === 409) {
             this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
-          } 
+          }
         })
       }, error => {
-         
+
         this.loader.stopLoader();
       })
     } else {
@@ -186,7 +189,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   ngOnInit() { }
   ionViewWillEnter() {
     this.initApp();
-    this.getProject();
+    // this.getProject();
     this.getDateFilters();
   }
 
@@ -232,7 +235,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.filters.thisQuarter = moment(endFullQuarter).format("YYYY-MM-DD");
   }
   sortTasks() {
-    console.log(this.filters,"this.filters");
     this.taskCount = 0;
     let completed = 0;
     let inProgress = 0;
@@ -389,21 +391,32 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
   //open openBodh
   openBodh(link) {
-    // console.log(link, "link");
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResourceSrvc.openBodh(link)
-    //   : this.toast.showMessage("MESSAGES.OFFLINE", "danger");
+     this.loader.startLoader();
+      let identifier = link.split("/").pop();
+      const req: ContentDetailRequest = {
+         contentId: identifier,
+         attachFeedback: false,
+         attachContentAccess: false,
+         emitUpdateIfAny: false
+      };
+
+      this.contentService.getContentDetails(req).toPromise()
+         .then(async (data: Content) => {
+            this.loader.stopLoader();
+            this.navigateService.navigateToDetailPage(data, { content: data });
+         }, error => {
+            this.loader.stopLoader();
+         });
   }
 
   //Update the project
   update(type) {
-    this.project.isEdit = true;
+    this.project.isEdit = true; 
     this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
       .then((success) => {
         this.project._rev = success.rev;
-        this.isNotSynced = this.project ? this.project.isNew || this.project.isEdit : false;
         if (type == "newTask") {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
@@ -551,7 +564,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     );
   }
 
- updateAssessmentStatus(data) {
+  updateAssessmentStatus(data) {
     // if task type is assessment or observation then check if it is submitted and change the status and update in db
     let isChnaged = false
     this.project.tasks.map((t) => {
@@ -589,8 +602,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       let payload = await this.utils.getProfileInfo();
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
-        payload:payload
-        
+        payload: payload
+
       };
       this.unnatiService.get(config).subscribe(
         (success) => {
@@ -603,13 +616,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           let params = `${data.programId}-${data.solutionId}-${data.entityId}-${entityType}`;
           // let link = `${environment.deepLinkAppsUrl}/${task.type}/reports/${params}`;
           // this.iab.create(link, "_system");
-           this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-          queryParams: {
-            entityId: data.entityId,
-            entityType: entityType,
-            observationId: data.observationId,
-          },
-        });
+          this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+            queryParams: {
+              entityId: data.entityId,
+              entityType: entityType,
+              observationId: data.observationId,
+            },
+          });
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");

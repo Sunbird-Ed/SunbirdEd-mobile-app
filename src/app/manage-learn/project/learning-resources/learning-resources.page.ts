@@ -84,15 +84,10 @@ export class LearningResourcesPage implements OnInit {
     this.loader.startLoader();
     this.db.query({ _id: projectId }).then(
       (success) => {
-        console.log(success, "success 67");
-        // this.db.getById(projectId).then(success => {
         this.loader.stopLoader();
         this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
-          console.log(this.taskId, "this.taskId");
-          // to show  learnign resources of task
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
-          console.log(this.list, "this.list");
         }
       },
       (error) => {
@@ -111,11 +106,7 @@ export class LearningResourcesPage implements OnInit {
 
     this.contentService.getContentDetails(req).toPromise()
       .then(async (data: Content) => {
-        console.log(data, "data 96");
         this.navigateService.navigateToDetailPage(data, { content: data });
       });
-    // this.networkService.isNetworkAvailable
-    //   ? this.openResources.openBodh(link)
-    //   : this.toast.showMessage("MESSAGES.OFFLINE", "danger");
   }
 }
