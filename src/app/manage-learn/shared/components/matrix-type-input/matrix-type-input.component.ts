@@ -158,21 +158,21 @@ export class MatrixTypeInputComponent implements OnInit {
 
   async deleteInstanceAlert(index) {
     let translateObject;
-    this.translate.get(['actionSheet.confirmDelete', 'actionSheet.confirmDeleteInstance', 'actionSheet.no', 'actionSheet.yes']).subscribe(translations => {
+    this.translate.get(['FRMELEMNTS_LBL_COFIRMATION_DELETE', 'FRMELEMNTS_LBL_COFIRMATION_DELETE_INSTANCE', 'NO', 'YES']).subscribe(translations => {
       translateObject = translations;
     })
     let alert = await this.alertCtrl.create({
-      header: translateObject['actionSheet.confirmDelete'],
-      message: translateObject['actionSheet.confirmDeleteInstance'],
+      header: translateObject['FRMELEMNTS_LBL_COFIRMATION_DELETE'],
+      message: translateObject['FRMELEMNTS_LBL_COFIRMATION_DELETE_INSTANCE'],
       buttons: [
         {
-          text: translateObject['actionSheet.no'],
+          text: translateObject['NO'],
           role: 'cancel',
           handler: () => {
           }
         },
         {
-          text: translateObject['actionSheet.yes'],
+          text: translateObject['YES'],
           handler: () => {
             this.deleteInstance(index);
           }

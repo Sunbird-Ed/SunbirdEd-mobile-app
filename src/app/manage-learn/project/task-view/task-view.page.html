@@ -45,7 +45,7 @@
 
     </ion-col>
   </ion-row>
-  <div class="subtask-form">
+  <div class="subtask-form" *ngIf="task?.type !='observation' && task?.type != 'assessment'">
     <h4>{{'FRMELEMNTS_LBL_SUBTASKS' | translate}}</h4>
     <ion-row>
       <ion-col size="3"> <img src="assets/imgs/subdirectory_arrow.png" class="arrow-image" /> </ion-col>

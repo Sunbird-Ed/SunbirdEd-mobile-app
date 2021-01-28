@@ -45,4 +45,7 @@
       </div>
     </div>
   </div>
+  <div *ngIf="!attachments?.length">
+    <app-no-data></app-no-data>
+  </div>
 </ion-content>

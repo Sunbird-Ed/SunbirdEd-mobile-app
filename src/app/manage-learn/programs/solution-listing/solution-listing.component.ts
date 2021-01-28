@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { UtilsService } from '../../core';
+import { ToastService, UtilsService } from '../../core';
 import { LoaderService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
 import { SurveyProviderService } from '../../survey/survey-provider.service';
@@ -41,7 +41,8 @@ private backButtonFunc: Subscription;
     private router: Router,
     private surveyProvider: SurveyProviderService,
     private headerService: AppHeaderService,
-    private platform: Platform
+    private platform: Platform,
+    private toast:ToastService
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -98,6 +99,10 @@ private handleBackButton() {
     this.surveyProvider
       .getDetailsById(surveyId, data._id)
       .then((res) => {
+        if (res.result && res.result.status == 'completed') {
+          this.toast.openToast(res.message)
+          return
+        }
         const survey = res.result;
         this.storeRedirect(survey);
       })

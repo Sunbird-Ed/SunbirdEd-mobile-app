@@ -30,10 +30,11 @@
           name="ios-arrow-round-forward"
           *ngIf="item?.status != 'completed' && item.submissionId"
         ></ion-icon>
+        <!-- *ngIf="item?.status == 'completed' || !item.submissionId" -->
         <ion-button
           report
           round
-          *ngIf="item?.status == 'completed' || !item.submissionId"
+          *ngIf="item?.status == 'completed' || item.isCreator"
           (click)="$event.stopPropagation(); checkReport(item)"
         >
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
