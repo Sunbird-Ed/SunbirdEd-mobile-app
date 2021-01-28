@@ -98,6 +98,11 @@ export class ObservationSubmissionComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
     this.getProgramFromStorage();
   }
 

@@ -3,8 +3,9 @@ import { LoaderService, UtilsService } from '@app/app/manage-learn/core';
 import { KendraApiService } from '@app/app/manage-learn/core/services/kendra-api.service';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { ModalController } from '@ionic/angular';
-import * as _ from "underscore";
+import * as _ from 'underscore';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-filter-modal',
@@ -27,7 +28,8 @@ export class FilterModalComponent implements OnInit {
     public kendraSrvc: KendraApiService,
     public unnatiSrvc: UnnatiDataService,
     private modalCtrl: ModalController,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private location: Location
   ) {
     this.search = _.debounce(this.search, 500);
   }
@@ -109,10 +111,10 @@ export class FilterModalComponent implements OnInit {
     //     console.log(err);
     //   }
     // );
-    this.utils.getMandatoryEntitiesList().then(data => {
-      console.log(data, "data 109");
+    this.utils.getMandatoryEntitiesList().then((data) => {
+      console.log(data, 'data 109');
       this.entityTypes = data;
-    })
+    });
   }
 
   dismissModal(data) {

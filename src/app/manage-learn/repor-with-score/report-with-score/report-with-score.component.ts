@@ -12,6 +12,7 @@ import { QuestionListComponent } from '../../shared/components/question-list/que
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { RouterLinks } from '@app/app/app.constant';
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: 'app-report-with-score',
@@ -41,6 +42,11 @@ export class ReportWithScoreComponent implements OnInit {
   // @ViewChild(FabContainer) fab: FabContainer;
   @ViewChild(IonFab, { static: false }) fab;
   from: any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+  };
   constructor(
     private routerParam: ActivatedRoute,
     public navCtrl: NavController,
@@ -57,7 +63,8 @@ export class ReportWithScoreComponent implements OnInit {
     private loader: LoaderService,
     private toast: ToastService,
     private dhiti: DhitiApiService,
-    private router: Router
+    private router: Router,
+    private headerService: AppHeaderService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.selectedTab = 'questionwise';
@@ -69,6 +76,13 @@ export class ReportWithScoreComponent implements OnInit {
       this.reportType = params.reportType;
       this.from = params.from;
     });
+  }
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
   }
 
   ngOnInit() {
