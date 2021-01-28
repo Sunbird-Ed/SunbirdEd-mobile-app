@@ -14,6 +14,7 @@ import { DownloadAndPreviewService } from '../../core/services/download-and-prev
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
 import { File } from '@ionic-native/file/ngx';
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: 'app-observation-reports',
@@ -44,8 +45,14 @@ export class ObservationReportsComponent implements OnInit {
   // @ViewChild(FabContainer) fab: FabContainer //TODO:check fab action
   @ViewChild(IonFab, { static: false }) fab; //TODO check fab with this.
   from: any;
+  headerConfig = {
+    showHeader: true,
+    showBurgerMenu: false,
+    actionButtons: [],
+  };
   constructor(
     private routerParam: ActivatedRoute,
+    private headerService: AppHeaderService,
     private platform: Platform,
     private loader: LoaderService,
     private httpClient: HttpClient,
@@ -71,6 +78,13 @@ export class ObservationReportsComponent implements OnInit {
       this.immediateChildEntityType = params.immediateChildEntityType;
       this.reportType = params.reportType;
     });
+  }
+  ionViewWillEnter() {
+    this.headerConfig = this.headerService.getDefaultPageConfig();
+    this.headerConfig.actionButtons = [];
+    this.headerConfig.showHeader = true;
+    this.headerConfig.showBurgerMenu = false;
+    this.headerService.updatePageConfig(this.headerConfig);
   }
 
   ngOnInit() {
