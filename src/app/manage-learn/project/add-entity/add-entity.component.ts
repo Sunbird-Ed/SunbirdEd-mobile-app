@@ -81,7 +81,7 @@ export class AddEntityComponent implements OnInit {
             }
          );
       } else {
-         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+         this.toast.showMessage("FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
       }
    }
    checkUserMapping() {
@@ -152,7 +152,7 @@ export class AddEntityComponent implements OnInit {
             }
          );
       } else {
-         this.toast.showMessage("MESSAGES.YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
+         this.toast.showMessage("FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN", "danger");
       }
    }
 

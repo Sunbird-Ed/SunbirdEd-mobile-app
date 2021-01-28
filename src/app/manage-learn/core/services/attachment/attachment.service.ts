@@ -101,7 +101,7 @@ export class AttachmentService {
       })
       .catch((err) => {
         console.log(err);
-        this.presentToast(this.texts["MESSAGES.ERROR_WHILE_STORING_FILE"]);
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
       });
   }
 
@@ -119,7 +119,7 @@ export class AttachmentService {
         this.actionSheetController.dismiss(data);
       },
       (error) => {
-        this.presentToast(this.texts["MESSAGES.ERROR_WHILE_STORING_FILE"]);
+        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
       }
     );
   }

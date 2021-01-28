@@ -91,7 +91,7 @@ export class CreateProjectPage implements OnInit {
         }
         console.log(this.selectedCategories, ' this.selectedCategories', this.project.categories);
       },
-      (error) => {}
+      (error) => { }
     );
   }
 
@@ -161,7 +161,7 @@ export class CreateProjectPage implements OnInit {
         },
         {
           text: text['FRMELEMNTS_BTN_CONTINUE'],
-          handler: () => {},
+          handler: () => { },
         },
       ],
     });
@@ -184,7 +184,7 @@ export class CreateProjectPage implements OnInit {
           text: text['FRMELEMNTS_BTN_CANCEL'],
           role: 'cancel',
           cssClass: 'secondary',
-          handler: (blah) => {},
+          handler: (blah) => { },
         },
         {
           text: text['FRMELEMNTS_BTN_DELETE'],
@@ -220,7 +220,6 @@ export class CreateProjectPage implements OnInit {
   }
 
   async openCategoryModal(categories) {
-    console.log(categories, 'categories 12');
     const modal = await this.modal.create({
       component: CategorySelectComponent,
       cssClass: 'transparentModal',
@@ -252,8 +251,8 @@ export class CreateProjectPage implements OnInit {
       this.projectForm.value.categories = this.selectedCategories;
       this.parameters ? this.update(this.projectForm.value) : this.saveData(this.projectForm.value);
     } else {
-      this.translate.get(['MESSAGES.REQUIRED_FIELDS']).subscribe((data) => {
-        this.toast.showMessage(data['MESSAGES.REQUIRED_FIELDS'], 'danger');
+      this.translate.get(['FRMELEMNTS_MSG_REQUIRED_FIELDS']).subscribe((data) => {
+        this.toast.showMessage(data['FRMELEMNTS_MSG_REQUIRED_FIELDS'], 'danger');
       });
     }
   }
@@ -276,13 +275,13 @@ export class CreateProjectPage implements OnInit {
             })
           );
         })
-        .catch((error) => {});
+        .catch((error) => { });
     } else {
       this.button == 'LABELS.SAVE_EDITS'
         ? this.router.navigate(['menu/project-operation', this.projectId], {
-            queryParams: { createdType: 'bySelf' },
-            replaceUrl: true,
-          })
+          queryParams: { createdType: 'bySelf' },
+          replaceUrl: true,
+        })
         : this.location.back();
     }
   }
@@ -297,6 +296,6 @@ export class CreateProjectPage implements OnInit {
       .then((success) => {
         this.location.back();
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
 }
