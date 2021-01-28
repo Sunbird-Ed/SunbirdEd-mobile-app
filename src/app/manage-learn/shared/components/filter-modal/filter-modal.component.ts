@@ -117,7 +117,7 @@ export class FilterModalComponent implements OnInit {
     });
   }
 
-  dismissModal(data) {
+  dismissModal(data?) {
     this.modalCtrl.dismiss(data);
   }
 
