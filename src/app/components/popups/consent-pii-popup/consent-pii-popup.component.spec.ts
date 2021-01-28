@@ -296,7 +296,7 @@ describe('ConsentPiiPopupComponent', () => {
                 code: 'emailId',
                 templateOptions: {
                     dataSrc: {
-                        marker: 'SERVER_PROFILE_DECLARED',
+                        marker: 'SERVER_PROFILE',
                         params: {
                             categoryCode: 'declared-email'
                         }
@@ -320,7 +320,7 @@ describe('ConsentPiiPopupComponent', () => {
                 code: 'phoneNumber',
                 templateOptions: {
                     dataSrc: {
-                        marker: 'SERVER_PROFILE_DECLARED',
+                        marker: 'SERVER_PROFILE',
                         params: {
                             categoryCode: 'declared-phone'
                         }
