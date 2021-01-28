@@ -457,7 +457,9 @@ export class FormAndFrameworkUtilService {
             if (profileRes.framework && Object.keys(profileRes.framework).length) {
                 const categoryKeysLen = Object.keys(profileRes.framework).length;
                 let keysLength = 0;
-                profile.syllabus = [profileRes.framework.id[0]];
+                if (profileRes.framework.id && profileRes.framework.id.length) {
+                    profile.syllabus = [profileRes.framework.id[0]];
+                }
                 for (const categoryKey in profileRes.framework) {
                     if (profileRes.framework[categoryKey].length
                         && FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES.includes(categoryKey as FrameworkCategoryCode)) {

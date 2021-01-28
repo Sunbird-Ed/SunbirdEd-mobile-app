@@ -555,6 +555,9 @@ export class RouterLinks {
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
     public static readonly DISCUSSION = 'discussion-forum';
+
+    public static readonly HOME_USER = 'user';
+    public static readonly HOME_ADMIN = 'admin';
 }
 
 export class ShareItemType {
