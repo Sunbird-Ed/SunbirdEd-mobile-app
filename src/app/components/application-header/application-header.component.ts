@@ -27,6 +27,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
 
 declare const cordova;
 
@@ -407,5 +408,22 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
               }
           }, () => {});
       }));
+  }
+
+  async showKebabMenu(event) {
+    const kebabMenuPopover = await this.popoverCtrl.create({
+      component: ApplicationHeaderKebabMenuComponent,
+      event,
+      showBackdrop: false,
+      componentProps: {
+        options: this.headerConfig.kebabMenuOptions || []
+      },
+    });
+    kebabMenuPopover.present();
+    const { data } = await kebabMenuPopover.onDidDismiss();
+    if (!data) {
+      return;
+    }
+    this.emitEvent({ event, option: data.option }, 'kebabMenu');
   }
 }

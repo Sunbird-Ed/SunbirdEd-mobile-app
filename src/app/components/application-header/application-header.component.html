@@ -82,6 +82,10 @@
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
         <ion-icon class="ion-float-end" name="ios-information-circle-outline"></ion-icon>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.showKebabMenu"
+                  (click)="showKebabMenu($event)" style="font-size: 1.8rem; padding: 0 16px;">
+        <img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
+      </ion-button>
     </ion-buttons>
 
   </ion-toolbar>

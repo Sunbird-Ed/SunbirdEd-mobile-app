@@ -510,11 +510,6 @@ export class ProfilePage implements OnInit {
     issuedCertificate?: CourseCertificate,
     status: number
   }) {
-    const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
-    const toastOptions = {
-      message: downloadMessage || 'Certificate getting downloaded'
-    };
-
     await this.checkForPermissions().then(async (result) => {
       if (result) {
         const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
@@ -528,31 +523,26 @@ export class ProfilePage implements OnInit {
           PageId.PROFILE, // page name
           telemetryObject,
           values);
-        let toast;
-        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-          toast = await this.toastController.create(toastOptions);
-          await toast.present();
-        }
+
         if (course.issuedCertificate) {
-          this.courseService.downloadCurrentProfileCourseCertificateV2(
-            { courseId: course.courseId, certificate: course.issuedCertificate },
-            (svgData, callback) => {
-              this.certificateDownloadAsPdfService.download(
-                svgData, (fileName, pdfData) => callback(pdfData as any)
-              );
-            }).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                await this.downloadLegacyCertificate(course, toast);
-              }
-              await this.handleCertificateDownloadIssue(toast, err);
-            });
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+            this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+            return;
+          }
+
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
+            state: {
+              request: { courseId: course.courseId, certificate: course.issuedCertificate }
+            }
+          });
         } else {
+          const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+          const toastOptions = {
+            message: downloadMessage || 'Certificate getting downloaded'
+          };
+          const toast = await this.toastController.create(toastOptions);
+          await toast.present();
+
           await this.downloadLegacyCertificate(course, toast);
         }
       } else {
