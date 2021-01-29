@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CachedItemRequestSourceFrom, LocationSearchCriteria, ProfileService } from '@project-sunbird/sunbird-sdk';
 import { FieldConfigOptionsBuilder } from 'common-form-elements';
-import { defer, of } from 'rxjs';
+import { concat, defer, iif, of } from 'rxjs';
 import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { Location as LocationType } from '@app/app/app.constant';
 import { distinctUntilChanged, startWith, switchMap, tap } from 'rxjs/operators';
@@ -33,6 +33,7 @@ export class FormLocationFactory {
             if (config.default && initial) {
               const option = list.find((o) => o.value.id === config.default.id || o.label === config.default.name);
               formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
+              formControl.markAsPristine();
               config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
             initial = false;
@@ -53,18 +54,19 @@ export class FormLocationFactory {
       if (!contextFormControl) {
         return of([]);
       }
-      return contextFormControl.valueChanges.pipe(
-        startWith(contextFormControl.value),
+      return iif(
+        () => initial,
+        contextFormControl.valueChanges,
+        concat(
+          of(contextFormControl.value),
+          contextFormControl.valueChanges
+        )
+      ).pipe(
         distinctUntilChanged((a: Location, b: Location) => {
           return !!(!a && !b ||
             !a && b ||
             !b && a ||
             a.code === b.code);
-        }),
-        tap(() => {
-          if (formControl.value) {
-            formControl.patchValue(null, { onlySelf: true, emitEvent: false });
-          }
         }),
         switchMap(async (value) => {
           if (!value) {
@@ -87,11 +89,14 @@ export class FormLocationFactory {
                 .find((org) => org.orgName === o.label);
               });
               formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
+              formControl.markAsPristine();
             } else if (config.default && initial && !formControl.value) {
               const option = list.find((o) => o.value.id === config.default.id);
               formControl.patchValue(option ? option.value : null);
+              formControl.markAsPristine();
               config.default['code'] = option ? option.value['code'] : config.default['code'];
             }
+            initial = false;
             return list;
           })
             .catch((e) => {
