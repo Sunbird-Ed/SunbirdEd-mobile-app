@@ -1,0 +1,29 @@
+{
+    "status": 200,
+    "message": "Users observations fetched successfully",
+    "result": {
+        "data": [
+            {
+                "_id": "5fd7201c04b0890391b92062",
+                "externalId": "Karnataka Flash Visit-2019-FRAMEWORK",
+                "name": "Karnataka Flash Visit-2019-FRAMEWORK",
+                "description": "Karnataka Flash Visit-2019-FRAMEWORK",
+                "programName": "Karnataka Flash Visit-2019-FRAMEWORK",
+                "solutionId": "5beaaa2baf0065f0e0a105c7",
+                "programId": "5beaaa2baf0065f0e0a105c7",
+                "entityId": "5beaaa2baf0065f0e0a105c7"
+            },
+            {
+                "_id": "",
+                "externalId": "PUNJAB-2019-FRAMEWORK",
+                "name": "PUNJAB-2019-FRAMEWORK",
+                "description": "PUNJAB-2019-FRAMEWORK",
+                "programName": "PUNJAB -2019-FRAMEWORK",
+                "solutionId": "5beaaa2baf0065f0e0a105c7",
+                "programId": "5beaaa2baf0065f0e0a105c7",
+                "entityId": "5beaaa2baf0065f0e0a105c7"
+            }
+        ],
+        "count": 2
+    }
+}

@@ -1,0 +1,51 @@
+<div class="_flex-box ion-margin-top"  style="flex-wrap: wrap;">
+  <!-- <fa-icon name="camera-retro"></fa-icon> -->
+
+  <div *ngIf="datas?.file" class="_cards _flex-box _justify-content-center _flex-direction-column ion-padding" >
+
+    <div class="textAdj" (click)="openActionSheet()">
+      <div class=" _flex-box _justify-content-center _flex-direction-column">
+        <ion-icon name="add" class="_iconAdj"></ion-icon>
+      </div>
+      <div>{{'FRMELEMENTS_LBL_FILES'|translate}}</div>
+    </div>
+    <div class="_overlay" (click)="openActionSheet()"></div>
+  </div>
+
+  <div class="_cards _flex-box  _justify-content-center" *ngFor="let image of imageList; let i = index">
+    <ion-icon name="trash" class="_closeBtn" (click)="deleteImageAlert(i)"></ion-icon>
+    <div class="_overlay" (click)="previewFile(image?.imageName,image?.extension)"></div>
+    <img [src]="image?.data">
+    <span>
+      <!-- <fa name="file-pdf-o" class="attachmentIcon" *ngIf="pdfFormats.includes(image?.extension)"></fa>
+      <fa name="file-word-o" class="attachmentIcon" *ngIf="wordFormats.includes(image?.extension)"></fa>
+      <fa name="file-audio-o" class="attachmentIcon" *ngIf="audioFormats.includes(image?.extension)"></fa>
+      <fa name="file-video-o" class="attachmentIcon" *ngIf="videoFormats.includes(image?.extension)"></fa>
+      <fa name="file-powerpoint-o" class="attachmentIcon" *ngIf="pptFormats.includes(image?.extension)"></fa>
+      <fa name="file-excel-o" class="attachmentIcon" *ngIf="spreadSheetFormats.includes(image?.extension)"></fa>
+      <fa name="file-picture-o" class="attachmentIcon" *ngIf="imageFormats.includes(image?.extension)"></fa> -->
+      <ion-icon name="document-outline" *ngIf="pdfFormats.includes(image?.extension) || wordFormats.includes(image?.extension) || pptFormats.includes(image?.extension) "></ion-icon>
+      <ion-icon name="musical-notes-outline" *ngIf="audioFormats.includes(image?.extension)"></ion-icon>
+      <ion-icon name="videocam-outline"  *ngIf="videoFormats.includes(image?.extension)"></ion-icon>
+      <ion-icon class="attachmentIcon" name="image-outline" *ngIf="imageFormats.includes(image?.extension)"></ion-icon>
+    </span>
+  </div>
+  <ion-card *ngIf="datas?.allowAudioRecording">
+    <ion-card-content>
+      <ion-row *ngIf="!recording">
+        <button ion-button primary (click)="checkRecordMediaPermission()">
+          <ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record
+        </button>
+      </ion-row>
+      <ion-row *ngIf="recording" class="_flex-box _justify-content-space-between">
+        <button ion-button primary (click)="stopRecord()">
+          <ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record
+        </button>
+
+        <h1>
+          <span *ngIf="minutes < 10">0</span>{{minutes}} : <span *ngIf="seconds < 10">0</span>{{seconds}}
+        </h1>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>

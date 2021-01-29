@@ -1,0 +1,71 @@
+<ion-content *ngIf="project">
+  <ion-card class="project-box">
+    <ion-card-header class="custom-filed" (click)="edit('metaData')">
+      <div style="height: 20px;">
+        <ion-icon name="create" color="primary"></ion-icon>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="custom-filed _capitalize">
+        <ion-label> {{'FRMELEMNTS_LBL_PROJECT_TITLE' | translate}} : </ion-label>
+        {{project?.title}}
+      </div>
+      <div class="custom-filed _capitalize">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_OBJECTIVE' | translate}} : </ion-label>
+        {{project?.description}}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.duration">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
+        {{project?.duration}}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.startDate">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
+        {{project?.startDate | date : 'dd/MM/yyyy' }}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.endDate">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
+        {{project?.endDate | date : 'dd/MM/yyyy' }}
+      </div>
+      <div class="custom-filed _capitalize">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
+        <!-- {{categories}} -->
+        <span *ngFor="let category of project?.categories">
+          {{category?.label || category?.name}} ,
+        </span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+  <ion-card class="project-box">
+    <ion-card-header class="custom-filed _capitalize" (click)="edit('others')">
+      <div style="height: 20px;">
+        <ion-icon name="create" color="primary"></ion-icon>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="custom-filed _capitalize">
+        <ion-label> {{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} : </ion-label>
+        {{project?.programName}}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.duration">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
+        {{project?.duration}}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.entityId">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_ENTITIES' | translate}} </ion-label>
+        <ion-card>
+          <ion-card-content>
+            {{project?.entityName}}
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project.learningResources && project.learningResources.length">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_LEARNING_RESOURCES' | translate}} : </ion-label>
+        <ion-card *ngFor="let resources  of project.learningResources">
+          <ion-card-content>
+            {{resources?.name}}
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

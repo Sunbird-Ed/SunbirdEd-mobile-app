@@ -1,0 +1,33 @@
+<ion-content fullscreen>
+  <app-common-header title=" {{ solutionName }}"></app-common-header>
+  <div class="d-flex flex-jc-flex-end grade_ellipsis info">
+    <ion-button
+      size="small"
+      class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
+      (click)="addEntity()"
+      >Add Entity</ion-button
+    >
+  </div>
+  <div *ngFor="let entity of selectedSolution" (click)="goToObservationSubmission(entity)">
+    <app-item-list-card [title]="entity?.name" (cardSelect)="goToObservationSubmission(entity)">
+      <ion-icon
+        class="mg-popup-btn-icon"
+        name="ios-arrow-round-forward"
+        arrow
+        *ngIf="entity?.submissionsCount"
+      ></ion-icon>
+      <ion-icon
+        class="mg-popup-btn-icon delete-icon"
+        name="trash"
+        arrow
+        *ngIf="!entity?.submissionsCount"
+        (click)="$event.stopPropagation(); removeEntity(entity)"
+      ></ion-icon>
+    </app-item-list-card>
+  </div>
+  <app-no-data *ngIf="!selectedSolution?.length"></app-no-data>
+</ion-content>
+//TODO: Add report button observation report
+<!-- <ion-button class="view-more" expand="block">
+  {{ 'FRMELEMNTS_LBL_VIEW_MORE' | translate }}
+</ion-button> -->

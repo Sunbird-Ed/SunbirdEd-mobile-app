@@ -1,0 +1,26 @@
+<ion-app>
+  <ion-content fullscreen>
+    <app-common-header
+      title="{{ 'FRMELEMNTS_LBL_OBSERVATION' | translate }}"
+      subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_DESC' | translate }}"
+    ></app-common-header>
+    <div *ngFor="let solution of solutionList; let solutionIndex = index">
+      <app-item-list-card
+        [title]="solution?.name"
+        [subTitle]="solution?.programName"
+        (cardSelect)="observationDetails(solution)"
+      >
+        <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
+      </app-item-list-card>
+    </div>
+    <app-no-data *ngIf="!solutionList?.length"></app-no-data>
+  </ion-content>
+  <ion-button
+    class="view-more"
+    expand="block"
+    (click)="loadMore()"
+    *ngIf="solutionList?.length && count > solutionList?.length"
+  >
+    {{ 'VIEW_MORE' | translate }}
+  </ion-button>
+</ion-app>

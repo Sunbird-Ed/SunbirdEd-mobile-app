@@ -10,6 +10,8 @@ import { UserHomePage } from './user-home/user-home.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
+import {UserTypeGuard} from './user-type.guard';
+import { CoreModule } from '../manage-learn/core/core.module';
 import { HomePage } from './home.page';
 
 const routes: Routes = [
@@ -37,7 +39,8 @@ const routes: Routes = [
     CommonConsumptionModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    PipesModule
+    PipesModule,
+    CoreModule
   ],
   declarations: [HomePage, UserHomePage, AdminHomePage],
 })

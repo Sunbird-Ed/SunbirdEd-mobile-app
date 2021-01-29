@@ -746,6 +746,7 @@
   "PUBLISHED_BY": "{{%s}} वर प्रकाशित ",
   "PUBLISHED_DATE": "प्रकाशनाची तारीख",
   "PUBLISHER": "प्रकाशक",
+  "PROGRAMS": "कार्यक्रमों",
   "QR_CODE_DETAILS": " हा मजकूर त्वरित पाहण्यासाठी तुमच्या पाठ्यपुस्तका मधील QR कोड स्कॅन करा ",
   "QR_SHOWING_MULTIPLE_BOOK_RESULT": "{{%s}} निकाल दाखवत आहोत ",
   "QUES_BANKS": "प्रश्न संचय ",

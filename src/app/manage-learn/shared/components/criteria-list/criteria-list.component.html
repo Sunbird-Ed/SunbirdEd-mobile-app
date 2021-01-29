@@ -1,0 +1,40 @@
+<ion-content padding>
+  <div>
+    <h3 class="heading">{{ 'FRMELEMENTS_MSG_QUESTION_FILTER' | translate }}</h3>
+  </div>
+
+  <ion-list text-wrap>
+    <ion-item
+      *ngFor="let criteria of allCriterias"
+      (click)="onCriteriaClick(criteria?.criteriaId ? criteria?.criteriaId : criteria?.id)"
+    >
+      <ion-label>{{ criteria?.criteriaName || criteria?.name }}</ion-label>
+      <ion-checkbox
+        *ngIf="criteria?.criteriaName"
+        [checked]="filteredCriterias?.includes(criteria?.criteriaId)"
+      ></ion-checkbox>
+      <!-- TODO Remove when backend is changed to give id and name only instead of criteriaId and criteriaName in both  apis-->
+      <ion-checkbox
+        *ngIf="criteria?.name"
+        [checked]="filteredCriterias?.includes(criteria?.id)"
+      ></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer no-shadow>
+  <ion-toolbar class="_toolbar-background-md" position="bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button ion-button full (click)="close()" class="w-100">
+          {{ 'FRMELEMENTS_BTN_CANCEL' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button ion-button full (click)="applyFilter()" class="w-100">
+          {{ 'FRMELEMENTS_BTN_APPLY_FILTER' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

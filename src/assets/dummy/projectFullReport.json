@@ -1,0 +1,157 @@
+{
+    "message": "Chart report data generated succesfully.",
+    "status": 200,
+    "result": [{
+        "title": {
+            "text": "second deletd project"
+        },
+        "series": [{
+            "name": "second deletd project",
+            "data": [{
+                "name": "sample",
+                "color": "#f5f5f5",
+                "start": null,
+                "end": null
+            }]
+        }],
+        "xAxis": {
+            "min": null,
+            "max": null
+        }
+    }, {
+        "title": {
+            "text": "Virtual Learning"
+        },
+        "series": [{
+            "name": "Virtual Learning",
+            "data": [{
+                "name": "Getting feedback (From students and parents)",
+                "color": "#f5f5f5",
+                "start": 1609990942054,
+                "end": 1609990942054
+            }, {
+                "name": "Mapping grades and teachers.",
+                "color": "#f5f5f5",
+                "start": 1609990942054,
+                "end": 1609990942054
+            }, {
+                "name": "Dividing students into groups of up to ten within the class",
+                "color": "#f5f5f5",
+                "start": 1609990942054,
+                "end": 1609990942054
+            }, {
+                "name": "Collating information from the school directory about student contact info",
+                "color": "#f5f5f5",
+                "start": 1609990942054,
+                "end": 1609990942054
+            }, {
+                "name": "Making resources and plans.",
+                "color": "#f5f5f5",
+                "start": 1609990942054,
+                "end": 1609990942055
+            }, {
+                "name": "Planning for monitoring and evaluation",
+                "color": "#f5f5f5",
+                "start": 1609990942055,
+                "end": 1609990942055
+            }, {
+                "name": "Having a timetable.",
+                "color": "#f5f5f5",
+                "start": 1609990942055,
+                "end": 1609990942055
+            }, {
+                "name": "Session for parents to orient them",
+                "color": "#f5f5f5",
+                "start": 1609990942055,
+                "end": 1609990942055
+            }, {
+                "name": "Scheduling calls and invitations.",
+                "color": "#f5f5f5",
+                "start": 1609990942056,
+                "end": 1609990942056
+            }, {
+                "name": "Taking classes.",
+                "color": "#f5f5f5",
+                "start": 1609990942056,
+                "end": 1609990942056
+            }, {
+                "name": "Recurring reflection cycles with the school team(SL and teachers)",
+                "color": "#f5f5f5",
+                "start": 1609990942056,
+                "end": 1609990942056
+            }]
+        }],
+        "xAxis": {
+            "min": 1609990942054,
+            "max": 1609990942056
+        }
+    }, {
+        "title": {
+            "text": "Template-05-01-20201"
+        },
+        "series": [{
+            "name": "Template-05-01-20201",
+            "data": [{
+                "name": "My test ",
+                "color": "#ef8c2b",
+                "start": null,
+                "end": null
+            }]
+        }],
+        "xAxis": {
+            "min": null,
+            "max": null
+        }
+    }, {
+        "title": {
+            "text": "isPrivateProgram testing"
+        },
+        "series": [{
+            "name": "isPrivateProgram testing",
+            "data": [{
+                "name": "task 1",
+                "color": "#f5f5f5",
+                "start": null,
+                "end": null
+            }]
+        }],
+        "xAxis": {
+            "min": null,
+            "max": null
+        }
+    }, {
+        "title": {
+            "text": "Qa test template – kiran"
+        },
+        "series": [{
+            "name": "Qa test template – kiran",
+            "data": [{
+                "name": "task 1",
+                "color": "#f5f5f5",
+                "start": null,
+                "end": null
+            }]
+        }],
+        "xAxis": {
+            "min": null,
+            "max": null
+        }
+    }, {
+        "title": {
+            "text": "test project wit isPrivateProgram"
+        },
+        "series": [{
+            "name": "test project wit isPrivateProgram",
+            "data": [{
+                "name": "task 1",
+                "color": "#f5f5f5",
+                "start": null,
+                "end": null
+            }]
+        }],
+        "xAxis": {
+            "min": null,
+            "max": null
+        }
+    }]
+}

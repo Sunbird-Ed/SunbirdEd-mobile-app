@@ -1,0 +1,56 @@
+<ion-content>
+  <ion-item-group>
+    <ion-item-divider color="light">
+      <h3 class="headerText">
+        <ion-icon name="book" class="ion-margin-right"></ion-icon>
+        <span class="_wrap-text">{{entityName}}</span>
+      </h3>
+    </ion-item-divider>
+
+    <button ion-item [disabled]="evidence?.notApplicable" *ngFor="let evidence of entityEvidences; let i= index"
+      (click)="navigateToEvidence(i)" text-wrap>
+      <div class="_flex-box" style="flex-wrap: wrap;">
+        <ion-icon name="albums" class="ion-margin-right"></ion-icon>
+        <div style="flex: 1;">{{ evidence?.name }}</div>
+        <div *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable"
+          class="_completed _flex-box progressWidth ion-float-right">
+          <app-progress-bar [progress]="100" class="_full-width"></app-progress-bar>
+          <!-- {{'labels.completed'|translate}} <ion-icon name="checkmark-circle" class="_progressIcon" margin-left>
+          </ion-icon> -->
+        </div>
+        <div *ngIf="!evidence.progressStatus && !evidence?.notApplicable && !isIos" class="_flex-box">
+          <ion-icon name="arrow-forward" class="_progressIcon ion-float-right ion-margin-right"></ion-icon>
+        </div>
+        <div *ngIf="evidence.progressStatus === 'inProgress' && !evidence?.notApplicable"
+          class="_inProgress _flex-box progressWidth ion-float-right">
+          <app-progress-bar [progress]="evidence?.completePercentage" class=" _full-width"></app-progress-bar>
+          <!-- {{'labels.inprogress'|translate}} <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon> -->
+        </div>
+        <div *ngIf="evidence.progressStatus === 'submitted' && !evidence?.notApplicable"
+          class="_submitted _flex-box ion-float-right">
+          {{'labels.submitted'|translate}} <ion-icon name="cloud-done" class="_progressIcon ion-margin-left"></ion-icon>
+        </div>
+        <div *ngIf="evidence?.notApplicable" class="_na _flex-box _float-right">
+          {{'labels.notApplicable'|translate}} <ion-icon name="alert" class="_progressIcon ion-margin-left"></ion-icon>
+        </div>
+      </div>
+    </button>
+
+    <!-- <ion-button ion-item (click)="goToGeneralQuestionList()" *ngIf="generalQuestions && generalQuestions?.length">
+      <ion-icon name="albums" class="ion-margin-right"></ion-icon> {{'ionLabel.generalQuestions' | translate}}
+    </ion-button> -->
+  </ion-item-group>
+</ion-content>
+
+<!-- <ion-footer no-shadow *ngIf="canShowManualRating">
+  <ion-toolbar class="_toolbar-background-md" position="bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button full (click)="goToManualRating(evidence)" class="btnText">
+          <ion-icon name="stats" class="ion-margin-right"></ion-icon>
+          {{'ionLabel.manualRating' | translate}}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer> -->

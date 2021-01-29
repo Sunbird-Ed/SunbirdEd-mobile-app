@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 // ionic cordova dependencies/plugins
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -75,8 +74,15 @@ import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { IonicStorageModule } from '@ionic/storage';
+import { Camera } from '@ionic-native/camera/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { Chooser } from '@ionic-native/chooser/ngx';
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
+import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
 import {configuration} from '@app/configuration/configuration';
 import { LocationHandler } from '@app/services/location-handler';
+import { CoreModule } from './manage-learn/core/core.module';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -437,7 +443,9 @@ declare const sbutility;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    TermsAndConditionsPageModule
+    TermsAndConditionsPageModule,
+    IonicStorageModule.forRoot(),
+    CoreModule
   ],
   providers: [
     StatusBar,
@@ -490,7 +498,12 @@ declare const sbutility;
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    Camera,
+    FilePath,
+    Chooser,
+    PhotoViewer,
+    StreamingMedia,
   ],
   bootstrap: [AppComponent],
   schemas: [

@@ -361,4 +361,5 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     }
   }
 
+
 }
