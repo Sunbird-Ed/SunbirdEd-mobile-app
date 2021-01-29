@@ -47,7 +47,7 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule,
+    ComponentsModule
   ],
   declarations: [DownloadManagerPage,
     NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],
