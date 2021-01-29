@@ -29,7 +29,7 @@
           placeholder="{{'SEARCH_FOR_GROUP_MEMBER' | translate}}">
       </div>
       <div class="ad-timestamp-container clearfix">
-        <span *ngIf="isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
+        <span *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
           <img src="assets/imgs/ic_download_selected_joyful.svg" alt="">
           <span>{{'DOWNLOAD_CSV' | translate}}</span>
         </span>
