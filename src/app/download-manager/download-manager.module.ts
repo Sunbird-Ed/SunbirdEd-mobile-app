@@ -48,7 +48,6 @@ const routes: Routes = [
     PipesModule,
     DirectivesModule,
     ComponentsModule,
-    CoreModule
   ],
   declarations: [DownloadManagerPage,
     NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],
