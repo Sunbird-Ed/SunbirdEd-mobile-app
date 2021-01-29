@@ -48,7 +48,7 @@ export class FormLocationFactory {
       });
     };
   }
-  buildLocationListClosure(config: FieldConfig<any>, initial = false, profile?): FieldConfigOptionsBuilder<Location> {
+  buildLocationListClosure(config: FieldConfig<any>, initial = false): FieldConfigOptionsBuilder<Location> {
     const locationType = config.templateOptions['dataSrc']['params']['id'];
     return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
       if (!contextFormControl) {
@@ -83,14 +83,7 @@ export class FormLocationFactory {
           return await this.fetchUserLocation(req).then((locationList: Location[]) => {
             notifyLoaded();
             const list = locationList.map((s) => ({ label: s.name, value: s }));
-            if (config.code === 'school' && initial && !formControl.value) {
-              const option = list.find((o) => {
-                return (profile.serverProfile ? profile.serverProfile.organisations : profile.organisations)
-                .find((org) => org.orgName === o.label);
-              });
-              formControl.patchValue(option ? option.value : null, { emitModelToViewChange: false });
-              formControl.markAsPristine();
-            } else if (config.default && initial && !formControl.value) {
+            if (config.default && initial && !formControl.value) {
               const option = list.find((o) => o.value.id === config.default.id);
               formControl.patchValue(option ? option.value : null);
               formControl.markAsPristine();

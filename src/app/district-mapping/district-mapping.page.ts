@@ -373,7 +373,7 @@ export class DistrictMappingPage implements OnDestroy {
               }
               case 'LOCATION_LIST': {
                 personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig,
-                  this.initialFormLoad, this.profile);
+                  this.initialFormLoad);
                 break;
               }
             }
