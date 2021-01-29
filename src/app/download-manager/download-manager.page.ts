@@ -34,7 +34,6 @@ import {
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
-import { LocalStorageService, UtilsService } from '../manage-learn/core';
 
 @Component({
   selector: 'app-download-manager',
@@ -68,8 +67,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private localStorage: LocalStorageService,
-    private utils: UtilsService
   ) { }
 
   async ngOnInit() {
