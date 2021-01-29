@@ -1,10 +1,10 @@
 export const urlConstants = {
   SERVICES: {
-    UNNATI: 'improvement-project/api/',
-    KENDRA: 'kendra/api/',
-    SAMIKSHA: 'assessment/api/',
-    DHITI: 'dhiti/api/',
-    SUNBIRD: 'sunbird/api/',
+    UNNATI: '/improvement-project/api/',
+    KENDRA: '/kendra/api/',
+    SAMIKSHA: '/assessment/api/',
+    DHITI: '/dhiti/api/',
+    SUNBIRD: '/sunbird/api/',
   },
   API_URLS: {
     PROGRAM_LISTING: 'v1/users/programs?',
