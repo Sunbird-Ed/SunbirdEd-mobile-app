@@ -1516,7 +1516,7 @@ describe('ChapterDetailsPage', () => {
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
                             telemetryObject: new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
-                            upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
+                            upcommingBatches: []
                         }
                     });
                 done();

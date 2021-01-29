@@ -38,7 +38,8 @@ import {
   FormRequest,
   FormService,
   FrameworkService,
-  ProfileType
+  ProfileType,
+  Batch
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router, NavigationExtras } from '@angular/router';
@@ -117,11 +118,14 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: {
     courseName: string,
+    batch: Batch,
     dateTime: string,
     courseId: string,
     certificate?: string,
     issuedCertificate?: string,
-    status: number
+    status: number,
+    style: string,
+    label: string
   }[] = [];
   isDefaultChannelProfile: boolean;
   personaTenantDeclaration: string;
@@ -451,12 +455,23 @@ export class ProfilePage implements OnInit {
     return trainings.reduce((accumulator, course) => {
       const oneCert = {
         courseName: course.courseName,
+        batch: course.batch,
         dateTime: course.dateTime,
         courseId: course.courseId,
         certificate: undefined,
         issuedCertificate: undefined,
-        status: course.status
+        status: course.status,
+        style: 'completed-status-text',
+        label: 'COMPLETED'
       };
+      if(course.status === 0 || course.status === 1) {
+        oneCert.style = "ongoing-status-text";
+        oneCert.label = 'ONGOING';
+        if(course.batch && course.batch.status === 2) {
+          oneCert.style = "ongoing-status-text";
+          oneCert.label = 'BATCH_EXPIRED';
+        }
+      }
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
       }
@@ -898,23 +913,16 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async openEnrolledCourse(coursecertificate) {
+  async openEnrolledCourse(training) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: coursecertificate.courseId }).toPromise();
-      const courseParams: NavigationExtras = {
-        state: {
-          content,
-          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
-        }
-      };
+      const content = await this.contentService.getContentDetails({ contentId: training.courseId }).toPromise();
       console.log('Content Data', content);
       this.navService.navigateToTrackableCollection(
         {
           content,
-          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
+          resumeCourseFlag: (training.status === 1 || training.status === 0) && !(training.batch.status === 2)
         }
       );
-      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }

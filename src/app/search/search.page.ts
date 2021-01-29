@@ -970,7 +970,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   // TODO: SDK changes by Swayangjit
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -993,8 +992,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 this.batches.forEach((batch) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -1005,7 +1002,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 const popover = await this.popoverCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatched,
                     content
