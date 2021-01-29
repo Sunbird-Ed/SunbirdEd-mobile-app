@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import {
   ProfileService,
   SharedPreferences,
@@ -31,7 +31,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import { delay, distinctUntilChanged, mergeMap, take, tap } from 'rxjs/operators';
+import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
 import { FormLocationFactory } from '@app/services/form-location-factory/form-location-factory';
 import { FieldConfig } from 'common-form-elements-v8';
 import { FormConstants } from '../form.constants';
@@ -45,7 +45,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
   templateUrl: './district-mapping.page.html',
   styleUrls: ['./district-mapping.page.scss'],
 })
-export class DistrictMappingPage {
+export class DistrictMappingPage implements OnDestroy {
   get isShowBackButton(): boolean {
     if (window.history.state.isShowBackButton === undefined) {
       return true;
@@ -65,7 +65,8 @@ export class DistrictMappingPage {
   private loader?: any;
   private stateChangeSubscription?: Subscription;
   private prevFormValue: any = {};
-  prevLocationDetails: any = {};
+  private formValueSubscription?: Subscription;
+  private initialFormLoad = true;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -108,7 +109,7 @@ export class DistrictMappingPage {
     this.initialiseFormData({
       ...FormConstants.LOCATION_MAPPING,
       subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
-    }, true);
+    });
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -204,7 +205,7 @@ export class DistrictMappingPage {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.events.publish('loggedInProfile:update', req);
           if (this.profile && (this.source === PageId.PROFILE ||
-                this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+            this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
             this.location.back();
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
@@ -316,8 +317,7 @@ export class DistrictMappingPage {
   }
 
   private async initialiseFormData(
-    formRequest: FormRequest,
-    initial = false
+    formRequest: FormRequest
   ) {
     let locationMappingConfig: FieldConfig<any>[];
     try {
@@ -328,7 +328,7 @@ export class DistrictMappingPage {
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
-      if (config.code === 'name' && (this.source === PageId.PROFILE  || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+      if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
         config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
@@ -336,7 +336,7 @@ export class DistrictMappingPage {
       }
       if (config.code === 'persona') {
         config.default = (this.profile.serverProfile && this.profile.serverProfile.userType) ?
-         this.profile.serverProfile.userType : this.profile.profileType;
+          this.profile.serverProfile.userType : this.profile.profileType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
@@ -368,15 +368,16 @@ export class DistrictMappingPage {
                 break;
               }
               case 'STATE_LOCATION_LIST': {
-                personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, initial);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildStateListClosure(personaConfig, this.initialFormLoad);
                 break;
               }
               case 'LOCATION_LIST': {
-                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig, initial,
-                   this.profile);
+                personaConfig.templateOptions.options = this.formLocationFactory.buildLocationListClosure(personaConfig,
+                  this.initialFormLoad);
                 break;
               }
             }
+
             personaConfig.default = (this.prevFormValue && this.prevFormValue.children && this.prevFormValue.children.persona) ?
               this.prevFormValue.children.persona[personaConfig.code] :
               personaConfig.default;
@@ -386,6 +387,7 @@ export class DistrictMappingPage {
         });
       }
     }
+    this.initialFormLoad = false;
     this.locationFormConfig = locationMappingConfig;
   }
 
@@ -398,12 +400,25 @@ export class DistrictMappingPage {
 
   async onFormInitialize(formGroup: FormGroup) {
     this.formGroup = formGroup;
+    if (this.formValueSubscription) {
+      this.formValueSubscription.unsubscribe();
+    }
+    this.formValueSubscription = this.formGroup.valueChanges.pipe(
+      filter((v) => v['children'] && !!Object.keys(v['children']).length),
+      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+      pairwise(),
+      delay(100),
+      filter(() => this.formGroup.dirty),
+      tap(([prev, curr]) => {
+        const changeField = this.isChangedLocation(prev, curr);
+        if (changeField) {
+          this.generateTelemetryForCategoryClicked(changeField);
+        }
+      })
+    ).subscribe();
   }
 
   async onFormValueChange(value: any) {
-    // if (value['children'] && value['children']['persona']) {
-    //   this.currentFormValue = value['children']['persona'];
-    // }
   }
 
   async onDataLoadStatusChange($event) {
@@ -491,6 +506,40 @@ export class DistrictMappingPage {
       undefined,
       undefined,
       corReletionList
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.formValueSubscription) {
+      this.formValueSubscription.unsubscribe();
+    }
+  }
+
+  isChangedLocation(prev, curr) {
+    let newLocation;
+    Object.keys(curr['children']['persona']).forEach((key) => {
+      if (curr['children']['persona'][key] && (!prev['children']['persona'][key] ||
+       (curr['children']['persona'][key].code !== prev['children']['persona'][key].code))) {
+        newLocation = curr['children']['persona'][key];
+      }
+    });
+    return newLocation;
+  }
+
+  generateTelemetryForCategoryClicked(location) {
+    const correlationList: Array<CorrelationData> = [];
+    correlationList.push({
+    id: location.name,
+    type: location.type.charAt(0).toUpperCase() + location.type.slice(1)
+    });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CATEGORY, '',
+      this.getEnvironment(),
+      PageId.LOCATION,
+      undefined,
+      undefined,
+      undefined,
+      correlationList
     );
   }
 
