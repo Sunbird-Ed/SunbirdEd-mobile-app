@@ -107,10 +107,14 @@ export class DistrictMappingPage implements OnDestroy {
         if (loc) { acc[loc.type] = loc; }
         return acc;
       }, {});
-    this.initialiseFormData({
-      ...FormConstants.LOCATION_MAPPING,
-      subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
-    });
+    try {
+        this.initialiseFormData({
+          ...FormConstants.LOCATION_MAPPING,
+          subType: this.presetLocation['state'] ? this.presetLocation['state'].code : FormConstants.LOCATION_MAPPING.subType
+        });
+      } catch (e) {
+        this.initialiseFormData(FormConstants.LOCATION_MAPPING);
+      }
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -344,13 +348,13 @@ export class DistrictMappingPage implements OnDestroy {
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
-        config.default = this.profile.serverProfile ? this.profile.serverProfile.firstName : this.profile.handle;
+        config.default = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile.serverProfile && this.profile.serverProfile.userType) ?
-          this.profile.serverProfile.userType : this.profile.profileType;
+        config.default = (this.profile && this.profile.serverProfile && this.profile.profileType) ?
+          this.profile.profileType : this.profile.serverProfile.userType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
@@ -561,7 +565,7 @@ export class DistrictMappingPage implements OnDestroy {
   isStateorDistrictChanged(locationCodes) {
     let changeStatus;
     locationCodes.forEach((d) => {
-      if (d.type === 'state' && (d.code !== this.presetLocation['state'].code)) {
+      if (!changeStatus && d.type === 'state' && (d.code !== this.presetLocation['state'].code)) {
         changeStatus = InteractSubtype.STATE_DIST_CHANGED;
       } else if (!changeStatus && d.type === 'district' && (d.code !== this.presetLocation['district'].code)) {
         changeStatus = InteractSubtype.DIST_CHANGED;
