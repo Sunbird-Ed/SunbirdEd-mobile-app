@@ -18,7 +18,7 @@ export class KendraApiService extends ApiService {
     @Inject('AUTH_SERVICE') public authService: AuthService,
     private utils: ApiUtilsService
   ) {
-    super(http, toast, modalController, authService);
+    super(http, toast, modalController, authService, utils);
     this.baseUrl = this.utils.getBaseUrl('assessmentBaseUrl') + urlConstants.SERVICES.KENDRA;
   }
 }

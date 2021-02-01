@@ -35,12 +35,16 @@
                 <div *ngFor="let answer of instance; let k = index" class="matrixQuestion">
                   <div *ngIf="answer?.value">
                     <h3>Q{{ k + 1 }}. {{ answer?.question[0] }}</h3>
-                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect'">
+                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
                       Ans. {{ answer?.value }}
                     </p>
                     <p *ngIf="answer?.responseType === 'radio' || answer?.responseType === 'multiselect'">
                       Ans.
                       {{ answer | getLabels }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'date'">
+                      Ans.
+                      {{ answer?.value | date:'medium':'IST' }} 
                     </p>
                     <p *ngIf="question.remarks">{{ question.remarks }}</p>
                   </div>
@@ -58,12 +62,17 @@
                       <h5 class="instacnce">{{ answer?.instanceIdentifier }} {{ j + 1 }}</h5>
                       <div *ngFor="let ans of instance; let k = index" class="matrixQuestion">
                         <h3>Q{{ k + 1 }}. {{ ans?.question[0] }}</h3>
-                        <p *ngIf="ans?.responseType !== 'radio' && ans?.responseType !== 'multiselect'">
+                        {{ans?.responseType}}
+                        <p *ngIf="ans?.responseType !== 'radio' && ans?.responseType !== 'multiselect' && ans?.responseType !== 'date'">
                           Ans. {{ ans?.value }}
                         </p>
                         <p *ngIf="ans?.responseType === 'radio' || ans?.responseType === 'multiselect'">
                           Ans.
                           {{ ans | getLabels }}
+                        </p>
+                        <p *ngIf="ans?.responseType === 'date'">
+                          Ans.
+                          {{ ans?.value | date:'medium':'IST' }} 
                         </p>
                         <p *ngIf="question.remarks">{{ question.remarks }}</p>
                       </div>
@@ -73,12 +82,16 @@
                 <ng-template #notMatrix>
                   <div class="instanceQuest" *ngIf="answer?.value">
                     <h5>Q{{ k + 1 }}. {{ answer?.question[0] }}</h5>
-                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect'">
+                    <p *ngIf="answer?.responseType !== 'radio' && answer?.responseType !== 'multiselect' && answer?.responseType !== 'date'">
                       Ans. {{ answer?.value }}
                     </p>
                     <p *ngIf="answer?.responseType === 'radio' || answer?.responseType === 'multiselect'">
                       Ans.
                       {{ answer | getLabels }}
+                    </p>
+                    <p *ngIf="answer?.responseType === 'date'">
+                      Ans.
+                      {{ answer?.value | date:'medium':'IST' }}
                     </p>
                     <p *ngIf="question.remarks">{{ question.remarks }}</p>
                   </div>
