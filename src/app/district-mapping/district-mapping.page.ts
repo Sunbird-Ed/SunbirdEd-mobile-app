@@ -67,6 +67,7 @@ export class DistrictMappingPage implements OnDestroy {
   private prevFormValue: any = {};
   private formValueSubscription?: Subscription;
   private initialFormLoad = true;
+  private isLocationUpdated = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -178,6 +179,17 @@ export class DistrictMappingPage implements OnDestroy {
     }, {}));
     const corReletionList: CorrelationData[] = locationCodes;
     this.generateSubmitInteractEvent(corReletionList);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      this.isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      this.isStateorDistrictChanged(locationCodes),
+      this.getEnvironment(),
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      undefined,
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.SUBMIT_CLICKED
+    );
     if (this.appGlobalService.isUserLoggedIn()) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
@@ -202,6 +214,8 @@ export class DistrictMappingPage implements OnDestroy {
           if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
             await this.saveDeviceLocation();
           }
+          this.isLocationUpdated = false;
+          this.generateLocationCaptured(false);
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.events.publish('loggedInProfile:update', req);
           if (this.profile && (this.source === PageId.PROFILE ||
@@ -224,7 +238,7 @@ export class DistrictMappingPage implements OnDestroy {
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
-      // this.generateLocationCaptured(true); // is dirtrict or location edit  = true
+      this.generateLocationCaptured(true); // is dirtrict or location edit  = true
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
       this.location.back();
@@ -412,6 +426,7 @@ export class DistrictMappingPage implements OnDestroy {
       tap(([prev, curr]) => {
         const changeField = this.isChangedLocation(prev, curr);
         if (changeField) {
+          this.isLocationUpdated = true;
           this.generateTelemetryForCategoryClicked(changeField);
         }
       })
@@ -541,6 +556,31 @@ export class DistrictMappingPage implements OnDestroy {
       undefined,
       correlationList
     );
+  }
+
+  isStateorDistrictChanged(locationCodes) {
+    let changeStatus;
+    locationCodes.forEach((d) => {
+      if (d.type === 'state' && (d.code !== this.presetLocation['state'].code)) {
+        changeStatus = InteractSubtype.STATE_DIST_CHANGED;
+      } else if (!changeStatus && d.type === 'district' && (d.code !== this.presetLocation['district'].code)) {
+        changeStatus = InteractSubtype.DIST_CHANGED;
+      }
+    });
+    return changeStatus;
+  }
+
+  generateLocationCaptured(isEdited: boolean) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LOCATION_CAPTURED,
+      this.getEnvironment(),
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      {
+        isEdited
+      }, undefined,
+      featureIdMap.location.LOCATION_CAPTURE);
   }
 
 }
