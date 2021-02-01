@@ -68,13 +68,13 @@ export class CategoryListPage {
 
 
     constructor(
-        public commonUtilService: CommonUtilService,
-        private router: Router,
-        private appHeaderService: AppHeaderService,
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
         @Inject('FORM_SERVICE') private formService: FormService,
         @Inject('COURSE_SERVICE') private courseService: CourseService,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        public commonUtilService: CommonUtilService,
+        private router: Router,
+        private appHeaderService: AppHeaderService,
         private navService: NavigationService,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private scrollService: ScrollToService,
