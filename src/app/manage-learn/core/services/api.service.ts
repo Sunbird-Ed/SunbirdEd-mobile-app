@@ -8,6 +8,7 @@ import { ToastService } from './toast/toast.service';
 import { AuthService } from 'sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
+import { ApiUtilsService } from './api-utils.service';
 
 
 @Injectable({
@@ -20,6 +21,7 @@ export class ApiService {
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    public apiUtils: ApiUtilsService
   ) { }
 
   get(requestParam: RequestParams): Observable<any> {
@@ -47,8 +49,8 @@ export class ApiService {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
             'x-authenticated-user-token': session ? session.access_token : "",
-            'appName':'diksha',
-            'appVersion':''
+            'X-App-Id': this.apiUtils.appName,
+            'X-App-Ver': this.apiUtils.appVersion
           })
         };
         return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
@@ -110,8 +112,8 @@ export class ApiService {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
             'x-authenticated-user-token': session ? session.access_token : "",
-            'appName':'diksha',
-            'appVersion':''
+            'X-App-Id': this.apiUtils.appName,
+            'X-App-Ver': this.apiUtils.appVersion
           })
         };
         return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
