@@ -47,6 +47,8 @@ export class ApiService {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
             'x-authenticated-user-token': session ? session.access_token : "",
+            'appName':'diksha',
+            'appVersion':''
           })
         };
         return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
@@ -108,6 +110,8 @@ export class ApiService {
           headers: new HttpHeaders({
             'x-auth-token': session ? session.access_token : "",
             'x-authenticated-user-token': session ? session.access_token : "",
+            'appName':'diksha',
+            'appVersion':''
           })
         };
         return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
