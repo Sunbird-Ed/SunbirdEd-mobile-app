@@ -114,7 +114,8 @@ export class DiscoverPage implements OnInit {
       return;
     }
     const params = {
-      formField: event.data[0].value
+      formField: event.data[0].value,
+      fromLibrary: true
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
