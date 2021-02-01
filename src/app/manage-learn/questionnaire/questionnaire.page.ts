@@ -507,4 +507,9 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     }
     return allAnsweredForEvidence
   }
+
+  ionViewWillLeave() {
+    this.headerConfig.actionButtons = [];
+    this.headerService.updatePageConfig(this.headerConfig);
+  }
 }
