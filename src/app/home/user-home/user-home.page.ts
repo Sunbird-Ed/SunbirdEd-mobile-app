@@ -167,7 +167,8 @@ export class UserHomePage implements OnInit, OnDestroy {
       return;
     }
     const params = {
-      formField: event.data[0].value
+      formField: event.data[0].value,
+      fromLibrary: false
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
