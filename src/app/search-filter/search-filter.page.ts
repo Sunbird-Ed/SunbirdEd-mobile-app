@@ -5,11 +5,11 @@ import {Router} from '@angular/router';
 import {FilterValue} from 'sunbird-sdk';
 
 @Component({
-    selector: 'app-filter-form-page',
-    templateUrl: './filter-form-page.page.html',
-    styleUrls: ['./filter-form-page.page.scss'],
+    selector: 'app-search-filter.page',
+    templateUrl: './search-filter.page.html',
+    styleUrls: ['./search-filter.page.scss'],
 })
-export class FilterFormPagePage implements OnInit {
+export class SearchFilterPage implements OnInit {
 
     private config: FieldConfig<any>[] = [
         {

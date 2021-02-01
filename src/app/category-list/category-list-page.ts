@@ -26,7 +26,7 @@ import {RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '@app/services/navigation-handler.service';
 import {ScrollToService} from '@app/services/scroll-to.service';
 import {FormConstants} from '@app/app/form.constants';
-import {FilterFormConfigMapper} from '@app/app/filter-form-page/filter-form-config-mapper';
+import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
 
 
 @Component({
@@ -188,6 +188,6 @@ export class CategoryListPage {
         const params = {
             facetFilters: FilterFormConfigMapper.map(this.facetFilters)
         };
-        this.router.navigate([RouterLinks.FILTER_FORM_PAGE], {state: params});
+        this.router.navigate([RouterLinks.SEARCH_FILTER], {state: params});
     }
 }

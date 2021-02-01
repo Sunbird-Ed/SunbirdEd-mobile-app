@@ -5,13 +5,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { FilterFormPagePage } from './filter-form-page.page';
+import { SearchFilterPage } from './search-filter.page';
 import {CommonFormElementsModule} from 'common-form-elements';
 
 const routes: Routes = [
   {
     path: '',
-    component: FilterFormPagePage
+    component: SearchFilterPage
   }
 ];
 
@@ -23,6 +23,6 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         CommonFormElementsModule
     ],
-  declarations: [FilterFormPagePage]
+  declarations: [SearchFilterPage]
 })
-export class FilterFormPagePageModule {}
+export class SearchFilterPageModule {}

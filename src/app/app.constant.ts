@@ -556,7 +556,7 @@ export class RouterLinks {
     public static readonly CATEGORY_LIST = 'category-list';
     public static readonly DISCUSSION = 'discussion-forum';
     // filter page
-    public static readonly FILTER_FORM_PAGE = 'filter-form-page';
+    public static readonly SEARCH_FILTER = 'search-filter';
 }
 
 export class ShareItemType {

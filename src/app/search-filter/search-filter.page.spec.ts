@@ -1,8 +1,8 @@
-import {FilterFormPagePage} from './filter-form-page.page';
+import {SearchFilterPage} from './search-filter.page';
 import {Router} from '@angular/router';
 
-describe('FilterFormPagePage', () => {
-    let filterFormPagePage: FilterFormPagePage;
+describe('SearchFilterPage', () => {
+    let searchFilterPage: SearchFilterPage;
     const mockRouterExtras = {
         extras: {
             state: undefined
@@ -13,7 +13,7 @@ describe('FilterFormPagePage', () => {
     };
 
     beforeAll(() => {
-        filterFormPagePage = new FilterFormPagePage(
+        searchFilterPage = new SearchFilterPage(
             mockRouter as Router,
         );
     });
@@ -23,6 +23,6 @@ describe('FilterFormPagePage', () => {
     });
 
     it('should create instance of filterFormPage', () => {
-        expect(filterFormPagePage).toBeTruthy();
+        expect(SearchFilterPage).toBeTruthy();
     });
 });
