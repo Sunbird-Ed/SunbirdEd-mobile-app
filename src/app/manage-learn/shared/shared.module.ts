@@ -25,6 +25,8 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
+  ChartComponent
+  
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -97,6 +99,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
+    ChartComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -139,6 +142,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
+    ChartComponent
   ],
   providers: [
     Camera,
