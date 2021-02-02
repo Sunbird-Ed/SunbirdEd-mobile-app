@@ -20,7 +20,7 @@ import {
   CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress,
   EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
   ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
-  ContentUpdate, ContentImport, Rollup, AuditState, ProfileService
+  ContentUpdate, ContentImport, Rollup, AuditState, ProfileService, CourseBatchesRequest
 } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe, Location } from '@angular/common';
@@ -104,6 +104,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   isCertifiedCourse: boolean;
   courseHeirarchy: any;
   private hasInit = false;
+  courseBatchesRequest: CourseBatchesRequest;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -253,7 +254,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   async getAllBatches() {
     // const loader = await this.commonUtilService.getLoader();
-    const courseBatchesRequest = {
+    this.courseBatchesRequest = {
       filters: {
         courseId: this.courseContentData.identifier,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS],
@@ -262,7 +263,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
-    this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+    this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
         this.batches = data || [];
       })
@@ -592,42 +593,47 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
+    const loader = await this.commonUtilService.getLoader();
+    const reqvalues = new Map();
+    reqvalues['enrollReq'] = this.courseBatchesRequest;
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ENROLL_CLICKED, Environment.HOME,
+      PageId.CHAPTER_DETAILS, this.telemetryObject, reqvalues, this.objRollup);
+
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      return;
+    }
+
+    if (!this.batches || !this.batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      await loader.dismiss();
+      return;
+    }
+
     if (!this.localCourseService.isEnrollable(this.batches, this.courseContentData)) {
-      return false;
+      return;
     }
 
     const ongoingBatches = [];
-    const upcommingBatches = [];
-    const loader = await this.commonUtilService.getLoader();
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.batches.length) {
-        if (this.batches.length === 1) {
-          this.enrollIntoBatch(this.batches[0]);
-        } else {
-          this.batches.forEach(batch => {
-            if (batch.status === 1) {
-              ongoingBatches.push(batch);
-            } else {
-              upcommingBatches.push(batch);
-            }
-          });
-          this.router.navigate([RouterLinks.COURSE_BATCHES], {
-            state: {
-              ongoingBatches,
-              upcommingBatches,
-              course: this.courseContentData,
-              objRollup: this.objRollup,
-              telemetryObject: this.telemetryObject,
-              // corRelationList: this.corRelationList
-            }
-          });
-        }
-      } else {
-        this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-        await loader.dismiss();
-      }
+    if (this.batches.length === 1) {
+      this.enrollIntoBatch(this.batches[0]);
     } else {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      this.batches.forEach(batch => {
+        if (batch.status === 1) {
+          ongoingBatches.push(batch);
+        }
+      });
+      this.router.navigate([RouterLinks.COURSE_BATCHES], {
+        state: {
+          ongoingBatches,
+          upcommingBatches: [],
+          course: this.courseContentData,
+          objRollup: this.objRollup,
+          telemetryObject: this.telemetryObject,
+          corRelationList: this.corRelationList
+        }
+      });
     }
   }
 

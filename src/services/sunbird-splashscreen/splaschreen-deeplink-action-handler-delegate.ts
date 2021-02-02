@@ -204,6 +204,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         code: 'library',
         values: '\\/(resources|explore)$',
         route: 'tabs/resources'
+      },
+      {
+        name: 'Profile',
+        code: 'profile',
+        values: '\\/(profile)$',
+        route: 'tabs/profile',
+      },
+      {
+        name: 'FAQ',
+        code: 'faq',
+        values: '\\/(faq)$',
+        route: 'faq-help'
       }
     ];
 
@@ -212,15 +224,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     deepLinkUrlConfig.forEach(config => {
       const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
-      if (!!urlRegexMatch) {
-        if (!matchedDeeplinkConfig ||
-          (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
-          (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-            && config.priority && matchedDeeplinkConfig.priority > config.priority)) {
+      if (!!urlRegexMatch && (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config))) {
+          if (config.code === 'profile' && !this.appGlobalServices.isUserLoggedIn()) {
+            config.route = 'tabs/guest-profile';
+          }
           matchedDeeplinkConfig = config;
           urlMatch = urlRegexMatch;
         }
-      }
     });
 
     if (!matchedDeeplinkConfig) {
@@ -261,6 +271,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route);
     }
+  }
+
+  // Lesser the value higher the priority
+  private validateDeeplinkPriority(matchedDeeplinkConfig, config){
+    return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
+    (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
+      && config.priority && matchedDeeplinkConfig.priority > config.priority)
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {

@@ -809,7 +809,6 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   async navigateToBatchListPopup(content: any, courseDetails: any, retiredBatched?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -832,8 +831,6 @@ export class CoursesPage implements OnInit, OnDestroy {
                 batches.forEach((batch, key) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -844,7 +841,7 @@ export class CoursesPage implements OnInit, OnDestroy {
                 const popover = await this.popCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatched,
                     content
