@@ -228,6 +228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   isConsentPopUp = false;
   skipCheckRetiredOpenBatch = false;
   forumIds;
+  private hasInit = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -670,7 +671,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.courseHeirarchy = content;
         this.checkRetiredOpenBatch(this.courseHeirarchy);
         this.toggleGroup(0, content.children[0]);
-        this.getContentState(true);
+        // this.getContentState(true);
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
           InteractSubtype.FAST_LOADING_FINISHED,
           PageId.COURSE_DETAIL,
@@ -1179,7 +1180,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             }, 1000);
             this.courseHeirarchy = data;
             this.checkRetiredOpenBatch(this.courseHeirarchy);
-            this.getContentState(true);
+            if (this.hasInit) {
+              this.getContentState(false);
+            } else {
+              this.hasInit = !this.hasInit;
+              this.getContentState(true);
+            }
           }
           if (this.courseCardData.batchId) {
             this.downloadSize = 0;

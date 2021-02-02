@@ -866,7 +866,6 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.subscribeUtilityEvents();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
                 expect(chapterDetailsPage.updatedCourseCardData).toStrictEqual(
