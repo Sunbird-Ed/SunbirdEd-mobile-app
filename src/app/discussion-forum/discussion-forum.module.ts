@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DiscussionEventsService, DiscussionUiModule } from '@project-sunbird/discussions-ui-v8'
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
@@ -13,7 +13,7 @@ import { DiscussionTelemetryService } from '@app/services/discussion/discussion-
     DiscussionUiModule
   ],
 })
-export class DiscussionForumModule { 
+export class DiscussionForumModule implements OnDestroy { 
   constructor(
     private discussionEvents: DiscussionEventsService,
     private discussionTelemetryService: DiscussionTelemetryService
@@ -21,5 +21,9 @@ export class DiscussionForumModule {
     this.discussionEvents.telemetryEvent.subscribe(event => {
       this.discussionTelemetryService.logTelemetryEvent(event);
     });
+  }
+
+  ngOnDestroy() {
+    this.discussionEvents.telemetryEvent.unsubscribe();
   }
 }
