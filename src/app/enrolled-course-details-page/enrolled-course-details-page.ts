@@ -386,6 +386,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
+    this.fetchForumIds()
   }
 
   private checkUserLoggedIn() {

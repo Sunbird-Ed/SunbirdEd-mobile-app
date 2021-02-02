@@ -1036,10 +1036,9 @@ export class ProfilePage implements OnInit {
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
         tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
-      this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
-        '%persona': this.selfDeclarationInfo.persona || '',
-        '%tenant': (tenantDetails && tenantDetails.label) || ''
-      });
+      this.personaTenantDeclaration = this.commonUtilService.translateMessage('FRMELEMNTS_LBL_SHARE_DATA_WITH', {
+          '%tenant': (tenantDetails && tenantDetails.label) || ''
+        });
 
       if (this.selfDeclarationInfo.orgId) {
         const formConfig = await this.formAndFrameworkUtilService.getFormFields(
