@@ -6,11 +6,13 @@ import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ContentService, CourseService, FormService, ProfileService} from '@project-sunbird/sunbird-sdk';
 import {ScrollToService} from '../../services/scroll-to.service';
-import {TelemetryGeneratorService} from '../../services';
+import {FormAndFrameworkUtilService, TelemetryGeneratorService} from '../../services';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        translateMessage: jest.fn()
+    };
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of({profileType: 'Student'} as any))
     };
@@ -34,18 +36,21 @@ describe('CategoryListPage', () => {
     const mockCourseService: Partial<CourseService> = {};
     const moockScrollToService: Partial<ScrollToService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
     beforeAll(() => {
         categoryListPage = new CategoryListPage(
-            mockCommonUtilService as CommonUtilService,
-            mockRouter as Router,
-            mockHeaderService as AppHeaderService,
             mockContentService as ContentService,
             mockFormService as FormService,
             mockCourseService as CourseService,
             mockProfileService as ProfileService,
+            mockCommonUtilService as CommonUtilService,
+            mockRouter as Router,
+            mockHeaderService as AppHeaderService,
             mockNavService as NavigationService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            moockScrollToService as ScrollToService
+            moockScrollToService as ScrollToService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
     beforeEach(() => {

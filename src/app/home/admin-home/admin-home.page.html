@@ -24,7 +24,7 @@
               [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
               [contentList]="subSection.contents" [hideProgress]="true"
               [viewMoreButtonText]="'VIEW_ALL' | translate"
-              (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+              (viewMoreClick)="navigateToViewMoreContentsPage(section)"
               (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
             </sb-course-cards-hlist>
           </ng-container>

@@ -253,7 +253,11 @@
     "moduleNameMapper": {
       "^@app/(.*)$": "<rootDir>/src/$1",
       "^sunbird-sdk": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk",
-      "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1"
+      "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1",
+      "@project-sunbird/common-consumption": ["<rootDir>/node_modules/@project-sunbird/common-consumption-v8"],
+      "@project-sunbird/common-consumption/*": ["<rootDir>/node_modules/@project-sunbird/common-consumption-v8/*"],
+      "common-form-elements": ["<rootDir>/node_modules/common-form-elements-v8"],
+      "common-form-elements/*": ["<rootDir>/node_modules/common-form-elements-v8/*"]
     },
     "transformIgnorePatterns": [],
     "coveragePathIgnorePatterns": [

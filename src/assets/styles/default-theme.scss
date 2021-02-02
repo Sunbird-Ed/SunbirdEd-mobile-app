@@ -1,8 +1,22 @@
 html[data-theme="DEFAULT"]{
 
-  --app-primary-background:#EDF4F9;
   --app-primary:#006DE5;
+  --app-primary-light:#C6E7FF;
+  --app-primary-background:#EDF4F9;
+  --app-primary-header:#FFFFFF;
+  --app-secondary-background:#EDF4F9;
+  --app-tertiary:#6236FF;
+  --app-tertiary-light:#E0E1FD;
+
   --app-white:#FFFFFF;
+  --app-black:#000000; // remove
+  --app-dark-gray:#222222;
+  --app-gray:#333333;
+  --app-light-gray:#999999;
+
+  --app-shadow:rgba(0,0,0,0.1);
+  --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
 
   app-profile{
     .self-declare-btn{

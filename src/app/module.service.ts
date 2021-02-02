@@ -11,7 +11,7 @@ const LIBRARY_TAB = {
 
 const HOME_TAB = {
     root: 'home',
-    icon: 'resources',
+    icon: 'home',
     label: 'HOME_BNAV',
     index: 1,
     isSelected: true
@@ -34,7 +34,7 @@ const COURSE_TAB_DISABLED = {
 
 const DISCOVER_TAB = {
     root: 'discover',
-    icon: 'courses',
+    icon: 'discover',
     label: 'DISCOVER_BNAV',
     index: 2
 };
@@ -78,24 +78,24 @@ const PROFILE_TAB = {
 // todo remove one from 'GUEST_TEACHER_TABS' or 'GUEST_STUDENT_TABS'
 
 export const GUEST_TEACHER_TABS = [
-    LIBRARY_TAB,
-    COURSE_TAB,
+    HOME_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
 export const LOGIN_TEACHER_TABS = [
-    LIBRARY_TAB,
-    COURSE_TAB,
+    HOME_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB
 ];
 
 export const GUEST_STUDENT_TABS = [
-    LIBRARY_TAB,
-    COURSE_TAB,
+    HOME_TAB,
+    DISCOVER_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB

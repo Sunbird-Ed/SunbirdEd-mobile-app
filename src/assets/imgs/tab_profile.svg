@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>0A04BAE8-5AFD-44BE-818A-6F6484FC62BB</title>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Bottom-Navigation-icons" transform="translate(-310.000000, -170.000000)" fill="#000000">
+            <g id="Group-5-Copy" transform="translate(0.000000, 114.000000)">
+                <g id="ic_person" transform="translate(310.000000, 56.000000)">
+                    <path d="M8,8 C10.21,8 12,6.21 12,4 C12,1.79 10.21,0 8,0 C5.79,0 4,1.79 4,4 C4,6.21 5.79,8 8,8 L8,8 Z M8,10 C5.33,10 0,11.34 0,14 L0,16 L16,16 L16,14 C16,11.34 10.67,10 8,10 L8,10 Z" id="Mask"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

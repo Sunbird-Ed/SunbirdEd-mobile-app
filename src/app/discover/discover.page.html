@@ -43,7 +43,7 @@
               [hideProgress]="section?.theme?.inputs?.hideProgress || true" 
               [viewMoreButtonText]="section?.theme?.inputs?.viewMoreButtonText | translateJson"
               [contentList]="subSection.contents"
-              (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+              (viewMoreClick)="navigateToViewMoreContentsPage(section)"
               (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
             </sb-course-cards-hlist>
 
