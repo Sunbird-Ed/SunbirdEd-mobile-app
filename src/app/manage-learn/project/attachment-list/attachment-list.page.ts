@@ -100,32 +100,34 @@ export class AttachmentListPage implements OnInit {
       if (this.project.tasks && this.project.tasks.length) {
         for (const task of this.project.tasks) {
           const attachments = []
-          if (task.attachments && task.attachments.length) {
-            for (const element of task.attachments) {
-              // if (element.type === tab.type) {
-              if (compare(element.type, tab.type)) {
-                element.localUrl = this.win.Ionic.WebView.convertFileSrc(
-                  this.platform.is("ios")
-                    ? this.file.documentsDirectory
-                    : this.file.externalDataDirectory + element.name
-                );
-                attachments.push(element);
+          if (!task.isDeleted) {
+            if (task.attachments && task.attachments.length) {
+              for (const element of task.attachments) {
+                // if (element.type === tab.type) {
+                if (compare(element.type, tab.type)) {
+                  element.localUrl = this.win.Ionic.WebView.convertFileSrc(
+                    this.platform.is("ios")
+                      ? this.file.documentsDirectory
+                      : this.file.externalDataDirectory + element.name
+                  );
+                  attachments.push(element);
+                }
               }
-            }
-            if (attachments.length) {
-              let attachmentObj = {
-                taskName: task.name,
-                remarks: task.remarks,
-                attachments: attachments
+              if (attachments.length) {
+                let attachmentObj = {
+                  taskName: task.name,
+                  remarks: task.remarks,
+                  attachments: attachments
+                }
+                this.attachments.push({ ...attachmentObj });
               }
-              this.attachments.push({ ...attachmentObj });
-            }
 
+            }
           }
         };
       }
-      function compare(fileType,tabType): boolean{
-        tabType = tabType.substr(0, tabType.indexOf("/")); 
+      function compare(fileType, tabType): boolean {
+        tabType = tabType.substr(0, tabType.indexOf("/"));
         fileType = fileType.substr(0, fileType.indexOf("/"));
         return tabType == fileType;
       }

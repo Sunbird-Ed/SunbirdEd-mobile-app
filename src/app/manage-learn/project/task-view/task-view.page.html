@@ -79,7 +79,7 @@
         <ion-col size="6">
           <ion-item class="ion-date-time" lines="none">
             <img src="assets/imgs/timetable.png" class="subtask-date-picker" />
-            <ion-datetime value="{{subtask?.endDate}}" [(ngModel)]="subtask.endDate" displayFormat="DD/MM/YYYY"
+            <ion-datetime value="{{subtask?.endDate}}" (ionChange)="setDate()" [(ngModel)]="subtask.endDate" displayFormat="DD/MM/YYYY"
               min="{{currentYear - 2}}" max="{{currentYear + 5}}" display-timezone="utc"></ion-datetime>
           </ion-item>
         </ion-col>
