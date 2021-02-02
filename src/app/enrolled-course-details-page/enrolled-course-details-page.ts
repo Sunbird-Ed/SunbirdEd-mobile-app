@@ -69,6 +69,7 @@ import {
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 declare const cordova;
 
@@ -260,6 +261,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private discussionTelemetryService: DiscussionTelemetryService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -2337,6 +2339,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       data.username = p.serverProfile['userName']
     });
     console.log('createUser req', data);
+    this.discussionTelemetryService.contextCdata = [
+      {
+        id: this.identifier,
+        type: 'Course'
+      },
+      {
+        id: this.courseCardData.batchId,
+        type: 'Batch'
+      }
+    ];
     this.discussionService.createUser(data).subscribe((response) => {
       console.log('discussionService.createUser', response)
       const userName = response.result.userName
