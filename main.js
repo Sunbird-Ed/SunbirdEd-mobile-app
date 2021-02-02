@@ -86,7 +86,7 @@ var formRequestArray = [{
     },
     {
         'type': 'dynamicform',
-        'subType': 'consentdeclaration',
+        'subType': 'consentdeclaration_v2',
         'action': 'submit',
         'component': 'app'
     },
