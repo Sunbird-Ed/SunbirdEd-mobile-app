@@ -113,7 +113,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn();
       // act
-      splaschreenDeeplinkActionHandlerDelegate.onAction(payload)
+      splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
       expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
     });
@@ -130,7 +130,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn();
       // act
-      splaschreenDeeplinkActionHandlerDelegate.onAction(payload)
+      splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
       expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
     });
@@ -138,7 +138,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     it('should navigate to the library page if content ID is changed', () => {
       // arrange
       const payload = {
-        url: 'https://staging.sunbirded.org/resources/play/collection/do_2129767444617707521474?contentType=TextBook'
+        url: 'https://staging.sunbirded.org/learn/course/do_21312548637480550413399?contentId=asdsd'
       }
       mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
       mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
@@ -147,7 +147,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn();
       // act
-      splaschreenDeeplinkActionHandlerDelegate.onAction(payload)
+      splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
       expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
     });
