@@ -8,7 +8,8 @@ export enum Environment {
     ONBOARDING = 'onboarding',
     NOTIFICATION = 'notification',
     GROUP = 'group',
-    PLAYER = 'player'
+    PLAYER = 'player',
+    DISCUSSION = 'discussion'
 }
 
 export enum ErrorCode {
