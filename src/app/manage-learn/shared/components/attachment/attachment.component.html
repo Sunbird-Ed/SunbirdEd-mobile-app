@@ -22,4 +22,11 @@
     *ngIf="pdfFormats.includes(extension)"
     (click)="openDocument(url)"
   ></ion-icon>
+
+  <ion-icon
+  name="document"
+  class="attachmentIcon"
+  *ngIf="spreadSheetFormats.includes(extension) || wordFormats.includes(extension) "
+  (click)="openDocument(url)"
+></ion-icon>
 </ion-card>
