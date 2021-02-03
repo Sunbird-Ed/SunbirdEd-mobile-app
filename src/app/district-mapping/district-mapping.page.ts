@@ -565,9 +565,11 @@ export class DistrictMappingPage implements OnDestroy {
   isStateorDistrictChanged(locationCodes) {
     let changeStatus;
     locationCodes.forEach((d) => {
-      if (!changeStatus && d.type === 'state' && (d.code !== this.presetLocation['state'].code)) {
+      if (!changeStatus && d.type === 'state' && this.presetLocation['state']
+      && (d.code !== this.presetLocation['state'].code)) {
         changeStatus = InteractSubtype.STATE_DIST_CHANGED;
-      } else if (!changeStatus && d.type === 'district' && (d.code !== this.presetLocation['district'].code)) {
+      } else if (!changeStatus && d.type === 'district' && this.presetLocation['district']
+      && (d.code !== this.presetLocation['district'].code)) {
         changeStatus = InteractSubtype.DIST_CHANGED;
       }
     });
