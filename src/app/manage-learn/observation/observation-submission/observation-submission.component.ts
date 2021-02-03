@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { AlertController, Platform, PopoverController } from '@ionic/angular';
+import { AlertController, ModalController, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ObservationService } from '../observation.service';
 import { Location } from '@angular/common';
@@ -16,6 +16,7 @@ import { SubmissionActionsComponent } from '../../shared/components/submission-a
 import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { ViewDetailComponent } from '../../shared/components/view-detail/view-detail.component';
 
 @Component({
   selector: 'app-observation-submission',
@@ -66,7 +67,8 @@ export class ObservationSubmissionComponent implements OnInit {
     private translate: TranslateService,
     private alertCntrl: AlertController,
     private routerParam: ActivatedRoute,
-    private assessmentService: AssessmentApiService
+    private assessmentService: AssessmentApiService,
+    private modalCtrl: ModalController
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -585,5 +587,17 @@ export class ObservationSubmissionComponent implements OnInit {
     //   .catch((error) => {
     //     this.loader.stopLoader();
     //   });
+  }
+
+  //open info menu
+  async openInfo(submission) {
+    submission.entityName = this.entityName;
+    const modal = await this.modalCtrl.create({
+      component: ViewDetailComponent,
+      componentProps: {
+        submission: submission,
+      },
+    });
+    await modal.present();
   }
 }
