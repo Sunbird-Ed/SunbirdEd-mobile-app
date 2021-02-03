@@ -8,7 +8,6 @@ import {
   DeviceInfo,
   LocationSearchResult,
   CorrelationData,
-  FormService,
   FormRequest,
   AuditState
 } from 'sunbird-sdk';
@@ -343,6 +342,7 @@ export class DistrictMappingPage implements OnDestroy {
     } catch (e) {
       locationMappingConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     }
+    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const useCaseList =
       this.appGlobalService.isUserLoggedIn() ? ['SIGNEDIN_GUEST', 'SIGNEDIN'] : ['SIGNEDIN_GUEST', 'GUEST'];
     for (const config of locationMappingConfig) {
@@ -353,8 +353,8 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.serverProfile && this.profile.profileType) ?
-          this.profile.profileType : this.profile.serverProfile.userType;
+        config.default = (this.profile && this.profile.profileType) ?
+        this.profile.profileType : ((this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType);
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
