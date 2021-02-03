@@ -37,8 +37,9 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/modul
 import { PreferenceKey, RegexPatterns } from '@app/app/app.constant';
 import { Location } from '@angular/common';
 import { Observable, Subscription, combineLatest } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { delay, tap } from 'rxjs/operators';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { LoginHandlerService } from '@app/services';
 
 @Component({
   selector: 'app-guest-edit',
@@ -62,6 +63,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   isFormValid = true;
   previousProfileType;
   profileForTelemetry: any = {};
+  btnColor = '#8FC4FF';
   private formControlSubscriptions: Subscription;
   public syllabusList: { name: string, code: string }[] = [];
   public mediumList: { name: string, code: string }[] = [];
@@ -129,7 +131,8 @@ export class GuestEditPage implements OnInit, OnDestroy {
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private loginHandlerService: LoginHandlerService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -209,6 +212,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       subjects: [],
       medium: []
     });
+    this.btnColor = '#8FC4FF';
   }
 
   async getSyllabusDetails() {
@@ -527,6 +531,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       } else if (formVal.profileType === ProfileType.ADMIN) {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
+        this.loginHandlerService.signIn();
       } else {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.OTHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
@@ -600,6 +605,12 @@ export class GuestEditPage implements OnInit, OnDestroy {
           break;
       }
     });
+    subscriptionArray.push(this.guestEditForm.valueChanges.pipe(
+     delay(250),
+      tap(() => {
+       this.btnColor = this.guestEditForm.valid ? '#006DE5' : '#8FC4FF';
+      })
+    ));
     return subscriptionArray;
   }
 
