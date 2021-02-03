@@ -14,7 +14,9 @@
         </div>
         <div class="info">
           <span *ngIf="isNumber(subTitle)">{{ subTitle }}</span>
-          <span *ngIf="!isNumber(subTitle)">{{ subTitle | titlecase }}</span>
+          <div *ngIf="!isNumber(subTitle)" class="d-flex flex-ai-center">
+            <span>{{ subTitle | titlecase }}</span> <ng-content select="[info]" class="ml-5"></ng-content>
+          </div>
         </div>
       </div>
     </div>
