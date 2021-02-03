@@ -21,9 +21,7 @@ export class AttachmentComponent implements OnInit {
   constructor(private photoViewer: PhotoViewer, private streamingMedia: StreamingMedia) {
     console.log('Hello AttachmentsComponent Component');
   }
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   playVideo(link) {
     let options: StreamingVideoOptions = {
@@ -61,8 +59,7 @@ export class AttachmentComponent implements OnInit {
   }
 
   openDocument(link) {
-
-    const url = encodeURIComponent(link);
+    // const url = encodeURIComponent(link);
     // const browser = this.iab.create(
     //   'https://docs.google.com/viewer?url=' + url,
     //   '_blank',
@@ -70,10 +67,11 @@ export class AttachmentComponent implements OnInit {
     // );
     // browser.show();
     // TODO:check working
-    (window as any).cordova.InAppBrowser.open(
-      'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
-      '',
-      'location=no,toolbar=no,clearcache=yes'
-    );
+    // (window as any).cordova.InAppBrowser.open(
+    //   'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
+    //   '',
+    //   'location=no,toolbar=no,clearcache=yes'
+    // );
+    window.open(link, '_system', 'location=yes,enableViewportScale=yes,hidden=no');
   }
 }
