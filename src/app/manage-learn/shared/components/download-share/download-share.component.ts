@@ -8,6 +8,7 @@ import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 @Component({
   selector: 'download-share',
@@ -34,14 +35,15 @@ export class DownloadShareComponent implements OnInit {
     public filePath: FilePath,
     public unnatiSrvc: UnnatiDataService,
     private translate: TranslateService,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    public fileOpener: FileOpener,
   ) {
     this.translate.get(['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING', 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED']).subscribe((data) => {
       this.texts = data;
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
   async openPopupMenu(ev) {
     const popover = await this.popoverController.create({
       component: DownloadShareComponent,
@@ -78,7 +80,8 @@ export class DownloadShareComponent implements OnInit {
     ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
       .then(
         (res) => {
-          share ? this.share(res.nativeURL) : this.toast.showMessage(this.texts['FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED']);
+          // this.toast.showMessage(this.texts['FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED'])
+          share ? this.share(res.nativeURL) : this.openFile(res);
         },
         (err) => {
           console.log(err);
@@ -112,5 +115,10 @@ export class DownloadShareComponent implements OnInit {
     } else {
       return this.file.externalRootDirectory + dir_name;
     }
+  }
+  openFile(res) {
+    this.fileOpener.open(res.nativeURL, 'application/pdf')
+      .then(() => { console.log('File is opened'); })
+      .catch(e => console.log('Error opening file', e));
   }
 }
