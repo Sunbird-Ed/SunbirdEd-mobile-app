@@ -11,7 +11,7 @@
       <ion-item *ngFor="let option of data?.options" class="ion-text-wrap ds-item">
         <ion-label class="_flex-box label ion-text-wrap ds-m0">
           <ion-icon name="bulb" class="help" (click)="openHint(option?.hint)" *ngIf="option?.hint"></ion-icon>
-          <div style="flex: 1;" [ngStyle]="{'margin-right': option?.hint ? '35px' :'0px'}" class="ds-m0">
+          <div style="flex: 1;" [ngStyle]="{ 'margin-left': option?.hint ? '35px' : '0px' }" class="ds-m0">
             {{option?.label}}
           </div>
         </ion-label>
