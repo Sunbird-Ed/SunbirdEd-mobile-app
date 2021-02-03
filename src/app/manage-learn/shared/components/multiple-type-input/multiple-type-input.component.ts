@@ -1,5 +1,7 @@
 import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { UtilsService } from '@app/app/manage-learn/core';
+import { ModalController } from '@ionic/angular';
+import { HintComponent } from '../hint/hint.component';
 
 @Component({
   selector: 'app-multiple-type-input',
@@ -25,6 +27,8 @@ export class MultipleTypeInputComponent implements OnInit {
   constructor(
     private utils: UtilsService,
     // private hintService: HintProvider
+     private modalCtrl:ModalController
+
   ) {
     this.text = "Hello World";
 
@@ -72,7 +76,16 @@ export class MultipleTypeInputComponent implements OnInit {
     this.data.endTime = this.data.isCompleted ? Date.now() : "";
   }
 
-  openHint(hint) {
+ async openHint(hint) {
     // this.hintService.presentHintModal({ hint: hint });
+    let hintModal = await this.modalCtrl.create({
+      component: HintComponent,
+      componentProps: {
+        hint,
+      },
+    });
+    // await hintModal.onDidDismiss(data => {
+    // });
+    hintModal.present();
   }
 }
