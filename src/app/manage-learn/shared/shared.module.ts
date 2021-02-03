@@ -56,6 +56,7 @@ import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.
 import { StateModalComponent } from './components/state-modal/state-modal.component';
 import { SearchPipe } from './pipe/search.pipe';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
+import { HintComponent } from './components/hint/hint.component';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
+    HintComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -139,6 +141,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
+    HintComponent
   ],
   providers: [
     Camera,
@@ -167,6 +170,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     ViewDetailComponent,
     StateModalComponent,
     SurveyMsgComponent,
+    HintComponent
   ],
 })
 export class SharedModule {}

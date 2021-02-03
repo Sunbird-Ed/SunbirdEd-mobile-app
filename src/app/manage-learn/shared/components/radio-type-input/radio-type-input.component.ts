@@ -1,5 +1,7 @@
 import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { UtilsService } from '@app/app/manage-learn/core';
+import { ModalController } from '@ionic/angular';
+import { HintComponent } from '../hint/hint.component';
 
 @Component({
   selector: 'app-radio-type-input',
@@ -26,6 +28,7 @@ export class RadioTypeInputComponent implements OnInit {
 
   constructor(
     private utils: UtilsService, 
+    private modalCtrl:ModalController
     // private hintService: HintProvider
     ) {
 
@@ -61,8 +64,18 @@ export class RadioTypeInputComponent implements OnInit {
     this.data.endTime = this.data.isCompleted ? Date.now() : "";
   }
 
-  openHint(hint){
-    // this.hintService.presentHintModal({hint: hint});
+  async openHint(hint){
+    // this.utils.presentHintModal({hint: hint});
+    let hintModal = await this.modalCtrl.create({
+      component: HintComponent,
+      componentProps: {
+        hint,
+      },
+    });
+    // await hintModal.onDidDismiss(data => {
+    // });
+    hintModal.present();
+  
   }
 
   checkForCompletion() {
