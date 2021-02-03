@@ -10,13 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
-var environment = {
-  db: {
-    projects: "project.db",
-    categories: "categories.db",
-  },
-  deepLinkAppsUrl: ''
-};
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-attachment-list',
   templateUrl: './attachment-list.page.html',
@@ -60,8 +55,13 @@ export class AttachmentListPage implements OnInit {
     public transfer: FileTransfer,
     public fileOpener: FileOpener,
     private photoViewer: PhotoViewer,
-
-  ) { }
+    private routeParam: ActivatedRoute
+  ) {
+    routeParam.params.subscribe(parameters => {
+      this.projectId = parameters.id;
+      this.getAttachments(this.tabs[0]);
+    })
+  }
 
   ngOnInit() {
     this.path = this.platform.is("ios") ? this.file.documentsDirectory : this.file.externalDataDirectory;
@@ -78,7 +78,6 @@ export class AttachmentListPage implements OnInit {
     this.headerConfig.pageTitle = data["FRMELEMNTS_LBL_ATTACHMENTS"];
     this.headerService.updatePageConfig(this.headerConfig);
     this.handleBackButton();
-    this.getAttachments(this.tabs[0]);
   }
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
@@ -93,39 +92,40 @@ export class AttachmentListPage implements OnInit {
   }
   getAttachments(tab) {
     this.attachments = [];
-    this.db.createPouchDB(environment.db.projects)
     this.db.query({ _id: this.projectId }).then(success => {
       this.project = success.docs.length ? success.docs[0] : {};
       this.projectcopy = { ...this.project }
       if (this.project.tasks && this.project.tasks.length) {
         for (const task of this.project.tasks) {
           const attachments = []
-          if (task.attachments && task.attachments.length) {
-            for (const element of task.attachments) {
-              // if (element.type === tab.type) {
-              if (compare(element.type, tab.type)) {
-                element.localUrl = this.win.Ionic.WebView.convertFileSrc(
-                  this.platform.is("ios")
-                    ? this.file.documentsDirectory
-                    : this.file.externalDataDirectory + element.name
-                );
-                attachments.push(element);
+          if (!task.isDeleted) {
+            if (task.attachments && task.attachments.length) {
+              for (const element of task.attachments) {
+                // if (element.type === tab.type) {
+                if (compare(element.type, tab.type)) {
+                  element.localUrl = this.win.Ionic.WebView.convertFileSrc(
+                    this.platform.is("ios")
+                      ? this.file.documentsDirectory
+                      : this.file.externalDataDirectory + element.name
+                  );
+                  attachments.push(element);
+                }
               }
-            }
-            if (attachments.length) {
-              let attachmentObj = {
-                taskName: task.name,
-                remarks: task.remarks,
-                attachments: attachments
+              if (attachments.length) {
+                let attachmentObj = {
+                  taskName: task.name,
+                  remarks: task.remarks,
+                  attachments: attachments
+                }
+                this.attachments.push({ ...attachmentObj });
               }
-              this.attachments.push({ ...attachmentObj });
-            }
 
+            }
           }
         };
       }
-      function compare(fileType,tabType): boolean{
-        tabType = tabType.substr(0, tabType.indexOf("/")); 
+      function compare(fileType, tabType): boolean {
+        tabType = tabType.substr(0, tabType.indexOf("/"));
         fileType = fileType.substr(0, fileType.indexOf("/"));
         return tabType == fileType;
       }
