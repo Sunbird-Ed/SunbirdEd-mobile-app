@@ -27,7 +27,7 @@
     </div>
 
     <div class="px-8">
-        <sb-pills-grid *ngIf="sectionGroup?.sections" [pillShape]="'default'" [pillsViewType]="'scroll'"
+        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'" [pillsViewType]="'scroll'"
                        [pillBorder]="'rounded'">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
