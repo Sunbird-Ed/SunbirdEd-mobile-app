@@ -10,7 +10,6 @@ import { AssessmentApiService } from './services/assessment-api.service';
 import { DhitiApiService } from './services/dhiti-api.service';
 import { DownloadAndPreviewService } from './services/download-and-preview.service';
 import { SharingFeatureService } from './services/sharing-feature.service';
-import { SurveyProviderService } from './services/survey-provider.service';
 
 
 @NgModule({
@@ -21,7 +20,7 @@ import { SurveyProviderService } from './services/survey-provider.service';
   providers: [
     UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,
     ProgramService, AssessmentApiService, DhitiApiService,
-    DownloadAndPreviewService,SharingFeatureService,SurveyProviderService
+    DownloadAndPreviewService,SharingFeatureService,
   ],
 })
 export class CoreModule {}
