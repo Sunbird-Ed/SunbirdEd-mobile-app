@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import {ContentFilterConfig, ProfileConstants, RouterLinks} from '../app.constant';
+import {ContentFilterConfig, RouterLinks} from '../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService, ContentAggregatorHandler, PageId } from '@app/services';
 import { Events } from '@ionic/angular';
@@ -10,8 +10,6 @@ import { CachedItemRequestSourceFrom, ContentAggregatorRequest, ContentSearchCri
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import {Profile, ProfileService, SearchType} from 'sunbird-sdk';
-import {ContentAggregation, DataSourceMap} from 'sunbird-sdk/content/handlers/content-aggregator';
 
 @Component({
   selector: 'app-discover',

@@ -1570,10 +1570,27 @@ sb-pills-grid{
   .sb-view-more-less{
     .view-all{
       width: 90%;
-      height: 2.5rem;
-      background-color: var(--app-primary-light) !important;
+      height: 2.75rem;
+      background-color: var(--app-white) !important;
       color: var(--app-primary) !important;
-      border: none !important
+      box-shadow: none !important
+    }
+  }
+  .two-rows-grid.column-sequence{
+    grid-template-rows: repeat(2,5rem) !important;
+  }
+  .sb-box-grid.icon-header{
+    .item{
+      .img{
+        width: 3rem !important;
+        height: 3rem !important;
+        .sb-icon-img-sm{
+          width: 2rem !important;
+        }
+      }
+      label{
+        font-size: 12px;
+      }
     }
   }
 }
@@ -1648,6 +1665,7 @@ app-discover{
 }
 
 .form-api-components{
+  margin-top: 1rem;
   sb-course-cards-hlist, sb-library-cards-hlist {
     .title{
       color: var(--app-gray) !important;
@@ -1673,3 +1691,11 @@ sb-form{
     }
   }
 }
+
+.container-focus{
+  width: 100%;
+  border-bottom-left-radius: 20px;
+  background-color: var(--app-primary-header) !important;
+  padding-bottom: 1rem;
+}
+

@@ -1,21 +1,23 @@
 <ion-content>
-  <div class="user-profile">
-    <div class="welcome-text">{{'WELCOME' | translate}}</div>
-    <div class="user-name-text">{{profile?.handle}}</div>
-  </div> 
-
-  <div class="preference-container" *ngIf="boards">
-    <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
-    <div class="user-preference">
-      <div class="preference-data">
-        <div>
-          <span>{{'YOUR_PREFERENCES' | translate}}</span>
-          <img (click)="viewPreferenceInfo()" class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+  <div class="container-focus">
+    <div class="user-profile">
+      <div class="welcome-text">{{'WELCOME' | translate}}</div>
+      <div class="user-name-text">{{profile?.handle}}</div>
+    </div> 
+    
+    <div class="preference-container" *ngIf="boards">
+      <div *ngIf="this.showPreferenceInfo">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}</div>
+      <div class="user-preference">
+        <div class="preference-data">
+          <div>
+            <span>{{'YOUR_PREFERENCES' | translate}}</span>
+            <img (click)="viewPreferenceInfo()" class="p-8" src="assets/imgs/info.svg" alt="preferences-info">
+          </div>
+          <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
         </div>
-        <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
-      </div>
-      <div class="change-btn">
-        <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
+        <div class="change-btn">
+          <button (click)="editProfileDetails()" class="sb-btn sb-btn-sm sb-btn-primary-outline">change</button>
+        </div>
       </div>
     </div>
   </div>

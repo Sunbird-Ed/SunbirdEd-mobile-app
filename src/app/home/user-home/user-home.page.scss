@@ -6,7 +6,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 38vh;
+  max-width: 100%;
   display: inline-block;
 }
 
@@ -26,10 +26,11 @@
 .preference-container {
   background-color: var(--app-primary-header);
   margin: 0 1rem;
-  padding: 0.5rem;
-  border-radius: 1rem;
+  padding: 0.5rem 1rem;
   font-size: 12px;
   color: var(--app-gray);
+  box-shadow: 0 0 50px 0 rgba(0,0,0,0.1);
+  border-radius: 1rem;
   .user-preference {
     display: flex;
     align-items: center;
