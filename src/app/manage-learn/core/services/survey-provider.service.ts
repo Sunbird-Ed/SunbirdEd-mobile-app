@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { rejects } from 'assert';
-import { LoaderService, LocalStorageService, UtilsService } from '../core';
-import { urlConstants } from '../core/constants/urlConstants';
-import { AssessmentApiService } from '../core/services/assessment-api.service';
-import { UpdateLocalSchoolDataService } from '../core/services/update-local-school-data.service';
-import { SurveyMsgComponent } from '../shared/components/survey-msg/survey-msg.component';
-import { storageKeys } from '../storageKeys';
+import { LoaderService, LocalStorageService, UtilsService } from '..';
+import { urlConstants } from '../constants/urlConstants';
+import { AssessmentApiService } from './assessment-api.service';
+import { UpdateLocalSchoolDataService } from './update-local-school-data.service';
+import { SurveyMsgComponent } from '../../shared/components/survey-msg/survey-msg.component';
+import { storageKeys } from '../../storageKeys';
 
 @Injectable({
   providedIn: 'root',

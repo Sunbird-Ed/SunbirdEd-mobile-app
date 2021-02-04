@@ -405,7 +405,7 @@ export class ImageListingComponent implements OnInit {
         //   this.navCtrl.remove(this.navCtrl.getActive().index - 1, 1);
         //   this.navCtrl.pop();
         // });
-        history.go(-4);
+        history.go(-2);
       },
       (error) => {
         this.loader.stopLoader();

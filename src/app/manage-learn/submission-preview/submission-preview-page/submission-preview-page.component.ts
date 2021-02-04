@@ -23,6 +23,7 @@ export class SubmissionPreviewPageComponent implements OnInit {
   allAnsweredForEvidence: boolean;
   networkAvailable: any;
   loaded: boolean = false;
+  goBackNum: any;
   constructor(
     private events: Events,
     private commonUtils: CommonUtilService,
@@ -46,6 +47,7 @@ export class SubmissionPreviewPageComponent implements OnInit {
       this.submissionId = params.submissionId;
       this.selectedEvidenceIndex = params.selectedEvidenceIndex;
       this.entityName = params.name;
+      this.goBackNum=params.goBackNum
     });
   }
 
@@ -167,7 +169,7 @@ export class SubmissionPreviewPageComponent implements OnInit {
         name: this.entityName,
         selectedEvidenceIndex: this.selectedEvidenceIndex,
       };
-      this.router.navigate([RouterLinks.IMAGE_LISTING], { queryParams: params });
+      this.router.navigate([RouterLinks.IMAGE_LISTING], { queryParams: params,replaceUrl:this.goBackNum?false:true });
     } else {
       this.translate.get('FRMELEMNTS_MSG_PLEASE_NETWORK').subscribe((translations) => {
         this.commonUtils.showToast(translations);
