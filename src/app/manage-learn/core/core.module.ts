@@ -20,7 +20,7 @@ import { SharingFeatureService } from './services/sharing-feature.service';
   providers: [
     UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,
     ProgramService, AssessmentApiService, DhitiApiService,
-    DownloadAndPreviewService,SharingFeatureService,
+    DownloadAndPreviewService,SharingFeatureService
   ],
 })
 export class CoreModule {}
