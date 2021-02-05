@@ -6,7 +6,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { ToastService, UtilsService } from '../../core';
 import { LoaderService } from '../../core';
 import { RouterLinks } from '@app/app/app.constant';
-import { SurveyProviderService } from '../../survey/survey-provider.service';
+import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
@@ -100,7 +100,8 @@ private handleBackButton() {
       .getDetailsById(surveyId, data._id)
       .then((res) => {
         if (res.result && res.result.status == 'completed') {
-          this.toast.openToast(res.message)
+          // this.toast.openToast(res.message)
+           this.surveyProvider.showMsg('surveyCompleted');
           return
         }
         const survey = res.result;
