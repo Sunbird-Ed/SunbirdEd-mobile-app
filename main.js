@@ -97,13 +97,13 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library_v2',
+        'subType': 'library_v3',
         'action': 'get',
         'component': 'app'
     },
     {
         'type': 'config',
-        'subType': 'course',
+        'subType': 'course_v2',
         'action': 'get',
         'component': 'app'
     },
