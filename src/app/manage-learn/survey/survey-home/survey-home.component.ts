@@ -10,7 +10,7 @@ import { LoaderService, LocalStorageService, ToastService, UtilsService } from '
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
-import { SurveyProviderService } from '../survey-provider.service';
+import { SurveyProviderService } from '../../core/services/survey-provider.service';
 
 @Component({
   selector: 'app-survey-home',

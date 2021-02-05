@@ -9,6 +9,7 @@ import { RouterLinks } from '@app/app/app.constant';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '../core/core.module';
+import { SurveyMsgComponent } from '../shared/components/survey-msg/survey-msg.component';
 
 const routes: Routes = [
   {
@@ -32,5 +33,6 @@ const routes: Routes = [
     FormsModule,
     CoreModule,
   ],
+  entryComponents:[SurveyMsgComponent]
 })
 export class ProgramsModule {}
