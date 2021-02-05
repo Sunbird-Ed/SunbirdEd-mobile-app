@@ -297,8 +297,16 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       userDetails = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
         this.bmgsString;
     } else {
+      let selectedBMG = this.appGlobalService.getSelectedBoardMediumGrade();
+      if (!selectedBMG) {
+        selectedBMG = ((userProfile.board && userProfile.board.length
+          && userProfile.board[0]) ? userProfile.board[0] + ', ' : '') +
+          (userProfile.medium && userProfile.medium.length
+            && userProfile.medium[0]) + ' Medium, ' +
+          (userProfile.grade && userProfile.grade.length && userProfile.grade[0]);
+      }
       userDetails = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
-        this.appGlobalService.getSelectedBoardMediumGrade() + ticketSummary;
+      selectedBMG + ticketSummary;
     }
     this.categories ? userDetails += '.<br> <br>' + this.commonUtilService.translateMessage('DEVICE_ID') + ': ' + this.deviceId + '<br>'
       : undefined;
