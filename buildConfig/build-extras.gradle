@@ -107,7 +107,6 @@ android {
             resValue("string", "deeplink_ncert_url", "${dev_deeplink_ncert_url}")
             resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
             resValue("string", "custom_scheme_url", "${dev_custom_scheme}")
-            //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
@@ -150,7 +149,6 @@ android {
             resValue("string", "deeplink_ncert_url", "${production_deeplink_ncert_url}")
             resValue("string", "deeplink_igot_url", "${dev_deeplink_igot_url}")
             resValue("string", "custom_scheme_url", "${production_custom_scheme}")
-            //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
