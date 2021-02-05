@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { CoreModule } from '../core/core.module';
-import { SurveyProviderService } from './survey-provider.service';
+import { SurveyMsgComponent } from '../shared/components/survey-msg/survey-msg.component';
 const routes: Routes = [
   {
     path: '',
@@ -25,6 +25,7 @@ const routes: Routes = [
     SharedModule,
     CoreModule,
   ],
-  providers:[SurveyProviderService]
+  providers: [],
+  entryComponents:[SurveyMsgComponent]
 })
 export class SurveyModule {}

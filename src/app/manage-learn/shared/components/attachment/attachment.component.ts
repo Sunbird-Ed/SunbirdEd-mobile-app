@@ -15,13 +15,13 @@ export class AttachmentComponent implements OnInit {
   videoFormats: string[] = FileExtension.videoFormats;
   audioFormats: string[] = FileExtension.audioFormats;
   pdfFormats: string[] = FileExtension.pdfFormats;
+  wordFormats: string[] = FileExtension.wordFormats;
+  spreadSheetFormats: string[] = FileExtension.spreadSheetFormats;
 
   constructor(private photoViewer: PhotoViewer, private streamingMedia: StreamingMedia) {
     console.log('Hello AttachmentsComponent Component');
   }
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void {}
 
   playVideo(link) {
     let options: StreamingVideoOptions = {
@@ -59,16 +59,19 @@ export class AttachmentComponent implements OnInit {
   }
 
   openDocument(link) {
-    //   const browser = this.iab.create(
-    //     'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
-    //     '',
-    //     'location=no,toolbar=no'
-    //   );
+    // const url = encodeURIComponent(link);
+    // const browser = this.iab.create(
+    //   'https://docs.google.com/viewer?url=' + url,
+    //   '_blank',
+    //   'location=no,toolbar=no,clearcache=yes'
+    // );
+    // browser.show();
     // TODO:check working
-    (window as any).cordova.InAppBrowser.open(
-      'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
-      '',
-      'location=no,toolbar=no'
-    );
+    // (window as any).cordova.InAppBrowser.open(
+    //   'https://docs.google.com/viewer?url=' + encodeURIComponent(link),
+    //   '',
+    //   'location=no,toolbar=no,clearcache=yes'
+    // );
+    window.open(link, '_system', 'location=yes,enableViewportScale=yes,hidden=no');
   }
 }

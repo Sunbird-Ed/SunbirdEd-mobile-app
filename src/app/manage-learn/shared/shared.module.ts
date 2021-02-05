@@ -58,6 +58,7 @@ import { ViewDetailComponent } from './components/view-detail/view-detail.compon
 import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.component';
 import { StateModalComponent } from './components/state-modal/state-modal.component';
 import { SearchPipe } from './pipe/search.pipe';
+import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
 
 @NgModule({
@@ -101,7 +102,8 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
-    GanttChartComponent
+    GanttChartComponent,
+    HintComponent,
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -145,7 +147,8 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
-    GanttChartComponent
+    GanttChartComponent,
+    HintComponent,
   ],
   providers: [
     Camera,
@@ -173,7 +176,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     SubmissionActionsComponent,
     ViewDetailComponent,
     StateModalComponent,
-    SurveyMsgComponent,
+    HintComponent
   ],
 })
 export class SharedModule {}

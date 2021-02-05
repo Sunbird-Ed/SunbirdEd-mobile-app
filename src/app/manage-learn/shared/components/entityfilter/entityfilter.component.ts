@@ -154,11 +154,11 @@ export class EntityfilterComponent implements OnInit {
         }
         this.totalCount = success.result[0].count;
         this.selectableList = [...this.selectableList, ...success.result[0].data];
-        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
+        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll(event);
       },
       (error) => {
         this.loading = false;
-        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll();
+        !event ? this.loader.stopLoader() : this.toggleInfiniteScroll(event);
       }
     );
     //TODO:uncomment
@@ -183,8 +183,11 @@ export class EntityfilterComponent implements OnInit {
     // );
   }
 
-  toggleInfiniteScroll() {
-    this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
+  toggleInfiniteScroll(e) {
+    e.target.complete()
+    // if (this.infiniteScroll) {
+    //   this.infiniteScroll.disabled = !this.infiniteScroll.disabled;
+    // }
   }
 
   doInfinite(infiniteScroll) {

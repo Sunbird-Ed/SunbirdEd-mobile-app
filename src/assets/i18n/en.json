@@ -1259,6 +1259,7 @@
   "FRMELEMENTS_LBL_TOTAL_SCORE_ACHIEVED": "Total Score Achieved",
   "FRMELEMENTS_LBL_TOTAL_SCHOOL": "Total Schools",
   "FRMELEMENTS_LBL_TOTAL_SCHOOL_OBSERVED": "School Observed",
+  "FRMELEMENTS_LBL_HINT": "Hint",
   "FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES": "View All Evidence",
   "FRMELEMENTS_LBL_TOTAL_SUBMISSIONS": "Total Submissions",
   "FRMELEMNTS_MSG_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
@@ -1280,6 +1281,7 @@
   "FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT": "Upload And Submit",
   "FRMELEMENTS_BTN_APPLY_FILTER": "Apply Filter",
   "FRMELEMNTS_BTN_PREVIEW_FORM": "Preview the form",
+  "FRMELEMNTS_BTN_PREVIEW": "Preview",
   "FRMELEMNTS_BTN_SAVE_FORM": "Save the form",
   "FRMELEMNTS_BTN_FILTER": "Filter",
   "FRMELEMNTS_BTN_REPORT_WITH_SCORE": "Report with score",
@@ -1301,6 +1303,7 @@
   "FRMELEMNTS_LBL_ADD_NEW_TASK": "Add New Task",
   "FRMELEMNTS_LBL_ASSIGNED_TO": "Assigned to",
   "FRMELEMNTS_LBL_TASK_DESCRIPTION": "Task Description",
+  "FRMELEMNTS_LBL_DESCRIPTION": "Description",
   "FRMELEMNTS_LBL_ATTACH": "Attach",
   "FRMELEMNTS_LBL_ADD_TASK": "Add Task",
   "FRMELEMNTS_BTN_DISCARD": "Discard",
@@ -1333,6 +1336,7 @@
   "FRMELEMNTS_MSG_PLEASE_ADD_OTHERCATEGORIES":"Please add other categories.",
   "FRMELEMNTS_LBL_PROJECT_OVERVIEW": "Project Overview",
   "FRMELEMNTS_LBL_VIEW_FULL_REPORT": "View Full Report",
+  "FRMELEMNTS_LBL_VIEW_REPORT": "View Report",
   "FRMELEMNTS_LBL_TASK_OVERVIEW": "Task Overview",
   "FRMELEMNTS_LBL_CATEGORY_OVERVIEW": "Category Overview",
   "FRMELEMNTS_LBL_OK": "OK",
@@ -1356,5 +1360,6 @@
   "FRMELEMNTS_LBL_COFIRM_DELETE":"Do you want to delete this file?",
   "FRMELEMNTS_LBL_COFIRMATION_DELETE":"Confirm Delete",
   "FRMELEMNTS_LBL_COFIRMATION_DELETE_INSTANCE":"Do you want to delete this instance?",
-  "FRMELEMNTS_LBL_THIS_QUARTER":"This Quarter"
+  "FRMELEMNTS_LBL_THIS_QUARTER":"This Quarter",
+  "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}"
 }
