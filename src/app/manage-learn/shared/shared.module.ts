@@ -25,7 +25,8 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
-  ChartComponent
+  ChartComponent,
+  GanttChartComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -99,7 +100,8 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
-    ChartComponent
+    ChartComponent,
+    GanttChartComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
@@ -142,7 +144,8 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
-    ChartComponent
+    ChartComponent,
+    GanttChartComponent
   ],
   providers: [
     Camera,
