@@ -1,53 +1,28 @@
 <ion-content>
-  <div class="search-info mt-16 mx-24">
-    <div>
-      <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appLabel} }}</strong>
-      <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appLabel} }}</p>
+  <div class="container-focus">
+    <div class="search-info pt-16 mx-24" [@labelVisibility]="searchLabelVisibility">
+      <div>
+        <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appLabel} }}</strong>
+        <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appLabel} }}</p>
+      </div>
+    </div>
+    <div class="search-container" [ngClass]="{'search-filter': showFilterBtn, '': !showFilterBtn}">
+      <div class="search-input">
+        <input type="text" [placeholder]="'SEARCH_OR_ENTER_QR_CODE' | translate" [(ngModel)]="searchKeywords" (input)="searchInput()" (focus)="onSearchFocus()" (blur)="onSearchBlur()">
+        <button (click)="submitSearch()">
+          <img src="assets/imgs/search.svg" alt="search">
+        </button>
+        <button (click)="cancelSearch()">
+          <img src="assets/imgs/ic_action_close.svg" alt="search">
+        </button>
+      </div>
+      <div class="filter-btn" *ngIf="showFilterBtn">
+        <button (click)="openFilters()">
+          <img src="assets/imgs/filter.svg" alt="search">
+        </button>
+      </div>
     </div>
   </div>
-  <div>
-    <div class="search-input m-16 p-16" (click)="openSearchPage()">
-      {{'SEARCH_IN_APP' | translate: {'app_name': appLabel} }}
-    </div>
-  </div>
 
-  <div class="mx-12">
-    <ng-container *ngFor="let section of displaySections">
-      <div class="label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist'">
-        {{section?.title | translateJson | titlecase}}</div>
-
-      <!-- Pills -->
-      <ng-container *ngIf="section?.theme?.component === 'sb-pills-grid'">
-        <sb-pills-grid [pillShape]="section?.theme?.inputs?.pillShape"
-          [pillsViewType]="section?.theme?.inputs?.pillsViewType" 
-          [selectMode]="section?.theme?.inputs?.selectMode"
-          [minDisplayCount]="section?.theme?.inputs?.minDisplayCount"
-          [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
-          [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson" 
-          (select)="handlePillSelect($event)">
-          <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | translateJson | titlecase"
-            [icon]="pillData?.icon" [value]="pillData">
-          </sb-pill-item>
-        </sb-pills-grid>
-      </ng-container>
-
-      <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
-        <ng-container *ngFor="let subSection of section?.data?.sections">
-          <ng-container *ngIf="subSection?.contents?.length">
-
-            <sb-course-cards-hlist [title]="(section?.title) | translateJson"
-              [type]="section?.theme?.inputs?.type || courseCardType.COURSE_CARD_GRID" 
-              [hideProgress]="section?.theme?.inputs?.hideProgress || true" 
-              [viewMoreButtonText]="section?.theme?.inputs?.viewMoreButtonText | translateJson"
-              [contentList]="subSection.contents"
-              (viewMoreClick)="navigateToViewMoreContentsPage(section)"
-              (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
-            </sb-course-cards-hlist>
-
-          </ng-container>
-        </ng-container>
-      </ng-container>
-
-    </ng-container>
-  </div>
+  <router-outlet></router-outlet>
 </ion-content>

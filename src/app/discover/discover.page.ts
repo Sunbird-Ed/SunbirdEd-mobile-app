@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {ContentFilterConfig, RouterLinks} from '../app.constant';
@@ -10,37 +10,55 @@ import { CachedItemRequestSourceFrom, ContentAggregatorRequest, ContentSearchCri
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { SearchEventsService } from './search-events-service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-discover',
   templateUrl: './discover.page.html',
   styleUrls: ['./discover.page.scss'],
+  animations: [
+    trigger('labelVisibility', [
+      state(
+        'show',
+        style({
+          height: 'auto'
+        })
+      ),
+      state(
+        'hide',
+        style({
+          opacity: '0'
+        })
+      ),
+      transition('* => show', [animate('500ms ease-out')]),
+      transition('show => hide', [animate('500ms ease-out')])
+    ])
+  ],
 })
-export class DiscoverPage implements OnInit {
+export class DiscoverPage implements OnInit, OnDestroy {
 
   appLabel: string;
   headerObservable: Subscription;
   displaySections: any[] = [];
   courseCardType = CourseCardGridTypes;
+  searchKeywords = '';
+  showFilterBtn = false;
+  showCancelBtn = false;
+  searchLabelVisibility: 'show' | 'hide' = 'show';
 
   constructor(
     private appVersion: AppVersion,
     private headerService: AppHeaderService,
     private router: Router,
     private events: Events,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private contentAggregatorHandler: ContentAggregatorHandler,
-    private navService: NavigationService,
-    private commonUtilService: CommonUtilService
-  ) {
-
-  }
+    private searchEventsService: SearchEventsService
+  ) {}
 
   ngOnInit() {
     this.appVersion.getAppName().then((appName: any) => {
       this.appLabel = appName;
     });
-    this.fetchDisplayElements();
   }
 
   async ionViewWillEnter() {
@@ -53,28 +71,8 @@ export class DiscoverPage implements OnInit {
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
-  async fetchDisplayElements() {
-    const request: ContentAggregatorRequest = {
-      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => contentSearchCriteria,
-      from: CachedItemRequestSourceFrom.SERVER
-    };
-
-    this.displaySections = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.DISCOVER);
-  }
-
   async openSearchPage() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.SEARCH_BUTTON_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
-    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-      ContentFilterConfig.NAME_COURSE);
-    this.router.navigate([RouterLinks.SEARCH], {
-      state: {
-        primaryCategories,
-        source: PageId.COURSES
-      }
-    });
+    this.router.navigate(['tabs/discover/search-results'], {state:{}});
   }
 
   handleHeaderEvents($event) {
@@ -85,63 +83,51 @@ export class DiscoverPage implements OnInit {
       case 'notification':
         this.redirectToNotifications();
         break;
-
       default: console.warn('Use Proper Event name');
     }
   }
 
   redirectToActivedownloads() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   redirectToNotifications() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.NOTIFICATION_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
-  handlePillSelect(event) {
-    console.log(event);
-    if (!event || !event.data || !event.data.length) {
-      return;
-    }
-    const params = {
-      formField: event.data[0].value,
-      fromLibrary: true
-    };
-    this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
-  }
-
-  navigateToDetailPage(event) {
-    event.data = event.data.content ? event.data.content : event.data;
-    const item = event.data;
-
-    if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.navService.navigateToDetailPage(item, { content: item });
-    } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+  searchInput() {
+    if (this.searchKeywords && this.searchKeywords.trim().length > 3) {
+      this.searchEventsService.setSearchInput(this.searchKeywords.trim());
     }
   }
 
-  navigateToViewMoreContentsPage(section, pageName) {
-    const params: NavigationExtras = {
-      state: {
-        requestParams: {
-          request: section.searchRequest
-        },
-        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
-      }
-    };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+  submitSearch() {
+    if (this.searchKeywords && this.searchKeywords.trim().length > 3) {
+      this.searchEventsService.setSearchSubmit(this.searchKeywords.trim());
+    }
+    this.showFilterBtn = !this.showFilterBtn;
+  }
+
+  cancelSearch() {
+    this.searchEventsService.triggerSearchCancel();
+    this.searchKeywords = '';
+    this.showCancelBtn = false;
+  }
+
+  openFilters() {
+    this.searchEventsService.triggerOpenFilter();
+  }
+
+  onSearchFocus() {
+    this.searchLabelVisibility = 'hide';
+  }
+
+  onSearchBlur() {
+    this.searchLabelVisibility = 'show';
+  }
+
+  ngOnDestroy() {
+    this.searchEventsService.clear();
   }
 
 }

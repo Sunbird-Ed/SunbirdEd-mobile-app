@@ -30,7 +30,7 @@ export class ContentAggregatorHandler {
     ) { }
 
     async aggregate(request, pageName): Promise<any> {
-        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
@@ -70,7 +70,7 @@ export class ContentAggregatorHandler {
 
 
     async newAggregate(request, pageName: AggregatorPageType): Promise<any> {
-        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];

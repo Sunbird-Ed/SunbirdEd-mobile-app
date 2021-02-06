@@ -693,6 +693,12 @@ export const PrimaryCaregoryMapping = {
     "tv programs": {
         icon: 'assets/imgs/tv.svg'
     },
+    "documents": {
+        icon: 'assets/imgs/documents.svg'
+    },
+    "videos": {
+        icon: 'assets/imgs/videos.svg'
+    },
     "default": {
         icon: 'assets/imgs/all_content.svg'
     }

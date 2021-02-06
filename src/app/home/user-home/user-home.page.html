@@ -60,6 +60,7 @@
           [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
           [showMoreViewType]="section?.theme?.inputs?.showMoreViewType"
           [pillsMultiRow]="section?.theme?.inputs?.pillsMultiRow"
+          [pillBorder]="section?.theme?.inputs?.pillBorder"
           (viewMorePillList)="onViewMorePillList($event, section?.title)"
           (select)="handlePillSelect($event)">
           <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData.icon" [theme]="pillData.theme"

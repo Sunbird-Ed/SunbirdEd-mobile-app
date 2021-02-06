@@ -9,11 +9,30 @@ import { IonicModule } from '@ionic/angular';
 import { DiscoverPage } from './discover.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
+import { DiscoverOnePage } from './discover-one/discover-one.page';
+import { SearchResultsPage } from './search-results/search-results.page';
+import { ComponentsModule } from '../components/components.module';
+import { SearchEventsService } from './search-events-service';
 
 const routes: Routes = [
   {
     path: '',
-    component: DiscoverPage
+    component: DiscoverPage,
+    children: [
+      {
+        path: 'discover-one',
+        component: DiscoverOnePage
+      },
+      {
+        path: 'search-results',
+        component: SearchResultsPage
+      },
+      {
+        path: '',
+        redirectTo: 'discover-one',
+        pathMatch: 'full'
+      }
+    ],
   }
 ];
 
@@ -25,8 +44,16 @@ const routes: Routes = [
     CommonConsumptionModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    PipesModule
+    PipesModule,
+    ComponentsModule
   ],
-  declarations: [DiscoverPage]
+  declarations: [
+    DiscoverPage,
+    DiscoverOnePage,
+    SearchResultsPage
+  ],
+  providers: [
+    SearchEventsService
+  ]
 })
 export class DiscoverPageModule {}
