@@ -5,8 +5,8 @@ import { Subject } from "rxjs";
 export class SearchEventsService {
   private _searchSubmit = new Subject<string>();
   private _searchInput = new Subject<string>();
-  private _searchCancel = new Subject<boolean>();
-  private _openFilter = new Subject<boolean>();
+  private _searchCancel = new Subject<any>();
+  private _openFilter = new Subject<any>();
   
   public searchSubmit$ = this._searchSubmit.asObservable();
   public searchInput$ = this._searchInput.asObservable();
@@ -22,11 +22,11 @@ export class SearchEventsService {
   }
 
   public triggerSearchCancel() {
-    this._searchCancel.next(true);
+    this._searchCancel.next();
   }
 
   public triggerOpenFilter() {
-    this._openFilter.next(true);
+    this._openFilter.next();
   }
 
   public clear() {

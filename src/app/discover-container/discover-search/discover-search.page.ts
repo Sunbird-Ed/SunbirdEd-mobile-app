@@ -124,7 +124,7 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
   preAppliedFilter: any;
   headerObservable: Subscription;
 
-  @ViewChild('contentView', { static: false }) contentView: IonContent;
+  @ViewChild('contentView', { static: false }) contentView;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -192,7 +192,36 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.initSearchEvents();
   }
 
-  async ionViewWillEnter() {
+  async ngAfterViewInit() {
+    // this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange.pipe(
+    //   rxjsMap((e: CustomEvent) => e.target['value']),
+    //   share(),
+    //   startWith(''),
+    //   debounceTime(500),
+    //   switchMap((v: string) => {
+    //     if (v) {
+    //       return from(this.searchHistoryService.getEntries({
+    //         like: v,
+    //         limit: 5,
+    //         namespace: SearchHistoryNamespaces.LIBRARY
+    //       }).toPromise());
+    //     }
+
+    //     return from(this.searchHistoryService.getEntries({
+    //       limit: 10,
+    //       namespace: SearchHistoryNamespaces.LIBRARY
+    //     }).toPromise());
+    //   }),
+    //   tap(() => {
+    //     setTimeout(() => {
+    //       this.showAddToGroupButtons = false;
+    //       this.changeDetectionRef.detectChanges();
+    //     });
+    //   }) as any
+
+    // );
+
+    // ionViewWillEnter
     this.headerService.showHeaderWithBackButton();
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
@@ -203,9 +232,8 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-  }
 
-  ionViewDidEnter() {
+    // ionViewDidEnter
     if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
@@ -215,36 +243,6 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
-  }
-
-  ngAfterViewInit() {
-    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange.pipe(
-      rxjsMap((e: CustomEvent) => e.target['value']),
-      share(),
-      startWith(''),
-      debounceTime(500),
-      switchMap((v: string) => {
-        if (v) {
-          return from(this.searchHistoryService.getEntries({
-            like: v,
-            limit: 5,
-            namespace: SearchHistoryNamespaces.LIBRARY
-          }).toPromise());
-        }
-
-        return from(this.searchHistoryService.getEntries({
-          limit: 10,
-          namespace: SearchHistoryNamespaces.LIBRARY
-        }).toPromise());
-      }),
-      tap(() => {
-        setTimeout(() => {
-          this.showAddToGroupButtons = false;
-          this.changeDetectionRef.detectChanges();
-        });
-      }) as any
-
-    );
   }
 
   onSearchHistoryTap(searchEntry: SearchEntry) {
@@ -270,6 +268,34 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.searchKeywords = searchKeywords;
     });
 
+    this.searchHistory$ = this.searchEventsService.searchInput$.pipe(
+      rxjsMap((e: String) => e),
+      share(),
+      startWith(''),
+      debounceTime(500),
+      switchMap((v: string) => {
+        if (v) {
+          return from(this.searchHistoryService.getEntries({
+            like: v,
+            limit: 5,
+            namespace: SearchHistoryNamespaces.LIBRARY
+          }).toPromise());
+        }
+
+        return from(this.searchHistoryService.getEntries({
+          limit: 10,
+          namespace: SearchHistoryNamespaces.LIBRARY
+        }).toPromise());
+      }),
+      tap(() => {
+        setTimeout(() => {
+          this.showAddToGroupButtons = false;
+          this.changeDetectionRef.detectChanges();
+        });
+      }) as any
+
+    );
+
     this.searchEventsService.searchSubmit$.subscribe(searchKeywords => {
       this.searchKeywords = searchKeywords;
       this.handleSearch();
@@ -281,6 +307,7 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.searchEventsService.searchCancel$.subscribe(() => {
       this.searchKeywords = '';
+      this.handleCancel();
     });
   }
 
@@ -296,6 +323,9 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
+    }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
     }
   }
 
@@ -1618,7 +1648,7 @@ export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   scrollToTop() {
-    this.contentView.scrollToTop();
+    this.contentView.nativeElement.scrollTop = 0;
   }
 
   goBack() {

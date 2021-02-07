@@ -1,4 +1,4 @@
-<ion-content #contentView class="search-bg">
+<div #contentView class="search-bg">
   <ng-container *ngIf="searchHistory$">
     <ng-container *ngIf="searchHistory$ | async as searchHistory">
       <ng-container *ngIf="!(
@@ -164,7 +164,7 @@
   <div class="empty-search-result ion-text-center" *ngIf="!showLoader && showEmptyMessage" padding-top>
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
-</ion-content>
+</div>
 
 <div class="add-to-group-btn-container" *ngIf="showAddToGroupButtons">	
   <button class="open-btn add-to-group-btn" (click)="openSelectedContent()">{{'VIEW_ACTIVITY' | translate}}</button>	
