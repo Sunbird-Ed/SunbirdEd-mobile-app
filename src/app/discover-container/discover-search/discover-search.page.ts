@@ -54,14 +54,15 @@ import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../../form.constants';
+import { SearchEventsService } from '../search-events-service';
 
 declare const cordova;
 @Component({
   selector: 'search-results',
-  templateUrl: './search-results.page.html',
-  styleUrls: ['./search-results.page.scss'],
+  templateUrl: './discover-search.page.html',
+  styleUrls: ['./discover-search.page.scss'],
 })
-export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
+export class DiscoverSearchPage implements OnInit, AfterViewInit, OnDestroy {
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;
   showLoading: boolean;
@@ -70,7 +71,7 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
-  activityTypeData: any = {};
+  activityTypeData;
   activityList: GroupActivity[] = [];
   isFromGroupFlow = false;
   dialCode: string;
@@ -121,6 +122,7 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
   supportedUserTypesConfig: Array<any>;
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
+  headerObservable: Subscription;
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   constructor(
@@ -152,7 +154,8 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
     private sbProgressLoader: SbProgressLoader,
     private groupHandlerService: GroupHandlerService,
     private navService: NavigationService,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private searchEventsService: SearchEventsService
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -186,16 +189,20 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
+    this.initSearchEvents();
   }
 
   async ionViewWillEnter() {
-    this.headerService.hideHeader();
+    this.headerService.showHeaderWithBackButton();
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
       this.isFirstLaunch = false;
       this.handleSearch(true);
     }
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
   }
 
   ionViewDidEnter() {
@@ -256,6 +263,25 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
       undefined,
       featureIdMap.searchHistory.SEARCH_HISTORY_QUERY_FROM_HISTORY
     );
+  }
+
+  initSearchEvents() {
+    this.searchEventsService.searchInput$.subscribe(searchKeywords => {
+      this.searchKeywords = searchKeywords;
+    });
+
+    this.searchEventsService.searchSubmit$.subscribe(searchKeywords => {
+      this.searchKeywords = searchKeywords;
+      this.handleSearch();
+    });
+
+    this.searchEventsService.openFilter$.subscribe(() => {
+      this.showFilter();
+    });
+
+    this.searchEventsService.searchCancel$.subscribe(() => {
+      this.searchKeywords = '';
+    });
   }
 
   ionViewWillLeave() {
@@ -1638,7 +1664,7 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
     this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
-      this.activityTypeData.activityType,
+      (this.activityTypeData && this.activityTypeData.activityType) || {},
       PageId.SEARCH,
       this.corRelationList,
       -2);
@@ -1670,10 +1696,19 @@ export class SearchResultsPage implements OnInit, AfterViewInit, OnDestroy {
           ...CsGroupAddableBloc.instance.state.params,
           corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
-          activityType: this.activityTypeData.activityType
+          activityType: (this.activityTypeData && this.activityTypeData.activityType) || {}
         }
       }
     );
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+        break;
+      default: console.warn('Use Proper Event name');
+    }
   }
 
 }

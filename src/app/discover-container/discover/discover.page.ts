@@ -14,10 +14,10 @@ import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subje
 
 @Component({
   selector: 'app-discover',
-  templateUrl: './discover-one.page.html',
-  styleUrls: ['./discover-one.page.scss'],
+  templateUrl: './discover.page.html',
+  styleUrls: ['./discover.page.scss'],
 })
-export class DiscoverOnePage implements OnInit, OnDestroy {
+export class DiscoverPage implements OnInit, OnDestroy {
 
   appLabel: string;
   headerObservable: Subscription;
@@ -172,7 +172,7 @@ export class DiscoverOnePage implements OnInit, OnDestroy {
         if (!displayItems[count].data) {
           continue;
         }
-        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.name === 'SEARCH_CONTENTS_BY_POULAR_CATEGORY')) {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type === 'SEARCH_CONTENTS_BY_POULAR_CATEGORY')) {
           displayItems[count] = this.mapPrimaryCategoryTheme(displayItems[count]);
         }
       }

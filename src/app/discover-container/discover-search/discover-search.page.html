@@ -1,27 +1,3 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-      class="search-input" (keyup.enter)="handleSearch()"
-      (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
-      [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_PLACEHOLDER' | translate"></ion-input>
-    <ion-buttons slot="start">
-      <ion-button icon-only (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons class="search-buttons-group" slot="primary" *ngIf="!dialCode">
-      <ion-button icon-only (click)="handleSearch()" *ngIf="(searchKeywords && !filterIcon) || (!searchKeywords && isFromGroupFlow)">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_search.svg" alt="search">
-      </ion-button>
-      <ion-button icon-only (click)="handleCancel()" *ngIf="filterIcon && searchKeywords">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_close.svg" alt="close">
-      </ion-button>
-      <ion-button icon-only (click)="showFilter()" *ngIf="filterIcon">
-        <img style="width: 18px; height: 18px" src="./assets/imgs/ic_action_filter.svg" alt="filter">
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
 <ion-content #contentView class="search-bg">
   <ng-container *ngIf="searchHistory$">
     <ng-container *ngIf="searchHistory$ | async as searchHistory">

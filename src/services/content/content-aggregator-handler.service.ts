@@ -101,12 +101,12 @@ export class ContentAggregatorHandler {
             return aggregatorResponse;
         }
         aggregatorResponse.forEach((displaySection) => {
-            if (displaySection.dataSrc.name === 'CONTENT_FACETS_ADMIN' && displaySection.data && displaySection.data.length) {
+            if (displaySection.dataSrc.type === 'CONTENT_FACETS_ADMIN' && displaySection.data && displaySection.data.length) {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS' ||
-                         displaySection.dataSrc.name === 'TRACKABLE_COURSE_CONTENTS') {
+            } else if (displaySection.dataSrc.type === 'TRACKABLE_CONTENTS' ||
+                         displaySection.dataSrc.type === 'TRACKABLE_COURSE_CONTENTS') {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
                     value['cardImg'] = value['courseLogoUrl'] || 'assets/imgs/ic_launcher.png';
                 });

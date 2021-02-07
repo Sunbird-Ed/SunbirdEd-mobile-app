@@ -24,11 +24,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: RouterLinks.DISCOVER,
+        path: RouterLinks.DISCOVER_CONTAINER,
         children: [
           {
             path: '',
-            loadChildren: '../discover/discover.module#DiscoverPageModule'
+            loadChildren: '../discover-container/discover-container.module#DiscoverContainerPageModule'
           }
         ]
       },

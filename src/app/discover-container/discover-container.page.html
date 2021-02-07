@@ -1,7 +1,7 @@
 <ion-content>
   <div class="container-focus">
-    <div class="search-info pt-16 mx-24" [@labelVisibility]="searchLabelVisibility">
-      <div>
+    <div class="search-info pt-16 mx-24">
+      <div [@labelVisibility]="searchLabelVisibility">
         <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appLabel} }}</strong>
         <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appLabel} }}</p>
       </div>

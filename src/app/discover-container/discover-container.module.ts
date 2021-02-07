@@ -1,3 +1,4 @@
+import { RouterLinks } from './../app.constant';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,30 +7,30 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8'
 
 import { IonicModule } from '@ionic/angular';
 
-import { DiscoverPage } from './discover.page';
+import { DiscoverContainerPage } from './discover-container.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
-import { DiscoverOnePage } from './discover-one/discover-one.page';
-import { SearchResultsPage } from './search-results/search-results.page';
+import { DiscoverPage } from './discover/discover.page';
+import { DiscoverSearchPage } from './discover-search/discover-search.page';
 import { ComponentsModule } from '../components/components.module';
 import { SearchEventsService } from './search-events-service';
 
 const routes: Routes = [
   {
     path: '',
-    component: DiscoverPage,
+    component: DiscoverContainerPage,
     children: [
       {
-        path: 'discover-one',
-        component: DiscoverOnePage
+        path: RouterLinks.DISCOVER,
+        component: DiscoverPage
       },
       {
-        path: 'search-results',
-        component: SearchResultsPage
+        path: RouterLinks.DISCOVER_SEARCH,
+        component: DiscoverSearchPage
       },
       {
         path: '',
-        redirectTo: 'discover-one',
+        redirectTo: 'discover',
         pathMatch: 'full'
       }
     ],
@@ -48,12 +49,12 @@ const routes: Routes = [
     ComponentsModule
   ],
   declarations: [
+    DiscoverContainerPage,
     DiscoverPage,
-    DiscoverOnePage,
-    SearchResultsPage
+    DiscoverSearchPage
   ],
   providers: [
     SearchEventsService
   ]
 })
-export class DiscoverPageModule {}
+export class DiscoverContainerPageModule {}

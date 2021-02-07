@@ -50,7 +50,7 @@ export class UserHomePage implements OnInit, OnDestroy {
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
@@ -284,13 +284,13 @@ export class UserHomePage implements OnInit, OnDestroy {
         if (!displayItems[count].data) {
           continue;
         }
-        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.name === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
           displayItems[count] = this.mapSubjectTheme(displayItems[count]);
         }
-        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.name === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
           displayItems[count] = this.mapPrimaryCategoryTheme(displayItems[count]);
         }
-        if (displayItems[count].dataSrc && displayItems[count].dataSrc.name === 'RECENTLY_VIEWED_CONTENTS') {
+        if (displayItems[count].dataSrc && displayItems[count].dataSrc.type === 'RECENTLY_VIEWED_CONTENTS') {
           displayItems[count] = this.modifyContentData(displayItems[count]);
         }
       }

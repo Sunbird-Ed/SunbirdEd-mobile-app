@@ -1,42 +1,40 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import {ContentFilterConfig, RouterLinks} from '../app.constant';
-import { NavigationExtras, Router } from '@angular/router';
-import { AppHeaderService, CommonUtilService, ContentAggregatorHandler, PageId } from '@app/services';
+import { RouterLinks} from '../app.constant';
+import { Router } from '@angular/router';
+import { AppHeaderService } from '@app/services';
 import { Events } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { CachedItemRequestSourceFrom, ContentAggregatorRequest, ContentSearchCriteria } from '@project-sunbird/sunbird-sdk';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
-import { NavigationService } from '@app/services/navigation-handler.service';
 import { SearchEventsService } from './search-events-service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-discover',
-  templateUrl: './discover.page.html',
-  styleUrls: ['./discover.page.scss'],
+  templateUrl: './discover-container.page.html',
+  styleUrls: ['./discover-container.page.scss'],
   animations: [
     trigger('labelVisibility', [
       state(
         'show',
         style({
-          height: 'auto'
+          maxHeight: '50vh',
+          overflow: 'hidden'
         })
       ),
       state(
         'hide',
         style({
-          opacity: '0'
+          maxHeight: '0',
+          overflow: 'hidden'
         })
       ),
       transition('* => show', [animate('500ms ease-out')]),
-      transition('show => hide', [animate('500ms ease-out')])
+      transition('show => hide', [animate('500ms ease-in')])
     ])
   ],
 })
-export class DiscoverPage implements OnInit, OnDestroy {
+export class DiscoverContainerPage implements OnInit, OnDestroy {
 
   appLabel: string;
   headerObservable: Subscription;
@@ -72,7 +70,7 @@ export class DiscoverPage implements OnInit, OnDestroy {
   }
 
   async openSearchPage() {
-    this.router.navigate(['tabs/discover/search-results'], {state:{}});
+    this.router.navigate([`${RouterLinks.TABS}/${RouterLinks.DISCOVER_CONTAINER}/${RouterLinks.DISCOVER_SEARCH}`], {state:{}});
   }
 
   handleHeaderEvents($event) {
@@ -120,6 +118,8 @@ export class DiscoverPage implements OnInit, OnDestroy {
 
   onSearchFocus() {
     this.searchLabelVisibility = 'hide';
+    this.openSearchPage()
+    this.headerService.showHeaderWithBackButton();
   }
 
   onSearchBlur() {

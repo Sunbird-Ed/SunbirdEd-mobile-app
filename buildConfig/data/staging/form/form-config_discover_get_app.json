@@ -1,1 +1,287 @@
-{"id":"api.form.read","params":{"resmsgid":"ba01ec9f-45c7-47a8-965b-b783e06913dc","msgid":"65aa2046-619c-496d-a539-7d3b417ca1f9","status":"successful"},"responseCode":"OK","result":{"form":{"type":"config","subType":"discoverContent","action":"get","component":"app","rootOrgId":"*","data":{"templateName":"discover","action":"get","fields":[{"index":0,"title":"{\"en\":\"Popular categories\"}","isEnabled":true,"dataSrc":{"name":"SEARCH_CONTENTS_BY_POULAR_CATEGORY","values":[{"facet":"Digital Textbook","searchCriteria":{"facets":[],"primaryCategory":["Digital Textbook"],"mode":"soft","searchType":"search"},"primaryFacetFilters":[{"code":"board","translations":"{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}","values":[],"name":"Board/Syllabus","index":1},{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2}],"aggregate":{"groupBy":"subject"}},{"facet":"Courses","searchCriteria":{"facets":[],"primaryCategory":["Course"],"mode":"soft","searchType":"search"},"primaryFacetFilters":[{"code":"board","translations":"{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}","values":[],"name":"Board/Syllabus","index":1},{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2}],"aggregate":{"groupBy":"subject"}},{"facet":"Tv Classes","searchCriteria":{"facets":[],"primaryCategory":["Explanation Content"],"mode":"soft","searchType":"search"},"primaryFacetFilters":[{"code":"board","translations":"{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}","values":[],"name":"Board/Syllabus","index":1},{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2}],"aggregate":{"groupBy":"subject"}}]},"theme":{"component":"sb-pills-grid","inputs":{"pillShape":"default"}}},{"index":1,"title":"{\"en\":\"Search from other boards\"}","isEnabled":true,"component":"tag","shape":"circle","dataSrc":{"name":"SEARCH_CONTENTS_FROM_BOARDS","values":[{"facet":"{\"en\":\"AP\"}","search":{"facets":["board"],"filters":{"board":["ts_k-12_2"]}},"primaryFacetFilters":[{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2},{"code":"medium","translations":"{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}","values":[],"name":"Medium","index":4}],"aggregate":{"groupBy":"subject"}},{"facet":"{\"en\":\"AS\"}","search":{"facets":["board"],"filters":{"board":["as_k-12_5"]}},"primaryFacetFilters":[{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2},{"code":"medium","translations":"{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}","values":[],"name":"Medium","index":4}],"aggregate":{"groupBy":"subject"}},{"facet":"{\"en\":\"KA\"}","search":{"facets":["board"],"filters":{"board":["ka_k-12_1"]}},"primaryFacetFilters":[{"code":"gradeLevel","translations":"{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}","values":[],"name":"Class","index":2},{"code":"medium","translations":"{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}","values":[],"name":"Medium","index":4}],"aggregate":{"groupBy":"subject"}}]},"theme":{"component":"sb-pills-grid","inputs":{"pillShape":"circle","pillsViewType":"scroll"}}},{"index":2,"title":"{\"en\":\"Trending courses from your state\"}","isEnabled":true,"dataSrc":{"name":"SEARCH_TRENDING_COURSE","search":{"facets":["primaryCategory"],"filters":{"primaryCategory":["Course"]}}},"theme":{"component":"sb-course-cards-hlist","inputs":{"type":"course_card_grid","hideProgress":true,"viewMoreButtonText":"{\"en\":\"View all\"}"}}}]}}},"ts":"2019-12-13T07:50:01.901Z","ver":"1.0"}
+{
+  "id": "api.form.read",
+  "params": {
+    "resmsgid": "ba01ec9f-45c7-47a8-965b-b783e06913dc",
+    "msgid": "65aa2046-619c-496d-a539-7d3b417ca1f9",
+    "status": "successful"
+  },
+  "responseCode": "OK",
+  "result": {
+    "form": {
+      "type": "config",
+      "subType": "discoverContent",
+      "action": "get",
+      "component": "app",
+      "rootOrgId": "*",
+      "data": {
+        "templateName": "discover",
+        "action": "get",
+        "fields": [
+          {
+            "dataSrc": {
+              "type": "CONTENT_FACETS",
+              "values": [
+                {
+                  "facet": "Digital Textbook",
+                  "searchCriteria": {
+                    "facets": [],
+                    "primaryCategory": [
+                      "Digital Textbook"
+                    ],
+                    "mode": "soft",
+                    "searchType": "search"
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "board",
+                      "translations": "{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}",
+                      "values": [],
+                      "name": "Board/Syllabus",
+                      "index": 1
+                    },
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                },
+                {
+                  "facet": "Courses",
+                  "searchCriteria": {
+                    "facets": [],
+                    "primaryCategory": [
+                      "Course"
+                    ],
+                    "mode": "soft",
+                    "searchType": "search"
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "board",
+                      "translations": "{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}",
+                      "values": [],
+                      "name": "Board/Syllabus",
+                      "index": 1
+                    },
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                },
+                {
+                  "facet": "Tv Classes",
+                  "searchCriteria": {
+                    "facets": [],
+                    "primaryCategory": [
+                      "Explanation Content"
+                    ],
+                    "mode": "soft",
+                    "searchType": "search"
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "board",
+                      "translations": "{\"en\":\"Board/Syllabus\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\"}",
+                      "values": [],
+                      "name": "Board/Syllabus",
+                      "index": 1
+                    },
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                }
+              ],
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 0,
+                "title": "{\"en\":\"Popular categories\"}",
+                "theme": {
+                  "component": "sb-pills-grid",
+                  "inputs": {
+                    "pillShape": "default",
+                    "pillBorder": "rounded"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "dataSrc": {
+              "type": "CONTENT_FACETS",
+              "values": [
+                {
+                  "facet": "{\"en\":\"AP\"}",
+                  "searchCriteria": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "ts_k-12_2"
+                      ]
+                    }
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    },
+                    {
+                      "code": "medium",
+                      "translations": "{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}",
+                      "values": [],
+                      "name": "Medium",
+                      "index": 4
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"AS\"}",
+                  "searchCriteria": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "as_k-12_5"
+                      ]
+                    }
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    },
+                    {
+                      "code": "medium",
+                      "translations": "{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}",
+                      "values": [],
+                      "name": "Medium",
+                      "index": 4
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                },
+                {
+                  "facet": "{\"en\":\"KA\"}",
+                  "searchCriteria": {
+                    "facets": [
+                      "board"
+                    ],
+                    "filters": {
+                      "board": [
+                        "ka_k-12_1"
+                      ]
+                    }
+                  },
+                  "primaryFacetFilters": [
+                    {
+                      "code": "gradeLevel",
+                      "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\"}",
+                      "values": [],
+                      "name": "Class",
+                      "index": 2
+                    },
+                    {
+                      "code": "medium",
+                      "translations": "{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\"}",
+                      "values": [],
+                      "name": "Medium",
+                      "index": 4
+                    }
+                  ],
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                }
+              ],
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 1,
+                "title": "{\"en\":\"Search from other boards\"}",
+                "isEnabled": true,
+                "component": "tag",
+                "shape": "circle",
+                "theme": {
+                  "component": "sb-pills-grid",
+                  "inputs": {
+                    "pillShape": "circle",
+                    "pillsViewType": "scroll"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "dataSrc": {
+              "type": "CONTENTS",
+              "request": {
+                "facets": [
+                  "primaryCategory"
+                ],
+                "filters": {
+                  "primaryCategory": [
+                    "Course"
+                  ]
+                }
+              },
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 2,
+                "title": "{\"en\":\"Trending courses from your state\"}",
+                "theme": {
+                  "component": "sb-course-cards-hlist",
+                  "inputs": {
+                    "type": "course_card_grid",
+                    "hideProgress": true,
+                    "viewMoreButtonText": "{\"en\":\"View all\"}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "ts": "2019-12-13T07:50:01.901Z",
+  "ver": "1.0"
+}

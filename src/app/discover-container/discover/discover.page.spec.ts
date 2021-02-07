@@ -1,6 +1,6 @@
-import { DiscoverOnePage } from './discover-one.page';
+import { DiscoverPage } from './discover.page';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Events } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
@@ -8,7 +8,7 @@ import { CommonUtilService, FormAndFrameworkUtilService } from '../../../service
 import { NavigationService } from '../../../services/navigation-handler.service';
 
 describe('DiscoverPage', () => {
-  let discoverPage: DiscoverOnePage;
+  let discoverPage: DiscoverPage;
   const mockAppVersion: Partial<AppVersion> = {
     getAppName: jest.fn(() => Promise.resolve('sunbird'))
   };
@@ -28,9 +28,10 @@ describe('DiscoverPage', () => {
     navigateToCollection: jest.fn(),
     navigateToContent: jest.fn()
   };
+  const mockPopoverController: Partial<PopoverController> = {};
 
   beforeAll(() => {
-    discoverPage = new DiscoverOnePage(
+    discoverPage = new DiscoverPage(
       mockAppVersion as AppVersion, 
       mockHeaderService as AppHeaderService,
       mockRouter as Router,
@@ -38,7 +39,8 @@ describe('DiscoverPage', () => {
       mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
       mockContentAggregatorHandler as ContentAggregatorHandler,
       mockNavService as NavigationService,
-      mockCommonUtilService as CommonUtilService
+      mockCommonUtilService as CommonUtilService,
+      mockPopoverController as PopoverController
     );
   });
 
