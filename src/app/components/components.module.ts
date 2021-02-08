@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
+import { ApplicationHeaderKebabMenuComponent } from './application-header/application-header-kebab-menu.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { PbHorizontalComponent } from './pb-horizontal/pb-horizontal.component';
@@ -62,6 +63,7 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
@@ -122,6 +124,7 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
   ],
   entryComponents: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
@@ -161,6 +164,7 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
   ],
   exports: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
