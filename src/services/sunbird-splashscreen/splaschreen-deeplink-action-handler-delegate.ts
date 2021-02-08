@@ -203,7 +203,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Library',
         code: 'library',
         values: '\\/(resources|explore)$',
-        route: 'tabs/resources'
+        route: 'tabs/resources',
+        priority: 1
+      },
+      {
+        name: 'Search',
+        code: 'search',
+        values: '\\/(resources|explore)(\\?.*|$)',
+        route: 'tabs/resources',
+        priority: 2
       },
       {
         name: 'Profile',
@@ -368,6 +376,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return (this.currentAppVersionCode
       && requiredVersionCode
       && this.currentAppVersionCode >= requiredVersionCode);
+  }
+
+  private pick(payloadUrl: string, queryParams: string[]) {
+    const url = new URL(payloadUrl);
+    const filter = {};
+    queryParams.forEach((queryParam) => {
+      const values = url.searchParams.getAll(queryParam);
+      if (values) {
+        filter[queryParam] = values;
+      }
+    });
+    return filter;
   }
 
   private async upgradeAppPopover(requiredVersionCode) {
@@ -547,8 +567,30 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.navigateContent(identifier, true, content, payloadUrl, route);
       }
     } else {
+      const selectedTab = this.getQueryParamValue(payloadUrl, 'selectedTab');
+      let extras = {};
+      if (selectedTab) {
+        // Route to new search page
+        //   for(var pair of searchParams.entries()) {
+        //     console.log(pair[0]+ ', '+ pair[1]);
+        //  }
+        const filter = this.pick(payloadUrl, ['medium', 'gradeLevel', 'board', 'subject']);
+        extras = {
+          state: {
+            source: PageId.SPLASH_SCREEN,
+            preAppliedFilter: {
+              filters: {
+                status: ['Live'],
+                objectType: ['Content'],
+                ...filter
+              }
+            }
+          }
+        }
+        route = 'search';
+      }
       this.setTabsRoot();
-      this.router.navigate([route]);
+      this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
   }
