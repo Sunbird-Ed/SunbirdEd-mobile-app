@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CourseCertificate} from '@project-sunbird/client-services/models';
 import {CourseService} from 'sunbird-sdk';
 import {CommonUtilService} from '@app/services/common-util.service';
@@ -54,7 +54,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
-    this.pageData = this.router.getCurrentNavigation().extras.state.request as any;
+    this.pageData = this.router.getCurrentNavigation().extras.state.request;
 
     const headerConfig = this.appHeaderService.getDefaultPageConfig();
     headerConfig.pageTitle = this.pageData.certificate.name;
@@ -77,75 +77,78 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     this.actionEventsSubscription.unsubscribe();
   }
 
-  public onGestureEvent/* istanbul ignore next */(ev) {
-    const el = this.scrollWrap.nativeElement;
+  public onGestureEvent(ev) {
+    /* istanbul ignore next */
+    (/* gesture based pan/zoom */() => {
+      const el = this.scrollWrap.nativeElement;
 
-    let {
-      posX,
-      posY,
-      scale,
-      last_scale,
-      last_posX,
-      last_posY,
-      max_pos_x,
-      max_pos_y,
-      transform
-    } = this.gestureState;
+      let {
+        posX,
+        posY,
+        scale,
+        last_scale,
+        last_posX,
+        last_posY,
+        max_pos_x,
+        max_pos_y,
+        transform
+      } = this.gestureState;
 
-    // pan
-    if (scale !== 1) {
-      posX = last_posX + ev.deltaX;
-      posY = last_posY + ev.deltaY;
-      max_pos_x = Math.ceil((scale - 1) * el.clientWidth / 2);
-      max_pos_y = Math.ceil((scale - 1) * el.clientHeight / 2);
-      if (posX > max_pos_x) {
-        posX = max_pos_x;
+      // pan
+      if (scale !== 1) {
+        posX = last_posX + ev.deltaX;
+        posY = last_posY + ev.deltaY;
+        max_pos_x = Math.ceil((scale - 1) * el.clientWidth / 2);
+        max_pos_y = Math.ceil((scale - 1) * el.clientHeight / 2);
+        if (posX > max_pos_x) {
+          posX = max_pos_x;
+        }
+        if (posX < -max_pos_x) {
+          posX = -max_pos_x;
+        }
+        if (posY > max_pos_y) {
+          posY = max_pos_y;
+        }
+        if (posY < -max_pos_y) {
+          posY = -max_pos_y;
+        }
       }
-      if (posX < -max_pos_x) {
-        posX = -max_pos_x;
+
+
+      // pinch
+      if (ev.type === 'pinch') {
+        scale = Math.max(.999, Math.min(last_scale * (ev.scale), 4));
       }
-      if (posY > max_pos_y) {
-        posY = max_pos_y;
+      if (ev.type === 'pinchend') {last_scale = scale; }
+
+      // panend
+      if (ev.type === 'panend') {
+        last_posX = posX < max_pos_x ? posX : max_pos_x;
+        last_posY = posY < max_pos_y ? posY : max_pos_y;
       }
-      if (posY < -max_pos_y) {
-        posY = -max_pos_y;
+
+      if (scale !== 1) {
+        transform =
+            'translate3d(' + posX + 'px,' + posY + 'px, 0) ' +
+            'scale3d(' + scale + ', ' + scale + ', 1)';
       }
-    }
 
+      if (transform) {
+        el.style.webkitTransform = transform;
+      }
 
-    // pinch
-    if (ev.type === 'pinch') {
-      scale = Math.max(.999, Math.min(last_scale * (ev.scale), 4));
-    }
-    if (ev.type === 'pinchend') {last_scale = scale; }
-
-    // panend
-    if (ev.type === 'panend') {
-      last_posX = posX < max_pos_x ? posX : max_pos_x;
-      last_posY = posY < max_pos_y ? posY : max_pos_y;
-    }
-
-    if (scale !== 1) {
-      transform =
-        'translate3d(' + posX + 'px,' + posY + 'px, 0) ' +
-        'scale3d(' + scale + ', ' + scale + ', 1)';
-    }
-
-    if (transform) {
-      el.style.webkitTransform = transform;
-    }
-
-    this.gestureState = {
-      posX,
-      posY,
-      scale,
-      last_scale,
-      last_posX,
-      last_posY,
-      max_pos_x,
-      max_pos_y,
-      transform
-    };
+      this.gestureState = {
+        posX,
+        posY,
+        scale,
+        last_scale,
+        last_posX,
+        last_posY,
+        max_pos_x,
+        max_pos_y,
+        transform
+      };
+    })();
   }
 
   private async loadCertificate() {

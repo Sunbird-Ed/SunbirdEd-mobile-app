@@ -100,7 +100,7 @@ describe('CertificateViewPage', () => {
         });
     });
 
-    describe('ngAfterViewInit', () => {
+    describe('ngAfterViewInit()', () => {
         it('should fetch and render certificate on screen', (done) => {
             const htmlElement = document.createElement('div');
             certificateViewPage.certificateContainer = new ElementRef(htmlElement);
@@ -160,6 +160,37 @@ describe('CertificateViewPage', () => {
                 expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'image/png');
                 done();
             });
+        });
+
+        it('should throw error for unknown events', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockAppHeaderService.headerEventEmitted$ = of({
+                name: 'kebabMenu',
+                event: {
+                    option: { label: 'UNKNOWN', value: {} }
+                }
+            });
+
+            certificateViewPage.ngOnInit();
+            certificateViewPage.ngAfterViewInit();
+
+            setTimeout(() => {
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+    
+    describe('ngOnDestroy()', () => {
+        it('should unsubscribe header events',  () => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockAppHeaderService.headerEventEmitted$ = EMPTY;
+
+            certificateViewPage.ngAfterViewInit();
+            certificateViewPage.ngOnDestroy();
         });
     });
 });

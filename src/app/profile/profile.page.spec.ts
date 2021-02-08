@@ -410,8 +410,7 @@ describe('Profile.page', () => {
             profilePage.getSelfDeclaredDetails();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('I_AM_A_PERSONA_WITH_TENANT', {
-                    '%persona': 'sample_persona',
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_LBL_SHARE_DATA_WITH', {
                     '%tenant': 'sample_label'
                 });
                 done();
