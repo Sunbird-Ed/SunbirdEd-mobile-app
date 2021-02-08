@@ -1138,5 +1138,7 @@
   "FRMELEMNTS_LBL_SUBPERSONA": "Subrole",
   "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
   "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
-  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School"
+  "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
+  "DOWNLOAD_AS_PDF": "Download as PDF",
+  "DOWNLOAD_AS_PNG": "Download as PNG"
 }

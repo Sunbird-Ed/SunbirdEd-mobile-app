@@ -77,7 +77,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     this.actionEventsSubscription.unsubscribe();
   }
 
-  public onGestureEvent(ev) {
+  public onGestureEvent/* istanbul ignore next */(ev) {
     const el = this.scrollWrap.nativeElement;
 
     let {
