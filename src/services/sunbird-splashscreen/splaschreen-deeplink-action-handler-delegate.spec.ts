@@ -8,7 +8,7 @@ import {
   FrameworkService,
   ContentService,
   SharedPreferences,
-  AuthService, 
+  AuthService,
   ProfileService,
   FrameworkUtilService,
   TelemetryService,
@@ -27,6 +27,7 @@ import { SbProgressLoader } from '../sb-progress-loader.service';
 import { Location } from '@angular/common';
 import { NavigationService } from '../navigation-handler.service';
 import { ContentPlayerHandler } from '../content/player/content-player-handler';
+import { PageId } from '../telemetry-constants';
 
 
 
@@ -101,7 +102,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
   });
 
   describe('onAction()', () => {
-    it('should navigate to the Profile page if user is logged in', () => {
+    it('should navigate to the Profile page if user is logged in', (done) => {
       // arrange
       const payload = {
         url: 'https://staging.sunbirded.org/profile'
@@ -115,10 +116,13 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
-      expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+      setTimeout(() => {
+        expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+        done();
+      }, 0);
     });
-    
-    it('should navigate to the Guest-Profile page if user is not logged in', () => {
+
+    it('should navigate to the Guest-Profile page if user is not logged in', (done) => {
       // arrange
       const payload = {
         url: 'https://staging.sunbirded.org/profile'
@@ -132,10 +136,13 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
-      expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+      setTimeout(() => {
+        expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+        done();
+      }, 0);
     });
 
-    it('should navigate to the library page if content ID is changed', () => {
+    it('should navigate to the library page if content ID is changed', (done) => {
       // arrange
       const payload = {
         url: 'https://staging.sunbirded.org/learn/course/do_21312548637480550413399?contentId=asdsd'
@@ -146,10 +153,50 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn();
+      mockTelemetryService.updateCampaignParameters = jest.fn();
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+      const content = {
+        identifier: 'do_212911645382959104165',
+        primaryCategory: 'Digital Textbook',
+        contentData: { primaryCategory: 'Digital Textbook', licenseDetails: undefined, attributions: ['sample-3', 'sample-1'] },
+        isAvailableLocally: false,
+        children: { identifier: 'do_212911645382959104166' }
+      };
+      mockContentService.getContentDetails = jest.fn(() => of(content));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
-      expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+      setTimeout(() => {
+        expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([{ id: 'asdsd', type: 'ContentId' }]);
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(
+          { contentId: 'asdsd' },
+          PageId.HOME,
+          { id: 'do_21312548637480550413399', type: 'Content', version: undefined },
+          [{ id: 'Deeplink', type: 'AccessType' }]);
+        expect(mockContentService.getContentDetails).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should navigate to the search page if selectedTab is available in the deeplink', (done) => {
+      // arrange
+      const payload = {
+        url: 'https://staging.sunbirded.org/explore?medium=Hindi&medium=English&gradeLevel=Class%201&gradeLevel=Class%2010&&&publisher=NCERT&channel=01283607456185548825093&board=CBSE&selectedTab=textbook'
+      }
+      mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+      mockSbProgressLoader.show = jest.fn();
+      mockSbProgressLoader.hide = jest.fn();
+      mockSharedPreferences.getString = jest.fn(() => of('true'));
+      mockRouter.navigate = jest.fn();
+      // act
+      splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
+      //assert
+      setTimeout(() => {
+        expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+        done();
+      }, 0);
     });
   });
 
