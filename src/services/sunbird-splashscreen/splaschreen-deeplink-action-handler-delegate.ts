@@ -144,7 +144,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
-    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number }[] = [
+    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number, search?: {} }[] = [
       {
         name: 'Dialcode parser',
         code: 'dialcode',
@@ -194,24 +194,61 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       },
       {
         name: 'Course tab',
-        code: 'courseTab',
-        values: '^.*explore-course(\\?.*|$)',
-        route: 'tabs/courses',
+        code: 'searchCourse',
+        values: '\\/(explore-course|learn)(\\?.*|$)',
+        route: 'search',
+        search: {
+          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filters: {
+            primaryCategory: ['Course', 'Course Assessment']
+          }
+        },
         priority: 4
       },
       {
-        name: 'Library',
-        code: 'library',
-        values: '\\/(resources|explore)$',
-        route: 'tabs/resources',
-        priority: 1
+        name: 'Search',
+        code: 'searchTextbook',
+        values: '\\/(resources|explore)(\\?.*selectedTab=textbook|$)',
+        route: 'search',
+        search: {
+          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filters: {
+            primaryCategory: ['Digital Textbook', 'eTextbook']
+          }
+        },
+        priority: 2
       },
       {
         name: 'Search',
-        code: 'search',
-        values: '\\/(resources|explore)(\\?.*|$)',
-        route: 'tabs/resources',
+        code: 'searchTvProgram',
+        values: '\\/(resources|explore)\\?.*selectedTab=tvProgram',
+        route: 'search',
+        search: {
+          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filters: {
+            primaryCategory: ['TVLesson']
+          }
+        },
         priority: 2
+      },
+      {
+        name: 'Search',
+        code: 'searchAll',
+        values: '\\/(search\\/Library|explore)\\/1(\\?.*|$)',
+        route: 'search',
+        search: {
+          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filters: {
+            primaryCategory: ['Collection','Resource',
+            'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
+            'eTextbook', 'Explanation Content', 'Learning Resource',
+            'Practice Question Set', 'Teacher Resource',
+            'LessonPlan', 'FocusSpot', 'Learning Outcome Definition',
+            'Curiosity Questions', 'MarkingSchemeRubric', 'ExplanationResource',
+            'ExperientialResource', 'Practice Resource', 'TVLesson']
+          }
+        },
+        priority: 1
       },
       {
         name: 'Profile',
@@ -233,12 +270,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     deepLinkUrlConfig.forEach(config => {
       const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
       if (!!urlRegexMatch && (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config))) {
-          if (config.code === 'profile' && !this.appGlobalServices.isUserLoggedIn()) {
-            config.route = 'tabs/guest-profile';
-          }
-          matchedDeeplinkConfig = config;
-          urlMatch = urlRegexMatch;
+        if (config.code === 'profile' && !this.appGlobalServices.isUserLoggedIn()) {
+          config.route = 'tabs/guest-profile';
         }
+        matchedDeeplinkConfig = config;
+        urlMatch = urlRegexMatch;
+      }
     });
 
     if (!matchedDeeplinkConfig) {
@@ -277,15 +314,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await this.setOnboradingData(payloadUrl);
       }
 
-      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route);
+      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig);
     }
   }
 
   // Lesser the value higher the priority
-  private validateDeeplinkPriority(matchedDeeplinkConfig, config){
+  private validateDeeplinkPriority(matchedDeeplinkConfig, config) {
     return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
-    (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-      && config.priority && matchedDeeplinkConfig.priority > config.priority)
+      (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
+        && config.priority && matchedDeeplinkConfig.priority > config.priority)
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
@@ -378,9 +415,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       && this.currentAppVersionCode >= requiredVersionCode);
   }
 
-  private pick(payloadUrl: string, queryParams: string[]) {
+  private pick(payloadUrl: string, matchedDeeplinkConfig) {
+    if (!matchedDeeplinkConfig.search) {
+      return undefined;
+    }
+    const queryParams = matchedDeeplinkConfig.search.queryParams;
     const url = new URL(payloadUrl);
-    const filter = {};
+    const filter = matchedDeeplinkConfig.search.filters || {};
     queryParams.forEach((queryParam) => {
       const values = url.searchParams.getAll(queryParam);
       if (values) {
@@ -547,7 +588,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async handleNavigation(payloadUrl, identifier, dialCode, route) {
+  private async handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig) {
+    const route = matchedDeeplinkConfig.route;
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();
@@ -567,14 +609,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.navigateContent(identifier, true, content, payloadUrl, route);
       }
     } else {
-      const selectedTab = this.getQueryParamValue(payloadUrl, 'selectedTab');
       let extras = {};
-      if (selectedTab) {
-        // Route to new search page
-        //   for(var pair of searchParams.entries()) {
-        //     console.log(pair[0]+ ', '+ pair[1]);
-        //  }
-        const filter = this.pick(payloadUrl, ['medium', 'gradeLevel', 'board', 'subject']);
+      const filter = this.pick(payloadUrl, matchedDeeplinkConfig);
+      if (filter && Object.keys(filter).length) {
         extras = {
           state: {
             source: PageId.SPLASH_SCREEN,
@@ -587,10 +624,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             }
           }
         }
-        route = 'search';
       }
       this.setTabsRoot();
-      this.router.navigate([route], extras);
+      // TODO: Needs to check route exists or not before navigating
+      this.router.navigate([route], extras)
+      .catch(e => {
+        console.error('splash-screen:handleNavigation', e);
+      });
       this.closeProgressLoader();
     }
   }

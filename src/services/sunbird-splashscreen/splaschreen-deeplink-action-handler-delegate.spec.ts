@@ -112,7 +112,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
-      mockRouter.navigate = jest.fn();
+      mockRouter.navigate = jest.fn(() => Promise.resolve(true));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
@@ -132,7 +132,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
-      mockRouter.navigate = jest.fn();
+      mockRouter.navigate = jest.fn(() => Promise.resolve(true));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
@@ -152,7 +152,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
-      mockRouter.navigate = jest.fn();
+      mockRouter.navigate = jest.fn(() => Promise.resolve(true));
       mockTelemetryService.updateCampaignParameters = jest.fn();
       mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
       const content = {
@@ -189,7 +189,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
-      mockRouter.navigate = jest.fn();
+      mockRouter.navigate = jest.fn(() => Promise.resolve(true));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
       //assert
