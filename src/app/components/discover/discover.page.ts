@@ -17,7 +17,7 @@ import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subje
   templateUrl: './discover.page.html',
   styleUrls: ['./discover.page.scss'],
 })
-export class DiscoverPage implements OnInit, OnDestroy {
+export class DiscoverComponent implements OnInit, OnDestroy {
 
   appLabel: string;
   headerObservable: Subscription;
@@ -41,12 +41,6 @@ export class DiscoverPage implements OnInit, OnDestroy {
       this.appLabel = appName;
     });
     this.fetchDisplayElements();
-  }
-
-  async ionViewWillEnter() {
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -83,7 +77,6 @@ export class DiscoverPage implements OnInit, OnDestroy {
       case 'notification':
         this.redirectToNotifications();
         break;
-
       default: console.warn('Use Proper Event name');
     }
   }

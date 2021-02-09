@@ -104,7 +104,6 @@ export class FiltersPage {
       undefined,
       values);
     this.events.publish('search.applyFilter', this.filterCriteria);
-
     this.location.back();
   }
 

@@ -70,7 +70,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
-  activityTypeData: any = {};
+  activityTypeData: any;
   activityList: GroupActivity[] = [];
   isFromGroupFlow = false;
   dialCode: string;
@@ -121,6 +121,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   supportedUserTypesConfig: Array<any>;
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
+  enableSearch = false;
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   constructor(
@@ -141,7 +142,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private appGlobalService: AppGlobalService,
     private platform: Platform,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private translate: TranslateService,
     private headerService: AppHeaderService,
@@ -189,7 +190,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.hideHeader();
+    this.events.subscribe('update_header', () => {
+      this.headerService.showHeaderWithHomeButton();
+    });
+    this.headerService.showHeaderWithHomeButton();
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
@@ -877,7 +881,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
-      JSON.stringify({ request:  this.preAppliedFilter });
+        JSON.stringify({ request:  this.preAppliedFilter });
       searchQuery = updateFilterInSearchQuery(query, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
@@ -1635,7 +1639,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
-      this.activityTypeData.activityType,
+      (this.activityTypeData && this.activityTypeData.activityType) || {},
       PageId.SEARCH,
       this.corRelationList,
       -2);
@@ -1667,10 +1671,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           ...CsGroupAddableBloc.instance.state.params,
           corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
-          activityType: this.activityTypeData.activityType
+          activityType: (this.activityTypeData && this.activityTypeData.activityType) || {}
         }
       }
     );
+  }
+
+  searchOnFocus() {
+    this.enableSearch = true;
   }
 
 }

@@ -33,7 +33,7 @@ const COURSE_TAB_DISABLED = {
 };
 
 const DISCOVER_TAB = {
-    root: 'discover-container',
+    root: 'search',
     icon: 'discover',
     label: 'DISCOVER_BNAV',
     index: 2
