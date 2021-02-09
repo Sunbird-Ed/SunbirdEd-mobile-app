@@ -5,7 +5,7 @@ import {
     CommonUtilService, TelemetryGeneratorService, UtilityService, AppHeaderService,
     LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService,
     InteractType, InteractSubtype, Environment, PageId,
-    LocalCourseService, ImpressionType, CorReleationDataType
+    LocalCourseService, ImpressionType, CorReleationDataType, LoginHandlerService
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
@@ -29,6 +29,7 @@ import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
+import { ProfileType } from '@project-sunbird/sunbird-sdk';
 
 declare const supportfile;
 declare const plugins;
@@ -146,6 +147,7 @@ describe('AppComponent', () => {
         checkCourseRedirect: jest.fn(() => Promise.resolve())
     };
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
+    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -180,7 +182,8 @@ describe('AppComponent', () => {
             mockNetworkAvailability as NetworkAvailabilityToastService,
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
-            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+            mockLoginHandlerService as LoginHandlerService
         );
     });
 
@@ -236,6 +239,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOYFUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.showStatusBar = jest.fn();
@@ -371,6 +376,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('DEFAULT');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -411,7 +418,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenCalledTimes(8);
+                expect(mockPreferences.getString).toHaveBeenCalledTimes(9);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -518,6 +525,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOYFUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -634,6 +643,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOYFUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -742,6 +753,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOYFUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -838,6 +851,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('DEFAULT');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -887,6 +902,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('DEFAULT');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -939,6 +956,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOFYUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.showStatusBar = jest.fn();
@@ -1031,6 +1050,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('DEFAULT');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -1230,7 +1251,9 @@ describe('AppComponent', () => {
             // mockCodePushExperimentService.getDefaultDeploymentKey = jest.fn(() => of());
             mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
             mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
-
+            mockPreferences.getString = jest.fn(() => of(ProfileType.ADMIN));
+            mockAppGlobalService.isGuestUser = true;
+            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
             // act
             appComponent.ngOnInit();
             // assert
@@ -1267,6 +1290,8 @@ describe('AppComponent', () => {
                         return of('sample');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('DEFAULT');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockHeaderService.hideStatusBar = jest.fn();
@@ -1562,24 +1587,39 @@ describe('AppComponent', () => {
 
     describe('checkDeviceLocation()', () => {
 
-        it('shouldn\'t show location selection page if location available', () => {
+        it('shouldn\'t show location selection page if location available', (done) => {
             // arrange
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockPreferences.getString = jest.fn(() => of(ProfileType.ADMIN));
+            mockAppGlobalService.isGuestUser = true;
+            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
             // act
             appComponent.reloadGuestEvents();
             // assert
-            expect(mockRouter.navigate).not.toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockRouter.navigate).not.toHaveBeenCalled();
+                expect(mockPreferences.getString).toHaveBeenCalled();
+                expect(mockAppGlobalService.isGuestUser).toBeTruthy();
+                done();
+            }, 0);
         });
 
-        it('shouldn\'t show location selection page if BMC value is not selected', () => {
+        it('shouldn\'t show location selection page if BMC value is not selected', (done) => {
             // arrange
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(false));
+            mockPreferences.getString = jest.fn(() => of(ProfileType.ADMIN));
+            mockAppGlobalService.isGuestUser = false;
             // act
             appComponent.reloadGuestEvents();
             // assert
-            expect(mockRouter.navigate).not.toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockRouter.navigate).not.toHaveBeenCalled();
+                expect(mockPreferences.getString).toHaveBeenCalled();
+                expect(mockAppGlobalService.isGuestUser).toBeFalsy();
+                done();
+            }, 0);
         });
 
         it('should show location selection page if BMC value is not selected', (done) => {
@@ -1588,6 +1628,7 @@ describe('AppComponent', () => {
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
             mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve({})) as any;
+            mockPreferences.getString = jest.fn(() => of(ProfileType.ADMIN));
             // act
             appComponent.reloadGuestEvents();
             // assert
@@ -1881,6 +1922,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -1933,7 +1976,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2060,6 +2103,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -2114,7 +2159,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2183,7 +2228,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2252,7 +2297,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2339,6 +2384,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case 'notification_received_at':
                         return of('sample');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
@@ -2401,7 +2448,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2484,7 +2531,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2563,7 +2610,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2642,7 +2689,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2720,7 +2767,7 @@ describe('AppComponent', () => {
                     undefined,
                     [{ id: '', type: 'NotificationId' }]
                 );
-                expect(mockPreferences.getString).toHaveBeenNthCalledWith(6, PreferenceKey.CAMPAIGN_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenNthCalledWith(7, PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -2801,6 +2848,8 @@ describe('AppComponent', () => {
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     case PreferenceKey.CURRENT_SELECTED_THEME:
                         return of('JOYFUL');
+                    case PreferenceKey.SELECTED_USER_TYPE:
+                        return of(ProfileType.ADMIN);
                 }
             });
             mockPreferences.putString = jest.fn(() => EMPTY);
