@@ -63,8 +63,10 @@
           [pillBorder]="section?.theme?.inputs?.pillBorder"
           (viewMorePillList)="onViewMorePillList($event, section?.title)"
           (select)="handlePillSelect($event)">
-          <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData.icon" [theme]="pillData.theme"
-            [value]="pillData"></sb-pill-item>
+          <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase"
+                        [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"
+                        [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : section?.theme : pillData?.facet) || (pillData?.facet | randomColorMapPipe)"
+                        [value]="pillData"></sb-pill-item>
         </sb-pills-grid>
       </ng-container>
 
