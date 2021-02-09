@@ -1,8 +1,7 @@
 <ion-content>
-    <sb-form [config]="config"></sb-form>
-
+    <sb-form [config]="config" (valueChanges)="onFormValueChange($event)"></sb-form>
     <div>
-        <button>Cancel</button>
-        <button>Apply</button>
+        <button (click)="cancel()">Cancel</button>
+        <button (click)="applyFilter()">Apply</button>
     </div>
 </ion-content>

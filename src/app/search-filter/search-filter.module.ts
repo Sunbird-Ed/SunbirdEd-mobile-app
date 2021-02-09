@@ -5,15 +5,9 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SearchFilterPage } from './search-filter.page';
 import {CommonFormElementsModule} from 'common-form-elements';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: SearchFilterPage
-  }
-];
+const routes: Routes = [];
 
 @NgModule({
     imports: [
@@ -23,6 +17,5 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         CommonFormElementsModule
     ],
-  declarations: [SearchFilterPage]
 })
 export class SearchFilterPageModule {}

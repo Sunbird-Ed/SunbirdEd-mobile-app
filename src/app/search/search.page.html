@@ -9,7 +9,7 @@
     <div class="search-container" [ngClass]="{'search-filter': filterIcon, '': !filterIcon}">
       <div class="search-input">
         <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-          class="search-input" (keyup.enter)="handleSearch()" (focus)="searchOnFocus()"
+          class="search-input" (keyup.enter)="handleSearch()" (click)="searchOnFocus()"
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
           [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_OR_ENTER_QR_CODE' | translate">
         </ion-input>

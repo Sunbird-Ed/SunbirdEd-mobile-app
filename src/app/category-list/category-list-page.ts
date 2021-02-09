@@ -1,32 +1,27 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {
     AppHeaderService,
     CommonUtilService,
     CorReleationDataType,
-    Environment, FormAndFrameworkUtilService,
+    Environment,
+    FormAndFrameworkUtilService,
     InteractSubtype,
     InteractType,
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
 import {Router} from '@angular/router';
-import {
-    ContentService,
-    ContentsGroupedByPageSection,
-    CourseService,
-    FilterValue,
-    FormService,
-    ProfileService,
-    SearchType
-} from 'sunbird-sdk';
-import {ContentAggregation, AggregatorConfigField} from 'sunbird-sdk/content/handlers/content-aggregator';
-import {ContentData, ContentSearchCriteria} from 'sunbird-sdk/content';
+import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService} from 'sunbird-sdk';
+import {AggregatorConfigField, ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
+import {ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk/content';
 import {ContentUtil} from '@app/util/content-util';
 import {RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '@app/services/navigation-handler.service';
 import {ScrollToService} from '@app/services/scroll-to.service';
 import {FormConstants} from '@app/app/form.constants';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
+import {ModalController} from '@ionic/angular';
+import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
 
 
 @Component({
@@ -62,9 +57,11 @@ export class CategoryListPage {
     } = {};
     supportedFacets?: string [];
     primaryFacetFilters: {
-        code: string
+        code: string,
+        translations: string
     } [];
     fromLibrary = false;
+    private pageSearchCriteria: ContentSearchCriteria;
 
 
     constructor(
@@ -79,10 +76,12 @@ export class CategoryListPage {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private scrollService: ScrollToService,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private modalController: ModalController
     ) {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.pageSearchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
@@ -91,10 +90,10 @@ export class CategoryListPage {
 
     ionViewWillEnter() {
         this.appHeaderService.showHeaderWithBackButton();
-        this.fetchAndSortData();
+        this.fetchAndSortData(this.pageSearchCriteria).then();
     }
 
-    private async fetchAndSortData() {
+    private async fetchAndSortData(searchCriteria) {
         if (!this.supportedFacets) {
             this.supportedFacets = (await this.formAndFrameworkUtilService
                 .getFormFields(FormConstants.SEARCH_FILTER)).reduce((acc, filterConfig) => {
@@ -106,7 +105,7 @@ export class CategoryListPage {
         (this.formService, this.courseService, this.profileService)
             .aggregate({
                     interceptSearchCriteria: () => ({
-                        ...this.formField.searchCriteria,
+                        ...searchCriteria,
                         facets: this.supportedFacets,
                         searchType: SearchType.SEARCH,
                         limit: 100
@@ -115,6 +114,11 @@ export class CategoryListPage {
                 [], null, [{
                     dataSrc: {
                         type: 'CONTENTS',
+                        request: {
+                            type: 'POST',
+                            path: '/api/content/v1/search',
+                            withBearerToken: true
+                        },
                         mapping: [{
                             aggregate: this.formField.aggregate
                         }]
@@ -186,10 +190,22 @@ export class CategoryListPage {
 
     }
 
-    navigateToFilterFormPage() {
-        const params = {
-            facetFilters: FilterFormConfigMapper.map(this.facetFilters)
-        };
-        this.router.navigate([RouterLinks.SEARCH_FILTER], {state: params});
+    async navigateToFilterFormPage() {
+        const openFiltersPage = await this.modalController.create({
+            component: SearchFilterPage,
+            componentProps: {
+                config: FilterFormConfigMapper.map(this.facetFilters)
+            }
+        });
+        await openFiltersPage.present();
+        openFiltersPage.onDidDismiss().then((result) => {
+            if (result && result.data) {
+                this.pageSearchCriteria = result.data;
+                this.pageSearchCriteria.mode = 'hard';
+                this.pageSearchCriteria.searchType = SearchType.FILTER;
+                this.pageSearchCriteria.fields = [];
+                this.fetchAndSortData(this.pageSearchCriteria).then();
+            }
+        });
     }
 }
