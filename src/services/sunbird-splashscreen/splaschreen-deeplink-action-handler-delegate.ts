@@ -411,7 +411,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         const result = await this.frameworkService.searchOrganization(orgSearchRequest).toPromise();
         const org: any = result.content && result.content[0];
         if (org) {
-          const channelId = org.identifier;
+          const channelId = org.id;
           this.setProfileData(channelId, payloadUrl);
 
           // Set the channel for page assemble and load the channel specifc course page is available.
