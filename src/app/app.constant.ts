@@ -463,7 +463,7 @@ export class RouterLinks {
     public static readonly HOME = 'home';
 
     // Discover(SEARCH) Routes
-    public static readonly DISCOVER = 'discover';
+    public static readonly DISCOVER_CONTAINER = 'discover-container';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -521,7 +521,7 @@ export class RouterLinks {
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
-    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
+    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER_CONTAINER}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
@@ -557,6 +557,9 @@ export class RouterLinks {
     public static readonly DISCUSSION = 'discussion-forum';
     // filter page
     public static readonly SEARCH_FILTER = 'search-filter';
+
+    public static readonly DISCOVER = 'discover';
+    public static readonly DISCOVER_SEARCH = 'discover-search';
 }
 
 export class ShareItemType {
@@ -692,6 +695,12 @@ export const PrimaryCaregoryMapping = {
     },
     "tv programs": {
         icon: 'assets/imgs/tv.svg'
+    },
+    "documents": {
+        icon: 'assets/imgs/documents.svg'
+    },
+    "videos": {
+        icon: 'assets/imgs/videos.svg'
     },
     "default": {
         icon: 'assets/imgs/all_content.svg'

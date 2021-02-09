@@ -19,7 +19,7 @@ import {
     ProfileService,
     SearchType
 } from 'sunbird-sdk';
-import {ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
+import {ContentAggregation, AggregatorConfigField} from 'sunbird-sdk/content/handlers/content-aggregator';
 import {ContentData, ContentSearchCriteria} from 'sunbird-sdk/content';
 import {ContentUtil} from '@app/util/content-util';
 import {RouterLinks} from '@app/app/app.constant';
@@ -113,18 +113,20 @@ export class CategoryListPage {
                     })
                 },
                 [], null, [{
-                    index: 0,
-                    title: this.formField.facet,
-                    isEnabled: true,
                     dataSrc: {
-                        name: 'CONTENTS',
-                        aggregate: this.formField.aggregate,
-                        search: {
-                            filters: {}
-                        },
+                        type: 'CONTENTS',
+                        mapping: [{
+                            aggregate: this.formField.aggregate
+                        }]
                     },
-                    theme: {}
-                }]).toPromise()).result);
+                    sections: [
+                        {
+                            index: 0,
+                            title: this.formField.facet,
+                            theme: {}
+                        }
+                    ],
+                } as AggregatorConfigField<'CONTENTS'>]).toPromise()).result);
         this.facetFilters = (temp[0].meta.filterCriteria.facetFilters).reduce((acc, f) => {
             acc[f.name] = f.values;
             return acc;

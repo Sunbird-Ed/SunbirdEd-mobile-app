@@ -534,24 +534,24 @@ export class ProfilePage implements OnInit {
           await toast.present();
         }
         if (course.issuedCertificate) {
-          this.courseService.downloadCurrentProfileCourseCertificateV2(
-            { courseId: course.courseId, certificate: course.issuedCertificate },
-            (svgData, callback) => {
-              this.certificateDownloadAsPdfService.download(
-                svgData, (fileName, pdfData) => callback(pdfData as any)
-              );
-            }).toPromise()
-            .then(async (res) => {
-              if (toast) {
-                await toast.dismiss();
-              }
-              this.openpdf(res.path);
-            }).catch(async (err) => {
-              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                await this.downloadLegacyCertificate(course, toast);
-              }
-              await this.handleCertificateDownloadIssue(toast, err);
-            });
+          // this.courseService.downloadCurrentProfileCourseCertificateV2(
+          //   { courseId: course.courseId, certificate: course.issuedCertificate },
+          //   (svgData, callback) => {
+          //     this.certificateDownloadAsPdfService.download(
+          //       svgData, (fileName, pdfData) => callback(pdfData as any)
+          //     );
+          //   }).toPromise()
+          //   .then(async (res) => {
+          //     if (toast) {
+          //       await toast.dismiss();
+          //     }
+          //     this.openpdf(res.path);
+          //   }).catch(async (err) => {
+          //     if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+          //       await this.downloadLegacyCertificate(course, toast);
+          //     }
+          //     await this.handleCertificateDownloadIssue(toast, err);
+          //   });
         } else {
           await this.downloadLegacyCertificate(course, toast);
         }

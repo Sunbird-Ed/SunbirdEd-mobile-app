@@ -35,7 +35,7 @@
       <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
         <ng-container *ngFor="let subSection of section?.data?.sections">
           <ng-container *ngIf="subSection?.contents?.length">
-            <sb-course-cards-hlist 
+            <sb-course-cards-hlist
               [title]="(section?.title) | translateJson"
               [type]="section?.theme?.inputs?.type || courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
               [contentList]="subSection.contents"
@@ -60,6 +60,7 @@
           [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
           [showMoreViewType]="section?.theme?.inputs?.showMoreViewType"
           [pillsMultiRow]="section?.theme?.inputs?.pillsMultiRow"
+          [pillBorder]="section?.theme?.inputs?.pillBorder"
           (viewMorePillList)="onViewMorePillList($event, section?.title)"
           (select)="handlePillSelect($event)">
           <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData.icon" [theme]="pillData.theme"
