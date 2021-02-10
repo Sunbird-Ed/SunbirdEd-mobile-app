@@ -11,7 +11,7 @@ const LIBRARY_TAB = {
 
 const HOME_TAB = {
     root: 'home',
-    icon: 'resources',
+    icon: 'home',
     label: 'HOME_BNAV',
     index: 1,
     isSelected: true
@@ -86,6 +86,14 @@ export const GUEST_TEACHER_TABS = [
 ];
 
 export const LOGIN_TEACHER_TABS = [
+    HOME_TAB,
+    COURSE_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    PROFILE_TAB
+];
+
+export const LOGIN_ADMIN_TABS = [
     HOME_TAB,
     COURSE_TAB,
     SCANNER_TAB,

@@ -94,6 +94,9 @@ ion-tabs {
     ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
       background-image: url(/assets/imgs/ic_library.png);
     }
+    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
+      background-image: url(/assets/imgs/ic_home.png);
+    }
     ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
       background-image: url(/assets/imgs/ic_chat.png);
     }
@@ -120,6 +123,10 @@ ion-tabs {
     ion-icon[aria-label="resources"] {
       background-image: url(/assets/imgs/ic_library_disabled.png);
     }
+    ion-icon[ng-reflect-name="home"],
+    ion-icon[aria-label="home"] {
+      background-image: url(/assets/imgs/ic_home.png);
+    }
     ion-icon[ng-reflect-name="downloads"],
     ion-icon[aria-label="downloads"] {
       background-image: url(/assets/imgs/ic_download_disabled.png);
@@ -131,6 +138,9 @@ ion-tabs {
     }
     ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
       background-image: url(/assets/imgs/ic_library_selected.png);
+    }
+    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
+      background-image: url(/assets/imgs/ic_home_blue.png);
     }
     ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
       background-image: url(/assets/imgs/ic_chat_blue.png);
