@@ -5,17 +5,23 @@
     </div>
 
     <!-- filter from discover search page-->
-    <div *ngIf="fromLibrary">
+    <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
         <ion-grid>
             <ion-row>
                 <ion-col size="4" *ngFor="let primaryFacetFilter of primaryFacetFilters">
-                    <ion-select #mediumSelect multiple="false" class="ion-text-capitalize"
-                                [interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent('medium')"
+                    <ion-select multiple="false" class="ion-text-capitalize"
+                                [interfaceOptions]="primaryFacetFiltersTemplateOptions"
+                                (ionCancel)="cancelEvent('medium')"
+                                [formControlName]="primaryFacetFilter.code"
                                 okText="{{'BTN_SUBMIT' | translate}}"
                                 cancelText="{{'CANCEL' | translate}}"
                                 placeholder="{{primaryFacetFilter.translations | translateJson}}">
-                        <ion-select-option *ngFor="let facet of facetFilters[primaryFacetFilter.code]" class="ion-text-capitalize">
-                            {{facet.name}}</ion-select-option>
+                        <ion-select-option
+                                *ngFor="let facet of (facetFilters[primaryFacetFilter.code] || [])"
+                                [value]="facet"
+                                class="ion-text-capitalize">
+                            {{facet.name}}
+                        </ion-select-option>
                     </ion-select>
                 </ion-col>
 
@@ -24,9 +30,9 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
-    </div>
+    </form>
 
-    <div class="px-8">
+    <div class="px-8" *ngIf="!showSheenAnimation">
         <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'" [pillsViewType]="'scroll'"
                        [pillBorder]="'rounded'">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
