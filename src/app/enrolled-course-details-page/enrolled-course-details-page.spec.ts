@@ -40,6 +40,7 @@ import { ConsentService } from '../../services/consent-service';
 import {
     TncUpdateHandlerService,
 } from '../../services/handlers/tnc-update-handler.service';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { mockProfileData } from '../profile/profile.page.spec.data';
 import { CourseBatchStatus, CourseEnrollmentType, DiscussionService, SortOrder } from '@project-sunbird/sunbird-sdk';
 
@@ -132,6 +133,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockDiscussionService: Partial<DiscussionService> = {
         getForumIds: jest.fn()
     };
+    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
+    };
+    
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -164,7 +168,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentPlayerHandler as ContentPlayerHandler,
             mockCategoryKeyTranslator as CategoryKeyTranslator,
             mockConsentService as ConsentService,
-            mockTncUpdateHandlerService as TncUpdateHandlerService
+            mockTncUpdateHandlerService as TncUpdateHandlerService,
+            mockDiscussionTelemetryService as DiscussionTelemetryService
         );
     });
 
@@ -978,7 +983,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockContentService.getContentHeirarchy).toBeCalled();
-                expect(enrolledCourseDetailsPage.getContentState).toBeCalled();
                 expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
                 done();
             }, 0);
@@ -1930,6 +1934,58 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockRouter.navigate).toBeCalled();
             done();
+        });
+
+        it('should show toast message for internet error', (done) => {
+            // arrnge
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            enrolledCourseDetailsPage.batches = [];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            enrolledCourseDetailsPage.navigateToBatchListPage();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(enrolledCourseDetailsPage.batches.length).toBe(0);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(dismissFn).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should show toast message if batches is empty', (done) => {
+            // arrnge
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            enrolledCourseDetailsPage.batches = [];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            enrolledCourseDetailsPage.navigateToBatchListPage();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(enrolledCourseDetailsPage.batches.length).toBe(0);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+                expect(dismissFn).toBeTruthy();
+                done();
+            }, 0);
         });
     });
 

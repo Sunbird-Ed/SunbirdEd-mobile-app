@@ -917,7 +917,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = { ...searchQuery.request.filters, ...profileFilters }
+      searchQuery.request.filters = {
+        ...searchQuery.request.filters,
+        ...profileFilters,
+        board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
+        medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
+        gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
+      }
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
@@ -999,7 +1005,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   // TODO: SDK changes by Swayangjit
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -1022,8 +1027,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 this.batches.forEach((batch) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -1034,7 +1037,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 const popover = await this.popoverCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatched,
                     content

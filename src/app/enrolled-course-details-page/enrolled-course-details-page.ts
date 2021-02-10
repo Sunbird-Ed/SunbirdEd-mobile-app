@@ -69,6 +69,7 @@ import {
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 declare const cordova;
 
@@ -228,6 +229,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   isConsentPopUp = false;
   skipCheckRetiredOpenBatch = false;
   forumIds;
+  private hasInit = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -260,6 +262,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private discussionTelemetryService: DiscussionTelemetryService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -385,6 +388,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
+    this.fetchForumIds()
   }
 
   private checkUserLoggedIn() {
@@ -670,7 +674,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.courseHeirarchy = content;
         this.checkRetiredOpenBatch(this.courseHeirarchy);
         this.toggleGroup(0, content.children[0]);
-        this.getContentState(true);
+        // this.getContentState(true);
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
           InteractSubtype.FAST_LOADING_FINISHED,
           PageId.COURSE_DETAIL,
@@ -1179,7 +1183,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             }, 1000);
             this.courseHeirarchy = data;
             this.checkRetiredOpenBatch(this.courseHeirarchy);
-            this.getContentState(true);
+            if (this.hasInit) {
+              this.getContentState(false);
+            } else {
+              this.hasInit = !this.hasInit;
+              this.getContentState(true);
+            }
           }
           if (this.courseCardData.batchId) {
             this.downloadSize = 0;
@@ -1592,52 +1601,47 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
-    const ongoingBatches = [];
-    const upcommingBatches = [];
     const loader = await this.commonUtilService.getLoader();
     const reqvalues = new Map();
     reqvalues['enrollReq'] = this.courseBatchesRequest;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ENROLL_CLICKED,
-      Environment.HOME,
-      PageId.COURSE_DETAIL, this.telemetryObject,
-      reqvalues,
-      this.objRollup);
-
-    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
-      return false;
+      InteractSubtype.ENROLL_CLICKED, Environment.HOME,
+      PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
+    
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      return;
+    }
+    
+    if (!this.batches || !this.batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      await loader.dismiss();
+      return;
+    }
+    
+    if (!this.localCourseService.isEnrollable(this.batches, this.course)) {
+      return;
     }
 
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.batches.length) {
-        if (this.batches.length === 1) {
-          this.enrollIntoBatch(this.batches[0]);
-        } else {
-          forEach(this.batches, (batch, key) => {
-            if (batch.status === 1) {
-              ongoingBatches.push(batch);
-            } else {
-              upcommingBatches.push(batch);
-            }
-          });
-          this.router.navigate([RouterLinks.COURSE_BATCHES], {
-            state: {
-              ongoingBatches,
-              upcommingBatches,
-              course: this.course,
-              objRollup: this.objRollup,
-              telemetryObject: this.telemetryObject,
-              corRelationList: this.corRelationList
-            }
-          });
-        }
-      } else {
-        this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-        await loader.dismiss();
-
-      }
+    const ongoingBatches = [];
+    if (this.batches.length === 1) {
+      this.enrollIntoBatch(this.batches[0]);
     } else {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      forEach(this.batches, (batch, key) => {
+        if (batch.status === 1) {
+          ongoingBatches.push(batch);
+        }
+      });
+      this.router.navigate([RouterLinks.COURSE_BATCHES], {
+        state: {
+          ongoingBatches,
+          upcommingBatches: [],
+          course: this.course,
+          objRollup: this.objRollup,
+          telemetryObject: this.telemetryObject,
+          corRelationList: this.corRelationList
+        }
+      });
     }
   }
 
@@ -2252,78 +2256,68 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
-    const ongoingBatches = [];
-    const upcommingBatches = [];
+    if (this.isGuestUser || !this.commonUtilService.networkInfo.isNetworkAvailable) {
+      return;
+    }
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
         enrollmentType: CourseEnrollmentType.OPEN,
-        status: [CourseBatchStatus.IN_PROGRESS] // CourseBatchStatus.NOT_STARTED,
+        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
-    const reqvalues = new Map();
-    reqvalues['enrollReq'] = courseBatchesRequest;
-
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (!this.isGuestUser) {
-        this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((res: Batch[]) => {
-            this.zone.run(async () => {
-              this.batches = res;
-              if (this.batches.length) {
-                this.batches.forEach((batch, key) => {
-                  if (batch.status === 1) {
-                    ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
-                  }
-                });
-                this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-                  'ongoing-batch-popup',
-                  Environment.HOME,
-                  PageId.COURSE_DETAIL, undefined,
-                  reqvalues, undefined, this.corRelationList);
-                const popover = await this.popoverCtrl.create({
-                  component: EnrollmentDetailsComponent,
-                  componentProps: {
-                    upcommingBatches,
-                    ongoingBatches,
-                    retiredBatched,
-                    content
-                  },
-                  cssClass: 'enrollement-popover'
-                });
-                // await this.loader.dismiss();
-                await popover.present();
-                const { data } = await popover.onDidDismiss();
-                if (data && data.isEnrolled) {
-                  // Reload the page
-                  // this.getEnrolledCourses();
-                  await this.reloadPageAfterEnrollment(data);
-                  this.checkDataSharingStatus();
-                }
-                if (data && typeof data.isEnrolled === 'function') {
-                  (data.isEnrolled as Function).call(this);
-                }
-              } else {
-                // await this.loader.dismiss();
-                // Do nothing.
-                // this.showContentDetails(content, true);
+    this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+      .then((res: Batch[]) => {
+        this.zone.run(async () => {
+          this.batches = res;
+          if (this.batches.length) {
+            const ongoingBatches = [];
+            this.batches.forEach((batch, key) => {
+              if (batch.status === 1) {
+                ongoingBatches.push(batch);
               }
             });
-          })
-          .catch((error: any) => {
-            console.log('error while fetching course batches ==>', error);
-          });
-      }
-    } else {
-      // if (this.loader) {
-      //   this.loader.dismiss();
-      // }
-      // this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-    }
+            const reqvalues = new Map();
+            reqvalues['enrollReq'] = courseBatchesRequest;
+            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+              'ongoing-batch-popup',
+              Environment.HOME,
+              PageId.COURSE_DETAIL, undefined,
+              reqvalues, undefined, this.corRelationList);
+            const popover = await this.popoverCtrl.create({
+              component: EnrollmentDetailsComponent,
+              componentProps: {
+                upcommingBatches: [],
+                ongoingBatches,
+                retiredBatched,
+                content
+              },
+              cssClass: 'enrollement-popover'
+            });
+            // await this.loader.dismiss();
+            await popover.present();
+            const { data } = await popover.onDidDismiss();
+            if (data && data.isEnrolled) {
+              // Reload the page
+              // this.getEnrolledCourses();
+              await this.reloadPageAfterEnrollment(data);
+              this.checkDataSharingStatus();
+            }
+            if (data && typeof data.isEnrolled === 'function') {
+              (data.isEnrolled as Function).call(this);
+            }
+          } else {
+            // await this.loader.dismiss();
+            // Do nothing.
+            // this.showContentDetails(content, true);
+          }
+        });
+      })
+      .catch((error: any) => {
+        console.log('error while fetching course batches ==>', error);
+      });
   }
 
   async checkUserRegistration() {
@@ -2336,6 +2330,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       data.username = p.serverProfile['userName']
     });
     console.log('createUser req', data);
+    this.discussionTelemetryService.contextCdata = [
+      {
+        id: this.identifier,
+        type: 'Course'
+      },
+      {
+        id: this.courseCardData.batchId,
+        type: 'Batch'
+      }
+    ];
     this.discussionService.createUser(data).subscribe((response) => {
       console.log('discussionService.createUser', response)
       const userName = response.result.userName

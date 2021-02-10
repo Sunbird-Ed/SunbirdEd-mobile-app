@@ -15,7 +15,7 @@ import {
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData,
-  Profile, DeviceRegisterService, ProfileService,
+  Profile, DeviceRegisterService, ProfileService, ProfileType,
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -39,7 +39,8 @@ import {
   AppHeaderService,
   FormAndFrameworkUtilService,
   SplashScreenService,
-  LocalCourseService
+  LocalCourseService,
+  LoginHandlerService
 } from '../services';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
@@ -116,6 +117,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private loginHandlerService: LoginHandlerService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -449,6 +451,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   reloadGuestEvents() {
     this.checkDeviceLocation();
+    this.checkGuestUserType();
+  }
+
+  private async checkGuestUserType() {
+    const isAdminUser = (await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise() === ProfileType.ADMIN);
+    if (isAdminUser && this.appGlobalService.isGuestUser) {
+      this.loginHandlerService.signIn();
+    }
   }
 
   addNetworkTelemetry(subtype: string, pageId: string) {
