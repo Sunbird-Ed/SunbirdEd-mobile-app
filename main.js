@@ -122,6 +122,18 @@ var formRequestArray = [{
         'type': 'profileConfig',
         'subType': 'default',
         'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'library_v2',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'adminHome',
+        'action': 'get',
+        'component': 'app'
     }
 
 
