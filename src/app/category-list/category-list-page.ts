@@ -66,6 +66,9 @@ export class CategoryListPage implements OnDestroy {
     private supportedUserTypesConfig: Array<any>;
     private supportedFacets?: string [];
     private subscriptions: Subscription[] = [];
+    layoutConfiguration = {
+        layout: 'v3'
+    };
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -158,7 +161,6 @@ export class CategoryListPage implements OnDestroy {
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
-
     navigateToTextbookPage(items, subject) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
@@ -166,7 +168,6 @@ export class CategoryListPage implements OnDestroy {
             PageId.LIBRARY,
             ContentUtil.getTelemetryObject(items));
         if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
-
             this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
                 state: {
                     contentList: items,
@@ -177,7 +178,6 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
-
     navigateToDetailPage(event, sectionName) {
         event.data = event.data.content ? event.data.content : event.data;
         const item = event.data;
@@ -201,11 +201,9 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
-
     scrollToSection(id: string) {
         this.scrollService.scrollTo(id);
     }
-
     cancelEvent($event) {
     }
 
