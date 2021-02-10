@@ -11,6 +11,8 @@ import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-observation-home',
@@ -29,6 +31,64 @@ export class ObservationHomeComponent implements OnInit {
   page = 1;
   limit = 10;
   count: any;
+
+  // todo:remove graph
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            min: 0, // Edit the value according to what you need,
+            max: 100,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Response in %',
+          },
+        },
+      ],
+      yAxes: [
+        {
+          ticks: {
+            callback: function (value: any, index, values) {
+              return value.split(' ');
+            },
+            fontSize: 12,
+          },
+          display: true,
+
+          scaleLabel: {
+            display: true,
+            labelString: 'Response',
+          },
+        },
+      ],
+    },
+  };
+  public barChartLabels: Label[] = ['Option A', 'Option B'];
+  public barChartType: ChartType = 'horizontalBar';
+  public barChartLegend = false;
+  public barChartPlugins = [];
+  public chartColors: Array<any> = [
+    {
+      // all colors in order
+      backgroundColor: ['#D35400', '#D35400', '#D35400'],
+    },
+  ];
+
+  public barChartData: ChartDataSets[] = [{ data: [65, 59], label: 'Series A' }];
+
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public pieChartLabels: Label[] = [['yes'], ['No']];
+  public pieChartData: SingleDataSet = [75, 25];
+  public pieChartType: ChartType = 'pie';
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
+  // todo
+
   constructor(
     private httpClient: HttpClient,
     private location: Location,
@@ -42,7 +102,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.solutionList=[]
+    this.solutionList = [];
     this.getPrograms();
   }
   async getPrograms() {
@@ -60,7 +120,7 @@ export class ObservationHomeComponent implements OnInit {
           if (success && success.result && success.result.data) {
             this.count = success.result.count;
 
-            this.solutionList = [...this.solutionList , ...success.result.data] ;
+            this.solutionList = [...this.solutionList, ...success.result.data];
           }
         },
         (error) => {
@@ -103,6 +163,6 @@ export class ObservationHomeComponent implements OnInit {
   }
   loadMore() {
     this.page = this.page + 1;
-    this.getPrograms()
+    this.getPrograms();
   }
 }

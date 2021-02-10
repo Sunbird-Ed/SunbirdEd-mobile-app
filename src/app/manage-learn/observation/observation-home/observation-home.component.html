@@ -1,24 +1,49 @@
-  <ion-content fullscreen>
-    <app-common-header
-      title="{{ 'FRMELEMNTS_LBL_OBSERVATION' | translate }}"
-      subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_DESC' | translate }}"
-    ></app-common-header>
-    <div *ngFor="let solution of solutionList; let solutionIndex = index">
-      <app-item-list-card
-        [title]="solution?.name"
-        [subTitle]="solution?.programName"
-        (cardSelect)="observationDetails(solution)"
-      >
-        <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
-      </app-item-list-card>
-    </div>
-    <app-no-data *ngIf="!solutionList?.length"></app-no-data>
-  </ion-content>
-  <ion-button
-    class="view-more"
-    expand="block"
-    (click)="loadMore()"
-    *ngIf="solutionList?.length && count > solutionList?.length"
-  >
-    {{ 'VIEW_MORE' | translate }}
-  </ion-button>
+<ion-content fullscreen>
+  <app-common-header
+    title="{{ 'FRMELEMNTS_LBL_OBSERVATION' | translate }}"
+    subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_DESC' | translate }}"
+  ></app-common-header>
+  <div *ngFor="let solution of solutionList; let solutionIndex = index">
+    <app-item-list-card
+      [title]="solution?.name"
+      [subTitle]="solution?.programName"
+      (cardSelect)="observationDetails(solution)"
+    >
+      <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
+    </app-item-list-card>
+  </div>
+  <app-no-data *ngIf="!solutionList?.length"></app-no-data>
+  <div style="display: block">
+    <canvas
+      baseChart
+      [datasets]="barChartData"
+      [labels]="barChartLabels"
+      [options]="barChartOptions"
+      [plugins]="barChartPlugins"
+      [legend]="barChartLegend"
+      [chartType]="barChartType"
+       [colors]="chartColors"
+    >
+    </canvas>
+  </div>
+  <div style="display: block">
+    <canvas
+      baseChart
+      [data]="pieChartData"
+      [labels]="pieChartLabels"
+      [chartType]="pieChartType"
+      [options]="pieChartOptions"
+      [plugins]="pieChartPlugins"
+      [legend]="pieChartLegend"
+    >
+    </canvas>
+  </div>
+</ion-content>
+<ion-button
+  class="view-more"
+  expand="block"
+  (click)="loadMore()"
+  *ngIf="solutionList?.length && count > solutionList?.length"
+>
+  {{ 'VIEW_MORE' | translate }}
+</ion-button>

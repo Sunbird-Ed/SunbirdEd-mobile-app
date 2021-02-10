@@ -2,8 +2,14 @@
 <canvas #ganttChartCanvas></canvas>
 </div> -->
 
-<div class="chart-container">
+<!-- <div class="chart-container">
     <canvas #ganttChartCanvas></canvas>
     <canvas #ganttChartCanvas1></canvas>
   </div>
-  
+   -->
+
+<!-- <chart class="chart" type="horizontalBar" [data]="chartData" [options]="options"></chart> -->
+<div style="display: block">
+  <canvas baseChart [chartType]="'horizontalBar'" [datasets]="chartData.datasets" [options]="options" [labels]="lables">
+  </canvas>
+</div>

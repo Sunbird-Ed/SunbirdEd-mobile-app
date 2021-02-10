@@ -60,6 +60,7 @@ import { StateModalComponent } from './components/state-modal/state-modal.compon
 import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
+import { ChartsModule, ThemeService } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     HintComponent,
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule,ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,
@@ -149,6 +150,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     ChartComponent,
     GanttChartComponent,
     HintComponent,
+    ChartsModule
   ],
   providers: [
     Camera,
@@ -163,6 +165,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
+    ThemeService
   ],
   entryComponents: [
     EntityfilterComponent,
