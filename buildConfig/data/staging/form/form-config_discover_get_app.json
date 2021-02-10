@@ -20,6 +20,22 @@
           {
             "dataSrc": {
               "type": "CONTENT_FACETS",
+              "request": {
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                    "request": {
+                        "limit": 0,
+                        "offset": 0,
+                        "mode": "hard",
+                        "facets": [
+                        ],
+                        "filters": {
+                        }
+                    }
+                }
+              },
               "values": [
                 {
                   "facet": "Digital Textbook",
@@ -121,8 +137,7 @@
                 "theme": {
                   "component": "sb-pills-grid",
                   "inputs": {
-                    "pillShape": "default",
-                    "pillBorder": "rounded"
+                    "pillShape": "default"
                   }
                 }
               }
@@ -131,6 +146,22 @@
           {
             "dataSrc": {
               "type": "CONTENT_FACETS",
+              "request": {
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                    "request": {
+                        "limit": 0,
+                        "offset": 0,
+                        "mode": "hard",
+                        "facets": [
+                        ],
+                        "filters": {
+                        }
+                    }
+                }
+              },
               "values": [
                 {
                   "facet": "{\"en\":\"AP\"}",
@@ -252,13 +283,20 @@
             "dataSrc": {
               "type": "CONTENTS",
               "request": {
-                "facets": [
-                  "primaryCategory"
-                ],
-                "filters": {
-                  "primaryCategory": [
-                    "Course"
-                  ]
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                  "request": {
+                    "facets": [
+                      "primaryCategory"
+                    ],
+                    "filters": {
+                      "primaryCategory": [
+                        "Course"
+                      ]
+                    }
+                  }
                 }
               },
               "mapping": []

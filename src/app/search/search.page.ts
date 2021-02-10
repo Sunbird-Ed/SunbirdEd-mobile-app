@@ -54,12 +54,33 @@ import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../form.constants';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss']
+  styleUrls: ['./search.page.scss'],
+  animations: [
+    trigger('labelVisibility', [
+      state(
+        'show',
+        style({
+          maxHeight: '50vh',
+          overflow: 'hidden'
+        })
+      ),
+      state(
+        'hide',
+        style({
+          maxHeight: '0',
+          overflow: 'hidden'
+        })
+      ),
+      transition('* => show', [animate('500ms ease-out')]),
+      transition('show => hide', [animate('500ms ease-in')])
+    ])
+  ],
 })
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   public searchHistory$: Observable<SearchEntry[]>;
@@ -122,8 +143,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
   enableSearch = false;
+  searchInfolVisibility = 'show';
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
+  headerObservable: Subscription;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -193,6 +216,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton();
     });
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
     this.headerService.showHeaderWithHomeButton();
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
@@ -206,7 +232,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
-        this.searchBar.setFocus();
       }, 100);
     }
     this.sbProgressLoader.hide({ id: this.dialCode });
@@ -1679,6 +1704,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   searchOnFocus() {
     this.enableSearch = true;
+    this.searchInfolVisibility = 'hide';
+    this.headerService.showHeaderWithBackButton();
+    this.appGlobalService.isDiscoverBackEnabled = true;
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        this.enableSearch = false;
+        this.searchInfolVisibility = 'show';
+        this.headerService.showHeaderWithHomeButton();
+        this.appGlobalService.isDiscoverBackEnabled = false; 
+        break;
+      default: console.warn('Use Proper Event name');
+    }
   }
 
 }

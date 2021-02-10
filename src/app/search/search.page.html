@@ -1,7 +1,7 @@
 <ion-content #contentView class="search-bg">
   <div class="container-focus">
     <div class="search-info pt-16 mx-24">
-      <div>
+      <div [@labelVisibility]="searchInfolVisibility">
         <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>
         <p class="description">{{'SEARCH_IN_APP_DESCRIPTION' | translate: {'app_name': appName} }}</p>
       </div>
@@ -9,7 +9,7 @@
     <div class="search-container" [ngClass]="{'search-filter': filterIcon, '': !filterIcon}">
       <div class="search-input">
         <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
-          class="search-input" (keyup.enter)="handleSearch()" (click)="searchOnFocus()"
+          class="search-input" (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
           [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_OR_ENTER_QR_CODE' | translate">
         </ion-input>

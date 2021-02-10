@@ -21,13 +21,20 @@
             "dataSrc": {
               "type": "CONTENTS",
               "request": {
-                "facets": [
-                  "primaryCategory"
-                ],
-                "filters": {
-                  "primaryCategory": [
-                    "Course"
-                  ]
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                    "request": {
+                        "facets": [
+                          "primaryCategory"
+                        ],
+                        "filters": {
+                          "primaryCategory": [
+                            "Course"
+                          ]
+                        }
+                    }
                 }
               },
               "mapping": []
@@ -64,20 +71,18 @@
           {
             "dataSrc": {
               "type": "TRACKABLE_COLLECTIONS",
-              "mapping": [
-                {
-                  "aggregate": {
-                    "filterBy": [
-                      {
-                        "content.primaryCategory": {
-                          "operation": "!=",
-                          "value": "Course"
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
+              "request": {
+                "type": "GET",
+                "path": "/api/course/v1/user/enrollment/list/${userId}",
+                "parameters": {
+                  "orgdetails": "orgName,email",
+                  "fields": "contentType,topic,name,channel,pkgVersion,primaryCategory,trackable",
+                  "batchDetails": "name,endDate,startDate,status,enrollmentType,createdBy,certificates"
+                },
+                "withBearerToken": true,
+                "withUserToken": true
+              },
+              "mapping": []
             },
             "sections": [
               {
@@ -101,13 +106,19 @@
             "dataSrc": {
               "type": "CONTENT_FACETS",
               "request": {
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
                 "body": {
-                  "filters": {
-                    "audience": "learner"
-                  },
-                  "offset": 0,
-                  "limit": 0,
-                  "mode": "hard"
+                    "request": {
+                        "limit": 0,
+                        "offset": 0,
+                        "mode": "hard",
+                        "facets": [
+                        ],
+                        "filters": {
+                        }
+                    }
                 }
               },
               "mapping": [
@@ -140,6 +151,34 @@
                     "viewMoreText": "{\"en\":\"View all subjects\"}",
                     "viewLessText": "{\"en\":\"View Less\"}",
                     "pillsMultiRow": "double_view_column"
+                  },
+                  "children": {
+                    "sb-pill-item": {
+                      "inputs": {
+                        "icon": "assets/imgs/book_default.svg"
+                      },
+                      "inputsMap": {
+                        "icon": {
+                          "english": "assets/imgs/book_english.svg",
+                          "mathematics": "assets/imgs/calculator.svg",
+                          "science": "assets/imgs/globe.svg"
+                        },
+                        "theme": {
+                          "english": {
+                            "iconBgColor": "rgba(255,139,46,1)",
+                            "pillBgColor": "rgba(255,139,46,0.3)"
+                          },
+                          "mathematics": {
+                            "iconBgColor": "rgba(163,99,255,1)",
+                            "pillBgColor": "rgba(163,99,255,0.3)"
+                          },
+                          "science": {
+                            "iconBgColor": "rgba(34,139,255,1)",
+                            "pillBgColor": "rgba(34,139,255,0.3)"
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -164,7 +203,7 @@
             },
             "sections": [
               {
-                "index": 0,
+                "index": 4,
                 "title": "{\"en\":\"Recently viewed\"}",
                 "isEnabled": true,
                 "theme": {
