@@ -11,9 +11,8 @@ import {
     TelemetryGeneratorService
 } from '@app/services';
 import {Router} from '@angular/router';
-import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService} from 'sunbird-sdk';
+import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService, ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk';
 import {AggregatorConfigField, ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
-import {ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk/content';
 import {ContentUtil} from '@app/util/content-util';
 import {RouterLinks} from '@app/app/app.constant';
 import {NavigationService} from '@app/services/navigation-handler.service';
