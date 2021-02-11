@@ -449,6 +449,8 @@ export class RouterLinks {
 
     // Course Batch
     public static readonly COURSE_BATCHES = 'course-batches';
+    // ADMIN HOME Routes
+    public static readonly ADMIN_HOME = 'admin-home';
 
     // Resources Routs
     public static readonly RESOURCES = 'resources';
@@ -527,7 +529,6 @@ export class RouterLinks {
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
     public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
 
-
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
 
@@ -552,9 +553,49 @@ export class RouterLinks {
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
 
+    //Manage learn router
+    public static readonly PROGRAM = 'program';
+    public static readonly SURVEY = 'survey';
+    public static readonly PROJECT = 'project';
+    public static readonly REPORTS = "reports";
+    public static readonly PROJECT_REPORT = "project-report";
+    public static readonly PROJECT_FULL_REPORT = "project-full-report";
+    public static readonly DEEPLINK_REDIRECT = "deeplink-redirect";
+    public static readonly DETAILS = 'details';
+    public static readonly TASK_VIEW = 'task-view';
+    public static readonly LEARNING_RESOURCES = 'learning-resources';
+    public static readonly SYNC = 'sync';
+    public static readonly ATTACHMENTS = 'attachments'
+    public static readonly PROJECT_EDIT = 'project-edit';
+    public static readonly PROJECT_OPERATION = `project-operation`;
+    public static readonly CREATE_PROJECT = `create-project`;
+    public static readonly PROJECT_OPERATION_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.PROJECT_OPERATION}`;
+    public static readonly CREATE_PROJECT_PAGE = `/${RouterLinks.PROJECT}/${RouterLinks.CREATE_PROJECT}`;
+    public static readonly ATTACHMENTS_LIST = `/${RouterLinks.PROJECT}/${RouterLinks.ATTACHMENTS}`;
+
+
+    public static readonly SOLUTIONS = 'solutions';
+    public static readonly QUESTIONNAIRE = 'questionnaire';
+    public static readonly OBSERVATION = 'observation';
+    public static readonly SECTION_LISTING = 'section-listing';
+    public static readonly ECM_LISTING = 'ecm-listing';
+    public static readonly SUBMISSION_PREVIEW = 'submission_preview';
+    public static readonly IMAGE_LISTING = 'image-listing';
+    public static readonly ALL_EVIDENCE = 'all-evidence';
+
+
+    // Observation routes
+    public static readonly OBSERVATION_DETAILS = 'observation-details';
+    public static readonly OBSERVATION_SUBMISSION = 'observation-submission';
+    public static readonly OBSERVATION_REPORTS = 'observation-reports';
+    public static readonly REPORT_WITH_SCORE = 'reports-with-score';
+    public static readonly SURVEY_REPORTS = 'survey-reports';
     // category-list page
     public static readonly CATEGORY_LIST = 'category-list';
     public static readonly DISCUSSION = 'discussion-forum';
+
+    public static readonly HOME_USER = 'user';
+    public static readonly HOME_ADMIN = 'admin';
 }
 
 export class ShareItemType {
@@ -589,7 +630,6 @@ export class IgnoreTelemetryPatters {
     public static readonly IGNORE_DIAL_CODE_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"search"}/;
     public static readonly IGNORE_CHANNEL_IMPRESSION_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/;
     public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
-
 }
 
 export class FormConfigCategories {
@@ -616,5 +656,5 @@ export class StatusBarTheme {
 }
 
 export class AssessmentConstant {
-    public static readonly MAX_ATTEMPTS = 3;
+    public static readonly MAX_ATTEMPTS = 25;
 }

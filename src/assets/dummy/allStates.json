@@ -1,0 +1,145 @@
+{
+    "message": "Entities fetched successfull",
+    "status": 200,
+    "result": [{
+        "externalId": "AP",
+        "name": "Andhra Pradesh",
+        "_id": "5e26c474410aee393d9e4844"
+    }, {
+        "externalId": "AR",
+        "name": "Arunachal Pradesh",
+        "_id": "5e26c474410aee393d9e4845"
+    }, {
+        "externalId": "AS",
+        "name": "Assam",
+        "_id": "5e26c474410aee393d9e4846"
+    }, {
+        "externalId": "BR",
+        "name": "Bihar",
+        "_id": "5e26c474410aee393d9e4847"
+    }, {
+        "externalId": "CH",
+        "name": "Chandigarh",
+        "_id": "5fcf8318c9e73a3bc93a5d2d"
+    }, {
+        "externalId": "CG",
+        "name": "Chhattisgarh",
+        "_id": "5e26c474410aee393d9e4848"
+    }, {
+        "externalId": "DL",
+        "name": "Delhi",
+        "_id": "5dba74f5ef7a6518ddabbd8c"
+    }, {
+        "externalId": "DDKEF01",
+        "name": "Dummy KEF State",
+        "_id": "5de4c1fb1f6a980ca737c7f5"
+    }, {
+        "externalId": "GA",
+        "name": "Goa",
+        "_id": "5e0b165dc580aa5d1fb86253"
+    }, {
+        "externalId": "GJ",
+        "name": "Gujarat",
+        "_id": "5e26c474410aee393d9e4849"
+    }, {
+        "externalId": "HR",
+        "name": "Haryana",
+        "_id": "5e26c474410aee393d9e484a"
+    }, {
+        "externalId": "HP",
+        "name": "Himachal Pradesh",
+        "_id": "5e26c474410aee393d9e484b"
+    }, {
+        "externalId": "JK",
+        "name": "Jammu and Kashmir",
+        "_id": "5e74f3b7cfa232208c29e10b"
+    }, {
+        "externalId": "JH",
+        "name": "Jharkhand",
+        "_id": "5e26c474410aee393d9e484c"
+    }, {
+        "externalId": "KA",
+        "name": "Karnataka",
+        "_id": "5dca7951a31c183b48ef847c"
+    }, {
+        "externalId": "KL",
+        "name": "Kerala",
+        "_id": "5e26c474410aee393d9e484d"
+    }, {
+        "externalId": "UT-LAD",
+        "name": "Ladakh",
+        "_id": "5f4676bb7cc13e10cd53592e"
+    }, {
+        "externalId": "MP",
+        "name": "Madhya Pradesh",
+        "_id": "5e26c474410aee393d9e484e"
+    }, {
+        "externalId": "MH",
+        "name": "Maharashtra",
+        "_id": "5e26c474410aee393d9e484f"
+    }, {
+        "externalId": "MN",
+        "name": "Manipur",
+        "_id": "5e26c474410aee393d9e4850"
+    }, {
+        "externalId": "ML",
+        "name": "Meghalaya",
+        "_id": "5e26c474410aee393d9e4851"
+    }, {
+        "externalId": "MZ",
+        "name": "Mizoram",
+        "_id": "5e26c474410aee393d9e4852"
+    }, {
+        "externalId": "NEP",
+        "name": "NEPAL",
+        "_id": "5fe05561c007676d1cfa0f3c"
+    }, {
+        "externalId": "NL",
+        "name": "Nagaland",
+        "_id": "5e26c474410aee393d9e4853"
+    }, {
+        "externalId": "OD",
+        "name": "Odisha",
+        "_id": "5e26c474410aee393d9e4854"
+    }, {
+        "externalId": "PDC",
+        "name": "Puducherry",
+        "_id": "5f068f7aa894e17e01225867"
+    }, {
+        "externalId": "PBS",
+        "name": "Punjab",
+        "_id": "5da96a79f91e5f43e4104ec7"
+    }, {
+        "externalId": "RJ",
+        "name": "Rajasthan",
+        "_id": "5de4f9e9bedec30a7bb9671d"
+    }, {
+        "externalId": "SK",
+        "name": "Sikkim",
+        "_id": "5e26c474410aee393d9e4855"
+    }, {
+        "externalId": "TN",
+        "name": "Tamil Nadu",
+        "_id": "5e26c474410aee393d9e4856"
+    }, {
+        "externalId": "TS",
+        "name": "Telangana",
+        "_id": "5e26c474410aee393d9e4859"
+    }, {
+        "externalId": "TR",
+        "name": "Tripura",
+        "_id": "5e26c474410aee393d9e4857"
+    }, {
+        "externalId": "UP",
+        "name": "Uttar Pradesh",
+        "_id": "5e26c474410aee393d9e485a"
+    }, {
+        "externalId": "UKD",
+        "name": "Uttarakhand",
+        "_id": "5dedb487ae9bc541052b4c69"
+    }, {
+        "externalId": "WB",
+        "name": "West Bengal",
+        "_id": "5e26c474410aee393d9e4858"
+    }]
+}

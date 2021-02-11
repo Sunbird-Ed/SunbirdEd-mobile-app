@@ -59,7 +59,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements-v8';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentUtil } from '@app/util/content-util';
@@ -75,7 +75,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 })
 export class ProfilePage implements OnInit {
 
-  @ViewChild('refresher') refresher: IonRefresher;
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
 
   profile: any = {};
   userId = '';
@@ -285,7 +285,7 @@ export class ProfilePage implements OnInit {
                   (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.subUserType,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
@@ -1028,10 +1028,9 @@ export class ProfilePage implements OnInit {
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
         tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
-      this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
-        '%persona': this.selfDeclarationInfo.persona || '',
-        '%tenant': (tenantDetails && tenantDetails.label) || ''
-      });
+      this.personaTenantDeclaration = this.commonUtilService.translateMessage('FRMELEMNTS_LBL_SHARE_DATA_WITH', {
+          '%tenant': (tenantDetails && tenantDetails.label) || ''
+        });
 
       if (this.selfDeclarationInfo.orgId) {
         const formConfig = await this.formAndFrameworkUtilService.getFormFields(

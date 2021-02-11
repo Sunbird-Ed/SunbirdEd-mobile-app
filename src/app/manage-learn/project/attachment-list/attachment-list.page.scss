@@ -1,0 +1,13 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/base/variables";
+.attachments-card{
+    border-radius: 16px;
+    background: $white-color;
+   ion-card-header{
+    font-size: 18px;
+    border-bottom: 1px solid $gray-200;
+    margin: 10px;
+    padding: 5px;
+    font-weight: 500;
+   }
+}

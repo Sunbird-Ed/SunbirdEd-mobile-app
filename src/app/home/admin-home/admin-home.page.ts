@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
   FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
@@ -11,6 +11,10 @@ import { AggregatorPageType } from '@app/services/content/content-aggregator-nam
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events, IonContent as ContentView  } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
+import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
+import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
+import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 
 @Component({
   selector: 'app-admin-home',
@@ -33,7 +37,7 @@ export class AdminHomePage implements OnInit, OnDestroy {
 
   displaySections: any[] = [];
   headerObservable: Subscription;
-  @ViewChild('contentView') contentView: ContentView;
+  @ViewChild('contentView', { static: false }) contentView: ContentView;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -48,6 +52,9 @@ export class AdminHomePage implements OnInit, OnDestroy {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private qrScanner: SunbirdQRScanner,
+    private storage: LocalStorageService,
+    private unnatiService: UnnatiDataService,
+    private db: DbService
   ) {
   }
 
@@ -61,6 +68,8 @@ export class AdminHomePage implements OnInit, OnDestroy {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+    this.getCreateProjectForm();
+    this.db.createDb();
   }
 
   async ionViewWillEnter() {
@@ -71,6 +80,42 @@ export class AdminHomePage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+  }
+
+  getCreateProjectForm() {
+    this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
+    }, error => {
+      const config = {
+        url: urlConstants.API_URLS.CREATE_PROJECT_FORM
+      }
+      this.unnatiService.get(config).subscribe(data => {
+        this.getTaskForm();
+        if (data.result && data.result.length) {
+          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, data.result).then(resp => {
+          }, error => {
+          })
+        }
+      }, error => {
+        this.getTaskForm();
+      })
+    })
+  }
+
+  getTaskForm() {
+    this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(resp => {
+    }, error => {
+      const config = {
+        url: urlConstants.API_URLS.GET_TASK_META_FORM
+      }
+      this.unnatiService.get(config).subscribe(data => {
+        if (data.result && data.result.length) {
+          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, data.result).then(resp => {
+          }, error => {
+          })
+        }
+      }, error => {
+      })
+    })
   }
 
   async getUserProfileDetails() {
@@ -147,17 +192,31 @@ export class AdminHomePage implements OnInit, OnDestroy {
   }
 
   onPillClick(event) {
-    const title = this.commonUtilService.getTranslatedValue(event.data[0].value.title, '');
-    this.commonUtilService.showToast(title);
     switch (event.data[0].value.code) {
+      case 'program':
+        this.router.navigate([RouterLinks.PROGRAM], {})
+        break
+      case 'project':
+        this.router.navigate([RouterLinks.PROJECT], {})
+        break
+      case 'observation':
+        this.router.navigate([RouterLinks.OBSERVATION], {})
+        break
+      case 'survey':
+        this.router.navigate([RouterLinks.SURVEY], {})
+        break
+      case 'report':
+        this.router.navigate([RouterLinks.REPORTS], {})
+        break
       case 'course':
-        this.router.navigate([RouterLinks.SEARCH], {
-          state: {
-            source: PageId.ADMIN_HOME,
-            preAppliedFilter: event.data[0].value.search
-          }
-        });
-        break;
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
+
+        // this.router.navigate([RouterLinks.SEARCH], {
+        //   state: {
+        //     source: PageId.ADMIN_HOME,
+        //     preAppliedFilter: event.data[0].value.search
+        //   }
+        // });
     }
   }
 

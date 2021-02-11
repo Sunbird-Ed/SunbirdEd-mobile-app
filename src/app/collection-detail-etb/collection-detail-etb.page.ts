@@ -66,7 +66,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { IButtonConfig, TocCardType, IAccordianConfig, ExpandMode, ExpandBehavior } from '@project-sunbird/common-consumption';
+import { IButtonConfig, TocCardType, IAccordianConfig, ExpandMode, ExpandBehavior } from '@project-sunbird/common-consumption-v8';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -246,9 +246,9 @@ export class CollectionDetailEtbPage implements OnInit {
   currentFilter = 'ALL';
   localImage = '';
   appName: any;
-  @ViewChild(iContent) ionContent: iContent;
-  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
-  @ViewChild('collectionChildComp') collectionChildComp: CollectionChildComponent;
+  @ViewChild(iContent, { static: false }) ionContent: iContent;
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
+  @ViewChild('collectionChildComp', { static: false }) collectionChildComp: CollectionChildComponent;
   private eventSubscription: Subscription;
 
   showDownload: boolean;

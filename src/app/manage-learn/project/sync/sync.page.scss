@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0,0,0,.5);
+    align-items: center;
+    height: 100%;
+}
+.innerContainer {
+    width: 90%;
+    padding: 25px 15px;
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+    flex-direction: column;
+}
+.middleSection{
+    margin: 10px 0;
+}
+.centerAlign {
+    justify-content: center;
+    align-items: center;
+}
+.flexBox {
+    display: flex;
+}

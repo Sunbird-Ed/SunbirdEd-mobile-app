@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TelemetryObject } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';

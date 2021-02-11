@@ -1,0 +1,31 @@
+<ion-content padding>
+  <div>
+    <h3 class="heading">{{ 'FRMELEMENTS_MSG_QUESTION_FILTER' | translate }}</h3>
+  </div>
+
+  <ion-list text-wrap>
+    <ion-item *ngFor="let question of allQuestions" (click)="onQuestionClick(question?.questionExternalId)">
+      <ion-label>{{ question?.questionName }}</ion-label>
+      <ion-checkbox
+        [checked]="filteredQuestions?.includes(question?.questionExternalId)"
+      ></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer no-shadow>
+  <ion-toolbar class="_toolbar-background-md" position="bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button ion-button full (click)="close()" class="btnText w-100">
+          {{ 'FRMELEMENTS_BTN_CANCEL' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button ion-button full (click)="applyFilter()" class="btnText w-100">
+          {{ 'FRMELEMENTS_BTN_APPLY_FILTER' | translate }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

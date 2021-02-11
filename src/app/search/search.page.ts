@@ -43,7 +43,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -66,7 +66,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   appName: string;
   showLoading: boolean;
   downloadProgress: any;
-  @ViewChild('searchInput') searchBar;
+  @ViewChild('searchInput', { static: false }) searchBar;
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
@@ -122,7 +122,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
 
-  @ViewChild('contentView') contentView: IonContent;
+  @ViewChild('contentView', { static: false }) contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,

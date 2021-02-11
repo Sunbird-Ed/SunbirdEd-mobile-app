@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DiscussionUiModule } from '@project-sunbird/discussions-ui'
+import { DiscussionEventsService, DiscussionUiModule } from '@project-sunbird/discussions-ui-v8'
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 @NgModule({
   declarations: [],
@@ -12,4 +13,13 @@ import { DiscussionUiModule } from '@project-sunbird/discussions-ui'
     DiscussionUiModule
   ],
 })
-export class DiscussionForumModule { }
+export class DiscussionForumModule { 
+  constructor(
+    private discussionEvents: DiscussionEventsService,
+    private discussionTelemetryService: DiscussionTelemetryService
+  ) {
+    this.discussionEvents.telemetryEvent.subscribe(event => {
+      this.discussionTelemetryService.logTelemetryEvent(event);
+    });
+  }
+}

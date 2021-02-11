@@ -1,0 +1,74 @@
+<ion-content>
+  <ion-item-group>
+    <ion-item-divider color="light">
+      <h3 class="headerText">
+        <ion-icon name="book" class="margin-right"></ion-icon>
+        <span class="ml-5">{{ entityName }}</span>
+      </h3>
+    </ion-item-divider>
+    <ng-container *ngFor="let section of evidenceSections; let i = index">
+      <ion-item (click)="goToQuestioner(i)" *ngIf="section?.questions?.length">
+        <div class="d-flex flex-ai-center flex-jc-space-between w-100">
+          <div class="d-flex flex-ai-center">
+            <ion-icon name="list-box" class="margin-right mr-5"></ion-icon>
+            <span>
+              {{ section?.name }}
+            </span>
+          </div>
+          <span class="float-right" *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
+            {{ 'COMPLETED' | translate }}
+            <ion-icon name="checkmark-circle" class="_progressIcon" margin-left> </ion-icon>
+          </span>
+          <span class="float-right" *ngIf="!section.progressStatus && !isIos" class="_flex-box">
+            <ion-icon name="arrow-forward" class="_progressIcon" margin-left></ion-icon>
+          </span>
+          <span class="float-right" *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box">
+            {{ 'FRMELEMNTS_LBL_IN_PROGRESS' | translate }}
+            <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon>
+          </span>
+          <span class="float-right" *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
+            {{ 'FRMELEMNTS_LBL_SUBMITTTED' | translate }}
+            <ion-icon name="cloud-done" class="_progressIcon" margin-left></ion-icon>
+          </span>
+        </div>
+      </ion-item>
+    </ng-container>
+  </ion-item-group>
+   <div margin class="border-radius" *ngIf="currentEvidence?.description">
+    <h2 padding-left>{{'FRMELEMNTS_LBL_DESCRIPTION' | translate}}</h2>
+    <div padding-left padding-right padding-bottom>
+      {{currentEvidence?.description}}
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer no-shadow
+  *ngIf="((allAnsweredForEvidence && !currentEvidence?.isSubmitted) || currentEvidence?.enableSubmit) && !sectionData?.observation">
+  <ion-toolbar position="bottom">
+    <ion-row>
+      <ion-button class="w-100" ion-button full (click)="checkForNetworkTypeAlert()">{{'FRMELEMNTS_BTN_UPLOAD_AND_SUBMIT'|translate}}
+       
+       </ion-button>
+
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>
+
+<ion-footer no-shadow *ngIf="((allAnsweredForEvidence && !currentEvidence.isSubmitted && sectionData?.observation) || currentEvidence?.enableSubmit)">
+  <ion-toolbar position="bottom">
+    <ion-row>
+      <ion-button class="w-100" ion-button full (click)="previewSubmission()">
+        {{'FRMELEMNTS_BTN_PREVIEW'|translate}}</ion-button>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>
+
+<ion-footer no-shadow *ngIf="sectionData?.observation && currentEvidence?.isSubmitted">
+  <ion-toolbar position="bottom">
+    <ion-row>
+      <ion-button class="w-100" ion-button full (click)="viewReport()">
+        {{'FRMELEMNTS_LBL_VIEW_REPORT'|translate}} </ion-button>
+      
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

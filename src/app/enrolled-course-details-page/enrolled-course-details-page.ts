@@ -69,6 +69,7 @@ import {
 } from '../components/popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 declare const cordova;
 
@@ -194,7 +195,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   licenseDetails;
   forumId?: string;
 
-  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  @ViewChild('stickyPillsRef', { static: false }) stickyPillsRef: ElementRef;
   public objRollup: Rollup;
   pageName = '';
   contentId: string;
@@ -260,6 +261,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     private categoryKeyTranslator: CategoryKeyTranslator,
     private consentService: ConsentService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
+    private discussionTelemetryService: DiscussionTelemetryService
   ) {
     this.objRollup = new Rollup();
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
@@ -385,6 +387,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
+    this.fetchForumIds()
   }
 
   private checkUserLoggedIn() {
@@ -1264,7 +1267,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         pageId: PageId.COURSE_DETAIL,
         corRelationList: this.corRelationList
       };
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {
@@ -1289,7 +1292,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       corRelationList: this.corRelationList
     };
 
-    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+    const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
     const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
     if (skipPlay) {
@@ -2335,11 +2338,22 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
       data.username = p.serverProfile['userName']
     });
-    console.log()
+    console.log('createUser req', data);
+    this.discussionTelemetryService.contextCdata = [
+      {
+        id: this.identifier,
+        type: 'Course'
+      },
+      {
+        id: this.courseCardData.batchId,
+        type: 'Batch'
+      }
+    ];
     this.discussionService.createUser(data).subscribe((response) => {
       console.log('discussionService.createUser', response)
       const userName = response.result.userName
       const result = [this.forumIds];
+      console.log('hello', this.forumIds);
       // this.router.navigate(['/discussion-forum'], {
         this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
@@ -2357,10 +2371,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   fetchForumIds() {
     const requestBody = this.prepareRequestBody();
     console.log('requestBody --', requestBody)
-    if (requestBody) {
+    if (requestBody.identifier.length) {
       this.discussionService.getForumIds(requestBody).subscribe(forumDetails => {
         console.log('forumDetails', forumDetails)
-        this.forumIds = forumDetails.result[0].cid;
+        if (forumDetails.result.length) {
+          this.forumIds = forumDetails.result[0].cid;
+        }
       }, error => {
         console.log('error', error);
       });
@@ -2372,7 +2388,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       identifier: [],
       type: ''
     };
-    const isCreator = this.course.createdBy === this.userId;
+    const isCreator = this.courseCardData.createdBy === this.userId;
     console.log('isCreator', isCreator)
     // const isMentor = this.permissionService.checkRolesPermissions(['COURSE_MENTOR']);
     if (isCreator) {

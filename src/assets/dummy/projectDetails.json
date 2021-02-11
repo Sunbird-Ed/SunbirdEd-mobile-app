@@ -1,0 +1,93 @@
+{
+    "message": "Successfully fetched projects",
+    "status": 200,
+    "result": {
+        "_id": "5fd7201c04b0890391b92062",
+        "userId": "e7719630-0457-47ca-a5ce-8190ffb34f13",
+        "status": "inProgress",
+        "isDeleted": false,
+        "categories": [
+            {
+                "_id": "5fc714ef94fda51a7fe90829",
+                "name": "Education Leader",
+                "externalId": "educationLeader"
+            },
+            {
+                "name": "tstts",
+                "externalId": "",
+                "_id": ""
+            }
+        ],
+        "tasks": [
+            {
+                "_id": "145415cc-8378-4399-baa9-94058ef156ea",
+                "status": "inProgress",
+                "name": "task 1",
+                "endDate": "",
+                "assignee": "",
+                "type": "simple",
+                "attachments": [],
+                "startDate": "",
+                "children": [],
+                "isDeleted": false,
+                "isDeletable": true,
+                "externalId": "task 1",
+                "isDeleteable": true,
+                "createdAt": "2020-12-14T08:19:41.663Z",
+                "updatedAt": "2020-12-15T09:37:17.115Z",
+                "isImportedFromLibrary": false,
+                "syncedAt": "2020-12-15T09:37:17.115Z",
+                "updatedBy": "e7719630-0457-47ca-a5ce-8190ffb34f13"
+            },
+            {
+                "_id": "1c59fa7e-61a1-4ddf-95d0-557aedbd1c78",
+                "status": "completed",
+                "name": "12345",
+                "endDate": "",
+                "assignee": "",
+                "type": "simple",
+                "attachments": [],
+                "startDate": "",
+                "children": [],
+                "isDeleted": false,
+                "isDeletable": true,
+                "externalId": "12345",
+                "isDeleteable": true,
+                "createdAt": "2020-12-15T10:13:56.457Z",
+                "updatedAt": "2020-12-15T10:13:56.457Z",
+                "isImportedFromLibrary": false,
+                "syncedAt": "2020-12-15T10:13:56.457Z",
+                "updatedBy": "e7719630-0457-47ca-a5ce-8190ffb34f13"
+            }
+        ],
+        "learningResources": [
+            {
+                "name": "\"Disadvantaged group\" in Right To Education act (RTE) : Did You Know?",
+                "id": "do_3128812241620254721830",
+                "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_3128812241620254721830",
+                "isChecked": true
+            },
+            {
+                "name": "\"Weaker section\" in Right To Education act, 2009 : Did You Know?",
+                "id": "do_3128812341787279361837",
+                "link": "https://qa.bodh.shikshalokam.org/resources/play/content/do_3128812341787279361837",
+                "isChecked": true
+            }
+        ],
+        "deleted": false,
+        "lastDownloadedAt": "2020-12-28T05:34:52.193Z",
+        "updatedAt": "2020-12-15T10:13:56.458Z",
+        "createdAt": "2020-12-14T08:19:40.735Z",
+        "description": "Karnataka Flash Visit-2019-FRAMEWORK",
+        "entityId": "5bfe53ea1d0c350d61b78d0a",
+        "lastSync": "2020-12-15T10:13:56.457Z",
+        "programExternalId": "Dummy program-1607933981574",
+        "programId": "5fd7201d08f9fd0f3644b84e",
+        "solutionExternalId": "e7719630-0457-47ca-a5ce-8190ffb34f13-1607933981574",
+        "solutionId": "5fd7201d08f9fd0f3644b84f",
+        "syncedAt": "2020-12-15T10:13:56.457Z",
+        "title": "Karnataka Flash Visit-2019-FRAMEWORK",
+        "entityName": "Sachdeva Convent School, Street No.-5 Sangam Vihar (Wazirabad - Jagatpur Road), Delhi",
+        "programName": "Karnataka Flash Visit-2019-FRAMEWORK"
+    }
+}

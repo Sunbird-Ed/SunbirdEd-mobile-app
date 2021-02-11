@@ -1,5 +1,5 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS, LOGIN_ADMIN_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class TabsPage implements OnInit, AfterViewInit {
 
   configData: any;
-  @ViewChild('tabRef') tabRef: IonTabs;
+  @ViewChild('tabRef', { static: false }) tabRef: IonTabs;
   tabIndex = 0;
   tabs = [];
   headerConfig = {
@@ -63,7 +63,9 @@ export class TabsPage implements OnInit, AfterViewInit {
         }).toPromise();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      initTabs(this.container, LOGIN_TEACHER_TABS);
+      const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+      initTabs(this.container,
+        selectedUserType === ProfileType.ADMIN ? LOGIN_ADMIN_TABS : LOGIN_TEACHER_TABS);
     }
 
     this.tabs = this.container.getAllTabs();

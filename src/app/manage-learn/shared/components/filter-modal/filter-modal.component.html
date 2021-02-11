@@ -1,0 +1,36 @@
+<ion-header>
+  <app-search-header (onSearch)="search($event)">
+    <ion-back-button></ion-back-button>
+  </app-search-header>
+</ion-header>
+<ion-content>
+  <ion-toolbar class="sb-header-toolbar">
+    <ion-buttons class="font-size-20 padding-left-6" (click)="dismissModal()" slot="start">
+      <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+  <div *ngIf="entityTypes && type == 'entity'">
+    <ion-select placeholder="Select One" (ionChange)="typeChange($event)" [value]="selectedType">
+      <ion-select-option [value]="t" *ngFor="let t of entityTypes; let i = index">{{
+        t | uppercase
+      }}</ion-select-option>
+    </ion-select>
+
+    <p class="type-filter-container" color="primary">{{ selectedType }}</p>
+  </div>
+  <div>
+    <p class="type-filter-container py-24" *ngIf="type == 'program'" color="primary">Programs</p>
+  </div>
+  <section>
+    <app-no-data *ngIf="!dataList.length"></app-no-data>
+  </section>
+  <div *ngIf="dataList">
+    <ion-item lines="inset" *ngFor="let data of dataList" (click)="dismissModal(data)">
+      <ion-label class="ion-text-wrap">{{ data?.name }} </ion-label>
+    </ion-item>
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>

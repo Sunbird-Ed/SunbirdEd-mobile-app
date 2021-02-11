@@ -7,7 +7,7 @@ import {
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { TocCardType } from '@project-sunbird/common-consumption';
+import { TocCardType } from '@project-sunbird/common-consumption-v8';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
@@ -338,8 +338,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }
-    if (this.courseHeirarchy && this.courseHeirarchy.contentData && this.courseHeirarchy.contentData.leafNodes) {
-      const leafNodeIds = this.courseHeirarchy.contentData.leafNodes;
+    if (this.courseContentData && this.courseContentData.contentData && this.courseContentData.contentData.leafNodes) {
+      const leafNodeIds = this.courseContentData.contentData.leafNodes;
       contentContextMap['leafNodeIds'] = leafNodeIds;
     }
 
@@ -469,7 +469,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         pageId: PageId.CHAPTER_DETAILS,
         corRelationList: this.corRelationList
       };
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {
@@ -501,7 +501,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
         this.objRollup,
       );
 
-      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent.identifier);
+      const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
       const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (skipPlay) {

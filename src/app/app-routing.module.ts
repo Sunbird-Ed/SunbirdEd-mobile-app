@@ -6,6 +6,7 @@ import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-frame
 import { HasNotSelectedLanguageGuard } from '@app/guards/has-not-selected-language.guard';
 import { HasNotSelectedUserTypeGuard } from '@app/guards/has-not-selected-user-type.guard';
 import { IsGuestUserGuard } from '@app/guards/is-guest-user.guard';
+import { MlGuard } from './manage-learn/core/guards/ml.guard';
 
 const routes: Routes = [
   {
@@ -99,6 +100,29 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
+  { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule', canActivate:[MlGuard] },
+  { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule', canActivate:[MlGuard] },
+  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule', canActivate:[MlGuard] },
+  { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule',canActivate:[MlGuard] },
+  {
+    path: RouterLinks.QUESTIONNAIRE,
+    loadChildren: './manage-learn/questionnaire/questionnaire.module#QuestionnairePageModule'
+  },
+
+  { path: RouterLinks.OBSERVATION, loadChildren: './manage-learn/observation/observation.module#ObservationModule' , canActivate:[MlGuard]},
+  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule' },
+  { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
+  { path: RouterLinks.ECM_LISTING, loadChildren: './manage-learn/ecm-listing/ecm-listing.module#EcmListingPageModule' },
+  { path: RouterLinks.SECTION_LISTING, loadChildren: './manage-learn/section-listing/section-listing.module#SectionListingPageModule' },
+  { path: RouterLinks.SUBMISSION_PREVIEW, loadChildren: './manage-learn/submission-preview/submission-preview.module#SubmissionPreviewModule' },
+  { path: RouterLinks.IMAGE_LISTING, loadChildren: './manage-learn/image-listing/image-listing.module#ImageListingModule' },
+  { path: RouterLinks.ALL_EVIDENCE, loadChildren: './manage-learn/all-evidence-list/all-evidence-list.module#AllEvidenceListModule' },
+  { path: RouterLinks.OBSERVATION_REPORTS, loadChildren: './manage-learn/observation-report/observation-report.module#ObservationReportModule' },
+   { path: RouterLinks.REPORT_WITH_SCORE, loadChildren: './manage-learn/repor-with-score/report-with-score.module#ReportWithScoreModule' },
+  { path: RouterLinks.SURVEY_REPORTS, loadChildren: './manage-learn/survey-report/survey-report.module#SurveyReportModule' },
+  { path: RouterLinks.PROJECT_REPORT, loadChildren: './manage-learn/project-report/project-report.module#ProjectReportModule' },
+  { path: RouterLinks.PROJECT_FULL_REPORT, loadChildren: './manage-learn/project-full-report/project-full-report.module#ProjectFullReportModule' },
+  { path: `${RouterLinks.DEEPLINK_REDIRECT}/:extra`, loadChildren: './manage-learn/deeplink-redirect/deeplink-redirect.module#DeeplinkRedirectModule', canActivate:[MlGuard] },
   { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
 

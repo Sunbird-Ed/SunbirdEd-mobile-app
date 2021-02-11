@@ -52,7 +52,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
   storageDestination: any;
   private deletedContentListTitle$?: BehaviorSubject<string>;
-  @ViewChild('downloadsTab') downloadsTab: DownloadsTabComponent;
+  @ViewChild('downloadsTab', { static: false }) downloadsTab: DownloadsTabComponent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -360,5 +360,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       this.downloadsTab.unSelectAllContents();
     }
   }
+
 
 }

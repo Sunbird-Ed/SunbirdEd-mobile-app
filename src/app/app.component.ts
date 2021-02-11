@@ -15,7 +15,7 @@ import {
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData,
-  Profile, DeviceRegisterService, ProfileService,
+  Profile, DeviceRegisterService, ProfileService, ProfileType,
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -39,7 +39,8 @@ import {
   AppHeaderService,
   FormAndFrameworkUtilService,
   SplashScreenService,
-  LocalCourseService
+  LocalCourseService,
+  LoginHandlerService
 } from '../services';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
@@ -49,6 +50,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
+import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
 
 declare const cordova;
 
@@ -74,7 +76,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   selectedLanguage: string;
   appName: string;
   appVersion: string;
-  @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
+  @ViewChild('mainContent', { read: IonRouterOutlet, static: false }) routerOutlet: IonRouterOutlet;
   isForeground: boolean;
   isPlannedMaintenanceStarted = false;
   isUnplannedMaintenanceStarted = false;
@@ -116,6 +118,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private utils: ApiUtilsService,
+    private networkServ: NetworkService,
+    private localStorage: LocalStorageService,
+    private db: DbService,
+    private loginHandlerService: LoginHandlerService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -162,6 +169,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
+      this.utils.initilizeML();
+      this.networkServ.netWorkCheck();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -449,6 +458,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   reloadGuestEvents() {
     this.checkDeviceLocation();
+    this.checkGuestUserType();
+  }
+
+  private async checkGuestUserType() {
+    const isAdminUser = (await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise() === ProfileType.ADMIN);
+    if (isAdminUser && this.appGlobalService.isGuestUser) {
+      this.loginHandlerService.signIn();
+    }
   }
 
   addNetworkTelemetry(subtype: string, pageId: string) {
@@ -820,6 +837,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
           this.logoutHandlerService.onLogout();
+          this.localStorage.deleteAllStorage();
+          this.db.dropDb();
         }
         break;
 

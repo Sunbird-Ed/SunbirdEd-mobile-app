@@ -204,6 +204,32 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         code: 'library',
         values: '\\/(resources|explore)$',
         route: 'tabs/resources'
+      },
+      {
+        name: 'TakeSurvey',
+        code: 'takeSurvey',
+        values: '\\/manage-learn\\/take-survey\\/(?<survey_id>\\w+)',
+        route: RouterLinks.SURVEY
+      },
+      {
+        name: 'Create Observation',
+        code: 'createObservation',
+        values: '\\/manage-learn\\/create-observation\\/(?<create_observation_id>\\w+)',
+        route: `${RouterLinks.DEEPLINK_REDIRECT}/observationLink`
+      },
+      {
+        name: 'Observation',
+        code: 'observation',
+        values: '\\/manage-learn\\/observation\\/(?<observation_id>\\w+)',
+        route: 'content-details',
+        priority: 6
+      },
+      {
+        name: 'Reports',
+        code: 'report',
+        values: '\\/manage-learn\\/observation\\/reports\\/(?<report_id>\\w+)',
+        route: 'content-details',
+        priority: 5
       }
     ];
 
@@ -259,7 +285,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await this.setOnboradingData(payloadUrl);
       }
 
-      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route);
+      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig.route, urlMatch.groups);
     }
   }
 
@@ -510,7 +536,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async handleNavigation(payloadUrl, identifier, dialCode, route) {
+  private async handleNavigation(payloadUrl, identifier, dialCode, route, urlMatchGroup) {
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       this.setTabsRoot();
@@ -531,7 +557,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     } else {
       this.setTabsRoot();
-      this.router.navigate([route]);
+      this.router.navigate([route], {
+        state: {
+          data: urlMatchGroup
+        }
+      });
       this.closeProgressLoader();
     }
   }
