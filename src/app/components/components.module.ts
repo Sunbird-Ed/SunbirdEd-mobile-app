@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
+import { ApplicationHeaderKebabMenuComponent } from './application-header/application-header-kebab-menu.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { PbHorizontalComponent } from './pb-horizontal/pb-horizontal.component';
@@ -64,6 +65,7 @@ import { DiscoverComponent } from './discover/discover.page';
 @NgModule({
   declarations: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,
@@ -126,6 +128,7 @@ import { DiscoverComponent } from './discover/discover.page';
   ],
   entryComponents: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
@@ -167,6 +170,7 @@ import { DiscoverComponent } from './discover/discover.page';
   ],
   exports: [
     ApplicationHeaderComponent,
+    ApplicationHeaderKebabMenuComponent,
     SignInCardComponent,
     PbHorizontalComponent,
     SbGenericPopoverComponent,

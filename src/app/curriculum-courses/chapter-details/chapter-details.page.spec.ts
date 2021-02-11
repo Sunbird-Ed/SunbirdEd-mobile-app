@@ -866,7 +866,6 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.subscribeUtilityEvents();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
                 expect(chapterDetailsPage.updatedCourseCardData).toStrictEqual(
@@ -1516,7 +1515,7 @@ describe('ChapterDetailsPage', () => {
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
                             telemetryObject: new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
-                            upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
+                            upcommingBatches: []
                         }
                     });
                 done();

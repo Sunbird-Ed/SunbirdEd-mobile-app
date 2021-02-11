@@ -71,31 +71,32 @@
             </span>
         </p>
     </div>
-   
+
     <div *ngIf="userLocation" class="location text-center">
         <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
             <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
             <span>{{userLocation.school.name}}</span>
             <span *ngIf="!(userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length)"
-            class="lighter">{{'FRMELEMNTS_LBL_ADD_SCHOOL' | translate}}</span>
+                class="lighter">{{'FRMELEMNTS_LBL_ADD_SCHOOL' | translate}}</span>
         </div>
         <div *ngIf="userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length">
             <span class="bolder">{{'FRMELEMNTS_LBL_CLUSTER' | translate}}: </span>
             <span>{{userLocation.cluster.name}}</span>
             <span *ngIf="!(userLocation?.cluster && userLocation?.cluster?.name && userLocation?.cluster?.name?.length)"
-            class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
+                class="lighter">{{'FRMELEMNTS_LBL_ADD_CLUSTER' | translate}}</span>
         </div>
         <div *ngIf="userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length">
             <span class="bolder">{{'FRMELEMNTS_LBL_BLOCK' | translate}}: </span>
             <span>{{userLocation.block.name}}</span>
             <span *ngIf="!(userLocation?.block && userLocation?.block?.name && userLocation?.block?.name?.length)"
-            class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
+                class="lighter">{{'FRMELEMNTS_LBL_ADD_BLOCK' | translate}}</span>
         </div>
         <div *ngIf="userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length">
             <span class="bolder">{{'DISTRICT' | translate}}: </span>
             <span>{{userLocation.district.name}}</span>
-            <span *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
-            class="lighter">{{'ADD_DISTRICT' | translate}}</span>
+            <span
+                *ngIf="!(userLocation?.district && userLocation?.district?.name && userLocation?.district?.name?.length)"
+                class="lighter">{{'ADD_DISTRICT' | translate}}</span>
         </div>
         <div *ngIf="userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length">
             <span class="bolder">{{'STATE' | translate}}: </span>
@@ -104,7 +105,8 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <ion-button shape="round" (click)="onEditProfileClicked()" *ngIf="userLocation?.state" class="custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="onEditProfileClicked()" *ngIf="userLocation?.state"
+                class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
 
@@ -238,23 +240,22 @@
             </div>
             <div class="content">
                 <div class="flex-nowrap"
-                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
+                    *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
-                        <div class="fw" (click)="openEnrolledCourse(certificate)">
-                            {{certificate.courseName}}
+                        <div class="fw" (click)="openEnrolledCourse(training)">
+                            {{training.courseName}}
+                        </div>
+                        <div class="batch-detail">
+                            {{training?.batch?.name}}
                         </div>
                         <div>
-                            <span *ngIf="certificate.status === 1 || certificate.status === 0"
-                                class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="completed-status-text">
-                                {{ 'COMPLETED' | translate }}</span>
-                            <span *ngIf="certificate.status === 2" class="lighter">
-                                {{certificate.dateTime | date:'MMMM yyyy'}} </span>
+                            <span [ngClass]="[training.style]"> {{ training.label | translate }}</span>
+                            <span class="lighter"> {{training.dateTime | date:'dd/MM/yyyy'}} </span>
                         </div>
                     </div>
-                    <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
+                    <div class="training-2" *ngIf="training?.certificate || training?.issuedCertificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
-                            (click)="downloadTrainingCertificate(certificate)">
+                            (click)="downloadTrainingCertificate(training)">
                             <ion-icon class="view-icon" name="md-eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>

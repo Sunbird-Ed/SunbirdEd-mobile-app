@@ -526,7 +526,6 @@ export class ViewMoreActivityComponent implements OnInit {
 
   private async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatches?: any, payload?: any) {
     const ongoingBatches = [];
-    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -551,8 +550,6 @@ export class ViewMoreActivityComponent implements OnInit {
                 batches.forEach((batch, key) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
-                  } else {
-                    upcommingBatches.push(batch);
                   }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -565,7 +562,7 @@ export class ViewMoreActivityComponent implements OnInit {
                 const popover = await this.popoverCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches,
+                    upcommingBatches: [],
                     ongoingBatches,
                     retiredBatches,
                     content
