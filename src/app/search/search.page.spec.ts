@@ -70,7 +70,7 @@ describe('SearchPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {};
-    const mockRoterExtras = {
+    const mockRouterExtras = {
         extras: {
             state: {
                 primaryCategories: 'primaryCategories',
@@ -83,7 +83,7 @@ describe('SearchPage', () => {
         }
     };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockRoterExtras as any),
+        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -965,8 +965,8 @@ describe('SearchPage', () => {
             // arrange
             searchPage.source = 'source';
             searchPage.initialFilterCriteria = {
-                    facetFilters: [{ name: 'name' }]
-                };
+                facetFilters: [{ name: 'name' }]
+            };
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [{ name: 'name' }]
@@ -1033,6 +1033,57 @@ describe('SearchPage', () => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
+            const searchContentResp = {
+                contentDataList: {
+                    identifier: 'id'
+                },
+                filterCriteria: {}
+            };
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
+            window.cordova.plugins = {
+                Keyboard: { close: jest.fn() }
+            };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
+            searchPage.profile = {
+                grade: ['grade1']
+            };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockTelemetryGeneratorService.generateLogEvent = jest.fn();
+            // act
+            searchPage.handleSearch();
+            // assert
+            expect(searchPage.showLoader).toEqual(true);
+            expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(searchPage.searchContentResult).toEqual(searchContentResp.contentDataList);
+                expect(searchPage.isEmptyResult).toBe(false);
+                expect(searchPage.responseData).toEqual(searchContentResp);
+                expect(searchPage.updateFilterIcon).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateLogEvent).toHaveBeenCalledWith(
+                    LogLevel.INFO,
+                    expect.anything(),
+                    Environment.HOME,
+                    ImpressionType.SEARCH,
+                    expect.anything()
+                );
+                done();
+            }, 0);
+        });
+        it('should handle search for preAppliedFilter', (done) => {
+            // arange
+            jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
+            searchPage.preAppliedFilter = {
+                filters: {
+                    status: ['Live'],
+                    objectType: ['Content'],
+                    board: ['cbse'],
+                    medium: ['Hindi', 'English']
+                }
+            };
+            // searchPage.searchKeywords = 'abcd';
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'

@@ -76,7 +76,7 @@ export class QRScannerResultHandler {
 
             if (org) {
               this.pageAssembleService.setPageAssembleChannel({
-                channelId: org.identifier
+                channelId: org.id
               });
 
               setTimeout(() => {
