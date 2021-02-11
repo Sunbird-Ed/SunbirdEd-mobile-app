@@ -57,6 +57,7 @@ import { StateModalComponent } from './components/state-modal/state-modal.compon
 import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
+import { SurveyProviderService } from '../core/services/survey-provider.service';
 
 @NgModule({
   declarations: [
@@ -156,6 +157,7 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
+    SurveyProviderService
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -169,7 +171,8 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
     SubmissionActionsComponent,
     ViewDetailComponent,
     StateModalComponent,
-    HintComponent
+    HintComponent,
+    SurveyMsgComponent
   ],
 })
 export class SharedModule {}
