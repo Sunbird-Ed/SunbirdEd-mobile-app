@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="search-container" [ngClass]="{'search-filter': filterIcon, '': !filterIcon}">
-      <div class="search-input">
+      <div class="search-input d-flex">
         <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
           class="search-input" (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
