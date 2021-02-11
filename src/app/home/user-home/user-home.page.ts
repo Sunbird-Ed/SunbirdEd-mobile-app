@@ -33,7 +33,7 @@ export class UserHomePage implements OnInit, OnDestroy {
   guestUser: boolean;
   appLabel: string;
 
-  displaySections: any[] = [];
+  displaySections?: any[];
   headerObservable: Subscription;
 
   pillsViewType = PillsViewType;

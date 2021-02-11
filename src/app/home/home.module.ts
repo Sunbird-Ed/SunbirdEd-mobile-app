@@ -13,6 +13,7 @@ import { AdminHomePage } from './admin-home/admin-home.page';
 import { UserTypeGuard } from './user-type.guard';
 import { ThemeInputsSelectorPipe } from './pipes/theme-inputs-selector.pipe';
 import { RandomColorMapPipe } from './pipes/random-color-map.pipe';
+import { ComponentsModule } from '@app/app/components/components.module';
 
 const routes: Routes = [
   {
@@ -37,6 +38,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     CommonConsumptionModule,
+    ComponentsModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
     PipesModule
