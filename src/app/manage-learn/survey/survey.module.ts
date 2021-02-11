@@ -26,6 +26,6 @@ const routes: Routes = [
     CoreModule,
   ],
   providers: [],
-  entryComponents:[SurveyMsgComponent]
+  entryComponents:[]
 })
 export class SurveyModule {}

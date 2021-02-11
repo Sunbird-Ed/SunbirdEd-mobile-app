@@ -33,6 +33,6 @@ const routes: Routes = [
     FormsModule,
     CoreModule,
   ],
-  entryComponents:[SurveyMsgComponent]
+  entryComponents:[]
 })
 export class ProgramsModule {}
