@@ -1,4 +1,4 @@
-import { DiscoverPage } from './discover.page';
+import { DiscoverComponent } from './discover.page';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -7,8 +7,8 @@ import { ContentAggregatorHandler } from '../../../services/content/content-aggr
 import { CommonUtilService, FormAndFrameworkUtilService } from '../../../services';
 import { NavigationService } from '../../../services/navigation-handler.service';
 
-describe('DiscoverPage', () => {
-  let discoverPage: DiscoverPage;
+describe('DiscoverComponent', () => {
+  let discoverComponent: DiscoverComponent;
   const mockAppVersion: Partial<AppVersion> = {
     getAppName: jest.fn(() => Promise.resolve('sunbird'))
   };
@@ -31,8 +31,8 @@ describe('DiscoverPage', () => {
   const mockPopoverController: Partial<PopoverController> = {};
 
   beforeAll(() => {
-    discoverPage = new DiscoverPage(
-      mockAppVersion as AppVersion, 
+    discoverComponent = new DiscoverComponent(
+      mockAppVersion as AppVersion,
       mockHeaderService as AppHeaderService,
       mockRouter as Router,
       mockEvents as Events,
@@ -48,7 +48,7 @@ describe('DiscoverPage', () => {
     jest.clearAllMocks();
   });
 
-  it('should be create an instance of DiscoverPage', () => {
-    expect(discoverPage).toBeTruthy();
+  it('should be create an instance of DiscoverComponent', () => {
+    expect(discoverComponent).toBeTruthy();
   });
 });
