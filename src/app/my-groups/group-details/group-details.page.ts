@@ -6,7 +6,7 @@ import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService
 } from '../../../services';
 import { Router } from '@angular/router';
-import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
+import { RouterLinks, MenuOverflow, ProfileConstants } from '@app/app/app.constant';
 import {
   InteractType,
   InteractSubtype,
@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, ActivateAndDeactivateByIdRequest
+  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -41,6 +41,7 @@ import {
   ViewMoreActivityActionsDelegate
 } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 @Component({
   selector: 'app-group-details',
@@ -69,9 +70,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   flattenedActivityList = [];
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
+  forumIds;
+
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
+    @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
@@ -82,7 +87,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
+    private viewMoreActivityDelegateService: ViewMoreActivityDelegateService,
+    private discussionTelemetryService: DiscussionTelemetryService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -99,6 +105,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
+    this.fetchForumIds()
   }
 
   ngOnDestroy() {
@@ -255,9 +262,18 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }
     } else {
       if (this.groupCreator.userId === this.userId) {
-        menuList = MenuOverflow.MENU_GROUP_CREATOR;
+        if(this.forumIds){
+          menuList = MenuOverflow.MENU_GROUP_CREATOR_DISABLE_DF;
+        } else {
+          menuList = MenuOverflow.MENU_GROUP_CREATOR;
+        }
+        
       } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
-        menuList = MenuOverflow.MENU_GROUP_ADMIN;
+        if(this.forumIds){
+          menuList = MenuOverflow.MENU_GROUP_ADMIN_DISABLE_DF
+        } else {
+          menuList = MenuOverflow.MENU_GROUP_ADMIN;
+        }
       }
     }
 
@@ -288,6 +304,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.showDeactivateGroupPopup();
       } else if (data.selectedItem === 'FRMELEMENTS_LBL_ACTIVATEGRP') {
         this.showReactivateGroupPopup();
+      } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM'){
+        this.enableDF();
+      } else if(data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
+        this.disableDF();
       }
     }
   }
@@ -892,5 +912,74 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       id
     );
   }
+
+  // openDiscussionForum() {
+  //   this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
+  //     queryParams: {
+  //       categories: JSON.stringify({ result }),
+  //       userName: userName
+  //     }
+  //   }
+  // }
+
+  fetchForumIds() {
+    const request = {
+      identifier: [this.groupId],
+      type: 'group'
+    };
+    this.discussionService.getForumIds(request).toPromise().then(forumDetails => {
+      console.log('forumDetails', forumDetails)
+      if (forumDetails.result.length) {
+        this.forumIds = forumDetails.result[0].cid;
+      }
+    }).catch(error => {
+      console.log('error fetchForumIds', error);
+    });
+  }
+
+  async openDiscussionForum() {
+    // this.showLoader = true;
+    const data = {
+      username: '',
+      identifier: this.userId,
+    };
+    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      data.username = p.serverProfile['userName']
+    });
+    console.log('createUser req', data);
+    this.discussionTelemetryService.contextCdata = [
+      {
+        id: this.groupId,
+        type: 'group'
+      }
+    ];
+    this.discussionService.createUser(data).subscribe((response) => {
+      console.log('discussionService.createUser', response)
+      const userName = response.result.userName
+      const result = [this.forumIds];
+      console.log('hello', this.forumIds);
+      // this.router.navigate(['/discussion-forum'], {
+        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
+        queryParams: {
+          categories: JSON.stringify({ result }),
+          userName: userName
+        }
+      });
+    }, error => {
+      console.log('err in discussionService.createUser', error)
+      // this.showLoader = false;
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+    });
+  }
+
+  enableDF(){
+    console.log('enable df');
+  }
+
+  disableDF(){
+    console.log('disable df');
+  }
+
+  
 
 }

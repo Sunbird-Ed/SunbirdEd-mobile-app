@@ -1141,5 +1141,7 @@
   "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
   "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}",
   "DOWNLOAD_AS_PDF": "Download as PDF",
-  "DOWNLOAD_AS_PNG": "Download as PNG"
+  "DOWNLOAD_AS_PNG": "Download as PNG",
+  "ENABLE_DISCUSSION_FORUM": "Enable discussion forum",
+  "DISABLE_DISCUSSION_FORUM": "Disable discussion forum"
 }

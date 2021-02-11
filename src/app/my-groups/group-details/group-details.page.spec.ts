@@ -1,7 +1,9 @@
 import { GroupDetailsPage } from './group-details.page';
 import {
     GroupService, GroupMemberRole,
-    GroupEntityStatus
+    GroupEntityStatus,
+    DiscussionService,
+    ProfileService
 } from '@project-sunbird/sunbird-sdk';
 import {
     AppHeaderService,
@@ -18,6 +20,7 @@ import { RouterLinks } from '../../app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
@@ -51,10 +54,19 @@ describe('GroupDetailsPage', () => {
         navigateToDetailPage: jest.fn()
     };
     const mockViewMoreActivityDelegateService: Partial<ViewMoreActivityDelegateService> = {};
+    const mockDiscussionService: Partial<DiscussionService> = {
+        getForumIds: jest.fn()
+    };
+    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
+    };
+    const mockProfileService: Partial<ProfileService> = {};
+    
 
     beforeAll(() => {
         groupDetailsPage = new GroupDetailsPage(
             mockGroupService as GroupService,
+            mockDiscussionService as DiscussionService,
+            mockProfileService as ProfileService,
             mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -65,7 +77,8 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService as CommonUtilService,
             mockFilterPipe as FilterPipe,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockViewMoreActivityDelegateService as ViewMoreActivityDelegateService
+            mockViewMoreActivityDelegateService as ViewMoreActivityDelegateService,
+            mockDiscussionTelemetryService as DiscussionTelemetryService,
         );
     });
 
@@ -82,7 +95,7 @@ describe('GroupDetailsPage', () => {
         // arrange
         mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-
+        jest.spyOn(groupDetailsPage, 'fetchForumIds').mockImplementation()
         // act
         groupDetailsPage.ngOnInit();
 
