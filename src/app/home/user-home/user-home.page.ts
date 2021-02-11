@@ -293,6 +293,9 @@ export class UserHomePage implements OnInit, OnDestroy {
         if (displayItems[count].dataSrc && displayItems[count].dataSrc.type === 'RECENTLY_VIEWED_CONTENTS') {
           displayItems[count] = this.modifyContentData(displayItems[count]);
         }
+        if (displayItems[count].dataSrc && displayItems[count].dataSrc.type === 'TRACKABLE_COLLECTIONS') {
+          displayItems[count] = this.modifyCourseData(displayItems[count]);
+        }
       }
     }
     return displayItems;
@@ -335,6 +338,16 @@ export class UserHomePage implements OnInit, OnDestroy {
       item['organisation'] = item['organisation'] || (item.contentData && item.contentData['organisation']);
       item['badgeAssertions'] = item['badgeAssertions'] || (item.contentData && item.contentData['badgeAssertions']);
       item['resourceType'] = item['resourceType'] || (item.contentData && item.contentData['resourceType']);
+    });
+    return displayItems;
+  }
+
+  modifyCourseData(displayItems) {
+    if (!displayItems.data.sections && !displayItems.data.sections[0] && !displayItems.data.sections[0].contents) {
+      return;
+    }
+    displayItems.data.sections[0].contents.forEach(item => {
+      item['cardImg'] = item['cardImg'] || (item.content && item.content['appIcon']);
     });
     return displayItems;
   }
