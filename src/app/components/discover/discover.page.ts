@@ -21,7 +21,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
 
   appLabel: string;
   headerObservable: Subscription;
-  displaySections: any[] = [];
+  displaySections?: any[];
   courseCardType = CourseCardGridTypes;
 
   constructor(

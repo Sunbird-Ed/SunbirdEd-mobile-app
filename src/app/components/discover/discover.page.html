@@ -1,4 +1,17 @@
-<div class="m-12">
+<ion-list class="m-n" *ngIf="!displaySections">
+  <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
+  <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
+    <ion-avatar item-start>
+      <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
+    </ion-avatar>
+    <ion-label style="padding-left: 40px;">
+      <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
+      <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
+    </ion-label>
+  </ion-item>
+</ion-list>
+
+<div class="m-12" *ngIf="displaySections">
   <ng-container *ngFor="let section of displaySections">
     <div class="heading-label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist'">
       <span>{{section?.title | translateJson | titlecase}}</span>
