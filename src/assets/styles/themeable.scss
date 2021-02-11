@@ -1022,6 +1022,16 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-user-home, app-search {
+    ion-content:first-child {
+      --offset-top: calc(-36px) !important;
+
+      .container-focus {
+        padding-top: 20px;
+      }
+    }
+  }
+
   // faq-report-issue page
   app-faq-report-issue{
     .initiate-email-info-button{
