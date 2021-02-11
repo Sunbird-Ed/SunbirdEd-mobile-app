@@ -1,1 +1,230 @@
-{"id":"api.form.read","params":{"resmsgid":"ef8ad0bd-a6c3-4f62-abfa-7e75bc33057e","msgid":"ba747c0d-76d0-4ece-95bc-1eadec18956f","status":"successful"},"responseCode":"OK","result":{"form":{"type":"config","subtype":"home","action":"get","component":"app","framework":"*","data":{"templateName":"home","action":"get","fields":[{"index":0,"title":"{\"en\":\"Continue learning\"}","isEnabled":true,"dataSrc":{"name":"TRACKABLE_CONTENTS"},"theme":{"component":"sb-course-cards-hlist","inputs":{"type":"my_course_recently_viewed_card_grid","hideProgress":true,"viewMoreButtonText":"{\"en\":\"View all\"}","maxCardCount":10,"viewMoreButtonPosition":"right"}}},{"index":1,"title":"{\"en\":\"Browse by subject\"}","isEnabled":true,"dataSrc":{"name":"CONTENT_FACETS","facet":"subject","aggregate":{"groupBy":"primaryCategory"}},"theme":{"component":"sb-pills-grid","inputs":{"pillShape":"default","pillsViewType":"scroll","minDisplayCount":10,"showMoreViewType":"new_screen","viewMoreText":"{\"en\":\"View all subjects\"}","viewLessText":"{\"en\":\"View Less\"}","pillsMultiRow":"double_view_column"}}},{"index":2,"title":"{\"en\":\"Browse by category\"}","isEnabled":true,"dataSrc":{"name":"CONTENT_FACETS","facet":"primaryCategory","aggregate":{"groupBy":"subject"}},"theme":{"component":"sb-pills-grid","inputs":{"pillShape":"image_overlap","pillsViewType":"scroll"}}},{"index":3,"title":"{\"en\":\"Recently viewed\"}","isEnabled":true,"dataSrc":{"name":"RECENTLY_VIEWED_CONTENTS"},"theme":{"component":"sb-library-cards-hlist","inputs":{"type":"mobile_textbook","viewMoreButtonText":"{\"en\":\"View all\"}","maxCardCount":10,"viewMoreButtonPosition":"right"}}}]},"created_on":"2020-12-09T06:11:50.319Z","last_modified_on":null,"rootOrgId":"*"}},"ts":"2021-01-11T05:27:33.009Z","ver":"1.0"}
+{
+  "id": "api.form.read",
+  "params": {
+    "resmsgid": "ef8ad0bd-a6c3-4f62-abfa-7e75bc33057e",
+    "msgid": "ba747c0d-76d0-4ece-95bc-1eadec18956f",
+    "status": "successful"
+  },
+  "responseCode": "OK",
+  "result": {
+    "form": {
+      "type": "config",
+      "subtype": "home",
+      "action": "get",
+      "component": "app",
+      "framework": "*",
+      "data": {
+        "templateName": "home",
+        "action": "get",
+        "fields": [
+          {
+            "dataSrc": {
+              "type": "CONTENTS",
+              "request": {
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                    "request": {
+                        "facets": [
+                          "primaryCategory"
+                        ],
+                        "filters": {
+                          "primaryCategory": [
+                            "Course"
+                          ]
+                        }
+                    }
+                }
+              },
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 0,
+                "title": "{\"en\":\"Trending courses from your state\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-course-cards-hlist",
+                  "inputs": {
+                    "type": "course_card_grid",
+                    "hideProgress": true,
+                    "viewMoreButtonText": "{\"en\":\"View all\"}"
+                  }
+                }
+              },
+              {
+                "index": 1,
+                "title": "{\"en\":\"Trending courses from your state\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-course-cards-hlist",
+                  "inputs": {
+                    "type": "course_card_grid",
+                    "hideProgress": true,
+                    "viewMoreButtonText": "{\"en\":\"View all\"}"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "dataSrc": {
+              "type": "TRACKABLE_COLLECTIONS",
+              "request": {
+                "type": "GET",
+                "path": "/api/course/v1/user/enrollment/list/${userId}",
+                "parameters": {
+                  "orgdetails": "orgName,email",
+                  "fields": "contentType,topic,name,channel,pkgVersion,primaryCategory,trackable",
+                  "batchDetails": "name,endDate,startDate,status,enrollmentType,createdBy,certificates"
+                },
+                "withBearerToken": true,
+                "withUserToken": true
+              },
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 0,
+                "title": "{\"en\":\"Continue learning\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-course-cards-hlist",
+                  "inputs": {
+                    "type": "my_course_recently_viewed_card_grid",
+                    "hideProgress": true,
+                    "viewMoreButtonText": "{\"en\":\"View all\"}",
+                    "maxCardCount": 10,
+                    "viewMoreButtonPosition": "right"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "dataSrc": {
+              "type": "CONTENT_FACETS",
+              "request": {
+                "type": "POST",
+                "path": "/api/content/v1/search",
+                "withBearerToken": true,
+                "body": {
+                    "request": {
+                        "limit": 0,
+                        "offset": 0,
+                        "mode": "hard",
+                        "facets": [
+                        ],
+                        "filters": {
+                        }
+                    }
+                }
+              },
+              "mapping": [
+                {
+                  "facet": "subject",
+                  "aggregate": {
+                    "groupBy": "primaryCategory"
+                  }
+                },
+                {
+                  "facet": "primaryCategory",
+                  "aggregate": {
+                    "groupBy": "subject"
+                  }
+                }
+              ]
+            },
+            "sections": [
+              {
+                "index": 2,
+                "title": "{\"en\":\"Browse by subject\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-pills-grid",
+                  "inputs": {
+                    "pillShape": "default",
+                    "pillsViewType": "scroll",
+                    "minDisplayCount": 10,
+                    "showMoreViewType": "new_screen",
+                    "viewMoreText": "{\"en\":\"View all subjects\"}",
+                    "viewLessText": "{\"en\":\"View Less\"}",
+                    "pillsMultiRow": "double_view_column"
+                  },
+                  "children": {
+                    "sb-pill-item": {
+                      "inputs": {
+                        "icon": "assets/imgs/book_default.svg"
+                      },
+                      "inputsMap": {
+                        "icon": {
+                          "english": "assets/imgs/book_english.svg",
+                          "mathematics": "assets/imgs/calculator.svg",
+                          "science": "assets/imgs/globe.svg"
+                        },
+                        "theme": {
+                          "english": {
+                            "iconBgColor": "rgba(255,139,46,1)",
+                            "pillBgColor": "rgba(255,139,46,0.3)"
+                          },
+                          "mathematics": {
+                            "iconBgColor": "rgba(163,99,255,1)",
+                            "pillBgColor": "rgba(163,99,255,0.3)"
+                          },
+                          "science": {
+                            "iconBgColor": "rgba(34,139,255,1)",
+                            "pillBgColor": "rgba(34,139,255,0.3)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "index": 2,
+                "title": "{\"en\":\"Browse by category\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-pills-grid",
+                  "inputs": {
+                    "pillShape": "image_overlap",
+                    "pillsViewType": "scroll"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "dataSrc": {
+              "type": "RECENTLY_VIEWED_CONTENTS",
+              "mapping": []
+            },
+            "sections": [
+              {
+                "index": 4,
+                "title": "{\"en\":\"Recently viewed\"}",
+                "isEnabled": true,
+                "theme": {
+                  "component": "sb-library-cards-hlist",
+                  "inputs": {
+                    "type": "mobile_textbook",
+                    "viewMoreButtonText": "{\"en\":\"View all\"}",
+                    "maxCardCount": 10,
+                    "viewMoreButtonPosition": "right"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "created_on": "2020-12-09T06:11:50.319Z",
+      "last_modified_on": null,
+      "rootOrgId": "*"
+    }
+  },
+  "ts": "2021-01-11T05:27:33.009Z",
+  "ver": "1.0"
+}

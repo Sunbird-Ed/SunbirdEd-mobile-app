@@ -2,7 +2,7 @@ import {FieldConfig, FieldConfigInputType, FieldConfigValidationType} from 'comm
 import {FilterValue} from 'sunbird-sdk';
 
 export class FilterFormConfigMapper {
-    static map(facetFilters: { [key: string]: FilterValue[] }): FieldConfig<string>[] {
+    static map(facetFilters: { [key: string]: FilterValue[] }, defaults: { [field: string]: any }): FieldConfig<string>[] {
         return Object.keys(facetFilters).reduce<FieldConfig<string>[]>((acc, key) => {
             switch (key) {
                 case 'board': {
@@ -10,6 +10,7 @@ export class FilterFormConfigMapper {
                         code: 'board',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'board',
+                        default: (defaults && defaults['board']) || null,
                         templateOptions: {
                             label: 'board',
                             placeHolder: 'Select Board',
@@ -35,6 +36,7 @@ export class FilterFormConfigMapper {
                         code: 'medium',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'medium',
+                        default: (defaults && defaults['medium']) || null,
                         templateOptions: {
                             label: 'medium',
                             placeHolder: 'Select Medium',
@@ -54,6 +56,7 @@ export class FilterFormConfigMapper {
                         code: 'gradeLevel',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'gradeLevel',
+                        default: (defaults && defaults['gradeLevel']) || null,
                         templateOptions: {
                             label: 'class',
                             placeHolder: 'Select Class',
@@ -73,6 +76,7 @@ export class FilterFormConfigMapper {
                         code: 'subject',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'subject',
+                        default: (defaults && defaults['subject']) || null,
                         templateOptions: {
                             label: 'subject',
                             placeHolder: 'Select Subject',
@@ -92,6 +96,7 @@ export class FilterFormConfigMapper {
                         code: 'publisher',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'publisher',
+                        default: (defaults && defaults['publisher']) || null,
                         templateOptions: {
                             label: 'publisher',
                             placeHolder: 'Select publisher',
@@ -111,6 +116,7 @@ export class FilterFormConfigMapper {
                         code: 'mimeType',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'mediaType',
+                        default: (defaults && defaults['mediaType']) || null,
                         templateOptions: {
                             label: 'Media Type',
                             placeHolder: 'Select Media Type',
@@ -130,6 +136,7 @@ export class FilterFormConfigMapper {
                         code: 'primaryCategory',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'primaryCategory',
+                        default: (defaults && defaults['primaryCategory']) || null,
                         templateOptions: {
                             label: 'Content Type',
                             placeHolder: 'Select Content Type',

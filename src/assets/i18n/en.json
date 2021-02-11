@@ -1139,8 +1139,9 @@
   "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
   "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
   "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
-  "YOUR_PREFERENCES": "Your preferences",
   "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}",
   "DOWNLOAD_AS_PDF": "Download as PDF",
-  "DOWNLOAD_AS_PNG": "Download as PNG"
+  "DOWNLOAD_AS_PNG": "Download as PNG",
+  "YOUR_PREFERENCES": "Your preferences",
+  "SEARCH_OR_ENTER_QR_CODE": "Search or enter QR code"
 }

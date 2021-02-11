@@ -32,8 +32,8 @@ const COURSE_TAB_DISABLED = {
     disabled: true
 };
 
-const DISCOVER_TAB = {
-    root: 'discover',
+const SEARCH_TAB = {
+    root: 'search',
     icon: 'discover',
     label: 'DISCOVER_BNAV',
     index: 2
@@ -79,7 +79,7 @@ const PROFILE_TAB = {
 
 export const GUEST_TEACHER_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
@@ -87,7 +87,7 @@ export const GUEST_TEACHER_TABS = [
 
 export const LOGIN_TEACHER_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB
@@ -95,24 +95,24 @@ export const LOGIN_TEACHER_TABS = [
 
 export const GUEST_STUDENT_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
 // todo name
-export const GUEST_HOME_DISCOVER_TABS = [
+export const GUEST_HOME_SEARCH_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
-export const LOGGEDIN_HOME_DISCOVER_TABS = [
+export const LOGGEDIN_HOME_SEARCH_TABS = [
     HOME_TAB,
-    DISCOVER_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB
