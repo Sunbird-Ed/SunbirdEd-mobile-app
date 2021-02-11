@@ -46,7 +46,7 @@
             [viewMoreButtonText]="section?.theme?.inputs?.viewMoreButtonText | translateJson"
             [contentList]="subSection.contents"
             (viewMoreClick)="navigateToViewMoreContentsPage(section)"
-            (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
+            (cardClick)="navigateToDetailPage($event)">
           </sb-course-cards-hlist>
 
         </ng-container>
