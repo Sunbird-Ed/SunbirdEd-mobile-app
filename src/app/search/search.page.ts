@@ -147,6 +147,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   headerObservable: Subscription;
+  primaryCategoryFilters = [];
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -831,6 +832,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
+              if (this.responseData.filterCriteria && this.responseData.filterCriteria.facetFilters) {
+                this.fetchPrimaryCategoryFilters(this.responseData.filterCriteria.facetFilters);
+              }
               values.searchCount = this.responseData.length;
               values.searchCriteria = this.responseData.filterCriteria;
               this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
@@ -1722,6 +1726,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         break;
       default: console.warn('Use Proper Event name');
     }
+  }
+
+  fetchPrimaryCategoryFilters(facetFilters) {
+    for (let index = 0; index < facetFilters.length; index++) {
+      if (facetFilters[index].name === 'primaryCategory') {
+        this.primaryCategoryFilters = facetFilters[index].values;
+        break;
+      }      
+    }
+  }
+
+  handleFilterSelect(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    
+    
   }
 
 }

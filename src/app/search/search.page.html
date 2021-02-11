@@ -175,6 +175,11 @@
     </ion-list>
 
     <div *ngIf="searchContentResult && searchContentResult.length">
+      <div class="pills-filter">
+        <sb-pills-grid (select)="handleFilterSelect($event)">
+          <sb-pill-item *ngFor="let filter of primaryCategoryFilters" [name]="filter?.name | titlecase" [value]="filter"></sb-pill-item>
+        </sb-pills-grid>
+      </div>
       <div class="sb-search-history-entry sb-search-header-meta row">
         <div class="col" *ngIf="searchKeywords">
           {{'SHOWING_RESULTS_FOR' | translate: {'%count': searchContentResult.length, '%query': searchKeywords} }}
