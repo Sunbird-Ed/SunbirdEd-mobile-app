@@ -1,0 +1,11 @@
+<ion-content hide-header-footer
+             class="main-container avoid-bottom-tabs-space" scrollEvents="true">
+  <div #scrollWrap
+       class="scroll-wrap"
+       (pan)="onGestureEvent($event)"
+       (pinch)="onGestureEvent($event)"
+       (panend)="onGestureEvent($event)"
+       (pinchend)="onGestureEvent($event)">
+    <div #certificateContainer></div>
+  </div>
+</ion-content>
