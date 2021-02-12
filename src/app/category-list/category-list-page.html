@@ -1,33 +1,47 @@
 <ion-content>
-    <div style="padding: 8px">
-        <h1 class="mt-4">{{ formField.facet | translateJson }}</h1>
-        <p>{{'SUBJECT_DESCRIPTION' | translate}}</p>
+    <div class="container-focus">
+        <div style="padding: 16px">
+            <h3 class="mt-4"
+                style="font-weight: 600;">{{ 'EXPLORE' | translate: {'%s': (formField.facet | translateJson)} }}</h3>
+            <p>{{'SUBJECT_DESCRIPTION' | translate: {'%s': (formField.facet | translateJson), '%a': appName} }}</p>
+        </div>
+
+        <!-- filter from discover search page-->
+        <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
+                        <ion-select style="border-radius: 16px; background-color: #ffffff;" multiple="false"
+                                    class="ion-text-capitalize"
+                                    [interfaceOptions]="primaryFacetFiltersTemplateOptions"
+                                    (ionCancel)="cancelEvent('medium')"
+                                    [formControlName]="primaryFacetFilter.code"
+                                    okText="{{'BTN_SUBMIT' | translate}}"
+                                    cancelText="{{'CANCEL' | translate}}"
+                                    placeholder="{{primaryFacetFilter.translations | translateJson}}">
+                            <ion-select-option
+                                    *ngFor="let facet of (facetFilters[primaryFacetFilter.code] || [])"
+                                    [value]="facet"
+                                    class="ion-text-capitalize">
+                                {{facet.name}}
+                            </ion-select-option>
+                        </ion-select>
+                    </ion-col>
+
+                    <ion-col size="2">
+                        <ion-button fill="outline" style="--background: transparent !important;"
+                                    (click)="navigateToFilterFormPage()">
+                            <img src="./assets/imgs/filter.svg" class="tool-icon" alt="filter">
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </form>
     </div>
 
-    <!-- filter from discover search page-->
-    <div *ngIf="fromLibrary">
-        <ion-grid>
-            <ion-row>
-                <ion-col size="4" *ngFor="let primaryFacetFilter of primaryFacetFilters">
-                    <ion-select #mediumSelect multiple="true" class="ion-text-capitalize"
-                                [interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent('medium')"
-                                okText="{{'BTN_SUBMIT' | translate}}"
-                                cancelText="{{'CANCEL' | translate}}"
-                                placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
-                        <ion-select-option *ngFor="let facet of facetFilters[primaryFacetFilter.code]" class="ion-text-capitalize">
-                            {{facet.name}}</ion-select-option>
-                    </ion-select>
-                </ion-col>
-
-                <ion-col size="4">
-                    <ion-button fill="outline" (click)="navigateToFilterFormPage()">more filters</ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-    </div>
-
-    <div class="px-8">
-        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'" [pillsViewType]="'scroll'"
+    <div class="px-8" *ngIf="!showSheenAnimation">
+        <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
+                       [pillsViewType]="'scroll'"
                        [pillBorder]="'rounded'">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
@@ -54,6 +68,7 @@
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
                                         [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
+                                        [layoutConfig]="layoutConfiguration"
                                         (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"
                                         (cardClick)="navigateToDetailPage($event, section.name)">
                 </sb-library-cards-stack>

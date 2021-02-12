@@ -22,7 +22,8 @@ import {
     Environment,
     PageId,
     ImpressionType,
-    ObjectType
+    ObjectType,
+    LoginHandlerService
 } from '../../../services';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
@@ -87,6 +88,8 @@ describe('GuestEditPage', () => {
         getSupportedProfileAttributes: jest.fn(() => Promise.resolve({ borad: 'board', medium: 'medium', gradeLevel: 'gradeLevel' }))
     };
 
+    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+
     beforeAll(() => {
         guestEditPage = new GuestEditPage(
             mockProfileService as ProfileService,
@@ -103,7 +106,8 @@ describe('GuestEditPage', () => {
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockLocation as Location,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockLoginHandlerService as LoginHandlerService
         );
     });
 

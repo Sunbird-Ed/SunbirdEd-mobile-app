@@ -12,8 +12,8 @@ export class SbSubjectListPopupComponent {
     @Input() public title = '';
 
     PillShape = PillShape;
-    PillsViewType = PillsViewType; 
-    PillBorder = PillBorder; 
+    PillsViewType = PillsViewType;
+    PillBorder = PillBorder;
     PillsMultiRow = PillsMultiRow;
     ShowMoreViewType = ShowMoreViewType;
 

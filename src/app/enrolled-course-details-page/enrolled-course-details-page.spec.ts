@@ -40,6 +40,7 @@ import { ConsentService } from '../../services/consent-service';
 import {
     TncUpdateHandlerService,
 } from '../../services/handlers/tnc-update-handler.service';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { mockProfileData } from '../profile/profile.page.spec.data';
 import { CourseBatchStatus, CourseEnrollmentType, DiscussionService, SortOrder } from '@project-sunbird/sunbird-sdk';
 
@@ -132,6 +133,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockDiscussionService: Partial<DiscussionService> = {
         getForumIds: jest.fn()
     };
+    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
+    };
+    
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -164,7 +168,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentPlayerHandler as ContentPlayerHandler,
             mockCategoryKeyTranslator as CategoryKeyTranslator,
             mockConsentService as ConsentService,
-            mockTncUpdateHandlerService as TncUpdateHandlerService
+            mockTncUpdateHandlerService as TncUpdateHandlerService,
+            mockDiscussionTelemetryService as DiscussionTelemetryService
         );
     });
 

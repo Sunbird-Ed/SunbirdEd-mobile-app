@@ -1119,7 +1119,7 @@
   "DOWNLOAD_CSV": "Download .CSV",
   "BROWES_RELEVANT_CONTENT": "Browse {{app_name}} Library to find relevant content based on your preferences (Board, Medium, Class)",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
-  "SUBJECT_DESCRIPTION": "Text is indicating the below cards combination oof textbooks from all classes(for teachers)",
+  "SUBJECT_DESCRIPTION": "Explore {{%s}} from all the boards and mediums on {{%a}}",
   "WELCOME": "Welcome",
   "DISCOVER_BNAV": "Search",
   "HOME_BNAV": "Home",
@@ -1139,5 +1139,10 @@
   "FRMELEMNTS_LBL_ADD_BLOCK": "Add Block",
   "FRMELEMNTS_LBL_ADD_CLUSTER": "Add Cluster",
   "FRMELEMNTS_LBL_ADD_SCHOOL": "Add School",
-  "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}"
+  "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}",
+  "DOWNLOAD_AS_PDF": "Download as PDF",
+  "DOWNLOAD_AS_PNG": "Download as PNG",
+  "YOUR_PREFERENCES": "Your preferences",
+  "SEARCH_OR_ENTER_QR_CODE": "Search or enter QR code",
+  "EXPLORE": "Explore {{%s}}"
 }

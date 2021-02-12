@@ -5,6 +5,7 @@ html[data-theme="JOYFUL"]{
   --app-primary-light:#C6E7FF;
   --app-primary-background:#F3F7FB;
   --app-primary-header:#FFD954;
+  --app-primary-header-light:#FFE487;
   --app-secondary-background:#F2F2EA;
   --app-tertiary:#6236FF;
   --app-tertiary-light:#E0E1FD;
@@ -1017,6 +1018,16 @@ html[data-theme="JOYFUL"]{
       .report-button{
         border-radius: 20px !important;
         box-shadow: var(--button-style-shadow) !important;
+      }
+    }
+  }
+
+  app-user-home, app-search, app-category-list-page {
+    ion-content:first-child {
+      --offset-top: calc(-36px) !important;
+
+      .container-focus {
+        padding-top: 20px;
       }
     }
   }

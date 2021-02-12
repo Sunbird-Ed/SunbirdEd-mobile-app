@@ -441,6 +441,7 @@ export class RouterLinks {
     public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
     public static readonly FRAMEWORK_SELECTION = 'framework-selection';
+    public static readonly CERTIFICATE_VIEW = 'certificate-view';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
@@ -461,9 +462,6 @@ export class RouterLinks {
 
     // HOME Routes
     public static readonly HOME = 'home';
-
-    // Discover(SEARCH) Routes
-    public static readonly DISCOVER = 'discover';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -521,7 +519,7 @@ export class RouterLinks {
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
-    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
+    public static readonly SEARCH_TAB = `/${RouterLinks.TABS}/${RouterLinks.SEARCH}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
@@ -692,6 +690,12 @@ export const PrimaryCaregoryMapping = {
     },
     "tv programs": {
         icon: 'assets/imgs/tv.svg'
+    },
+    "documents": {
+        icon: 'assets/imgs/documents.svg'
+    },
+    "videos": {
+        icon: 'assets/imgs/videos.svg'
     },
     "default": {
         icon: 'assets/imgs/all_content.svg'

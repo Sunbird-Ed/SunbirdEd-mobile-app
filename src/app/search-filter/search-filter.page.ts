@@ -1,8 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {FieldConfig} from 'common-form-elements';
-import {FieldConfigInputType, FieldConfigValidationType} from 'common-form-elements';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {FilterValue} from 'sunbird-sdk';
+import {Location} from '@angular/common';
+import {ModalController} from '@ionic/angular';
+import {FormGroup} from '@angular/forms';
+import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType} from 'sunbird-sdk';
+import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
+import {CommonUtilService} from '@app/services';
+import {Subscription} from 'rxjs';
+import {FieldConfig} from 'common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',
@@ -10,200 +15,101 @@ import {FilterValue} from 'sunbird-sdk';
     styleUrls: ['./search-filter.page.scss'],
 })
 export class SearchFilterPage implements OnInit {
+    @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
+    
+    public config: FieldConfig<any>[];
 
-    private config: FieldConfig<any>[] = [
-        {
-            code: 'board',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'board',
-            templateOptions: {
-                label: 'board',
-                placeHolder: 'Select Board',
-                multiple: false,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'karnataka',
-                        value: 'ka'
-                    }
-                ]
-            },
-            validations: [
-                {
-                    type: FieldConfigValidationType.REQUIRED
-                }
-            ]
-        },
-        {
-            code: 'medium',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'medium',
-            templateOptions: {
-                label: 'medium',
-                placeHolder: 'Select Medium',
-                multiple: true,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'karnataka',
-                        value: 'ka'
-                    }
-                ]
-            }
-        },
-        {
-            code: 'gradeLevel',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'gradeLevel',
-            templateOptions: {
-                label: 'class',
-                placeHolder: 'Select Class',
-                multiple: true,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'karnataka',
-                        value: 'ka'
-                    }
-                ]
-            }
-        },
-        {
-            code: 'subject',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'subject',
-            templateOptions: {
-                label: 'subject',
-                placeHolder: 'Select Subject',
-                multiple: true,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'karnataka',
-                        value: 'ka'
-                    }
-                ]
-            }
-        },
-        {
-            code: 'publisher',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'publisher',
-            templateOptions: {
-                label: 'publisher',
-                placeHolder: 'Select publisher',
-                multiple: true,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'karnataka',
-                        value: 'ka'
-                    }
-                ]
-            }
-        },
-        {
-            code: 'mediaType',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'mediaType',
-            templateOptions: {
-                label: 'Media Type',
-                multiple: true,
-                hidden: false,
-                disabled: false,
-                options: []
-            }
-        },
-        {
-            code: 'rating',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'rating',
-            templateOptions: {
-                label: 'Rating',
-                multiple: false,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: '1',
-                        value: 1
-                    },
-                    {
-                        label: '2',
-                        value: 2
-                    },
-                    {
-                        label: '3',
-                        value: 3
-                    },
-                    {
-                        label: '4',
-                        value: 4
-                    },
-                    {
-                        label: '5',
-                        value: 5
-                    }
-                ]
+    private formGroup: FormGroup;
+    private formValueSubscription: Subscription;
+    private appliedFilterCriteria: ContentSearchCriteria;
 
-            }
-        },
-        {
-            code: 'certificates',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'certificates',
-            templateOptions: {
-                label: 'certificates',
-                multiple: false,
-                hidden: false,
-                disabled: false,
-                options: [
-                    {
-                        label: 'Available',
-                        value: 'available'
-                    },
-                    {
-                        label: 'Not Available',
-                        value: 'not_available'
-                    }
-                ]
-
-            }
-        },
-        {
-            code: 'primaryCategory',
-            type: FieldConfigInputType.SELECT,
-            fieldName: 'primaryCategory',
-            templateOptions: {
-                label: 'Content Type',
-                multiple: false,
-                hidden: false,
-                disabled: false,
-                options: []
-
-            }
-        },
-    ];
-
-    facetFilters: {
-        [code: string]: FilterValue []
-    } = {};
+    private static buildConfig(filterCriteria: ContentSearchCriteria, defaults?: {[field: string]: any}) {
+        return FilterFormConfigMapper.map(
+            filterCriteria.facetFilters.reduce((acc, f) => {
+                acc[f.name] = f.values;
+                return acc;
+            }, {}),
+            defaults
+        );
+    }
 
     constructor(
+        @Inject('CONTENT_SERVICE') private contentService: ContentService,
         private router: Router,
+        private location: Location,
+        private modalController: ModalController,
+        private commonUtilService: CommonUtilService
     ) {
-        const extrasState = this.router.getCurrentNavigation().extras.state;
-        if (extrasState) {
-            this.config = extrasState.facetFilters;
-        }
     }
 
     ngOnInit() {
+        this.resetFilter();
     }
 
+    onFormInitialize(formGroup: FormGroup) {
+        this.formGroup = formGroup;
+
+        if (this.formValueSubscription) {
+            this.formValueSubscription.unsubscribe();
+        }
+
+        this.formValueSubscription = this.formGroup.valueChanges.subscribe((formValue) => {
+            this.refreshForm(formValue);
+        });
+    }
+
+    resetFilter() {
+        this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+        this.config = SearchFilterPage.buildConfig(this.appliedFilterCriteria);
+    }
+
+    applyFilter() {
+        this.modalController.dismiss({
+            appliedFilterCriteria: this.appliedFilterCriteria
+        });
+    }
+
+    cancel() {
+        this.modalController.dismiss();
+    }
+
+    private async refreshForm(formValue) {
+        const searchCriteria: ContentSearchCriteria = {
+            ...JSON.parse(JSON.stringify(this.appliedFilterCriteria)),
+            limit: 0,
+            mode: 'hard',
+            searchType: SearchType.FILTER,
+            fields: [],
+        };
+
+        searchCriteria.facetFilters.forEach((facetFilter) => {
+            const selection = formValue[facetFilter.name];
+
+            const valueToApply = facetFilter.values.find((value) => {
+                if (Array.isArray(selection)) {
+                    return selection.includes(value.name);
+                } else {
+                    return selection === value.name;
+                }
+            });
+
+            if (valueToApply) {
+                valueToApply.apply = true;
+            }
+        });
+
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+
+        try {
+            const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
+            this.appliedFilterCriteria = contentSearchResult.filterCriteria;
+            this.config = SearchFilterPage.buildConfig(contentSearchResult.filterCriteria, this.formGroup.value);
+        } catch (e) {
+            // todo show error toast
+            console.error(e);
+        } finally {
+            await loader.dismiss();
+        }
+    }
 }
