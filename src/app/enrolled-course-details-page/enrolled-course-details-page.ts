@@ -1613,11 +1613,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       return;
     }
     
-    if (!this.batches || !this.batches.length) {
-      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-      await loader.dismiss();
-      return;
-    }
+    // if (!this.batches || !this.batches.length) {
+    //   this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+    //   await loader.dismiss();
+    //   return;
+    // }
     
     if (!this.localCourseService.isEnrollable(this.batches, this.course)) {
       return;
@@ -2034,7 +2034,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
 
     if (this.course.createdBy !== this.userId) {
-      if (!this.isAlreadyEnrolled && !this.isBatchNotStarted) {
+      if (!this.isAlreadyEnrolled) {
         this.joinTraining();
         return false;
       } else if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
@@ -2044,9 +2044,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       }
     }
 
-    if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
-      return false;
-    }
+    // if (this.batches && this.batches.length && !this.localCourseService.isEnrollable(this.batches, this.course)) {
+    //   return false;
+    // }
 
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(
