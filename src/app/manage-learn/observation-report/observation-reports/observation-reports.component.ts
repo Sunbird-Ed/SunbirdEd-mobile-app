@@ -160,9 +160,9 @@ export class ObservationReportsComponent implements OnInit {
       url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_REPORT;
     }
     if (this.entityType && this.reportType) {
-      url = 'v2' + url;
+      url = 'v3' + url;
     } else {
-      url = 'v1' + url;
+      url = 'v2' + url;
     }
 
     this.payload.filter = {
