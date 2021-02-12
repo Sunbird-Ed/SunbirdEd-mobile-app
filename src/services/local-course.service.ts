@@ -281,6 +281,11 @@ export class LocalCourseService {
   }
 
   isEnrollable(batches, course) {
+    if (!batches || !batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      return false;
+    }
+
     let latestBatch = batches[0];
     const showEnrollmentEndedMessage = () => {
       this.commonUtilService.showToast(

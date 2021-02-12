@@ -1534,7 +1534,7 @@ describe('ChapterDetailsPage', () => {
                 isNetworkAvailable: true
             };
             chapterDetailsPage.batches = [];
-            mockCommonUtilService.showToast = jest.fn();
+            // mockCommonUtilService.showToast = jest.fn();
             // act
             chapterDetailsPage.navigateToBatchListPage();
             // assert
@@ -1542,7 +1542,7 @@ describe('ChapterDetailsPage', () => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
                 expect(chapterDetailsPage.batches.length).toBe(0);
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
                 expect(dismissFn).toBeTruthy();
                 done();
             }, 0);

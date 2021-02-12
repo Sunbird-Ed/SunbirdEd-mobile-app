@@ -149,7 +149,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Dialcode parser',
         code: 'dialcode',
         values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))',
-        route: 'search'
+        route: 'tabs/search'
       },
       {
         name: 'content deatil',
@@ -193,12 +193,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         priority: 2
       },
       {
-        name: 'Course tab',
+        name: 'Search Course',
         code: 'searchCourse',
         values: '\\/(explore-course|learn)(\\?.*|$)',
-        route: 'search',
+        route: 'tabs/search',
         search: {
-          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          queryParam: 'key',
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Course', 'Course Assessment']
           }
@@ -206,12 +207,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         priority: 4
       },
       {
-        name: 'Search',
+        name: 'Search Textbook',
         code: 'searchTextbook',
         values: '\\/(resources|explore)(\\?.*selectedTab=textbook|$)',
-        route: 'search',
+        route: 'tabs/search',
         search: {
-          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          queryParam: 'key',
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Digital Textbook', 'eTextbook']
           }
@@ -219,12 +221,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         priority: 2
       },
       {
-        name: 'Search',
+        name: 'Search TV Program',
         code: 'searchTvProgram',
         values: '\\/(resources|explore)\\?.*selectedTab=tvProgram',
-        route: 'search',
+        route: 'tabs/search',
         search: {
-          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          queryParam: 'key',
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['TVLesson']
           }
@@ -235,9 +238,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Search',
         code: 'searchAll',
         values: '\\/(search\\/Library|explore)\\/1(\\?.*|$)',
-        route: 'search',
+        route: 'tabs/search',
         search: {
-          queryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          queryParam: 'key',
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Collection','Resource',
             'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
@@ -416,19 +420,29 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private pick(payloadUrl: string, matchedDeeplinkConfig) {
-    if (!matchedDeeplinkConfig.search) {
+    if (!matchedDeeplinkConfig.search || !Object.keys(matchedDeeplinkConfig.search).length) {
       return undefined;
     }
-    const queryParams = matchedDeeplinkConfig.search.queryParams;
+
+    const filterQueryParams = matchedDeeplinkConfig.search.filterQueryParams;
     const url = new URL(payloadUrl);
-    const filter = matchedDeeplinkConfig.search.filters || {};
-    queryParams.forEach((queryParam) => {
+    let request: {
+      query?: string;
+      filters?: {};
+    } = {};
+    if(matchedDeeplinkConfig.search.queryParam) {
+      request.query = url.searchParams.get(matchedDeeplinkConfig.search.queryParam);
+    }
+    const filters = matchedDeeplinkConfig.search.filters || {};
+    const queryParamFilters = {};
+    filterQueryParams.forEach((queryParam) => {
       const values = url.searchParams.getAll(queryParam);
       if (values) {
-        filter[queryParam] = values;
+        queryParamFilters[queryParam] = values;
       }
     });
-    return filter;
+    request.filters = {...filters, ...queryParamFilters};
+    return request;
   }
 
   private async upgradeAppPopover(requiredVersionCode) {
@@ -610,16 +624,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     } else {
       let extras = {};
-      const filter = this.pick(payloadUrl, matchedDeeplinkConfig);
-      if (filter && Object.keys(filter).length) {
+      const request = this.pick(payloadUrl, matchedDeeplinkConfig);
+      if (request && (request.query || request.filters && Object.keys(request.filters).length)) {
         extras = {
           state: {
             source: PageId.SPLASH_SCREEN,
             preAppliedFilter: {
+              query: request.query || '',
               filters: {
                 status: ['Live'],
                 objectType: ['Content'],
-                ...filter
+                ...request.filters
               }
             }
           }
