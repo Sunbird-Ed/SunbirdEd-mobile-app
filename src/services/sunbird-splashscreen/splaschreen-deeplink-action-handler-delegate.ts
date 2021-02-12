@@ -199,7 +199,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Course', 'Course Assessment']
           }
@@ -213,7 +213,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Digital Textbook', 'eTextbook']
           }
@@ -227,7 +227,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['TVLesson']
           }
@@ -241,7 +241,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
           filters: {
             primaryCategory: ['Collection','Resource',
             'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
@@ -434,13 +434,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       request.query = url.searchParams.get(matchedDeeplinkConfig.search.queryParam);
     }
     const filters = matchedDeeplinkConfig.search.filters || {};
+    const queryParamFilters = {};
     filterQueryParams.forEach((queryParam) => {
       const values = url.searchParams.getAll(queryParam);
       if (values) {
-        filters[queryParam] = values;
+        queryParamFilters[queryParam] = values;
       }
     });
-    request.filters = filters;
+    request.filters = {...filters, ...queryParamFilters};
     return request;
   }
 
