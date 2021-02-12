@@ -119,7 +119,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
           request: section.meta.searchCriteria
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName: ViewMore.PAGE_TV_PROGRAMS
+        pageName: ViewMore.PAGE_COURSE_POPULAR
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
@@ -133,7 +133,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title: title
+        title
       },
       backdropDismiss: true,
       showBackdrop: true,
@@ -156,7 +156,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    this.events.unsubscribe('update_header');    
+    this.events.unsubscribe('update_header');
   }
 
   mapContentFacteTheme(displayItems) {
@@ -177,7 +177,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     displayItems.data.forEach(item => {
       const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping[item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
         PrimaryCaregoryMapping['default'];
-        item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
+      item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
     });
     return displayItems;
   }
