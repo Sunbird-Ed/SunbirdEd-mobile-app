@@ -6,7 +6,7 @@
     <div class="cert-details">
       <div class="cert-info">
         <p class="title">{{pageData?.certificate?.name}}</p>
-        <p class="date">{{pageData?.certificate?.issuedOn | date}}</p>
+        <p class="date">{{pageData?.certificate?.lastIssuedOn | date}}</p>
       </div>
       <div class="download-btn">
         <button class="cert-btn" [ngClass]="{'highlight-cert-btn': onPopupOpen, '': !onPopupOpen }" (click)="showCertificateMenu($event)">
