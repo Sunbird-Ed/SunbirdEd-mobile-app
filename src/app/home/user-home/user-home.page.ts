@@ -173,15 +173,29 @@ export class UserHomePage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToViewMoreContentsPage(section, pageName?) {
+  navigateToViewMoreContentsPage(section, subsection) {
+    let state = {};
+    switch (section.dataSrc.type) {
+      case 'TRACKABLE_COLLECTIONS':
+        state = {
+          enrolledCourses: subsection.contents,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+          userId: this.appGlobalService.getUserId()
+        };
+        break;
+      case 'RECENTLY_VIEWED_CONTENTS':
+        state = {
+          requestParams: {
+              request: section.meta && section.meta.searchRequest
+          },
+          pageName: ViewMore.PAGE_TV_PROGRAMS,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+        };
+        break;
+    }
     const params: NavigationExtras = {
-      state: {
-        requestParams: {
-          request: section.searchRequest
-        },
-        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
-      }
+      state
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
