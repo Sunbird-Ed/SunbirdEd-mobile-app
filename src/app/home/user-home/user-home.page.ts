@@ -5,7 +5,15 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
   Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
   CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ColorMapping, EventTopics, PrimaryCaregoryMapping, ProfileConstants, RouterLinks, SubjectMapping } from '../../app.constant';
+import {
+  ColorMapping,
+  EventTopics,
+  PrimaryCaregoryMapping,
+  ProfileConstants,
+  RouterLinks,
+  SubjectMapping,
+  ViewMore
+} from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
@@ -187,7 +195,10 @@ export class UserHomePage implements OnInit, OnDestroy {
       case 'RECENTLY_VIEWED_CONTENTS':
         state = {
           requestParams: {
-              request: section.meta && section.meta.searchRequest
+              request: {
+                searchType: SearchType.FILTER,
+                offset: 0
+              }
           },
           pageName: ViewMore.PAGE_TV_PROGRAMS,
           headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),

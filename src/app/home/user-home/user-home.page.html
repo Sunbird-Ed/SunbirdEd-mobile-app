@@ -93,7 +93,7 @@
           [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
           [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
           [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
-          (viewMoreClick)="navigateToViewMoreContentsPage(section)"
+          (viewMoreClick)="navigateToViewMoreContentsPage(section, section?.data?.sections)"
           (cardClick)="navigateToDetailPage($event, section?.title);">
         </sb-library-cards-hlist>
       </div>
