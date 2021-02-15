@@ -35,12 +35,13 @@ import {
   ViewMore
 } from '../../app.constant';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
-import {NavigationService} from '@app/services/navigation-handler.service';
-import {Events, IonContent as ContentView, PopoverController} from '@ionic/angular';
-import {Subscription} from 'rxjs';
-import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
+import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { Events, IonContent as ContentView, PopoverController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 
 @Component({
   selector: 'app-user-home',
@@ -48,12 +49,12 @@ import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
   styleUrls: ['./user-home.page.scss'],
 })
 export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
+  private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
   concatProfileFilter: Array<string> = [];
-  categories: Array<any> = [];
   boards: string;
   medium: string;
   grade: string;
@@ -159,36 +160,45 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     };
     this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
-        this.categories = framework.categories;
+        this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
+          acc[category.code] = category;
+          return acc;
+        }, {});
 
         if (this.profile.board && this.profile.board.length) {
-          this.boards = this.getFieldDisplayValues(this.profile.board, 0);
+          this.boards = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.board, 'board'));
         }
         if (this.profile.medium && this.profile.medium.length) {
-          this.medium = this.getFieldDisplayValues(this.profile.medium, 1);
+          this.medium = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.medium, 'medium'));
         }
         if (this.profile.grade && this.profile.grade.length) {
-          this.grade = this.getFieldDisplayValues(this.profile.grade, 2);
+          this.grade = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
         }
       });
   }
 
-  getFieldDisplayValues(field: Array<any>, catIndex: number): string {
+  getFieldDisplayValues(field: Array<any>, categoryCode: string): any[] {
     const displayValues = [];
-    this.categories[catIndex].terms.forEach(element => {
+
+    if (!this.frameworkCategoriesMap[categoryCode]) {
+      return displayValues;
+    }
+
+    this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
     });
-    return this.commonUtilService.arrayToString(displayValues);
+
+    return displayValues;
   }
 
   async fetchDisplayElements() {
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.profile.board;
-        contentSearchCriteria.medium = this.profile.medium;
-        contentSearchCriteria.grade = this.profile.grade;
+        contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
+        contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
+        contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
         contentSearchCriteria.searchType = SearchType.SEARCH;
         contentSearchCriteria.mode = 'soft';
         return contentSearchCriteria;
