@@ -1712,3 +1712,14 @@ sb-form{
   }
 }
 
+sb-library-card-v3 {
+  .sb--card__meta1 {
+    height: 3.2rem !important;
+  }
+  .sb--card__title {
+    bdi {
+      line-height: 1.3;
+      font-size: 1.3rem;
+    }
+  }
+}
