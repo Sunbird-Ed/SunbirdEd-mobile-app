@@ -1144,5 +1144,11 @@
   "DOWNLOAD_AS_PNG": "Download as PNG",
   "YOUR_PREFERENCES": "Your preferences",
   "SEARCH_OR_ENTER_QR_CODE": "Search or enter QR code",
-  "EXPLORE": "Explore {{%s}}"
+  "EXPLORE": "Explore {{%s}}",
+  "ENABLE_DISCUSSION_FORUM": "Enable discussions",
+  "DISABLE_DISCUSSION_FORUM": "Disable discussions",
+  "DISCUSSION_FORUM_ENABLE_SUCCESS": "Discussion forum enabled successfully",
+  "DISCUSSION_FORUM_DISABLE_SUCCESS": "Discussion forum disabled successfully",
+  "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
+  "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?"
 }
