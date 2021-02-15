@@ -11,7 +11,7 @@
   </ion-item>
 </ion-list>
 
-<div class="m-12" *ngIf="displaySections">
+<div class="form-api-components" *ngIf="displaySections">
   <ng-container *ngFor="let section of displaySections">
     <div class="heading-label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist'">
       <span>{{section?.title | translateJson | titlecase}}</span>
@@ -46,7 +46,7 @@
             [viewMoreButtonText]="section?.theme?.inputs?.viewMoreButtonText | translateJson"
             [contentList]="subSection.contents"
             (viewMoreClick)="navigateToViewMoreContentsPage(section)"
-            (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
+            (cardClick)="navigateToDetailPage($event)">
           </sb-course-cards-hlist>
 
         </ng-container>

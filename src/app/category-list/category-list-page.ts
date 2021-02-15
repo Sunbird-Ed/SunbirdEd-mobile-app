@@ -25,7 +25,7 @@ import {Subscription} from 'rxjs';
 
 
 @Component({
-    selector: 'app-home-page',
+    selector: 'app-category-list-page',
     templateUrl: './category-list-page.html',
     styleUrls: ['./category-list-page.scss'],
 })
@@ -58,7 +58,7 @@ export class CategoryListPage implements OnDestroy {
     } [];
     fromLibrary = false;
     primaryFacetFiltersFormGroup: FormGroup;
-    
+
     private readonly searchCriteria: ContentSearchCriteria;
     private readonly filterCriteria: ContentSearchCriteria;
 
@@ -68,6 +68,7 @@ export class CategoryListPage implements OnDestroy {
     layoutConfiguration = {
         layout: 'v3'
     };
+    appName = '';
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -90,7 +91,7 @@ export class CategoryListPage implements OnDestroy {
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
-            
+
             if (this.fromLibrary) {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();
@@ -107,6 +108,7 @@ export class CategoryListPage implements OnDestroy {
     }
 
     async ionViewWillEnter() {
+        this.appName = await this.commonUtilService.getAppName();
         this.appHeaderService.showHeaderWithBackButton();
 
         if (!this.supportedFacets) {

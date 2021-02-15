@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import {ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks} from '../../app.constant';
+import {ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService, ContentAggregatorHandler, PageId } from '@app/services';
 import { Events, PopoverController } from '@ionic/angular';
@@ -112,14 +112,14 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToViewMoreContentsPage(section, pageName) {
+  navigateToViewMoreContentsPage(section, pageName?) {
     const params: NavigationExtras = {
       state: {
         requestParams: {
-          request: section.searchRequest
+          request: section.meta.searchCriteria
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        pageName: ViewMore.PAGE_COURSE_POPULAR
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
@@ -133,7 +133,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title: title
+        title
       },
       backdropDismiss: true,
       showBackdrop: true,
@@ -156,7 +156,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    this.events.unsubscribe('update_header');    
+    this.events.unsubscribe('update_header');
   }
 
   mapContentFacteTheme(displayItems) {
@@ -177,7 +177,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     displayItems.data.forEach(item => {
       const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping[item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
         PrimaryCaregoryMapping['default'];
-        item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
+      item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
     });
     return displayItems;
   }

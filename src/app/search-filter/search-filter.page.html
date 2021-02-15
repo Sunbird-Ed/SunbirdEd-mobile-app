@@ -1,8 +1,28 @@
 <ion-content>
-    <sb-form [config]="config" (initialize)="onFormInitialize($event)"></sb-form>
-    <div>
-        <button (click)="resetFilter()">Reset</button>
-        <button (click)="cancel()">Cancel</button>
-        <button (click)="applyFilter()">Apply</button>
+    <div class="form-content">
+        <ion-button class="reset-button" fill="clear" (click)="resetFilter()">
+            <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+            {{'RESET' | translate}}
+        </ion-button>
+        <sb-form [config]="config" (initialize)="onFormInitialize($event)"></sb-form>
     </div>
 </ion-content>
+
+<div>
+    <ion-row class="padding-12" style="--background: #FFFFFF !important;">
+
+        <ion-col>
+            <ion-button style="--background: #F3F7FB !important; color: #000000 !important;"
+                        class="ion-text-capitalize mb-16" expand="block" (click)="cancel()">
+                {{'CANCEL' | translate}}
+            </ion-button>
+        </ion-col>
+
+        <ion-col>
+            <ion-button class="ion-text-capitalize mb-16" expand="block"
+                        (click)="applyFilter()">{{'APPLY' | translate}}
+            </ion-button>
+        </ion-col>
+
+    </ion-row>
+</div>

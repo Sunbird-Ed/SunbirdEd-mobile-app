@@ -5,7 +5,15 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
   Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
   CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ColorMapping, EventTopics, PrimaryCaregoryMapping, ProfileConstants, RouterLinks, SubjectMapping } from '../../app.constant';
+import {
+  ColorMapping,
+  EventTopics,
+  PrimaryCaregoryMapping,
+  ProfileConstants,
+  RouterLinks,
+  SubjectMapping,
+  ViewMore
+} from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
@@ -183,15 +191,32 @@ export class UserHomePage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToViewMoreContentsPage(section, pageName?) {
+  navigateToViewMoreContentsPage(section, subsection) {
+    let state = {};
+    switch (section.dataSrc.type) {
+      case 'TRACKABLE_COLLECTIONS':
+        state = {
+          enrolledCourses: subsection.contents,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+          userId: this.appGlobalService.getUserId()
+        };
+        break;
+      case 'RECENTLY_VIEWED_CONTENTS':
+        state = {
+          requestParams: {
+              request: {
+                searchType: SearchType.FILTER,
+                offset: 0
+              }
+          },
+          pageName: ViewMore.PAGE_TV_PROGRAMS,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+        };
+        break;
+    }
     const params: NavigationExtras = {
-      state: {
-        requestParams: {
-          request: section.searchRequest
-        },
-        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
-      }
+      state
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
