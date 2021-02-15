@@ -8,7 +8,8 @@ import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {CertificateDownloadService} from 'sb-svg2pdf';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
-import {ToastController} from '@ionic/angular';
+import { ToastController, PopoverController } from '@ionic/angular';
+import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
 
 @Component({
   selector: 'app-certificate-view',
@@ -21,9 +22,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('scrollWrap', {static: true}) scrollWrap: ElementRef;
 
   private activeUserId: string;
-  private actionEventsSubscription: Subscription;
 
-  private pageData: {
+  pageData: {
     courseId: string;
     certificate: CourseCertificate;
   };
@@ -39,6 +39,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     max_pos_y: 0,
     transform: ''
   };
+  headerConfig: any;
+  onPopupOpen = false;
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -48,7 +50,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private appGlobalService: AppGlobalService,
     private router: Router,
     private fileOpener: FileOpener,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private popoverCtrl: PopoverController
   ) {
   }
 
@@ -56,25 +59,15 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     this.appGlobalService.getActiveProfileUid().then((activeUserId) => this.activeUserId = activeUserId);
     this.pageData = this.router.getCurrentNavigation().extras.state.request;
 
-    const headerConfig = this.appHeaderService.getDefaultPageConfig();
-    headerConfig.pageTitle = this.pageData.certificate.name;
-    headerConfig.showKebabMenu = true;
-    headerConfig.kebabMenuOptions = [
-      { label: 'DOWNLOAD_AS_PDF', value: {} },
-      { label: 'DOWNLOAD_AS_PNG', value: {} },
-    ];
-    headerConfig.actionButtons = [];
-    headerConfig.showBurgerMenu = false;
-    this.appHeaderService.updatePageConfig(headerConfig);
+    this.appHeaderService.showHeaderWithBackButton();
   }
 
   ngAfterViewInit() {
     this.loadCertificate();
-    this.actionEventsSubscription = this.listenActionEvents();
   }
 
   ngOnDestroy() {
-    this.actionEventsSubscription.unsubscribe();
+
   }
 
   public onGestureEvent(ev) {
@@ -169,8 +162,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     this.certificateContainer.nativeElement.innerHTML = template;
   }
 
-  private listenActionEvents(): Subscription {
-    const downloadCertificate = async (option) => {
+  private async listenActionEvents(option) {
       const toast = await this.toastController.create({
         message: this.commonUtilService.translateMessage('CERTIFICATE_DOWNLOAD_INFO')
       });
@@ -180,7 +172,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
         const downloadRequest = await (async () => {
           const baseFileName = `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}`;
           switch (option.label) {
-            case 'DOWNLOAD_AS_PDF': {
+            case 'PDF': {
               return {
                 fileName: baseFileName + '.pdf',
                 mimeType: 'application/pdf',
@@ -190,7 +182,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
                 )
               };
             }
-            case 'DOWNLOAD_AS_PNG': {
+            case 'PNG': {
               return {
                 fileName: baseFileName + '.png',
                 mimeType: 'image/png',
@@ -215,13 +207,30 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
       } finally {
         toast.dismiss();
       }
-    };
 
-    return this.appHeaderService.headerEventEmitted$.pipe(
-      filter((e) => e.name === 'kebabMenu' && e.event && e.event.option),
-      map((e) => e.event.option),
-      tap(downloadCertificate.bind(this))
-    ).subscribe();
+  }
+
+  async showCertificateMenu(event) {
+    const certificatePopover = await this.popoverCtrl.create({
+      component: ApplicationHeaderKebabMenuComponent,
+      event,
+      showBackdrop: false,
+      componentProps: {
+        options: [
+          { label: 'PDF', value: {} },
+          { label: 'PNG', value: {} },
+        ] || []
+      },
+      cssClass: 'certificate-popup'
+    });
+    this.onPopupOpen = true;
+    certificatePopover.present();
+    const { data } = await certificatePopover.onDidDismiss();
+    this.onPopupOpen = false;
+    if (!data) {
+      return;
+    }
+    this.listenActionEvents(data.option);
   }
 }
 

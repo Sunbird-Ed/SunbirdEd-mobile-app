@@ -1722,3 +1722,12 @@ sb-library-card-v3 {
     }
   }
 }
+
+.certificate-popup {
+  .popover-content {
+    left: auto !important;
+    top: 150px !important;
+    right: 3rem;
+    width: 30% !important;
+  }
+}
