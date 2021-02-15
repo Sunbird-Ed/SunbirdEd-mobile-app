@@ -187,7 +187,10 @@ export class UserHomePage implements OnInit, OnDestroy {
       case 'RECENTLY_VIEWED_CONTENTS':
         state = {
           requestParams: {
-              request: section.meta && section.meta.searchRequest
+              request: {
+                searchType: SearchType.FILTER,
+                offset: 0
+              }
           },
           pageName: ViewMore.PAGE_TV_PROGRAMS,
           headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
