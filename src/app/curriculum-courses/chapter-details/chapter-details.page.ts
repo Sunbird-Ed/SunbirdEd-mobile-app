@@ -605,11 +605,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       return;
     }
 
-    if (!this.batches || !this.batches.length) {
-      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-      await loader.dismiss();
-      return;
-    }
+    // if (!this.batches || !this.batches.length) {
+    //   this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+    //   await loader.dismiss();
+    //   return;
+    // }
 
     if (!this.localCourseService.isEnrollable(this.batches, this.courseContentData)) {
       return;
