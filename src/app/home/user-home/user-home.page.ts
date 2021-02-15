@@ -5,7 +5,15 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
   Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
   CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ColorMapping, EventTopics, PrimaryCaregoryMapping, ProfileConstants, RouterLinks, SubjectMapping } from '../../app.constant';
+import {
+  ColorMapping,
+  EventTopics,
+  PrimaryCaregoryMapping,
+  ProfileConstants,
+  RouterLinks,
+  SubjectMapping,
+  ViewMore
+} from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
