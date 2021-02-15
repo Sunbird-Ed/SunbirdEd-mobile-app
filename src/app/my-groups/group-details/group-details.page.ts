@@ -70,7 +70,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   flattenedActivityList = [];
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
-  forumIds;
+  forumDetails;
 
 
   constructor(
@@ -262,14 +262,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       }
     } else {
       if (this.groupCreator.userId === this.userId) {
-        if(this.forumIds){
+        if(this.forumDetails){
           menuList = MenuOverflow.MENU_GROUP_CREATOR_DISABLE_DF;
         } else {
           menuList = MenuOverflow.MENU_GROUP_CREATOR;
         }
         
       } else if (this.loggedinUser.role === GroupMemberRole.ADMIN) {
-        if(this.forumIds){
+        if(this.forumDetails){
           menuList = MenuOverflow.MENU_GROUP_ADMIN_DISABLE_DF
         } else {
           menuList = MenuOverflow.MENU_GROUP_ADMIN;
@@ -307,7 +307,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       } else if (data.selectedItem === 'ENABLE_DISCUSSION_FORUM'){
         this.enableDF();
       } else if(data.selectedItem === 'DISABLE_DISCUSSION_FORUM') {
-        this.disableDF();
+        this.showDisableDFPopupPopup();
       }
     }
   }
@@ -913,15 +913,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     );
   }
 
-  // openDiscussionForum() {
-  //   this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
-  //     queryParams: {
-  //       categories: JSON.stringify({ result }),
-  //       userName: userName
-  //     }
-  //   }
-  // }
-
   fetchForumIds() {
     const request = {
       identifier: [this.groupId],
@@ -930,7 +921,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.discussionService.getForumIds(request).toPromise().then(forumDetails => {
       console.log('forumDetails', forumDetails)
       if (forumDetails.result.length) {
-        this.forumIds = forumDetails.result[0].cid;
+        this.forumDetails = forumDetails.result[0];
       }
     }).catch(error => {
       console.log('error fetchForumIds', error);
@@ -938,7 +929,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async openDiscussionForum() {
-    // this.showLoader = true;
     const data = {
       username: '',
       identifier: this.userId,
@@ -956,9 +946,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.discussionService.createUser(data).subscribe((response) => {
       console.log('discussionService.createUser', response)
       const userName = response.result.userName
-      const result = [this.forumIds];
-      console.log('hello', this.forumIds);
-      // this.router.navigate(['/discussion-forum'], {
+      const result = [this.forumDetails.cid];
+      console.log('hello', this.forumDetails);
         this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
         queryParams: {
           categories: JSON.stringify({ result }),
@@ -967,19 +956,77 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       });
     }, error => {
       console.log('err in discussionService.createUser', error)
-      // this.showLoader = false;
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
     });
   }
 
-  enableDF(){
-    console.log('enable df');
+  async enableDF(){
+    console.log('in enable df');
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const requestBody = {
+      'sbType': 'group',
+      'sbIdentifier': this.groupId,
+      'cid': 27
+    };
+    this.discussionService.attachForum(requestBody).toPromise()
+    .then(async res => {
+      console.log('enableDF resp', res)
+      await loader.dismiss();
+      this.fetchForumIds();
+      this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
+    }).catch(async err => {
+      console.log('enableDF err', err)
+      await loader.dismiss();
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+    });
   }
 
-  disableDF(){
-    console.log('disable df');
+  async disableDF(){
+    console.log('in disable df');
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.discussionService.removeForum(this.forumDetails).toPromise()
+    .then(async res => {
+      console.log('disableDF resp', res)
+      await loader.dismiss();
+      this.forumDetails = '';
+      this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
+    }).catch(async err => {
+      console.log('disableDF err', err)
+      await loader.dismiss();
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+    });
   }
 
-  
+  private async showDisableDFPopupPopup() {
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DEACTIVATE_GROUP_CLICKED);
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DISCUSSION_FORUM_DISABLE_CONFIRM'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('DISABLE_DISCUSSION_FORUM'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DISCUSSION_FORUM_DISABLE_CONFIRM_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
+        return;
+      }
+      // this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
+      this.disableDF();
+    }
+  }
 
 }
