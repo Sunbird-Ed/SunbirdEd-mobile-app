@@ -1122,12 +1122,10 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
     color: $blue;
 }
 
-sb-course-cards-hlist > .layout-course > .header{
-  padding: 0 8px !important;
-}
 sb-course-cards-hlist > .layout-course > .header > .title{
-  color: black !important;
-  font-size: 18px !important;
+  color: var(--app-gray) !important;
+  font-size: 16px !important;
+  height: auto !important;
 }
 
 app-courses{
@@ -1671,6 +1669,7 @@ app-discover{
       color: var(--app-gray) !important;
       font-size: 16px !important;
       font-weight: normal !important;
+      padding-left: 1rem;
       hr{
         display: inline !important;
         background-color: var(--app-primary-header);
@@ -1702,7 +1701,7 @@ sb-form{
 .heading-label {
   font-size: 16px;
   color: var(--app-gray);
-  padding-left: 8px;
+  padding-left: 1rem;
   display: flex;
   align-items: center;
   hr{
