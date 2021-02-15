@@ -199,7 +199,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
           filters: {
             primaryCategory: ['Course', 'Course Assessment']
           }
@@ -213,7 +213,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
           filters: {
             primaryCategory: ['Digital Textbook', 'eTextbook']
           }
@@ -227,7 +227,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
           filters: {
             primaryCategory: ['TVLesson']
           }
@@ -241,16 +241,55 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         route: 'tabs/search',
         search: {
           queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory'],
+          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel', 'mediaType'],
           filters: {
-            primaryCategory: ['Collection','Resource',
-            'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
-            'eTextbook', 'Explanation Content', 'Learning Resource',
-            'Practice Question Set', 'Teacher Resource',
-            'LessonPlan', 'FocusSpot', 'Learning Outcome Definition',
-            'Curiosity Questions', 'MarkingSchemeRubric', 'ExplanationResource',
-            'ExperientialResource', 'Practice Resource', 'TVLesson']
-          }
+            primaryCategory: [
+              'Collection', 'Resource', 'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
+              'eTextbook', 'Explanation Content', 'Learning Resource',
+              'Practice Question Set', 'Teacher Resource',
+              'LessonPlan', 'FocusSpot', 'Learning Outcome Definition',
+              'Curiosity Questions', 'MarkingSchemeRubric', 'ExplanationResource',
+              'ExperientialResource', 'Practice Resource', 'TVLesson'
+            ]
+          },
+          mimeType: [
+            {
+              name: 'all',
+              values: [
+                'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive', 'application/vnd.android.package-archive',
+                'application/vnd.ekstep.content-archive', 'application/vnd.ekstep.content-collection', 'application/vnd.ekstep.plugin-archive',
+                'application/vnd.ekstep.h5p-archive', 'application/epub', 'text/x-url', 'video/x-youtube',
+                'application/octet-stream', 'application/msword', 'application/pdf', 'image/jpeg', 'image/jpg',
+                'image/png', 'image/tiff', 'image/bmp', 'image/gif', 'image/svg+xml',
+                'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm',
+                'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
+              ]
+            },
+            {
+              name: 'video',
+              values: [
+                'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm'
+              ]
+            },
+            {
+              name: 'documents',
+              values: [
+                'application/pdf', 'application/epub', 'application/msword'
+              ]
+            },
+            {
+              name: 'interactive',
+              values: [
+                'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.html-archive'
+              ]
+            },
+            {
+              name: 'audio',
+              values: [
+                'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
+              ]
+            }
+          ]
         },
         priority: 1
       },
@@ -430,19 +469,44 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       query?: string;
       filters?: {};
     } = {};
-    if(matchedDeeplinkConfig.search.queryParam) {
+    if (matchedDeeplinkConfig.search.queryParam) {
       request.query = url.searchParams.get(matchedDeeplinkConfig.search.queryParam);
     }
     const filters = matchedDeeplinkConfig.search.filters || {};
     const queryParamFilters = {};
     filterQueryParams.forEach((queryParam) => {
       const values = url.searchParams.getAll(queryParam);
+      if (queryParam === 'mediaType') {
+        const mimeType = this.getMiyeTypeByMediaType(matchedDeeplinkConfig.search.mimeType, 'all');
+        if (mimeType && mimeType.length) {
+          queryParamFilters['mimeType'] = mimeType;
+        }
+      }
       if (values) {
-        queryParamFilters[queryParam] = values;
+        if (queryParam === 'mediaType') {
+          values.forEach((v) => {
+            const mimeType = this.getMiyeTypeByMediaType(matchedDeeplinkConfig.search.mimeType, v);
+            if (mimeType && mimeType.length) {
+              queryParamFilters['mimeType'] = mimeType;
+            }
+          });
+        } else {
+          queryParamFilters[queryParam] = values;
+        }
       }
     });
-    request.filters = {...filters, ...queryParamFilters};
+    request.filters = { ...filters, ...queryParamFilters };
     return request;
+  }
+
+  private getMiyeTypeByMediaType(mimeTypes, name) {
+    const mimeType = mimeTypes.find(m => m.name === name);
+    if (mimeType) {
+      return mimeType.values;
+    }
+    else {
+      return [];
+    }
   }
 
   private async upgradeAppPopover(requiredVersionCode) {
@@ -643,9 +707,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.setTabsRoot();
       // TODO: Needs to check route exists or not before navigating
       this.router.navigate([route], extras)
-      .catch(e => {
-        console.error('splash-screen:handleNavigation', e);
-      });
+        .catch(e => {
+          console.error('splash-screen:handleNavigation', e);
+        });
       this.closeProgressLoader();
     }
   }
