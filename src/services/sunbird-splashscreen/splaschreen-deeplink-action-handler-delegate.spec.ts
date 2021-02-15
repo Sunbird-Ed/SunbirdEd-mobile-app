@@ -202,7 +202,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     it('should navigate to the search page with mimeType in filter if selectedTab is available in the deeplink', (done) => {
       // arrange
       const payload = {
-        url: 'https://staging.sunbirded.org/search/explore?medium=Hindi&medium=English&gradeLevel=Class%201&gradeLevel=Class%2010&&&publisher=NCERT&channel=01283607456185548825093&board=CBSE&mediaType=video&selectedTab=all'
+        url: 'https://staging.sunbirded.org/search/explore/1?medium=Hindi&medium=English&gradeLevel=Class%201&gradeLevel=Class%2010&&&publisher=NCERT&channel=01283607456185548825093&board=CBSE&mediaType=video&selectedTab=all'
       }
       mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
       mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
