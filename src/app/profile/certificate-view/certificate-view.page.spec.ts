@@ -59,12 +59,7 @@ describe('CertificateViewPage', () => {
             dismiss: jest.fn()
         }))
     };
-    const mockPopoverController: Partial<PopoverController> = {
-        create: jest.fn(() => Promise.resolve({
-            present: jest.fn(),
-            dismiss: jest.fn()
-        }))
-    };
+    const mockPopoverController: Partial<PopoverController> = {};
 
     let certificateViewPage: CertificateViewPage;
 
@@ -111,7 +106,7 @@ describe('CertificateViewPage', () => {
             });
         });
     });
-
+    
     describe('ngOnDestroy()', () => {
         it('should unsubscribe header events',  () => {
             const htmlElement = document.createElement('div');
@@ -120,4 +115,103 @@ describe('CertificateViewPage', () => {
             certificateViewPage.ngOnDestroy();
         });
     });
+
+    describe('showCertificateMenu()', () => {
+        it('should skip the download', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: null }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).not.toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should skip the download if the type is not PDF or PNG', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'JPEG', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).not.toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should listen for download_as_pdf events and download certificate accordingly', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'PDF', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should listen for download_as_pdf events and download certificate accordingly', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'PNG', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'image/png');
+                done();
+            });
+        });
+
+    })
 });
