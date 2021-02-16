@@ -58,7 +58,7 @@ html[data-theme="JOYFUL"]{
   button{
     border-radius: 20px !important;
     color: var(--app-white) !important;
-    background-color: var(--app-primary) !important;
+    // background-color: var(--app-primary) !important;
   }
 
   input, textarea, ion-input, ion-textarea {
@@ -113,6 +113,10 @@ html[data-theme="JOYFUL"]{
       .alert-radio-inner.sc-ion-alert-md{
         background-color: var(--app-primary) !important;
       }
+    }
+    button {
+      background-color: var(--app-primary) !important;
+      color: var(--app-white) !important;
     }
   }
 

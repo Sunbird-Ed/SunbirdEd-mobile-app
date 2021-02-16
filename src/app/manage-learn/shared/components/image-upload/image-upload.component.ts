@@ -148,13 +148,13 @@ export class ImageUploadComponent implements OnInit {
             this.openLocalLibrary();
           },
         },
-        {
-          text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
-          icon: "document",
-          handler: () => {
-            this.isIos ? this.filePickerForIOS() : this.openFilePicker();
-          },
-        },
+        // {
+        //   text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
+        //   icon: "document",
+        //   handler: () => {
+        //     this.isIos ? this.filePickerForIOS() : this.openFilePicker();
+        //   },
+        // },
         {
           text: translateObject["FRMELEMENTS_LBL_CANCEL"],
           role: "cancel",
