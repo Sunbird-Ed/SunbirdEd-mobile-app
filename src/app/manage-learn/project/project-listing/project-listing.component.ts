@@ -95,7 +95,6 @@ export class ProjectListingComponent implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   private handleBackButton() {

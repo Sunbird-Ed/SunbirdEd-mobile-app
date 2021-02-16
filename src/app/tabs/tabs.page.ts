@@ -8,6 +8,7 @@ import { ProfileConstants, EventTopics, RouterLinks, PreferenceKey } from '@app/
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId } from '@app/services';
 import { Router } from '@angular/router';
+import { OnTabViewWillEnter } from './on-tab-view-will-enter';
 
 @Component({
   selector: 'app-tabs',
@@ -108,6 +109,9 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    if (this.tabRef.outlet.component['tabViewWillEnter']) {
+      (this.tabRef.outlet.component as OnTabViewWillEnter).tabViewWillEnter();
+    }
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {

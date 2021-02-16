@@ -83,7 +83,6 @@ export class ObservationHomeComponent implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   observationDetails(solution) {

@@ -73,7 +73,6 @@ export class SurveyHomeComponent implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async getSurveyListing() {
