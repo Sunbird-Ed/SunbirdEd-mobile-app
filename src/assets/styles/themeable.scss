@@ -113,6 +113,10 @@ html[data-theme="JOYFUL"]{
         background-color: var(--app-primary) !important;
       }
     }
+    button {
+      background-color: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
   }
 
   ion-card{
