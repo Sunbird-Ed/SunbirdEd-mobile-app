@@ -5,7 +5,15 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
   Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
   CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
-import { ColorMapping, EventTopics, PrimaryCaregoryMapping, ProfileConstants, RouterLinks, SubjectMapping } from '../../app.constant';
+import {
+  ColorMapping,
+  EventTopics,
+  PrimaryCaregoryMapping,
+  ProfileConstants,
+  RouterLinks,
+  SubjectMapping,
+  ViewMore
+} from '../../app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
@@ -13,6 +21,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events, IonContent as ContentView, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
 
 @Component({
   selector: 'app-user-home',
@@ -20,12 +29,12 @@ import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subje
   styleUrls: ['./user-home.page.scss'],
 })
 export class UserHomePage implements OnInit, OnDestroy {
+  private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
   selectedFilter: string;
   concatProfileFilter: Array<string> = [];
-  categories: Array<any> = [];
   boards: string;
   medium: string;
   grade: string;
@@ -122,36 +131,45 @@ export class UserHomePage implements OnInit, OnDestroy {
     };
     this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
-        this.categories = framework.categories;
+        this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
+          acc[category.code] = category;
+          return acc;
+        }, {});
 
         if (this.profile.board && this.profile.board.length) {
-          this.boards = this.getFieldDisplayValues(this.profile.board, 0);
+          this.boards = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.board, 'board'));
         }
         if (this.profile.medium && this.profile.medium.length) {
-          this.medium = this.getFieldDisplayValues(this.profile.medium, 1);
+          this.medium = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.medium, 'medium'));
         }
         if (this.profile.grade && this.profile.grade.length) {
-          this.grade = this.getFieldDisplayValues(this.profile.grade, 2);
+          this.grade = this.commonUtilService.arrayToString(this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'));
         }
       });
   }
 
-  getFieldDisplayValues(field: Array<any>, catIndex: number): string {
+  getFieldDisplayValues(field: Array<any>, categoryCode: string): any[] {
     const displayValues = [];
-    this.categories[catIndex].terms.forEach(element => {
+
+    if (!this.frameworkCategoriesMap[categoryCode]) {
+      return displayValues;
+    }
+
+    this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
     });
-    return this.commonUtilService.arrayToString(displayValues);
+
+    return displayValues;
   }
 
   async fetchDisplayElements() {
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.profile.board;
-        contentSearchCriteria.medium = this.profile.medium;
-        contentSearchCriteria.grade = this.profile.grade;
+        contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
+        contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
+        contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
         contentSearchCriteria.searchType = SearchType.SEARCH;
         contentSearchCriteria.mode = 'soft';
         return contentSearchCriteria;
@@ -173,15 +191,32 @@ export class UserHomePage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
 
-  navigateToViewMoreContentsPage(section, pageName?) {
+  navigateToViewMoreContentsPage(section, subsection) {
+    let state = {};
+    switch (section.dataSrc.type) {
+      case 'TRACKABLE_COLLECTIONS':
+        state = {
+          enrolledCourses: subsection.contents,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+          userId: this.appGlobalService.getUserId()
+        };
+        break;
+      case 'RECENTLY_VIEWED_CONTENTS':
+        state = {
+          requestParams: {
+              request: {
+                searchType: SearchType.FILTER,
+                offset: 0
+              }
+          },
+          pageName: ViewMore.PAGE_TV_PROGRAMS,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+        };
+        break;
+    }
     const params: NavigationExtras = {
-      state: {
-        requestParams: {
-          request: section.searchRequest
-        },
-        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
-      }
+      state
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }

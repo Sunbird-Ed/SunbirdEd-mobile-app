@@ -13,6 +13,7 @@
       <div class="sb-card-container sb-card-textbook-container">
         <div class="sb-card-loop" *ngFor="let content of contentList; let i = index">
           <sb-library-card [content]="content" [type]="LibraryCardTypes.MOBILE_TEXTBOOK"
+            [layoutConfig]="{layout: 'v3'}"
             (click)="navigateToDetailPage(content, i, content.name)"
             [cardImg]="commonUtilService.getContentImg(content)">
           </sb-library-card>
