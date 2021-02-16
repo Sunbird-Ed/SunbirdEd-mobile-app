@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppHeaderService } from '@app/services';
 import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
@@ -18,7 +19,7 @@ export class SurveyMsgComponent implements OnInit {
   showClose: any;
   showMenu: any;
 
-  constructor(public params: NavParams, public modal: ModalController) {
+  constructor(public params: NavParams, public modal: ModalController, private headerService:AppHeaderService) {
     this.option = this.params.get('option');
     this.showMenu = this.params.get('showMenu') || false;
     if (this.showMenu == false) {
@@ -29,6 +30,10 @@ export class SurveyMsgComponent implements OnInit {
     this.modal.dismiss()
   }
   ngOnInit(): void {}
+
+  ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton();
+  }
 
   get data(): any {
     return this.options[this.option];
