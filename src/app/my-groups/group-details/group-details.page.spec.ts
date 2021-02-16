@@ -3,7 +3,8 @@ import {
     GroupService, GroupMemberRole,
     GroupEntityStatus,
     DiscussionService,
-    ProfileService
+    ProfileService,
+    FormService
 } from '@project-sunbird/sunbird-sdk';
 import {
     AppHeaderService,
@@ -58,6 +59,9 @@ describe('GroupDetailsPage', () => {
     const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
     };
     const mockProfileService: Partial<ProfileService> = {};
+    const mockFormService: Partial<FormService> = {
+        getForm: jest.fn()
+    };
     
 
     beforeAll(() => {
@@ -65,6 +69,7 @@ describe('GroupDetailsPage', () => {
             mockGroupService as GroupService,
             mockDiscussionService as DiscussionService,
             mockProfileService as ProfileService,
+            mockFormService as FormService,
             mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -96,6 +101,7 @@ describe('GroupDetailsPage', () => {
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // jest.spyOn(groupDetailsPage, 'fetchForumIds').mockImplementation()
             mockDiscussionService.getForumIds = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockFormService.getForm = jest.fn(() => throwError({ error: 'error' })) as any;
             // act
             groupDetailsPage.ngOnInit();
     
@@ -2788,12 +2794,12 @@ describe('GroupDetailsPage', () => {
             //     cid: 'some_cid'
             // }
             // groupDetailsPage.forumDetails = req;
-            mockDiscussionService.attachForum = jest.fn(() => of({}) as any)
+            mockDiscussionService.createForum = jest.fn(() => of({}) as any)
             // act
             groupDetailsPage.enableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.attachForum).toHaveBeenCalled()
+                expect(mockDiscussionService.createForum).toHaveBeenCalled()
                 done()
             });
         })
@@ -2804,13 +2810,13 @@ describe('GroupDetailsPage', () => {
             //     cid: 'some_cid'
             // }
             // groupDetailsPage.forumDetails = req;
-            mockDiscussionService.attachForum = jest.fn(() => throwError('err') as any)
+            mockDiscussionService.createForum = jest.fn(() => throwError('err') as any)
             mockCommonUtilService.showToast = jest.fn();
             // act
             groupDetailsPage.enableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.attachForum).toHaveBeenCalled();
+                expect(mockDiscussionService.createForum).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
                 done()
             });
@@ -2857,6 +2863,34 @@ describe('GroupDetailsPage', () => {
             setTimeout(() => {
                 expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
+                done()
+            });
+        })
+    })
+
+    describe('fetchForumConfig', () => {
+        it('should create request for createforum', (done) => {
+            // arrange
+            const res = {
+                form: {
+                    data: {
+                        fields: [
+                            {
+                                uid: 40,
+                                category: {
+                                    context: ''
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            mockFormService.getForm = jest.fn(() => of(res) as any)
+            // act
+            groupDetailsPage.fetchForumConfig()
+            // assert
+            setTimeout(() => {
+                expect(groupDetailsPage.createForumRequest).toEqual(res.form.data.fields[0])
                 done()
             });
         })

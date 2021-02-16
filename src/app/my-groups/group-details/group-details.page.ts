@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService
+  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService, FormService, FormRequest
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -71,12 +71,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
   forumDetails;
+  createForumRequest;
 
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
@@ -105,6 +107,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
+    this.fetchForumConfig()
     this.fetchForumIds()
   }
 
@@ -173,7 +176,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       this.isSuspended = this.groupDetails.status.toLowerCase() === 'suspended';
-      console.log(' this.isSuspended',  this.isSuspended);
       this.memberList = this.groupDetails.members;
       this.activityList = this.groupDetails.activitiesGrouped;
       this.activityList.forEach((a) => {
@@ -393,7 +395,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       };
       try {
         const resp = await this.groupService.suspendById(deactivateByIdRequest).toPromise();
-        console.log('suspendById', resp);
         // await loader.dismiss();
         this.commonUtilService.showToast('FRMELEMENTS_MSG_DEACTIVATEGRPSUCCESS');
         await loader.dismiss();
@@ -442,7 +443,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       try {
         // const updateMemberResponse: GroupUpdateMembersResponse = await this.groupService.updateMembers(updateMembersRequest).toPromise();
         const resp = await this.groupService.reactivateById(reActivateByIdRequest).toPromise();
-        console.log('reactivateById', resp);
         // await loader.dismiss();
         this.isGroupLoading = false;
         // if (updateMemberResponse) {
@@ -961,17 +961,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async enableDF(){
-    console.log('in enable df');
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const requestBody = {
-      'sbType': 'group',
-      'sbIdentifier': this.groupId,
-      'cid': 27
-    };
-    this.discussionService.attachForum(requestBody).toPromise()
+    this.discussionService.createForum(this.createForumRequest).toPromise()
     .then(async res => {
-      console.log('enableDF resp', res)
       await loader.dismiss();
       this.fetchForumIds();
       this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
@@ -983,12 +976,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async disableDF(){
-    console.log('in disable df');
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.discussionService.removeForum(this.forumDetails).toPromise()
     .then(async res => {
-      console.log('disableDF resp', res)
       await loader.dismiss();
       this.forumDetails = '';
       this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
@@ -1024,9 +1015,26 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
         this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
         return;
       }
-      // this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
       this.disableDF();
     }
+  }
+
+  fetchForumConfig() {
+    const groupContext = [{
+      type: 'group',
+      identifier: this.groupId
+    }];
+    const req: FormRequest = {
+      type: 'forum',
+      action: 'create',
+      subType: 'group'
+    };
+    this.formService.getForm(req).subscribe((formData: any) => {
+      this.createForumRequest = formData.form.data.fields[0];
+      this.createForumRequest['category']['context'] = groupContext;
+    }, error => {
+      console.log('fetchForumConfig err', error)
+    });
   }
 
 }
