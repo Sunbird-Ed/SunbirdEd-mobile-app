@@ -25,7 +25,7 @@ import {
   GroupActivity,
   Form,
   GroupSupportedActivitiesFormField,
-  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService
+  CorrelationData, ActivateAndDeactivateByIdRequest, DiscussionService, ProfileService, FormService, FormRequest
 } from '@project-sunbird/sunbird-sdk';
 import {
   OverflowMenuComponent
@@ -71,12 +71,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
   forumDetails;
+  createForumRequest;
 
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
@@ -105,6 +107,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
+    this.fetchForumConfig()
     this.fetchForumIds()
   }
 
@@ -969,7 +972,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       'sbIdentifier': this.groupId,
       'cid': 27
     };
-    this.discussionService.attachForum(requestBody).toPromise()
+    this.discussionService.createForum(this.createForumRequest).toPromise()
     .then(async res => {
       console.log('enableDF resp', res)
       await loader.dismiss();
@@ -1027,6 +1030,25 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       // this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DEACTIVATE_GROUP);
       this.disableDF();
     }
+  }
+
+  fetchForumConfig() {
+    const groupContext = [{
+      type: 'group',
+      identifier: this.groupId
+    }];
+    const req: FormRequest = {
+      type: 'forum',
+      action: 'create',
+      subType: 'group'
+    };
+    this.formService.getForm(req).subscribe((formData: any) => {
+      console.log('getForm resp', formData)
+      this.createForumRequest = formData.form.data.fields[0];
+      this.createForumRequest['category']['context'] = groupContext;
+    }, error => {
+      console.log('fetchForumConfig err', error)
+    });
   }
 
 }
