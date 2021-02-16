@@ -32,7 +32,7 @@ export const urlConstants = {
     GET_REPORT_TYPES: 'v1/reports/types',
     GET_ENTITY_TYPES: 'v1/user-extension/getEntityTypes',
     GET_ENTITIES_BY_TYPE: 'v1/user-extension/getEntities',
-    GET_FULL_REPORT: 'v1/reports/detailView/',
+    GET_FULL_REPORT: 'v2/reports/detailView/',
     GET_PROGRAM_BY_ENTITY: 'v1/reports/getProgramsByEntity',
     GET_TASK_META_FORM: 'v1/userProjects/tasksMetaForm',
     GET_LEARNING_RESOURCES: 'v1/learningResources/list',
@@ -103,9 +103,9 @@ export const urlConstants = {
     },
 
     CRITERIA_REPORTS: {
-      INSTANCE_REPORT: 'v1/observations/instanceReportByCriteria',
-      ENTITY_REPORT: 'v1/observations/entityReportByCriteria',
-      OBSERVATION_REPORT: 'v1/observations/observationReportByCriteria',
+      INSTANCE_REPORT: 'v2/observations/instanceReportByCriteria',
+      ENTITY_REPORT: 'v2/observations/entityReportByCriteria',
+      OBSERVATION_REPORT: 'v2/observations/observationReportByCriteria',
       GET_REPORTS_PDF_URLS: '/observations/pdfReportsByCriteria?',
     },
     SURVEY_FEEDBACK: {

@@ -17,13 +17,15 @@
     <div style="display: block" *ngIf="data?.chart?.data">
       <canvas
         baseChart
-         height="60vh" width="80vw"
+        height="60vh"
+        width="80vw"
         [data]="pieChartData"
         [labels]="pieChartLabels"
         [chartType]="pieChartType"
         [options]="pieChartOptions"
         [plugins]="pieChartPlugins"
         [legend]="pieChartLegend"
+        [colors]="chartColors"
       >
       </canvas>
     </div>

@@ -134,12 +134,45 @@ export class ProjectReportComponent implements OnInit {
           }
           this.reportData = data.result ? data.result.data : {};
           this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
+          this.reportData.tasks.series_new = this.generateCircleData_new(this.reportData.tasks, 80);
+
           this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
+          this.reportData.categories.series_new = this.generateCircleData_new(this.reportData.categories, 50);
         },
         (err) => {}
       );
     } else {
     }
+  }
+
+  generateCircleData_new(obj, radius) {
+    let label = [];
+    let data = [];
+    let color = [];
+    for (const key in obj) {
+      if (key == 'total' || key == 'series' || obj[key] == 0) {
+        continue;
+      }
+      label.push(this.utils.cameltoNormalCase(key));
+      data.push(obj[key]);
+      if (key == 'completed') {
+        color.push('green');
+      }
+
+      if (key == 'notStarted') {
+        color.push('#B80000');
+      }
+    }
+
+    let series = {
+      label: label,
+      data: data,
+      color: color,
+      radius: radius,
+    };
+    debugger;
+
+    return series;
   }
 
   generateCircleData(obj, innerRadius) {
@@ -223,8 +256,8 @@ export class ProjectReportComponent implements OnInit {
   }
 
   async openFilterModal(type) {
-    console.log(type, "type");
-    console.log(this.filter.entity, "this.filter.entity");
+    console.log(type, 'type');
+    console.log(this.filter.entity, 'this.filter.entity');
     // if (type == 'program' && this.filter.entity == undefined) {
     //   this.presentAlert(
     //     this.texts['FRMELEMENTS_LBL_SELECT_ENTITY'],
