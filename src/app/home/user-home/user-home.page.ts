@@ -94,8 +94,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   ngOnInit() {
-    this.getUserProfileDetails();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
+      this.getUserProfileDetails();
+    });
+
+    this.events.subscribe('refresh:profile', () => {
       this.getUserProfileDetails();
     });
 
@@ -118,12 +121,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async getUserProfileDetails() {
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-      .subscribe((profile: Profile) => {
-        this.profile = profile;
-        this.getFrameworkDetails();
-        this.fetchDisplayElements();
-      });
+    this.profile = await this.profileService.getActiveSessionProfile(
+      { requiredFields: ProfileConstants.REQUIRED_FIELDS }
+    ).toPromise();
+    await this.getFrameworkDetails();
+    await this.fetchDisplayElements();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     if (this.guestUser) {
       this.audienceFilter = AudienceFilter.GUEST_TEACHER;
@@ -153,12 +155,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  getFrameworkDetails(frameworkId?: string): void {
+  async getFrameworkDetails(frameworkId?: string) {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
-    this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
+    await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
         this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
           acc[category.code] = category;
@@ -194,13 +196,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async fetchDisplayElements() {
+    this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
-        contentSearchCriteria.searchType = SearchType.SEARCH;
-        contentSearchCriteria.mode = 'soft';
         return contentSearchCriteria;
       }, from: CachedItemRequestSourceFrom.SERVER
     };
@@ -417,6 +418,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     this.getUserProfileDetails();
   }
 }
