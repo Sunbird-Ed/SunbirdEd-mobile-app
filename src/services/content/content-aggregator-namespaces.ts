@@ -4,7 +4,7 @@ export enum AggregatorPageType {
     HOME = 'home_v2',
     DISCOVER = 'discover',
     SEARCH = 'search',
-    ADMIN_HOME = 'adminHome'
+    ADMIN_HOME = 'adminHome_v2'
 }
 
 export enum Orientation {
