@@ -1,11 +1,31 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, SunbirdQRScanner } from '@app/services';
-import { CourseCardGridTypes, LibraryCardTypes, PillShape, PillsViewType, SelectMode, ButtonPosition, ShowMoreViewType, PillsMultiRow } from '@project-sunbird/common-consumption-v8';
-import { NavigationExtras, Router } from '@angular/router';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
-  Framework, Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-  CachedItemRequestSourceFrom, SearchType } from '@project-sunbird/sunbird-sdk';
+import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, SunbirdQRScanner} from '@app/services';
 import {
+  ButtonPosition,
+  CourseCardGridTypes,
+  LibraryCardTypes,
+  PillShape,
+  PillsMultiRow,
+  PillsViewType,
+  SelectMode,
+  ShowMoreViewType
+} from '@project-sunbird/common-consumption-v8';
+import {NavigationExtras, Router} from '@angular/router';
+import {
+  CachedItemRequestSourceFrom,
+  ContentAggregatorRequest,
+  ContentSearchCriteria,
+  Framework,
+  FrameworkCategoryCodesGroup,
+  FrameworkDetailsRequest,
+  FrameworkService,
+  Profile,
+  ProfileService,
+  ProfileType,
+  SearchType
+} from '@project-sunbird/sunbird-sdk';
+import {
+  AudienceFilter,
   ColorMapping,
   EventTopics,
   PrimaryCaregoryMapping,
@@ -14,8 +34,8 @@ import {
   SubjectMapping,
   ViewMore
 } from '../../app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TranslateService } from '@ngx-translate/core';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { Events, IonContent as ContentView, PopoverController } from '@ionic/angular';
@@ -28,7 +48,7 @@ import { FrameworkCategory } from '@project-sunbird/client-services/models/chann
   templateUrl: './user-home.page.html',
   styleUrls: ['./user-home.page.scss'],
 })
-export class UserHomePage implements OnInit, OnDestroy {
+export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
 
   aggregatorResponse = [];
@@ -51,10 +71,11 @@ export class UserHomePage implements OnInit, OnDestroy {
   @ViewChild('contentView', { static: false }) contentView: ContentView;
   showPreferenceInfo = false;
 
-  LibraryCardTypes = LibraryCardTypes
-  ButtonPosition = ButtonPosition
-  ShowMoreViewType = ShowMoreViewType
-  PillsMultiRow = PillsMultiRow
+  LibraryCardTypes = LibraryCardTypes;
+  ButtonPosition = ButtonPosition;
+  ShowMoreViewType = ShowMoreViewType;
+  PillsMultiRow = PillsMultiRow;
+  audienceFilter = [];
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -73,8 +94,11 @@ export class UserHomePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getUserProfileDetails();
     this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
+      this.getUserProfileDetails();
+    });
+
+    this.events.subscribe('refresh:profile', () => {
       this.getUserProfileDetails();
     });
 
@@ -93,16 +117,23 @@ export class UserHomePage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.getUserProfileDetails();
   }
 
   async getUserProfileDetails() {
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-      .subscribe((profile: Profile) => {
-        this.profile = profile;
-        this.getFrameworkDetails();
-        this.fetchDisplayElements();
-      });
+    this.profile = await this.profileService.getActiveSessionProfile(
+      { requiredFields: ProfileConstants.REQUIRED_FIELDS }
+    ).toPromise();
+    await this.getFrameworkDetails();
+    await this.fetchDisplayElements();
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
+    if (this.guestUser) {
+      this.audienceFilter = AudienceFilter.GUEST_TEACHER;
+    } else if (this.guestUser && this.profile.profileType === ProfileType.STUDENT) {
+      this.audienceFilter = AudienceFilter.GUEST_STUDENT;
+    } else {
+      this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
+    }
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appLabel = appName;
@@ -124,12 +155,12 @@ export class UserHomePage implements OnInit, OnDestroy {
     }
   }
 
-  getFrameworkDetails(frameworkId?: string): void {
+  async getFrameworkDetails(frameworkId?: string) {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
-    this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
+    await this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
       .then(async (framework: Framework) => {
         this.frameworkCategoriesMap = framework.categories.reduce((acc, category) => {
           acc[category.code] = category;
@@ -165,13 +196,12 @@ export class UserHomePage implements OnInit, OnDestroy {
   }
 
   async fetchDisplayElements() {
+    this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
-        contentSearchCriteria.searchType = SearchType.SEARCH;
-        contentSearchCriteria.mode = 'soft';
         return contentSearchCriteria;
       }, from: CachedItemRequestSourceFrom.SERVER
     };
@@ -302,7 +332,7 @@ export class UserHomePage implements OnInit, OnDestroy {
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title: title
+        title
       },
       backdropDismiss: true,
       showBackdrop: true,
@@ -387,4 +417,8 @@ export class UserHomePage implements OnInit, OnDestroy {
     return displayItems;
   }
 
+  tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.getUserProfileDetails();
+  }
 }
