@@ -1,7 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppHeaderService } from '@app/services';
 import { SharedPreferences, ProfileType } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -11,7 +13,8 @@ export class HomePage {
 
   constructor(
     @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
-    private router: Router
+    private router: Router,
+    private headerService: AppHeaderService
   ) {}
 
   async ionViewWillEnter() {
@@ -21,7 +24,7 @@ export class HomePage {
         routePath = `${RouterLinks.HOME_TAB}/${RouterLinks.HOME_ADMIN}`;
     }
     this.router.navigate([routePath]);
-
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
 }
