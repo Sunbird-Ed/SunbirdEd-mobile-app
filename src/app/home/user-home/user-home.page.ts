@@ -98,7 +98,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       this.getUserProfileDetails();
     });
 
-    this.events.subscribe('refresh:profile', () => {
+    this.events.subscribe('refresh:loggedInProfile', () => {
       this.getUserProfileDetails();
     });
 
