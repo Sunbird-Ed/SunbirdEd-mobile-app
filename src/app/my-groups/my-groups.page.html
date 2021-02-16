@@ -2,7 +2,7 @@
   <div class="my-cr-bg">
     <p class="my-cr-title">
       {{'MY_GROUPS' | translate}}
-      <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="">
+      <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()" alt="{{'MY_GROUPS' | translate}}">
     </p>
 
     <div *ngIf="isGuestUser" class="my-cr-card">
