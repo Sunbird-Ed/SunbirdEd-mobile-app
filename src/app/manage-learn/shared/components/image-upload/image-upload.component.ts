@@ -125,7 +125,7 @@ export class ImageUploadComponent implements OnInit {
         "FRMELEMENTS_LBL_UPLOAD_FILE",
         "FRMELEMENTS_LBL_UPLOAD_IMAGE",
         // "actionSheet.upload",
-        "FRMELEMENTS_LBL_CANCEL",
+        "CANCEL",
       ])
       .subscribe((translations) => {
         translateObject = translations;
@@ -156,7 +156,7 @@ export class ImageUploadComponent implements OnInit {
         //   },
         // },
         {
-          text: translateObject["FRMELEMENTS_LBL_CANCEL"],
+          text: translateObject["CANCEL"],
           role: "cancel",
           handler: () => { },
         },

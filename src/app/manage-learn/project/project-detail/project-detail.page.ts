@@ -369,14 +369,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "FRMELEMNTS_LBL_CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
       buttons: [
         {
-          text: data["FRMELEMNTS_LBL_CANCEL"],
+          text: data["CANCEL"],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => { },

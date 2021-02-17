@@ -33,10 +33,10 @@ export class EvidenceService {
     this.translate
       .get([
         'FRMELEMNTS_LBL_SURVEY_ACTION',
-        'FRMELEMNTS_LBL_VIEW',
-        'FRMELEMNTS_LBL_START',
+        'VIEW',
+        'START',
         'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
-        'FRMELEMNTS_LBL_CANCEL',
+        'CANCEL',
         'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
       ])
       .subscribe(async (translations) => {
@@ -46,7 +46,7 @@ export class EvidenceService {
           header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
           buttons: [
             {
-              text: translateObject['FRMELEMNTS_LBL_START'] + ' ' + type,
+              text: translateObject['START'] + ' ' + type,
               icon: 'arrow-forward',
               handler: () => {
                 params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
@@ -67,7 +67,7 @@ export class EvidenceService {
               },
             },
             {
-              text: translateObject['FRMELEMNTS_LBL_VIEW'] + ' ' + type,
+              text: translateObject['VIEW'] + ' ' + type,
               icon: 'eye',
               handler: () => {
                 delete params.entityDetails;
@@ -84,7 +84,7 @@ export class EvidenceService {
             {
               text: selectedECM.canBeNotApplicable
                 ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
-                : translateObject['FRMELEMNTS_LBL_CANCEL'],
+                : translateObject['CANCEL'],
               role: !selectedECM.canBeNotApplicable ? 'destructive' : '',
               icon: selectedECM.canBeNotApplicable ? 'alert' : '',
               handler: () => {
@@ -115,7 +115,7 @@ export class EvidenceService {
   async openAlert(selectedECM) {
     let translateObject;
     this.translate
-      .get(['FRMELEMNTS_LBL_CANCEL', '"FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
+      .get(['CANCEL', '"FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
       .subscribe((translations) => {
         translateObject = translations;
         console.log(JSON.stringify(translations));
@@ -125,7 +125,7 @@ export class EvidenceService {
       message: translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'],
       buttons: [
         {
-          text: translateObject['FRMELEMNTS_LBL_CANCEL'],
+          text: translateObject['CANCEL'],
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');

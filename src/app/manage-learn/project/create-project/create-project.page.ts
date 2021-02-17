@@ -171,7 +171,7 @@ export class CreateProjectPage implements OnInit {
   async confirmToDelete(data, type) {
     let text;
     this.translate
-      .get(['FRMELEMNTS_MSG_DELETE_CONFIRM', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_BTN_DELETE'])
+      .get(['FRMELEMNTS_MSG_DELETE_CONFIRM', 'CANCEL', 'FRMELEMNTS_BTN_DELETE'])
       .subscribe((data) => {
         text = data;
       });
@@ -181,7 +181,7 @@ export class CreateProjectPage implements OnInit {
       message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type + ' ?',
       buttons: [
         {
-          text: text['FRMELEMNTS_BTN_CANCEL'],
+          text: text['CANCEL'],
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => { },
