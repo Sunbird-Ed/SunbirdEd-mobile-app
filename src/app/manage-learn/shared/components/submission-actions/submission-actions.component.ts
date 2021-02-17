@@ -26,7 +26,7 @@ export class SubmissionActionsComponent implements OnInit {
   ngOnInit() {
     this.submission = this.navParams.get('submission');
     this.translateService
-      .get(['FRMELEMNTS_BTN_UPDATE', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_LBL_INSTANCE_NAME'])
+      .get(['FRMELEMNTS_BTN_UPDATE', 'CANCEL', 'FRMELEMNTS_LBL_INSTANCE_NAME'])
       .subscribe((translations) => {
         this.translateObject = translations;
       });
@@ -44,7 +44,7 @@ export class SubmissionActionsComponent implements OnInit {
       ],
       buttons: [
         {
-          text: this.translateObject['FRMELEMNTS_BTN_CANCEL'],
+          text: this.translateObject['CANCEL'],
           role: 'cancel',
           handler: (data) => {
             console.log('Cancel clicked');

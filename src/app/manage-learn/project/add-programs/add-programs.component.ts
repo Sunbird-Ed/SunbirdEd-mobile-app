@@ -58,7 +58,7 @@ export class AddProgramsComponent implements OnInit {
   }
   async createProgram() {
     let text;
-    this.translate.get(['FRMELEMNTS_LBL_CREATE_PROGRAM', 'FRMELEMNTS_MSG_CREATE_PROGRAM_MESSAGE', 'FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_BTN_SAVE', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_PLACEHOLDER', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_NAME']).subscribe(data => {
+    this.translate.get(['FRMELEMNTS_LBL_CREATE_PROGRAM', 'FRMELEMNTS_MSG_CREATE_PROGRAM_MESSAGE', 'CANCEL', 'FRMELEMNTS_BTN_SAVE', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_PLACEHOLDER', 'FRMELEMNTS_LBL_CREATE_PROGRAM_INPUT_NAME']).subscribe(data => {
       text = data;
     })
     const alert = await this.alertCtrl.create({
@@ -74,7 +74,7 @@ export class AddProgramsComponent implements OnInit {
       ],
       buttons: [
         {
-          text: text['FRMELEMNTS_BTN_CANCEL'],
+          text: text['CANCEL'],
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
