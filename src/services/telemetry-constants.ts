@@ -491,7 +491,9 @@ export enum InteractSubtype {
     LET_US_KNOW_CLICKED = 'let-us-know-clicked',
     DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked',
     DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
-    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked'
+    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked',
+    ENABLE_DISCUSSIONS_CLICKED = 'enable-discussions-clicked',
+    DISABLE_DISCUSSIONS_CLICKED = 'disable-discussions-clicked'
 }
 
 export enum ID {
@@ -539,7 +541,9 @@ export enum ID {
     NOTIFICATION_REQUEST = 'notification-request',
     DEACTIVATE_GROUP= 'deactivate-group',
     REACTIVATE_GROUP= 'reactivate-group',
-    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines'
+    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines',
+    ENABLE_DISCUSSIONS = 'enable-discussions',
+    DISABLE_DISCUSSIONS = 'disable-discussions'
 }
 
 export enum ActionButtonType {
