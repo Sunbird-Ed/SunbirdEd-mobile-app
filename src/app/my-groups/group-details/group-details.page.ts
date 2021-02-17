@@ -961,10 +961,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   async enableDF(){
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.ENABLE_DISCUSSIONS_CLICKED);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.ENABLE_DISCUSSIONS);
     this.discussionService.createForum(this.createForumRequest).toPromise()
     .then(async res => {
+      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.ENABLE_DISCUSSIONS);
       await loader.dismiss();
       this.fetchForumIds();
       this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
@@ -978,8 +981,10 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   async disableDF(){
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DISABLE_DISCUSSIONS);
     this.discussionService.removeForum(this.forumDetails).toPromise()
     .then(async res => {
+      this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DISABLE_DISCUSSIONS);
       await loader.dismiss();
       this.forumDetails = '';
       this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
@@ -991,7 +996,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDisableDFPopupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DEACTIVATE_GROUP_CLICKED);
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DISABLE_DISCUSSIONS_CLICKED);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
