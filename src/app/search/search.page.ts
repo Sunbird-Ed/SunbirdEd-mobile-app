@@ -189,6 +189,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.source = extras.source;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
+        this.searchOnFocus();
       }
       this.groupId = extras.groupId;
       this.activityTypeData = extras.activityTypeData;
@@ -224,7 +225,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton();
+    if(!this.isFromGroupFlow){
+      this.headerService.showHeaderWithHomeButton();
+    }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
@@ -1723,10 +1726,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        this.enableSearch = false;
-        this.searchInfolVisibility = 'show';
-        this.headerService.showHeaderWithHomeButton();
-        this.appGlobalService.isDiscoverBackEnabled = false; 
+        if(this.isFromGroupFlow){
+          this.location.back()
+        }  else {
+          this.enableSearch = false;
+          this.searchInfolVisibility = 'show';
+          this.headerService.showHeaderWithHomeButton();
+          this.appGlobalService.isDiscoverBackEnabled = false; 
+        }
         break;
       default: console.warn('Use Proper Event name');
     }
