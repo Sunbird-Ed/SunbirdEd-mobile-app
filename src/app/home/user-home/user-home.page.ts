@@ -188,7 +188,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
-        displayValues.push(element.name);
+        displayValues.push(element.name.toLowerCase());
       }
     });
 
@@ -198,6 +198,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   async fetchDisplayElements() {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
+      userPreferences: {
+        'board': this.getFieldDisplayValues(this.profile.board, 'board'),
+        'medium': this.getFieldDisplayValues(this.profile.medium, 'medium'),
+        'gradeLevel': this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'),
+        'subject': this.getFieldDisplayValues(this.profile.subject, 'subject'),
+      },
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
