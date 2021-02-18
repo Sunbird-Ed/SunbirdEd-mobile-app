@@ -60,6 +60,7 @@ import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
+import { SurveyProviderService } from '../core/services/survey-provider.service';
 
 @NgModule({
   declarations: [
@@ -162,7 +163,8 @@ import { ChartsModule, ThemeService } from 'ng2-charts';
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
-    ThemeService
+    ThemeService,
+    SurveyProviderService
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -176,7 +178,8 @@ import { ChartsModule, ThemeService } from 'ng2-charts';
     SubmissionActionsComponent,
     ViewDetailComponent,
     StateModalComponent,
-    HintComponent
+    HintComponent,
+    SurveyMsgComponent
   ],
 })
 export class SharedModule {}

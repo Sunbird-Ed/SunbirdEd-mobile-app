@@ -15,13 +15,14 @@ import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
 import { localStorageConstants } from '@app/app/manage-learn/core/constants/localStorageConstants';
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
+import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 
 @Component({
   selector: 'app-admin-home',
   templateUrl: './admin-home.page.html',
   styleUrls: ['./admin-home.page.scss'],
 })
-export class AdminHomePage implements OnInit, OnDestroy {
+export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
@@ -70,6 +71,10 @@ export class AdminHomePage implements OnInit, OnDestroy {
     });
     this.getCreateProjectForm();
     this.db.createDb();
+  }
+
+  tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   async ionViewWillEnter() {

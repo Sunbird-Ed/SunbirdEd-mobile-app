@@ -103,7 +103,7 @@
             <ion-button size="small"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status!='completed' "
               (click)="$event.stopPropagation();startAssessment(task)">
-              {{'FRMELEMNTS_LBL_START' | translate}} {{task?.type}}
+              {{'START' | translate}} {{task?.type}}
             </ion-button>
             <ion-button size="small"
               *ngIf="(task?.type=='assessment' || task?.type=='observation')&&task?.status=='completed' "

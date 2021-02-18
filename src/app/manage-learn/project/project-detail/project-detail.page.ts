@@ -169,19 +169,30 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.loader.stopLoader();
         // this.projectId = success.result._id;
         // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
-        let data = success.result
+        let data = success.result;
+        let newCategories = []
+        for (const category of data.categories) {
+          if (category._id || category.name) {
+            const obj = {
+              label: category.name || category.label,
+              value: category._id
+            }
+            newCategories.push(obj)
+          }
+        }
+        data.categories = newCategories.length ? newCategories : data.categories;
         if (data.tasks) {
-          
+
           data.tasks.map(t => {
-            if ((t.type == 'observation' || t.type == 'assessment' ) && t.submissionDetails && t.submissionDetails.status) {
+            if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
               if (t.submissionDetails.status != t.status) {
                 t.status = t.submissionDetails.status
                 t.isEdit = true;
-                data.isEdit=true
+                data.isEdit = true
               }
             }
           })
-        
+
         }
         // TODO:till here
         this.db.create(success.result).then(successData => {
@@ -358,14 +369,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "FRMELEMNTS_LBL_CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
       buttons: [
         {
-          text: data["FRMELEMNTS_LBL_CANCEL"],
+          text: data["CANCEL"],
           role: "cancel",
           cssClass: "secondary",
           handler: (blah) => { },
@@ -407,27 +418,27 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
   //open openBodh
   openBodh(link) {
-     this.loader.startLoader();
-      let identifier = link.split("/").pop();
-      const req: ContentDetailRequest = {
-         contentId: identifier,
-         attachFeedback: false,
-         attachContentAccess: false,
-         emitUpdateIfAny: false
-      };
+    this.loader.startLoader();
+    let identifier = link.split("/").pop();
+    const req: ContentDetailRequest = {
+      contentId: identifier,
+      attachFeedback: false,
+      attachContentAccess: false,
+      emitUpdateIfAny: false
+    };
 
-      this.contentService.getContentDetails(req).toPromise()
-         .then(async (data: Content) => {
-            this.loader.stopLoader();
-            this.navigateService.navigateToDetailPage(data, { content: data });
-         }, error => {
-            this.loader.stopLoader();
-         });
+    this.contentService.getContentDetails(req).toPromise()
+      .then(async (data: Content) => {
+        this.loader.stopLoader();
+        this.navigateService.navigateToDetailPage(data, { content: data });
+      }, error => {
+        this.loader.stopLoader();
+      });
   }
 
   //Update the project
   update(type) {
-    this.project.isEdit = true; 
+    this.project.isEdit = true;
     this.project = this.utils.setStatusForProject(this.project);
     this.db
       .update(this.project)
@@ -437,7 +448,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this._headerConfig.actionButtons.pop()
         this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
         this.headerService.updatePageConfig(this._headerConfig);
-         this.ref.detectChanges();
+        this.ref.detectChanges();
         if (type == "newTask") {
           this.toast.showMessage("FRMELEMNTS_MSG_NEW_TASK_ADDED_SUCCESSFUL", "success");
         } else if (type == "ProjectDelete") {
@@ -595,10 +606,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             // check id matches and task details has submissionDetails
             if (!t.submissionDetails || t.submissionDetails.status != d.submissionDetails.status) {
               t.submissionDetails = d.submissionDetails;
-              t.isEdit= true
+              t.isEdit = true
               isChnaged = true;
               t.isEdit = true
-              this.project.isEdit = true 
+              this.project.isEdit = true
             }
           }
         }

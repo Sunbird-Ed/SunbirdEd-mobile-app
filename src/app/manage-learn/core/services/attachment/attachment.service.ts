@@ -32,7 +32,7 @@ export class AttachmentService {
         "FRMELEMNTS_MSG_LOAD_FROM_LIBRARY",
         "FRMELEMNTS_MSG_USE_CAMERA",
         "FRMELEMNTS_MSG_USE_FILE",
-        "FRMELEMENTS_LBL_CANCEL",
+        "CANCEL",
         "FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE",
         "FRMELEMNTS_MSG_SUCCESSFULLY_ATTACHED",
       ])
@@ -60,15 +60,15 @@ export class AttachmentService {
             return false;
           },
         },
+        // {
+        //   text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
+        //   handler: () => {
+        //     this.openFile();
+        //     return false;
+        //   },
+        // },
         {
-          text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
-          handler: () => {
-            this.openFile();
-            return false;
-          },
-        },
-        {
-          text: this.texts["FRMELEMENTS_LBL_CANCEL"],
+          text: this.texts["CANCEL"],
           role: "cancel",
         },
       ],

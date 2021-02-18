@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { AppHeaderService } from '@app/services';
 import { ModalController, NavController, NavParams } from '@ionic/angular';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -30,7 +31,8 @@ export class SurveyReportComponent implements OnInit {
     private loader: LoaderService,
     private httpClient: HttpClient,
     private router: Router,
-    private dhiti: DhitiApiService
+    private dhiti: DhitiApiService,
+    private headerService: AppHeaderService
   ) {}
 
   ngOnInit() {
@@ -41,6 +43,10 @@ export class SurveyReportComponent implements OnInit {
       this.solutionId = params.solutionId;
     });
     this.getObservationReports();
+  }
+
+  ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton();
   }
 
   async getObservationReports() {

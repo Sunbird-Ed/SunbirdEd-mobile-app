@@ -9,6 +9,8 @@ import { ProjectReportService } from '../../core/services/project-report.service
 import { FilterModalComponent } from '../../shared/components/filter-modal/filter-modal.component';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { AppHeaderService } from '@app/services';
+
 @Component({
   selector: 'app-project-report',
   templateUrl: './project-report.component.html',
@@ -29,7 +31,8 @@ export class ProjectReportComponent implements OnInit {
     private router: Router,
     private reportSrvc: ProjectReportService,
     public modalController: ModalController,
-    public unnatiService: UnnatiDataService
+    public unnatiService: UnnatiDataService,
+    private headerService: AppHeaderService,
   ) {
     this.translate
       .get([
@@ -67,6 +70,7 @@ export class ProjectReportComponent implements OnInit {
     },
   ];
   ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton();
     this.getReports();
     this.loadFilterType();
   }

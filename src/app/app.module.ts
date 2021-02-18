@@ -83,6 +83,7 @@ import { StreamingMedia } from '@ionic-native/streaming-media/ngx';
 import {configuration} from '@app/configuration/configuration';
 import { LocationHandler } from '@app/services/location-handler';
 import { CoreModule } from './manage-learn/core/core.module';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -495,6 +496,7 @@ declare const sbutility;
     ConsentService,
     ProfileHandler,
     LocationHandler,
+    DiscussionTelemetryService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
