@@ -704,3 +704,10 @@ export const PrimaryCaregoryMapping = {
     }
 }
 
+export interface MaxAttempt {
+    isLastAttempt: boolean;
+    limitExceeded: boolean;
+    isCloseButtonClicked: boolean;
+}
+
+

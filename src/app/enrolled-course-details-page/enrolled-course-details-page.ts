@@ -42,7 +42,7 @@ import {
   PageId
 } from '../../services/telemetry-constants';
 import {
-  BatchConstants, ContentCard, EventTopics, MimeType,
+  BatchConstants, ContentCard, EventTopics, MaxAttempt, MimeType,
   PreferenceKey, ProfileConstants, RouterLinks, ShareItemType
 } from '../app.constant';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -1275,8 +1275,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       };
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-      if (skipPlay) {
+      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
       this.contentPlayerHandler.playContent(this.nextContent, this.generateContentNavExtras(this.nextContent, 1), telemetryDetails, true);
@@ -1300,8 +1300,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
 
     const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-    const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-    if (skipPlay) {
+    const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+    if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
       return;
     }
     

@@ -341,4 +341,51 @@ describe('CategoryListPage', () => {
             done();
         });
     });
+
+    it('should get facetValues and set audience filter', () => {
+        // arrange
+        categoryListPage['supportedUserTypesConfig'] = [{
+            code: 'sample'
+        }];
+        mockModalController.create = jest.fn(() => (Promise.resolve(
+            {
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({
+                    data: {
+                        appliedFilterCriteria: {
+                            facetFilters: [
+                                {
+                                    name: 'audience',
+                                    values: [{
+                                        name: 'audience',
+                                        apply: true
+                                    }]
+                                }
+                            ]
+                        }
+
+                    },
+                })),
+            } as any
+        )));
+        mockContentService.buildContentAggregator = jest.fn(() => ({
+            aggregate: data
+        })) as any;
+        // act
+        categoryListPage.navigateToFilterFormPage();
+        // assert
+        setTimeout(() => {
+            expect(mockModalController.create).toHaveBeenCalled();
+            done();
+        });
+    });
+
+    it('should call scrollService() to id', () => {
+        // arrange
+        mockScrollService.scrollTo = jest.fn();
+        // act
+        categoryListPage.scrollToSection('Mathematics');
+        // assert
+        expect(mockScrollService.scrollTo).toHaveBeenCalledWith('Mathematics');
+    });
 });

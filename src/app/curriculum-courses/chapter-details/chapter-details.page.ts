@@ -12,7 +12,7 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import {
   RouterLinks, PreferenceKey, EventTopics, AssessmentConstant,
-  MimeType, ShareItemType, BatchConstants, ProfileConstants
+  MimeType, ShareItemType, BatchConstants, ProfileConstants, MaxAttempt
 } from '@app/app/app.constant';
 import {
   SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
@@ -468,8 +468,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       };
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, firstChild);
 
-      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-      if (skipPlay) {
+      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
 
@@ -500,8 +500,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-      const skipPlay =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-      if (skipPlay) {
+      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
 

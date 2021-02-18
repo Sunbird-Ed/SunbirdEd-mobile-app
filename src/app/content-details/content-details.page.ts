@@ -43,7 +43,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, PreferenceKey, AssessmentConstant
+  ShareItemType, PreferenceKey, AssessmentConstant, MaxAttempt
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
@@ -176,8 +176,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
-  private isLastAttempt = false;
-  private isContentDisabled = false;
+  maxAttemptAssessment: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -951,13 +950,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async handleContentPlay(isStreaming) {
-    if (this.isContentDisabled) {
-      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+    const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(this.maxAttemptAssessment);
+    if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
       return;
-    }
-    if (this.isLastAttempt) {
-      await this.commonUtilService.showAssessmentLastAttemptPopup();
-      this.isLastAttempt = false;
     }
     if (this.limitedShareContentFlag) {
       if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
@@ -1388,9 +1383,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.showCourseCompletePopup = true;
         }
 
-        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
-        this.isLastAttempt = assesmentsStatus.isLastAttempt;
-        this.isContentDisabled = assesmentsStatus.isContentDisabled;
+        this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
       }
       resolve();
     });

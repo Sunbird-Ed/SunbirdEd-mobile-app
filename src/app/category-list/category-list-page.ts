@@ -162,6 +162,7 @@ export class CategoryListPage implements OnDestroy {
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
+
     navigateToTextbookPage(items, subject) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
@@ -179,6 +180,7 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
+
     navigateToDetailPage(event, sectionName) {
         event.data = event.data.content ? event.data.content : event.data;
         const item = event.data;
@@ -202,9 +204,11 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
+
     scrollToSection(id: string) {
         this.scrollService.scrollTo(id);
     }
+
     cancelEvent($event) {
     }
 
