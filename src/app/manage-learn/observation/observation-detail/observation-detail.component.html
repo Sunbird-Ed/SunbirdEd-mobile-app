@@ -5,7 +5,7 @@
       size="small"
       class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
       (click)="addEntity()"
-      >{{FRMELEMNTS_LBL_ADD_ENTITY | translate}}</ion-button
+      >{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}</ion-button
     >
   </div>
   <div *ngFor="let entity of selectedSolution" (click)="goToObservationSubmission(entity)">
