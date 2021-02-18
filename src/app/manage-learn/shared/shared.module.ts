@@ -25,8 +25,7 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
-  ChartComponent,
-  GanttChartComponent
+  ChartComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -103,7 +102,6 @@ import { ChartsModule, ThemeService } from 'ng2-charts';
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
-    GanttChartComponent,
     HintComponent,
   ],
 
@@ -148,7 +146,6 @@ import { ChartsModule, ThemeService } from 'ng2-charts';
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
-    GanttChartComponent,
     HintComponent,
     ChartsModule
   ],

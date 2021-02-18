@@ -28,7 +28,7 @@ export const urlConstants = {
     GET_SUBENTITIES: 'v1/entities/subEntityTypeList/',
     GET_ENTITY_LIST: 'v1/entities/subEntityList/',
     IMPORT_TEMPLATE: 'v1/userProjects/importFromLibrary/',
-    GET_REPORT: 'v1/reports/entity/',
+    GET_REPORT: 'v2/reports/entity/',
     GET_REPORT_TYPES: 'v1/reports/types',
     GET_ENTITY_TYPES: 'v1/user-extension/getEntityTypes',
     GET_ENTITIES_BY_TYPE: 'v1/user-extension/getEntities',

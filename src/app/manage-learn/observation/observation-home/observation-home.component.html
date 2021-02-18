@@ -13,31 +13,6 @@
     </app-item-list-card>
   </div>
   <app-no-data *ngIf="!solutionList?.length"></app-no-data>
-  <div style="display: block">
-    <canvas
-      baseChart
-      [datasets]="barChartData"
-      [labels]="barChartLabels"
-      [options]="barChartOptions"
-      [plugins]="barChartPlugins"
-      [legend]="barChartLegend"
-      [chartType]="barChartType"
-       [colors]="chartColors"
-    >
-    </canvas>
-  </div>
-  <div style="display: block">
-    <canvas
-      baseChart
-      [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [chartType]="pieChartType"
-      [options]="pieChartOptions"
-      [plugins]="pieChartPlugins"
-      [legend]="pieChartLegend"
-    >
-    </canvas>
-  </div>
 </ion-content>
 <ion-button
   class="view-more"
