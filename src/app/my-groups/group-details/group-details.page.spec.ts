@@ -1,7 +1,10 @@
 import { GroupDetailsPage } from './group-details.page';
 import {
     GroupService, GroupMemberRole,
-    GroupEntityStatus
+    GroupEntityStatus,
+    DiscussionService,
+    ProfileService,
+    FormService
 } from '@project-sunbird/sunbird-sdk';
 import {
     AppHeaderService,
@@ -18,6 +21,7 @@ import { RouterLinks } from '../../app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { ViewMoreActivityDelegateService } from '../view-more-activity/view-more-activity.page';
+import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 
 describe('GroupDetailsPage', () => {
     let groupDetailsPage: GroupDetailsPage;
@@ -51,10 +55,21 @@ describe('GroupDetailsPage', () => {
         navigateToDetailPage: jest.fn()
     };
     const mockViewMoreActivityDelegateService: Partial<ViewMoreActivityDelegateService> = {};
+    const mockDiscussionService: Partial<DiscussionService> = {};
+    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
+    };
+    const mockProfileService: Partial<ProfileService> = {};
+    const mockFormService: Partial<FormService> = {
+        getForm: jest.fn()
+    };
+    
 
     beforeAll(() => {
         groupDetailsPage = new GroupDetailsPage(
             mockGroupService as GroupService,
+            mockDiscussionService as DiscussionService,
+            mockProfileService as ProfileService,
+            mockFormService as FormService,
             mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -65,7 +80,8 @@ describe('GroupDetailsPage', () => {
             mockCommonUtilService as CommonUtilService,
             mockFilterPipe as FilterPipe,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockViewMoreActivityDelegateService as ViewMoreActivityDelegateService
+            mockViewMoreActivityDelegateService as ViewMoreActivityDelegateService,
+            mockDiscussionTelemetryService as DiscussionTelemetryService,
         );
     });
 
@@ -78,21 +94,26 @@ describe('GroupDetailsPage', () => {
         expect(groupDetailsPage).toBeTruthy();
     });
 
-    it('should return active profile uid', () => {
-        // arrange
-        mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-
-        // act
-        groupDetailsPage.ngOnInit();
-
-        // assert
-        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP,
-            undefined, undefined, undefined, undefined, groupDetailsPage.corRelationList
-        );
-    });
+    describe('ngOnInit', () => {
+        it('should return active profile uid', () => {
+            // arrange
+            mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // jest.spyOn(groupDetailsPage, 'fetchForumIds').mockImplementation()
+            mockDiscussionService.getForumIds = jest.fn(() => throwError({ error: 'error' })) as any;
+            mockFormService.getForm = jest.fn(() => throwError({ error: 'error' })) as any;
+            // act
+            groupDetailsPage.ngOnInit();
+    
+            // assert
+            expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP,
+                undefined, undefined, undefined, undefined, groupDetailsPage.corRelationList
+            );
+        });
+    })
+    
 
     it('should navigate to previous page', () => {
         // arrange
@@ -2669,5 +2690,210 @@ describe('GroupDetailsPage', () => {
             expect(showMenu).toBeFalsy();
         });
     });
+
+    describe('fetchForumIds', () => {
+        it('should fetch forumids with apropriate request ', (done) => {
+            // arrange
+            const res = {
+                result: [
+                    {
+                        cid: 'some_cid'
+                    }
+                ]
+            }
+            mockDiscussionService.getForumIds = jest.fn(() => of(res) as any);
+            // groupDetailsPage.groupId = 'some_group_id';
+            // act
+            groupDetailsPage.fetchForumIds()
+            // assert
+            expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(groupDetailsPage.forumDetails).toEqual(res.result[0]);
+                done()
+            });
+        });
+    });
+
+    describe('openDiscussionForum', () => {
+        it('should redirect to DF route', (done) => {
+            // arrange
+            const profileRes = {
+                serverProfile: [
+                    {
+                        userName: 'some_user_name'
+                    }
+                ]
+            }
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes) as any);
+            groupDetailsPage.forumDetails = {
+                cid: 'some_cid'
+            }
+            const res = {
+                result: {
+                    userName: 'some_user'
+                }
+            }
+            mockDiscussionService.createUser = jest.fn(() => of(res) as any);
+            // act
+            groupDetailsPage.openDiscussionForum()
+            // assert
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    ['/discussion-forum'],
+                    {
+                        queryParams: {
+                            categories: JSON.stringify({result:['some_cid']}),
+                            userName: 'some_user'
+                        }
+                    }
+                );
+                done()
+            })
+        });
+        it('should redirect to DF route', (done) => {
+            // arrange
+            const profileRes = {
+                serverProfile: [
+                    {
+                        userName: 'some_user_name'
+                    }
+                ]
+            }
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes) as any);
+            groupDetailsPage.forumDetails = {
+                cid: 'some_cid'
+            }
+            const res = {
+                result: {
+                    userName: 'some_user'
+                }
+            }
+            mockDiscussionService.createUser = jest.fn(() => throwError('err') as any);
+            // act
+            groupDetailsPage.openDiscussionForum()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.createUser).toHaveBeenCalled()
+                done()
+            })
+        });
+    })
+
+    describe('enableDF', () => {
+        beforeEach(() => {
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+        })
+        it('should enable DF with appropriate request', (done) => {
+            // arrange
+            // const req = {
+            //     cid: 'some_cid'
+            // }
+            // groupDetailsPage.forumDetails = req;
+            mockDiscussionService.createForum = jest.fn(() => of({}) as any)
+            // act
+            groupDetailsPage.enableDF()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.createForum).toHaveBeenCalled()
+                done()
+            });
+        })
+
+        it('should show toast when enabling DF fails', (done) => {
+            // arrange
+            // const req = {
+            //     cid: 'some_cid'
+            // }
+            // groupDetailsPage.forumDetails = req;
+            mockDiscussionService.createForum = jest.fn(() => throwError('err') as any)
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            groupDetailsPage.enableDF()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.createForum).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled()
+                done()
+            });
+        })
+    })
+
+    describe('disableDF', () => {
+
+        beforeEach(() => {
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+        })
+        it('should disable DF with appropriate request', (done) => {
+            // arrange
+            const req = {
+                cid: 'some_cid'
+            }
+            groupDetailsPage.forumDetails = req;
+            mockDiscussionService.removeForum = jest.fn(() => of({}) as any)
+            // act
+            groupDetailsPage.disableDF()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req)
+                done()
+            });
+        })
+
+        it('should show toast when disabling DF fails', (done) => {
+            // arrange
+            const req = {
+                cid: 'some_cid'
+            }
+            groupDetailsPage.forumDetails = req;
+            mockDiscussionService.removeForum = jest.fn(() => throwError('err') as any)
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            groupDetailsPage.disableDF()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled()
+                done()
+            });
+        })
+    })
+
+    describe('fetchForumConfig', () => {
+        it('should create request for createforum', (done) => {
+            // arrange
+            const res = {
+                form: {
+                    data: {
+                        fields: [
+                            {
+                                uid: 40,
+                                category: {
+                                    context: ''
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            mockFormService.getForm = jest.fn(() => of(res) as any)
+            // act
+            groupDetailsPage.fetchForumConfig()
+            // assert
+            setTimeout(() => {
+                expect(groupDetailsPage.createForumRequest).toEqual(res.form.data.fields[0])
+                done()
+            });
+        })
+    })
 
 });

@@ -256,7 +256,7 @@ export class LocalCourseService {
         userId: this.appGlobalService.getUserId(),
         courseId: courseContext.courseId,
         contentIds: courseContext.leafNodeIds,
-        returnRefreshedContentStates: true,
+        returnRefreshedContentStates: false,
         batchId: courseContext.batchId,
         fields: ['progress', 'score']
       };
@@ -281,6 +281,11 @@ export class LocalCourseService {
   }
 
   isEnrollable(batches, course) {
+    if (!batches || !batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      return false;
+    }
+
     let latestBatch = batches[0];
     const showEnrollmentEndedMessage = () => {
       this.commonUtilService.showToast(

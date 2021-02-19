@@ -1,11 +1,11 @@
 <div class="notification-item-container" (click)="!itemData?.actionData?.ctaText ? handleDeepLink() : ''">
   <p class="date-time">
-    <img *ngIf="!itemData?.isRead" src="./assets/imgs/oval.svg" class="mr-6"
-      alt="oval">{{ itemData?.displayTime * 1000 | date:'E, d MMMM h:mm'}}
+    <img *ngIf="!itemData?.isRead" src="./assets/imgs/oval.svg" class="mr-6" alt="oval">{{ itemData?.displayTime * 1000
+    | date:'E, d MMMM h:mm'}}
   </p>
   <div class="ni-flex">
     <div class="img-info ni-flex-grow" *ngIf="itemData?.actionData?.appIcon">
-      <img [src]="itemData?.actionData?.appIcon">
+      <img [src]="itemData?.actionData?.appIcon" alt="content_icon">
     </div>
     <div class="richText-info ni-flex-grow">
       <div class="title"
@@ -15,8 +15,8 @@
         <div class="description" *ngIf="itemData?.actionData?.richText">
           {{itemData?.actionData?.richText}}</div>
         <hr *ngIf="itemData?.actionData?.ctaText">
-          <div *ngIf="itemData?.actionData?.ctaText" (click)="handleDeepLink()" class="update-now-btn">
-            {{itemData?.actionData?.ctaText}}</div>
+        <div *ngIf="itemData?.actionData?.ctaText" (click)="handleDeepLink()" class="update-now-btn">
+          {{itemData?.actionData?.ctaText}}</div>
       </div>
     </div>
   </div>
