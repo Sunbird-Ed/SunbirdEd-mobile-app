@@ -209,13 +209,17 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         });
       })
-      .catch(function (error) { });
+      .catch(function (error) { 
+        console.error(error);
+      });
   }
 
   openPlaystore() {
     plugins['webViewChecker'].openGooglePlayPage()
       .then(function () { })
-      .catch(function (error) { });
+      .catch(function (error) { 
+        console.error(error);
+      });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -230,7 +234,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
-        //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
         if (res && res.value) {
           const value = JSON.parse(res.value);
           if (value.deploymentKey) {
@@ -411,7 +414,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.toggleRouterOutlet = false;
       }
 
-      // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
         /* Medatory for login flow
@@ -502,7 +504,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
         this.headerService.sidebarEvent('back');
       } else {
-        // this.routerOutlet.pop();
         if (this.location.back && !this.rootPageDisplayed) {
           this.location.back();
         }
@@ -771,7 +772,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
           this.headerService.sidebarEvent($event);
         } else {
-          // this.routerOutlet.pop();
           if (this.location.back) {
             this.location.back();
           }

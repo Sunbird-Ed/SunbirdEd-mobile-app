@@ -1,4 +1,9 @@
-import {Component, Inject, OnDestroy} from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterLinks } from '@app/app/app.constant';
+import { FormConstants } from '@app/app/form.constants';
+import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
 import {
     AppHeaderService,
     CommonUtilService,
@@ -10,19 +15,16 @@ import {
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
-import {Router} from '@angular/router';
-import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService, ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk';
-import {AggregatorConfigField, ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
-import {ContentUtil} from '@app/util/content-util';
-import {RouterLinks} from '@app/app/app.constant';
-import {NavigationService} from '@app/services/navigation-handler.service';
-import {ScrollToService} from '@app/services/scroll-to.service';
-import {FormConstants} from '@app/app/form.constants';
-import {ModalController} from '@ionic/angular';
-import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Subscription} from 'rxjs';
-
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ScrollToService } from '@app/services/scroll-to.service';
+import { ContentUtil } from '@app/util/content-util';
+import { ModalController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import {
+    ContentData, ContentSearchCriteria, ContentService, ContentsGroupedByPageSection,
+    CourseService, FilterValue, FormService, ProfileService, SearchType
+} from 'sunbird-sdk';
+import { AggregatorConfigField, ContentAggregation } from 'sunbird-sdk/content/handlers/content-aggregator';
 
 @Component({
     selector: 'app-category-list-page',
@@ -162,6 +164,7 @@ export class CategoryListPage implements OnDestroy {
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
+    
     navigateToTextbookPage(items, subject) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
@@ -179,6 +182,7 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
+    
     navigateToDetailPage(event, sectionName) {
         event.data = event.data.content ? event.data.content : event.data;
         const item = event.data;
@@ -202,9 +206,11 @@ export class CategoryListPage implements OnDestroy {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
     }
+    
     scrollToSection(id: string) {
         this.scrollService.scrollTo(id);
     }
+    
     cancelEvent($event) {
     }
 
