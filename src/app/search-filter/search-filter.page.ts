@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {Location} from '@angular/common';
+import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
 import {FormGroup} from '@angular/forms';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType} from 'sunbird-sdk';
@@ -13,6 +13,7 @@ import {FieldConfig} from 'common-form-elements';
     selector: 'app-search-filter.page',
     templateUrl: './search-filter.page.html',
     styleUrls: ['./search-filter.page.scss'],
+    providers: [FilterFormConfigMapper, TitleCasePipe]
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
@@ -23,22 +24,13 @@ export class SearchFilterPage implements OnInit {
     private formValueSubscription: Subscription;
     private appliedFilterCriteria: ContentSearchCriteria;
 
-    private static buildConfig(filterCriteria: ContentSearchCriteria, defaults?: {[field: string]: any}) {
-        return FilterFormConfigMapper.map(
-            filterCriteria.facetFilters.reduce((acc, f) => {
-                acc[f.name] = f.values;
-                return acc;
-            }, {}),
-            defaults
-        );
-    }
-
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
         private router: Router,
         private location: Location,
         private modalController: ModalController,
-        private commonUtilService: CommonUtilService
+        private commonUtilService: CommonUtilService,
+        private filterFormConfigMapper: FilterFormConfigMapper
     ) {
     }
 
@@ -60,7 +52,7 @@ export class SearchFilterPage implements OnInit {
 
     resetFilter() {
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
-        this.config = SearchFilterPage.buildConfig(this.appliedFilterCriteria);
+        this.config = this.buildConfig(this.appliedFilterCriteria);
     }
 
     applyFilter() {
@@ -104,12 +96,22 @@ export class SearchFilterPage implements OnInit {
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
             this.appliedFilterCriteria = contentSearchResult.filterCriteria;
-            this.config = SearchFilterPage.buildConfig(contentSearchResult.filterCriteria, this.formGroup.value);
+            this.config = this.buildConfig(contentSearchResult.filterCriteria, this.formGroup.value);
         } catch (e) {
             // todo show error toast
             console.error(e);
         } finally {
             await loader.dismiss();
         }
+    }
+
+    private buildConfig(filterCriteria: ContentSearchCriteria, defaults?: {[field: string]: any}) {
+        return this.filterFormConfigMapper.map(
+            filterCriteria.facetFilters.reduce((acc, f) => {
+                acc[f.name] = f.values;
+                return acc;
+            }, {}),
+            defaults
+        );
     }
 }
