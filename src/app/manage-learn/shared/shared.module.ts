@@ -25,6 +25,8 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
+  ChartComponent
+  
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -43,7 +45,6 @@ import { ReportsTextComponent } from './components/reports-text/reports-text.com
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.component';
-import { HighchartsChartModule } from 'highcharts-angular';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
@@ -57,6 +58,7 @@ import { StateModalComponent } from './components/state-modal/state-modal.compon
 import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
+import { ChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
 
 @NgModule({
@@ -98,11 +100,12 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     NoDataComponent,
     StateModalComponent,
     SearchPipe,
+    SurveyMsgComponent,
+    ChartComponent,
     HintComponent,
-    SurveyMsgComponent
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule,ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,
@@ -141,8 +144,10 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     NoDataComponent,
     StateModalComponent,
     SearchPipe,
+    SurveyMsgComponent,
+    ChartComponent,
     HintComponent,
-    SurveyMsgComponent
+    ChartsModule
   ],
   providers: [
     Camera,
@@ -157,6 +162,7 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     CommonModule,
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
+    ThemeService,
     SurveyProviderService
   ],
   entryComponents: [

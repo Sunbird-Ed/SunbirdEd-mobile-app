@@ -303,11 +303,11 @@ export class ReportWithScoreComponent implements OnInit {
     payload = { ...payload, ...this.payload };
 
     if (this.selectedTab == 'criteriawise') {
-      url = 'v1' + url;
-    } else if (this.observationId && this.entityId) {
       url = 'v2' + url;
+    } else if (this.observationId && this.entityId) {
+      url = 'v3' + url;
     } else {
-      url = 'v1' + url;
+      url = 'v2' + url;
     }
 
     const config = {

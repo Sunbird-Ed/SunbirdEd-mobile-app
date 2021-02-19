@@ -1,11 +1,7 @@
 <ion-content class="ion-padding">
   <div *ngIf="reports && reports.length">
-    <download-share
-      [name]="fileName()"
-      [extension]="'.pdf'"
-      [downloadUrl]="downloadUrl()"
-      [interface]="'fab'"
-    ></download-share>
+    <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()" [interface]="'fab'">
+    </download-share>
 
     <div style="width: 75%; min-height: 25px">
       <h5>
@@ -22,7 +18,20 @@
     <h5 *ngIf="filter?.type == 3">
       {{ 'FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER' | translate }}
     </h5>
-    <div *ngFor="let report of reports; let i = index">
+    <!-- <app-gantt-chart></app-gantt-chart> -->
+    <div style="display: block" *ngFor="let g of graph">
+      <canvas
+        baseChart
+        [chartType]="'horizontalBar'"
+        [datasets]="g.chartData.datasets"
+        [options]="g.options"
+        [labels]="g.labels"
+        [plugins]="barChartPlugins"
+      >
+      </canvas>
+    </div>
+
+    <!-- <div *ngFor="let report of reports; let i = index">
       <ion-card style="background: #f5f5f5b8; border-radius: 10px" *ngIf="report?.title?.text">
         <ion-card-header class="chart-title">
           {{ report.title.text }}
@@ -31,7 +40,7 @@
           <div id="{{ idvalue }}{{ i }}"></div>
         </ion-card-content>
       </ion-card>
-    </div>
+    </div> -->
   </div>
   <ion-card *ngIf="reports && reports.length == 0">
     <!-- <app-no-data></app-no-data> -->

@@ -11,6 +11,8 @@ import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-observation-home',
@@ -29,6 +31,7 @@ export class ObservationHomeComponent implements OnInit {
   page = 1;
   limit = 10;
   count: any;
+
   constructor(
     private httpClient: HttpClient,
     private location: Location,
@@ -42,7 +45,7 @@ export class ObservationHomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.solutionList=[]
+    this.solutionList = [];
     this.getPrograms();
   }
   async getPrograms() {
@@ -60,7 +63,7 @@ export class ObservationHomeComponent implements OnInit {
           if (success && success.result && success.result.data) {
             this.count = success.result.count;
 
-            this.solutionList = [...this.solutionList , ...success.result.data] ;
+            this.solutionList = [...this.solutionList, ...success.result.data];
           }
         },
         (error) => {
@@ -103,6 +106,6 @@ export class ObservationHomeComponent implements OnInit {
   }
   loadMore() {
     this.page = this.page + 1;
-    this.getPrograms()
+    this.getPrograms();
   }
 }

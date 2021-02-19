@@ -14,7 +14,7 @@
             <ion-label class="font-bold"> {{data.label}} <sup *ngIf="data.validation.required" data>*</sup> </ion-label>
             <ion-label position="floating" class="label-hint"> {{data.hint}} </ion-label>
             <ion-input type="text" required="{{data.validation.required}}" *ngIf="data.input == 'text'"
-              [formControlName]="data.field" name="{{data.field}}"> </ion-input>
+              [formControlName]="data.field" name="{{data.field}}" (ionInput)="onKeyPress($event,data)"> </ion-input>
             <ion-textarea type="text" required="{{data.validation.required}}" *ngIf="data.input == 'textarea'"
               name="{{data.field}}" [formControlName]="data.field">
             </ion-textarea>

@@ -160,9 +160,9 @@ export class ObservationReportsComponent implements OnInit {
       url = urlConstants.API_URLS.OBSERVATION_REPORTS.ENTITY_REPORT;
     }
     if (this.entityType && this.reportType) {
-      url = 'v2' + url;
+      url = 'v3' + url;
     } else {
-      url = 'v1' + url;
+      url = 'v2' + url;
     }
 
     this.payload.filter = {
@@ -408,9 +408,9 @@ export class ObservationReportsComponent implements OnInit {
         : urlConstants.API_URLS.CRITERIA_REPORTS.GET_REPORTS_PDF_URLS;
     const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
     if (this.selectedTab == 'questionwise') {
-      url = 'v2' + url;
+      url = 'v3' + url;
     } else {
-      url = 'v1' + url;
+      url = 'v2' + url;
     }
     if (this.submissionId) {
       this.fileName = this.submissionId + timeStamp + '.pdf';

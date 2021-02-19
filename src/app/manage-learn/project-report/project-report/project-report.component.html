@@ -35,12 +35,8 @@
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share
-              [name]="fileName()"
-              [extension]="'.pdf'"
-              [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"
-            ></download-share>
+            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
+              [interface]="'simple'"></download-share>
           </div>
         </div>
 
@@ -56,13 +52,13 @@
           </div>
         </div>
 
-        <div class="overview-footer">
+        <!-- <div class="overview-footer">
           <div class="view-option">
             <ion-button (click)="viewFullReport()" expand="full" fill="outline">{{
               'FRMELEMNTS_LBL_VIEW_FULL_REPORT' | translate
             }}</ion-button>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
 
@@ -80,12 +76,8 @@
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share
-              [name]="fileName()"
-              [extension]="'.pdf'"
-              [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"
-            ></download-share>
+            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
+              [interface]="'simple'"></download-share>
           </div>
         </div>
 
@@ -95,13 +87,13 @@
           </div>
         </div>
 
-        <div class="overview-footer">
+        <!-- <div class="overview-footer">
           <div class="view-option">
             <ion-button (click)="viewFullReport()" expand="full" fill="outline">{{
               'FRMELEMNTS_LBL_VIEW_FULL_REPORT' | translate
             }}</ion-button>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
 
@@ -120,27 +112,24 @@
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share
-              [name]="fileName()"
-              [extension]="'.pdf'"
-              [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"
-            ></download-share>
+            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
+              [interface]="'simple'"></download-share>
           </div>
         </div>
         <div class="task-overview-body">
           <div>
             <graph-circle [data]="reportData?.categories"></graph-circle>
+            <!-- <app-chart> </app-chart> -->
           </div>
         </div>
 
-        <div class="overview-footer">
+        <!-- <div class="overview-footer">
           <div class="view-option">
             <ion-button (click)="viewFullReport()" expand="full" fill="outline">{{
               'FRMELEMNTS_LBL_VIEW_FULL_REPORT' | translate
             }}</ion-button>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
 
