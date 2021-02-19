@@ -144,7 +144,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
-    this.courseHeirarchy = this.courseHeirarchy;
+    this.courseHeirarchy = this.extrasData.courseHeirarchy;
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
@@ -936,9 +936,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       })
       .catch((error) => {
         this.zone.run(() => {
-          if (this.isDownloadStarted) {
-          } else {
-          }
           if (error && error.error === 'NETWORK_ERROR') {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {

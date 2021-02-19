@@ -1,9 +1,8 @@
-import { filter } from 'rxjs/operators';
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { GroupHandlerService, CommonUtilService } from '@app/services';
-import { AddActivityToGroup } from '@app/app/my-groups/group.interface';
-import {CsGroupAddableBloc, CsGroupAddableState} from '@project-sunbird/client-services/blocs';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { CommonUtilService, GroupHandlerService } from '@app/services';
+import { CsGroupAddableBloc, CsGroupAddableState } from '@project-sunbird/client-services/blocs';
 import { Observable, of } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'add-activity-to-group',

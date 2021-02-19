@@ -1,19 +1,20 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { Observable, Subscription, of } from 'rxjs';
-import { Events, Platform } from '@ionic/angular';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { RouterLinks } from '@app/app/app.constant';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
 import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Location } from '@angular/common';
-import { RouterLinks } from '@app/app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Events, Platform } from '@ionic/angular';
+import { of, Subscription } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
+
 declare const cordova;
 
 @Component({

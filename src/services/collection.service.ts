@@ -1,11 +1,6 @@
-import { Injectable, Inject } from '@angular/core';
-import {
-  Content, ContentService, ContentDetailRequest, ChildContentRequest
-} from 'sunbird-sdk';
-import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { Environment, InteractSubtype, PageId } from './telemetry-constants';
+import { Inject, Injectable } from '@angular/core';
 import { CommonUtilService } from '@app/services';
-
+import { ChildContentRequest, Content, ContentDetailRequest, ContentService } from 'sunbird-sdk';
 
 @Injectable()
 export class CollectionService {

@@ -858,8 +858,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.course.contentTypesCount) {
       if (!isObject(this.course.contentTypesCount)) {
         this.course.contentTypesCount = JSON.parse(this.course.contentTypesCount);
-      } else {
-        this.course.contentTypesCount = this.course.contentTypesCount;
       }
     } else if (this.courseCardData.contentTypesCount && !isObject(this.courseCardData.contentTypesCount)) {
       this.course.contentTypesCount = JSON.parse(this.courseCardData.contentTypesCount);

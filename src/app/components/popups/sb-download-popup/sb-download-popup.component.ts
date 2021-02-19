@@ -1,20 +1,15 @@
 import {
   Component,
-  NgZone,
-  ViewChild,
   EventEmitter,
-  Output,
   Input,
   OnChanges,
-  SimpleChanges,
-  OnInit
+  OnInit, Output,
+  SimpleChanges
 } from '@angular/core';
-import {
-  Events,
-  // Navbar,
-  ModalController
-} from '@ionic/angular';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import {
+  Events
+} from '@ionic/angular';
 
 @Component({
   selector: 'app-sb-download-popup',
