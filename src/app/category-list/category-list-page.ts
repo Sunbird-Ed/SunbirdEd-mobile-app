@@ -209,9 +209,6 @@ export class CategoryListPage implements OnDestroy {
         this.scrollService.scrollTo(id);
     }
 
-    cancelEvent($event) {
-    }
-
     async navigateToFilterFormPage() {
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
