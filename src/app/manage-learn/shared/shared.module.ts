@@ -45,7 +45,6 @@ import { ReportsTextComponent } from './components/reports-text/reports-text.com
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.component';
-import { HighchartsChartModule } from 'highcharts-angular';
 import { AttachmentComponent } from './components/attachment/attachment.component';
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
@@ -106,7 +105,7 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     HintComponent,
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, HighchartsChartModule,ChartsModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule,ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,

@@ -1,7 +1,4 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import variablepie from 'highcharts/modules/variable-pie.src';
-variablepie(Highcharts);
 import { ChartType } from 'chart.js';
 import { MultiDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
@@ -13,7 +10,6 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 })
 export class GraphCircleComponent implements OnInit {
   @Input() data;
-  highcharts = Highcharts;
   chartConstructor = 'chart'; // optional string, defaults to 'chart'
   runOutsideAngular = false;
 

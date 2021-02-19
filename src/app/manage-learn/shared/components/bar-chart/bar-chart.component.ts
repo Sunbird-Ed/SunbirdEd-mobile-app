@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 

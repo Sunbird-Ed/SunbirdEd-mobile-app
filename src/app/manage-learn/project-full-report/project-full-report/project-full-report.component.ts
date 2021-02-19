@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts/highcharts-gantt';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { LoaderService, UtilsService } from '../../core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
@@ -21,7 +20,6 @@ export class ProjectFullReportComponent implements OnInit {
   // }[];
   reports: any;
   showCharts: boolean;
-  highcharts = Highcharts;
   idvalue = 'container';
   filter: any;
   barChartPlugins: any;
