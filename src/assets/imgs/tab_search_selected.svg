@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="21px" viewBox="0 0 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>52F51613-8012-45D4-9950-014D3E6A6D8D</title>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Bottom-Navigation-icons" transform="translate(-90.000000, -287.000000)">
+            <g id="Group-5-Copy-2" transform="translate(0.000000, 233.000000)">
+                <g id="Group-4-Copy" transform="translate(91.000000, 55.000000)">
+                    <rect id="Rectangle" x="0" y="0" width="18" height="18"></rect>
+                    <path d="M15,8 C15,11.8663131 11.8663131,15 8,15 C4.13368685,15 1,11.8663131 1,8 C1,4.13368685 4.13368685,1 8,1 C11.8663131,1 15,4.13368685 15,8 Z" id="Stroke-1" stroke="#FF7648" stroke-width="3" stroke-linecap="round"></path>
+                    <line x1="18" y1="18" x2="13" y2="13" id="Stroke-3" stroke="#FF7648" stroke-width="3" stroke-linecap="round"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -3,7 +3,7 @@
 
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
-        <img src="./assets/imgs/ic_burger_menu.png" class="tool-icon" alt="burger menu">
+        <img src="./assets/imgs/ic_burger_menu.svg" class="tool-icon" alt="burger menu">
       </ion-button>
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
@@ -47,7 +47,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
         (click)="emitEvent($event, 'notification');" class="active-download-icon">
-        <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>
+        <img src="assets/imgs/notification.svg" class="tool-icon" alt="notification">
         <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
@@ -93,6 +93,9 @@
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
         (click)="emitEvent($event, 'questionMap');" style="font-size: 1.8rem;">
         <ion-icon class="ion-float-end" name="map"></ion-icon>
+      <ion-button icon-only *ngIf="headerConfig?.showKebabMenu"
+                  (click)="showKebabMenu($event)" style="font-size: 1.8rem; padding: 0 16px;">
+        <img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
       </ion-button>
     </ion-buttons>
 

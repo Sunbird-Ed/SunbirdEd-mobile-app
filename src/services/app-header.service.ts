@@ -36,6 +36,8 @@ export class AppHeaderService {
         const defaultConfig = {
             showHeader: true,
             showBurgerMenu: true,
+            showKebabMenu: false,
+            kebabMenuOptions: [],
             pageTitle: '',
             actionButtons: ['search'],
         };

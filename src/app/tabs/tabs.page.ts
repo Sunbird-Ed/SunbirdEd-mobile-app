@@ -8,7 +8,7 @@ import { ProfileConstants, EventTopics, RouterLinks, PreferenceKey } from '@app/
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId } from '@app/services';
 import { Router } from '@angular/router';
-import { OnTabViewWillEnter } from './on-tab-view-will-enter';
+import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 
 @Component({
   selector: 'app-tabs',

@@ -25,11 +25,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: RouterLinks.DISCOVER,
+        path: RouterLinks.SEARCH,
         children: [
           {
             path: '',
-            loadChildren: '../discover/discover.module#DiscoverPageModule'
+            loadChildren: '../search/search.module#SearchPageModule'
           }
         ]
       },
@@ -81,7 +81,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: RouterLinks.RESOURCES,
+        redirectTo: RouterLinks.HOME,
         pathMatch: 'full'
       }
     ]

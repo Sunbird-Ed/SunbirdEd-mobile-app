@@ -20,7 +20,7 @@ import {
   CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress,
   EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
   ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
-  ContentUpdate, ContentImport, Rollup, AuditState, ProfileService
+  ContentUpdate, ContentImport, Rollup, AuditState, ProfileService, CourseBatchesRequest
 } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe, Location } from '@angular/common';
@@ -103,6 +103,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   maxAssessmentLimit = AssessmentConstant.MAX_ATTEMPTS;
   isCertifiedCourse: boolean;
   courseHeirarchy: any;
+  private hasInit = false;
+  courseBatchesRequest: CourseBatchesRequest;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -142,7 +144,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
-    this.courseHeirarchy = this.courseHeirarchy;
+    this.courseHeirarchy = this.extrasData.courseHeirarchy;
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
@@ -181,7 +183,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.appGlobalService.generateCourseUnitCompleteTelemetry = false;
       this.location.back();
     });
-    this.getContentState(true);
+    if (this.hasInit) {
+      this.getContentState(false);
+    } else {
+      this.hasInit = !this.hasInit;
+      this.getContentState(true);
+    }
 
     if (!this.guestUser) {
       this.updatedCourseCardData = await this.courseService.getEnrolledCourses({ userId: this.userId, returnFreshCourses: false })
@@ -247,7 +254,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
 
   async getAllBatches() {
     // const loader = await this.commonUtilService.getLoader();
-    const courseBatchesRequest = {
+    this.courseBatchesRequest = {
       filters: {
         courseId: this.courseContentData.identifier,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS],
@@ -256,7 +263,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
-    this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+    this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
         this.batches = data || [];
       })
@@ -274,9 +281,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async getContentState(returnRefresh: boolean) {
-    // const loader = await this.commonUtilService.getLoader();
     if (this.courseContent.batchId) {
-      // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
         courseId: this.courseContentData.identifier,
@@ -291,11 +296,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
           this.zone.run(() => {
             this.contentStatusData = res;
             this.checkChapterCompletion();
-          });
-          // await loader.dismiss();
-        }).catch(async (err) => {
-          // await loader.dismiss();
-        });
+          }); }).catch(async () => {});
     }
   }
 
@@ -417,9 +418,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   }
 
   async subscribeUtilityEvents() {
-
-    const loader = await this.commonUtilService.getLoader();
-
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
       console.log('enrol succ event');
       this.isAlreadyEnrolled = true;
@@ -432,7 +430,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.courseContent.batchId = res.batchId;
       console.log('enrol succ event -->', this.courseContent);
       await this.getBatchDetails();
-      // this.getCourseProgress();
       this.getContentState(true);
     });
 
@@ -596,42 +593,47 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
    * checks whether batches are available or not and then Navigate user to batch list page
    */
   async navigateToBatchListPage() {
+    const loader = await this.commonUtilService.getLoader();
+    const reqvalues = new Map();
+    reqvalues['enrollReq'] = this.courseBatchesRequest;
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ENROLL_CLICKED, Environment.HOME,
+      PageId.CHAPTER_DETAILS, this.telemetryObject, reqvalues, this.objRollup);
+
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      return;
+    }
+
+    // if (!this.batches || !this.batches.length) {
+    //   this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+    //   await loader.dismiss();
+    //   return;
+    // }
+
     if (!this.localCourseService.isEnrollable(this.batches, this.courseContentData)) {
-      return false;
+      return;
     }
 
     const ongoingBatches = [];
-    const upcommingBatches = [];
-    const loader = await this.commonUtilService.getLoader();
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.batches.length) {
-        if (this.batches.length === 1) {
-          this.enrollIntoBatch(this.batches[0]);
-        } else {
-          this.batches.forEach(batch => {
-            if (batch.status === 1) {
-              ongoingBatches.push(batch);
-            } else {
-              upcommingBatches.push(batch);
-            }
-          });
-          this.router.navigate([RouterLinks.COURSE_BATCHES], {
-            state: {
-              ongoingBatches,
-              upcommingBatches,
-              course: this.courseContentData,
-              objRollup: this.objRollup,
-              telemetryObject: this.telemetryObject,
-              // corRelationList: this.corRelationList
-            }
-          });
-        }
-      } else {
-        this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
-        await loader.dismiss();
-      }
+    if (this.batches.length === 1) {
+      this.enrollIntoBatch(this.batches[0]);
     } else {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      this.batches.forEach(batch => {
+        if (batch.status === 1) {
+          ongoingBatches.push(batch);
+        }
+      });
+      this.router.navigate([RouterLinks.COURSE_BATCHES], {
+        state: {
+          ongoingBatches,
+          upcommingBatches: [],
+          course: this.courseContentData,
+          objRollup: this.objRollup,
+          telemetryObject: this.telemetryObject,
+          corRelationList: this.corRelationList
+        }
+      });
     }
   }
 
@@ -934,9 +936,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       })
       .catch((error) => {
         this.zone.run(() => {
-          if (this.isDownloadStarted) {
-          } else {
-          }
           if (error && error.error === 'NETWORK_ERROR') {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {

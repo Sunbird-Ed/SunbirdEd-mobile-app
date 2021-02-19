@@ -87,6 +87,7 @@ export class AppGlobalService implements OnDestroy {
     private _selectedActivityCourseId: string;
     private _redirectUrlAfterLogin: string;
     private _isNativePopupVisible: boolean;
+    private _isDiscoverBackEnabled: boolean = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -803,6 +804,14 @@ export class AppGlobalService implements OnDestroy {
 
     set isNativePopupVisible(value) {
         this._isNativePopupVisible = value;
+    }
+
+    get isDiscoverBackEnabled() {
+        return this._isDiscoverBackEnabled;
+    }
+
+    set isDiscoverBackEnabled(value) {
+        this._isDiscoverBackEnabled = value;
     }
 
     setNativePopupVisible(value, timeOut?) {

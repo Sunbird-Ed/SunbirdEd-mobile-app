@@ -1283,7 +1283,7 @@
   "FRMELEMNTS_BTN_UNDO": "Undo",
   "BROWES_RELEVANT_CONTENT": "Browse {{app_name}} Library to find relevant content based on your preferences (Board, Medium, Class)",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
-  "SUBJECT_DESCRIPTION": "Text is indicating the below cards combination oof textbooks from all classes(for teachers)",
+  "SUBJECT_DESCRIPTION": "Explore {{%s}} from all the boards and mediums on {{%a}}",
   "WELCOME": "Welcome",
   "DISCOVER_BNAV": "Search",
   "HOME_BNAV": "Home",
@@ -1355,5 +1355,17 @@
   "FRMELEMNTS_LBL_COFIRMATION_DELETE_INSTANCE":"Do you want to delete this instance?",
   "FRMELEMNTS_LBL_THIS_QUARTER":"This Quarter",
   "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}",
-  "PROGRAMS_DESC":"View and participate in educational programs active in your location and designed for your role"
+  "PROGRAMS_DESC":"View and participate in educational programs active in your location and designed for your role",
+  "PDF": "PDF",
+  "PNG": "PNG",
+  "YOUR_PREFERENCES": "Your preferences",
+  "SEARCH_OR_ENTER_QR_CODE": "Search or enter QR code",
+  "EXPLORE": "Explore {{%s}}",
+  "CERTIFICATE": "Certificate",
+  "ENABLE_DISCUSSION_FORUM": "Enable discussions",
+  "DISABLE_DISCUSSION_FORUM": "Disable discussions",
+  "DISCUSSION_FORUM_ENABLE_SUCCESS": "Discussion forum enabled successfully",
+  "DISCUSSION_FORUM_DISABLE_SUCCESS": "Discussion forum disabled successfully",
+  "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
+  "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?"
 }
