@@ -1,29 +1,27 @@
 import { Injectable } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { AppGlobalService, CommonUtilService, QRScannerResultHandler, TelemetryGeneratorService } from '@app/services/';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
+import { ContainerService } from '@app/services/container.services';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Platform, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Profile, ProfileType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
+import { take } from 'rxjs/operators';
+import { CorrelationData, Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
+import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from './android-permissions/android-permission';
 import {
-  Environment,
+  CorReleationDataType, Environment,
   ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
   Mode,
-  PageId,
-  CorReleationDataType
+  PageId
 } from './telemetry-constants';
-import { ContainerService } from '@app/services/container.services';
-import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
-import { AndroidPermissionsStatus, AndroidPermission, PermissionAskedEnum } from './android-permissions/android-permission';
-import { QRScannerResultHandler, AppGlobalService } from '@app/services/';
-import { TelemetryGeneratorService } from '@app/services/';
-import { CommonUtilService } from '@app/services/';
-import { Platform, ToastController, PopoverController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { initTabs, GUEST_TEACHER_TABS, GUEST_STUDENT_TABS } from '@app/app/module.service';
-import { NavigationExtras, Router } from '@angular/router';
-import { take } from 'rxjs/operators';
 
 declare const cordova;
+
 @Injectable()
 export class SunbirdQRScanner {
   profile: Profile;

@@ -1,14 +1,50 @@
-import { PageFilterCallback } from './../page-filter/page-filter.page';
-import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
-import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
-import { TranslateService } from '@ngx-translate/core';
-import has from 'lodash/has';
-import forEach from 'lodash/forEach';
-import { Subscription } from 'rxjs';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import {
+  AudienceFilter,
+  ContentCard,
+  ContentFilterConfig,
+  EventTopics,
+  ExploreConstants,
+  PreferenceKey,
+  PrimaryCategory, ProfileConstants,
+  RouterLinks,
+  Search, ViewMore
+} from '@app/app/app.constant';
+import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { NotificationService } from '@app/services/notification.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import {
+  CorReleationDataType,
+  Environment,
+  ID,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
+import { applyProfileFilter } from '@app/util/filter.util';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CourseCardGridTypes, LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import forEach from 'lodash/forEach';
+import has from 'lodash/has';
+import { Subscription } from 'rxjs';
 import {
   CategoryTerm,
   ContentAggregatorRequest,
@@ -31,52 +67,12 @@ import {
   SharedPreferences,
   SortOrder
 } from 'sunbird-sdk';
-
-import {
-  AudienceFilter,
-  ContentCard,
-  ContentFilterConfig,
-  EventTopics,
-  ExploreConstants,
-  PreferenceKey,
-  ProfileConstants,
-  RouterLinks,
-  PrimaryCategory,
-  Search, ViewMore
-} from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import {
-  CorReleationDataType,
-  Environment,
-  ID,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId
-} from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { ContentUtil } from '@app/util/content-util';
-import { NotificationService } from '@app/services/notification.service';
-import { applyProfileFilter } from '@app/util/filter.util';
-import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import {
-  FrameworkSelectionDelegateService,
-  FrameworkSelectionActionsDelegate
+  FrameworkSelectionActionsDelegate, FrameworkSelectionDelegateService
 } from '../profile/framework-selection/framework-selection.page';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
-import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
-import { ProfileHandler } from '@app/services/profile-handler';
+import { PageFilterCallback } from './../page-filter/page-filter.page';
 
 @Component({
   selector: 'app-resources',

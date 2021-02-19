@@ -1,9 +1,8 @@
-import { Injectable, Inject } from '@angular/core';
-import { Router, Resolve, NavigationExtras, ActivatedRouteSnapshot } from '@angular/router';
-import { SharedPreferences } from 'sunbird-sdk';
+import { Inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, NavigationExtras, Resolve, Router } from '@angular/router';
 import { PreferenceKey } from '@app/app/app.constant';
 import { SplashScreenService } from '@app/services/splash-screen.service';
-import { Events } from '@ionic/angular';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @Injectable()
 export class HasNotSelectedLanguageGuard implements Resolve<any> {
