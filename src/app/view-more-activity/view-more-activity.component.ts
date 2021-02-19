@@ -165,8 +165,6 @@ export class ViewMoreActivityComponent implements OnInit {
         }
 
         if (this.headerTitle !== this.title) {
-          console.log('inside header title if condition');
-          this.headerTitle = this.headerTitle;
           this.offset = 0;
           this.loadMoreBtn = true;
           this.mapper();
