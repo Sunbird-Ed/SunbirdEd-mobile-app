@@ -1024,9 +1024,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
               const content = this.storyAndWorksheets[i].contents[k];
               if (content.appIcon) {
                 if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-                  if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                    content.appIcon = content.appIcon;
-                  } else {
+                  if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
                     this.imageSrcMap.set(content.identifier, content.appIcon);
                     // this.imageSrcMap[content.identifier] = content.appIcon;
                     content.appIcon = this.defaultImg;

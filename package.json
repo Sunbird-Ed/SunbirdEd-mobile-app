@@ -58,20 +58,20 @@
     "@ionic/storage": "2.2.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/client-services": "3.6.16",
-    "@project-sunbird/common-consumption-v8": "3.6.4",
-    "@project-sunbird/content-player": "3.6.4",
-    "@project-sunbird/discussions-ui-v8": "2.0.13",
+    "@project-sunbird/client-services": "3.7.3",
+    "@project-sunbird/common-consumption-v8": "3.7.0",
+    "@project-sunbird/content-player": "3.7.0",
+    "@project-sunbird/discussions-ui-v8": "2.0.15",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-pdf-player-v8": "3.6.0",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
-    "@project-sunbird/sunbird-sdk": "3.6.8",
+    "@project-sunbird/sunbird-sdk": "3.7.10",
     "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
     "com.jjdltc.cordova.plugin.zip": "https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
-    "common-form-elements-v8": "2.0.4",
+    "common-form-elements-v8": "2.0.5",
     "cordova-android": "^9.0.0",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
@@ -96,7 +96,7 @@
     "cordova-plugin-filepath": "^1.5.8",
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-inappbrowser": "^3.2.0",
-    "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git",
+    "cordova-plugin-inappupdatemanager": "git+https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.2.1",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
@@ -111,9 +111,9 @@
     "cordova-plugin-secure-storage-echo": "^5.1.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-streaming-media": "^2.3.0",
-    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.7.0",
     "cordova-sqlite-storage": "^5.1.0",
     "cordova-plugin-telerik-imagepicker": "2.3.3",
+    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.7.0",
     "cordova-plugin-webview-checker": "^1.0.1",
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^6.0.3",
@@ -125,6 +125,7 @@
     "dom-to-image": "^2.6.0",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
+    "hammerjs": "^2.0.8",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
     "jspdf": "^2.0.0",
@@ -144,7 +145,7 @@
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0",
-    "sb-svg2pdf": "0.0.9",
+    "sb-svg2pdf": "0.0.10",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.9.1",
@@ -179,6 +180,7 @@
     "babel-polyfill": "^6.26.0",
     "fs-extra": "^8.1.0",
     "jest": "^25.4.0",
+    "sb-theme": "^1.0.20",
     "sonarqube-scanner": "^2.5.0",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
@@ -302,7 +304,19 @@
     "moduleNameMapper": {
       "^@app/(.*)$": "<rootDir>/src/$1",
       "^sunbird-sdk": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk",
-      "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1"
+      "^sunbird-sdk/(.*)$": "<rootDir>/node_modules/@project-sunbird/sunbird-sdk/$1",
+      "@project-sunbird/common-consumption": [
+        "<rootDir>/node_modules/@project-sunbird/common-consumption-v8"
+      ],
+      "@project-sunbird/common-consumption/*": [
+        "<rootDir>/node_modules/@project-sunbird/common-consumption-v8/*"
+      ],
+      "common-form-elements": [
+        "<rootDir>/node_modules/common-form-elements-v8"
+      ],
+      "common-form-elements/*": [
+        "<rootDir>/node_modules/common-form-elements-v8/*"
+      ]
     },
     "transformIgnorePatterns": [],
     "coveragePathIgnorePatterns": [

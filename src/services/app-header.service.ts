@@ -36,6 +36,8 @@ export class AppHeaderService {
         const defaultConfig = {
             showHeader: true,
             showBurgerMenu: true,
+            showKebabMenu: false,
+            kebabMenuOptions: [],
             pageTitle: '',
             actionButtons: ['search'],
         };
@@ -78,8 +80,9 @@ export class AppHeaderService {
         const theme = await this.preferences.getString('current_selected_theme').toPromise();
         if (theme === 'JOYFUL') {
             document.querySelector('html').setAttribute('data-theme', AppThemes.JOYFUL);
+            document.querySelector('html').setAttribute('device-accessable-theme','accessible' );
             const themeColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-header');
-            this.statusBar.backgroundColorByHexString(themeColor);
+            this.statusBar.backgroundColorByHexString(themeColor);      
         }
     }
 

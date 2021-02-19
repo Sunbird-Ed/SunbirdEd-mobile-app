@@ -1,0 +1,14 @@
+.form-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reset-button {
+  align-self: flex-end;
+  color: var(--app-black);
+
+  ion-icon {
+    color: var(--app-primary);
+  }
+}

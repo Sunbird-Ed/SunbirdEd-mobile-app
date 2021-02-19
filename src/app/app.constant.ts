@@ -175,8 +175,10 @@ export class ShareUrl {
 
 export class MenuOverflow {
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
-    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_DELETE_GROUP'];
-    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'ENABLE_DISCUSSION_FORUM', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'ENABLE_DISCUSSION_FORUM', 'MENU_LEAVE_GROUP'];
+    public static readonly MENU_GROUP_CREATOR_DISABLE_DF = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'DISABLE_DISCUSSION_FORUM', 'MENU_DELETE_GROUP'];
+    public static readonly MENU_GROUP_ADMIN_DISABLE_DF = ['MENU_EDIT_GROUP_DETAILS', 'FRMELEMENTS_LBL_DEACTIVATEGRP', 'DISABLE_DISCUSSION_FORUM', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_CREATOR_SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_DELETE_GROUP'];
     public static readonly MENU_GROUP_ADMIN__SUSPENDED = ['FRMELEMENTS_LBL_ACTIVATEGRP', 'MENU_LEAVE_GROUP'];
     public static readonly MENU_GROUP_NON_ADMIN = ['MENU_LEAVE_GROUP'];
@@ -441,6 +443,7 @@ export class RouterLinks {
     public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
     public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
     public static readonly FRAMEWORK_SELECTION = 'framework-selection';
+    public static readonly CERTIFICATE_VIEW = 'certificate-view';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
@@ -463,9 +466,6 @@ export class RouterLinks {
 
     // HOME Routes
     public static readonly HOME = 'home';
-
-    // Discover(SEARCH) Routes
-    public static readonly DISCOVER = 'discover';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -523,7 +523,7 @@ export class RouterLinks {
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly HOME_TAB = `/${RouterLinks.TABS}/${RouterLinks.HOME}`;
-    public static readonly DISCOVER_TAB = `/${RouterLinks.TABS}/${RouterLinks.DISCOVER}`;
+    public static readonly SEARCH_TAB = `/${RouterLinks.TABS}/${RouterLinks.SEARCH}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
@@ -596,6 +596,8 @@ export class RouterLinks {
 
     public static readonly HOME_USER = 'user';
     public static readonly HOME_ADMIN = 'admin';
+    // filter page
+    public static readonly SEARCH_FILTER = 'search-filter';
 }
 
 export class ShareItemType {
@@ -658,3 +660,88 @@ export class StatusBarTheme {
 export class AssessmentConstant {
     public static readonly MAX_ATTEMPTS = 25;
 }
+
+export const ColorMapping = [
+    {
+        primary: 'rgba(255,139,46,1)',
+        secondary: 'rgba(255,139,46,0.3)'
+    },
+    {
+        primary: 'rgba(163,99,255,1)',
+        secondary: 'rgba(163,99,255,0.3)'
+    },
+    {
+        primary: 'rgba(34,139,255,1)',
+        secondary: 'rgba(34,139,255,0.3)'
+    },
+    {
+        primary: 'rgba(95,192,32,1)',
+        secondary: 'rgba(95,192,32,0.3)'
+    },
+    {
+        primary: 'rgba(255,128,47,1)',
+        secondary: 'rgba(255,128,47,0.3)'
+    },
+    {
+        primary: 'rgba(251,70,70,1)',
+        secondary: 'rgba(251,70,70,0.3)'
+    },
+    {
+        primary: 'rgba(83,109,252,1)',
+        secondary: 'rgba(83,109,252,0.3)'
+    },
+    {
+        primary: 'rgba(15,186,208,1)',
+        secondary: 'rgba(15,186,208,0.3)'
+    }
+]
+
+export const SubjectMapping = {
+    english: {
+        icon: 'assets/imgs/book_english.svg',
+        theme: {
+            iconBgColor: ColorMapping[0].primary,
+            pillBgColor: ColorMapping[0].secondary
+        }
+    },
+    mathematics: {
+        icon: 'assets/imgs/calculator.svg',
+        theme: {
+            iconBgColor: ColorMapping[1].primary,
+            pillBgColor: ColorMapping[1].secondary
+        }
+    },
+    science: {
+        icon: 'assets/imgs/globe.svg',
+        theme: {
+            iconBgColor: ColorMapping[2].primary,
+            pillBgColor: ColorMapping[2].secondary
+        }
+    },
+    default: {
+        icon: 'assets/imgs/book_default.svg',
+        theme: null
+    }
+}
+
+export const PrimaryCaregoryMapping = {
+    "digital textbooks": {
+        icon: 'assets/imgs/textbook.svg'
+    },
+    "courses": {
+        icon: 'assets/imgs/course.svg'
+    },
+    "tv programs": {
+        icon: 'assets/imgs/tv.svg'
+    },
+    "documents": {
+        icon: 'assets/imgs/documents.svg'
+    },
+    "videos": {
+        icon: 'assets/imgs/videos.svg'
+    },
+    "default": {
+        icon: 'assets/imgs/all_content.svg'
+    }
+}
+

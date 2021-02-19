@@ -794,6 +794,18 @@ describe('LocalCourseService', () => {
       expect(data).toBeFalsy();
     });
 
+    it('should show toast message if batches is empty', (done) => {
+          // arrnge
+          mockCommonUtilService.showToast = jest.fn();
+          // act
+          const data = localCourseService.isEnrollable([], {});
+          // assert
+          setTimeout(() => {
+              expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+              done();
+          }, 0);
+      });
+
     it('should return is enrolled', () => {
       const batches = [{
         enrollmentEndDate: undefined,

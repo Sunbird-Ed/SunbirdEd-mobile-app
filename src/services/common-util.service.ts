@@ -692,13 +692,14 @@ export class CommonUtilService {
                 ],
             },
             cssClass: 'sb-popover warning',
+            backdropDismiss: false
         });
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
         if (data && data.canDelete) {
             return false;
         }
-        return true
+        return true;
     }
 
 }

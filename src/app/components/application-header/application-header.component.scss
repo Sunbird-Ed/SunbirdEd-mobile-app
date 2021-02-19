@@ -4,7 +4,7 @@
 @import "src/assets/styles/_variables.scss";
 
 ion-icon {
-    width: 30px;
+    width: 32px;
     height: 30px;
     color: $primary-color;
 }
@@ -88,9 +88,9 @@ ion-icon {
 }
 .badge-container{
     position: absolute;
-    top: 5px;
-    left: 8px;
-    background: #e0005a;
+    top: 0.2rem;
+    left: 0.2rem;
+    background: var(--app-tertiary);
     color: white;
     font-size: 9px;
     padding-bottom: 3px;

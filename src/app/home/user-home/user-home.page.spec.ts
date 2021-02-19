@@ -12,9 +12,10 @@ import { of } from 'rxjs';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileService } from '@project-sunbird/sunbird-sdk';
+import { SunbirdQRScanner } from '@app/services';
 
 describe('UserHomePage', () => {
-  let homePage: UserHomePage;
+  let userhomePage: UserHomePage;
   const mockAppGlobalService: Partial<AppGlobalService> = {
   };
   const mockAppVersion: Partial<AppVersion> = {
@@ -36,10 +37,10 @@ describe('UserHomePage', () => {
     navigateToContent: jest.fn()
   };
   const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
- 
+  const mockSunbirdQRScanner: Partial<SunbirdQRScanner> = {};
 
   beforeAll(() => {
-    homePage = new UserHomePage(
+    userhomePage = new UserHomePage(
       mockFrameworkService as FrameWorkService,
       mockProfileService as ProfileService,
       mockCommonUtilService as CommonUtilService,
@@ -49,7 +50,8 @@ describe('UserHomePage', () => {
       mockContentAggregatorHandler as ContentAggregatorHandler,
       mockNavService as NavigationService,
       mockHeaderService as AppHeaderService,
-      mockEvents as Events
+      mockEvents as Events,
+      mockSunbirdQRScanner as SunbirdQRScanner
     );
   });
 
@@ -58,6 +60,17 @@ describe('UserHomePage', () => {
   });
 
   it('should be create an instance of HomePage', () => {
-    expect(homePage).toBeTruthy();
+    expect(userhomePage).toBeTruthy();
   });
+
+  describe('viewPreferenceInfo()', () => {
+    it('should enable and disable the user prefrence information', () => {
+      // arrange
+      userhomePage.showPreferenceInfo = false;
+      // act
+      userhomePage.viewPreferenceInfo()
+      // assert
+      expect(userhomePage.showPreferenceInfo).toBeTruthy();
+    });
+  })
 });
