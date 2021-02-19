@@ -1,6 +1,5 @@
-import {StorageDestination} from 'sunbird-sdk';
-import {OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
+import { OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export interface StorageSettingsInterface extends OnInit {
   // eventBusService: EventBusService
@@ -16,7 +15,6 @@ export interface StorageSettingsInterface extends OnInit {
   availableExternalMemorySize: number;
 
   availableInternalMemorySize: number;
-
 
   spaceTakenBySunbird$: Observable<number>;
 

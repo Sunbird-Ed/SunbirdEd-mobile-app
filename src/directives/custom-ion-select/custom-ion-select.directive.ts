@@ -1,5 +1,4 @@
-import { IonSelect } from '@ionic/angular';
-import { Directive, ElementRef, DoCheck } from '@angular/core';
+import { Directive, DoCheck, ElementRef } from '@angular/core';
 
 @Directive({
   selector: '[appCustomIonSelect]'

@@ -1,29 +1,30 @@
-import { PreferenceKey } from '@app/app/app.constant';
-import { LoginHandlerService } from './../../services/login-handler.service';
-import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
+import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import {
-  Batch, SharedPreferences,
-  Rollup, CorrelationData, TelemetryObject
-} from 'sunbird-sdk';
+import { Router } from '@angular/router';
+import { PreferenceKey } from '@app/app/app.constant';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { AppGlobalService } from '@app/services';
+import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
 import {
   Events, Platform, PopoverController
 } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import {
+  Batch,
+  CorrelationData, Rollup, SharedPreferences,
+  TelemetryObject
+} from 'sunbird-sdk';
 import { EventTopics } from '../../app/app.constant';
+import { AppHeaderService } from '../../services/app-header.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import {
-  InteractType, InteractSubtype,
-  Environment, PageId, ImpressionType
+  Environment, ImpressionType, InteractSubtype, InteractType,
+  PageId
 } from '../../services/telemetry-constants';
-import { AppHeaderService } from '../../services/app-header.service';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { SbPopoverComponent } from '../components/popups';
-import { LocalCourseService, ConsentPopoverActionsDelegate } from '@app/services/local-course.service';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
-import { AppGlobalService } from '@app/services';
-import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { LoginHandlerService } from './../../services/login-handler.service';
+import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 
 @Component({
   selector: 'app-course-batches',
@@ -85,10 +86,6 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.userId = await this.appGlobalService.getActiveProfileUid();
     this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
-
-    if (!this.isGuestUser) {
-      this.getBatchesByCourseId();
-    }
   }
 
   ionViewWillEnter() {
@@ -115,14 +112,6 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
 
   goBack() {
     this.location.back();
-  }
-
-  private getBatchesByCourseId(): void {
-    this.ongoingBatches = this.ongoingBatches;
-    this.upcommingBatches = this.upcommingBatches;
-    this.objRollup = this.objRollup;
-    this.corRelationList = this.corRelationList;
-    this.telemetryObject = this.telemetryObject;
   }
 
   async enrollIntoBatch(batch: Batch) {

@@ -1,33 +1,33 @@
 import {
   ChangeDetectorRef, Component, EventEmitter,
-  Inject, Input, OnInit, Output, OnDestroy, NgZone
+  Inject, Input, NgZone, OnDestroy, OnInit, Output
 } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, MenuController, Platform, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, EMPTY, Observable, Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import {
-  AppGlobalService, UtilityService, CommonUtilService,
-  NotificationService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment,
-  ActivePageService, ID, CorReleationDataType, AppHeaderService
-} from '../../../services';
-import {
-  DownloadService, SharedPreferences
-  , NotificationService as PushNotificationService, NotificationStatus,
-  EventNamespace, DownloadProgress, DownloadEventType, EventsBusService,
-  ProfileService, Profile, CachedItemRequestSourceFrom,
-  ServerProfile, CorrelationData
+  CachedItemRequestSourceFrom,
+  CorrelationData, DownloadEventType, DownloadProgress, DownloadService,
+  EventNamespace, EventsBusService, NotificationService as PushNotificationService, NotificationStatus,
+  Profile, ProfileService,
+  ServerProfile, SharedPreferences
 } from 'sunbird-sdk';
 import {
-  GenericAppConfig, PreferenceKey,
-  EventTopics, ProfileConstants, RouterLinks, AppThemes
+  AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
+  ProfileConstants, RouterLinks
 } from '../../../app/app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription, combineLatest, Observable, EMPTY, interval } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-import { NavigationExtras, Router } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import {
+  ActivePageService, AppGlobalService,
+  AppHeaderService, CommonUtilService,
+  CorReleationDataType, Environment,
+  ID, InteractSubtype, InteractType, NotificationService, TelemetryGeneratorService, UtilityService
+} from '../../../services';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
 
 declare const cordova;
 

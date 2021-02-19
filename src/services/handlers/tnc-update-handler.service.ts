@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import {
-  AuthService, ProfileService, SharedPreferences,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, ProfileType
-} from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
-import { Router, NavigationExtras } from '@angular/router';
-import { CommonUtilService } from '../common-util.service';
-import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
-import { ExternalIdVerificationService } from '../externalid-verification.service';
-import { AppGlobalService } from '../app-global-service.service';
-import { ConsentService } from '../consent-service';
-import { SbProgressLoader } from '../sb-progress-loader.service';
+import { NavigationExtras, Router } from '@angular/router';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
 import { FormConstants } from '@app/app/form.constants';
+import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
+import { ModalController } from '@ionic/angular';
+import {
+  AuthService,
+  CachedItemRequestSourceFrom, Profile, ProfileService,
+  ProfileType, ServerProfile, ServerProfileDetailsRequest
+} from 'sunbird-sdk';
+import { AppGlobalService } from '../app-global-service.service';
+import { CommonUtilService } from '../common-util.service';
+import { ConsentService } from '../consent-service';
+import { ExternalIdVerificationService } from '../externalid-verification.service';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 
 @Injectable({
   providedIn: 'root'
