@@ -125,8 +125,6 @@
     "dom-to-image": "^2.6.0",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
-    "highcharts": "^8.2.2",
-    "highcharts-angular": "^2.7.0",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionic4-rating": "^1.0.9",
     "jspdf": "^2.0.0",
