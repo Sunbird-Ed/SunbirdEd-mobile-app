@@ -428,7 +428,7 @@ describe('DistrictMappingPage', () => {
                     undefined,
                     undefined,
                     undefined,
-                    [{ code: undefined, type: 'sample-type' }]
+                    [{ id: '', type: 'sample-type' }]
                 );
                 expect(mockAppGlobalService.setOnBoardingCompleted).toHaveBeenCalled();
                 done();
