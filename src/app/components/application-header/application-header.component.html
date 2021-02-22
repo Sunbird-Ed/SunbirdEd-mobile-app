@@ -93,6 +93,8 @@
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
         (click)="emitEvent($event, 'questionMap');" style="font-size: 1.8rem;">
         <ion-icon class="ion-float-end" name="map"></ion-icon>
+      </ion-button>
+      
       <ion-button icon-only *ngIf="headerConfig?.showKebabMenu"
                   (click)="showKebabMenu($event)" style="font-size: 1.8rem; padding: 0 16px;">
         <img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
