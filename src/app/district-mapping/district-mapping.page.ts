@@ -170,8 +170,8 @@ export class DistrictMappingPage implements OnDestroy {
         }
       }
     }, {}));
-    const corReletionList: CorrelationData[] = locationCodes;
-    this.generateSubmitInteractEvent(corReletionList);
+    const corRelationList: CorrelationData[] =  locationCodes.map(r => ({ type: r.type, id: r.code || '' }));
+    this.generateSubmitInteractEvent(corRelationList);
     this.telemetryGeneratorService.generateInteractTelemetry(
       this.isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
       this.isStateorDistrictChanged(locationCodes),
@@ -251,7 +251,7 @@ export class DistrictMappingPage implements OnDestroy {
         undefined,
         undefined,
         undefined,
-        corReletionList
+        corRelationList
       );
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
