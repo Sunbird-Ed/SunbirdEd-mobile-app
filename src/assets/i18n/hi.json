@@ -552,12 +552,14 @@
   "FRMELEMNTS_LBL_SURVEY_DESC": "सर्वेक्षण सूची ",
   "FRMELEMNTS_LBL_SURVEY_REPORTS": "सर्वेक्षण रिपोर्ट",
   "FRMELEMNTS_LBL_SURVEY_REPORTS_DESC": "सर्वेक्षण रिपोर्ट देखें",
+  "FRMELEMNTS_LBL_TAB_HOME": "होम ",
   "FRMELEMNTS_LBL_TASK_DESCRIPTION": "कार्य विवरण",
   "FRMELEMNTS_LBL_TASK_OVERVIEW": "कार्य अवलोकन",
   "FRMELEMNTS_LBL_THIS_MONTH": "वर्तमान माह",
   "FRMELEMNTS_LBL_TOTAL_TASKS": "कुल कार्य",
   "FRMELEMNTS_LBL_UPCOMING": "आगामी",
   "FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS": "सेटिंग अद्यतित करें",
+  "FRMELEMNTS_LBL_USERTYPE_LEADER": "नेता",
   "FRMELEMNTS_LBL_VIEW_ENTITY_REPORT": "अस्तित्व रिपोर्ट देखें",
   "FRMELEMNTS_LBL_VIEW_FULL_REPORT": "पूरी रिपोर्ट देखें",
   "FRMELEMNTS_LBL_VIEW_RESOURCES": "संसाधन देखें",
@@ -1195,5 +1197,6 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "आप इंटरनेट से जुड़े हुए नहीं हैं",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "कोर्स जानकारी के लिए सक्रिय बैच में नामांकन किजिए",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "कोर्स के अभिगम के लिए लाॅग इन करें",
-  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "इस कंटेंट तक पहुंचने के लिए आपको लॉग इन करना होगा"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "इस कंटेंट तक पहुंचने के लिए आपको लॉग इन करना होगा",
+  "HOME_BNAV": "होम"
 }
