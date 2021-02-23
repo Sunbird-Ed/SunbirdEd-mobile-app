@@ -1,7 +1,23 @@
 .mt-15 {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .view-more {
-    margin: 20px 20px;
+  margin: 20px 20px;
+}
+
+.create_header ::ng-deep .title.w-90 {
+  color:black;
+}
+.container {
+//   width: 100px;
+//   background-color: green;
+  overflow: hidden;
+  white-space: nowrap;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll_chip {
+    overflow: auto;
+  }
 }

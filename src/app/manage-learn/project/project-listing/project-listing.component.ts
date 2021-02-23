@@ -115,5 +115,8 @@ export class ProjectListingComponent implements OnInit {
     this.page = this.page + 1;
     this.getProjectList();
   }
+  onSearch(e) {
+    this.getProjectList()
+  }
 
 }
