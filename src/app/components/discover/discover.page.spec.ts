@@ -204,4 +204,30 @@ describe('DiscoverComponent', () => {
         });
     });
 
+    it('should fetch displayElements', () => {
+        // arrange
+        mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
+        // act
+        discoverComponent.tabViewWillEnter();
+        // assert
+        expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
+    });
+
+    it('should call clearAllSubscription', () => {
+        // arrange
+        mockEvents.unsubscribe = jest.fn((_) => true);
+        // act
+        discoverComponent.ionViewWillLeave();
+        // assert
+        expect(mockEvents.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should call clearAllSubscription', () => {
+        // arrange
+        mockEvents.unsubscribe = jest.fn((_) => true);
+        // act
+        discoverComponent.ngOnDestroy();
+        // assert
+        expect(mockEvents.unsubscribe).toHaveBeenCalled();
+    });
 });
