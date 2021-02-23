@@ -1,52 +1,14 @@
 import { Location } from '@angular/common';
-import { Component, Inject, NgZone, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ContentConstants, ContentFilterConfig, EventTopics,
-  PreferenceKey, RouterLinks,
-  ShareItemType, XwalkConstants
-} from '@app/app/app.constant';
-import { ConfirmAlertComponent } from '@app/app/components';
-import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Map } from '@app/app/telemetryutil';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import {
-  CommonUtilService, CourseUtilService,
-  LocalCourseService,
-  TelemetryGeneratorService, UtilityService
-} from '@app/services';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppHeaderService } from '@app/services/app-header.service';
-import { ChildContentHandler } from '@app/services/content/child-content-handler';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { LoginHandlerService } from '@app/services/login-handler.service';
-import { RatingHandler } from '@app/services/rating/rating-handler';
-import {
-  CorReleationDataType, Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  Mode,
-  PageId
-} from '@app/services/telemetry-constants';
-import { ProfileSwitchHandler } from '@app/services/user-groups/profile-switch-handler';
-import { ContentUtil } from '@app/util/content-util';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Network } from '@ionic-native/network/ngx';
+import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
   Events,
   Platform,
   PopoverController
 } from '@ionic/angular';
-import { Components } from '@ionic/core/dist/types/components';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { Observable, Subscription } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { Subscription, Observable } from 'rxjs';
 import {
   Content,
   ContentDetailRequest,
@@ -55,23 +17,71 @@ import {
   ContentImportRequest,
   ContentImportResponse,
   ContentService,
-  ContentUpdate, CorrelationData,
-  Course,
-  CourseService, DownloadEventType,
+  CorrelationData,
+  DownloadEventType,
   DownloadProgress,
-  DownloadService,
-  EventNamespace, EventsBusEvent,
+  EventsBusEvent,
   EventsBusService,
   GetAllProfileRequest,
-  ObjectType, ProfileService,
+  ProfileService,
   Rollup,
-  SharedPreferences, StorageService,
-  TelemetryObject
+  StorageService,
+  TelemetryObject,
+  Course,
+  DownloadService,
+  ObjectType,
+  SharedPreferences,
+  EventNamespace,
+  ContentEvent,
+  ContentUpdate,
+  CourseService
 } from 'sunbird-sdk';
+
+import { Map } from '@app/app/telemetryutil';
+import { ConfirmAlertComponent } from '@app/app/components';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import {
+  ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
+  ShareItemType, PreferenceKey, AssessmentConstant, MaxAttempt
+} from '@app/app/app.constant';
+import {
+  CourseUtilService,
+  LocalCourseService,
+  UtilityService,
+  TelemetryGeneratorService,
+  CommonUtilService,
+} from '@app/services';
+import { ContentInfo } from '@app/services/content/content-info';
+import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
+import {
+  Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  Mode,
+  PageId,
+  CorReleationDataType,
+} from '@app/services/telemetry-constants';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { RatingHandler } from '@app/services/rating/rating-handler';
+import { ProfileSwitchHandler } from '@app/services/user-groups/profile-switch-handler';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ChildContentHandler } from '@app/services/content/child-content-handler';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ContentUtil } from '@app/util/content-util';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { map, filter, take, tap } from 'rxjs/operators';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
-import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { AddActivityToGroup } from '../my-groups/group.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 declare const window;
 @Component({
@@ -166,8 +176,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
-  private isLastAttempt = false;
-  private isContentDisabled = false;
+  maxAttemptAssessment: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -921,13 +930,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async handleContentPlay(isStreaming) {
-    if (this.isContentDisabled) {
-      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+    const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(this.maxAttemptAssessment);
+    if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
       return;
-    }
-    if (this.isLastAttempt) {
-      await this.commonUtilService.showAssessmentLastAttemptPopup();
-      this.isLastAttempt = false;
     }
     if (this.limitedShareContentFlag) {
       if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
@@ -1358,9 +1363,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.showCourseCompletePopup = true;
         }
 
-        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
-        this.isLastAttempt = assesmentsStatus.isLastAttempt;
-        this.isContentDisabled = assesmentsStatus.isContentDisabled;
+        this.maxAttemptAssessment = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.cardData);
       }
       resolve();
     });
