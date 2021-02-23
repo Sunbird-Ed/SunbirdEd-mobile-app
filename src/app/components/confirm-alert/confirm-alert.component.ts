@@ -30,7 +30,6 @@ export class ConfirmAlertComponent implements OnDestroy {
     this.contentSize = this.navParams.get('contentSize');
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
     this.popOverCtrl.dismiss();
-    // this.backButtonFunc.unsubscribe();
     });
   }
 

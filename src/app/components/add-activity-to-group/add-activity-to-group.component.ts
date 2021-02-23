@@ -12,8 +12,6 @@ import { filter } from 'rxjs/operators';
 })
 export class AddActivityToGroupComponent implements OnInit {
 
-    // data: any;
-    // private csGroupAddableBloc: CsGroupAddableBloc;
     @Input() identifier: string;
     @Input() pageId: string;
     state$: Observable<CsGroupAddableState | undefined>;
@@ -22,7 +20,6 @@ export class AddActivityToGroupComponent implements OnInit {
         private groupHandlerService: GroupHandlerService,
         private commonUtilService: CommonUtilService
     ) {
-        // this.csGroupAddableBloc = CsGroupAddableBloc.instance;
     }
 
     ngOnInit() {
