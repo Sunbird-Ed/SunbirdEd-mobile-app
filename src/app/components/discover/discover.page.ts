@@ -160,7 +160,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     this.events.unsubscribe('update_header');
   }
 
-  mapContentFacteTheme(displayItems) {
+  private mapContentFacteTheme(displayItems) {
     if (displayItems && displayItems.length) {
       for (let count = 0; count < displayItems.length; count++){
         if (!displayItems[count].data) {
@@ -174,7 +174,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     return displayItems;
   }
 
-  mapPrimaryCategoryTheme(displayItems) {
+  private mapPrimaryCategoryTheme(displayItems) {
     displayItems.data.forEach(item => {
       const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping[item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
         PrimaryCaregoryMapping['default'];
