@@ -1,7 +1,7 @@
-import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
-import { Events, IonContent } from '@ionic/angular';
-import { Subject, Observable, Subscription, defer, timer} from 'rxjs';
-import { takeUntil, finalize, tap, mergeMap, switchMap, take, startWith} from 'rxjs/operators';
+import { Directive, ElementRef, Renderer2 } from '@angular/core';
+import { Events } from '@ionic/angular';
+import { defer, Subject, Subscription, timer } from 'rxjs';
+import { finalize, mergeMap, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 @Directive({
   selector: '[hide-header-footer]', // Attribute

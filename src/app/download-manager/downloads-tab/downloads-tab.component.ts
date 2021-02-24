@@ -1,18 +1,17 @@
-import { Component, Input, EventEmitter, Output, NgZone, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuOverflow } from '@app/app/app.constant';
-import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-import { CommonUtilService, } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { PopoverController, Events } from '@ionic/angular';
-import { InteractType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
-import { Content, ContentDelete } from 'sunbird-sdk';
-import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { InteractSubtype, Environment, PageId, ActionButtonType, CorReleationDataType } from '../../../services/telemetry-constants';
-import { EmitedContents } from '../download-manager.interface';
+import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import { AppHeaderService } from '@app/services';
-import { ContentUtil } from '@app/util/content-util';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { ContentUtil } from '@app/util/content-util';
+import { Events, PopoverController } from '@ionic/angular';
+import { Content, ContentDelete, CorrelationData, InteractType, TelemetryObject } from 'sunbird-sdk';
+import { ActionButtonType, CorReleationDataType, Environment, InteractSubtype, PageId } from '../../../services/telemetry-constants';
+import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
+import { EmitedContents } from '../download-manager.interface';
 
 @Component({
   selector: 'app-downloads-tab',

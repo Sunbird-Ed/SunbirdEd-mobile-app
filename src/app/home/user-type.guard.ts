@@ -1,8 +1,8 @@
-import { Injectable, Inject } from '@angular/core';
-import { SharedPreferences, ProfileType } from 'sunbird-sdk';
-import { PreferenceKey } from '@app/app/app.constant';
+import { Inject, Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { ProfileType, SharedPreferences } from 'sunbird-sdk';
+
 @Injectable()
 export class UserTypeGuard implements CanActivate {
     constructor(
