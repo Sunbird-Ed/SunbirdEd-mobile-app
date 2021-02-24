@@ -1562,9 +1562,6 @@ app-collection-detail-etb{
 }
 
 sb-pills-grid{
-  label{
-    margin-bottom: 0 !important;
-  }
   .sb-view-more-less{
     .view-all{
       width: 90%;
@@ -1574,47 +1571,21 @@ sb-pills-grid{
       box-shadow: none !important
     }
   }
-  .two-rows-grid.column-sequence{
-    grid-template-rows: repeat(2,5rem) !important;
-  }
-  .sb-box-grid.icon-header{
-    .item{
-      .img{
-        width: 3rem !important;
-        height: 3rem !important;
-        .sb-icon-img-sm{
-          width: 2rem !important;
-        }
-      }
-      label{
-        font-size: 12px;
-      }
+
+  .size--lg {
+    .img{
+      padding:0.125em !important;
+    }
+    label {
+      font-weight: bold;
     }
   }
-}
-
-app-home{
-  sb-pills-grid{
-    .sb-label-grid{
-      @include padding(null, 8px, null, 8px !important);
-    }
-    .sb-pills-grid{
-      .item{
-        padding: 1.5rem !important;
-      }
-    }
+  .size--lg.sb-label-grid.hscroll {
+    padding-left: 0.25em;
   }
-
-}
-
-app-admin-home{
-  sb-pills-grid{
-    .sb-label-grid{
-      padding: 12px;
-      .sb-icon-img{
-        width: 3.5rem!important;
-      }
-    }
+  .sb-label-grid:not(.hscroll){
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 
@@ -1633,21 +1604,6 @@ app-user-home{
         height: 60% !important;
         top: 20% !important;
       }
-    }
-  }
-}
-
-app-discover{
-  sb-pills-grid{
-    .item{
-      padding: 1rem !important;
-      margin: 0.5rem !important;
-      font-size: 16px !important;
-    }
-    .show-circle{
-      font-size: 20px !important;
-      min-height: 75px !important;
-      grid-template-columns: repeat(auto-fill,minmax(110px,0fr)) !important;
     }
   }
 }
