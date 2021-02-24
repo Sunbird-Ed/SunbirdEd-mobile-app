@@ -1581,7 +1581,11 @@ sb-pills-grid{
     }
   }
   .size--lg.sb-label-grid.hscroll {
-    padding-left: 0;
+    padding-left: 0.25em;
+  }
+  .sb-label-grid:not(.hscroll){
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 
