@@ -1,0 +1,25 @@
+<ion-content>
+
+  <!-- Title -->
+  <div *ngIf="title" class="framework-header">
+    <h4>{{title}}</h4>
+    <p class="mb-0">{{subTitle}}</p>
+  </div>
+
+  <!-- SB-Forms -->
+  <div *ngIf="formConfig" class="framework-form-bg">
+    <sb-form 
+      [config]='formConfig'
+      (valueChanges)="valueChanged($event)" 
+      (statusChanges)="statusChanged($event)">
+    </sb-form>
+  </div>
+
+</ion-content>
+
+<!-- Submit -->
+<ion-footer>
+  <ion-button expand="block" class="M16 MB30" [disabled]="!isFrameworkFormValid" (click)="submitForm()" >
+    {{submitDetails?.label || 'Submit'}}
+  </ion-button>
+</ion-footer>

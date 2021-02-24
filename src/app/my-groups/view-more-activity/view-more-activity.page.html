@@ -1,0 +1,35 @@
+<ion-content class="activity-toc-container ion-no-padding">    
+    <div class="sb-textbook-container">
+      <div class="sb-textbook-items">
+        <div class="sb-textbook-title-container">
+          <span class="textbook-icon">
+            <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
+          </span>
+          <span class="textbook-title">
+            {{activityGroup.title | translate}}
+          </span>
+        </div>
+        <div class="sb-card-container sb-card-textbook-container">
+          <div *ngIf="activityGroup.title === 'ACTIVITY_COURSE_TITLE'">
+            <div class="sc-content" *ngFor="let activity of activityGroup.items; let i = index;">
+              <sb-course-card *ngIf="activity.type === 'Course' && activity.activityInfo" [section]="null"
+                [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [course]="activity.activityInfo"
+                (click)="onActivityCardClick($event, activity)" [isMenu]="isMenu"
+                (menuClick)="activityMenuClick($event, activity, i)">
+              </sb-course-card>
+            </div>
+          </div>
+          <div *ngIf="activityGroup.title !== 'ACTIVITY_COURSE_TITLE'">
+            <div class="sc-content" *ngFor="let activity of activityGroup.items; let i = index;">
+              <sb-library-card [content]="activity.activityInfo" [type]="'mobile_textbook'" (click)="onActivityCardClick($event, activity)"
+              [cardImg]="commonUtilService.getContentImg(activity.activityInfo)" [isMenu]="isMenu"
+              (menuClick)="activityMenuClick($event, activity, i)">
+              </sb-library-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</ion-content>
+
+    

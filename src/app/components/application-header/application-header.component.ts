@@ -7,7 +7,7 @@ import {
   AppGlobalService, UtilityService, CommonUtilService,
   NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment,
-  ActivePageService, ID, CorReleationDataType
+  ActivePageService, ID, CorReleationDataType, AppHeaderService
 } from '../../../services';
 import {
   DownloadService, SharedPreferences
@@ -18,15 +18,17 @@ import {
 } from 'sunbird-sdk';
 import {
   GenericAppConfig, PreferenceKey,
-  EventTopics, ProfileConstants, RouterLinks
+  EventTopics, ProfileConstants, RouterLinks, AppThemes
 } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
+import { Subscription, combineLatest, Observable, EMPTY, interval } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+
+declare const cordova;
 
 @Component({
   selector: 'app-application-header',
@@ -55,7 +57,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   profile: Profile;
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
-
+  appTheme = AppThemes.DEFAULT;
+  unreadNotificationsCount = 0;
+  isUpdateAvailable = false;
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -77,7 +81,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private activePageService: ActivePageService,
     private popoverCtrl: PopoverController,
-    private tncUpdateHandlerService: TncUpdateHandlerService
+    private tncUpdateHandlerService: TncUpdateHandlerService,
+    private appHeaderService: AppHeaderService
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -119,12 +124,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.decreaseZindex = false;
     });
     this.listenDownloads();
+    this.listenNotifications();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();
     });
+    this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    this.checkForAppUpdate().then();
   }
 
-  setAppVersion(): any {
+  private setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(vName => {
         this.versionName = vName;
@@ -172,6 +180,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
 
       this.changeDetectionRef.detectChanges();
+    });
+  }
+
+  private listenNotifications() {
+    this.pushNotificationService.notifications$.subscribe((notifications) => {
+      this.unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
     });
   }
 
@@ -370,4 +384,28 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  async switchTheme() {
+    if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
+      this.appTheme = AppThemes.JOYFUL;
+      await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
+      this.appHeaderService.showStatusBar().then();
+    } else {
+      document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
+      this.appTheme = AppThemes.DEFAULT;
+      await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
+      this.appHeaderService.hideStatusBar();
+    }
+    this.menuCtrl.close();
+  }
+
+  private async checkForAppUpdate() {
+      return new Promise((resolve => {
+          cordova.plugins.InAppUpdateManager.isUpdateAvailable((result: string) => {
+              if (result) {
+                  this.isUpdateAvailable = true;
+                  resolve();
+              }
+          }, () => {});
+      }));
+  }
 }

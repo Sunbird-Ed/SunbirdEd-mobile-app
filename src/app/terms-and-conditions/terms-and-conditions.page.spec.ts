@@ -26,11 +26,14 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { RouterLinks } from '../app.constant';
+import { ConsentService } from '../../services/consent-service';
+import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
 describe('TermsAndConditionsPage', () => {
     let termsAndConditionsPage: TermsAndConditionsPage;
 
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({ serverProfile: { tncLatestVersionUrl: 'sample_tnc_url' } })),
+        getActiveSessionProfile: jest.fn(() => of({profileType: 'none', serverProfile: { tncLatestVersionUrl: 'sample_tnc_url' ,
+        declarations: [{name: 'sample-name'}]} })),
         getServerProfilesDetails: jest.fn(() => of({ tncLatestVersionUrl: 'sample_tnc_url' })),
     };
 
@@ -101,6 +104,8 @@ describe('TermsAndConditionsPage', () => {
         hide: jest.fn()
     };
 
+    const mockConsentService: Partial<ConsentService> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
 
     beforeAll(() => {
         termsAndConditionsPage = new TermsAndConditionsPage(
@@ -117,7 +122,8 @@ describe('TermsAndConditionsPage', () => {
             mockSplashScreenService as SplashScreenService,
             mockExternalIdVerificationService as ExternalIdVerificationService,
             mockAppGlobalService as AppGlobalService,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockConsentService as ConsentService
         );
     });
 
@@ -132,6 +138,7 @@ describe('TermsAndConditionsPage', () => {
     describe('ngOnint', () => {
         it('should populate the tncUrl and generate impression telemetry', (done) => {
             // arrange
+            mockAppGlobalService.closeSigninOnboardingLoader = jest.fn(() => Promise.resolve());
             // act
             termsAndConditionsPage.ngOnInit();
             // assert
@@ -275,6 +282,15 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
+            mockConsentService.getConsent = jest.fn(() => Promise.resolve());
+            const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+                profile: undefined,
+                isRootPage: true,
+                isUserLocationAvalable: true,
+                status: true
+              };
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
@@ -282,8 +298,10 @@ describe('TermsAndConditionsPage', () => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
                 setTimeout(() => {
-                    expect(mockRouter.navigate).toHaveBeenCalledWith(['/', RouterLinks.TABS]);
-                    expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+                   // expect(mockConsentService.getConsent).toHaveBeenCalled();
+                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
+                    //     {state: {categoriesProfileData}});
+                   // expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
                     done();
                 }, 0);
             });
@@ -294,16 +312,21 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => false);
             mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(false));
+            const categoriesProfileData = {
+                hasFilledLocation: false,
+                showOnlyMandatoryFields: true,
+                profile: undefined,
+                isRootPage: true,
+                isUserLocationAvalable: false,
+                status: true
+              };
             // act
-            // assert
             termsAndConditionsPage.ngOnInit();
+            // assert
             termsAndConditionsPage.onAcceptanceClick().then(() => {
                 setTimeout(() => {
-                    expect(mockRouter.navigate).toHaveBeenCalledWith(['/', RouterLinks.DISTRICT_MAPPING], {
-                        state: {
-                            isShowBackButton: false
-                        }
-                    });
+                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
+                    //     {state: {categoriesProfileData}});
                     done();
                 }, 0);
             });
@@ -314,20 +337,22 @@ describe('TermsAndConditionsPage', () => {
             mockProfileService.acceptTermsAndConditions = jest.fn(() => of(true));
             mockCommonUtilService.isUserLocationAvalable = jest.fn(() => true);
             mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({ status: false }));
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
+            mockConsentService.getConsent = jest.fn(() => Promise.resolve());
+            const categoriesProfileData = {
+                hasFilledLocation: true,
+                showOnlyMandatoryFields: true,
+                profile: undefined,
+                isRootPage: true
+              };
             // act
             // assert
             termsAndConditionsPage.ngOnInit();
             termsAndConditionsPage.onAcceptanceClick().then(() => {
                 expect(mockTncUpdateHandlerService.dismissTncPage).toHaveBeenCalled();
                 setTimeout(() => {
-                    expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                        state: {
-                            hasFilledLocation: true,
-                            showOnlyMandatoryFields: true,
-                            profile: undefined,
-                            isRootPage: true
-                        }
-                    });
+                    // expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN],
+                    //     {state: {categoriesProfileData}});
                     done();
                 }, 0);
             });

@@ -111,6 +111,7 @@ const data: Partial<ContentData> = {
   me_averageRating: 4,
   contentEncoding: 'gzip',
   contentType: 'Course',
+  primaryCategory: 'Course',
   identifier: 'do_21281258639073280011490',
   audience: [
     'Learner'
@@ -239,6 +240,30 @@ export const mockEnrolledCourses = [
       enrollmentType: 'open',
       startDate: '2019-05-09',
       status: 1
+    },
+    description: 'Enter description for Course',
+    courseLogoUrl: 'https://ntpstagingall.blob.core.windows.net' +
+      '/ntp-content-staging/content/do_2127509908237926401406/artifact/4c1dbdc7d062dd11cd5b8bf5bbd25d61_1551854311088.thumb.jpg',
+    batchId: '0127580528849387521',
+    userId: '993230e2-d9f5-44fe-8b9c-fbfe5a1a3204'
+  }
+];
+
+export const mockExpiredBatchEnrolledCourses = [
+  {
+    dateTime: '2019-05-17 05:29:01.305Z',
+    lastReadContentStatus: 2,
+    contentId: 'do_2127509908237926401406',
+    courseId: 'do_091231312312',
+    progress: 50,
+    batch: {
+      identifier: '0127580528849387521',
+      endDate: null,
+      createdBy: 'ab467e6e-1f32-453c-b1d8-c6b5fa6c7b9e',
+      name: '9may open batch',
+      enrollmentType: 'open',
+      startDate: '2019-05-09',
+      status: 2
     },
     description: 'Enter description for Course',
     courseLogoUrl: 'https://ntpstagingall.blob.core.windows.net' +

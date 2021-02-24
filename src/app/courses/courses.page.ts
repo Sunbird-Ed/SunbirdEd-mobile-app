@@ -7,7 +7,7 @@ import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import {
   ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext
+  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, MimeType, ProgressPopupContext
 } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
@@ -20,8 +20,9 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
-  PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
-  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject, SortOrder
+  PageAssembleCriteria, PageName, SharedPreferences, NetworkError, CorrelationData,
+  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus,
+  CourseBatchesRequest, TelemetryObject, SortOrder, ContentAggregatorRequest, ContentSearchCriteria, ProfileService, Profile
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -29,8 +30,12 @@ import { AppHeaderService } from '../../services/app-header.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LocalCourseService } from '@app/services/local-course.service';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-courses',
@@ -78,7 +83,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   courseFilter: any;
   appliedFilter: any;
   filterIcon = './assets/imgs/ic_action_filter.png';
-  profile: any;
+  profile: Profile;
   isVisible = false;
   inProgressSection = 'My Courses';
 
@@ -102,14 +107,18 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   courseCardType = CourseCardGridTypes;
   loader: any;
+  dynamicCourses: any;
+  searchGroupingContents: any;
+  resetCourseFilter: boolean;
+  filter: ContentSearchCriteria;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
-    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private appVersion: AppVersion,
     private ngZone: NgZone,
@@ -124,8 +133,10 @@ export class CoursesPage implements OnInit, OnDestroy {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
-    private localCourseService: LocalCourseService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private navService: NavigationService,
+    private contentAggregatorHandler: ContentAggregatorHandler,
+    private profileHandler: ProfileHandler
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -151,7 +162,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.getCourseTabData();
 
     this.events.subscribe('event:update_course_data', () => {
-      this.getEnrolledCourses();
+      this.getAggregatorResult();
     });
   }
 
@@ -254,7 +265,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.events.subscribe(EventTopics.COURSE_STATUS_UPDATED_SUCCESSFULLY, (data) => {
       if (data.update) {
-        this.getEnrolledCourses(false, true);
+        this.getAggregatorResult();
       }
     });
 
@@ -269,20 +280,20 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
       if (res && res.batchId) {
-        this.getEnrolledCourses(false, true);
+        this.getAggregatorResult();
       }
     });
 
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
       if (res && res.selectedLanguage) {
         this.selectedLanguage = res.selectedLanguage;
-        this.getPopularAndLatestCourses();
+        this.getAggregatorResult();
       }
     });
 
     this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, () => {
       this.ngZone.run(() => {
-        this.getPopularAndLatestCourses();
+        this.getAggregatorResult();
       });
     });
 
@@ -294,130 +305,20 @@ export class CoursesPage implements OnInit, OnDestroy {
             this.courseFilter = undefined;
             this.appliedFilter = undefined;
             this.isFilterApplied = false;
-            this.getPopularAndLatestCourses();
+            this.filter = undefined;
+            this.resetCourseFilter = true;
+            this.getAggregatorResult();
           }
         }
       });
     });
     this.events.subscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST, () => {
-      this.getEnrolledCourses(false, true);
+      this.getAggregatorResult();
     });
 
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       this.showSignInCard = false;
     });
-  }
-
-  /**
-   * To get enrolled course(s) of logged-in user.
-   *
-   * It internally calls course handler of genie sdk
-   */
-  getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false): void {
-    this.spinner(true);
-    const option: FetchEnrolledCourseRequest = {
-      userId: this.userId,
-      returnFreshCourses: returnRefreshedCourses
-    };
-    this.courseService.getEnrolledCourses(option).toPromise()
-      .then((enrolledCourses) => {
-        if (enrolledCourses) {
-          this.ngZone.run(() => {
-            this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
-            if (this.enrolledCourses.length > 0) {
-              const courseList: Array<Course> = [];
-              for (let count = 0; count < this.enrolledCourses.length; count++) {
-                courseList.push(this.enrolledCourses[count]);
-                this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
-                this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
-              }
-
-              this.appGlobalService.setEnrolledCourseList(courseList);
-            }
-
-            this.spinner(false);
-          });
-        }
-      }, (err) => {
-        this.spinner(false);
-      });
-  }
-
-  /**
-   * To get popular course.
-   *
-   * It internally calls course handler of genie sdk
-   */
-  getPopularAndLatestCourses(hardRefresh = false, pageAssembleCriteria?: PageAssembleCriteria): void {
-    this.pageApiLoader = true;
-    if (pageAssembleCriteria === undefined) {
-      const criteria: PageAssembleCriteria = {
-        name: PageName.COURSE,
-        filters: {},
-        source: 'app'
-      };
-
-      if (this.appliedFilter) {
-        let filterApplied = false;
-        Object.keys(this.appliedFilter).forEach(key => {
-          if (this.appliedFilter[key].length > 0) {
-            filterApplied = true;
-          }
-        });
-
-        criteria.filters = this.appliedFilter;
-      }
-      pageAssembleCriteria = criteria;
-    }
-
-    // pageAssembleCriteria.hardRefresh = hardRefresh;
-
-    this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
-      .then((res: PageAssemble) => {
-        this.ssoSectionId = res.ssoSectionId;
-
-        this.ngZone.run(() => {
-          const sections = res.sections;
-          const newSections = [];
-          sections.forEach(element => {
-            const display = JSON.parse(element.display);
-            if (display.name) {
-              if (has(display.name, this.selectedLanguage)) {
-                const langs = [];
-                forEach(display.name, (value, key) => {
-                  langs[key] = value;
-                });
-                element.name = langs[this.selectedLanguage];
-              }
-            }
-            newSections.push(element);
-          });
-
-          if (newSections.length) {
-            for (let i = 0; i < newSections.length; i++) {
-              if (newSections[i].contents) {
-                for (let j = 0; j < newSections[i].contents.length; j++) {
-                  newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
-                }
-              }
-            }
-          }
-
-          this.popularAndLatestCourses = newSections;
-          this.pageApiLoader = !this.pageApiLoader;
-          this.generateExtraInfoTelemetry(newSections.length);
-          this.checkEmptySearchResult();
-        });
-      }).catch((error: string) => {
-        this.ngZone.run(() => {
-          this.pageApiLoader = false;
-          if (error === 'CONNECTION_ERROR') {
-            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-          } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          }
-        });
-      });
   }
 
   generateExtraInfoTelemetry(sectionsCount) {
@@ -455,7 +356,6 @@ export class CoursesPage implements OnInit, OnDestroy {
       } else {
         const sessionObj = this.appGlobalService.getSessionData();
         this.userId = sessionObj[ProfileConstants.USER_TOKEN];
-        this.getEnrolledCourses(false, true);
         resolve();
       }
     });
@@ -474,27 +374,20 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.getUserId()
       .then(() => {
-        this.getPopularAndLatestCourses(true);
+       this.getAggregatorResult();
       })
       .catch(() => {
-        this.getPopularAndLatestCourses(true);
+       this.getAggregatorResult();
       });
   }
 
   /**
    * It will fetch the guest user profile details
    */
-  getCurrentUser(): void {
+  private getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
-    if (this.commonUtilService.isAccessibleForNonStudentRole(profileType) && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
-      this.showSignInCard = true;
-    } else {
-      this.showSignInCard = false;
-    }
-  }
-
-  scanQRCode() {
-    this.qrScanner.startScanner(PageId.COURSES);
+    this.showSignInCard = this.commonUtilService.isAccessibleForNonStudentRole(profileType) &&
+      this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER;
   }
 
   async search() {
@@ -502,11 +395,11 @@ export class CoursesPage implements OnInit, OnDestroy {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.COURSES);
-    const contentType = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_COURSE);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType,
+        primaryCategories,
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
         guestUser: this.guestUser,
@@ -564,7 +457,8 @@ export class CoursesPage implements OnInit, OnDestroy {
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
           if (isChecked) {
-            that.getPopularAndLatestCourses(false, criteria);
+            that.filter = filter;
+            that.getAggregatorResult();
           }
         });
       }
@@ -574,13 +468,15 @@ export class CoursesPage implements OnInit, OnDestroy {
       callback: this.pageFilterCallBack,
       pageId: PageId.COURSES
     };
-    // Already apllied filter
     if (this.courseFilter) {
       filterOptions['filter'] = this.courseFilter;
       this.showFilterPage(filterOptions);
     } else {
-      // TODO: Need to add loader
       this.formAndFrameworkUtilService.getCourseFilterConfig().then((data) => {
+        if (this.resetCourseFilter) {
+          data = this.resetFilter(data);
+          this.resetCourseFilter = false;
+        }
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
       }).catch(() => {
@@ -588,7 +484,15 @@ export class CoursesPage implements OnInit, OnDestroy {
       });
     }
   }
-  async presentToastForOffline(msg: string) {
+
+  resetFilter(data) {
+    for (let i = 0; data.length > i; i++) {
+      data[i].selected = [];
+    }
+    return data;
+  }
+
+  private async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
       duration: 3000,
       message: this.commonUtilService.translateMessage(msg),
@@ -610,7 +514,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       componentProps: {
         callback: filterOptions.callback,
         filter: filterOptions.filter,
-        pageId: PageId.COURSES
+        pageId: PageId.COURSES,
+        reset: filterOptions.reset || false
       },
       cssClass: 'resource-filter'
     });
@@ -684,7 +589,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       });
   }
 
-  contentDetailsImportCall(identifier) {
+  private contentDetailsImportCall(identifier) {
     this.subscribeSdkEvent();
     this.showOverlay = true;
     this.importContent([identifier], false);
@@ -737,7 +642,7 @@ export class CoursesPage implements OnInit, OnDestroy {
 
   }
 
-  navigateToContentDetailsPage(content) {
+  private navigateToContentDetailsPage(content) {
     const identifier = content.contentId || content.identifier;
     const extras: NavigationExtras = {
       state: {
@@ -758,7 +663,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.router.navigate([RouterLinks.CONTENT_DETAILS], extras);
   }
 
-  importContent(identifiers, isChild) {
+  private importContent(identifiers, isChild) {
     const option: ContentImportRequest = {
       contentImportArray: this.courseUtilService.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
@@ -789,13 +694,13 @@ export class CoursesPage implements OnInit, OnDestroy {
    * This method removes the loading/downloading overlay and displays the error message
    * and also shows the bottom navigation bar
    */
-  removeOverlayAndShowError(): any {
+  private removeOverlayAndShowError(): any {
     this.commonUtilService.showToast('COURSE_NOT_AVAILABLE');
     this.tabBarElement.style.display = 'flex';
     this.showOverlay = false;
   }
 
-  subscribeSdkEvent() {
+  private subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
       this.ngZone.run(() => {
         if (event.type === DownloadEventType.PROGRESS) {
@@ -839,7 +744,7 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  redirectToActivedownloads() {
+  private redirectToActivedownloads() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
@@ -857,7 +762,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       pageName: 'course',
       course: event.data,
       guestUser: this.guestUser,
-      layoutName: this.layoutInProgress
+      layoutName: this.layoutInProgress,
+      enrolledCourses: this.enrolledCourses
     };
     this.checkRetiredOpenBatch(params.course, params);
   }
@@ -908,7 +814,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       filters: {
         courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
         enrollmentType: CourseEnrollmentType.OPEN,
-        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+        status: [CourseBatchStatus.IN_PROGRESS]
       },
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
@@ -941,7 +847,7 @@ export class CoursesPage implements OnInit, OnDestroy {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatched,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });
@@ -969,10 +875,9 @@ export class CoursesPage implements OnInit, OnDestroy {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, ContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, undefined);
     } else {
-      const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-      telemetryObject = new TelemetryObject(identifier, objectType, undefined);
+      telemetryObject = ContentUtil.getTelemetryObject(content);
     }
 
     const corRelationList: Array<CorrelationData> = [{
@@ -1000,28 +905,22 @@ export class CoursesPage implements OnInit, OnDestroy {
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
-    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
-          content,
-          isCourse: true,
-          corRelation: corRelationList
-        }
+    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || ContentUtil.isTrackable(content) === 1) {
+      this.navService.navigateToTrackableCollection({
+        content,
+        isCourse: true,
+        corRelation: corRelationList
       });
     } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-        state: {
-          content,
-          corRelation: corRelationList
-        }
+      this.navService.navigateToCollection({
+        content,
+        corRelation: corRelationList
       });
     } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content,
-          isCourse: true,
-          corRelation: corRelationList
-        }
+      this.navService.navigateToContent({
+        content,
+        isCourse: true,
+        corRelation: corRelationList
       });
     }
   }
@@ -1029,6 +928,65 @@ export class CoursesPage implements OnInit, OnDestroy {
   private getContentIndexOf(contentList, content) {
     const contentIndex = contentList.findIndex(val => val.identifier === content.identifier);
     return contentIndex;
+  }
+
+  navigateToTextbookPage(items, subject) {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.VIEW_MORE_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY,
+      ContentUtil.getTelemetryObject(items));
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
+
+      this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
+        state: {
+          contentList: items,
+          subjectName: subject
+        }
+      });
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
+  }
+
+  async getAggregatorResult(resetFilter?: boolean) {
+    this.spinner(true);
+    this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
+    const request: ContentAggregatorRequest = {
+      applyFirstAvailableCombination: {},
+      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+        if (this.filter) {
+          contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
+        }
+        // contentSearchCriteria.audience = audience;
+        return contentSearchCriteria;
+      }
+    };
+    try {
+      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
+      if (this.dynamicCourses) {
+        this.dynamicCourses.forEach((val) => {
+          if (val.theme && val.theme.orientation === Orientation.HORIZONTAL) {
+            this.enrolledCourses = val.data && val.data.sections && val.data.sections.length && val.data.sections[0].contents;
+          } else if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
+            this.popularAndLatestCourses = val.data && val.data.sections;
+          }
+        });
+        this.dynamicCourses = this.contentAggregatorHandler.populateIcons(this.dynamicCourses);
+      }
+      this.spinner(false);
+    } catch (e) {
+      this.spinner(false);
+    }
+  }
+
+  concatFilter(filter, searchCriteria) {
+    if (filter.gradeLevel) {
+      filter.grade = filter.gradeLevel;
+      delete filter.gradeLevel;
+    }
+    return { ...filter, ...searchCriteria };
   }
 
 }

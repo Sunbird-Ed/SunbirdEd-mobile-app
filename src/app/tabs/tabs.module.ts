@@ -15,6 +15,24 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
+        path: RouterLinks.HOME,
+        children: [
+          {
+            path: '',
+            loadChildren: '../home/home.module#HomePageModule'
+          }
+        ]
+      },
+      {
+        path: RouterLinks.DISCOVER,
+        children: [
+          {
+            path: '',
+            loadChildren: '../discover/discover.module#DiscoverPageModule'
+          }
+        ]
+      },
+      {
         path: RouterLinks.RESOURCES,
         children: [
           {
@@ -61,7 +79,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'resources',
+        redirectTo: RouterLinks.RESOURCES,
         pathMatch: 'full'
       }
     ]

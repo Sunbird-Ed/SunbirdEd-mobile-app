@@ -1,7 +1,7 @@
-import { MimeType, ContentType, RouterLinks, EventTopics } from '@app/app/app.constant';
-import { ContentPlayerHandler } from './../../services/content/player/content-player-handler';
-import { RatingHandler } from './../../services/rating/rating-handler';
-import { QrcoderesultPage } from './qrcoderesult.page';
+import {MimeType, RouterLinks, EventTopics} from '@app/app/app.constant';
+import {ContentPlayerHandler} from './../../services/content/player/content-player-handler';
+import {RatingHandler} from './../../services/rating/rating-handler';
+import {QrcoderesultPage} from './qrcoderesult.page';
 import {
     FrameworkService,
     FrameworkUtilService,
@@ -12,22 +12,24 @@ import {
     DownloadEventType,
     ContentEventType
 } from 'sunbird-sdk';
-import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
+import {Events, Platform, NavController} from '@ionic/angular';
+import {Router} from '@angular/router';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
     AppHeaderService
 } from 'services';
-import { Location } from '@angular/common';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
-import { of, throwError } from 'rxjs';
-import { NgZone } from '@angular/core';
-import { CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType } from '../../services';
-import { File } from '@ionic-native/file/ngx';
-import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
+import {Location} from '@angular/common';
+import {ImpressionType, PageId, Environment, InteractSubtype, InteractType} from '@app/services/telemetry-constants';
+import {of, throwError} from 'rxjs';
+import {NgZone} from '@angular/core';
+import {CanvasPlayerService, AuditType, ImpressionSubtype, CorReleationDataType} from '../../services';
+import {File} from '@ionic-native/file/ngx';
+import {TextbookTocService} from '../collection-detail-etb/textbook-toc-service';
+import {NavigationService} from '../../services/navigation-handler.service';
+import {CsContentType} from '@project-sunbird/client-services/services/content';
 
 describe('QrcoderesultPage', () => {
     let qrcoderesultPage: QrcoderesultPage;
@@ -74,7 +76,7 @@ describe('QrcoderesultPage', () => {
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockContentService: Partial<ContentService> = {
-        getContentHeirarchy : jest.fn(() => of(undefined))
+        getContentHeirarchy: jest.fn(() => of(undefined))
     };
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
@@ -98,6 +100,12 @@ describe('QrcoderesultPage', () => {
         },
         resetTextbookIds: jest.fn()
     };
+    const mockNavigationService: Partial<NavigationService> = {
+        navigateToTrackableCollection: jest.fn(),
+        navigateToCollection: jest.fn(),
+        navigateToContent: jest.fn(),
+        navigateTo: jest.fn()
+    };
 
     beforeAll(() => {
         qrcoderesultPage = new QrcoderesultPage(
@@ -118,6 +126,7 @@ describe('QrcoderesultPage', () => {
             mockLocation as Location,
             mockFile as File,
             mockHeaderService as AppHeaderService,
+            mockNavigationService as NavigationService,
             mockRouter as Router,
             mockNavCtrl as NavController,
             mockRatingHandler as RatingHandler,
@@ -134,11 +143,117 @@ describe('QrcoderesultPage', () => {
         expect(qrcoderesultPage).toBeTruthy();
     });
 
+    describe('handleBackButton', () => {
+        it('should go back to previous route', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = false;
+            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
+            spyOn(qrcoderesultPage, 'goBack').and.stub();
+            // act
+            qrcoderesultPage.handleBackButton(PageId.LIBRARY);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                PageId.LIBRARY,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT);
+            expect(qrcoderesultPage.goBack).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
+                false,
+                Environment.ONBOARDING,
+                'qr-content-result'
+            );
+        });
+        it('should go back to tabs', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = true;
+            qrcoderesultPage.isSingleContent = true;
+            spyOn(qrcoderesultPage, 'goBack').and.stub();
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            // act
+            qrcoderesultPage.handleBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NAV_BACK_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT);
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
+                false,
+                Environment.ONBOARDING,
+                'qr-content-result'
+            );
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 1000);
+        });
+        it('should call navigateForward', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+            mockAppGlobalService.isProfileSettingsCompleted = true;
+            qrcoderesultPage.isSingleContent = true;
+            spyOn(qrcoderesultPage, 'goBack').and.stub();
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            qrcoderesultPage.source = '';
+            // act
+            qrcoderesultPage.handleBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NAV_BACK_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT);
+            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
+                false,
+                Environment.HOME,
+                'qr-content-result'
+            );
+            setTimeout(() => {
+                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
+                done();
+            }, 1000);
+        });
+        it('should go to profilesettings page', (done) => {
+            // arrange
+            mockAppGlobalService.isProfileSettingsCompleted = false;
+            mockAppGlobalService.isGuestUser = true;
+            qrcoderesultPage.isSingleContent = true;
+            // spyOn(qrcoderesultPage, 'goBack').and.stub();
+            // mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            // act
+            qrcoderesultPage.handleBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NAV_BACK_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT);
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 1000);
+        });
+    });
+
+    it('should get event name back and trigger back button', () => {
+        // arrange
+        jest.spyOn(qrcoderesultPage, 'handleBackButton').mockImplementation();
+        // act
+        qrcoderesultPage.handleHeaderEvents({name: 'back'});
+        // assert
+        expect(qrcoderesultPage.handleBackButton).toHaveBeenCalledWith(InteractSubtype.NAV_BACK_CLICKED);
+    });
+
     describe('ionViewWillEnter', () => {
         beforeEach(() => {
             qrcoderesultPage.navData = {
                 content: {identifier: 'id', dialcodes: ['EQ4523']},
-                corRelation: [{id: 'do-123', type: 'Content'}]
+                corRelation: [{id: 'do-123', type: 'Content'}],
+                dialCode: 'EQ4523'
             };
             const data = jest.fn();
             const subscribeWithPriorityData = jest.fn((_, fn) => fn());
@@ -148,17 +263,18 @@ describe('QrcoderesultPage', () => {
             } as any;
             qrcoderesultPage.unregisterBackButton = {
                 unsubscribe: data
-            }as any;
+            } as any;
             const headerData = jest.fn((fn => fn()));
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: headerData
-            }as any;
+            } as any;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
             jest.spyOn(qrcoderesultPage, 'handleHeaderEvents').mockImplementation(() => {
                 return;
             });
         });
-        it('should assign varaibles from navigation extras', (done) => {
+
+        it('should check for contentData if network is  not available', (done) => {
             // arrange
             mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             const mockContentHeirarchy = {
@@ -166,22 +282,33 @@ describe('QrcoderesultPage', () => {
                 children: [
                     {
                         identifier: 'id2',
-                        children : [],
+                        children: [],
                         mimeType: 'mime',
-                        contentData: {}
+                        contentData: {
+                            appIcon: 'http:',
+                            trackable: {
+                                enabled: 'Yes'
+                            }
+                        }
                     }
                 ],
                 contentData: {
-                    name: 'name1'
+                    name: 'name1',
+                    trackable: {
+                        enabled: 'Yes'
+                    }
                 }
             };
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
             mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
-            mockTextbookTocService.textbookIds = { unit : {
-                identifier: 'parentid',
-                contentData: {identifier: 'parentid'},
-                mimeType: MimeType.COLLECTION,
-                children: [{identifier: 'childid', basePath: 'basePath'}]
-            }} as any;
+            mockTextbookTocService.textbookIds = {
+                unit: {
+                    identifier: 'parentid',
+                    contentData: {identifier: 'parentid'},
+                    mimeType: MimeType.COLLECTION,
+                    children: [{identifier: 'childid', basePath: 'basePath'}]
+                }
+            } as any;
             const scrollObj = {
                 scrollTo: jest.fn()
             };
@@ -221,11 +348,158 @@ describe('QrcoderesultPage', () => {
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
                 expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
                 expect(qrcoderesultPage.results.length).toEqual(1);
+               // expect(mockEvents.unsubscribe).toHaveBeenCalled();
+               // expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
+                done();
+            }, 200);
+        });
+
+        it('should check for content data if https is available and network is true', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            const mockContentHeirarchy = {
+                identifier: 'id',
+                children: [
+                    {
+                        identifier: 'id2',
+                        children: [],
+                        mimeType: 'mime',
+                        contentData: {
+                            appIcon: 'https:',
+                            trackable: {
+                                enabled: 'No'
+                            }
+                        }
+                    }
+                ],
+                contentData: {
+                    name: 'name1',
+                    trackable: {
+                        enabled: 'No'
+                    }
+                }
+            };
+            qrcoderesultPage.backToPreviusPage = true;
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
+            mockTextbookTocService.textbookIds = {} as any;
+            const scrollObj = {
+                scrollTo: jest.fn()
+            };
+            qrcoderesultPage.ionContent = {
+                getScrollElement: jest.fn(() => Promise.resolve(scrollObj))
+            } as any;
+            // spyOn(qrcoderesultPage, 'getFirstChildOfChapter').and.stub();
+            spyOn(qrcoderesultPage, 'handleBackButton').and.stub();
+            spyOn(qrcoderesultPage, 'getChildContents').and.stub();
+            spyOn(qrcoderesultPage, 'subscribeSdkEvent').and.stub();
+            // qrcoderesultPage.chapterFirstChildId = 'id';
+            spyOn(document, 'getElementById').and.returnValue('element');
+            mockEvents.unsubscribe = jest.fn(() => true);
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            qrcoderesultPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
+            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                InteractSubtype.FAST_LOADING_INITIATED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                [{id: 'do-123', type: 'Content'}]
+            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.PAGE_REQUEST, '',
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.HOME,
+                    '', '', '', undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
+                expect(qrcoderesultPage.results.length).toEqual(1);
                 expect(mockEvents.unsubscribe).toHaveBeenCalled();
                 expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
                 done();
             }, 200);
         });
+
+        it('should check for content data if http or https not available', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            const mockContentHeirarchy = {
+                identifier: 'id',
+                children: [
+                    {
+                        identifier: 'id2',
+                        children: [],
+                        mimeType: 'mime',
+                        contentData: {
+                            appIcon: 'sample:',
+                            trackable: {
+                                enabled: 'Yes'
+                            }
+                        },
+                        basePath: 'file://sample'
+                    }
+                ],
+                contentData: {
+                    name: 'name1',
+                    trackable: {
+                        enabled: 'Yes'
+                    }
+                }
+            };
+            qrcoderesultPage.backToPreviusPage = true;
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
+            mockTextbookTocService.textbookIds = {} as any;
+            const scrollObj = {
+                scrollTo: jest.fn()
+            };
+            qrcoderesultPage.ionContent = {
+                getScrollElement: jest.fn(() => Promise.resolve(scrollObj))
+            } as any;
+            // spyOn(qrcoderesultPage, 'getFirstChildOfChapter').and.stub();
+            spyOn(qrcoderesultPage, 'handleBackButton').and.stub();
+            spyOn(qrcoderesultPage, 'getChildContents').and.stub();
+            spyOn(qrcoderesultPage, 'subscribeSdkEvent').and.stub();
+            // qrcoderesultPage.chapterFirstChildId = 'id';
+            spyOn(document, 'getElementById').and.returnValue('element');
+            mockEvents.unsubscribe = jest.fn(() => true);
+            mockNavCtrl.navigateForward = jest.fn(() => Promise.resolve(true));
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            qrcoderesultPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            expect(qrcoderesultPage.content).toEqual({identifier: 'id', dialcodes: ['EQ4523']});
+            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                InteractSubtype.FAST_LOADING_INITIATED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                [{id: 'do-123', type: 'Content'}]
+            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.PAGE_REQUEST, '',
+                    PageId.QR_CONTENT_RESULT,
+                    Environment.HOME,
+                    '', '', '', undefined,
+                    [{id: 'do-123', type: 'Content'}]
+                );
+                expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
+                expect(qrcoderesultPage.results.length).toEqual(1);
+                // expect(mockEvents.unsubscribe).toHaveBeenCalled();
+                // expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
+                done();
+            }, 200);
+        });
+
     });
 
     describe('ionViewWillLeave', () => {
@@ -283,110 +557,26 @@ describe('QrcoderesultPage', () => {
         });
     });
 
-    describe('handleBackButton', () => {
-        it('should go back to previous route', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
-            mockAppGlobalService.isProfileSettingsCompleted = false;
-            qrcoderesultPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
-            // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
-            spyOn(qrcoderesultPage, 'goBack').and.stub();
-            // act
-            qrcoderesultPage.handleBackButton(PageId.LIBRARY);
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                PageId.LIBRARY,
-                Environment.ONBOARDING,
-                PageId.DIAL_CODE_SCAN_RESULT);
-            expect(qrcoderesultPage.goBack).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
-                false,
-                Environment.ONBOARDING,
-                'qr-content-result'
-            );
-        });
-        it('should go back to tabs', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
-            mockAppGlobalService.isProfileSettingsCompleted = true;
-            qrcoderesultPage.isSingleContent = true;
-            spyOn(qrcoderesultPage, 'goBack').and.stub();
-            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
-            // act
-            qrcoderesultPage.handleBackButton();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.NAV_BACK_CLICKED,
-                Environment.ONBOARDING,
-                PageId.DIAL_CODE_SCAN_RESULT);
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
-                    false,
-                    Environment.ONBOARDING,
-                    'qr-content-result'
-                );
-            setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalled();
-                done();
-            }, 1000);
-        });
-        it('should call navigateForward', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
-            mockAppGlobalService.isProfileSettingsCompleted = true;
-            qrcoderesultPage.isSingleContent = true;
-            spyOn(qrcoderesultPage, 'goBack').and.stub();
-            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
-            qrcoderesultPage.source = '';
-            // act
-            qrcoderesultPage.handleBackButton();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.NAV_BACK_CLICKED,
-                Environment.ONBOARDING,
-                PageId.DIAL_CODE_SCAN_RESULT);
-            expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenLastCalledWith(
-                    false,
-                    Environment.HOME,
-                    'qr-content-result'
-                );
-            setTimeout(() => {
-                expect(mockNavCtrl.navigateForward).toHaveBeenCalled();
-                done();
-            }, 1000);
-        });
-        it('should go to profilesettings page', (done) => {
-            // arrange
-            mockAppGlobalService.isProfileSettingsCompleted = false;
-            mockAppGlobalService.isGuestUser = true;
-            qrcoderesultPage.isSingleContent = true;
-            // spyOn(qrcoderesultPage, 'goBack').and.stub();
-            // mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
-            // act
-            qrcoderesultPage.handleBackButton();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.NAV_BACK_CLICKED,
-                Environment.ONBOARDING,
-                PageId.DIAL_CODE_SCAN_RESULT);
-            setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalled();
-                done();
-            }, 1000);
-        });
-    });
-
     describe('getChildContents', () => {
         it('should get child contents', (done) => {
             // arrange
             const content = {
                 identifier: 'parentid',
-                contentData: {identifier: 'parentid'},
+                contentData: {
+                    identifier: 'parentid',
+                    trackable: {
+                        enabled: 'No'
+                    }
+                },
                 children: [
-                    {identifier: 'childid', basePath: 'basePath', mimeType: 'content', contentData: {identifier: 'id2'}}
+                    {
+                        identifier: 'childid', basePath: 'basePath', mimeType: 'content', contentData: {
+                            identifier: 'id2',
+                            trackable: {
+                                enabled: 'No'
+                            }
+                        }
+                    }
                 ]
             };
             qrcoderesultPage.searchIdentifier = 'childid';
@@ -429,12 +619,6 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockContentService.getChildContents).toHaveBeenCalled();
             setTimeout(() => {
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.VIEW,
-                    '',
-                    PageId.DIAL_LINKED_NO_CONTENT,
-                    Environment.HOME
-                );
                 expect(mockCommonUtilService.showContentComingSoonAlert).toHaveBeenCalled();
                 done();
             }, 0);
@@ -479,11 +663,15 @@ describe('QrcoderesultPage', () => {
         it('should return a toast message if downloadUrl is undefined', () => {
             const content = {
                 contentData: {
-                    contentType: ContentType.COURSE,
-                    downloadUrl: ''
+                    contentType: CsContentType.COURSE,
+                    downloadUrl: '',
+                    trackable: {
+                        enabled: 'No'
+                    }
                 }
             };
-            mockTelemetryGeneratorService.isCollection = jest.fn(() => {});
+            mockTelemetryGeneratorService.isCollection = jest.fn(() => {
+            });
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockCommonUtilService.showToast = jest.fn();
             mockCommonUtilService.networkInfo = {
@@ -494,15 +682,15 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
         });
 
         it('should navigate to enrolled course details page', () => {
             // arrange
             const content = {
+                contentType: CsContentType.COURSE,
                 contentData: {
-                    contentType: ContentType.COURSE,
+                    contentType: CsContentType.COURSE,
                     downloadUrl: 'sample-url'
                 }
             };
@@ -515,15 +703,13 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content, [{identifier: 'do-123'}]);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.ENROLLED_COURSE_DETAILS],
-                expect.anything()
-            );
+
         });
         it('should navigate to collection details ETB page', () => {
             // arrange
             const content = {
                 mimeType: MimeType.COLLECTION,
+                contentType: CsContentType.COLLECTION,
                 contentData: {
                     downloadUrl: 'sample-url'
                 }
@@ -540,8 +726,7 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content, paths, 'sampleId');
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.COLLECTION_DETAIL_ETB],
+            expect(mockNavigationService.navigateToCollection).toHaveBeenCalledWith(
                 expect.anything()
             );
             expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith(
@@ -552,6 +737,7 @@ describe('QrcoderesultPage', () => {
             // arrange
             const content = {
                 identifier: 'id',
+                contentType: CsContentType.RESOURCE,
                 contentData: {
                     downloadUrl: 'sample-url'
                 }
@@ -564,8 +750,7 @@ describe('QrcoderesultPage', () => {
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.CONTENT_DETAILS],
+            expect(mockNavigationService.navigateToContent).toHaveBeenCalledWith(
                 expect.anything()
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
@@ -577,7 +762,7 @@ describe('QrcoderesultPage', () => {
         // arrange
         qrcoderesultPage.identifier = 'sampleid';
         mockProfileService.getAllProfiles = jest.fn(() => of([{handle: 'handle1'}] as any));
-        mockAppGlobalService.isUserLoggedIn =  jest.fn(() => true);
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         // act
         qrcoderesultPage.calculateAvailableUserCount();
         // assert
@@ -608,7 +793,7 @@ describe('QrcoderesultPage', () => {
     describe('setContentDetails', () => {
         it('should set contentDetails', () => {
             // arrange
-            mockContentService.getContentDetails = jest.fn(() => of({ identifier: 'id'} as any));
+            mockContentService.getContentDetails = jest.fn(() => of({identifier: 'id'} as any));
             // spyOn(qrcoderesultPage, 'calculateAvailableUserCount').and.stub();
             // act
             qrcoderesultPage.setContentDetails('id', true);
@@ -689,9 +874,9 @@ describe('QrcoderesultPage', () => {
                 undefined,
                 undefined,
                 [{id: 'sample-board', type: 'Board'},
-                 {id: 'sample-medium', type: 'Medium'},
-                 {id: 'sample-class', type: 'Class'},
-                 {id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE}],
+                    {id: 'sample-medium', type: 'Medium'},
+                    {id: 'sample-class', type: 'Class'},
+                    {id: ImpressionSubtype.AUTO, type: CorReleationDataType.FILL_MODE}],
                 {l1: undefined}
             );
         });
@@ -806,6 +991,7 @@ describe('QrcoderesultPage', () => {
                 qrcoderesultPage.corRelationList);
         });
     });
+
     describe('cancelDownload', () => {
         it('should cancel ongoing download', (done) => {
             // arrange
@@ -823,7 +1009,7 @@ describe('QrcoderesultPage', () => {
                 done();
             }, 0);
         });
-        it('should cancel ongoing download', (done) => {
+        it('should cancel download', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateCancelDownloadTelemetry = jest.fn();
             const content = {identifier: 'sampleId'} as any;
@@ -839,6 +1025,81 @@ describe('QrcoderesultPage', () => {
                 done();
             }, 0);
         });
+    });
+
+    describe('playContent', () => {
+        it('should call contentService and open player', (done) => {
+            // arrange
+            qrcoderesultPage.cardData = {
+                hierarchyInfo: [
+                    'do-123',
+                    'do-1234'
+                ]
+            };
+            const mockContentData = {
+                identifier: 'do-123',
+                contentData: {
+                    streamingUrl: 'https://'
+                },
+                hierachyInfo: [
+                    'do-1234',
+                    'do-122345'
+                ],
+                isAvailableLocally: false
+            };
+            const mockData = {
+                metadata: {
+                    mimeType: 'application/vnd.ekstep.ecml-archive'
+                }
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            mockContentPlayerHandler.launchContentPlayer = jest.fn();
+            // act
+            qrcoderesultPage.playContent(mockContentData, false);
+            // assert
+            setTimeout(() => {
+                expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should call contentService and check for metaData is not mimeType ecml', (done) => {
+            // arrange
+            qrcoderesultPage.cardData = {
+                hierarchyInfo: [
+                    'do-123',
+                    'do-1234'
+                ]
+            };
+            const mockContentData = {
+                identifier: 'do-123',
+                contentData: {
+                    streamingUrl: 'https://'
+                },
+                hierachyInfo: [
+                    'do-1234',
+                    'do-122345'
+                ],
+                isAvailableLocally: false
+            };
+            const mockData = {
+                metadata: {
+                    mimeType: 'youtube'
+                }
+            };
+            mockAppGlobalService.getCurrentUser = jest.fn(() => ({uid: 'sample-uid'}));
+            mockContentService.setContentMarker = jest.fn(() => of(true));
+            mockContentPlayerHandler.launchContentPlayer = jest.fn();
+            // act
+            qrcoderesultPage.playContent(mockContentData, false);
+            // assert
+            setTimeout(() => {
+                expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
     });
 
     it('should get FirstChild Of Chapter', () => {
@@ -862,7 +1123,7 @@ describe('QrcoderesultPage', () => {
         // act
         qrcoderesultPage.openTextbookToc();
         // assert
-        expect(mockRouter.navigate).toHaveBeenCalledWith(
+        expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
             [`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
             expect.anything()
         );
@@ -881,14 +1142,98 @@ describe('QrcoderesultPage', () => {
             const content = {
                 identifier: 'do-123',
                 contentData: {
+                    contentType: CsContentType.COURSE,
                     streamingUrl: ''
-                }
+                },
+                contentType: CsContentType.COURSE,
             };
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            qrcoderesultPage.playOnline(content);
+            qrcoderesultPage.playOnline(content, false);
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        });
+
+        it('should go to play content if it has streaming url and availableLocally', () => {
+            mockAppGlobalService.isOnBoardingCompleted = false;
+            qrcoderesultPage.source = 'course';
+            const content = {
+                identifier: 'do-123',
+                contentData: {
+                    streamingUrl: 'https://'
+                },
+                hierachyInfo: [
+                    'do-1234',
+                    'do-122345'
+                ],
+                isAvailableLocally: false
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            jest.spyOn(qrcoderesultPage, 'playContent').mockImplementation();
+
+            qrcoderesultPage.playOnline(content, false);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                {id: 'do-123', type: undefined, version: ''}
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                InteractType.SELECT_CARD,
+                '',
+                Environment.HOME,
+                PageId.QR_CONTENT_RESULT,
+                {id: 'do-123', type: undefined, version: ''},
+                undefined,
+                {l1: 'do-123'},
+                qrcoderesultPage.corRelationList
+            );
+        });
+    });
+
+    describe('skip-steps', () => {
+        it('should generate interact telemetry and check user is onboarded or not', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockAppGlobalService.isOnBoardingCompleted = true;
+            mockAppGlobalService.isProfileSettingsCompleted = true;
+            mockRouter.navigate = jest.fn();
+            // act
+            qrcoderesultPage.skipSteps();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NO_QR_CODE_CLICKED,
+                Environment.HOME,
+                PageId.DIAL_CODE_SCAN_RESULT
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.TABS}`], {
+                state: {
+                    loginMode: 'guest'
+                }
+            });
+        });
+
+        it('should to go to profile-settings page if onboarding is not completed', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockAppGlobalService.isOnBoardingCompleted = false;
+            mockAppGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE = true;
+            mockRouter.navigate = jest.fn();
+            // act
+            qrcoderesultPage.skipSteps();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NO_QR_CODE_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_CODE_SCAN_RESULT
+            );
+            expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.PROFILE_SETTINGS}`], {
+                state: {
+                    showFrameworkCategoriesMenu: true
+                }
+            });
         });
     });
 });

@@ -1,38 +1,47 @@
 import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
-    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
-    ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
+    AuthService, CorrelationData, TelemetryObject,
+    ProfileType, UnenrollCourseRequest, ContentDetailRequest,
+    ServerProfileDetailsRequest, ServerProfile,
     NetworkError, DownloadService
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService,
-    LocalCourseService, PageId, ID, InteractType
+    LocalCourseService, PageId, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses,
+    mockGetChildDataResponse, mockImportContentResponse,
+    mockEnrolledCourses, mockExpiredBatchEnrolledCourses,
     mockCourseCardData_2, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, BatchConstants } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { MimeType } from '../app.constant';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { Consent, ConsentStatus, UserConsent } from '@project-sunbird/client-services/models';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { ConsentService } from '../../services/consent-service';
+import {
+    TncUpdateHandlerService,
+} from '../../services/handlers/tnc-update-handler.service';
+import { mockProfileData } from '../profile/profile.page.spec.data';
+import { CourseBatchStatus, CourseEnrollmentType, DiscussionService, SortOrder } from '@project-sunbird/sunbird-sdk';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -107,11 +116,22 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockLocalCourseService: Partial<LocalCourseService> = {
         prepareEnrollCourseRequest: jest.fn(),
         enrollIntoBatch: jest.fn(),
-        prepareRequestValue: jest.fn()
+        prepareRequestValue: jest.fn(),
+        isEnrollable: jest.fn()
     };
-    const mockAppVersion: Partial<AppVersion> = {};
+    const mockConsentService: Partial<ConsentService> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+    const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+        transform: jest.fn(() => 'sample-message')
+    };
+    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
+        dismissTncPage: jest.fn(),
+        isSSOUser: jest.fn()
+    };
+    const mockDiscussionService: Partial<DiscussionService> = {
+        getForumIds: jest.fn()
+    };
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -122,6 +142,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
+            mockDiscussionService as DiscussionService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -140,7 +161,10 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentDeleteHandler as ContentDeleteHandler,
             mockLocalCourseService as LocalCourseService,
             mockSbProgressLoader as SbProgressLoader,
-            mockContentPlayerHandler as ContentPlayerHandler
+            mockContentPlayerHandler as ContentPlayerHandler,
+            mockCategoryKeyTranslator as CategoryKeyTranslator,
+            mockConsentService as ConsentService,
+            mockTncUpdateHandlerService as TncUpdateHandlerService
         );
     });
 
@@ -218,7 +242,7 @@ describe('EnrolledCourseDetailsPage', () => {
             jest.spyOn(enrolledCourseDetailsPage, 'getLocalCourseAndUnitProgress').mockImplementation();
             enrolledCourseDetailsPage.courseHeirarchy = {
                 children: [{ identifier: 'do-123' }],
-                contentData: {leafNodes: ['do_1', 'do_12', 'do_123']}
+                contentData: { leafNodes: ['do_1', 'do_12', 'do_123'] }
             };
             enrolledCourseDetailsPage.resumeCourseFlag = true;
             jest.spyOn(enrolledCourseDetailsPage, 'resumeContent').mockImplementation();
@@ -889,7 +913,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
-                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('UNENROL_FALIURE'));
+                    expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('FRMELEMNTS_MSG_UNABLE_TO_ENROLL'));
                 done();
             }, 0);
         });
@@ -1323,6 +1347,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
@@ -1369,10 +1394,8 @@ describe('EnrolledCourseDetailsPage', () => {
                         },
                         cssClass: 'sb-popover info',
                     });
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'TRAININGS_ONLY_REGISTERED_USERS');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'OVERLAY_SIGN_IN');
-                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'OVERLAY_SIGN_IN');
+                expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'OVERLAY_SIGN_IN');
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(1,
                     PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify({}));
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
@@ -1403,6 +1426,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockCommonUtilService.translateMessage = jest.fn(() => 'sample-message');
+            mockCategoryKeyTranslator.transform = jest.fn(() => 'sample-message');
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
@@ -1513,7 +1537,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(presentFn).toBeCalled();
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
-                expect(mockCommonUtilService.translateMessage).toBeCalledWith('COURSE_ENROLLED');
+                expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled();
                 expect(mockEvents.publish).toBeCalled();
                 expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
@@ -1549,71 +1573,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockZone.run).toHaveBeenCalled();
                 done();
             }, 0);
-        });
-    });
-
-    describe('licenseSectionClicked()', () => {
-        it('should generate telemetry license expanded when licenseSectionClicked()', () => {
-            // arrange
-            enrolledCourseDetailsPage.objId = 'do_21281258639073280011490',
-                enrolledCourseDetailsPage.objType = 'Course',
-                enrolledCourseDetailsPage.objVer = '2',
-                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            enrolledCourseDetailsPage.licenseSectionClicked('expanded');
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.LICENSE_CARD_EXPANDED,
-                '',
-                undefined,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                enrolledCourseDetailsPage.objRollup,
-                [{ id: '', type: 'CourseBatch' }],
-                ID.LICENSE_CARD_CLICKED
-            );
-        });
-
-        it('should generate telemetry license collapsed when licenseSectionClicked()', () => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            // act
-            enrolledCourseDetailsPage.licenseSectionClicked('collapsed');
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.LICENSE_CARD_COLLAPSED,
-                '',
-                undefined,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                enrolledCourseDetailsPage.objRollup,
-                [{ id: '', type: 'CourseBatch' }],
-                ID.LICENSE_CARD_CLICKED
-            );
-        });
-    });
-
-    describe('showLicensce()', () => {
-        it('should show license true when user clicked on credits and license', () => {
-            // arrange
-            enrolledCourseDetailsPage.showCredits = false;
-            jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
-            // act
-            enrolledCourseDetailsPage.showLicensce();
-            // assert
-            expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
-        });
-
-        it('should not show license when user clicked on license and credits', () => {
-            // arrange
-            enrolledCourseDetailsPage.showCredits = true;
-            jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
-            // act
-            enrolledCourseDetailsPage.showLicensce();
-            // assert
-            expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
         });
     });
 
@@ -1945,8 +1904,9 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('navigateToBatchListPage()', () => {
-        it('should', async (done) => {
+        it('should return false, not call navigate', async (done) => {
             // arrange
+            mockLocalCourseService.isEnrollable = jest.fn(() => true);
             spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
             spyOn(mockRouter, 'navigate').and.stub();
             const presentFn = jest.fn(() => Promise.resolve());
@@ -1973,8 +1933,8 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('startContent()', () => {
-        it('should find next content which status is 0 or 1', () => {
+    describe('startLearning()', () => {
+        it('should find next content which status is 0 or 1', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             enrolledCourseDetailsPage.courseHeirarchy = {
@@ -2010,25 +1970,37 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.isBatchNotStarted = false;
             enrolledCourseDetailsPage.nextContent = false;
             mockContentPlayerHandler.playContent = jest.fn();
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }));
+            mockCommonUtilService.handleAssessmentStatus = jest.fn(() => Promise.resolve(false));
             // act
-            enrolledCourseDetailsPage.startContent();
+            enrolledCourseDetailsPage.startLearning();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                {},
-                [{ id: '', type: 'CourseBatch' }],
-            );
-            expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
-            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
-            expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
+                expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                done();
+            }, 0);
         });
 
-        it('should show toast message', () => {
+        it('should show toast message', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             enrolledCourseDetailsPage.courseHeirarchy = {
@@ -2038,23 +2010,77 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
             mockCommonUtilService.showToast = jest.fn();
             mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+
             // act
-            enrolledCourseDetailsPage.startContent();
+            enrolledCourseDetailsPage.startLearning();
             // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.START_CLICKED,
-                Environment.HOME,
-                PageId.COURSE_DETAIL,
-                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
-                undefined,
-                {},
-                [{ id: '', type: 'CourseBatch' }],
-            );
-            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
-            expect(mockDatePipe.transform).toBeCalled();
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
+                expect(mockDatePipe.transform).toBeCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should show profile name confirmation popup', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                children: []
+            };
+            enrolledCourseDetailsPage.isBatchNotStarted = true;
+            enrolledCourseDetailsPage.isCertifiedCourse = true;
+            mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-04');
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileData));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { buttonClicked: true } }))
+            } as any)));
+
+            // act
+            enrolledCourseDetailsPage.startLearning();
+
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.START_CLICKED,
+                    Environment.HOME,
+                    PageId.COURSE_DETAIL,
+                    { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
+                    undefined,
+                    {},
+                    [{ id: '', type: 'CourseBatch' }],
+                );
+                expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
+                expect(mockDatePipe.transform).toBeCalled();
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(
+                    PreferenceKey.DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP + '-some_uid');
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
@@ -2191,6 +2217,116 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    describe('checkDataSharingStatus', () => {
+        it('should return conset details', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId
+            };
+            mockProfileService.getConsent = jest.fn(() => of({
+                consents: [{
+                    status: ConsentStatus.ACTIVE,
+                    lastUpdatedOn: 'dd/mm/yy'
+                }]
+            }));
+            // act
+            enrolledCourseDetailsPage.checkDataSharingStatus();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                expect(enrolledCourseDetailsPage.dataSharingStatus).toBe(ConsentStatus.ACTIVE);
+                expect(enrolledCourseDetailsPage.lastUpdateOn).toBe('dd/mm/yy');
+                done();
+            }, 0);
+        });
+
+        it('should return conset popup if consent data not found for catch part', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId
+            };
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            enrolledCourseDetailsPage.course = {
+                userConsent: UserConsent.YES
+            };
+            enrolledCourseDetailsPage.isConsentPopUp = false;
+            mockProfileService.getConsent = jest.fn(() => throwError({
+                response: {
+                    body: {
+                        params: {
+                            err: 'USER_CONSENT_NOT_FOUND'
+                        }
+                    }
+                }
+            }));
+            mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            await enrolledCourseDetailsPage.checkDataSharingStatus().catch();
+            // assert
+            setTimeout(() => {
+                // expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                // expect(enrolledCourseDetailsPage.isConsentPopUp).toBeTruthy();
+                // expect(mockLocalCourseService.showConsentPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return conset popup if consent data not found for catch part', (done) => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+            };
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            enrolledCourseDetailsPage.course = {
+                userConsent: UserConsent.YES
+            };
+            enrolledCourseDetailsPage.isConsentPopUp = false;
+            mockProfileService.getConsent = jest.fn(() => throwError({
+                code: 'NETWORK_ERROR'
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            enrolledCourseDetailsPage.checkDataSharingStatus();
+            // assert
+            setTimeout(() => {
+                // expect(mockProfileService.getConsent).toHaveBeenCalledWith(request);
+                // expect(enrolledCourseDetailsPage.isConsentPopUp).toBeFalsy();
+                // expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                done();
+            }, 0);
+        });
+    });
+
     describe('ionViewWillEnter()', () => {
         it('should be a guest user, ', (done) => {
             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
@@ -2201,6 +2337,7 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.isGuestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
             mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockDiscussionService.getForumIds = jest.fn(() => throwError('some_err'));
             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
@@ -2240,6 +2377,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockHeaderService.headerEventEmitted$ = of({
                 subscribe: jest.fn((fn) => fn({}))
             });
+            mockDiscussionService.getForumIds = jest.fn(() => throwError('some_err'));
+            // jest.spyOn(enrolledCourseDetailsPage, 'fetchForumIds').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
             jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
@@ -2264,6 +2403,79 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
+
+        //     it('should show expired batch popup for logged in user and enrolled into course if already enrolled batch is expired, ',
+        //         (done) => {
+        //             // act
+        //             mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('some_uid'));
+        //             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+        //             enrolledCourseDetailsPage.isGuestUser = false;
+        //             enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+        //             enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
+        //             enrolledCourseDetailsPage.courseHeirarchy = mockCourseCardData_2;
+        //             mockHeaderService.headerEventEmitted$ = {
+        //                 subscribe: jest.fn(() => { })
+        //             };
+        //             mockHeaderService.headerEventEmitted$ = of({
+        //                 subscribe: jest.fn((fn) => fn({}))
+        //             });
+        //             jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'setContentDetails').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'handleHeaderEvents').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'populateCorRelationData').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'handleBackButton').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').mockImplementation();
+        //             jest.spyOn(enrolledCourseDetailsPage, 'getAllBatches').mockImplementation(() => {
+        //                 return Promise.resolve();
+        //             });
+        //             jest.spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseData').mockImplementation(() => {
+        //                 return Promise.resolve();
+        //             });
+        //             mockCourseService.getEnrolledCourses = jest.fn(() => of(mockExpiredBatchEnrolledCourses));
+        //             mockAppGlobalService.getEnrolledCourseList = jest.fn(() => mockExpiredBatchEnrolledCourses);
+        //             mockHeaderService.showHeaderWithBackButton = jest.fn();
+        //             const batches = [
+        //                 {
+        //                     enrollmentEndDate: '01/01/2020',
+        //                     endDate: '05/01/2020',
+        //                     identifier: 'do-123',
+        //                     status: 1
+        //                 },
+        //                 {
+        //                     enrollmentEndDate: '01/01/2020',
+        //                     endDate: '05/01/2020',
+        //                     identifier: 'do-1234',
+        //                     status: 0
+        //                 }
+        //             ];
+        //             mockCourseService.getCourseBatches = jest.fn(() => of(batches));
+        //             mockZone.run = jest.fn((fn) => fn());
+        //             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+        //                 present: jest.fn(() => Promise.resolve({})),
+        //                 onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
+        //             } as any)));
+
+        //             // act
+        //             enrolledCourseDetailsPage.ionViewWillEnter();
+        //             // assert
+        //             setTimeout(() => {
+        //                 expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        //                 expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        //                 expect(mockCourseService.getCourseBatches).toBeCalledWith({
+        //                     filters: {
+        //                         courseId: enrolledCourseDetailsPage.courseHeirarchy.identifier,
+        //                         enrollmentType: CourseEnrollmentType.OPEN,
+        //                         status: [CourseBatchStatus.IN_PROGRESS]
+        //                     },
+        //                     sort_by: { createdDate: SortOrder.DESC },
+        //                     fields: BatchConstants.REQUIRED_FIELDS
+        //                 });
+        //                 expect(mockZone.run).toHaveBeenCalled();
+        //                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
+        //                 done();
+        //             }, 0);
+        //         });
     });
 
     it('should hide deeplink progress loader', () => {
@@ -2313,4 +2525,311 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
+    it('should dismiss consentPii popup', () => {
+        // arrange
+        const dismissFn = jest.fn(() => Promise.resolve(true));
+        enrolledCourseDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
+        // act
+        enrolledCourseDetailsPage.onConsentPopoverShow();
+        // assert
+        expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+        expect(dismissFn).toHaveBeenCalled();
+    });
+
+    it('shoule invoked after consentPii popup dismissed', () => {
+        jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+            return;
+        });
+        enrolledCourseDetailsPage.onConsentPopoverDismiss();
+    });
+
+    it('should fetch consent PII data', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: { channel: 'sample-channel' },
+            courseId: 'sample-do-id'
+        };
+        mockProfileService.getConsent = jest.fn(() => of([{
+            status: ConsentStatus.ACTIVE,
+            lastUpdatedOn: '02/02/2020'
+        }]));
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
+    });
+
+    it('should fetch consent PII data for catch part', () => {
+        // arrange
+        enrolledCourseDetailsPage.courseCardData = {
+            userId: 'sample-user-id',
+            content: { channel: 'sample-channel', userConsent: 'Yes' },
+            courseId: 'sample-do-id'
+        };
+        enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+        mockProfileService.getConsent = jest.fn(() => throwError({ code: 'NETWORK_ERROR' }));
+        mockCommonUtilService.showToast = jest.fn();
+        // act
+        enrolledCourseDetailsPage.checkDataSharingStatus();
+    });
+
+    it('should retrun checked for shareData', () => {
+        // arrange
+        enrolledCourseDetailsPage.showShareData = false;
+        // act
+        enrolledCourseDetailsPage.editDataSettings();
+        // assert
+        expect(enrolledCourseDetailsPage.showShareData).toBeTruthy();
+    });
+
+    it('should extend data settings for user click', () => {
+        // arrange
+        enrolledCourseDetailsPage.isDataShare = false;
+        // act
+        enrolledCourseDetailsPage.expandDataSettings();
+        // assert
+        expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+        expect(enrolledCourseDetailsPage.isDataShare).toBeTruthy();
+    });
+
+    describe('saveChanges', () => {
+        it('should update userConsent for active status', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.ACTIVE;
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                status: ConsentStatus.REVOKED,
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+                objectType: 'Collection',
+            };
+            mockProfileService.updateConsent = jest.fn(() => of({ message: 'successfull' }));
+            mockCommonUtilService.showToast = jest.fn();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELEMNTS_MSG_DATA_SETTINGS_SUBMITED_SUCCESSFULLY');
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should not update userConsent for active status catch part', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.ACTIVE;
+            enrolledCourseDetailsPage.courseCardData = {
+                userId: 'sample-userId',
+                content: {
+                    channel: 'sample-channel'
+                },
+                courseId: 'sample-courseId'
+            };
+            const request: Consent = {
+                status: ConsentStatus.REVOKED,
+                userId: enrolledCourseDetailsPage.courseCardData.userId,
+                consumerId: enrolledCourseDetailsPage.courseCardData.content.channel,
+                objectId: enrolledCourseDetailsPage.courseCardData.courseId,
+                objectType: 'Collection',
+            };
+            mockProfileService.updateConsent = jest.fn(() => throwError({ code: 'NETWORK_ERROR' }));
+            mockCommonUtilService.showToast = jest.fn();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateConsent).toHaveBeenCalledWith(request);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should return consent popup for revoked status', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            enrolledCourseDetailsPage.dataSharingStatus = ConsentStatus.REVOKED;
+            mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
+            jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
+                return (Promise.resolve());
+            });
+            // act
+            enrolledCourseDetailsPage.saveChanges();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockConsentService.showConsentPopup).toHaveBeenCalled();
+                expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
+                done();
+            }, 0);
+        });
+    });
+    describe('fetchForumIds', () => {
+        it('should fetch forumids with apropriate request ', (done) => {
+            // arrange
+            const res = {
+                result: [
+                    {
+                        cid: 'some_cid'
+                    }
+                ]
+            }
+            mockDiscussionService.getForumIds = jest.fn(() => of(res));
+            enrolledCourseDetailsPage.course ={
+                createdBy: 'some_id'
+            };
+            enrolledCourseDetailsPage.userId = 'some_id';
+            enrolledCourseDetailsPage.identifier = 'some_course_id'
+            
+            // jest.spyOn(enrolledCourseDetailsPage, 'prepareRequestBody').mockImplementation(() => {
+            //     return {
+            //         identifier: ['some_id'],
+            //         type: 'some_type'
+            //     }
+            // });
+            // act
+            enrolledCourseDetailsPage.fetchForumIds()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+                // expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+                done()
+            });
+            
+        });
+        it('should fetch forumids with apropriate request ', (done) => {
+            // arrange
+            const res = {
+                result: [
+                    {
+                        cid: 'some_cid'
+                    }
+                ]
+            }
+            enrolledCourseDetailsPage.course ={
+                createdBy: 'some_id'
+            };
+            enrolledCourseDetailsPage.userId = 'some_other_id';
+            enrolledCourseDetailsPage.identifier = 'some_course_id';
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            mockDiscussionService.getForumIds = jest.fn(() => of(res));
+            // jest.spyOn(enrolledCourseDetailsPage, 'prepareRequestBody').mockImplementation(() => {
+            //     return {
+            //         identifier: ['some_id'],
+            //         type: 'some_type'
+            //     }
+            // });
+            // act
+            enrolledCourseDetailsPage.fetchForumIds()
+            // assert
+            setTimeout(() => {
+                expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
+                // expect(enrolledCourseDetailsPage.forumIds).toEqual('some_cid');
+                done();
+            });
+            
+        });
+    });
+    describe('checkUserRegistration', () => {
+        it('should register user with apropriate request ', (done) => {
+            // arrange
+            const profileRes = {
+                serverProfile: [
+                    {
+                        userName: 'some_user_name'
+                    }
+                ]
+            }
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes));
+            const res = {
+                result: {
+                    userName: 'some_user'
+                }
+                
+            }
+            mockDiscussionService.createUser = jest.fn(() => of(res));
+            enrolledCourseDetailsPage.forumIds = 'forum_id';
+            // act
+            enrolledCourseDetailsPage.checkUserRegistration()
+            // assert
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    ['/discussion-forum'],
+                    {
+                        queryParams: {
+                            categories: JSON.stringify({result:['forum_id']}),
+                            userName: 'some_user'
+                        }
+                    }
+                );
+                done()
+            })
+            
+        });
+        it('should handle error while registering user ', (done) => {
+            // arrange
+            mockCommonUtilService.showToast = jest.fn();
+            const profileRes = {
+                serverProfile: [
+                    {
+                        userName: 'some_user_name'
+                    }
+                ]
+            }
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes));
+            const res = {
+                result: {
+                    userName: 'some_user'
+                }
+                
+            }
+            mockDiscussionService.createUser = jest.fn(() => throwError('some_err'));
+            enrolledCourseDetailsPage.forumIds = 'forum_id';
+            // act
+            enrolledCourseDetailsPage.checkUserRegistration()
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled()
+                done()
+            })
+        });
+    });
 });

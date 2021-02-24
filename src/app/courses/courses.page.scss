@@ -122,4 +122,16 @@
   .course-card-pd{
     padding: 1px 0 12px;
   }
+
+  .section-header-style{
+    margin-left: 10px;
+    font-weight: 700;
+    font-size: 18px;
+    padding-top: 14px;
+    padding-bottom: 4px;
+  }
+  .animation-background {
+    padding: 0 8px 0 8px;
+    background-color: map-get($colors, white_f2);
+  }
 }

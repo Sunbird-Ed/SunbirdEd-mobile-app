@@ -6,7 +6,8 @@ export class TextbookTocService {
     textbookIds = {
         contentId: undefined,
         rootUnitId: undefined,
-        unit: undefined
+        unit: undefined,
+        content: undefined
     };
 
     constructor(
@@ -21,7 +22,8 @@ export class TextbookTocService {
         this.textbookIds = {
             contentId: undefined,
             rootUnitId: undefined,
-            unit: undefined
+            unit: undefined,
+            content: undefined
         };
     }
 

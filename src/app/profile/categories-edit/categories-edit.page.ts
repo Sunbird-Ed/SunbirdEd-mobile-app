@@ -1,6 +1,6 @@
 import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
-import { Component, Inject, ViewChild, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,30 +10,30 @@ import {
   FrameworkUtilService,
   GetSuggestedFrameworksRequest,
   GetFrameworkCategoryTermsRequest,
-  FrameworkDetailsRequest,
   Framework,
   FrameworkCategoryCodesGroup,
   Profile,
   ProfileService,
-  CategoryTerm,
   UpdateServerProfileInfoRequest,
   ServerProfileDetailsRequest,
   CachedItemRequestSourceFrom,
   Channel,
-  FrameworkCategoryCode
+  FrameworkCategoryCode,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 
 @Component({
@@ -75,6 +75,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   isRootPage = false;
   hasFilledLocation = false;
+  public supportedProfileAttributes: { [key: string]: string } = {};
+  userType: string;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -120,6 +122,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -128,14 +131,14 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     private container: ContainerService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
     private router: Router,
     private location: Location,
     private platform: Platform,
     private activePageService: ActivePageService,
     private externalIdVerificationService: ExternalIdVerificationService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private profileHandler: ProfileHandler
 
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
@@ -154,12 +157,11 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     this.initializeForm();
   }
 
-  ngOnInit() {
-    this.formControlSubscriptions = combineLatest(
-      this.onSyllabusChange(),
-      this.onMediumChange(),
-      this.onGradeChange(),
-    ).subscribe();
+  async ngOnInit() {
+    this.supportedProfileAttributes = await this.profileHandler.getSupportedProfileAttributes(false);
+    const subscriptionArray: Array<any> = this.updateAttributeStreamsnSetValidators(this.supportedProfileAttributes);
+    this.formControlSubscriptions = combineLatest(subscriptionArray).subscribe();
+    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
   }
 
   ngOnDestroy() {
@@ -190,7 +192,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide({id: 'login'});
+    this.sbProgressLoader.hide({ id: 'login' });
   }
 
   /**
@@ -203,10 +205,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
     }
     this.profileEditForm = this.fb.group({
       syllabus: [],
-        boards: [],
-        medium: [],
-        grades: [],
-        subjects: []
+      boards: [],
+      medium: [],
+      grades: [],
+      subjects: []
     });
   }
 
@@ -267,7 +269,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           const boards = await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise();
           this.boardList = boards.map(t => ({ name: t.name, code: t.code }));
 
-          const boardTerm = boards.find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+          const boardTerm = boards.find(b => b.name === (this.syllabusList.find((s) => s.code === value[0]).name));
 
           this.boardControl.patchValue([boardTerm.code]);
 
@@ -291,8 +293,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           // todo
           console.error(e);
         } finally {
-          // todo
-          // this.mediumControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -301,7 +301,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
-      tap(async (value) => {
+      tap(async () => {
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -325,11 +325,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             this.gradeControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          // this.gradeControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -339,10 +336,6 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
   private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
-        // await this.commonUtilService.getLoader().then((loader) => {
-        //   this.loader = loader;
-        //   this.loader.present();
-        // });
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -361,11 +354,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             this.subjectControl.patchValue([]);
           }
         } catch (e) {
-          // todo
           console.error(e);
         } finally {
-          // todo
-          // this.subjectControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -383,13 +373,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       } else {
         this.showErrorToastMessage('BOARD');
       }
-    } else if (formVal.medium && !formVal.medium.length) {
+    } else if (formVal.medium && !formVal.medium.length && this.supportedProfileAttributes['medium']) {
       if (this.showOnlyMandatoryFields) {
         this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
-    } else if (formVal.grades && !formVal.grades.length) {
+    } else if (formVal.grades && !formVal.grades.length && this.supportedProfileAttributes['gradeLevel']) {
       if (this.showOnlyMandatoryFields) {
         this.gradeSelect.open();
       } else {
@@ -478,7 +468,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(updatedProfile => {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
-                .then( async (value) => {
+                .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
                   if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
                     this.router.navigate([RouterLinks.TABS]);
@@ -489,10 +479,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                         isShowBackButton: false
                       }
                     };
-                    this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
                   }
                 });
-            }).catch(e => {
+            }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
                 this.router.navigate([RouterLinks.TABS]);
@@ -503,7 +493,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                     isShowBackButton: false
                   }
                 };
-                this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
               }
             });
         } else {
@@ -524,7 +514,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
 
   async getLoggedInFrameworkCategory() {
     try {
-      const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails({ channelId: this.frameworkService.activeChannelId }).toPromise()
+      const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails(
+        { channelId: this.frameworkService.activeChannelId }).toPromise();
       const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
         frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
       }).toPromise();
@@ -532,7 +523,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         language: '',
         requiredCategories: []
       }).toPromise();
-      this.frameworkId =  activeChannelDetails.defaultFramework;
+      this.frameworkId = activeChannelDetails.defaultFramework;
       this.categories = defaultFrameworkDetails.categories;
       const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
       const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
@@ -562,5 +553,23 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       frameworkId,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     }).toPromise();
+  }
+
+  private updateAttributeStreamsnSetValidators(attributes: { [key: string]: string }): Array<any> {
+    const subscriptionArray = [];
+    Object.keys(attributes).forEach((attribute) => {
+      switch (attribute) {
+        case 'board':
+          subscriptionArray.push(this.onSyllabusChange());
+          break;
+        case 'medium':
+          subscriptionArray.push(this.onMediumChange());
+          break;
+        case 'gradeLevel':
+          subscriptionArray.push(this.onGradeChange());
+          break;
+      }
+    });
+    return subscriptionArray;
   }
 }

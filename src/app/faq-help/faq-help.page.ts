@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService, } from '@app/services/app-global-service.service';
 import { AppHeaderService, } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractType, PageId, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
+import { Environment, InteractType, PageId, InteractSubtype, ImpressionType, CorReleationDataType } from '@app/services/telemetry-constants';
 import {
   SharedPreferences,
   TelemetryObject,
@@ -15,6 +15,7 @@ import {
   SystemSettings,
   FaqService,
   GetFaqRequest,
+  CorrelationData,
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
@@ -57,6 +58,7 @@ export class FaqHelpPage implements OnInit {
   jsonURL: any;
   textValue: any;
   value: any;
+  corRelation: Array<CorrelationData> = [];
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
@@ -75,6 +77,15 @@ export class FaqHelpPage implements OnInit {
     private router: Router,
     private zone: NgZone
   ) {
+    this.getNavParam();
+  }
+
+  private getNavParam() {
+    const navExtras = this.router.getCurrentNavigation().extras && this.router.getCurrentNavigation().extras.state;
+    if (navExtras) {
+      this.corRelation = navExtras.corRelation || [];
+      this.corRelation.push({ id: PageId.FAQ, type: CorReleationDataType.FROM_PAGE });
+    }
   }
 
   ngOnInit() {
@@ -92,7 +103,12 @@ export class FaqHelpPage implements OnInit {
       ImpressionType.VIEW,
       '',
       PageId.FAQ,
-      Environment.USER);
+      Environment.USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelation);
   }
 
   receiveMessage(event) {
@@ -312,7 +328,8 @@ export class FaqHelpPage implements OnInit {
     this.appGlobalService.formConfig = formConfig;
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
-        data: this.data
+        data: this.data,
+        corRelation: this.corRelation
       }
     });
   }

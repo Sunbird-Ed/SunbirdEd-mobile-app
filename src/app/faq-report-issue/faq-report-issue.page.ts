@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentType, AudienceFilter, ProfileConstants, FormConfigSubcategories } from '../app.constant';
+import { AudienceFilter, ProfileConstants, FormConfigSubcategories, PrimaryCategory } from '../app.constant';
 import {
   ProfileService,
   ContentService,
@@ -16,8 +16,6 @@ import {
   FrameworkCategoryCodesGroup,
   Framework,
   FrameworkService,
-  GetFrameworkCategoryTermsRequest,
-  FrameworkCategoryCode,
   TelemetryService,
   TelemetrySyncStat,
   CorrelationData
@@ -35,21 +33,20 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { map, tap, switchMap, distinctUntilChanged, catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { FormControl } from '@angular/forms';
-import { defer, of, EMPTY } from 'rxjs';
 import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { Location } from '@angular/common';
-import { FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 import { ModalController } from '@ionic/angular';
+import { FrameworkCommonFormConfigBuilder } from '@app/services/common-form-config-builders/framework-common-form-config-builder';
+import {AliasBoardName} from '@app/pipes/alias-board-name/alias-board-name';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
 
 @Component({
-  selector: 'app-fa-report-issue',
+  selector: 'app-faq-report-issue',
   templateUrl: './faq-report-issue.page.html',
   styleUrls: ['./faq-report-issue.page.scss']
 })
@@ -122,12 +119,14 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     private translate: TranslateService,
     private modalCtrl: ModalController,
     public zone: NgZone,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private frameworkCommonFormConfigBuilder: FrameworkCommonFormConfigBuilder,
+    private aliasBoardName: AliasBoardName
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
       this.formContext = this.router.getCurrentNavigation().extras.state.formCnotext;
-      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation || [];
       if (this.router.getCurrentNavigation().extras.state.showHeader) {
         this.headerService.showHeaderWithBackButton();
         this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -234,7 +233,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       server: true
     };
     const contentRequest: ContentRequest = {
-      contentTypes: ContentType.FOR_DOWNLOADED_TAB,
+      primaryCategories: PrimaryCategory.FOR_DOWNLOADED_TAB,
       audience: AudienceFilter.GUEST_TEACHER
     };
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(
@@ -276,8 +275,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,
-      PageId.FAQ_REPORT_ISSUE, undefined,
-      values
+      PageId.FAQ_REPORT_ISSUE,
+      undefined,
+      values,
+      undefined,
+      this.corRelationList
     );
   }
 
@@ -395,7 +397,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       subjectList: this.extractPrepareFieldStr('subject'),
       relevantTerms: this.relevantTerms,
       curLang: this.translate.currentLang
-    }
+    };
     const sortOptionsModal = await this.modalCtrl.create({
       component: ExploreBooksSortComponent,
       componentProps: props
@@ -585,239 +587,15 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   getClosure(type: string) {
-    // Board Closure
-    const boardClosure: FieldConfigOptionsBuilder<{ name: string, code: string, deafult?: any }> =
-      ((control: FormControl, _, notifyLoading, notifyLoaded) => {
-        return defer(async () => {
-          notifyLoading();
-          const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
-            language: this.translate.currentLang,
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-          };
-
-          const list = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise();
-          const options: FieldConfigOption<{ name: string, code: string }>[] = [];
-          list.forEach(element => {
-            const value: FieldConfigOption<{ name: string, code: string }> = {
-              label: element.name,
-              value: {
-                name: element.name,
-                code: element.identifier
-              }
-            };
-            options.push(value);
-
-            if (this.profile && this.profile.syllabus && this.profile.syllabus.length
-              && this.profile.syllabus[0] === element.identifier) {
-              control.patchValue(value.value);
-            }
-          });
-          notifyLoaded();
-          return options;
-        }).pipe(
-          catchError((e) => {
-            console.error(e);
-            notifyLoaded();
-            return EMPTY;
-          })
-        );
-      });
-
-    // Medium Closure
-    const mediumClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
-      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-        if (!context) {
-          return of([]);
-        }
-        return context.valueChanges.pipe(
-          distinctUntilChanged((v1, v2) => {
-            return this.valueComparator(v1 && v1.code, v2 && v2.code);
-          }),
-          tap(notifyLoading),
-          switchMap((value) => {
-            if (!value) {
-              return of([]);
-            }
-            const userInput: { name: string, code: string } = value;
-            return defer(async () => {
-              const framework = await this.frameworkService.getFrameworkDetails({
-                from: CachedItemRequestSourceFrom.SERVER,
-                frameworkId: userInput.code,
-                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-              }).toPromise();
-
-              const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-                frameworkId: userInput.code,
-                requiredCategories: [FrameworkCategoryCode.BOARD],
-                currentCategoryCode: FrameworkCategoryCode.BOARD,
-                language: this.translate.currentLang
-              };
-
-              const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise()).
-                find(b => b.name === userInput.name);
-
-              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-                frameworkId: framework.code,
-                requiredCategories: [FrameworkCategoryCode.MEDIUM],
-                prevCategoryCode: FrameworkCategoryCode.BOARD,
-                currentCategoryCode: FrameworkCategoryCode.MEDIUM,
-                language: this.translate.currentLang,
-                selectedTermsCodes: [boardTerm.code]
-              };
-
-              const list = await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise();
-              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-              list.forEach(element => {
-                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                  label: element.name,
-                  value: {
-                    name: element.name,
-                    code: element.code,
-                    frameworkCode: framework.code
-                  }
-                };
-                options.push(value);
-
-                if (!context.dirty && this.profile && this.profile.medium && this.profile.medium.length
-                  && this.profile.medium[0] === element.code) {
-                  control.patchValue(value.value);
-                }
-              });
-              return options;
-            });
-          }),
-          tap(notifyLoaded),
-          catchError((e) => {
-            console.error(e);
-            notifyLoaded();
-            return EMPTY;
-          })
-        );
-      });
-
-    // Grade Closure
-    const gradeClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
-      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-        if (!context) {
-          return of([]);
-        }
-        return context.valueChanges.pipe(
-          distinctUntilChanged((v1, v2) => {
-            return this.valueComparator(v1 && v1.code, v2 && v2.code);
-          }),
-          tap(notifyLoading),
-          switchMap((value) => {
-            if (!value) {
-              return of([]);
-            }
-            const userInput: { name: string, code: string, frameworkCode: string } = value;
-            return defer(async () => {
-              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-                frameworkId: userInput.frameworkCode,
-                requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-                prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-                currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-                language: this.translate.currentLang,
-                selectedTermsCodes: [context.value.code]
-              };
-
-              const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
-              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-              list.forEach(element => {
-                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                  label: element.name,
-                  value: {
-                    name: element.name,
-                    code: element.code,
-                    frameworkCode: userInput.frameworkCode
-                  }
-                };
-                options.push(value);
-
-                if (!context.dirty && this.profile && this.profile.grade && this.profile.grade.length
-                  && this.profile.grade[0] === element.code) {
-                  control.patchValue(value.value);
-                }
-              });
-              return options;
-            });
-          }),
-          tap(notifyLoaded),
-          catchError((e) => {
-            console.error(e);
-            notifyLoaded();
-            return EMPTY;
-          })
-        );
-
-      });
-
-    // Subject Closure
-    const subjectClosure: FieldConfigOptionsBuilder<{ name: string, code: string, frameworkCode: string }> =
-      ((control: FormControl, context: FormControl, notifyLoading, notifyLoaded) => {
-        if (!context) {
-          return of([]);
-        }
-        return context.valueChanges.pipe(
-          distinctUntilChanged((v1, v2) => {
-            return this.valueComparator(v1 && v1.code, v2 && v2.code);
-          }),
-          tap(notifyLoading),
-          switchMap((value) => {
-            if (!value) {
-              return of([]);
-            }
-            const userInput: { name: string, code: string, frameworkCode: string } = value;
-            return defer(async () => {
-              const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-                frameworkId: userInput.frameworkCode,
-                requiredCategories: [FrameworkCategoryCode.SUBJECT],
-                prevCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-                currentCategoryCode: FrameworkCategoryCode.SUBJECT,
-                language: this.translate.currentLang,
-                selectedTermsCodes: [context.value.code]
-              };
-
-              const list = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise());
-              const options: FieldConfigOption<{ name: string, code: string, frameworkCode: string }>[] = [];
-              list.forEach(element => {
-                const value: FieldConfigOption<{ name: string, code: string, frameworkCode: string }> = {
-                  label: element.name,
-                  value: {
-                    name: element.name,
-                    code: element.code,
-                    frameworkCode: userInput.frameworkCode
-                  }
-                };
-                options.push(value);
-
-                if (!context.dirty && this.profile && this.profile.subject && this.profile.subject.length
-                  && this.profile.subject[0] === element.code) {
-                  control.patchValue(value.value);
-                }
-              });
-              return options;
-            });
-          }),
-          tap(notifyLoaded),
-          catchError((e) => {
-            console.error(e);
-            notifyLoaded();
-            return EMPTY;
-          })
-        );
-      });
-
     switch (type) {
       case 'board':
-        return boardClosure;
+        return this.frameworkCommonFormConfigBuilder.getBoardConfigOptionsBuilder(this.profile);
       case 'medium':
-        return mediumClosure;
+        return this.frameworkCommonFormConfigBuilder.getMediumConfigOptionsBuilder(this.profile);
       case 'grade':
-        return gradeClosure;
+        return this.frameworkCommonFormConfigBuilder.getGradeConfigOptionsBuilder(this.profile);
       case 'subject':
-        return subjectClosure;
+        return this.frameworkCommonFormConfigBuilder.getSubjectConfigOptionsBuilder(this.profile);
     }
   }
 
@@ -855,13 +633,13 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     bmgskeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(fields, element)) {
         if (!this.bmgsString) {
-          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+          if (fields[element] && typeof fields[element] === 'object' && fields[element].length) {
             this.bmgsString = this.getStringFromArray(fields[element]);
           } else {
-            this.bmgsString = fields[element].name ? fields[element].name : fields[element];
+            this.bmgsString = fields[element].name ? this.aliasBoardName.transform(fields[element].name) : fields[element];
           }
         } else {
-          if(fields[element] && typeof fields[element] === 'object' && fields[element].length) {
+          if (fields[element] && typeof fields[element] === 'object' && fields[element].length) {
             this.bmgsString += ', ' + this.getStringFromArray(fields[element]);
           } else {
             this.bmgsString += ', ' + (fields[element].name ? fields[element].name : fields[element]);
@@ -883,17 +661,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   statusChanged($event) {
     this.isFormValid = $event.isValid;
     this.btnColor = this.isFormValid ? '#006DE5' : '#8FC4FF';
-  }
-
-  private valueComparator(v1: any, v2: any): boolean {
-    if (typeof v1 === 'object' && typeof v2 === 'object') {
-      return (JSON.stringify(v1) !== JSON.stringify(v2));
-    } else if (v1 === v2) {
-      return true;
-    } else if (!v1 && !v2) {
-      return true;
-    }
-    return false;
   }
 
   async dataLoadStatus($event) {

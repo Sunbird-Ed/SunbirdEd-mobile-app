@@ -81,3 +81,24 @@ ion-icon {
     font-size: 24px;
     padding: 0 4px ;
 }
+
+.sb-menu-item-switch{
+    position: relative;
+    top: 5px;
+}
+.badge-container{
+    position: absolute;
+    top: 5px;
+    left: 8px;
+    background: #e0005a;
+    color: white;
+    font-size: 9px;
+    padding-bottom: 3px;
+    border-radius: 6px;
+}
+
+.update-icon {
+    height: auto;
+    float: left;
+    margin-right: 16px;
+}

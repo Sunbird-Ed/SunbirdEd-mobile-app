@@ -289,52 +289,92 @@ export const mockLocationConfigResponse =
  }
 } as any;
 
+
+export const mockPdfPlayerConfigurationResponse =
+{
+  form : {
+    type :  'config' ,
+    subtype :  'pdfPlayer' ,
+    action :  'get' ,
+    data : {
+      action :  'get' ,
+      fields : [
+        {
+          name: 'pdfPlayer',
+          code: 'pdf',
+          values: [
+            {
+              isEnabled: true
+             }
+          ]
+        }
+     ]
+   }
+ }
+} as any;
+
 export const mockContentConfigResponse =
 {
   form : {
     type :  'config' ,
-    subtype :  'content' ,
+    subtype :  'content_v2' ,
     action :  'filter' ,
     data : {
       action :  'filter' ,
       fields : [
        {
           name :  'library' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Resource' ,
-            'Collection' ,
-            'TextBook' ,
-            'LessonPlan' ,
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'course' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'downloads' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'Resource' ,
-            'Collection' ,
-            'TextBook' ,
-            'LessonPlan' ,
-            'Course'
-         ]
+            'Course',
+            'Learning Resource',
+            'Explanation Content',
+            'Teacher Resource',
+            'Content Playlist',
+            'Digital Textbook',
+            'Practice Question Set',
+            'eTextbook',
+            'Course Assessment'
+          ]
        },
        {
           name :  'dialcode' ,
-          code :  'contentType' ,
+          code :  'primaryCategory' ,
           values : [
-            'TextBook' ,
-            'TextBookUnit' ,
-            'Course'
-         ]
+            'Course',
+            'Digital Textbook',
+            'Textbook Unit'
+          ]
        }
      ]
    }
@@ -474,4 +514,234 @@ export const mockCategoryTermsResponse =
      status :  'Live'
   }
 ] as any;
+
+export const mockTenantPersonaInfoForm = [
+  {
+    code: 'persona',
+    type: 'select',
+    templateOptions: {
+      label: 'I am a',
+      placeHolder: 'Select persona',
+      options: [
+        {
+          value: 'teacher',
+          label: 'Teacher'
+        },
+        {
+          value: 'other',
+          label: 'Other'
+        }
+      ]
+    },
+    validations: [
+      {
+        type: 'required',
+        value: true,
+        message: 'Persona is required'
+      }
+    ]
+  },
+  {
+    code: 'tenant',
+    type: 'select',
+    templateOptions: {
+      label: 'with',
+      placeHolder: 'Select State/ Institution',
+      options: [
+        {
+          label: 'Andhra Pradesh',
+          value: '012320771042492416102'
+        }
+      ],
+      validations: [
+        {
+          type: 'required',
+          value: true,
+          message: 'Persona is required'
+        }
+      ]
+    }
+  }
+];
+
+export const mockSelfDeclarationForm = [
+  {
+    code: 'name',
+    type: 'label',
+    templateOptions: {
+      labelHtml: {
+        contents: '<p>$0:&nbsp;$1</p>',
+        values: {
+          $0: 'NAME',
+          $1: ''
+        }
+      }
+    }
+  },
+  {
+    code: 'state',
+    type: 'label',
+    templateOptions: {
+      labelHtml: {
+        contents: '<p>$0:&nbsp;$1</p>',
+        values: {
+          $0: 'STATE',
+          $1: ''
+        }
+      }
+    }
+  },
+  {
+    code: 'district',
+    type: 'label',
+    templateOptions: {
+      labelHtml: {
+        contents: '<p>$0:&nbsp;$1</p>',
+        values: {
+          $0: 'DISTRICT',
+          $1: ''
+        }
+      }
+    }
+  },
+  {
+    code: 'externalIds',
+    type: 'nested_group',
+    children: [
+      {
+        code: 'declared-phone',
+        fieldName: 'Mobile Number',
+        type: 'input',
+        templateOptinputions: {
+          labelHtml: {
+            contents: '<span>$0&nbsp;<span class=\required-asterisk\>*</span></span>',
+            values: {
+              $0: 'PHONE_PLACEHOLDER'
+            }
+          },
+          placeHolder: 'ENTER_PHONE_POPUP_TITLE',
+          prefix: '+91 -'
+        },
+        validations: [
+          {
+            type: 'required',
+            value: true,
+            message: 'ERROR_PHONE_REQUIRED'
+          },
+          {
+            type: 'pattern',
+            value: '^[6-9*][0-9*]{9}$',
+            message: 'ERROR_PHONE_INVALID'
+          }
+        ],
+        asyncValidation: {
+          marker: 'MOBILE_OTP_VALIDATION',
+          message: 'PLEASE_VALIDATE_YOUR_MOBILE_NUMBER',
+          trigger: 'validate'
+        }
+      },
+      {
+        code: 'declared-email',
+        fieldName: 'Email Address',
+        type: 'input',
+        templateOptions: {
+          placeHolder: 'EMAIL_PLACEHOLDER',
+          label: 'EMAIL_ID_PLACEHOLDER'
+        },
+        validations: [
+          {
+            type: 'pattern',
+            value: '^[A-Za-z0-9._*%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$',
+            message: 'ERROR_EMAIL_INVALID'
+          }
+        ],
+        asyncValidation: {
+          marker: 'EMAIL_OTP_VALIDATION',
+          message: 'PLEASE_VALIDATE_YOUR_EMAIL_ADDRESS',
+          trigger: 'validate'
+        }
+      },
+      {
+        code: 'declared-school-name',
+        fieldName: 'School/Organization name',
+        type: 'input',
+        templateOptions: {
+          label: 'SCHOOL_OR_ORG_NAME',
+          placeHolder: 'ENTER_SCHOOL_NAME'
+        },
+        validations: [
+          {
+            type: 'pattern',
+            value: '^[^\',(\\r\\n|\\r|\\n)]*$',
+            message: 'Special characters not allowed'
+          }
+        ]
+      },
+      {
+        code: 'declared-school-udise-code',
+        fieldName: 'School UDISE ID/Org ID',
+        type: 'input',
+        templateOptions: {
+          label: 'SCHOOL_UDISE_ID_OR_ORG_ID',
+          placeHolder: 'ENTER_UDISE_ID'
+        },
+        validations: [
+          {
+            type: 'pattern',
+            value: '^[^\',(\\r\\n|\\r|\\n)]*$',
+            message: 'Special characters not allowed'
+          }
+        ]
+      },
+      {
+        code: 'declared-ext-id',
+        fieldName: 'Your ID from State/Board/Org',
+        type: 'input',
+        templateOptions: {
+          labelHtml: {
+            contents: '<span>$0&nbsp;<span class=\required-asterisk\>*</span></span>',
+            values: {
+              $0: 'ENTER_ID_AS_REQUESTED_BY_STATE_BOARD_ORG'
+            }
+          },
+          placeHolder: 'ENTER_ID'
+        },
+        validations: [
+          {
+            type: 'required',
+            value: true,
+            message: 'ID_IS_REQUIRED'
+          },
+          {
+            type: 'pattern',
+            value: '^[^\',(\\r\\n|\\r|\\n)]*$',
+            message: 'Special characters not allowed'
+          }
+        ]
+      }
+    ],
+    templateOptions: {}
+  },
+  {
+    code: 'tnc',
+    type: 'checkbox',
+    templateOptions: {
+      labelHtml: {
+        contents: '<span>$tnc <u><a href=\$url\>$0</a></u></span>',
+        values: {
+          $tnc: 'SELF_DECLARE_TEACHER_TNC',
+          $url: 'url',
+          $0: 'PRIVACY_POLICY'
+        }
+      }
+    },
+    validations: [
+      {
+        type: 'required',
+        value: true,
+        message: ''
+      }
+    ]
+  }
+];
 

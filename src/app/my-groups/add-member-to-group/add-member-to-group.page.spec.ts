@@ -135,7 +135,7 @@ describe('AddMemberToGroupPage', () => {
             expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
                 PageId.ADD_MEMBER,
                 Environment.GROUP,
-                true
+                true, undefined, addMemberToGroupPage.corRelationList
             );
             expect(mockLocation.back).toHaveBeenCalled();
         });
@@ -187,20 +187,20 @@ describe('AddMemberToGroupPage', () => {
 
         it('should fetch from preferences and store it const variable if ' +
             'false then trigger native element click and put true in preferences again', (done) => {
-            // arrange
-            mockPreferences.getBoolean = jest.fn(() => of(false));
-            mockPreferences.putBoolean = jest.fn();
-            addMemberToGroupPage.addMemberInfoPopupRef = {nativeElement: {click: jest.fn()}};
-            // act
-            addMemberToGroupPage.ionViewDidEnter();
-            // assert
-            expect(mockPreferences.getBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup');
-            setTimeout(() => {
-                expect(addMemberToGroupPage.addMemberInfoPopupRef.nativeElement.click).toHaveBeenCalled();
-                expect(mockPreferences.putBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup', true);
-                done();
-            }, 0);
-        });
+                // arrange
+                mockPreferences.getBoolean = jest.fn(() => of(false));
+                mockPreferences.putBoolean = jest.fn();
+                addMemberToGroupPage.addMemberInfoPopupRef = { nativeElement: { click: jest.fn() } };
+                // act
+                addMemberToGroupPage.ionViewDidEnter();
+                // assert
+                expect(mockPreferences.getBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup');
+                setTimeout(() => {
+                    expect(addMemberToGroupPage.addMemberInfoPopupRef.nativeElement.click).toHaveBeenCalled();
+                    expect(mockPreferences.putBoolean).toHaveBeenCalledWith('add_member_to_group_info_popup', true);
+                    done();
+                }, 0);
+            });
 
         it('should not call preferences put boolean if return value is true ', () => {
             // arrange
@@ -230,15 +230,15 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() => Promise.resolve('api key'));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
-                    PageId.ADD_MEMBER
-                );
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
                 expect(addMemberToGroupPage.username).toBeUndefined();
                 expect(addMemberToGroupPage.showErrorMsg).toBeTruthy();
                 done();
@@ -255,7 +255,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() => Promise.resolve('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => throwError(''));
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
@@ -263,8 +263,8 @@ describe('AddMemberToGroupPage', () => {
                     InteractType.TOUCH,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
-                    PageId.ADD_MEMBER
-                );
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
                 expect(addMemberToGroupPage.username).toBe('sample-user-name');
                 expect(addMemberToGroupPage.showLoader).toBe(false);
                 done();
@@ -285,7 +285,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.resolve('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() => Promise.resolve('api key'));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
@@ -299,7 +299,7 @@ describe('AddMemberToGroupPage', () => {
                     undefined,
                     undefined,
                     undefined,
-                    undefined,
+                    addMemberToGroupPage.corRelationList,
                     ID.VERIFY_MEMBER
                 );
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
@@ -316,7 +316,7 @@ describe('AddMemberToGroupPage', () => {
                     undefined,
                     undefined,
                     undefined,
-                    undefined,
+                    addMemberToGroupPage.corRelationList,
                     ID.VERIFY_MEMBER
                 );
                 expect(addMemberToGroupPage.isUserIdVerified).toBeTruthy();
@@ -333,7 +333,7 @@ describe('AddMemberToGroupPage', () => {
                     captchaKey: 'site key'
                 });
             });
-            mockSbUtility.verifyCaptcha = jest.fn(() =>  Promise.reject('api key'));
+            mockSbUtility.verifyCaptcha = jest.fn(() => Promise.reject('api key'));
             mockProfileService.checkServerProfileExists = jest.fn(() => of(undefined)) as any;
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
@@ -342,6 +342,20 @@ describe('AddMemberToGroupPage', () => {
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH,
+                    InteractSubtype.VERIFY_CLICKED,
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.INITIATED,
+                    '',
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined,
+                    addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_MEMBER);
                 done();
             }, 0);
         });
@@ -362,6 +376,20 @@ describe('AddMemberToGroupPage', () => {
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH,
+                    InteractSubtype.VERIFY_CLICKED,
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.INITIATED,
+                    '',
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined,
+                    addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_MEMBER);
                 done();
             }, 0);
         });
@@ -388,7 +416,7 @@ describe('AddMemberToGroupPage', () => {
             ];
             addMemberToGroupPage.userDetails = { userId: 'sample-user-id' };
             //  GroupMemberRole.MEMBER;
-            mockGroupService.addMembers = jest.fn(() => of({ error: { members: ['member-1'] } })) as any;
+            mockGroupService.addMembers = jest.fn(() => of({ error: { members: [{errorCode: 'EXCEEDED_MEMBER_MAX_LIMIT'}] } })) as any;
             mockCommonUtilService.showToast = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();
@@ -475,7 +503,8 @@ describe('AddMemberToGroupPage', () => {
                     InteractType.TOUCH,
                     InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
                     Environment.GROUP,
-                    PageId.ADD_MEMBER);
+                    PageId.ADD_MEMBER,
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
                 expect(addMemberToGroupPage.userDetails).not.toBeNull();
                 expect(mockGroupService.addMembers).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
@@ -486,7 +515,7 @@ describe('AddMemberToGroupPage', () => {
 
         it('should return if network is not available', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             mockCommonUtilService.presentToastForOffline = jest.fn();
             // act
             addMemberToGroupPage.onAddToGroupClick();

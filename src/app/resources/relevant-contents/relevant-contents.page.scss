@@ -1,0 +1,22 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
+
+.rc-title {
+  margin: 8px;
+  font-weight: bold;
+}
+
+.rc-bg-color {
+  background-color: map-get($colors, white_f2)
+}
+
+ion-button {
+  --background: #{$blue} !important;
+  height: 40px !important;
+}
+
+.no-content-msg {
+  text-align: center;
+  padding-top: 30%;
+}

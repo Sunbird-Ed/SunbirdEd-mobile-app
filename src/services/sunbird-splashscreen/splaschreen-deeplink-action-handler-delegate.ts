@@ -39,7 +39,7 @@ import {
   CourseService
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
+import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -48,12 +48,15 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { UtilityService } from '../utility-service';
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
-import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { QRScannerResultHandler } from '../qrscanresulthandler.service';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
 import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 import { Location } from '@angular/common';
+import { NavigationService } from '../navigation-handler.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentInfo } from '../content/content-info';
+import { ContentPlayerHandler } from '../content/player/content-player-handler';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -65,6 +68,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private childContent;
   private isChildContentFound;
   private enableRootNavigation = false;
+  private _context: any;
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -94,15 +98,27 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private utilityService: UtilityService,
     private loginHandlerService: LoginHandlerService,
     public translateService: TranslateService,
-    private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
     private sbProgressLoader: SbProgressLoader,
-    private location: Location
+    private location: Location,
+    private navService: NavigationService,
+    private contentPlayerHandler: ContentPlayerHandler
   ) {
     this.eventToSetDefaultOnboardingData();
   }
 
-  onAction(payload: any): Observable<undefined> {
+  set context(context) {
+    this._context = context;
+  }
+
+  get context() {
+    return this._context;
+  }
+
+  onAction(payload: any, context?): Observable<undefined> {
+    if (context) {
+      this.context = context;
+    }
     if (payload && payload.url) {
       this.handleDeeplink(payload.url);
     }
@@ -522,7 +538,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   /////////////////////////////////////////////////
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, payloadUrl?: string, route?: string) {
+  async navigateContent(
+    identifier, isFromLink = false, content?: Content | null,
+    payloadUrl?: string, route?: string, coreRelationList?: Array<CorrelationData>
+  ) {
     try {
       // TODO not required resetSavedQuizContent
       this.appGlobalServices.resetSavedQuizContent();
@@ -534,25 +553,44 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
       }
 
-      // this.appGlobalServices.skipCoachScreenForDeeplink = true;
       if (content && content.contentData &&
         content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl);
+        this.navigateQuizContent(identifier, content, isFromLink, payloadUrl, coreRelationList);
       } else if (content) {
         if (!route) {
           route = this.getRouterPath(content);
         }
         if (content.mimeType === MimeType.COLLECTION) {
-          this.navigateToCollection(identifier, content, payloadUrl, route);
+          this.navigateToCollection(identifier, content, payloadUrl, route, false, false, coreRelationList);
         } else {
           this.setTabsRoot();
-          await this.router.navigate([route],
-            {
+          if (this.context && this.context.notificationPayload && this.context.notificationPayload.actionData.openPlayer) {
+            const contentInfo: ContentInfo = {
+              telemetryObject: undefined,
+              rollUp: undefined,
+              correlationList: coreRelationList,
+              hierachyInfo: undefined,
+              course: undefined
+            };
+            const navExtras = {
               state: {
-                content,
-                corRelation: this.getCorrelationList(payloadUrl)
+                content: content,
               }
-            });
+            };
+            const telemetryObject = {
+              corRelationList: []
+            };
+            this.contentPlayerHandler.playContent(content, navExtras, telemetryObject, false, false);
+            this.closeProgressLoader();
+          } else {
+            await this.router.navigate([route],
+              {
+                state: {
+                  content,
+                  corRelation: this.getCorrelationList(payloadUrl)
+                }
+              });
+          }
         }
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -570,7 +608,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private getRouterPath(content) {
     let route;
-    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory === CsPrimaryCategory.COURSE.toLowerCase()) {
       route = RouterLinks.ENROLLED_COURSE_DETAILS;
     } else if (content.mimeType === MimeType.COLLECTION) {
       route = RouterLinks.COLLECTION_DETAIL_ETB;
@@ -580,7 +618,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return route;
   }
 
-  private async navigateQuizContent(identifier, content, isFromLink, payloadUrl) {
+  private async navigateQuizContent(identifier, content, isFromLink, payloadUrl, corRelationList) {
     this.appGlobalServices.limitedShareQuizContent = identifier;
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
@@ -595,7 +633,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         state: {
           content, autoPlayQuizContent: true,
-          corRelation: this.getCorrelationList(payloadUrl)
+          corRelation: this.getCorrelationList(payloadUrl, corRelationList)
         }
       });
   }
@@ -645,7 +683,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   async navigateToCollection(
     identifier, content: Content | null, payloadUrl: string, route?: string,
-    isOnboardingSkipped = false, isFromChannelDeeplink = false
+    isOnboardingSkipped = false, isFromChannelDeeplink = false, corRelationList?: Array<CorrelationData>
   ) {
     let childContentId;
     if (payloadUrl) {
@@ -672,122 +710,121 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     }
     if (this.childContent) {
-      if (this.childContent.mimeType === MimeType.COLLECTION) {
-        if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-          const chapterParams: NavigationExtras = {
-            state: {
-              courseContent: content,
-              chapterData: this.childContent,
-              isOnboardingSkipped,
-              isFromDeeplink: true,
-            }
-          };
-          this.closeProgressLoader();
-          this.setTabsRoot();
-          this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
-            chapterParams);
-        } else {
-          this.setTabsRoot();
-          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-            {
-              state: {
-                content,
-                corRelation: this.getCorrelationList(payloadUrl)
-              }
-            });
-        }
-      } else {
-        if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-          if (this.appGlobalServices.isGuestUser) {
-            this.setTabsRoot();
-            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-              {
+      switch (ContentUtil.isTrackable(this.childContent)) {
+        case 0:
+          switch (ContentUtil.isTrackable(content)) {
+            case 1:
+              const chapterParams: NavigationExtras = {
                 state: {
+                  courseContent: content,
+                  chapterData: this.childContent,
+                  isOnboardingSkipped,
+                  isFromDeeplink: true
+                }
+              };
+              this.closeProgressLoader();
+              this.setTabsRoot();
+              this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+                chapterParams);
+              break;
+            case 0:
+              this.navService.navigateToCollection({
+                content,
+                corRelation: this.getCorrelationList(payloadUrl, corRelationList)
+              });
+              break;
+          }
+          break;
+        case -1:
+        case 1:
+          switch (ContentUtil.isTrackable(content)) {
+            case 1:
+              if (this.appGlobalServices.isGuestUser) { // guest user
+                this.setTabsRoot();
+                this.navService.navigateToTrackableCollection({
                   content,
                   isFromChannelDeeplink,
-                  corRelation: this.getCorrelationList(payloadUrl)
+                  corRelation: this.getCorrelationList(payloadUrl, corRelationList)
+                });
+              } else {
+                const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
+                  userId: await this.appGlobalServices.getActiveProfileUid(),
+                };
+                const enrolledCourses = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise();
+                let isCourseEnrolled;
+                if (enrolledCourses && enrolledCourses.length > 0) {
+                  isCourseEnrolled = enrolledCourses.find(course => {
+                    return course.contentId === childContentId;
+                  });
                 }
-              });
-          } else {
-            const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
-              userId: this.appGlobalServices.getUserId(),
-            };
-            const enrolledCourses = await this.courseService.getEnrolledCourses(fetchEnrolledCourseRequest).toPromise();
-            let isCourseEnrolled;
-            if (enrolledCourses && enrolledCourses.length > 0) {
-              isCourseEnrolled = enrolledCourses.find(course => {
-                return course.contentId === childContentId;
-              });
-            }
-            if (isCourseEnrolled) {
-              this.setTabsRoot();
-              this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-                state: {
-                  content: this.childContent,
-                  depth: 1,
-                  isChildContent: true,
-                  corRelation: undefined,
-                  isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-                  isOnboardingSkipped
-                }
-              });
-            } else {
-              this.setTabsRoot();
-              this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-                {
-                  state: {
+                if (isCourseEnrolled) { // already enrolled
+                  this.setTabsRoot();
+                  this.navService.navigateToContent({
+                    content: this.childContent,
+                    depth: 1,
+                    isChildContent: true,
+                    isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                    isOnboardingSkipped,
+                    corRelation: this.getCorrelationList(payloadUrl, corRelationList)
+                  });
+                } else { // not enrolled in batch
+                  this.setTabsRoot();
+                  this.navService.navigateToTrackableCollection({
                     content,
                     isFromChannelDeeplink,
-                    corRelation: this.getCorrelationList(payloadUrl)
-                  }
-                });
-            }
+                    corRelation: this.getCorrelationList(payloadUrl, corRelationList)
+                  });
+                }
+              }
+              break;
+            case -1:
+            case 0:
+              this.setTabsRoot();
+              this.navService.navigateToContent({
+                content: this.childContent,
+                depth: 1,
+                isChildContent: true,
+                corRelation: this.getCorrelationList(payloadUrl, corRelationList),
+                isCourse: content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase(),
+                isOnboardingSkipped
+              });
+              this.sbProgressLoader.hide({ id: content.identifier });
+              break;
           }
-        } else {
-          this.setTabsRoot();
-          this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-            state: {
-              content: this.childContent,
-              depth: 1,
-              isChildContent: true,
-              corRelation: this.getCorrelationList(payloadUrl),
-              isCourse: content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase(),
-              isOnboardingSkipped
-            }
-          });
-        }
+          break;
       }
     } else {
-      if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-        this.setTabsRoot();
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-          {
-            state: {
-              content,
-              isOnboardingSkipped,
-              isFromChannelDeeplink,
-              corRelation: this.getCorrelationList(payloadUrl)
-            }
+      this.setTabsRoot();
+      switch (ContentUtil.isTrackable(content)) {
+        case 1:
+          this.navService.navigateToTrackableCollection({
+            content,
+            isOnboardingSkipped,
+            isFromChannelDeeplink,
+            corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
-      } else {
-        this.setTabsRoot();
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
-          {
-            state: {
-              content,
-              corRelation: this.getCorrelationList(payloadUrl)
-            }
+          break;
+        case 0:
+          this.navService.navigateToCollection({
+            content,
+            corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
+          break;
       }
     }
   }
 
-  private getCorrelationList(payloadUrl): Array<CorrelationData> {
-    const corRelationList: Array<CorrelationData> = [{
-      id: ContentUtil.extractBaseUrl(payloadUrl),
-      type: CorReleationDataType.SOURCE
-    }];
-    return corRelationList;
+  private getCorrelationList(payloadUrl, corRelation?: Array<CorrelationData>) {
+    if (!corRelation) {
+      corRelation = [];
+    }
+    if (payloadUrl) {
+      corRelation.push({
+        id: ContentUtil.extractBaseUrl(payloadUrl),
+        type: CorReleationDataType.SOURCE
+      });
+    }
+    return corRelation;
   }
 
   async getChildContents(identifier) {

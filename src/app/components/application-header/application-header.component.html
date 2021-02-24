@@ -45,16 +45,19 @@
         (click)="emitEvent($event, 'settings');">
         <ion-icon name="settings"></ion-icon>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
+        (click)="emitEvent($event, 'notification');" class="active-download-icon">
+        <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>
+        <ion-badge class="badge-container" *ngIf="unreadNotificationsCount">{{unreadNotificationsCount}}</ion-badge>
+      </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
         <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
       </ion-button>
-
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('information') >=0"
-                  (click)="emitEvent($event, 'information');">
+        (click)="emitEvent($event, 'information');">
         <img src="./assets/imgs/ic_info_circle.svg" class="tool-icon" alt="information">
       </ion-button>
-
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
         (click)="emitEvent($event, 'person');">
         <ion-icon name="person"></ion-icon>
@@ -95,7 +98,8 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <section *ngIf="isLoggedIn">
+    <div class="menu-section">
+    <section *ngIf="isLoggedIn" class="menu-container">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
           
@@ -156,6 +160,18 @@
         </div>
       </ion-item>
 
+      <ion-item (click)="switchTheme()">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/Help.png" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{SWITCH_TO_JOYFUL_THEME | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{SWITCH_TO_CLASSIC_THEME | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
@@ -188,6 +204,7 @@
       </ion-item>
 
     </ion-list>
+    </div>
   </ion-content>
   <ion-footer class="side-menu-footer">
     {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
@@ -206,7 +223,8 @@
   </ion-header>
   <ion-content>
 
-    <section *ngIf="isLoggedIn">
+    <div class="menu-section">
+    <section *ngIf="isLoggedIn" class="menu-container">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
           
@@ -268,6 +286,18 @@
         </div>
       </ion-item>
 
+      <ion-item (click)="switchTheme()">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
+        <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app langugae">
@@ -300,8 +330,18 @@
       </ion-item>
 
     </ion-list>
+    </div>
   </ion-content>
-  <ion-footer class="side-menu-footer">
-    {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+  <ion-footer class="side-menu-footer" style="height: 97px; padding: 26px">
+    <div *ngIf="!isUpdateAvailable">
+      {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+    </div>
+    <div *ngIf="isUpdateAvailable">
+      <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
+              (click)="emitSideMenuItemEvent($event, 'UPDATE')">
+        <img class="update-icon" src="./assets/imgs/ic_update.svg" alt="">
+        <span>{{ 'APP_UPDATE' | translate: {'%s': appName} }}</span>
+      </button>
+    </div>
   </ion-footer>
 </ion-menu>

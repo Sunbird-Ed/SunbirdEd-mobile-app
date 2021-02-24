@@ -8,6 +8,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import {
   Environment, InteractSubtype, InteractType, ID
 } from '../telemetry-constants';
+import { GroupErrorCodes } from '@app/app/app.constant';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,8 @@ export class GroupHandlerService {
       InteractType.TOUCH,
       InteractSubtype.ADD_TO_GROUP_CLICKED,
       Environment.GROUP,
-      pageId);
+      pageId,
+      undefined, undefined, undefined, corRelationList);
 
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -71,7 +73,11 @@ export class GroupHandlerService {
       if (addActivityResponse.error
         && addActivityResponse.error.activities
         && addActivityResponse.error.activities.length) {
-        this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        if (addActivityResponse.error.activities[0].errorCode === GroupErrorCodes.EXCEEDED_ACTIVITY_MAX_LIMIT) {
+          this.commonUtilService.showToast('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
+        } else {
+          this.commonUtilService.showToast('ADD_ACTIVITY_ERROR_MSG');
+        }
         this.location.back();
       } else {
         this.commonUtilService.showToast('ADD_ACTIVITY_SUCCESS_MSG');

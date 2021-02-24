@@ -2,19 +2,22 @@ import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
-import { ProfileService, ServerProfile, CachedItemRequestSourceFrom } from 'sunbird-sdk';
+import { ProfileService, ServerProfile, CachedItemRequestSourceFrom, ProfileType, SharedPreferences } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ProfileConstants, RouterLinks } from '../app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { ConsentService } from '@app/services/consent-service';
+import { FieldConfig } from '../components/common-forms/field-config';
+import { FormConstants } from '../form.constants';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -43,7 +46,8 @@ export class TermsAndConditionsPage implements OnInit {
     private splashScreenService: SplashScreenService,
     private externalIdVerificationService: ExternalIdVerificationService,
     private appGlobalService: AppGlobalService,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private consentService: ConsentService
   ) {
   }
 
@@ -115,10 +119,18 @@ export class TermsAndConditionsPage implements OnInit {
       );
       await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
-      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
-        userId: this.userProfileDetails.userId,
-        version: this.userProfileDetails.tncLatestVersion
-      })
+      let request;
+      if (this.userProfileDetails.managedBy) {
+        request = {
+          userId: this.userProfileDetails.userId,
+          version: this.userProfileDetails.tncLatestVersion
+        };
+      } else {
+        request = {
+          version: this.userProfileDetails.tncLatestVersion
+        };
+      }
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions(request)
         .toPromise();
 
       if (isTCAccepted) {
@@ -132,7 +144,6 @@ export class TermsAndConditionsPage implements OnInit {
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
-
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             this.dismissLoader(loader);
@@ -140,35 +151,63 @@ export class TermsAndConditionsPage implements OnInit {
               this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
               await this.appGlobalService.signinOnboardingLoader.present();
             }
+            const locationMappingConfig: FieldConfig<any>[] =
+            await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
             this.disableSubmitButton = false;
+            const categoriesProfileData = {
+              hasFilledLocation: this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig),
+              showOnlyMandatoryFields: true,
+              profile: value['profile'],
+              isRootPage: true
+            };
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile)
-              ||  await tncUpdateHandlerService.isSSOUser(profile)) {
+              if (this.commonUtilService.isUserLocationAvalable(profile, locationMappingConfig)
+             || await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
-                this.router.navigate(['/', RouterLinks.TABS]);
+                if (await tncUpdateHandlerService.isSSOUser(profile)) {
+                  await this.consentService.getConsent(profile, true);
+                }
+                categoriesProfileData['status'] = value['status'],
+                categoriesProfileData['isUserLocationAvalable'] = true;
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: {categoriesProfileData}
+                  });
+                } else {
+                  this.router.navigate(['/', RouterLinks.TABS]);
+              }
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 // closeSigninOnboardingLoader() is called in District-Mapping page
-                const navigationExtras: NavigationExtras = {
-                  state: {
-                    isShowBackButton: false
-                  }
-                };
-                this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                  categoriesProfileData['status'] = value['status'],
+                    categoriesProfileData['isUserLocationAvalable'] = false;
+                  this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                    state: { categoriesProfileData }
+                });
+                } else {
+                  this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                    state: categoriesProfileData
+               });
+              }
               }
             } else {
               // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
-              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                state: {
-                  hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
-                  showOnlyMandatoryFields: true,
-                  profile: value['profile'],
-                  isRootPage: true
-                }
-              });
+              if (await tncUpdateHandlerService.isSSOUser(profile)) {
+                await this.consentService.getConsent(profile, true);
+              }
+              if (profile.profileType === ProfileType.NONE || profile.profileType === ProfileType.OTHER.toUpperCase()) {
+                this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
+                  state: {categoriesProfileData}
+                });
+              } else {
+                this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                  state: categoriesProfileData
+             });
+            }
             }
           }).catch(async e => {
             this.dismissLoader(loader);

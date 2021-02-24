@@ -1,0 +1,67 @@
+<ion-content>
+
+    <div class="p-16 rc-bg-color" *ngIf="isLoading">
+        <div class="sb-textbook-container">
+            <sb-library-cards-stack 
+                [contentList]="[1,2,3,4,5,6,7,8]"
+                [maxCardCount]="8"
+                [isLoading]="isLoading">
+            </sb-library-cards-stack>
+        </div>
+    </div>
+
+    <div class="p-16 rc-bg-color" *ngIf="relevantContentList?.length">
+        <p class="rc-title">{{'FRMELEMNTS_LBL_CONTENT_FOUND' | translate }}</p>
+        <div class="sb-textbook-container">
+            <sb-library-cards-stack 
+                [contentList]="relevantContentList"
+                [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" 
+                [maxCardCount]="relevantContentCount"
+                [viewMoreButtonText]="'SEE_MORE_CONTENT' | translate"
+                (viewMoreClick)="viewMoreContent(contentOrder.RELEVANT)"
+                (cardClick)="navigateToTextBookDetailPage($event)">
+            </sb-library-cards-stack>
+        </div>
+    </div>
+
+    <div class="p-16 mt-8" *ngIf="similarContentList?.length">
+        <p class="rc-title">{{'FRMELEMNTS_LBL_CONTENT_AVAIALABLE_IN_OTHER_BOARD' | translate }}</p>
+        <div class="sb-textbook-container">
+            <sb-library-cards-stack 
+                [contentList]="similarContentList"
+                [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" 
+                [maxCardCount]="similarContentCount"
+                [viewMoreButtonText]="'SEE_MORE_CONTENT' | translate"
+                (viewMoreClick)="viewMoreContent(contentOrder.SIMILAR)"
+                (cardClick)="navigateToTextBookDetailPage($event)">
+            </sb-library-cards-stack>
+        </div>
+    </div>
+
+    <div class="no-content-msg" *ngIf="!isLoading && !similarContentList?.length && !relevantContentList?.length">
+        <div>
+            <img src="assets/imgs/group.svg" alt="no data found">
+        </div>
+        <strong>{{'FRMELEMNTS_LBL_NO_MATCHING_CONTENT' | translate}}</strong>
+
+        <p class="mb-0">{{'FRMELEMNTS_LBL_CONTENT_TO_BE_ADDED' | translate}}</p>
+        <p>{{'FRMELEMNTS_LBL_CLICK_HELP' | translate}}</p>
+    </div>
+
+    <div *ngIf="similarContentList?.length || relevantContentList?.length">
+        <div class="text-center mt-32">
+            <p class="mb-0">{{ "FRMELEMNTS_LBL_COULD_NOT_FIND_CONTENT_YET" | translate}}</p>
+        </div>
+        
+        <ion-button expand="block" class="M16 MB30" (click)="goToHelp()">
+            {{'FRMELEMNTS_BTN_SEEK_HELP' | translate}}
+        </ion-button>
+    </div>
+        
+</ion-content>
+
+<ion-footer *ngIf="!similarContentList?.length && !relevantContentList?.length">
+    <ion-button expand="block" class="M16 MB30" (click)="goToHelp()">
+        {{'FRMELEMNTS_BTN_SEEK_HELP' | translate}}
+    </ion-button>
+</ion-footer>

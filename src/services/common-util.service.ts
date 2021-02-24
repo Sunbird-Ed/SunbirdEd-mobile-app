@@ -9,12 +9,19 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria } from 'sunbird-sdk';
-
-import { PreferenceKey, ProfileConstants, RouterLinks, appLanguages, Location as loc } from '@app/app/app.constant';
-
+import {
+    SharedPreferences, ProfileService, Profile, ProfileType,
+    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria
+} from 'sunbird-sdk';
+import {
+    PreferenceKey, ProfileConstants, RouterLinks,
+    appLanguages, Location as loc
+} from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType, ObjectType } from '@app/services/telemetry-constants';
+import {
+    InteractType, InteractSubtype, PageId, Environment,
+    CorReleationDataType, ImpressionType, ObjectType
+} from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
@@ -192,7 +199,7 @@ export class CommonUtilService {
     async showContentComingSoonAlert(source, content?, dialCode?) {
         let message;
         if (content) {
-             message = await this.comingSoonMessageService.getComingSoonMessage(content);
+            message = await this.comingSoonMessageService.getComingSoonMessage(content);
         }
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -202,7 +209,7 @@ export class CommonUtilService {
         );
         if (source !== 'permission') {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'), source,
-            (dialCode ? dialCode : ''));
+                (dialCode ? dialCode : ''));
             return;
         }
         let popOver: any;
@@ -439,26 +446,34 @@ export class CommonUtilService {
 
 
     getUserLocation(profile: any) {
-        let userLocation = {
-            state: {},
-            district: {}
+        const userLocation = {
         };
         if (profile && profile.userLocations && profile.userLocations.length) {
-            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
-                if (profile.userLocations[i].type === 'state') {
-                    userLocation.state = profile.userLocations[i];
-                } else if (profile.userLocations[i].type === 'district') {
-                    userLocation.district = profile.userLocations[i];
-                }
-            }
+            profile.userLocations.forEach((d) => {
+                userLocation[d.type] = d;
+            });
         }
 
         return userLocation;
     }
 
-    isUserLocationAvalable(profile: any): boolean {
-        const location = this.getUserLocation(profile);
-        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
+    isUserLocationAvalable(profile: any, locationMappingConfig): boolean {
+        const location = this.getUserLocation(profile.serverProfile ? profile.serverProfile : profile);
+        let isAvailable = false;
+        if (locationMappingConfig && profile && profile.profileType !== ProfileType.NONE) {
+            const requiredFileds = this.findAllRequiredFields(locationMappingConfig, profile.profileType);
+            isAvailable = requiredFileds.every(key => Object.keys(location).includes(key));
+        }
+        return isAvailable;
+    }
+
+    private findAllRequiredFields(locationMappingConfig, userType) {
+        return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
+            if (config.validations && config.validations.find((v) => v.type === 'required')) {
+              acc.push(config.code);
+            }
+            return acc;
+          }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -477,6 +492,7 @@ export class CommonUtilService {
                 const profile = response;
                 const subscribeTopic: Array<string> = [];
                 subscribeTopic.push(profile.board[0]);
+                subscribeTopic.push(profile.profileType.concat('-', profile.board[0]));
                 profile.medium.forEach((m) => {
                     subscribeTopic.push(profile.board[0].concat('-', m));
                     profile.grade.forEach((g) => {
@@ -485,8 +501,11 @@ export class CommonUtilService {
                     });
                 });
                 await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
-                    subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
-                    subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    if (data) {
+                        subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                        subscribeTopic.push(profile.profileType.concat('-', JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-')));
+                        subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    }
                 });
                 await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
                     const previuslySubscribeTopics = JSON.parse(data);
@@ -520,7 +539,7 @@ export class CommonUtilService {
     }
 
     isAccessibleForNonStudentRole(profileType) {
-        return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER;
+        return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER || profileType === ProfileType.ADMIN;
     }
 
     public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
@@ -553,7 +572,8 @@ export class CommonUtilService {
         });
     }
 
-    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+    public async buildPermissionPopover(
+        handler: (selectedButton: string) => void,
         appName: string, whichPermission: string,
         permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
         return this.popOverCtrl.create({
@@ -634,9 +654,9 @@ export class CommonUtilService {
         const req: LocationSearchCriteria = {
             from: CachedItemRequestSourceFrom.SERVER,
             filters: {
-              type: loc.TYPE_DISTRICT,
-              parentId: id || undefined,
-              code: code || undefined
+                type: loc.TYPE_DISTRICT,
+                parentId: id || undefined,
+                code: code || undefined
             }
         };
         try {
@@ -646,4 +666,39 @@ export class CommonUtilService {
             return [];
         }
     }
+
+    async handleAssessmentStatus(assessmentStatus) {
+        if (assessmentStatus.isContentDisabled) {
+            this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+            return true;
+        }
+        if (assessmentStatus.isLastAttempt) {
+            return await this.showAssessmentLastAttemptPopup();
+        }
+        return false;
+    }
+
+    async showAssessmentLastAttemptPopup() {
+        const confirm = await this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                sbPopoverMainTitle: this.translateMessage('ASSESSMENT_LAST_ATTEMPT_MESSAGE'),
+                showCloseBtn: true,
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('CONTINUE'),
+                        btnClass: 'popover-color'
+                    },
+                ],
+            },
+            cssClass: 'sb-popover warning',
+        });
+        await confirm.present();
+        const { data } = await confirm.onDidDismiss();
+        if (data && data.canDelete) {
+            return false;
+        }
+        return true
+    }
+
 }

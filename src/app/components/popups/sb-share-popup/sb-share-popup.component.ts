@@ -2,7 +2,10 @@ import { UtilityService } from '@app/services/utility-service';
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { AndroidPermissionsService, CommonUtilService, ContentShareHandlerService, TelemetryGeneratorService } from '@app/services';
+import {
+  AndroidPermissionsService, AppGlobalService, CommonUtilService,
+  ContentShareHandlerService, TelemetryGeneratorService
+} from '@app/services';
 import {
   Environment,
   ImpressionType,
@@ -11,11 +14,20 @@ import {
   InteractType,
   InteractSubtype
 } from '@app/services/telemetry-constants';
-import { TelemetryObject, ContentDetailRequest, ContentService } from 'sunbird-sdk';
-import { ShareUrl, ShareMode, ContentType, MimeType } from '@app/app/app.constant';
+import {
+  TelemetryObject, ContentDetailRequest,
+  ContentService
+} from 'sunbird-sdk';
+import {
+  ShareUrl, ShareMode, MimeType
+} from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import {
+  AndroidPermission,
+  AndroidPermissionsStatus
+} from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -50,6 +62,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   pageId: string;
   telemetryObject: TelemetryObject;
   appName = '';
+  shareFromPlayer = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -62,6 +75,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     private appVersion: AppVersion,
     private commonUtilService: CommonUtilService,
     private permissionService: AndroidPermissionsService,
+    private appGlobalService: AppGlobalService
   ) {
     this.content = this.navParams.get('content');
     this.corRelationList = this.navParams.get('corRelationList');
@@ -70,6 +84,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.pageId = this.navParams.get('pageId');
     this.moduleId = this.navParams.get('moduleId');
     this.subContentIds = this.navParams.get('subContentIds');
+    this.shareFromPlayer = this.navParams.get('shareFromPlayer');
   }
 
   async ngOnInit() {
@@ -92,6 +107,10 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.appName = await this.appVersion.getAppName();
   }
 
+  ngOnDestroy(): void {
+    this.backButtonFunc.unsubscribe();
+  }
+
   private async getContentEndPoint(content, rootContentIdentifier) {
     if (content.identifier !== rootContentIdentifier) {
       const contentDetailRequest: ContentDetailRequest = {
@@ -107,7 +126,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     }
 
     let endPoint = '';
-    if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+    if (content.primaryCategory.toLowerCase() === CsPrimaryCategory.COURSE.toLowerCase()) {
       endPoint = ShareUrl.COURSE;
     } else if (content.mimeType === MimeType.COLLECTION) {
       endPoint = ShareUrl.COLLECTION;
@@ -117,7 +136,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     return endPoint;
   }
 
-  generateImpressionTelemetry() {
+  private generateImpressionTelemetry() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.SHARE_CONTENT_POPUP,
@@ -129,7 +148,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       this.corRelationList);
   }
 
-  generateShareClickTelemetry() {
+  private generateShareClickTelemetry() {
     this.telemetryGeneratorService.generateInteractTelemetry(this.shareItemType,
       '',
       Environment.HOME,
@@ -141,7 +160,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       ID.SHARE);
   }
 
-  generateConfirmClickTelemetry(shareMode) {
+  private generateConfirmClickTelemetry(shareMode) {
     this.telemetryGeneratorService.generateInteractTelemetry(shareMode,
       '',
       Environment.HOME,
@@ -151,10 +170,6 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       this.objRollup,
       this.corRelationList,
       ID.SHARE_CONFIRM);
-  }
-
-  ngOnDestroy(): void {
-    this.backButtonFunc.unsubscribe();
   }
 
   closePopover() {
@@ -168,7 +183,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       link: this.shareUrl
     };
     this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-      this.corRelationList, this.objRollup);
+      this.corRelationList, this.objRollup,  this.pageId);
     this.popoverCtrl.dismiss();
   }
 
@@ -181,7 +196,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           link: this.shareUrl
         };
         this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup);
+          this.corRelationList, this.objRollup, this.pageId);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
@@ -197,7 +212,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           saveFile: true,
         };
         this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
-          this.corRelationList, this.objRollup);
+          this.corRelationList, this.objRollup, this.pageId);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
@@ -244,6 +259,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
               InteractSubtype.ALLOW_CLICKED,
               Environment.HOME,
               PageId.PERMISSION_POPUP);
+            this.appGlobalService.isNativePopupVisible = true;
             this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
               .subscribe(async (status: AndroidPermissionsStatus) => {
                 if (status.hasPermission) {
@@ -268,6 +284,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                 }
+                this.appGlobalService.setNativePopupVisible(false, 1000);
                 resolve(undefined);
               });
           }

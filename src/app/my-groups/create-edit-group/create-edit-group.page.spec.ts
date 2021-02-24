@@ -23,7 +23,7 @@ describe('CreateEditGroupPage', () => {
     const mockAlertCtrl: Partial<AlertController> = {};
     const mockGroupService: Partial<GroupService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        getAppName : jest.fn(() => Promise.resolve('Sunbird')),
+        getAppName: jest.fn(() => Promise.resolve('Sunbird')),
         getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig')),
         networkInfo: jest.fn(),
     };
@@ -105,7 +105,7 @@ describe('CreateEditGroupPage', () => {
     });
 
     it('handleHeaderEvents', () => {
-        createEditGroupPage.handleHeaderEvents({name: 'back'});
+        createEditGroupPage.handleHeaderEvents({ name: 'back' });
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -136,7 +136,7 @@ describe('CreateEditGroupPage', () => {
             setTimeout(() => {
                 expect(mockPlatform.backButton).not.toBeUndefined();
                 expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
-                    PageId.CREATE_GROUP, Environment.GROUP, false
+                    PageId.CREATE_GROUP, Environment.GROUP, false, undefined, createEditGroupPage.corRelationList
                 );
                 done();
             }, 0);
@@ -145,7 +145,7 @@ describe('CreateEditGroupPage', () => {
 
     it('should return headers with backButton', () => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
-        const data = jest.fn((fn => fn({name: 'sample-event'})));
+        const data = jest.fn((fn => fn({ name: 'sample-event' })));
         mockHeaderService.headerEventEmitted$ = {
             subscribe: data
         } as any;
@@ -159,7 +159,8 @@ describe('CreateEditGroupPage', () => {
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP);
+            ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP,
+            undefined, undefined, undefined, undefined, createEditGroupPage.corRelationList);
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.INITIATED,
             '',
@@ -168,7 +169,7 @@ describe('CreateEditGroupPage', () => {
             undefined,
             undefined,
             undefined,
-            undefined,
+            createEditGroupPage.corRelationList,
             ID.CREATE_GROUP
         );
     });
@@ -196,17 +197,17 @@ describe('CreateEditGroupPage', () => {
     it('should return createGroupForm', () => {
         createEditGroupPage.createGroupForm = {
             controls: {
-                id : {}
+                id: {}
             }
         } as any;
-        expect(createEditGroupPage.createGroupFormControls).toEqual({id: {}});
+        expect(createEditGroupPage.createGroupFormControls).toEqual({ id: {} });
     });
 
     describe('onSubmit', () => {
         it('should return and new group invoked createGroup if createGroupForm is valid', (done) => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: undefined},
-                controls: {groupTerms: {setErrors: jest.fn(() => true)}},
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: undefined },
+                controls: { groupTerms: { setErrors: jest.fn(() => true) } },
                 valid: true
             } as any;
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
@@ -236,7 +237,7 @@ describe('CreateEditGroupPage', () => {
 
         it('should not return and new group invoked createGroup if createGroupForm is valid for catch part', (done) => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true'},
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true' },
                 valid: true
             } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -246,7 +247,7 @@ describe('CreateEditGroupPage', () => {
                 dismiss: dismissFn,
             }));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            mockGroupService.create = jest.fn(() => throwError({error: 'error'})) as any;
+            mockGroupService.create = jest.fn(() => throwError({ error: 'error' })) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
             createEditGroupPage.onSubmit();
@@ -264,7 +265,7 @@ describe('CreateEditGroupPage', () => {
 
         it('should not invoked createGroup if createGroupForm is not valid', () => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupTerms: 'true'},
+                value: { groupName: 'new-sample-group', groupTerms: 'true' },
                 valid: false
             } as any;
             createEditGroupPage.onSubmit();
@@ -274,11 +275,11 @@ describe('CreateEditGroupPage', () => {
 
         it('should call editgroup', (done) => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id'},
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id' },
                 valid: true
             } as any;
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            createEditGroupPage.groupDetails = {name: 'name'};
+            createEditGroupPage.groupDetails = { name: 'name' };
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -304,11 +305,11 @@ describe('CreateEditGroupPage', () => {
 
         it('should call editgroup', (done) => {
             createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id'},
+                value: { groupName: 'new-sample-group', groupDesc: 'group-desc', groupTerms: 'true', id: 'id' },
                 valid: true
             } as any;
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-            createEditGroupPage.groupDetails = {name: 'name'};
+            createEditGroupPage.groupDetails = { name: 'name' };
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -327,7 +328,7 @@ describe('CreateEditGroupPage', () => {
         });
     });
 
-    it( 'should open terms of use page', () => {
+    it('should open terms of use page', () => {
         // arrange
         // action
         createEditGroupPage.openTermsOfUse();

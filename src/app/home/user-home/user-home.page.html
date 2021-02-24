@@ -1,0 +1,71 @@
+<ion-content>
+  <div class="user-profile">
+    <span>{{'WELCOME' | translate}},</span>
+    <strong>&nbsp;{{profile?.handle}}</strong>
+  </div>
+  <div class="p-8">{{'BROWES_RELEVANT_CONTENT' | translate: {'app_name': appLabel} }}
+  </div>
+  <div class="p-8" (click)="editProfileDetails()" *ngIf="boards">
+    <div class="filter-style"><span>{{boards}}</span><span *ngIf="medium">{{', ' +medium}}</span><span *ngIf="grade">{{', ' +grade}}</span></div>
+    <div class="d-inline">
+      <ion-icon name="arrow-dropdown"></ion-icon>
+    </div>
+  </div>
+
+  <ng-container *ngFor="let section of displaySections">
+
+    <!-- Trackable contents -->
+    <div class="label" *ngIf="section?.title && section?.dataSrc?.name !== 'TRACKABLE_CONTENTS'">{{section?.title | translateJson}}</div>
+
+    <ng-container *ngIf="section?.dataSrc?.name === 'TRACKABLE_CONTENTS'">
+      <ng-container *ngFor="let subSection of section?.data?.sections">
+        <ng-container *ngIf="subSection?.contents?.length">
+          <sb-course-cards-hlist 
+            [title]="(section?.title) | translateJson"
+            [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
+            [contentList]="subSection.contents" [hideProgress]="true"
+            [viewMoreButtonText]="'VIEW_ALL' | translate"
+            (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+            (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
+          </sb-course-cards-hlist>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <!-- Pills -->
+    <ng-container *ngIf="section?.theme?.component === 'sb-pills-grid'">
+      <sb-pills-grid [pillShape]="section?.theme?.inputs?.pillShape"
+        [pillsViewType]="section?.theme?.inputs?.pillsViewType" 
+        [selectMode]="section?.theme?.inputs?.selectMode"
+        [minDisplayCount]="section?.theme?.inputs?.minDisplayCount"
+        [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
+        [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
+        (select)="handlePillSelect($event)">
+        <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase" [icon]="pillData?.icon"
+          [value]="pillData"></sb-pill-item>
+      </sb-pills-grid>
+    </ng-container>
+
+    <div class="sb-recently-viewed-container"
+      *ngIf="section?.data?.sections?.length && section?.data?.sections[0].contents?.length && section?.dataSrc?.name=== 'RECENTLY_VIEWED_CONTENTS'">
+      <!-- <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
+        (click)="navigateToViewMoreContentsPage(section);">
+        {{ 'VIEW_ALL' | translate }}</button> -->
+
+      <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
+        <div class="sb-card-container sb-card-recently-container">
+          <div class="recently-viewed-card-size" *ngFor="let content of section.data.sections[0].contents">
+            <sb-library-card
+              [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
+              [content]="content" [type]="'mobile_textbook'" [isLoading]="searchApiLoader"
+              (cardClick)="navigateToDetailPage($event, section?.title);"
+              [cardImg]="content?.appIcon || defaultAppIcon">
+            </sb-library-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</ion-content>

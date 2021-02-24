@@ -28,8 +28,11 @@ import {
   mockLocationConfigResponse,
   mockContentConfigResponse,
   mockforceUpgradeFormAPIResponse,
-  mockCategoryTermsResponse
+  mockCategoryTermsResponse,
+  mockPdfPlayerConfigurationResponse,
+  mockSelfDeclarationForm
 } from './formandframeworkutil.service.spec.data';
+import { FormConstants } from '../app/form.constants';
 
 
 describe('FormAndFrameworkUtilService', () => {
@@ -477,6 +480,46 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
+  describe('invokePdfPlayerConfiguration()', () => {
+    it('should invoke form api to get pdf player configuration' , (done) => {
+      mockFormService.getForm = jest.fn(() => of(mockPdfPlayerConfigurationResponse));
+      const resolve = jest.fn(() => Promise.resolve());
+      const reject = jest.fn(() => Promise.reject());
+      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration');
+      formAndFrameworkUtilService.invokePdfPlayerConfiguration(undefined, resolve , reject).then((res) => {
+        done();
+      });
+    });
+  });
+
+  describe('getPdfPlayerConfiguration()', () => {
+    it('should not invoke pdf player configuration , if config is available locally', (done) => {
+      mockFormService.getForm = jest.fn(() => of({}));
+      mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => true);
+      formAndFrameworkUtilService.getPdfPlayerConfiguration().then((response) => {
+        expect(response).toEqual(true);
+        done();
+      });
+    });
+
+    it('should invoke pdf player configuration, if config is not available locally' , (done) => {
+      mockFormService.getForm = jest.fn(() => of({}));
+      jest.spyOn(formAndFrameworkUtilService, 'invokePdfPlayerConfiguration').mockImplementation(() => {
+        return Promise.resolve();
+      });
+      mockAppGlobalService.getPdfPlayerConfiguration = jest.fn(() => undefined);
+      formAndFrameworkUtilService.getPdfPlayerConfiguration();
+      setTimeout(() => {
+        expect(formAndFrameworkUtilService.invokePdfPlayerConfiguration).toHaveBeenCalled();
+        done();
+      }, 0);
+      // then((response) => {
+        // expect(formAndFrameworkUtilService.invokePdfPlayerConfiguration).toHaveBeenCalled();
+        // done();
+      // });
+    });
+  });
+
   describe('getCourseFilterConfig()', () => {
 
     it('should invoke invokeCourseFilterConfigFormApi if cached response is not available', (done) => {
@@ -643,7 +686,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.invokeContentFilterConfigFormApi().then((response) => {
-        expect(response[0].values.length).toEqual(5);
+        expect(response[0].values.length).toEqual(9);
         done();
       });
     });
@@ -670,9 +713,17 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Course',
+          'Teacher Resource',
+          'Learning Resource',
+          'Explanation Content',
+          'Content Playlist',
+          'Digital Textbook',
+          'Practice Question Set',
+          'eTextbook',
+          'Course Assessment'
+        ]));
         done();
       });
     });
@@ -681,13 +732,21 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Course',
+          'Teacher Resource',
+          'Learning Resource',
+          'Explanation Content',
+          'Content Playlist',
+          'Digital Textbook',
+          'Practice Question Set',
+          'eTextbook',
+          'Course Assessment'
+        ]));
         done();
       });
     });
@@ -696,13 +755,19 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+        Promise.resolve(mockContentConfigResponse.form.data.fields));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('course').then((response) => {
-        expect(response).toEqual(['Course', 'Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
+        expect(response).toContain('Course');
+        expect(response).toContain('Teacher Resource');
+        expect(response).toContain('Learning Resource');
+        expect(response).toContain('Explanation Content');
+        expect(response).toContain('Content Playlist');
+        expect(response).toContain('Digital Textbook');
+        expect(response).toContain('Practice Question Set');
+        expect(response).toContain('eTextbook');
+        expect(response).toContain('Course Assessment');
         done();
       });
     });
@@ -711,14 +776,20 @@ describe('FormAndFrameworkUtilService', () => {
       // arrange
       formAndFrameworkUtilService['getCachedContentFilterConfig'] = jest.fn(() => undefined);
       formAndFrameworkUtilService['invokeContentFilterConfigFormApi'] = jest.fn(() =>
-        Promise.resolve([]));
+        Promise.resolve(Promise.resolve(mockContentConfigResponse.form.data.fields)));
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
-          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource',
-          'Course']);
+        expect(response).toContain('Course');
+        expect(response).toContain('Teacher Resource');
+        expect(response).toContain('Learning Resource');
+        expect(response).toContain('Explanation Content');
+        expect(response).toContain('Content Playlist');
+        expect(response).toContain('Digital Textbook');
+        expect(response).toContain('Practice Question Set');
+        expect(response).toContain('eTextbook');
+        expect(response).toContain('Course Assessment');
+
         done();
       });
     });
@@ -731,7 +802,11 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('dialcode').then((response) => {
-        expect(response).toEqual(['TextBook', 'TextBookUnit', 'Course']);
+        expect(response).toEqual(expect.arrayContaining([
+          'Digital Textbook',
+          'Textbook Unit',
+          'Course'
+        ]));
         expect(formAndFrameworkUtilService['getCachedContentFilterConfig']()).toBeUndefined();
         done();
       });
@@ -998,6 +1073,140 @@ describe('FormAndFrameworkUtilService', () => {
         }, 0);
       });
     });
+  });
+
+  describe('getContentRequestFormConfig()', () => {
+    it('should return the formConfig for reuest content', (done) => {
+      // arrange
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+            fields: []
+          }
+        }
+      }));
+      // act
+      formAndFrameworkUtilService.getContentRequestFormConfig().then(() => {
+        // assert
+        expect(mockFormService.getForm).toHaveBeenCalled();
+        done();
+      });
+      // assert
+
+    });
+  });
+
+  it('should get formConfig and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getFormConfig().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form getStateContactList and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getStateContactList().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form for getConsentFormConfig and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getConsentFormConfig().then(() => {
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form for notificationConfig and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getNotificationFormConfig().then(() => {
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should get form with board alias and return data with fields', (done) => {
+    // arrange
+    mockFormService.getForm = jest.fn(() => of({
+      form: {
+        data: {
+          fields: []
+        }
+      }
+    }));
+    // act
+    formAndFrameworkUtilService.getBoardAliasName().then(() => {
+      // assert
+      expect(mockFormService.getForm).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  describe('getFormFields()', () => {
+    it('should return the field data in the response', () => {
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+            fields: mockSelfDeclarationForm
+          }
+        }
+      }));
+
+      formAndFrameworkUtilService.getFormFields(FormConstants.SELF_DECLARATION).then((response) => {
+        expect(response).toEqual(mockSelfDeclarationForm);
+      });
+    });
+
+    it('should return the empty response', () => {
+      mockFormService.getForm = jest.fn(() => of({
+        form: {
+          data: {
+          }
+        }
+      }));
+
+      formAndFrameworkUtilService.getFormFields(FormConstants.SELF_DECLARATION, '12345678').then((response) => {
+        expect(response).toEqual([]);
+      });
+    });
+
   });
 
 });

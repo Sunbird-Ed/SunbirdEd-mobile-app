@@ -1,25 +1,33 @@
-import { Component, NgZone, Inject } from '@angular/core';
-import { NavController, Events, PopoverController, NavParams } from '@ionic/angular';
+import { Component, NgZone, Inject, OnInit } from '@angular/core';
 import {
-    SharedPreferences,
-    AuthService,
-    TelemetryObject,
-    InteractType,
+    NavController, Events, PopoverController, NavParams
+} from '@ionic/angular';
+import {
+    SharedPreferences, TelemetryObject, InteractType,
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, RouterLinks } from '@app/app/app.constant';
+import {
+    PreferenceKey, EventTopics
+} from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
-import { Router } from '@angular/router';
-import { LocalCourseService } from '@app/services';
+import {
+    InteractSubtype, Environment, PageId
+} from '@app/services/telemetry-constants';
+import {
+    LocalCourseService, AppGlobalService
+} from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentUtil } from '@app/util/content-util';
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
     selector: 'app-enrollment-details',
     templateUrl: './enrollment-details.component.html',
     styleUrls: ['./enrollment-details.component.scss'],
 })
-export class EnrollmentDetailsComponent {
+export class EnrollmentDetailsComponent implements OnInit {
     ongoingBatches: any;
     upcommingBatches: any;
     retiredBatched: any;
@@ -32,11 +40,12 @@ export class EnrollmentDetailsComponent {
     pageName: any;
     env: any;
     courseId: any;
+    content: any;
     todayDate: string;
 
     constructor(
-        @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
+        private appGlobalService: AppGlobalService,
         public navCtrl: NavController,
         public navParams: NavParams,
         private events: Events,
@@ -44,16 +53,21 @@ export class EnrollmentDetailsComponent {
         private popOverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private commonUtilService: CommonUtilService,
-        private router: Router,
-        private localCourseService: LocalCourseService
+        private navService: NavigationService,
+        private localCourseService: LocalCourseService,
+        private categoryKeyTranslator: CategoryKeyTranslator
     ) {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
         this.todayDate = window.dayjs().format('YYYY-MM-DD');
-        this.courseId = this.navParams.get('courseId');
-        this.getUserId();
+        this.content = this.navParams.get('content');
+        this.courseId = this.content.identifier;
+    }
 
+    async ngOnInit() {
+        this.userId = await this.appGlobalService.getActiveProfileUid();
+        this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
     }
 
     close(data?: any) {
@@ -63,14 +77,9 @@ export class EnrollmentDetailsComponent {
     resumeCourse(content: any) {
         this.saveContentContext(content);
 
-        if (content.lastReadContentId && content.status === 1) {
-            this.events.publish('course:resume', { content });
-            this.close();
-        } else {
-            this.close().then(() => {
-                this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
-            });
-        }
+        this.close().then(() => {
+            this.navService.navigateToDetailPage(content.content, { content, skipCheckRetiredOpenBatch: true });
+        });
     }
 
     saveContentContext(content: any) {
@@ -87,9 +96,8 @@ export class EnrollmentDetailsComponent {
         this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise();
     }
 
-    async enrollIntoBatch(content: any) {
-
-        const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, content, this.courseId);
+    async enrollIntoBatch(batch: any) {
+        const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch, this.courseId);
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.ENROLL_CLICKED,
             Environment.HOME,
@@ -100,52 +108,35 @@ export class EnrollmentDetailsComponent {
         await loader.present();
         const enrollCourse: EnrollCourse = {
             userId: this.userId,
-            batch: content,
+            batch,
             pageId: PageId.COURSE_BATCHES,
             courseId: this.courseId
         };
         this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
             .then((data: any) => {
                 this.zone.run(() => {
-                    this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+                    this.commonUtilService.showToast(this.categoryKeyTranslator.transform('FRMELEMNTS_MSG_COURSE_ENROLLED', this.content));
                     this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-                        batchId: content.id,
-                        courseId: content.courseId
+                        batchId: batch.id,
+                        courseId: batch.courseId
                     });
                     loader.dismiss();
-                    this.popOverCtrl.dismiss({ isEnrolled: true });
-                    this.navigateToDetailPage(content);
+                    this.popOverCtrl.dismiss({ isEnrolled: true, batchId: batch.id, courseId: batch.courseId });
+                    this.navigateToDetailPage(this.content);
                 });
             }, (error) => {
                 loader.dismiss();
             });
     }
 
-    /**
-     * Get logged-user id. User id is needed to enroll user into batch.
-     */
-    getUserId(): void {
-        this.authService.getSession().toPromise().then((session) => {
-            if (session === undefined || session == null) {
-                this.zone.run(() => { this.isGuestUser = true; });
-            } else {
-                this.zone.run(() => {
-                    this.isGuestUser = false;
-                    this.userId = session[ProfileConstants.USER_TOKEN];
-                });
-            }
-        });
-    }
-
     navigateToDetailPage(content: any, layoutName?: string): void {
         const identifier = content.contentId || content.identifier;
-        let type;
+        let telemetryObject;
         if (layoutName === this.layoutInProgress) {
-            type = ContentType.COURSE;
+            telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, '');
         } else {
-            type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+            telemetryObject = ContentUtil.getTelemetryObject(content);
         }
-        const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
 
         const values = new Map();
         values['sectionName'] = this.sectionName;
@@ -158,8 +149,7 @@ export class EnrollmentDetailsComponent {
             telemetryObject,
             values
         );
-        content.contentId = !content.contentId ? content.courseId : content.contentId;
-        this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
+        this.navService.navigateToDetailPage(content, { content });
     }
 
 }

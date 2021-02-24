@@ -9,9 +9,8 @@ import {
   CorrelationData,
   TelemetryObject,
   TelemetryService,
-  SharedPreferences
 } from 'sunbird-sdk';
-import { ContentType, EventTopics, MimeType, RouterLinks, PreferenceKey } from '../app/app.constant';
+import { EventTopics, RouterLinks } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
 import {
@@ -31,6 +30,7 @@ import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
+import { NavigationService } from './navigation-handler.service';
 
 declare var cordova;
 
@@ -52,7 +52,8 @@ export class QRScannerResultHandler {
     private navCtrl: NavController,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private formFrameWorkUtilService: FormAndFrameworkUtilService
+    private formFrameWorkUtilService: FormAndFrameworkUtilService,
+    private navService: NavigationService
   ) {
   }
 
@@ -156,14 +157,14 @@ export class QRScannerResultHandler {
     };
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
-        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
         const corRelationData: CorrelationData[] = [{
           id: CorReleationDataType.SCAN,
           type: CorReleationDataType.ACCESS_TYPE
         }];
         if (cData && cData.length) {
           this.telemetryService.updateCampaignParameters(cData);
-          this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject, corRelationData);
+          this.telemetryGeneratorService.generateUtmInfoTelemetry(params,
+            PageId.QRCodeScanner, ContentUtil.getTelemetryObject(content), corRelationData);
         }
 
         this.navigateToDetailsPage(content,
@@ -233,13 +234,10 @@ export class QRScannerResultHandler {
       }
     };
 
-    if (content.contentData.contentType === ContentType.COURSE) {
-      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
-    } else {
-      this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      navigationExtras.state
+    );
   }
 
   generateQRScanSuccessInteractEvent(scannedData, action, dialCode?, certificate?:

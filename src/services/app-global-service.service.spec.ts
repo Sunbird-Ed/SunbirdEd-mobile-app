@@ -555,7 +555,7 @@ describe('AppGlobalService', () => {
             mockPreferences.putBoolean = jest.fn(() => of(undefined));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: false } }))
             } as any)));
             // act
             appGlobalService.showTutorialScreen().then(() => {
@@ -577,7 +577,7 @@ describe('AppGlobalService', () => {
             mockPreferences.putBoolean = jest.fn(() => of(undefined));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: true } }))
             } as any)));
             // act
             appGlobalService.showTutorialScreen().then(() => {
@@ -718,6 +718,30 @@ describe('AppGlobalService', () => {
             // act
             // assert
             expect(appGlobalService.getUserId()).toEqual('0123456789');
+        });
+    });
+
+    describe('setpdfPlayerConfiguration()', () => {
+        it('should set pdf player Config', () => {
+            appGlobalService.setpdfPlayerconfiguration(true);
+            expect(appGlobalService.pdfPlayerConfiguratiion).toEqual(true);
+        });
+    });
+
+    describe('getPdfPlayerConfiguration()', () => {
+        it('should return pdf player config', () => {
+            appGlobalService.getPdfPlayerConfiguration();
+            expect(appGlobalService.pdfPlayerConfiguratiion).toBeTruthy();
+        });
+    });
+
+    describe('RootOrganizations()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setRootOrganizations([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedRootOrganizations()).toEqual([]);
         });
     });
 
@@ -881,11 +905,11 @@ describe('AppGlobalService', () => {
         it('should show force upgrade popup with shouldDismissAlert as false if type is force', () => {
             // arrange
             // act
-            appGlobalService.openPopover({type: 'force'});
+            appGlobalService.openPopover({ type: 'force' });
             // assert
             expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
                 component: UpgradePopoverComponent,
-                componentProps: { upgrade: {type: 'force'} },
+                componentProps: { upgrade: { type: 'force' } },
                 cssClass: 'upgradePopover',
                 showBackdrop: true,
                 backdropDismiss: false
@@ -895,11 +919,11 @@ describe('AppGlobalService', () => {
         it('should show force upgrade popup with shouldDismissAlert as false if type is forced', () => {
             // arrange
             // act
-            appGlobalService.openPopover({type: 'forced'});
+            appGlobalService.openPopover({ type: 'forced' });
             // assert
             expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
                 component: UpgradePopoverComponent,
-                componentProps: { upgrade: {type: 'forced'} },
+                componentProps: { upgrade: { type: 'forced' } },
                 cssClass: 'upgradePopover',
                 showBackdrop: true,
                 backdropDismiss: false
@@ -909,15 +933,64 @@ describe('AppGlobalService', () => {
         it('should show force upgrade popup with shouldDismissAlert as true if type is optional', () => {
             // arrange
             // act
-            appGlobalService.openPopover({type: 'optional'});
+            appGlobalService.openPopover({ type: 'optional' });
             // assert
             expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
                 component: UpgradePopoverComponent,
-                componentProps: { upgrade: {type: 'optional'} },
+                componentProps: { upgrade: { type: 'optional' } },
                 cssClass: 'upgradePopover',
                 showBackdrop: true,
                 backdropDismiss: true
             });
         });
+    });
+
+    describe('isNativePopupVisible', () => {
+        it('should return the isNativePopupVisible', () => {
+            // arrange
+            appGlobalService.isNativePopupVisible = true;
+
+            // act
+            // assert
+            expect(appGlobalService.isNativePopupVisible).toBeTruthy();
+
+        });
+    });
+
+    describe('isNativePopupVisible', () => {
+        it('should return the isNativePopupVisible', () => {
+            // arrange
+            appGlobalService.isNativePopupVisible = true;
+
+            // act
+            // assert
+            expect(appGlobalService.isNativePopupVisible).toBeTruthy();
+
+        });
+    });
+
+    describe('setNativePopupVisible', () => {
+        it('should setNativePopupVisible property to false', () => {
+            // arrange
+            // act
+            appGlobalService.setNativePopupVisible(false);
+            // assert
+            expect(appGlobalService.isNativePopupVisible).toBeFalsy();
+
+        });
+
+        it('should setNativePopupVisible property to true', () => {
+            // arrange
+            jest.useFakeTimers();
+            // act
+            appGlobalService.setNativePopupVisible(true, 1);
+            // assert
+            jest.advanceTimersByTime(20);
+            expect(appGlobalService.isNativePopupVisible).toBeTruthy();
+            jest.useRealTimers();
+            jest.clearAllTimers();
+
+        });
+
     });
 });

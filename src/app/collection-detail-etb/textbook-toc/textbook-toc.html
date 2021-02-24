@@ -4,11 +4,11 @@
       <ion-grid class="sb-accordian-header">
         <ion-row *ngIf="item?.children">
           <ion-col size="11">
-            <div class="sb-topic-text" (click)="setContentId(item.identifier)"> {{item?.contentData?.name}} </div>
+            <div class="sb-topic-text" (click)="setContentId(item.identifier, item)"> {{item?.contentData?.name}} </div>
           </ion-col>
         </ion-row>
         <ion-row *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children"
-          (click)="setContentId(item.identifier)">
+          (click)="setContentId(item.identifier, item)">
           <ion-col size="11">
             <div [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally,
                 'sb-play-selected':item?.isAvailableLocally,'sb-play-unselected':!item?.isAvailableLocally}">

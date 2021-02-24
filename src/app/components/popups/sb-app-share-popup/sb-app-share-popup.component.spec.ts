@@ -1,6 +1,6 @@
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService} from '../../../../services';
+import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService, AppGlobalService} from '../../../../services';
 import { DeviceInfo } from 'sunbird-sdk';
 import { SbAppSharePopupComponent } from '@app/app/components/popups';
 import {PopoverController, Platform, NavParams, ToastController} from '@ionic/angular';
@@ -15,15 +15,13 @@ describe('SbAppSharePopupComponent', () => {
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
-    const mockDeviceInfo: Partial<DeviceInfo> = {
-        getDeviceID: jest.fn(() => '0123456789')
-    };
     const mockPlatform: Partial<Platform> = {};
     const mocksocialSharing: Partial<SocialSharing> = {
         share: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        showToast: jest.fn()
+        showToast: jest.fn(),
+        getGivenPermissionStatus: jest.fn(() => Promise.resolve({ hasPermission : true} as any))
     };
     const mockUtilityService: Partial<UtilityService> = {
         exportApk: jest.fn(() => Promise.resolve('filePath')),
@@ -54,14 +52,12 @@ describe('SbAppSharePopupComponent', () => {
     const mockRouter: Partial<Router> = {
         navigate: jest.fn()
     };
-    const mockToastController: Partial<ToastController> = {
-        create: jest.fn(),
-        dismiss: jest.fn()
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        setNativePopupVisible: jest.fn()
     };
 
     beforeAll(() => {
         sbAppSharePopupComponent = new SbAppSharePopupComponent(
-            mockDeviceInfo as DeviceInfo,
             mockPopoverCtrl as PopoverController,
             mocksocialSharing as SocialSharing,
             mockPlatform as Platform,
@@ -70,8 +66,6 @@ describe('SbAppSharePopupComponent', () => {
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockPermissionService as AndroidPermissionsService,
-            mockRouter as Router,
-            mockToastController as ToastController,
             mockCommonUtilService as CommonUtilService);
     });
 
@@ -177,7 +171,7 @@ describe('SbAppSharePopupComponent', () => {
                 Environment.SETTINGS);
             expect(sbAppSharePopupComponent.shareUrl).toEqual(
                 'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
+                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
             done();
         }, 0);
     });
@@ -205,7 +199,7 @@ describe('SbAppSharePopupComponent', () => {
                 Environment.SETTINGS);
             expect(sbAppSharePopupComponent.shareUrl).toEqual(
                 'https://play.google.com/store/apps/details?id=org.sunbird.' +
-                'app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
+                'app&referrer=utm_source%3Dmobile%26utm_campaign%3Dshare_app');
             done();
         }, 0);
     });

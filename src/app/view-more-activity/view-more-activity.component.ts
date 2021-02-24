@@ -40,7 +40,7 @@ import {
   CorReleationDataType
 } from '@app/services/telemetry-constants';
 import {
-  ContentType, ViewMore, MimeType, RouterLinks,
+  ViewMore, MimeType, RouterLinks,
   ContentCard, BatchConstants, PreferenceKey
 } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
@@ -50,6 +50,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -145,6 +146,7 @@ export class ViewMoreActivityComponent implements OnInit {
     private zone: NgZone,
     private appGlobalService: AppGlobalService,
     private popoverCtrl: PopoverController,
+    private navService: NavigationService
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -277,6 +279,11 @@ export class ViewMoreActivityComponent implements OnInit {
 
       case ViewMore.PAGE_COURSE_POPULAR:
         this.pageType = 'popularCourses';
+        this.search();
+        break;
+
+      case ViewMore.PAGE_TV_PROGRAMS:
+        this.pageType = 'tvPrograms';
         this.search();
         break;
 
@@ -462,9 +469,6 @@ export class ViewMoreActivityComponent implements OnInit {
     if (!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
       return false;
     }
-    const identifier = content.contentId || content.identifier;
-    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
 
     const values = new Map();
     values['sectionName'] = this.sectionName;
@@ -474,17 +478,9 @@ export class ViewMoreActivityComponent implements OnInit {
       InteractSubtype.CONTENT_CLICKED,
       this.env,
       this.pageName ? this.pageName : this.layoutName,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values);
-    if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state: { content }
-      });
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: { content }
-      });
-    }
+    this.navService.navigateToDetailPage(content, { content });
   }
 
   getContentImg(content) {
@@ -535,7 +531,7 @@ export class ViewMoreActivityComponent implements OnInit {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
         enrollmentType: CourseEnrollmentType.OPEN,
-        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+        status: [CourseBatchStatus.IN_PROGRESS]
       },
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
@@ -572,7 +568,7 @@ export class ViewMoreActivityComponent implements OnInit {
                     upcommingBatches,
                     ongoingBatches,
                     retiredBatches,
-                    courseId: content.identifier
+                    content
                   },
                   cssClass: 'enrollement-popover'
                 });
@@ -603,9 +599,6 @@ export class ViewMoreActivityComponent implements OnInit {
 
   private async navigateToDetailsPage(content: any, layoutName) {
     const identifier = content.contentId || content.identifier;
-    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
-
     const corRelationList: Array<CorrelationData> = [{
       id: this.sectionName,
       type: CorReleationDataType.SECTION
@@ -622,25 +615,19 @@ export class ViewMoreActivityComponent implements OnInit {
       InteractSubtype.CONTENT_CLICKED,
       this.env,
       PageId.VIEW_MORE,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(content),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
 
     this.zone.run(async () => {
-      if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: { content }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: { content }
-        });
-
+      if (layoutName === 'enrolledCourse') {
+        this.navService.navigateToTrackableCollection({ content });
       } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: { content }
-        });
+        this.navService.navigateToDetailPage(
+          content,
+          { content }
+        );
       }
     });
   }

@@ -274,7 +274,7 @@ export class ContentRatingAlertComponent {
         objId: this.content.identifier,
         comments: this.allComments,
         env: Environment.HOME,
-        objType: this.content.contentData.contentType,
+        objType: this.content.contentData.primaryCategory,
         objVer: this.content.contentData.pkgVersion,
       };
       if (opt.isChecked) {

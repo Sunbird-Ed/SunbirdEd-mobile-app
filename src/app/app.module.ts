@@ -44,7 +44,8 @@ import {
   CanvasPlayerService,
   SplashScreenService,
   GroupHandlerService,
-  CollectionService
+  CollectionService,
+  ContentAggregatorHandler
 } from '../services/index';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -65,10 +66,17 @@ import {
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LocalCourseService } from '@app/services/local-course.service';
-import { ContentType } from './app.constant';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
+import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
+import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
+import {ConsentService} from '@app/services/consent-service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import {configuration} from '@app/configuration/configuration';
+import { LocationHandler } from '@app/services/location-handler';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -160,7 +168,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
-
+export const discussionService = () => {
+  return SunbirdSdk.instance.discussionService;
+};
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -255,6 +265,10 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  },
+  {
+    provide: 'DISCUSSION_SERVICE',
+    useFactory: discussionService
   }
   ];
 }
@@ -280,6 +294,7 @@ export const sunbirdSdkFactory =
         fileConfig: {
         },
         apiConfig: {
+          debugMode: configuration.debug,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -361,7 +376,7 @@ export const sunbirdSdkFactory =
           showEndPage: false,
           endPage: [{
             template: 'assessment',
-            contentType: [ContentType.SELF_ASSESS]
+            contentType: [CsContentType.SELF_ASSESS]
           }],
           splash: {
             webLink: '',
@@ -449,6 +464,7 @@ declare const sbutility;
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
+    DownloadPdfService,
     CollectionService,
     Device,
     Network,
@@ -465,6 +481,12 @@ declare const sbutility;
     TextbookTocService,
     GroupHandlerService,
     NativePageTransitions,
+    NavigationService,
+    ContentAggregatorHandler,
+    AliasBoardName,
+    ConsentService,
+    ProfileHandler,
+    LocationHandler,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

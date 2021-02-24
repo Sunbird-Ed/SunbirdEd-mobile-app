@@ -70,7 +70,8 @@ describe('GroupHandlerService', () => {
                     InteractType.TOUCH,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
-                    'some_page_id');
+                    'some_page_id',
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -124,7 +125,7 @@ describe('GroupHandlerService', () => {
             mockGroupService.addActivities = jest.fn(() => of({
                 error: {
                     activities: [{
-                        activityId: 'activity_id'
+                        errorCode: 'EXCEEDED_ACTIVITY_MAX_LIMIT'
                     }]
                 }
             }));
@@ -138,7 +139,68 @@ describe('GroupHandlerService', () => {
                     InteractType.TOUCH,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
-                    'some_page_id');
+                    'some_page_id',
+                    undefined, undefined, undefined, []);
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                    InteractType.INITIATED,
+                    '',
+                    Environment.GROUP,
+                    'some_page_id',
+                    undefined,
+                    undefined,
+                    undefined,
+                    [],
+                    ID.ADD_ACTIVITY_TO_GROUP);
+                expect(mockGroupService.addActivities).toHaveBeenCalledWith({
+                    groupId: 'group_id',
+                    addActivitiesRequest: {
+                        activities: [
+                            {
+                                id: 'activity_id',
+                                type: 'activity_type'
+                            }
+                        ]
+                    }
+                });
+                expect(mockCommonUtilService.showToast).toHaveBeenLastCalledWith('ERROR_MAXIMUM_ACTIVITY_COUNT_EXCEEDS');
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('Should return error', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockGroupService.addActivities = jest.fn(() => of({
+                error: {
+                    activities: [{
+                        errorCode: 'Err'
+                    }]
+                }
+            }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            // act
+            groupHandlerService.addActivityToGroup('group_id', 'activity_id', 'activity_type', 'some_page_id', []);
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                    InteractType.TOUCH,
+                    InteractSubtype.ADD_TO_GROUP_CLICKED,
+                    Environment.GROUP,
+                    'some_page_id',
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -193,7 +255,8 @@ describe('GroupHandlerService', () => {
                     InteractType.TOUCH,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
-                    'some_page_id');
+                    'some_page_id',
+                    undefined, undefined, undefined, []);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,

@@ -4,7 +4,7 @@ import {
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
-import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks } from 'app/app.constant';
+import { MimeType, Search, ExploreConstants } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
   Environment,
@@ -22,7 +22,6 @@ import {
   ContentService,
   CorrelationData,
   FilterValue,
-  ProfileType,
   SearchType
 } from 'sunbird-sdk';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
@@ -35,6 +34,8 @@ import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
 @Component({
   selector: 'app-explore-books',
@@ -111,14 +112,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   ];
   headerObservable: any;
   unregisterBackButton: Subscription;
-  contentType: Array<string> = [];
-  audienceFilter = [];
+  primaryCategories: Array<string> = [];
   contentSearchResult: Array<any> = [];
   showLoader = false;
   searchFormSubscription?: Subscription;
   selectedGrade: string;
   selectedMedium: string;
-  selectedContentType = 'all';
+  selectedPrimartCategory = 'all';
 
   searchForm: FormGroup = new FormGroup({
     grade: new FormControl([]),
@@ -145,7 +145,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private navService: NavigationService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
@@ -154,7 +155,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.categoryGradeLevels = extras.categoryGradeLevels;
       this.subjects = extras.subjects;
       this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true });
-      this.contentType = extras.contentType;
+      this.primaryCategories = extras.primaryCategories;
 
       this.corRelationList = [
         ... this.populateCData(this.selectedGrade, CorReleationDataType.CLASS),
@@ -167,7 +168,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.checkUserSession();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.EXPLORE_MORE_CONTENT,
@@ -237,21 +237,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
   }
 
-  checkUserSession() {
-    const isGuestUser = !this.appGlobalService.isUserLoggedIn();
-
-    if (isGuestUser) {
-      const userType = this.appGlobalService.getGuestUserType();
-      if (userType === ProfileType.STUDENT) {
-        this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
-        this.audienceFilter = AudienceFilter.GUEST_TEACHER;
-      }
-    } else {
-      this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
-    }
-  }
-
   union(arrA: { name: string }[], arrB: { name: string }[]): { name: string }[] {
     return [
       ...arrA, ...arrB.filter((bItem) => !arrA.find((aItem) => bItem.name === aItem.name))
@@ -268,9 +253,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           ...this.searchForm.getRawValue(),
           query: this.searchInputRef.nativeElement['value'],
           searchType: SearchType.SEARCH,
-          contentTypes: this.selectedContentType === ContentType.TEXTBOOK ? [ContentType.TEXTBOOK] : this.contentType,
+          primaryCategories: this.selectedPrimartCategory === CsPrimaryCategory.DIGITAL_TEXTBOOK ?
+            [CsPrimaryCategory.DIGITAL_TEXTBOOK] : this.primaryCategories,
           facets: Search.FACETS,
-          audience: this.audienceFilter,
+          audience: [],
           mode: 'soft',
           languageCode: this.translate.currentLang,
           fields: ExploreConstants.REQUIRED_FIELDS
@@ -354,11 +340,12 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       }
     };
 
-    if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(content, navigationExtras.state);
+    // if (content.mimeType === MimeType.COLLECTION) {
+    //   this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
+    // } else {
+    //   this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
+    // }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -444,9 +431,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     this.generateMimeTypeClickedTelemetry(mimeType.name);
 
     if (idx === index) {
-      this.selectedContentType = ContentType.TEXTBOOK;
+      this.selectedPrimartCategory = CsPrimaryCategory.DIGITAL_TEXTBOOK;
     } else {
-      this.selectedContentType = 'all';
+      this.selectedPrimartCategory = 'all';
     }
   }
 
