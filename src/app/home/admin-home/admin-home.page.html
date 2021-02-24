@@ -13,18 +13,19 @@
   </div>
   
     <ng-container *ngFor="let section of displaySections">
-  
-      <div class="label" *ngIf="section?.title && section?.dataSrc?.name !== 'TRACKABLE_CONTENTS'">{{section?.title | translateJson}}</div>
+      <div class="label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist' && section?.theme?.component !== 'sb-library-cards-hlist'">{{section?.title | translateJson}}</div>
       <!-- Trackable contents -->
-      <ng-container *ngIf="section?.dataSrc?.name === 'TRACKABLE_CONTENTS'">
+      <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
         <ng-container *ngFor="let subSection of section?.data?.sections">
           <ng-container *ngIf="subSection?.contents?.length">
             <sb-course-cards-hlist 
               [title]="(section?.title) | translateJson"
-              [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
-              [contentList]="subSection.contents" [hideProgress]="true"
-              [viewMoreButtonText]="'VIEW_ALL' | translate"
-              (viewMoreClick)="navigateToViewMoreContentsPage(result)"
+              [type]="section?.theme?.inputs?.type || courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
+              [contentList]="subSection.contents" [hideProgress]="section?.theme?.inputs?.hideProgress || true"
+              [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
+              [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
+              [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+              (viewMoreClick)="navigateToViewMoreContentsPage(section)"
               (cardClick)="navigateToDetailPage($event, (subSection.name || section?.title))">
             </sb-course-cards-hlist>
           </ng-container>

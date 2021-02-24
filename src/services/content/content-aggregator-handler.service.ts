@@ -30,7 +30,7 @@ export class ContentAggregatorHandler {
     ) { }
 
     async aggregate(request, pageName): Promise<any> {
-        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
@@ -70,7 +70,7 @@ export class ContentAggregatorHandler {
 
 
     async newAggregate(request, pageName: AggregatorPageType): Promise<any> {
-        let dataSrc: DataSourceType[] = ['TRACKABLE_CONTENTS', 'TRACKABLE_COURSE_CONTENTS'];
+        let dataSrc: DataSourceType[] = ['TRACKABLE_COLLECTIONS'];
 
         if (this.appGlobalService.isUserLoggedIn()) {
             dataSrc = [];
@@ -101,14 +101,15 @@ export class ContentAggregatorHandler {
             return aggregatorResponse;
         }
         aggregatorResponse.forEach((displaySection) => {
-            if (displaySection.dataSrc.name === 'CONTENT_FACETS_ADMIN' && displaySection.data && displaySection.data.length) {
+            if (displaySection.dataSrc.type === 'CONTENT_FACETS' && displaySection.data && displaySection.data.length) {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.name === 'TRACKABLE_CONTENTS' ||
-                         displaySection.dataSrc.name === 'TRACKABLE_COURSE_CONTENTS') {
+            } else if (displaySection.dataSrc.type === 'TRACKABLE_COLLECTIONS') {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
-                    value['cardImg'] = value['courseLogoUrl'] || 'assets/imgs/ic_launcher.png';
+                    value['cardImg'] = value['courseLogoUrl'] || (value.content && value.content['appIcon']) ||
+                    'assets/imgs/ic_launcher.png';
+                    value = value.content;
                 });
             }
         });

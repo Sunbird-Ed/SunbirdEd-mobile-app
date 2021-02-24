@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Events } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
+import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '../container.services';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
-import { ContainerService } from '../container.services';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { Observable } from 'rxjs';
-import { mergeMap, tap } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })

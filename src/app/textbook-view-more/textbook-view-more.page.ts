@@ -1,16 +1,14 @@
-import { RouterLinks } from '@app/app/app.constant';
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { TelemetryObject } from 'sunbird-sdk';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
-import { Location } from '@angular/common';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-textbook-view-more',

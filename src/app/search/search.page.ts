@@ -54,12 +54,33 @@ import { CsGroupAddableBloc } from '@project-sunbird/client-services/blocs';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../form.constants';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss']
+  styleUrls: ['./search.page.scss'],
+  animations: [
+    trigger('labelVisibility', [
+      state(
+        'show',
+        style({
+          maxHeight: '50vh',
+          overflow: 'hidden'
+        })
+      ),
+      state(
+        'hide',
+        style({
+          maxHeight: '0',
+          overflow: 'hidden'
+        })
+      ),
+      transition('* => show', [animate('500ms ease-out')]),
+      transition('show => hide', [animate('500ms ease-in')])
+    ])
+  ],
 })
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   public searchHistory$: Observable<SearchEntry[]>;
@@ -70,7 +91,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   primaryCategories: Array<string> = [];
   source: string;
   groupId: string;
-  activityTypeData: any = {};
+  activityTypeData: any;
   activityList: GroupActivity[] = [];
   isFromGroupFlow = false;
   dialCode: string;
@@ -121,8 +142,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   supportedUserTypesConfig: Array<any>;
   searchFilterConfig: Array<any>;
   preAppliedFilter: any;
+  enableSearch = false;
+  searchInfolVisibility = 'show';
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
+  headerObservable: Subscription;
+  primaryCategoryFilters = [];
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -141,7 +166,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private appGlobalService: AppGlobalService,
     private platform: Platform,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private translate: TranslateService,
     private headerService: AppHeaderService,
@@ -164,6 +189,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.source = extras.source;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
+        this.searchOnFocus();
       }
       this.groupId = extras.groupId;
       this.activityTypeData = extras.activityTypeData;
@@ -173,6 +199,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.userId = extras.userId;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.preAppliedFilter = extras.preAppliedFilter;
+      if (this.preAppliedFilter) {
+        this.enableSearch = true;
+        this.searchKeywords = this.preAppliedFilter.query;
+      }
     }
 
     this.checkUserSession();
@@ -189,7 +219,18 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.hideHeader();
+    if (this.dialCode) {
+      this.enableSearch = true;
+    }
+    this.events.subscribe('update_header', () => {
+      this.headerService.showHeaderWithHomeButton();
+    });
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+    if(!this.isFromGroupFlow){
+      this.headerService.showHeaderWithHomeButton();
+    }
     this.handleDeviceBackButton();
     this.searchFilterConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.SEARCH_FILTER);
     if ((this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) || this.preAppliedFilter) {
@@ -202,7 +243,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
-        this.searchBar.setFocus();
       }, 100);
     }
     this.sbProgressLoader.hide({ id: this.dialCode });
@@ -802,6 +842,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
+              if (this.responseData.filterCriteria && this.responseData.filterCriteria.facetFilters) {
+                this.fetchPrimaryCategoryFilters(this.responseData.filterCriteria.facetFilters);
+              }
               values.searchCount = this.responseData.length;
               values.searchCriteria = this.responseData.filterCriteria;
               this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
@@ -877,7 +920,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     let searchQuery;
     if (this.activityTypeData ||  this.preAppliedFilter) {
       const query = this.activityTypeData ? this.activityTypeData.searchQuery :
-      JSON.stringify({ request:  this.preAppliedFilter });
+        JSON.stringify({ request:  this.preAppliedFilter });
       searchQuery = updateFilterInSearchQuery(query, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
@@ -1638,7 +1681,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.groupHandlerService.addActivityToGroup(
       this.groupId,
       content.identifier,
-      this.activityTypeData.activityType,
+      (this.activityTypeData && this.activityTypeData.activityType) || {},
       PageId.SEARCH,
       this.corRelationList,
       -2);
@@ -1670,10 +1713,50 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           ...CsGroupAddableBloc.instance.state.params,
           corRelation: params.corRelation,
           noOfPagesToRevertOnSuccess: -3,
-          activityType: this.activityTypeData.activityType
+          activityType: (this.activityTypeData && this.activityTypeData.activityType) || {}
         }
       }
     );
+  }
+
+  searchOnFocus() {
+    this.enableSearch = true;
+    this.searchInfolVisibility = 'hide';
+    this.headerService.showHeaderWithBackButton();
+    this.appGlobalService.isDiscoverBackEnabled = true;
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        if(this.isFromGroupFlow){
+          this.location.back()
+        }  else {
+          this.enableSearch = false;
+          this.searchInfolVisibility = 'show';
+          this.headerService.showHeaderWithHomeButton();
+          this.appGlobalService.isDiscoverBackEnabled = false; 
+        }
+        break;
+      default: console.warn('Use Proper Event name');
+    }
+  }
+
+  fetchPrimaryCategoryFilters(facetFilters) {
+    for (let index = 0; index < facetFilters.length; index++) {
+      if (facetFilters[index].name === 'primaryCategory') {
+        this.primaryCategoryFilters = facetFilters[index].values;
+        break;
+      }      
+    }
+  }
+
+  handleFilterSelect(event) {
+    if (!event || !event.data || !event.data.length) {
+      return;
+    }
+    
+    
   }
 
 }

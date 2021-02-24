@@ -1,8 +1,8 @@
-import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Events, PopoverController, NavParams } from '@ionic/angular';
-import { Platform, ToastController } from '@ionic/angular';
 import { Component, Inject } from '@angular/core';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { ContentUtil } from '@app/util/content-util';
+import { Events, NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import {
   AuthService,
   ContentDeleteResponse,
@@ -10,15 +10,13 @@ import {
   ContentService,
   CorrelationData,
   OAuthSession,
-  Rollup,
-  TelemetryObject
+  Rollup
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
-import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { PageId } from './../../../services/telemetry-constants';
-import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-content-actions',

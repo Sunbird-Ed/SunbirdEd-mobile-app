@@ -1,41 +1,36 @@
-import { Subscription } from 'rxjs';
-import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
-import { } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
-import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { LoginHandlerService } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 import {
-  Profile,
+  AuditProps,
+  AuditType, CorReleationDataType, Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+import { Events, IonRouterOutlet, Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import {
+  AuditState, CorrelationData, Profile,
   ProfileService,
   ProfileSource,
   ProfileType,
   SharedPreferences,
-  CorrelationData,
-  AuditState,
   UpdateServerProfileInfoRequest
 } from 'sunbird-sdk';
-import {
-  Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  PageId,
-  CorReleationDataType,
-  AuditProps,
-  AuditType
-} from '@app/services/telemetry-constants';
-import { ContainerService } from '@app/services/container.services';
-import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { ProfileHandler } from '@app/services/profile-handler';
-import { LoginHandlerService } from '@app/services';
 
 @Component({
   selector: 'page-user-type-selection',

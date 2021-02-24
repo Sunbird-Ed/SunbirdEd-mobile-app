@@ -713,18 +713,15 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   importContent(identifiers: Array<string>, isChild: boolean) {
-    const option: ContentImportRequest = {
+    const contentImportRequest: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: [],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
 
     // Call content service
-    this.contentService.importContent(option).toPromise()
+    this.contentService.importContent(contentImportRequest).toPromise()
       .then((data: ContentImportResponse[]) => {
-        this.zone.run(() => {
-          data = data;
-        });
       })
       .catch((error: any) => {
         this.zone.run(() => {
@@ -793,9 +790,7 @@ export class QrcoderesultPage implements OnDestroy {
         if (content.mimeType !== MimeType.COLLECTION || ContentUtil.isTrackable(content.contentData) === 1) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
-              if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                content.contentData.appIcon = content.contentData.appIcon;
-              } else {
+              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
                 content.contentData.appIcon = this.defaultImg;
               }
             } else if (content.basePath) {

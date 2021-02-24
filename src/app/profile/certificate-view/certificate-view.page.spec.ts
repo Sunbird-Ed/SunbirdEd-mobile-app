@@ -3,7 +3,7 @@ import {CertificateDownloadService} from 'sb-svg2pdf';
 import {AppGlobalService, AppHeaderService, CommonUtilService} from '@app/services';
 import {Router} from '@angular/router';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
-import {ToastController} from '@ionic/angular';
+import {PopoverController, ToastController} from '@ionic/angular';
 import {CertificateViewPage} from './certificate-view.page';
 import {ElementRef} from '@angular/core';
 import {EMPTY, of} from 'rxjs';
@@ -20,7 +20,6 @@ describe('CertificateViewPage', () => {
         buildBlob: jest.fn(() => Promise.resolve(new Blob())),
     };
     const mockAppHeaderService: Partial<AppHeaderService> = {
-        headerEventEmitted$: EMPTY,
         getDefaultPageConfig: jest.fn(() => ({})),
         updatePageConfig: jest.fn()
     };
@@ -60,8 +59,9 @@ describe('CertificateViewPage', () => {
             dismiss: jest.fn()
         }))
     };
+    const mockPopoverController: Partial<PopoverController> = {};
 
-    let certificateViewPage: CertificateViewComponent;
+    let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {
         certificateViewPage = new CertificateViewPage(
@@ -73,6 +73,7 @@ describe('CertificateViewPage', () => {
             mockRouter as Router,
             mockFileOpener as FileOpener,
             mockToastController as ToastController,
+            mockPopoverController as PopoverController
         );
     });
 
@@ -82,21 +83,12 @@ describe('CertificateViewPage', () => {
 
     describe('ngOnInit()', () => {
         it('should update header with title and kebab menu options for download', () => {
-            spyOn(mockAppHeaderService, 'getDefaultPageConfig').and.returnValue({});
-            spyOn(mockAppHeaderService, 'updatePageConfig').and.stub();
-
+            // arrange
+            mockAppHeaderService.showHeaderWithBackButton = jest.fn();
+            // act
             certificateViewPage.ngOnInit();
-
-            expect(mockAppHeaderService.updatePageConfig).toHaveBeenCalledWith({
-                pageTitle: 'SOME_CERTIFICATE_NAME',
-                showKebabMenu: true,
-                kebabMenuOptions: [
-                    { label: 'DOWNLOAD_AS_PDF', value: {} },
-                    { label: 'DOWNLOAD_AS_PNG', value: {} },
-                ],
-                actionButtons: [],
-                showBurgerMenu: false
-            });
+            // assert
+            expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         });
     });
 
@@ -113,84 +105,113 @@ describe('CertificateViewPage', () => {
                 done();
             });
         });
-
-        it('should listen for download_as_pdf events and download certificate accordingly', (done) => {
-            const htmlElement = document.createElement('div');
-            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
-            mockAppHeaderService.headerEventEmitted$ = of({
-                name: 'kebabMenu',
-                event: {
-                    option: { label: 'DOWNLOAD_AS_PDF', value: {} }
-                }
-            });
-
-            certificateViewPage.ngOnInit();
-            certificateViewPage.ngAfterViewInit();
-
-            setTimeout(() => {
-                expect(mockCourseService.downloadCurrentProfileCourseCertificateV2).toHaveBeenCalledWith(expect.objectContaining({
-                    fileName: expect.any(String),
-                    mimeType: 'application/pdf',
-                    blob: expect.any(Blob),
-                }));
-                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
-                done();
-            });
-        });
-
-        it('should listen for download_as_png events and download certificate accordingly', (done) => {
-            const htmlElement = document.createElement('div');
-            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
-            mockAppHeaderService.headerEventEmitted$ = of({
-                name: 'kebabMenu',
-                event: {
-                    option: { label: 'DOWNLOAD_AS_PNG', value: {} }
-                }
-            });
-
-            certificateViewPage.ngOnInit();
-            certificateViewPage.ngAfterViewInit();
-
-            setTimeout(() => {
-                expect(mockCourseService.downloadCurrentProfileCourseCertificateV2).toHaveBeenCalledWith(expect.objectContaining({
-                    fileName: expect.any(String),
-                    mimeType: 'application/pdf',
-                    blob: expect.any(Blob),
-                }));
-                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'image/png');
-                done();
-            });
-        });
-
-        it('should throw error for unknown events', (done) => {
-            const htmlElement = document.createElement('div');
-            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
-            mockAppHeaderService.headerEventEmitted$ = of({
-                name: 'kebabMenu',
-                event: {
-                    option: { label: 'UNKNOWN', value: {} }
-                }
-            });
-
-            certificateViewPage.ngOnInit();
-            certificateViewPage.ngAfterViewInit();
-
-            setTimeout(() => {
-                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
-                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-                done();
-            });
-        });
     });
     
     describe('ngOnDestroy()', () => {
         it('should unsubscribe header events',  () => {
             const htmlElement = document.createElement('div');
             certificateViewPage.certificateContainer = new ElementRef(htmlElement);
-            mockAppHeaderService.headerEventEmitted$ = EMPTY;
-
             certificateViewPage.ngAfterViewInit();
             certificateViewPage.ngOnDestroy();
         });
     });
+
+    describe('showCertificateMenu()', () => {
+        it('should skip the download', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: null }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).not.toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should skip the download if the type is not PDF or PNG', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'JPEG', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).not.toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should listen for download_as_pdf events and download certificate accordingly', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'PDF', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should listen for download_as_pdf events and download certificate accordingly', (done) => {
+            const htmlElement = document.createElement('div');
+            certificateViewPage.certificateContainer = new ElementRef(htmlElement);
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { option: { label: 'PNG', value: {} } } }))
+            } as any)));
+            certificateViewPage.pageData = {
+                certificate: {
+                    name: 'sample'
+                } as any,
+                courseId: 'sample_id'
+            };
+            certificateViewPage['activeUserId'] = 'user_id';
+
+            certificateViewPage.showCertificateMenu({});
+
+            expect(mockPopoverController.create).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_DOWNLOAD_PATH', 'image/png');
+                done();
+            });
+        });
+
+    })
 });

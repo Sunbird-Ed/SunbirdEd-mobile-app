@@ -1,6 +1,20 @@
-import { Component, EventEmitter, Inject, Input, NgZone, Output, OnInit } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { Component, EventEmitter, Inject, Input, NgZone, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { EventTopics, IgnoreTelemetryPatters, PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { AppGlobalService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import {
+  Environment,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Events, NavController } from '@ionic/angular';
 import {
   AuthService,
   OAuthSession,
@@ -8,30 +22,14 @@ import {
   ProfileService,
   ProfileSource,
   ProfileType,
-  SignInError,
   ServerProfileDetailsRequest,
-  SharedPreferences,
+  SharedPreferences, SignInError,
   TenantInfoRequest,
   WebviewLoginSessionProvider,
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
-
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import {ProfileConstants, PreferenceKey, EventTopics, IgnoreTelemetryPatters} from '@app/app/app.constant';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import {
-  Environment,
-  InteractSubtype,
-  InteractType,
-  PageId
-} from '@app/services/telemetry-constants';
-import { ContainerService } from '@app/services/container.services';
-import { AppGlobalService } from '@app/services';
-import { Router } from '@angular/router';
+import { Context as SbProgressLoaderContext, SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { EventParams } from './event-params.interface';
-import {Context as SbProgressLoaderContext, SbProgressLoader} from '../../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -102,17 +100,17 @@ export class SignInCardComponent {
         webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
         await webviewSessionProviderConfigloader.dismiss();
       } catch (e) {
-        this.sbProgressLoader.hide({id: 'login'});
+        this.sbProgressLoader.hide({ id: 'login' });
         await webviewSessionProviderConfigloader.dismiss();
         this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
         return;
       }
 
       this.authService.setSession(
-          new WebviewLoginSessionProvider(
-              webviewLoginSessionProviderConfig,
-              webviewMigrateSessionProviderConfig
-          )
+        new WebviewLoginSessionProvider(
+          webviewLoginSessionProviderConfig,
+          webviewMigrateSessionProviderConfig
+        )
       )
         .toPromise()
         .then(async () => {
@@ -126,7 +124,7 @@ export class SignInCardComponent {
           return that.refreshTenantData(value.slug, value.title);
         })
         .then(async () => {
-          if (!this.appGlobalService.signinOnboardingLoader) {}
+          if (!this.appGlobalService.signinOnboardingLoader) { }
           that.ngZone.run(() => {
             setTimeout(() => {
               if (that.source === 'courses') {
@@ -143,7 +141,7 @@ export class SignInCardComponent {
           });
         })
         .catch(async (err) => {
-          this.sbProgressLoader.hide({id: 'login'});
+          this.sbProgressLoader.hide({ id: 'login' });
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
           } else {
@@ -184,8 +182,7 @@ export class SignInCardComponent {
                   source: ProfileSource.SERVER,
                   serverProfile: success
                 };
-                this.profileService.createProfile(profile, ProfileSource.SERVER)
-                  .toPromise()
+                this.profileService.createProfile(profile, ProfileSource.SERVER).toPromise()
                   .then(async () => {
                     await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, currentProfileType).toPromise();
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
@@ -210,11 +207,12 @@ export class SignInCardComponent {
                       }).catch((err) => {
                         console.log('err in setActiveSessionProfile in sign-in card --', err);
                       });
-                  }).catch(() => {
-
+                  }).catch((err) => {
+                    console.log('err in createProfile --', err);
                   });
               }).catch((err) => {
-              reject(err);
+                console.log('err in getServerProfilesDetails --', err);
+                reject(err);
               });
           } else {
             reject('session is null');
@@ -224,7 +222,7 @@ export class SignInCardComponent {
   }
 
   private refreshTenantData(tenantSlug: string, title: string) {
-    const tenantInfoRequest: TenantInfoRequest = {slug: tenantSlug};
+    const tenantInfoRequest: TenantInfoRequest = { slug: tenantSlug };
     return new Promise((resolve, reject) => {
       this.profileService.getTenantInfo(tenantInfoRequest).toPromise()
         .then(async (res) => {
@@ -236,7 +234,8 @@ export class SignInCardComponent {
           this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
           (window as any).splashscreen.setContent(title, res.appLogo);
           resolve();
-        }).catch(() => {
+        }).catch((err) => {
+          console.log('err in getTenantInfo --', err);
           resolve(); // ignore
         });
     });

@@ -200,17 +200,6 @@ describe('SearchPage', () => {
             done();
         }, 0);
     });
-    // });
-
-    it('should hide header on ionview will enter', () => {
-        // arrange
-        spyOn(searchPage, 'handleDeviceBackButton').and.stub();
-        // act
-        searchPage.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(searchPage.handleDeviceBackButton).toHaveBeenCalled();
-    });
 
     it('should focus the search bar', (done) => {
         // arrange
@@ -977,6 +966,7 @@ describe('SearchPage', () => {
             ];
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
             mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
+            searchPage.searchFilterConfig = [];
             // act
             searchPage.showFilter();
             // assert

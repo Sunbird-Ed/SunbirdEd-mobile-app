@@ -59,6 +59,8 @@ import {
   ProfileNameConfirmationPopoverComponent
 } from './popups/sb-profile-name-confirmation-popup/sb-profile-name-confirmation-popup.component';
 import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/copy-trace-id-popup.component';
+import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import { DiscoverComponent } from './discover/discover.page';
 
 @NgModule({
   declarations: [
@@ -109,7 +111,9 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent
   ],
   imports: [
     CommonModule,
@@ -160,7 +164,9 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     ConsentPiiPopupComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -209,7 +215,9 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
     LicenseCardComponentComponent,
     GroupGuideLinesPopoverComponent,
     ProfileNameConfirmationPopoverComponent,
-    CopyTraceIdPopoverComponent
+    CopyTraceIdPopoverComponent,
+    SbSubjectListPopupComponent,
+    DiscoverComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
