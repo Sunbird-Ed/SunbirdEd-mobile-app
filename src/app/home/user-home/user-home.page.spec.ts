@@ -349,4 +349,43 @@ describe('UserHomePage', () => {
         // assert
         expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
+
+    it('should show headerWithHomeButton and call UserProfileDetails', (done) => {
+        // arrange
+        mockHeaderService.showHeaderWithHomeButton = jest.fn();
+        mockProfileService.getActiveSessionProfile = jest.fn(() => of({
+            uid: 'sample_uid',
+            handle: 'u1234',
+            profileType: ProfileType.TEACHER,
+            board: ['CBSE'],
+            medium: ['English'],
+            grade: ['Class 10']
+        }));
+        mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+            name: 'sample_name',
+            identifier: '12345',
+            categories: [
+                {
+                    identifier: '097',
+                    code: 'sample_code',
+                    name: 'sample_category_name',
+                    description: 'sample_category_descrption',
+                    index: 1,
+                    status: 'Live'
+                }
+            ]
+        }));
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
+        mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
+        // act
+        userHomePage.tabViewWillEnter();
+        // assert
+        setTimeout(() => {
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
 });
