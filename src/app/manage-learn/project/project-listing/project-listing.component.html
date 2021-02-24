@@ -1,5 +1,5 @@
   <ion-content fullscreen>
-    <app-common-header title="{{'FRMELEMNTS_LBL_PROJECT' | translate}}" [subTitle]="description">
+    <app-common-header title="{{'FRMELEMNTS_LBL_PROJECT' | translate}}" subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESCRIPTION' | translate }}">
     </app-common-header>
     <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
       [id]="project?._id" (cardSelect)="selectedProgram($event,project)"></app-item-list-card>

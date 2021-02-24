@@ -12,7 +12,7 @@ const LIBRARY_TAB = {
 const HOME_TAB = {
     root: 'home',
     icon: 'home',
-    label: 'HOME_BNAV',
+    label: 'FRMELEMNTS_LBL_TAB_HOME',
     index: 1,
     isSelected: true
 };
