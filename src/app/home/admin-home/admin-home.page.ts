@@ -71,6 +71,11 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     this.getCreateProjectForm();
     this.db.createDb();
+    this.events.subscribe('onAfterLanguageChange:update', (res) => {
+      if (res && res.selectedLanguage) {
+        this.fetchDisplayElements();
+      }
+    });
   }
 
   tabViewWillEnter() {
@@ -291,6 +296,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   ngOnDestroy() {
+    this.events.unsubscribe('onAfterLanguageChange:update');
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
