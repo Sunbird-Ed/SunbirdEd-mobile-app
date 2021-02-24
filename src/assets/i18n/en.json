@@ -458,7 +458,7 @@
   "FRMELEMENTS_LBL_DEACTIVATEGRP": "Deactivate group",
   "FRMELEMENTS_LBL_DEACTIVATEGRPQUES": "Deactivate group?",
   "FRMELEMENTS_MSG_ACTIVATEGRPFAILED": "Could not activate group, try again later",
-  "FRMELEMENTS_MSG_ACTIVATEGRPMSG": "Activating the group enables you to add members and activities. You can also track member progress",
+  "FRMELEMENTS_MSG_ACTIVATEGRPMSG": "This group is temporarily inactive. The group admin can re-activate the group if required. Group members can continue their discussions on the discussion forum.",
   "FRMELEMENTS_MSG_ACTIVATEGRPPOPUP": "This group is temporarily inactive. The group admin can re-activate the group if required. Group members can continue their discussions on the discussion forum.",
   "FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS": "Activated group successfully",
   "FRMELEMENTS_MSG_DEACTIVATEGRPFAILED": "Could not deactivate group, try again later",
