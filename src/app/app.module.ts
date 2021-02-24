@@ -71,6 +71,8 @@ import { LocationHandler } from '@app/services/location-handler';
 import { CoreModule } from './manage-learn/core/core.module';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
+import { RouteReuseStrategy } from '@angular/router';
+import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
