@@ -673,12 +673,12 @@ export class CommonUtilService {
             isCloseButtonClicked: false,
             isLastAttempt: false
         };
-        if (assessmentStatus.isContentDisabled) {
+        if (assessmentStatus && assessmentStatus.isContentDisabled) {
             maxAttempt.limitExceeded = true;
             this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
             return maxAttempt;
         }
-        if (assessmentStatus.isLastAttempt) {
+        if (assessmentStatus && assessmentStatus.isLastAttempt) {
             maxAttempt.isLastAttempt = true;
             return await this.showAssessmentLastAttemptPopup(maxAttempt);
         }
