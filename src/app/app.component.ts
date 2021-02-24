@@ -1,55 +1,49 @@
-import { Router, NavigationExtras, NavigationStart, Event } from '@angular/router';
 import { Location } from '@angular/common';
 import {
-  AfterViewInit, Component, Inject, NgZone,
-  OnInit, EventEmitter, ViewChild
+  AfterViewInit, Component,
+  EventEmitter, Inject, NgZone,
+  OnInit, ViewChild
 } from '@angular/core';
-import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable, combineLatest, Subscription } from 'rxjs';
-import { mergeMap, filter, tap, mapTo, take } from 'rxjs/operators';
-import { Network } from '@ionic-native/network/ngx';
-import {
-  ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
-  GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData,
-  Profile, DeviceRegisterService, ProfileService, ProfileType,
-} from 'sunbird-sdk';
-import {
-  InteractType,
-  InteractSubtype,
-  Environment, PageId,
-  ImpressionType,
-  CorReleationDataType,
-  ID
-} from '@app/services/telemetry-constants';
-import {
-  AppThemes, EventTopics, GenericAppConfig,
-  PreferenceKey, ProfileConstants, SystemSettingsIds
-} from './app.constant';
+import { Event, NavigationExtras, NavigationStart, Router } from '@angular/router';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
-import {
-  AppGlobalService,
-  CommonUtilService,
-  TelemetryGeneratorService,
-  UtilityService,
-  AppRatingService,
-  AppHeaderService,
-  FormAndFrameworkUtilService,
-  SplashScreenService,
-  LocalCourseService,
-  LoginHandlerService
-} from '../services';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
-import { NotificationService as LocalNotification } from '@app/services/notification.service';
-import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
+import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { EventParams } from './components/sign-in-card/event-params.interface';
+import {
+  CorReleationDataType, Environment,
+  ID, ImpressionType, InteractSubtype, InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
+import { Network } from '@ionic-native/network/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Events, IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { filter, mapTo, mergeMap, take, tap } from 'rxjs/operators';
+import {
+  AuthEventType, CodePushExperimentService, CorrelationData,
+  DeviceRegisterService, ErrorEventType, EventNamespace, EventsBusService,
+  GetSystemSettingsRequest, NotificationService,
+  Profile, ProfileService, ProfileType, SharedPreferences,
+  SunbirdSdk,
+  SystemSettings, SystemSettingsService, TelemetryAutoSyncService, TelemetryService
+} from 'sunbird-sdk';
+import {
+  AppGlobalService,
+  AppHeaderService, AppRatingService, CommonUtilService,
+  FormAndFrameworkUtilService,
+  LocalCourseService,
+  LoginHandlerService, SplashScreenService, TelemetryGeneratorService,
+  UtilityService
+} from '../services';
+import {
+  AppThemes, EventTopics, GenericAppConfig,
+  PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
+} from './app.constant';
+import { EventParams } from './components/sign-in-card/event-params.interface';
 
 declare const cordova;
 
@@ -215,13 +209,17 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         });
       })
-      .catch(function (error) { });
+      .catch(function (error) { 
+        console.error(error);
+      });
   }
 
   openPlaystore() {
     plugins['webViewChecker'].openGooglePlayPage()
       .then(function () { })
-      .catch(function (error) { });
+      .catch(function (error) { 
+        console.error(error);
+      });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -236,7 +234,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
-        //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
         if (res && res.value) {
           const value = JSON.parse(res.value);
           if (value.deploymentKey) {
@@ -417,7 +414,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.toggleRouterOutlet = false;
       }
 
-      // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
         /* Medatory for login flow
@@ -496,7 +492,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
-        || this.router.url === RouterLinks.HOME_TAB || this.router.url === RouterLinks.DISCOVER_TAB
+        || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH && !this.appGlobalService.isDiscoverBackEnabled)
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
         || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
@@ -505,8 +501,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
         }
+      } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
+        this.headerService.sidebarEvent('back');
       } else {
-        // this.routerOutlet.pop();
         if (this.location.back && !this.rootPageDisplayed) {
           this.location.back();
         }
@@ -768,12 +765,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       } else {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
-          || this.router.url === RouterLinks.HOME_TAB || this.router.url === RouterLinks.DISCOVER_TAB
+          || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
           this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+        } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
+          this.headerService.sidebarEvent($event);
         } else {
-          // this.routerOutlet.pop();
           if (this.location.back) {
             this.location.back();
           }

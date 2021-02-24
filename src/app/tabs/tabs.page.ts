@@ -1,13 +1,14 @@
-import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
-import { IonTabs, Events, ToastController } from '@ionic/angular';
-import { ContainerService } from '@app/services/container.services';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants, EventTopics, RouterLinks, PreferenceKey } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { PageId } from '@app/services';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import { EventTopics, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { PageId } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ContainerService } from '@app/services/container.services';
+import { Events, IonTabs, ToastController } from '@ionic/angular';
+import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-tabs',
@@ -106,6 +107,9 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    if (this.tabRef.outlet.component['tabViewWillEnter']) {
+      (this.tabRef.outlet.component as OnTabViewWillEnter).tabViewWillEnter();
+    }
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {

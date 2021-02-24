@@ -1,7 +1,13 @@
-import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { defer, Observable, of } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { ImportPopoverComponent } from '@app/app/components/popups/import-popover/import-popover.component';
+import { UtilityService } from '@app/services';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { Events, PopoverController } from '@ionic/angular';
+import { defer, from, Observable, of } from 'rxjs';
+import { catchError, concatMap, filter, map, mapTo, reduce, takeUntil, tap } from 'rxjs/operators';
+import { CommonUtilService } from 'services/common-util.service';
 import {
-  ContentEvent,
+  ArchiveObjectType, ArchiveService, ContentEvent,
   ContentEventType,
   ContentImportResponse,
   ContentImportStatus,
@@ -11,18 +17,9 @@ import {
   ProfileService,
   SunbirdSdk,
   TelemetryErrorRequest,
-  TelemetryService,
-  ArchiveService,
-  ArchiveObjectType
+  TelemetryService
 } from 'sunbird-sdk';
-import { Inject, Injectable } from '@angular/core';
-import { CommonUtilService } from 'services/common-util.service';
-import { Events, PopoverController } from '@ionic/angular';
-import { from } from 'rxjs';
-import { catchError, concatMap, filter, map, mapTo, reduce, takeUntil, tap } from 'rxjs/operators';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { ImportPopoverComponent } from '@app/app/components/popups/import-popover/import-popover.component';
-import { UtilityService } from '@app/services';
+import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 
 @Injectable()
 export class SplashscreenImportActionHandlerDelegate implements SplashscreenActionHandlerDelegate {

@@ -695,8 +695,12 @@ describe('CommonUtilService', () => {
       const assessmentStatus = {
         isContentDisabled: false,
         isLastAttempt: true
-      }
-      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+      };
+      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve({
+        isLastAttempt: true,
+        limitExceeded: false,
+        isContentDisabled: false,
+      }));
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);
       // assert
@@ -708,8 +712,12 @@ describe('CommonUtilService', () => {
       const assessmentStatus = {
         isContentDisabled: false,
         isLastAttempt: false
-      }
-      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+      };
+      commonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve({
+        isContentDisabled: false,
+        isLastAttempt: false,
+        limitExceeded: false,
+      }));
       commonUtilService.showToast = jest.fn();
       // act
       commonUtilService.handleAssessmentStatus(assessmentStatus);

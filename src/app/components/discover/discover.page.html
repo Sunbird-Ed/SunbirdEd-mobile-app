@@ -1,0 +1,57 @@
+<ion-list class="m-n" *ngIf="!displaySections">
+  <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
+  <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
+    <ion-avatar item-start>
+      <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
+    </ion-avatar>
+    <ion-label style="padding-left: 40px;">
+      <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
+      <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
+    </ion-label>
+  </ion-item>
+</ion-list>
+
+<div class="form-api-components" *ngIf="displaySections">
+  <ng-container *ngFor="let section of displaySections">
+    <div class="heading-label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist'">
+      <span>{{section?.title | translateJson | titlecase}}</span>
+      <hr>
+    </div>
+
+    <!-- Pills -->
+    <ng-container *ngIf="section?.theme?.component === 'sb-pills-grid'">
+      <sb-pills-grid [pillShape]="section?.theme?.inputs?.pillShape"
+          [pillsViewType]="section?.theme?.inputs?.pillsViewType"
+          [selectMode]="section?.theme?.inputs?.selectMode"
+          [minDisplayCount]="section?.theme?.inputs?.minDisplayCount"
+          [viewMoreText]="section?.theme?.inputs?.viewMoreText | translateJson"
+          [viewLessText]="section?.theme?.inputs?.viewLessText | translateJson"
+          [showMoreViewType]="section?.theme?.inputs?.showMoreViewType"
+          [pillsMultiRow]="section?.theme?.inputs?.pillsMultiRow"
+          [pillBorder]="section?.theme?.inputs?.pillBorder"
+          (viewMorePillList)="onViewMorePillList($event, section?.title)"
+          (select)="handlePillSelect($event)">
+          <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | translateJson| titlecase" [icon]="pillData.icon" [theme]="pillData.theme"
+            [value]="pillData"></sb-pill-item>
+        </sb-pills-grid>
+    </ng-container>
+
+    <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
+      <ng-container *ngFor="let subSection of section?.data?.sections">
+        <ng-container *ngIf="subSection?.contents?.length">
+
+          <sb-course-cards-hlist [title]="(section?.title) | translateJson"
+            [type]="section?.theme?.inputs?.type || courseCardType.COURSE_CARD_GRID" 
+            [hideProgress]="section?.theme?.inputs?.hideProgress || true" 
+            [viewMoreButtonText]="section?.theme?.inputs?.viewMoreButtonText | translateJson"
+            [contentList]="subSection.contents"
+            (viewMoreClick)="navigateToViewMoreContentsPage(section)"
+            (cardClick)="navigateToDetailPage($event)">
+          </sb-course-cards-hlist>
+
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+  </ng-container>
+</div>

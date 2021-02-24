@@ -12,6 +12,7 @@ ion-tabs {
     align-items: flex-end;
     contain: none;
     filter: drop-shadow(0px 5px 6px rgba(0, 0, 0, 0.3));
+    border-top: 2px solid var(--app-primary-header);
   }
 
   ion-tab-button.tab-layout-icon-top.tab-has-label.tab-has-icon ion-label {
@@ -29,7 +30,7 @@ ion-tabs {
 
     position: relative;
     
-    height: calc(56px + (56px / 2));
+    height: calc(64px + (64px / 2));
 
     &::before {
       content: "";
@@ -38,8 +39,8 @@ ion-tabs {
       left: 50%;
       transform: translateX(-40px);
       width: 80px;
-      height: 56px;
-      background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 25px, rgba(0, 0, 0, 0.1) 35px);
+      height: 64px;
+      // background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 25px, rgba(0, 0, 0, 0.1) 35px);
       z-index: 1;
     }
 
@@ -50,24 +51,25 @@ ion-tabs {
       left: 50%;
       transform: translateX(-40px);
       width: 80px;
-      height: 56px;
-      background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 36px, rgba(255, 255, 255, 1) 35px);
+      height: 64px;
+      // background-image: radial-gradient(circle at center 0px, rgba(255, 255, 255, 0) 36px, rgba(255, 255, 255, 1) 35px);
       z-index: 2;
     }
 
     ion-icon {
-      bottom: 10px;
+      bottom: 6px;
       position: relative;
-      background: $primary-color;
-      width: 56px;
-      height: 56px;
+      background: var(--app-white);
+      width: 64px;
+      height: 64px;
       margin: 0px;
       padding: 0px;
-      min-height: 56px;
+      min-height: 64px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
+      border: 0.5rem solid var(--app-tertiary-light);
+      border-radius: 1rem;
       color: $white;
 
       .icon-inner {
@@ -89,25 +91,31 @@ ion-tabs {
     background: transparent;
 
     ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/ic_courses1.png);
+      background-image: url(/assets/imgs/tab_course.svg);
     }
     ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/ic_library.png);
+      background-image: url(/assets/imgs/tab_library.svg);
     }
     ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
       background-image: url(/assets/imgs/ic_chat.png);
     }
     ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/ic_profile1.png);
+      background-image: url(/assets/imgs/tab_profile.svg);
     }
     ion-icon[ng-reflect-name="qrscanner"], ion-icon[aria-label="qrscanner"] {
       background-image: url(/assets/imgs/ic_qr_scanner.svg);
-      background-size: 30px;
+      background-size: 46px;
       background-position: center center;
       background-repeat: no-repeat;
     }
     ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/ic_dowload.png);
+      background-image: url(/assets/imgs/tab_download.svg);
+    }
+    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
+      background-image: url(/assets/imgs/tab_home.svg);
+    }
+    ion-icon[ng-reflect-name="discover"], ion-icon[aria-label="discover"] {
+      background-image: url(/assets/imgs/tab_search.svg);
     }
   }
   ion-tab-button.tab-disabled {
@@ -127,25 +135,31 @@ ion-tabs {
   }
   ion-tab-button.tab-selected {
     ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
-      background-image: url(/assets/imgs/ic_courses_selected.png);
+      background-image: url(/assets/imgs/tab_course_selected.svg);
     }
     ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
-      background-image: url(/assets/imgs/ic_library_selected.png);
+      background-image: url(/assets/imgs/tab_library_selected.svg);
     }
     ion-icon[ng-reflect-name="groups"], ion-icon[aria-label="groups"] {
       background-image: url(/assets/imgs/ic_chat_blue.png);
     }
     ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
-      background-image: url(/assets/imgs/ic_profile_selected.png);
+      background-image: url(/assets/imgs/tab_profile_selected.svg);
     }
     ion-icon[ng-reflect-name="qrscanner"], ion-icon[aria-label="qrscanner"] {
       background-image: url(/assets/imgs/ic_qr_scanner.svg);
-      background-size: 30px;
+      background-size: 46px;
       background-position: center center;
       background-repeat: no-repeat;
     }
     ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
-      background-image: url(/assets/imgs/ic_download_selected.png);
+      background-image: url(/assets/imgs/tab_download_selected.svg);
+    }
+    ion-icon[ng-reflect-name="home"], ion-icon[aria-label="home"] {
+      background-image: url(/assets/imgs/tab_home_selected.svg);
+    }
+    ion-icon[ng-reflect-name="discover"], ion-icon[aria-label="discover"] {
+      background-image: url(/assets/imgs/tab_search_selected.svg);
     }
   }
   .tab-button[aria-selected="true"] {
@@ -159,10 +173,6 @@ ion-tabs {
     }
     ion-label {
       font-size: 12px;
-    }
-    ion-icon:not([aria-label="qrscanner"]) {
-      font-size: 20px;
-      margin-top: 8px;
     }
   }
 }
