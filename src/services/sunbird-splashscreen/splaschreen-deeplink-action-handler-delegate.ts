@@ -735,6 +735,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             }
           }
         };
+      } else if (matchedDeeplinkConfig &&
+        matchedDeeplinkConfig.values && matchedDeeplinkConfig.values.includes('manage-learn')) {
+          extras = {
+            state: {
+              data: urlMatchGroup
+            }
+          };
       }
       this.setTabsRoot();
       // TODO: Needs to check route exists or not before navigating
