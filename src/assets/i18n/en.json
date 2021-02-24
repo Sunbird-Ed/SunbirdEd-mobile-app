@@ -1356,5 +1356,6 @@
   "FRMELEMNTS_LBL_THIS_QUARTER":"This Quarter",
   "FRMELEMNTS_LBL_SHARE_DATA_WITH": "I wish to share my data with {{%tenant}}",
   "PROGRAMS_DESC":"View and participate in educational programs active in your location and designed for your role",
-  "FRMELEMNTS_LBL_PROJECT_DESCRIPTION":"Manage and track your school improvements by creating tasks and scheduling them"
+  "FRMELEMNTS_LBL_PROJECT_DESCRIPTION":"Manage and track your school improvements by creating tasks and scheduling them",
+  "FRMELEMNTS_LBL_TAB_HOME":"Home"
 }
