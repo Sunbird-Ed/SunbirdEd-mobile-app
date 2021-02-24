@@ -43,7 +43,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, ContentType, PreferenceKey
+  ShareItemType, PreferenceKey, AssessmentConstant
 } from '@app/app/app.constant';
 import {
   CourseUtilService,
@@ -81,7 +81,9 @@ import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { AddActivityToGroup } from '../my-groups/group.interface';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 
+declare const window;
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
@@ -127,7 +129,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * This flag helps in knowing when the content player is closed and the user is back on content details page.
    */
   public isPlayerLaunched = false;
-  isGuestUser = false;
   launchPlayer: boolean;
   isResumedCourse: boolean;
   didViewLoad: boolean;
@@ -135,9 +136,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
-  groupId: string;
-  isFromGroupFlow = false;
-  addActivityToGroupData: AddActivityToGroup;
   userCount = 0;
   shouldGenerateTelemetry = true;
   playOnlineSpinner: boolean;
@@ -177,6 +175,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private contentProgressSubscription: Subscription;
   private playerEndEventTriggered: boolean;
   isCourseCertificateShown: boolean;
+  pageId = PageId.CONTENT_DETAIL;
+  private isLastAttempt = false;
+  private isContentDisabled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -235,20 +236,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
       this.source = extras.source || this.source;
-      if (this.source === PageId.GROUP_DETAIL) {
-        this.isFromGroupFlow = true;
-        this.groupId = extras.groupId;
-        this.addActivityToGroupData = {
-          groupId: this.groupId,
-          activityId: this.identifier,
-          activityList: extras.activityList || [],
-          activityType: this.cardData.contentType,
-          pageId: PageId.CONTENT_DETAIL,
-          corRelationList: this.corRelationList,
-          noOfPagesToRevertOnSuccess: -4
-        };
-      }
-
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;
@@ -333,6 +320,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    this.headerService.hideStatusBar();
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -670,7 +658,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent() {
     this.telemetryGeneratorService.generateEndTelemetry(
-      this.telemetryObject.type ? this.telemetryObject.type : ContentType.RESOURCE,
+      this.telemetryObject.type ? this.telemetryObject.type : CsPrimaryCategory.LEARNING_RESOURCE,
       Mode.PLAY,
       PageId.CONTENT_DETAIL,
       Environment.HOME,
@@ -881,8 +869,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (data) {
         this.downloadContent();
       } else {
-        // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
-        // this.content.contentData.pkgVersion);
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CLOSE_CLICKED,
@@ -964,7 +950,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  handleContentPlay(isStreaming) {
+  async handleContentPlay(isStreaming) {
+    if (this.isContentDisabled) {
+      this.commonUtilService.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+      return;
+    }
+    if (this.isLastAttempt) {
+      await this.commonUtilService.showAssessmentLastAttemptPopup();
+      this.isLastAttempt = false;
+    }
     if (this.limitedShareContentFlag) {
       if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
         return;
@@ -1127,7 +1121,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming,
-        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup);
+        this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup , true , this.isChildContent);
       this.downloadAndPlay = false;
     }
   }
@@ -1383,7 +1377,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
       this.courseContext = JSON.parse(this.courseContext);
       if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
-        const progress = await this.localCourseService.getCourseProgress(this.courseContext);
+        const courseDetails: any = await this.localCourseService.getCourseProgress(this.courseContext);
+        const progress = courseDetails.progress;
+        const contentStatusData = courseDetails.contentStatusData || {};
         if (progress !== 100) {
           this.appGlobalService.showCourseCompletePopup = true;
         }
@@ -1391,6 +1387,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.appGlobalService.showCourseCompletePopup = false;
           this.showCourseCompletePopup = true;
         }
+
+        const assesmentsStatus = this.localCourseService.fetchAssessmentStatus(contentStatusData, this.identifier);
+        this.isLastAttempt = assesmentsStatus.isLastAttempt;
+        this.isContentDisabled = assesmentsStatus.isContentDisabled;
       }
       resolve();
     });
@@ -1424,7 +1424,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       component: CourseCompletionPopoverComponent,
       componentProps: {
         isCertified: this.courseContext['isCertified'],
-        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId)
+        certificateDescription: await this.fetchCertificateDescription(this.courseContext && this.courseContext.batchId),
+        course: this.course ? this.course.content : undefined
       },
       cssClass: 'sb-course-completion-popover',
     });

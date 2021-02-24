@@ -1,17 +1,23 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {
   CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype
+  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype, UtilityService
 } from '@app/services';
 import { Router } from '@angular/router';
-import { RouterLinks, ProfileConstants } from '../app.constant';
-import { TranslateService } from '@ngx-translate/core';
-import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest, CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
+import {
+  CourseService,
+  Course,
+  CorrelationData,
+  TelemetryObject,
+  GetUserEnrolledCoursesRequest,
+  CachedItemRequestSourceFrom
+} from '@project-sunbird/sunbird-sdk';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { ContentUtil } from '@app/util/content-util';
+import { NavigationService } from '@app/services/navigation-handler.service';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -38,7 +44,7 @@ export class CurriculumCoursesPage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private appHeaderService: AppHeaderService,
     private appGlobalService: AppGlobalService,
-    private translate: TranslateService,
+    private navService: NavigationService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -73,7 +79,6 @@ export class CurriculumCoursesPage implements OnInit {
       Environment.HOME
     );
     if (this.appGlobalService.isUserLoggedIn()) {
-      // TODO: get the current userId
       await this.appGlobalService.getActiveProfileUid()
         .then(async (uid) => {
           try {
@@ -112,12 +117,12 @@ export class CurriculumCoursesPage implements OnInit {
       undefined,
       ContentUtil.generateRollUp(undefined, course.identifier),
       this.corRelationList);
-    this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-      state: {
+    this.navService.navigateToTrackableCollection(
+      {
         content: course,
         corRelationList: this.corRelationList
       }
-    });
+    );
   }
 
   async getEnrolledCourses(userId: string) {

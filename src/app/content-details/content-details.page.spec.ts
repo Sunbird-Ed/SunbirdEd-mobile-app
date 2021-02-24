@@ -47,13 +47,14 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
 import { PreferenceKey, RouterLinks } from '../app.constant';
-import { EventTopics, ContentType, ShareItemType, ContentFilterConfig } from '../app.constant';
+import { EventTopics, ShareItemType, ContentFilterConfig } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { LocalCourseService } from '../../services';
 import { ContentEventType } from '@project-sunbird/sunbird-sdk';
 import { CourseService } from '@project-sunbird/sunbird-sdk';
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -1063,7 +1064,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.generateEndEvent();
             // assert
-            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(CsContentType.RESOURCE,
                 Mode.PLAY,
                 PageId.CONTENT_DETAIL,
                 Environment.HOME,
@@ -1079,7 +1080,7 @@ describe('ContentDetailsPage', () => {
             // act
             contentDetailsPage.generateEndEvent();
             // assert
-            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith('Learning Resource',
                 Mode.PLAY,
                 PageId.CONTENT_DETAIL,
                 Environment.HOME,
@@ -1286,10 +1287,12 @@ describe('ContentDetailsPage', () => {
                 }
             });
             mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(10));
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeTruthy();
                 done();
             });
@@ -1305,11 +1308,91 @@ describe('ContentDetailsPage', () => {
                         return of(context);
                 }
             });
-            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(100));
+            mockAppGlobalService.identifier = 'do_id';
+            const contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do_id',
+                        bestScore: {},
+                        score:[{}]
+                    }
+                ]
+            }
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({ progress: 100, contentStatusData: contentStatusData }));
             // act
             contentDetailsPage.getContentState();
             // assert
             setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
+                expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
+                expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
+                done();
+            });
+        });
+
+        it('should show course complete popup, make isLastAttempt as true', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = true;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockAppGlobalService.identifier = 'do_id';
+            const contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do_id',
+                        bestScore: {},
+                        score:[{}, {}]
+                    }
+                ]
+            }
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
+                expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
+                expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
+                done();
+            });
+        });
+
+        it('should show course complete popup, make isContentDisabled as true', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = true;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockAppGlobalService.identifier = 'do_id';
+            const contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do_id',
+                        bestScore: {},
+                        score:[{}, {}, {}]
+                    }
+                ]
+            }
+            mockLocalCourseService.fetchAssessmentStatus = jest.fn(() => ({ isLastAttempt: false, isContentDisabled: false }))
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve({progress: 100, contentStatusData: contentStatusData}));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockLocalCourseService.fetchAssessmentStatus).toHaveBeenCalled();
                 expect(mockAppGlobalService.showCourseCompletePopup).toBeFalsy();
                 expect(contentDetailsPage.showCourseCompletePopup).toBeTruthy();
                 done();
@@ -1671,6 +1754,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
             mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -1678,6 +1762,7 @@ describe('ContentDetailsPage', () => {
                 expect(contentDetailsPage.isResumedCourse).toBeTruthy();
                 expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
                 expect(contentDetailsPage.isUsrGrpAlrtOpen).toBeFalsy();
+                expect(mockHeaderService.hideStatusBar).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1697,6 +1782,7 @@ describe('ContentDetailsPage', () => {
             jest.spyOn(contentDetailsPage, 'findHierarchyOfContent').mockImplementation();
             jest.spyOn(contentDetailsPage, 'handleDeviceBackButton').mockImplementation();
             mockChildContentHandler.getLastPlayedContentId = jest.fn(() => 'sample-last-content-id');
+            mockHeaderService.hideStatusBar = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -1704,6 +1790,7 @@ describe('ContentDetailsPage', () => {
                 expect(contentDetailsPage.isResumedCourse).toBeTruthy();
                 expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
                 expect(contentDetailsPage.isUsrGrpAlrtOpen).toBeFalsy();
+                expect(mockHeaderService.hideStatusBar).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2180,16 +2267,22 @@ describe('ContentDetailsPage', () => {
         });
 
         it('should invoked promotToLogIn page', (done) => {
+            // arrange
             contentDetailsPage.limitedShareContentFlag = true;
             contentDetailsPage.content = {
                 contentData: {
                     streamingUrl: 'streamingUrl'
                 }
             };
+            contentDetailsPage['isLastAttempt'] = true;
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            mockCommonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
+            // act
             contentDetailsPage.handleContentPlay('');
+            // assert
             setTimeout(() => {
+                expect(mockCommonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
                 done();
             }, 0);
@@ -2201,6 +2294,19 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.handleContentPlay('');
             setTimeout(() => {
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should show a toast message with User has exceeded the number of atempts', (done) => {
+            // arrange
+            contentDetailsPage['isContentDisabled'] = true;
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.handleContentPlay('');
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELMNTS_IMSG_LASTATTMPTEXCD');
                 done();
             }, 0);
         });

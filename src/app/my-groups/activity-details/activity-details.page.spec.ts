@@ -6,16 +6,23 @@ import {
     PageId, TelemetryGeneratorService
 } from '@app/services';
 import { GroupService, GroupMemberRole, MimeType } from '@project-sunbird/sunbird-sdk';
-import { AppHeaderService, CollectionService, AppGlobalService } from '../../../services';
+import { AppHeaderService, CollectionService, AppGlobalService, InteractType, InteractSubtype, AndroidPermissionsService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { CsGroupActivityAggregationMetric } from '@project-sunbird/client-services/services/group/activity';
 import { RouterLinks } from '../../app.constant';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { doesNotReject } from 'assert';
 
 describe('ActivityDetailsPage', () => {
     let activityDetailsPage: ActivityDetailsPage;
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn(),
+        translateMessage: jest.fn()
+    };
     const mockFilterPipe: Partial<FilterPipe> = {};
     const mockGroupService: Partial<GroupService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
@@ -40,12 +47,23 @@ describe('ActivityDetailsPage', () => {
             }
         })) as any
     };
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         selectedActivityCourseId: ''
     };
     const mockCollectionService: Partial<CollectionService> = {
         fetchCollectionData: jest.fn(() => Promise.reject(''))
+    };
+    const mockFileService: Partial<File> = {
+    };
+    const mockPermissionService: Partial<AndroidPermissionsService> = {
+    };
+    const mockFileOpener: Partial<FileOpener> = {
+    };
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
     };
 
     beforeAll(() => {
@@ -59,7 +77,11 @@ describe('ActivityDetailsPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockCollectionService as CollectionService,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockFileService as File,
+            mockPermissionService as AndroidPermissionsService,
+            mockFileOpener as FileOpener,
+            mockAppVersion as AppVersion
         );
     });
 
@@ -114,8 +136,8 @@ describe('ActivityDetailsPage', () => {
                 ImpressionType.VIEW,
                 '',
                 PageId.ACTIVITY_DETAIL,
-                Environment.GROUP
-            );
+                Environment.GROUP,
+                undefined, undefined, undefined, undefined, activityDetailsPage.corRelationList);
         });
     });
 
@@ -141,7 +163,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -169,6 +191,9 @@ describe('ActivityDetailsPage', () => {
                         agg: {}
                     }
                 })) as any
+            };
+            activityDetailsPage.activity = {
+                type: 'Course'
             };
             // act
             activityDetailsPage.ionViewWillEnter();
@@ -228,7 +253,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -313,7 +338,7 @@ describe('ActivityDetailsPage', () => {
                 contentData: {
                     leafNodes: ['node1']
                 }
-            }as any;
+            } as any;
             mockGroupService.activityService = {
                 getDataAggregation: jest.fn(() => of({
                     members: [{
@@ -559,8 +584,8 @@ describe('ActivityDetailsPage', () => {
         // act
         activityDetailsPage.handleBackButton(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-            .toHaveBeenCalledWith(PageId.ACTIVITY_DETAIL, Environment.GROUP, true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.ACTIVITY_DETAIL, Environment.GROUP, true, undefined, activityDetailsPage.corRelationList);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -691,9 +716,14 @@ describe('ActivityDetailsPage', () => {
                 name: 'course1'
             }
         } as any;
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         activityDetailsPage.openActivityToc();
         // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH, InteractSubtype.SELECT_NESTED_ACTIVITY_CLICKED,
+            Environment.GROUP, PageId.ACTIVITY_DETAIL,
+            undefined, undefined, undefined, activityDetailsPage.corRelationList);
         expect(mockRouter.navigate).toHaveBeenCalledWith(
             [`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_TOC}`],
             expect.anything()
@@ -703,4 +733,170 @@ describe('ActivityDetailsPage', () => {
         activityDetailsPage.ngOnDestroy();
         expect(mockAppGlobalService.selectedActivityCourseId).toBe('');
     });
+    describe('openCSV', () => {
+        it('should open Intent for opening CSV', () => {
+            //arrange
+            mockFileOpener.open = jest.fn(() => Promise.resolve('msg'))
+            const type = 'text/csv';
+            //act
+            activityDetailsPage.openCsv('path')
+            //assert
+            expect( mockFileOpener.open).toHaveBeenCalledWith('path', type)
+        })
+        it('should open Intent for opening CSV', (done) => {
+            //arrange
+            mockFileOpener.open = jest.fn(() => Promise.reject('msg'))
+            const type = 'text/csv';
+            //act
+            activityDetailsPage.openCsv('path')
+            //assert
+            expect( mockFileOpener.open).toHaveBeenCalledWith('path', type)
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('CERTIFICATE_ALREADY_DOWNLOADED');
+               
+                done();
+            }, 0);
+        })
+    })
+
+    describe('checkForPermissions', () => {
+        it('should return true if permissions are already accepted', () => {
+            // arrange
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({hasPermission: true}))
+            // act
+            activityDetailsPage.checkForPermissions().then((res) => {
+                expect(res).toBe(true)
+            })
+        })
+        it('should return false if permissions are not accepted', () => {
+            // arrange
+            mockCommonUtilService.showSettingsPageToast = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: true}))
+            // act
+            activityDetailsPage.checkForPermissions().then((res) => {
+                expect(res).toBe(false)
+                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                    'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                    undefined,
+                    'profile',
+                    true
+                )
+            })
+        })
+
+        it('should show settinngs toast when user doesnt give permission', (done) => {
+            // arrange
+            mockCommonUtilService.showSettingsPageToast = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
+            mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+                await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+                return {
+                    present: jest.fn(() => Promise.resolve())
+                };
+            });
+            // act
+            activityDetailsPage.checkForPermissions()
+            setTimeout(() => {
+                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                    'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                    undefined,
+                    PageId.PROFILE, true
+                )
+                done()
+            });
+        })
+        it('should return true if user gives permission', (done) => {
+            // arrange
+            mockCommonUtilService.showSettingsPageToast = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
+            mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                return {
+                    present: jest.fn(() => Promise.resolve())
+                };
+            });
+            mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}))
+            // act
+            activityDetailsPage.checkForPermissions()
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
+                done()
+            });
+        })
+
+        it('should show toast when permissions not set', (done) => {
+            // arrange
+            mockCommonUtilService.showSettingsPageToast = jest.fn();
+            mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve({isPermissionAlwaysDenied: false}))
+            mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+                await callback(mockCommonUtilService.translateMessage('ALLOW'));
+                return {
+                    present: jest.fn(() => Promise.resolve())
+                };
+            });
+            mockPermissionService.requestPermission = jest.fn(() => of({isPermissionAlwaysDenied: true}))
+            // act
+            activityDetailsPage.checkForPermissions()
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled()
+                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                    'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                    undefined,
+                    PageId.PROFILE, true
+                )
+                done()
+            });
+        })
+    })
+    describe('convertToCSV', () => {
+        it('should return CSV', () => {
+            // arrange
+            const memberList = [
+                {
+                    name: 'name1',
+                    agg: [
+                        {metric: "progress", value: 100}
+                    ]
+                }
+            ]
+            activityDetailsPage.courseData = {
+                name: 'some_name'
+            } as any
+            //act
+            activityDetailsPage.convertToCSV(memberList)
+        })
+    })
+    describe('downloadCSV', () => {
+        it('should download csv successfully', (done) => {
+            // arrange
+            activityDetailsPage.memberList = [
+                {
+                    name: 'name1',
+                    agg: [
+                        {metric: "progress", value: 100}
+                    ]
+                }
+            ];
+            activityDetailsPage.courseData = {
+                name: 'sample_name'
+            } as any;
+            jest.spyOn(activityDetailsPage, 'checkForPermissions').mockResolvedValue(true);
+            mockFileService.writeFile = jest.fn(() => Promise.resolve('path'));
+            jest.spyOn(activityDetailsPage, 'openCsv').mockImplementation();
+            
+            //act
+            activityDetailsPage.downloadCsv()
+            //assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.DOWNLOAD_CLICKED,
+                    Environment.USER,
+                    PageId.ACTIVITY_DETAIL, undefined,
+                )
+                expect(activityDetailsPage.openCsv).toHaveBeenCalled();
+                done();
+            });
+        })
+    })
 });

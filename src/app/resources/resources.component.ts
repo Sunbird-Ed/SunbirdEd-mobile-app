@@ -1,12 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
-import {
-  Component, OnInit, AfterViewInit, Inject, NgZone,
-  ViewChild, OnDestroy, ChangeDetectorRef
-} from '@angular/core';
-import {
-  IonContent as ContentView, Events, ToastController,
-  MenuController, PopoverController, IonRefresher
-} from '@ionic/angular';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Events, IonContent as ContentView, IonRefresher, MenuController, PopoverController, ToastController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,13 +11,17 @@ import { Network } from '@ionic-native/network/ngx';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
+  ContentAggregatorRequest,
   ContentEventType,
+  ContentRequest,
   ContentSearchCriteria,
   ContentService,
+  CorrelationData,
   EventsBusEvent,
   EventsBusService,
   FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
+  FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
   Profile,
@@ -31,29 +29,20 @@ import {
   ProfileType,
   SearchType,
   SharedPreferences,
-  TelemetryObject,
-  ContentRequest,
-  FrameworkService,
-  SortOrder,
-  CorrelationData,
-  ContentsGroupedByPageSection,
-  SearchAndGroupContentRequest,
-  CachedItemRequestSourceFrom
+  SortOrder
 } from 'sunbird-sdk';
 
 import {
   AudienceFilter,
   ContentCard,
-  ContentType,
-  PreferenceKey,
-  Search,
-  ProfileConstants,
-  RouterLinks,
   ContentFilterConfig,
   EventTopics,
   ExploreConstants,
-  FormConfigSubcategories,
-  FormConfigCategories
+  PreferenceKey,
+  ProfileConstants,
+  RouterLinks,
+  PrimaryCategory,
+  Search, ViewMore
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -62,7 +51,13 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType
+  CorReleationDataType,
+  Environment,
+  ID,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -72,6 +67,16 @@ import { applyProfileFilter } from '@app/util/filter.util';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
+import {
+  FrameworkSelectionDelegateService,
+  FrameworkSelectionActionsDelegate
+} from '../profile/framework-selection/framework-selection.page';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
+import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-resources',
@@ -115,7 +120,7 @@ import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-t
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
   @ViewChild('libraryRefresher') refresher: IonRefresher;
 
   pageLoadedSuccess = false;
@@ -124,7 +129,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   guestUser = false;
   showSignInCard = false;
   userId: string;
-  showLoader = false;
 
   /**
    * Common consumption
@@ -179,6 +183,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
    * Flag to show latest and popular course loader
    */
   pageApiLoader = true;
+  dynamicResponse: any;
+  courseCardType = CourseCardGridTypes;
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
@@ -250,10 +256,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public toastController: ToastController,
     public menuCtrl: MenuController,
     private headerService: AppHeaderService,
+    private navService: NavigationService,
     private router: Router,
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
+    private contentAggregatorHandler: ContentAggregatorHandler,
+    private profileHandler: ProfileHandler
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -327,6 +337,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+
   }
 
   generateNetworkType() {
@@ -389,7 +400,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, isPullToRefreshed = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -433,13 +444,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
-    this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.primaryCategories = [CsPrimaryCategory.DIGITAL_TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
-    this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
+    this.getGroupByPage(isAfterLanguageChange);
   }
 
   // Make this method as private
-  async getGroupByPage(isAfterLanguageChange = false, isPullToRefreshed = false) {
+  async getGroupByPage(isAfterLanguageChange = false) {
 
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -457,174 +468,77 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       Environment.HOME,
       this.source, undefined,
       reqvalues);
+
     this.getGroupByPageReq.sortCriteria = [{
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    const request: SearchAndGroupContentRequest = {
-      from: isPullToRefreshed ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE,
-      groupBy: 'subject',
-      combination: {
+    const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
+    const request: ContentAggregatorRequest = {
+      applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
         gradeLevel: this.getGroupByPageReq.grade
       },
-      searchCriteria: this.getGroupByPageReq
+      interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
+        contentSearchCriteria.board = this.getGroupByPageReq.board;
+        contentSearchCriteria.medium = this.getGroupByPageReq.medium;
+        contentSearchCriteria.grade = this.getGroupByPageReq.grade;
+        // contentSearchCriteria.audience = audience;
+        return contentSearchCriteria;
+      }
     };
-
-    const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.searchAndGroupContent(requestBody).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
-        this.ngZone.run(() => {
-          this.searchGroupingContents = response;
-          const newSections = [];
-          this.getCategoryData();
-          // Get the course data
-          this.getCurriculumCourses(requestBody, response);
-          this.searchGroupingContents.sections.forEach(section => {
-            if (section.name) {
-              if (has(section.name, this.selectedLanguage)) {
-                const langs = [];
-                forEach(section.name, (value, key) => {
-                  langs[key] = value;
-                });
-                section.name = langs[this.selectedLanguage];
-              }
-            }
-            newSections.push(section);
-          });
-          // END OF TEMPORARY CODE
-          if (this.profile.subject && this.profile.subject.length) {
-            this.storyAndWorksheets = this.orderBySubject([...newSections]);
-          } else {
-            this.storyAndWorksheets = newSections;
+    try {
+      this.dynamicResponse = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.LIBRARY);
+      if (this.dynamicResponse) {
+        this.dynamicResponse.forEach((val) => {
+          if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
+            this.searchGroupingContents = val.data;
           }
-          const sectionInfo = {};
-          for (let i = 0; i < this.storyAndWorksheets.length; i++) {
-            const sectionName = this.storyAndWorksheets[i].name,
-              count = this.storyAndWorksheets[i].contents.length;
-            // check if locally available
-            this.markLocallyAvailableTextBook();
-            for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
-              const content = this.storyAndWorksheets[i].contents[k];
-              if (content.appIcon) {
-                if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
-                  if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                    content.appIcon = content.appIcon;
-                  } else {
-                    this.imageSrcMap.set(content.identifier, content.appIcon);
-                    content.appIcon = this.defaultImg;
-                  }
-                } else if (content.basePath) {
-                  content.appIcon = content.basePath + '/' + content.appIcon;
-                }
-              }
-              // add custom attribute('cardImg') for common consumption
-              if (!(!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable)) {
-                if (this.commonUtilService.convertFileSrc(content.courseLogoUrl)) {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.courseLogoUrl);
-                } else if (this.commonUtilService.convertFileSrc(content.appIcon)) {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.appIcon);
-                } else {
-                  this.storyAndWorksheets[i].contents[k].cardImg = this.defaultImg;
-                }
-              } else {
-                this.storyAndWorksheets[i].contents[k].cardImg = 'assets/imgs/ic_offline_white_sm.png';
-              }
-            }
-
-            sectionInfo[sectionName] = count;
-            sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-              && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
-            sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
-            sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
-          }
-
-          const resValues = {};
-          resValues['pageRes'] = sectionInfo;
-          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.RESOURCE_PAGE_LOADED,
-            Environment.HOME,
-            this.source, undefined,
-            resValues);
-          this.pageLoadedSuccess = true;
-          this.refresh = false;
-          this.searchApiLoader = false;
-          this.generateExtraInfoTelemetry(newSections.length);
         });
-      })
-      .catch(error => {
-        this.ngZone.run(() => {
-          this.refresh = false;
-          this.searchApiLoader = false;
-          if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
-            if (!isAfterLanguageChange) {
-              this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-            }
+        this.dynamicResponse = this.contentAggregatorHandler.populateIcons(this.dynamicResponse);
+      }
+      const newSections = [];
+      this.getCategoryData();
+      this.searchGroupingContents.sections.forEach(section => {
+        if (section.name) {
+          if (has(section.name, this.selectedLanguage)) {
+            const langs = [];
+            forEach(section.name, (value, key) => {
+              langs[key] = value;
+            });
+            section.name = langs[this.selectedLanguage];
           }
-          const errValues = {};
-          errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
-          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.RESOURCE_PAGE_ERROR,
-            Environment.HOME,
-            this.source, undefined,
-            errValues);
-        });
+        }
+        newSections.push(section);
       });
-  }
-
-  private getCurriculumCourses(request: SearchAndGroupContentRequest, bookResponse) {
-    if (bookResponse && bookResponse.combination) {
-      if (bookResponse.combination.medium) {
-        request.searchCriteria.medium = [bookResponse.combination.medium];
-        request.combination.medium = [bookResponse.combination.medium];
+      if (this.profile.subject && this.profile.subject.length) {
+        this.storyAndWorksheets = this.orderBySubject([...newSections]);
+      } else {
+        this.storyAndWorksheets = newSections;
       }
-      if (bookResponse.combination.gradeLevel) {
-        request.searchCriteria.grade = [bookResponse.combination.gradeLevel];
-        request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
-      }
+      this.pageLoadedSuccess = true;
+      this.refresh = false;
+      this.searchApiLoader = false;
+      this.generateExtraInfoTelemetry(newSections.length);
+    } catch (error) {
+      this.ngZone.run(() => {
+        this.refresh = false;
+        this.searchApiLoader = false;
+        if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+          if (!isAfterLanguageChange) {
+            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+          }
+        }
+        const errValues = {};
+        errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+          InteractSubtype.RESOURCE_PAGE_ERROR,
+          Environment.HOME,
+          this.source, undefined,
+          errValues);
+      });
     }
-    request.searchCriteria.contentTypes = [ContentType.COURSE];
-    request.searchCriteria.languageCode = this.selectedLanguage;
-    // request.searchCriteria.framework = ;
-    console.log('getCurriculumCourses:request = ', request);
-
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
-        console.log('getCurriculumCourses:response = ', response);
-        this.ngZone.run(() => {
-          this.courseList = [];
-          response.sections.forEach(section => {
-            let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
-            if (section.contents) {
-              if (section.contents.length === 1) {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1', 1);
-              } else {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
-              }
-            }
-            const contentListObj = {
-              contents: section.contents,
-              title: section.name,
-              count: countLabel,
-              theme: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].background
-                : null,
-
-              titleColor: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].titleColor
-                : null,
-
-              cardImg: this.subjectThemeAndIconsMap[section.name] ?
-                this.subjectThemeAndIconsMap[section.name].icon
-                : null
-            };
-            this.courseList.push(contentListObj);
-          });
-        });
-      })
-      .catch(error => {
-      });
   }
 
   orderBySubject(searchResults: any[]) {
@@ -723,9 +637,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (refresher) {
       refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
-      this.getGroupByPage(false, true);
+      this.getGroupByPage(false);
     } else {
-      this.getPopularContent(false, null, avoidRefreshList);
+      this.getPopularContent(false, null);
     }
   }
 
@@ -742,11 +656,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+    const primaryCategories = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
-        contentType: contentTypes,
+        primaryCategories,
         source: PageId.LIBRARY
       }
     });
@@ -841,7 +755,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       })
-      .catch(err => {
+      .catch(() => {
       });
   }
 
@@ -880,7 +794,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
 
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
-      this.getGroupByPage(false, !isClassClicked);
+      this.dynamicResponse = [];
+      this.getGroupByPage(false);
     }
 
     for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
@@ -916,7 +831,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.getGroupByPageReq.medium = [mediumName];
     if (this.currentMedium !== mediumName && isMediumClicked) {
-      this.getGroupByPage(false, !isMediumClicked);
+      this.dynamicResponse = [];
+      this.getGroupByPage(false);
     }
     for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
       if (this.categoryMediumNamesArray[i] === mediumName) {
@@ -933,38 +849,35 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToDetailPage(event, sectionName) {
+    event.data = event.data.content ? event.data.content : event.data;
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
-    const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
+    const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
     const values = {};
-    values['sectionName'] = item.subject;
+    values['sectionName'] = sectionName;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject,
+      ContentUtil.getTelemetryObject(item),
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
+      this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
     } else {
       this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
   navigateToTextbookPage(items, subject) {
-    const identifier = items.contentId || items.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, items.contentType, undefined);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
       PageId.LIBRARY,
-      telemetryObject);
+      ContentUtil.getTelemetryObject(items));
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
       this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
@@ -1057,7 +970,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
-        contentType: ContentType.FOR_LIBRARY_TAB,
+        primaryCategories: PrimaryCategory.FOR_LIBRARY_TAB,
         selectedGrade: this.getGroupByPageReq.grade,
         selectedMedium: this.getGroupByPageReq.medium
       }
@@ -1084,7 +997,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
+      primaryCategories: [],
       audience: this.audienceFilter,
       recentlyViewed: false,
     };
@@ -1156,6 +1069,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.frameworkSelectionDelegateService.delegate = undefined;
   }
 
   onCourseCardClick(event) {
@@ -1202,12 +1116,100 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         undefined,
         corRelationList
       );
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-        state: {
+      console.log('Content Data', event);
+      this.navService.navigateToTrackableCollection(
+        {
           content: event.data.contents[0],
           corRelation: corRelationList
         }
-      });
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      //   state: {
+      //     content: event.data.contents[0],
+      //     corRelation: corRelationList
+      //   }
+      // });
     }
+  }
+
+  navigateToViewMoreContentsPage(section) {
+    const params: NavigationExtras = {
+      state: {
+        requestParams: {
+          request: section.meta && section.meta.searchRequest
+        },
+        headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+        pageName: ViewMore.PAGE_TV_PROGRAMS
+      }
+    };
+    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+  }
+
+  async requestMoreContent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LET_US_KNOW_CLICKED,
+      Environment.LIBRARY,
+      PageId.LIBRARY,
+    );
+
+    const formConfig = await this.formAndFrameworkUtilService.getContentRequestFormConfig();
+    this.appGlobalService.formConfig = formConfig;
+    this.frameworkSelectionDelegateService.delegate = this;
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.FRAMEWORK_SELECTION}`],
+      {
+        state: {
+          showHeader: true,
+          corRelation: [{ id: PageId.LIBRARY, type: CorReleationDataType.FROM_PAGE }],
+          title: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_REQUEST_CONTENT'),
+          subTitle: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_RELEVANT_CONTENT_SUB_HEADING'),
+          formConfig,
+          submitDetails: {
+            label: this.commonUtilService.translateMessage('BTN_SUBMIT')
+          }
+        }
+      });
+  }
+
+  async onFrameworkSelectionSubmit(formInput: any, formOutput: any, router: Router, commonUtilService: CommonUtilService,
+    telemetryGeneratorService: TelemetryGeneratorService, corRelation: Array<CorrelationData>) {
+    if (!commonUtilService.networkInfo.isNetworkAvailable) {
+      await commonUtilService.showToast('OFFLINE_WARNING_ETBUI');
+      return;
+    }
+    const selectedCorRelation: Array<CorrelationData> = [];
+
+    if (formOutput['children']) {
+      for (const key in formOutput['children']) {
+        if (formOutput[key] && formOutput['children'][key]['other']) {
+          formOutput[key] = formOutput['children'][key]['other'];
+        }
+      }
+
+      delete formOutput['children'];
+    }
+
+    for (const key in formOutput) {
+      if (typeof formOutput[key] === 'string') {
+        selectedCorRelation.push({ id: formOutput[key], type: key });
+      } else if (typeof formOutput[key] === 'object' && formOutput[key].name) {
+        selectedCorRelation.push({ id: formOutput[key].name, type: key });
+      }
+    }
+    telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SUBMIT_CLICKED,
+      Environment.HOME,
+      PageId.FRAMEWORK_SELECTION,
+      undefined,
+      undefined,
+      undefined,
+      selectedCorRelation);
+    const params = {
+      formInput,
+      formOutput,
+      corRelation
+    };
+    router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
   }
 }

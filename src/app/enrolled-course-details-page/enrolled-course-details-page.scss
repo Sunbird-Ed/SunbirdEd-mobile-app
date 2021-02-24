@@ -118,6 +118,12 @@
         margin-top: 9px;
         margin-bottom: 10px;
     }
+    .hr-border-bottom-share {
+      box-sizing: border-box;
+      height: 1px;
+      border: 1px solid #E9DED3;
+      margin-top: 8px;
+  }
     hr {
         border:0.5px solid $gray-300;
     }
@@ -268,25 +274,6 @@
     color: $blue;
     font-size: 14px;
     // line-height: 20px;
-  }
-  .view-credits{
-    margin-bottom: 8px;
-    span{
-    color: $blue;
-    ion-icon{
-      padding: 0 0 4px 8px;
-      vertical-align: middle;
-      font-size: 18px;
-      margin-right: 2%;
-      float: right;
-    }
-    }
-
-  }
-  .showLicensce{
-    p{
-     margin-bottom: 16px;
-    }
   }
 
   .certificate-container {
@@ -541,3 +528,51 @@ ion-segment-button{
     margin-right: 8px;
   }
 }
+
+.edit-setting{
+  float: right;
+  padding: 12px;
+  color: $blue;
+  font-weight: bold;
+}
+
+.save-changes{
+  color: map-get($colors, white);
+  background-color: $blue;
+  padding: 12px 45px;
+  outline: none;
+  border: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+.ds-m0 {
+  color: map-get($colors, primary_black);
+  font-family: "Noto Sans", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 20px;
+}
+
+.ds-item{
+  --padding-start: 0px;
+}
+ion-radio{
+  margin-right: 10px !important;
+}
+.font-14-new{
+  font-size: 16px !important;
+  margin-top: 8px;
+}
+.data-share-info{
+  padding: 5px;
+  margin-left: -6px;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.data-share-header{
+  margin-left: 2px;
+}
+
+

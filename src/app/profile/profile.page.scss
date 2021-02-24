@@ -41,6 +41,14 @@
       top: -6px;
      }
   }
+  .profile-share-icon{
+    .share-icon{
+      color: $blue;
+      position: relative;
+      top: 6px;
+      margin-left: 8px;
+    }
+  }
   
 
   ion-row {
@@ -146,7 +154,7 @@
   }
   .school-recent {
     margin: 0 auto;
-    @include padding(0, 16px, 16px, 16px);
+    @include padding(8px, 16px, 8px, 16px);
     text-align: center;
   }
 
@@ -331,7 +339,7 @@
     margin: 8px 0 16px;
     ion-button{
       text-transform: none;
-      --background: #{map-get($colors, dark_green)} !important;
+      --background: #{map-get($colors, dark_green)};
       --padding-start: 24px;
       --padding-end: 24px;
     }
@@ -350,10 +358,8 @@
 
     ion-button{
       text-transform: none;
-      --background: #FFFFFF !important;
       --padding-start: 24px;
       --padding-end: 24px;
-      --color: #024F9D;
     }
 
     .declare-info{

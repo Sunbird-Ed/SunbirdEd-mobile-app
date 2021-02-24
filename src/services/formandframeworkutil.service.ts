@@ -21,10 +21,11 @@ import {
     SystemSettingsService,
     WebviewSessionProviderConfig,
     SignInError,
-    FrameworkCategoryCode
+    FrameworkCategoryCode,
+    ProfileType
 } from 'sunbird-sdk';
 
-import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
@@ -326,6 +327,48 @@ export class FormAndFrameworkUtilService {
             });
     }
 
+    async getPdfPlayerConfiguration() {
+        return new Promise((resolve, reject) => {
+            let pdfPlayerConfig;
+            // get cached pdfplayer config
+            pdfPlayerConfig = this.appGlobalService.getPdfPlayerConfiguration();
+
+            if (pdfPlayerConfig === undefined) {
+                pdfPlayerConfig = this.invokePdfPlayerConfiguration(pdfPlayerConfig, resolve, reject);
+            } else {
+                resolve(pdfPlayerConfig);
+            }
+        });
+    }
+
+
+
+
+    // get pdf player enable or disable configuration
+    async invokePdfPlayerConfiguration(
+        pdfPlayerConfig: any,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'pdfPlayer',
+            action: 'get',
+        };
+        let currentConfiguration;
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                res.form.data.fields.forEach((ele, index) => {
+                    if (ele.code === 'pdf') {
+                        currentConfiguration = ele.values[index].isEnabled;
+                    }
+                });
+                this.appGlobalService.setpdfPlayerconfiguration(currentConfiguration);
+                resolve(currentConfiguration);
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+            });
+    }
+
     private setContentFilterConfig(contentFilterConfig: Array<any>) {
         this.contentFilterConfig = contentFilterConfig;
     }
@@ -337,7 +380,7 @@ export class FormAndFrameworkUtilService {
     public async invokeContentFilterConfigFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
-            subType: 'content',
+            subType: 'content_v2',
             action: 'filter',
         };
 
@@ -352,24 +395,6 @@ export class FormAndFrameworkUtilService {
             });
     }
 
-    public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
-        const req: FormRequest = {
-            type: 'group',
-            subType: 'activities',
-            action: 'list',
-            component: 'app'
-        };
-
-        // form api call
-        return this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                // this.setContentFilterConfig(res.form.data.fields);
-                return res.form.data.fields;
-            }).catch((error: any) => {
-                console.log('Error - ' + error);
-                return error;
-            });
-    }
 
     async getSupportedContentFilterConfig(name): Promise<Array<string>> {
         // get cached library config
@@ -388,26 +413,22 @@ export class FormAndFrameworkUtilService {
         if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
             switch (name) {
                 case ContentFilterConfig.NAME_LIBRARY:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    libraryTabContentTypes = PrimaryCategory.FOR_LIBRARY_TAB;
                     break;
                 case ContentFilterConfig.NAME_COURSE:
-                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
+                    libraryTabContentTypes = PrimaryCategory.FOR_COURSE_TAB;
                     break;
                 case ContentFilterConfig.NAME_DOWNLOADS:
-                    libraryTabContentTypes = ContentType.FOR_DOWNLOADED_TAB;
+                    libraryTabContentTypes = PrimaryCategory.FOR_DOWNLOADED_TAB;
                     break;
                 case ContentFilterConfig.NAME_DIALCODE:
-                    libraryTabContentTypes = ContentType.FOR_DIAL_CODE_SEARCH;
+                    libraryTabContentTypes = PrimaryCategory.FOR_DIAL_CODE_SEARCH;
                     break;
             }
         } else {
             for (const field of contentFilterConfig) {
-                if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
-                    if (field.name === ContentFilterConfig.NAME_LIBRARY || field.name === ContentFilterConfig.NAME_COURSE) {
-                        libraryTabContentTypes = ContentType.FOR_COURSE_TAB.concat(ContentType.FOR_LIBRARY_TAB);
-                    } else {
-                        libraryTabContentTypes = field.values;
-                    }
+                if (field.name === name && field.code === ContentFilterConfig.CODE_PRIMARY_CATEGORY) {
+                    libraryTabContentTypes = field.values;
                     break;
                 }
             }
@@ -481,6 +502,12 @@ export class FormAndFrameworkUtilService {
                             });
                     } else {
                         keysLength++;
+                        if (categoryKeysLen === keysLength && (profileData.profileType === ProfileType.ADMIN)) {
+                            this.updateProfileInfo(profile, profileData, eventParams)
+                                .then((response) => {
+                                    resolve(response);
+                                });
+                        }
                     }
                 }
             } else {
@@ -686,5 +713,51 @@ export class FormAndFrameworkUtilService {
             component: 'app'
         };
         return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
+
+    async getContentRequestFormConfig() {
+        const req: FormRequest = {
+            type: 'dynamicForm',
+            subType: 'contentRequest',
+            action: 'submit',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
+
+    async getConsentFormConfig() {
+        const req: FormRequest = {
+            type: 'dynamicForm',
+            subType: 'consentDeclaration_v2',
+            action: 'submit',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
+
+    async getNotificationFormConfig() {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'notification',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
+
+    async getBoardAliasName() {
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'boardAlias',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
+
+    async getFormFields(formRequest: FormRequest, rootOrgId?: string) {
+        formRequest.rootOrgId = rootOrgId || '*' ;
+        const formData  = await this.formService.getForm(formRequest).toPromise() as any;
+        return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
     }
 }

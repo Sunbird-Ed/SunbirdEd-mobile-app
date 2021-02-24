@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone, Inject, ChangeDetectorRef } from '@angular/core';
 import {
-  TelemetrySyncStat,
   TelemetryService,
   TelemetryImpressionRequest,
   TelemetryAutoSyncModes,
@@ -65,7 +64,7 @@ export class DataSyncComponent implements OnInit {
     );
   }
 
-  async init() {
+  private async init() {
     this.zone.run(async () => {
       this.dataSyncType = (
         await this.telemetryService.autoSync.getSyncMode().toPromise() as TelemetryAutoSyncModes | undefined
@@ -84,6 +83,7 @@ export class DataSyncComponent implements OnInit {
       PageId.SETTINGS_DATASYNC,
       Environment.SETTINGS, '', '', ''
     );
+    this.handleBackButton();
   }
 
   onSelected() {
@@ -93,7 +93,7 @@ export class DataSyncComponent implements OnInit {
     }
   }
 
-  generateSyncTypeInteractTelemetry(dataSyncType: string) {
+  private generateSyncTypeInteractTelemetry(dataSyncType: string) {
     const value = new Map();
     value['dataSyncType'] = dataSyncType;
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -121,7 +121,6 @@ export class DataSyncComponent implements OnInit {
         ignoreSyncThreshold: true
       }).toPromise();
     } catch (e) {
-      console.error(e);
     }
 
     return this.archiveService.export(
@@ -135,7 +134,6 @@ export class DataSyncComponent implements OnInit {
         return this.social.share('', '', r.filePath, '');
       })
       .catch(async (e) => {
-        console.error(e);
         await loader.dismiss();
 
         if (e instanceof ObjectNotFoundError) {
@@ -147,7 +145,6 @@ export class DataSyncComponent implements OnInit {
   }
 
   async onSyncClick() {
-    const that = this;
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.SYNC_NOW_CLICKED, null);
@@ -163,14 +160,12 @@ export class DataSyncComponent implements OnInit {
         }
 
         this.commonUtilService.showToast('DATA_SYNC_FAILURE');
-        console.error('Telemetry Data Sync Error: ', syncStat);
         return;
       } else if (!syncStat.syncedEventCount) {
         if (this.loader) {
           await this.loader.dismiss();
         }
         this.commonUtilService.showToast('DATA_SYNC_NOTHING_TO_SYNC');
-        console.error('Telemetry Data Sync Error: ', syncStat);
         return;
       }
 
@@ -179,17 +174,15 @@ export class DataSyncComponent implements OnInit {
         await this.loader.dismiss();
       }
       this.commonUtilService.showToast('DATA_SYNC_SUCCESSFUL');
-      console.log('Telemetry Data Sync Success: ', syncStat);
     }, async (error) => {
       if (this.loader) {
         await this.loader.dismiss();
       }
       this.commonUtilService.showToast('DATA_SYNC_FAILURE');
-      console.error('Telemetry Data Sync Error: ', error);
     });
   }
 
-  generateInteractEvent(interactType: string, subtype: string, size: number) {
+  private generateInteractEvent(interactType: string, subtype: string, size: number) {
     /*istanbul ignore else */
       this.telemetryGeneratorService.generateInteractTelemetry(
         interactType,
@@ -201,7 +194,7 @@ export class DataSyncComponent implements OnInit {
       );
   }
 
-  handleBackButton() {
+  private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_DATASYNC, Environment.SETTINGS, false);
       this.location.back();

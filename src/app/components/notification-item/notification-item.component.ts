@@ -2,6 +2,7 @@ import { Component, Input, Inject, Output, EventEmitter } from '@angular/core';
 import { NotificationService } from 'sunbird-sdk';
 
 import { InteractSubtype } from '@app/services/telemetry-constants';
+import {NotificationService as LocalNotification} from '@app/services';
 
 @Component({
   selector: 'app-notification-item',
@@ -14,7 +15,10 @@ export class NotificationItemComponent {
   @Output() notificationClick = new EventEmitter();
   @Output() generateNotification = new EventEmitter();
   @Input('itemData') itemData;
-  constructor(@Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService) {
+  constructor(
+      @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
+      private notificationDelegate: LocalNotification
+  ) {
   }
 
   toggleExpand() {
@@ -37,5 +41,9 @@ export class NotificationItemComponent {
     this.notificationService.updateNotification(this.itemData).subscribe((status) => {
       this.notificationClick.emit();
     });
+
+    this.notificationDelegate.notificationId = this.itemData.id || '';
+    this.notificationDelegate.setNotificationParams(this.itemData);
+    this.notificationDelegate.handleNotification();
   }
 }

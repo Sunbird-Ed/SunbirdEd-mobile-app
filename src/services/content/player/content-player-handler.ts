@@ -6,7 +6,7 @@ import { File } from '@ionic-native/file/ngx';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentInfo } from '../content-info';
-import { RouterLinks, ContentType, ContentFilterConfig } from '@app/app/app.constant';
+import { RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
 import { Router, NavigationExtras } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Course, CourseService } from 'sunbird-sdk';
@@ -36,7 +36,7 @@ export class ContentPlayerHandler {
      */
     public launchContentPlayer(
         content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
-        navigateBackToContentDetails?: boolean) {
+        navigateBackToContentDetails?: boolean , isChildContent?: boolean) {
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -55,7 +55,7 @@ export class ContentPlayerHandler {
         if (isCourse && content.contentData['totalQuestions']) {
             const correlationData: CorrelationData = {
                 id: this.courseService.generateAssessmentAttemptId({
-                    courseId: contentInfo.course!.identifier,
+                    courseId: contentInfo.course.identifier,
                     batchId: contentInfo.course.batchId,
                     contentId: content.identifier,
                     userId: contentInfo.course.userId
@@ -112,8 +112,8 @@ export class ContentPlayerHandler {
 
             } else {
                 this.router.navigate([RouterLinks.PLAYER],
-                    { state: { config: data,  course : contentInfo.course, navigateBackToContentDetails,
-                            corRelation: contentInfo.correlationList, isCourse } });
+                    { state: { contentToPlay : content , config: data,  course : contentInfo.course, navigateBackToContentDetails,
+                            corRelation: contentInfo.correlationList, isCourse , childContent: isChildContent } });
             }
         });
     }

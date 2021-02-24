@@ -1,0 +1,30 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+
+.framework-header {
+    background-color: $blue;
+    color: map-get($colors, white);
+    padding: 16px;
+
+    h4 {
+        padding:0;
+        font-weight: 700;
+        max-width: 1024px;
+        margin: 0 auto;
+    }
+}
+
+.framework-form-bg{
+    padding: 16px;  
+}
+
+ion-footer{
+    z-index: 5;
+}
+
+ion-button{
+    --background: #{$blue} !important;
+    height: 40px !important;
+    text-transform: capitalize !important;
+}

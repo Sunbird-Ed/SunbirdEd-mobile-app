@@ -12,6 +12,9 @@ import {
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
+declare const cordova;
+
+
 @Component({
   selector: 'app-upgrade-popover',
   templateUrl: './upgrade-popover.component.html',
@@ -94,8 +97,11 @@ export class UpgradePopoverComponent {
   }
 
   upgradeApp(link) {
-    const appId = link.substring(link.indexOf('=') + 1, link.length);
-    this.utilityService.openPlayStore(appId);
+    // for in app update
+    cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+        () => {},
+        () => {}
+    );
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UPGRADE_CLICKED,

@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
 import { } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
@@ -8,7 +8,16 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState, } from 'sunbird-sdk';
+import {
+  Profile,
+  ProfileService,
+  ProfileSource,
+  ProfileType,
+  SharedPreferences,
+  CorrelationData,
+  AuditState,
+  UpdateServerProfileInfoRequest
+} from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -20,10 +29,13 @@ import {
   AuditType
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
-import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
+import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { ProfileHandler } from '@app/services/profile-handler';
+import { LoginHandlerService } from '@app/services';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -31,8 +43,8 @@ import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/na
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage {
-  selectedUserType?: ProfileType;
+export class UserTypeSelectionPage implements OnDestroy {
+  selectedUserType?: any;
   continueAs = '';
   profile: Profile;
   backButtonFunc: Subscription;
@@ -46,6 +58,8 @@ export class UserTypeSelectionPage {
   appName = '';
   public hideBackButton = true;
   ProfileType = ProfileType;
+  categoriesProfileData: any;
+  supportedUserTypeConfig: Array<any>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -61,12 +75,16 @@ export class UserTypeSelectionPage {
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
     private splashScreenService: SplashScreenService,
-    private nativePageTransitions: NativePageTransitions
+    private nativePageTransitions: NativePageTransitions,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
+    private profileHandler: ProfileHandler,
+    private loginHandlerService: LoginHandlerService
   ) {
   }
 
   getNavParams() {
     this.navParams = window.history.state;
+    this.categoriesProfileData = this.navParams.categoriesProfileData;
   }
 
   ionViewDidEnter() {
@@ -82,6 +100,10 @@ export class UserTypeSelectionPage {
   }
 
   async ionViewWillEnter() {
+    if (this.appGlobalService.isUserLoggedIn()) {
+      this.selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    }
+    this.supportedUserTypeConfig = await this.profileHandler.getSupportedUserTypes();
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -152,28 +174,14 @@ export class UserTypeSelectionPage {
     }
   }
 
-  selectTeacherCard() {
-    this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
-    this.generateUserTypeClicktelemetry(ProfileType.TEACHER);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectStudentCard() {
-    this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
-    this.generateUserTypeClicktelemetry(ProfileType.STUDENT);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
-  }
-
-  selectOtherCard() {
-    this.selectCard('USER_TYPE_3', ProfileType.OTHER);
-    this.generateUserTypeClicktelemetry(ProfileType.OTHER);
-    setTimeout(() => {
-      this.continue();
-    }, 50);
+  selectUserTypeCard(selectedUserTypeName: string, userType: string) {
+    this.selectCard(selectedUserTypeName, userType);
+    this.generateUserTypeClicktelemetry(userType);
+    if (!this.categoriesProfileData) {
+      setTimeout(() => {
+        this.continue();
+      }, 50);
+    }
   }
 
   generateUserTypeClicktelemetry(userType: string) {
@@ -200,7 +208,7 @@ export class UserTypeSelectionPage {
 
       this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
     });
-    const values = new Map();
+    const values = {};
     values['userType'] = (this.selectedUserType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -246,7 +254,7 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
-            const correlationlist: Array<CorrelationData> = [{id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE}];
+            const correlationlist: Array<CorrelationData> = [{ id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE }];
             correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
             this.telemetryGeneratorService.generateAuditTelemetry(
               Environment.ONBOARDING,
@@ -267,7 +275,7 @@ export class UserTypeSelectionPage {
 
   /**
    * It will initializes tabs based on the user type and navigates to respective page
-   * @param isUserTypeChanged
+   * isUserTypeChanged
    */
 
   // changes
@@ -281,13 +289,14 @@ export class UserTypeSelectionPage {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
 
-    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted) {
+    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted && !isUserTypeChanged) {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+        this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() :
+          this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
       }
     } else {
       this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
@@ -322,8 +331,8 @@ export class UserTypeSelectionPage {
 
   /**
    * Updates profile and navigates to desired page with given params
-   * @param page
-   * @param params
+   * page
+   * params
    */
   updateProfile(page: string, params = {}) {
     this.profile.profileType = this.selectedUserType;
@@ -331,12 +340,43 @@ export class UserTypeSelectionPage {
       .then((res: any) => {
         if (page === 'TabsPage') {
           this.navigateToTabsAsGuest();
+        } else if (this.categoriesProfileData) {
+          this.navigateToTabsAsLogInUser();
         } else {
-          this.navigateToProfileSettingsPage(params);
+          this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() : this.navigateToProfileSettingsPage(params);
+          // this.navigateToProfileSettingsPage(params);
         }
       }).catch(error => {
         console.error('Error=', error);
       });
+    const request: UpdateServerProfileInfoRequest = {
+      userId: this.profile.uid,
+      userType: this.selectedUserType
+    };
+    this.profileService.updateServerProfile(request).toPromise()
+      .then().catch((e) => console.log('server error for update profile', e));
+  }
+
+  async navigateToTabsAsLogInUser() {
+    if (this.categoriesProfileData.status) {
+      if (this.categoriesProfileData.showOnlyMandatoryFields) {
+        initTabs(this.container, LOGIN_TEACHER_TABS);
+        if (this.categoriesProfileData.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+          this.router.navigate([RouterLinks.TABS]);
+        } else {
+          const navigationExtras: NavigationExtras = {
+            state: {
+              isShowBackButton: false
+            }
+          };
+          this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+        }
+      }
+    } else {
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+        state: this.categoriesProfileData
+      });
+    }
   }
 
   navigateToTabsAsGuest() {
@@ -344,7 +384,7 @@ export class UserTypeSelectionPage {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  navigateToProfileSettingsPage(params) {
+  async navigateToProfileSettingsPage(params) {
     const navigationExtras: NavigationExtras = { state: params };
     const options: NativeTransitionOptions = {
       direction: 'left',
@@ -355,5 +395,30 @@ export class UserTypeSelectionPage {
     };
     this.nativePageTransitions.slide(options);
     this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+  }
+
+  async navigateToProfilePage() {
+    const navigationExtras: NavigationExtras = {};
+    const options: NativeTransitionOptions = {
+      direction: 'left',
+      duration: 500,
+      androiddelay: 500,
+      fixedPixelsTop: 0,
+      fixedPixelsBottom: 0
+    };
+    // this.nativePageTransitions.slide(options);
+    this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`], navigationExtras);
+  }
+
+  onSubmitAttempt() {
+    setTimeout(() => {
+      this.continue();
+    }, 50);
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 }

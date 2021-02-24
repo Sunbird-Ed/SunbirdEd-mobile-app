@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { ProfileService, UserFeed } from 'sunbird-sdk';
+import { ProfileService } from 'sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';

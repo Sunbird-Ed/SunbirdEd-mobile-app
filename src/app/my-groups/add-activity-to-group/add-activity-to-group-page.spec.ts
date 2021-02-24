@@ -1,12 +1,13 @@
-import { PageId, Environment, ImpressionType, InteractSubtype } from '../../../services/telemetry-constants';
+import {
+    PageId, Environment, ImpressionType, InteractType, InteractSubtype, CorReleationDataType
+} from '../../../services/telemetry-constants';
 import { AddActivityToGroupPage } from './add-activity-to-group.page';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services';
 import { AppHeaderService, AppGlobalService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { of, throwError } from 'rxjs';
-import { InteractType } from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
 import { RouterLinks } from '../../app.constant';
 
 describe('AddActivityToGroupPage', () => {
@@ -25,7 +26,7 @@ describe('AddActivityToGroupPage', () => {
                     },
                     groupId: 'g1',
                     supportedActivityList: [
-                        {title: 'some_title'}
+                        { title: 'some_title' }
                     ]
                 }
             }
@@ -64,8 +65,8 @@ describe('AddActivityToGroupPage', () => {
         // act
         addActivityToGroupPage.handleBackButton(true);
         // assert
-        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry)
-        .toHaveBeenCalledWith(PageId.ACTIVITY_TOC, Environment.GROUP, true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.ACTIVITY_TOC, Environment.GROUP, true, undefined, addActivityToGroupPage.corRelationList);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -82,7 +83,7 @@ describe('AddActivityToGroupPage', () => {
 
     it('should invoked handleDeviceBackButton', () => {
         mockPlatform.backButton = {
-            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({event: {}}))) as any
+            subscribeWithPriority: jest.fn((_, fn) => fn(Promise.resolve({ event: {} }))) as any
         } as any;
         jest.spyOn(addActivityToGroupPage, 'handleBackButton').mockImplementation();
         // act
@@ -103,6 +104,11 @@ describe('AddActivityToGroupPage', () => {
         it('should handle device header and back-button', (done) => {
             // assert
             mockAppGlobalService.selectedActivityCourseId = '';
+            addActivityToGroupPage.activityList = [
+                {
+                    items: [{ identifier: 'id1' }]
+                }
+            ];
             // act
             addActivityToGroupPage.ionViewWillEnter();
             // assert
@@ -113,8 +119,8 @@ describe('AddActivityToGroupPage', () => {
                     ImpressionType.VIEW,
                     '',
                     PageId.ADD_ACTIVITY_TO_GROUP,
-                    Environment.GROUP
-                );
+                    Environment.GROUP,
+                    undefined, undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
                 done();
             }, 0);
         });
@@ -142,16 +148,74 @@ describe('AddActivityToGroupPage', () => {
     });
 
     describe('search', () => {
-        it('should redirect to search page', () => {
+        it('should redirect to search page and add the ActivityType cData', (done) => {
             // arrange
             mockRouter.navigate = jest.fn();
+            addActivityToGroupPage.flattenedActivityList = [
+                { identifier: 'id1' }
+            ];
             // act
-            addActivityToGroupPage.search('data');
+            addActivityToGroupPage.search({ activityType: 'Course' });
+
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith(
-                [RouterLinks.SEARCH],
-                expect.anything()
-            );
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                    InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
+                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    [RouterLinks.SEARCH],
+                    {
+                        state: {
+                            activityList: [
+                                { identifier: 'id1' }
+                            ],
+                            groupId: 'g1',
+                            activityTypeData: { activityType: 'Course' },
+                            corRelation: addActivityToGroupPage.corRelationList,
+                            source: 'group-detail'
+                        }
+                    }
+                );
+                done();
+            }, 0);
+        });
+
+        it('should redirect to search page and update the ActivityType cData', (done) => {
+            // arrange
+            addActivityToGroupPage.corRelationList = [
+                {
+                    id: 'Course',
+                    type: CorReleationDataType.ACTIVITY_TYPE
+                }
+            ];
+            mockRouter.navigate = jest.fn();
+            addActivityToGroupPage.flattenedActivityList = [
+                { identifier: 'id1' }
+            ];
+            // act
+            addActivityToGroupPage.search({ activityType: 'TextBook' });
+
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                    InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
+                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
+                expect(mockRouter.navigate).toHaveBeenCalledWith(
+                    [RouterLinks.SEARCH],
+                    {
+                        state: {
+                            activityList: [
+                                { identifier: 'id1' }
+                            ],
+                            groupId: 'g1',
+                            activityTypeData: { activityType: 'TextBook' },
+                            corRelation: addActivityToGroupPage.corRelationList,
+                            source: 'group-detail'
+                        }
+                    }
+                );
+                done();
+            }, 0);
         });
     });
 

@@ -3,7 +3,6 @@ import {
   ContentService,
   SharedPreferences,
   CourseService,
-  AuthService,
   Batch,
   NetworkError,
   HttpClientError,
@@ -18,15 +17,16 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Location, DatePipe } from '@angular/common';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
-
+import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
+import { UserConsent } from '@project-sunbird/client-services/models';
+import { ConsentService } from './consent-service';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
 
   const mockCourseService: Partial<CourseService> = {};
-  const mockAuthService: Partial<AuthService> = {};
   const mockPreferences: Partial<ContentService> = {};
   const mockAppGlobalService: Partial<AppGlobalService> = {};
   const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -43,11 +43,16 @@ describe('LocalCourseService', () => {
   const mockSbProgressLoader: Partial<SbProgressLoader> = {
     hide: jest.fn()
   };
+  const mockConsentService: Partial<ConsentService> = {};
+  const mockDatePipe: Partial<DatePipe> = {};
+
+  const mockCategoryKeyTranslator: Partial<CategoryKeyTranslator> = {
+    transform: jest.fn(() => 'sample-message')
+  };
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
-      mockAuthService as AuthService,
       mockPreferences as SharedPreferences,
       mockAppGlobalService as AppGlobalService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
@@ -57,26 +62,40 @@ describe('LocalCourseService', () => {
       mockAppVersion as AppVersion,
       mockRouter as Router,
       mockLocation as Location,
-      mockSbProgressLoader as SbProgressLoader
+      mockSbProgressLoader as SbProgressLoader,
+      new DatePipe('en'),
+      mockCategoryKeyTranslator as CategoryKeyTranslator,
+      mockConsentService as ConsentService
     );
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should create an instance of LocalCourseService', () => {
     expect(localCourseService).toBeTruthy();
   });
 
+  it('should return reqestMap Value', () => {
+    const course = {
+      courseId: 'courseId',
+      channel: 'sample-channelId',
+      userId: 'sample-userId'
+    };
+    const data = localCourseService.prepareRequestValue(course);
+    expect(data).toBeTruthy();
+  });
+
   describe('enrollIntoBatch', () => {
-    it('should Enrol into batch, and when the return is true', (done) => {
+    it('should Enrol into batch, and when the return is true', async (done) => {
       // arrange
       const enrollCourse = {
         userId: 'sample_userid',
         batch: {
           id: '',
-          courseId: '',
+          courseId: 'sample-do-ID',
           status: 0
         },
         courseId: 'sample_courseid',
@@ -84,13 +103,61 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
+        channel: 'sample-channel',
+        userConsent: 'Yes'
       };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCourseService.enrollCourse = jest.fn(() => of(true));
-
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation();
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+          expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+          expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+          expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
+          done();
+      });
+    });
+
+    it('should Enrol into batch, and when the return is true for updateConsent catchPart', async (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: 'sample-do-ID',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+        channel: 'sample-channel',
+        userConsent: 'Yes'
+      };
+      mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCourseService.enrollCourse = jest.fn(() => of(true));
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      }));
+      mockCommonUtilService.showToast = jest.fn();
+      // act
+      await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockCourseService.enrollCourse).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       });
     });
@@ -136,9 +203,12 @@ describe('LocalCourseService', () => {
         corRelationList: [],
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-
-      mockCourseService.enrollCourse = jest.fn(() => throwError(''));
-
+      const map = new Map();
+      map.set('data', 'sample-data');
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return map;
+      });
+      mockCourseService.enrollCourse = jest.fn(() => throwError({}));
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
@@ -166,14 +236,13 @@ describe('LocalCourseService', () => {
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       const networkError = new NetworkError({ code: 'samp' });
       mockCourseService.enrollCourse = jest.fn(() => throwError(networkError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
 
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
-        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         done();
       });
 
@@ -193,22 +262,63 @@ describe('LocalCourseService', () => {
         telemetryObject: {},
         objRollup: {},
         corRelationList: [],
+        userConsent: UserConsent.YES
       };
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
-
+      const value = new Map();
+      value.set('error', {});
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return value;
+      });
       // act
       localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
         // assert
+        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         done();
       });
+    });
 
+
+    it('should raise a telemetry event when HttpClient error is thrown and already enrolled and network error', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+        userConsent: UserConsent.YES
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
+
+      mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
+      mockCommonUtilService.showToast = jest.fn();
+      const value = new Map();
+      value.set('error', {});
+      jest.spyOn(localCourseService, 'prepareRequestValue').mockImplementation(() => {
+        return value;
+      });
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        done();
+      });
     });
 
     it('should raise a telemetry event when Httpclient error is thrown but not already enrolled', (done) => {
@@ -230,7 +340,7 @@ describe('LocalCourseService', () => {
       const httpClientError = new HttpClientError('http_clicnt_error', { body: {} });
 
       mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
-      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'enrolled');
       mockCommonUtilService.showToast = jest.fn();
 
       // act
@@ -240,17 +350,11 @@ describe('LocalCourseService', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         done();
       });
-
     });
 
   });
 
   describe('checkCourseRedirect', () => {
-    const authSession = {
-      access_token: 'access_token',
-      refresh_token: 'refresh_token',
-      userToken: 'userId'
-    };
     const courseAndBatchData: Batch = `{
       "identifier":"string",
       "id":"string",
@@ -277,11 +381,13 @@ describe('LocalCourseService', () => {
     it('should restrict the enrolling flow, if the user is not logged in.', (done) => {
       // arrange
       mockAppGlobalService.isSignInOnboardingCompleted = false;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
       // action
       localCourseService.checkCourseRedirect();
+      jest.spyOn(localCourseService, 'enrollIntoBatch').mockImplementation();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.isJoinTraningOnboardingFlow).toEqual(true);
         done();
       }, 0);
@@ -289,42 +395,50 @@ describe('LocalCourseService', () => {
 
     it('should restrict the enrolling flow if batchId and course details are not saved in the preference.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
       mockPreferences.getString = jest.fn(() => of(undefined));
+      jest.spyOn(localCourseService, 'enrollIntoBatch').mockImplementation();
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        // expect(mockAppGlobalService.getActiveProfileUid).not.toHaveBeenCalled();
         done();
       }, 0);
     });
 
     it('should restrict the enrolling flow if session details is empty.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(undefined));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      mockPreferences.putString = jest.fn(() => of(undefined));
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, '');
         done();
       }, 0);
     });
 
     it('should restrict the enrolling flow if created id and the userId are same.', (done) => {
       // arrange
-      authSession['userToken'] = 'other_userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('other_userId'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      mockPreferences.putString = jest.fn(() => of(undefined));
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockEvents.publish).toHaveBeenCalledWith(expect.any(String));
         expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, expect.any(String));
         done();
@@ -333,9 +447,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -357,7 +471,9 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
@@ -366,9 +482,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference, but enrolledCourse is null.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -390,7 +506,9 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
@@ -398,9 +516,9 @@ describe('LocalCourseService', () => {
 
     it('should allow the enrolling flow if created id and the userId are saved in the preference, but enrolledCourse is [].', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -422,7 +540,9 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
-        expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+        expect(mockCategoryKeyTranslator.transform).toBeCalledWith('FRMELEMNTS_MSG_COURSE_ENROLLED', expect.anything());
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
         done();
       }, 0);
@@ -430,9 +550,12 @@ describe('LocalCourseService', () => {
 
     it('should handle Network error when getEnrolled Courses is called.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+      mockNgZone.run = jest.fn((cb) => {
+        cb();
+      }) as any;
       mockPreferences.getString = jest.fn((key) => {
         switch (key) {
           case PreferenceKey.BATCH_DETAIL_KEY:
@@ -463,9 +586,10 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -476,12 +600,10 @@ describe('LocalCourseService', () => {
 
     it('should handle HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
-      const dismissFn = jest.fn(() => Promise.resolve());
-      const presentFn = jest.fn(() => Promise.resolve());
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
@@ -494,10 +616,11 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockEvents.publish).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'login' });
@@ -507,9 +630,9 @@ describe('LocalCourseService', () => {
 
     it('should handle HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -529,10 +652,11 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
@@ -542,9 +666,9 @@ describe('LocalCourseService', () => {
 
     it('should handle error other than HttpClient error when course is already enrolled.', (done) => {
       // arrange
-      authSession['userToken'] = 'userId';
       mockAppGlobalService.isSignInOnboardingCompleted = true;
-      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+      mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
@@ -564,6 +688,8 @@ describe('LocalCourseService', () => {
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
+        expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+        expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
         expect(mockSbProgressLoader.hide).toHaveBeenCalled();
         done();
       }, 0);
@@ -603,8 +729,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of(contentStatus));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(100);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(100);
         done();
       });
     });
@@ -617,8 +743,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => throwError(''));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
@@ -631,8 +757,8 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of(undefined));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
@@ -645,11 +771,99 @@ describe('LocalCourseService', () => {
       };
       mockCourseService.getContentState = jest.fn(() => of({ contentList: [{ contentId: 'do_1234' }] }));
       // act
-      localCourseService.getCourseProgress(context).then((res) => {
-        expect(res).toBe(0);
+      localCourseService.getCourseProgress(context).then((res: any) => {
+        expect(res.progress).toBe(0);
         done();
       });
     });
+  });
+
+  describe('isEnrollable', () => {
+    it('should return unEnrolled and invoked showFutureBatchMessage', () => {
+      const batches = [{
+        enrollmentEndDate: '01/01/01',
+        startDate: '01/01/01'
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // assert
+      expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+      expect(data).toBeFalsy();
+    });
+
+    it('should return is enrolled', () => {
+      const batches = [{
+        enrollmentEndDate: undefined,
+        startDate: '01/01/01'
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // arrange
+      expect(data).toBeTruthy();
+    });
+
+    it('should return is enrolled', () => {
+      const batches = [{
+        enrollmentEndDate: undefined,
+        startDate: 1800863414000
+      }, {
+        enrollmentEndDate: undefined,
+        startDate: '02/02/02'
+      }, {
+        startDate: 1800863614000
+      }];
+      mockCommonUtilService.showToast = jest.fn();
+      mockDatePipe.transform = jest.fn(() => '01-01-01');
+      mockCategoryKeyTranslator.transform = jest.fn(() => 'batches avilable');
+      // act
+      const data = localCourseService.isEnrollable(batches, {});
+      // assert
+      expect(data).toBeTruthy();
+    });
+  });
+
+  describe('fetchAssessmentStatus()', () => {
+
+    it('return default assessment status data', () => {
+      // arrange
+      const contentStatusData = null;
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(false);
+      expect(data.isContentDisabled).toEqual(false);
+    });
+
+    it('return assessment status isLastAttempt as true if its the final attempt', () => {
+      // arrange
+      const contentStatusData = {
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2] }]
+      };
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(true);
+      expect(data.isContentDisabled).toEqual(false);
+    });
+
+    it('return assessment status isContentDisabled as true if the user has exceeded the number of attempts', () => {
+      // arrange
+      const contentStatusData = {
+        contentList: [{ contentId: 'do_id', bestScore: {}, score: [1,2,3] }]
+      };
+      // act
+      const data = localCourseService.fetchAssessmentStatus(contentStatusData, 'do_id');
+      // assert
+      expect(data.isLastAttempt).toEqual(false);
+      expect(data.isContentDisabled).toEqual(true);
+    });
+
   });
 
 });

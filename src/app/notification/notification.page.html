@@ -1,40 +1,42 @@
 <ion-content overflow-scroll="true">
+  <ng-container *ngIf="(notificationList$ | async) as notificationList">
   <!-- Shows Notification Count with Clear Button -->
-  <div class="sb-view-all-container" *ngIf="notificationList?.length">
-    <div class="sb-view-all-items">
-      <div class="sb-view-all-title">
-        <span class="page-heading">{{ 'NOTIFICATION' | translate }}</span>
-        <span class="clear-btn" (click)="clearAllNotifications()">{{'CLEAR' | translate}}</span>
-        <span class="page-info">{{'NEW_NOTIFICATIONS' | translate:{'%s': newNotificationCount} }}&lrm;</span>
+  <ng-container *ngIf="(unreadNotificationList$ | async) as unreadNotificationList">
+    <div class="sb-view-all-container">
+      <div class="sb-view-all-items">
+        <div class="sb-view-all-title">
+          <span class="page-heading">{{ 'NOTIFICATION' | translate }}</span>
+          <span class="clear-btn" *ngIf="notificationList.length" (click)="clearAllNotifications()">{{'CLEAR' | translate}}</span>
+          <span class="page-info">{{'NEW_NOTIFICATIONS' | translate:{'%s': unreadNotificationList?.length} }}&lrm;</span>
+        </div>
       </div>
-    </div>
-  </div>
+    </div> 
+  </ng-container>
 
   <!-- Shows various types of notifications with sliding delete buttons-->
-  <ion-list lines="none" *ngIf="notificationList?.length && commonUtilService?.networkInfo?.isNetworkAvailable">
-    <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList;let index = index" #slidingItem>
-      <ion-item>
-        <app-notification-item (notificationClick)="updateNotificationCount($event);"
-          (generateNotification)="handleTelemetry($event)" [itemData]="item"></app-notification-item>
-      </ion-item>
-      <ion-item-options side="start">
-        <ion-button color="danger" class="delete-button" (click)="removeNotification(index, 'left')">
-          <img src="./assets/imgs/noun_delete.svg" alt="delete" />
-        </ion-button>
-      </ion-item-options>
-      <ion-item-options side="end">
-        <ion-button color="danger" class="delete-button" (click)="removeNotification(index, 'right')">
-          <img src="./assets/imgs/noun_delete.svg" alt="delete" />
-        </ion-button>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
-  <div class="oval-wrapper" *ngIf="!notificationList.length">
-    <div class="oval">
-      <img src="./assets/imgs/no_notification.svg" alt="delete" />
-    </div>
-    <h4>{{'MSG_NO_NEW_NOTIFICATION' | translate}}</h4>
-  </div>
-
+      <ion-list lines="none" *ngIf="notificationList.length">
+        <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList" #slidingItem>
+          <ion-item>
+            <app-notification-item (generateNotification)="handleTelemetry($event)" [itemData]="item"></app-notification-item>
+          </ion-item>
+          <ion-item-options side="start">
+            <ion-button color="danger" class="delete-button-left" (click)="removeNotification(item, 'left')">
+              <img src="./assets/imgs/noun_delete.svg" alt="delete" />
+            </ion-button>
+          </ion-item-options>
+          <ion-item-options side="end">
+            <ion-button color="danger" class="delete-button-right" (click)="removeNotification(item, 'right')">
+              <img src="./assets/imgs/noun_delete.svg" alt="delete" />
+            </ion-button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    
+      <div class="oval-wrapper" *ngIf="!notificationList.length">
+        <div class="oval">
+          <img src="./assets/imgs/no_notification.svg" alt="delete" />
+        </div>
+        <h4>{{'MSG_NO_NEW_NOTIFICATION' | translate}}</h4>
+      </div>
+    </ng-container>
 </ion-content>

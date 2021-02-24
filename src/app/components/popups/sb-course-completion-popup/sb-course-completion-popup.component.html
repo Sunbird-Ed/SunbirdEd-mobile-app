@@ -8,13 +8,14 @@
                 <img src="assets/imgs/Badge green.svg" alt="">
             </div>
             <div class="course-completion-title">{{'CONGRATULATIONS' | translate}}</div>
-            <div class="course-completion-info">{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</div>
+            <div class="course-completion-info">{{'FRMELEMNTS_MSG_TRAINING_COMPLETED_SUCCESSFULLY' | categoryKeyTranslate : course }}</div>
             <div class="course-completion-cert" *ngIf="isCertified && certificateDescription">
-                <p>{{'COURSE_COMPLETION_POPUP_DESC' | translate}}</p>
+                <p>{{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_DESC' | categoryKeyTranslate : course }}</p>
                 <p>{{certificateDescription}}</p>
             </div>
-            <div class="course-completion-cert" *ngIf="isOnline && !isCertified">{{'COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | translate}}</div>
+            <div class="course-completion-cert" *ngIf="isOnline && !isCertified">
+                {{'FRMELEMNTS_MSG_COURSE_COMPLETION_POPUP_NO_CERTIFICATE' | categoryKeyTranslate : course }}
+            </div>
         </div>
-       </div>
-  </ion-content>
-    
+    </div>
+</ion-content>

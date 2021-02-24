@@ -1,0 +1,30 @@
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title class="sb-popover-title">{{'GROUP_GUIDELINES' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+  
+<ion-content class="sb-popover-container ion-no-padding">
+  <div class="sb-popover-items">
+    <div class="sb-popover-content-details">
+      <div class="gg-terms-container">
+          <div class="input-item gg-input-primary" lines="none">
+            <ion-checkbox class="gg-terms-checkbox" color="secondary" checked="false" [(ngModel)]="agreedToGroupGuidelines"></ion-checkbox>
+            <p class="gg-terms-checkbox-label"> 
+              <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }} </span><span class="gg-terms" (click)="openTermsOfUse()">{{'GROUP_GUIDELINES' | translate}}</span>
+            </p>
+            </div>
+          <p
+            *ngIf="showGroupGuideLinesError"
+            class="cr-error cr-error-checkbox"
+            [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'app_name':  appName}" ></p>
+        </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <div class="sb-popover-footer">
+    <button class="sb-popover-action-btn popover-color" (click)="continue()">{{'CONTINUE' | translate}}</button>
+  </div>
+</ion-footer>

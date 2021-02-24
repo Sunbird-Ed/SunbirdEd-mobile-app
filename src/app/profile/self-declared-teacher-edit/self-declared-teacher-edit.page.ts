@@ -1,23 +1,18 @@
-import {Component, Inject, ViewChild} from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
-  LocationSearchCriteria,
   ProfileService,
   SharedPreferences,
   LocationSearchResult,
-  CachedItemRequestSourceFrom,
-  FormRequest,
-  FormService,
-  FrameworkService,
   AuditState,
   CorrelationData,
   TelemetryObject,
-  ServerProfile
+  ServerProfile,
+  Consent
 } from 'sunbird-sdk';
-import { Location as loc, PreferenceKey } from '../../../app/app.constant';
+import { PreferenceKey, ProfileConstants } from '../../../app/app.constant';
 import {
   AppHeaderService,
   CommonUtilService,
-  AppGlobalService,
   ID,
   TelemetryGeneratorService,
   InteractType,
@@ -26,20 +21,20 @@ import {
   PageId,
   ImpressionType,
   AuditType,
-  CorReleationDataType
+  CorReleationDataType,
+  FormAndFrameworkUtilService
 } from '@app/services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
-import { Subscription, of, defer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
-// import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { FormControl } from '@angular/forms';
-import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { FieldConfig, FieldConfigOption } from 'common-form-elements';
+import { FieldConfig } from 'common-form-elements';
+import { FormConstants } from '@app/app/form.constants';
+import { ConsentService } from '@app/services/consent-service';
+import { ConsentStatus, Profile } from '@project-sunbird/client-services/models';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -64,15 +59,11 @@ export class SelfDeclaredTeacherEditPage {
   teacherDetailsForm: FieldConfig<any>[] = [];
   tenantPersonaForm: FieldConfig<any>[] = [];
   appName = '';
-  selectedTenant: string = '';
-
-  // @ViewChild('commonForms') commonForms: CommonFormsComponent;
+  selectedTenant = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('FORM_SERVICE') private formService: FormService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
     private router: Router,
@@ -83,7 +74,8 @@ export class SelfDeclaredTeacherEditPage {
     private popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formValidationAsyncFactory: FormValidationAsyncFactory,
-    private appVersion: AppVersion
+    private formnFrameworkService: FormAndFrameworkUtilService,
+    private consentService: ConsentService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
@@ -108,12 +100,13 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async ionViewDidEnter() {
-    this.appName = await this.appVersion.getAppName();
+    this.appName = await this.commonUtilService.getAppName();
     this.getTenantPersonaForm();
   }
 
   async getTenantPersonaForm() {
-    const personaTenantFormData: FieldConfig<any>[] = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+    const personaTenantFormData: FieldConfig<any>[] = await this.formnFrameworkService.getFormFields(FormConstants.TENANT_PERSONAINFO,
+      this.profile.rootOrg.rootOrgId);
 
     this.selectedTenant = (this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].orgId) || '';
 
@@ -127,12 +120,12 @@ export class SelfDeclaredTeacherEditPage {
 
     this.tenantPersonaForm = personaTenantFormData;
     if (this.selectedTenant) {
-      this.getTeacherDetailsFormApi(this.selectedTenant, false);
+      this.initTenantSpecificForm(this.selectedTenant, false);
     }
   }
 
-  async getTeacherDetailsFormApi(rootOrgId?, isFormLoaded?) {
-    const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', rootOrgId);
+  async initTenantSpecificForm(rootOrgId?, isFormLoaded?) {
+    const formConfig = await this.formnFrameworkService.getFormFields(FormConstants.SELF_DECLARATION, rootOrgId);
     this.translateLabels(formConfig as any);
     if (formConfig.length) {
       this.initializeFormData(formConfig, isFormLoaded);
@@ -142,8 +135,10 @@ export class SelfDeclaredTeacherEditPage {
   private translateLabels(fieldConfig: FieldConfig<any>[]) {
     fieldConfig.forEach((config) => {
       if (config.templateOptions) {
-        config.templateOptions.label = config.templateOptions.label ? this.commonUtilService.translateMessage(config.templateOptions.label) : '';
-        config.templateOptions.placeHolder = config.templateOptions.placeHolder ? this.commonUtilService.translateMessage(config.templateOptions.placeHolder) : '';
+        config.templateOptions.label = config.templateOptions.label
+          ? this.commonUtilService.translateMessage(config.templateOptions.label) : '';
+        config.templateOptions.placeHolder = config.templateOptions.placeHolder
+          ? this.commonUtilService.translateMessage(config.templateOptions.placeHolder) : '';
       }
 
       if (config.validations && config.validations.length) {
@@ -164,7 +159,7 @@ export class SelfDeclaredTeacherEditPage {
                 this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key], { '%appName': this.appName });
             }
             if (config.code === 'tnc' && key === '$url') {
-              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl;
+              config.templateOptions.labelHtml.values[key] = this.profile.tncLatestVersionUrl || 'TNC_URL';
             }
             config.templateOptions.labelHtml.values[key] =
               this.commonUtilService.translateMessage(config.templateOptions.labelHtml.values[key]);
@@ -178,45 +173,11 @@ export class SelfDeclaredTeacherEditPage {
     });
   }
 
-  private async fetchFormApi(req) {
-    return await this.formService.getForm(req).toPromise().then(res => {
-      return res;
-    }).catch(err => {
-      return null;
-    });
-  }
-
   async initializeFormData(formConfig, isFormLoaded) {
 
     this.teacherDetailsForm = formConfig.map((config: FieldConfig<any>) => {
       if (config.code === 'externalIds' && config.children) {
         config.children = (config.children as FieldConfig<any>[]).map((childConfig: FieldConfig<any>) => {
-
-          if (childConfig.templateOptions['dataSrc'] && childConfig.templateOptions['dataSrc'].marker === 'LOCATION_LIST') {
-            if (childConfig.templateOptions['dataSrc'].params.id === 'state') {
-              let stateCode;
-              if (this.selectedStateCode) {
-                stateCode = this.selectedStateCode;
-              } else {
-                let stateDetails;
-                if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
-                  this.profile.declarations[0].info[childConfig.code]) {
-                  stateDetails = this.profile.declarations[0].info[childConfig.code]
-                }
-                stateCode = stateDetails && stateDetails.id;
-              }
-              childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
-            } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
-              let districtDetails;
-              if(this.profile.declarations && this.profile.declarations.length && this.profile.declarations[0].info &&
-                this.profile.declarations[0].info[childConfig.code]) {
-                  districtDetails = this.profile.declarations[0].info[childConfig.code]
-              }
-              childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
-            }
-            return childConfig;
-          }
-
           if (childConfig.asyncValidation) {
             childConfig = this.assignDefaultValue(childConfig, false);
 
@@ -251,7 +212,7 @@ export class SelfDeclaredTeacherEditPage {
         return config;
       }
 
-      if (config.code === 'tnc') {
+      if (config.code === 'tnc' || config.code === 'consentInfo') {
         if (this.editType === 'edit') {
           return undefined;
         }
@@ -265,7 +226,7 @@ export class SelfDeclaredTeacherEditPage {
           this.availableLocationState || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
       } else if (config.code === 'district') {
         config.templateOptions.labelHtml.values['$1'] =
-        this.availableLocationDistrict || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
+          this.availableLocationDistrict || this.commonUtilService.translateMessage('ENTER_LOCATION_FROM_PROFILE_PAGE');
       }
 
       return config;
@@ -330,7 +291,7 @@ export class SelfDeclaredTeacherEditPage {
 
   ionViewWillLeave(): void {
     if (this.backButtonFunc) {
-    this.backButtonFunc.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -370,7 +331,7 @@ export class SelfDeclaredTeacherEditPage {
       } else if (this.tenantPersonaLatestFormValue.tenant === this.profile.declarations[0].orgId) {
         operation = 'edit';
       } else if (this.tenantPersonaLatestFormValue.tenant !== this.profile.declarations[0].orgId) {
-        const tenantPersonaData = { persona: this.profile.declarations[0].persona, tenant: this.profile.declarations[0].orgId }
+        const tenantPersonaData = { persona: this.profile.declarations[0].persona, tenant: this.profile.declarations[0].orgId };
         declarations.push(this.getDeclarationReqObject('remove', this.profile.declarations[0].info, tenantPersonaData));
         operation = 'add';
       }
@@ -382,16 +343,24 @@ export class SelfDeclaredTeacherEditPage {
         telemetryValue = this.getUpdatedValues(declaredDetails);
       }
 
-      await this.profileService.updateServerProfileDeclarations(req).toPromise();
+      try {
+        await this.profileService.updateServerProfileDeclarations(req).toPromise();
+      } catch (e) {
+
+      }
+
       this.events.publish('loggedInProfile:update');
 
       this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
       if (this.editType === 'add') {
+        const userDetails = await this.profileService.getActiveSessionProfile(
+          { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
         this.generateTncAudit();
-        this.showAddedSuccessfullPopup();
+        this.commonUtilService.showToast('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS');
+        this.updateConsent(userDetails, declarations[0].orgId);
       } else {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('UPDATED_SUCCESSFULLY'));
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_UPDATED_SUCCESSFULLY'));
       }
     } catch (err) {
       console.error(err);
@@ -410,27 +379,6 @@ export class SelfDeclaredTeacherEditPage {
       persona: tenantPersonaDetails.persona,
       info: declaredDetails
     };
-  }
-
-  async showAddedSuccessfullPopup() {
-    const confirm = await this.popoverCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS'),
-        sbPopoverInfo: this.commonUtilService.translateMessage('YOU_CAN_EDIT_TEACHER_INFO'),
-        showCloseBtn: false,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('OK'),
-            btnClass: 'popover-color'
-          },
-        ]
-      },
-      cssClass: 'sb-popover success',
-    });
-    await confirm.present();
-    const { data } = await confirm.onDidDismiss();
-
   }
 
   generateTelemetryInteract(type, id, value?) {
@@ -477,125 +425,6 @@ export class SelfDeclaredTeacherEditPage {
     );
   }
 
-  private buildStateListClosure(stateCode?): any {
-    return (formControl: FormControl, _: FormControl, notifyLoading, notifyLoaded) => {
-      return defer(async () => {
-
-        const formStateList: FieldConfigOption<string>[] = [];
-        let selectedState;
-
-        const loader = await this.commonUtilService.getLoader();
-        await loader.present();
-        const req: LocationSearchCriteria = {
-          from: CachedItemRequestSourceFrom.SERVER,
-          filters: {
-            type: loc.TYPE_STATE
-          }
-        };
-        try {
-          const locations = await this.profileService.searchLocation(req).toPromise();
-
-          if (locations && Object.keys(locations).length) {
-            this.stateList = locations;
-
-            this.stateList.forEach(stateData => {
-              formStateList.push({ label: stateData.name, value: stateData.code });
-            });
-
-            if (this.editType === 'add' && this.availableLocationState) {
-              selectedState = this.stateList.find(s =>
-                (s.name === this.availableLocationState)
-              );
-            }
-
-            setTimeout(() => {
-              formControl.patchValue(stateCode || (selectedState && selectedState.code) || null);
-            }, 0);
-
-          } else {
-            this.commonUtilService.showToast('NO_DATA_FOUND');
-          }
-        } catch (e) {
-          console.log(e);
-        } finally {
-          loader.dismiss();
-        }
-        return formStateList;
-      });
-    };
-  }
-
-  private buildDistrictListClosure(districtCode?, isFormLoaded?): any {
-    return (formControl: FormControl, contextFormControl: FormControl, notifyLoading, notifyLoaded) => {
-      if (!contextFormControl) {
-        return of([]);
-      }
-
-      return contextFormControl.valueChanges.pipe(
-        distinctUntilChanged(),
-        tap(() => {
-          formControl.patchValue(null);
-        }),
-        switchMap((value) => {
-          return defer(async () => {
-            const formDistrictList: FieldConfigOption<string>[] = [];
-            let selectedDistrict;
-
-            const loader = await this.commonUtilService.getLoader();
-            await loader.present();
-
-            const selectdState = this.getStateIdFromCode(contextFormControl.value);
-
-            const req: LocationSearchCriteria = {
-              from: CachedItemRequestSourceFrom.SERVER,
-              filters: {
-                type: loc.TYPE_DISTRICT,
-                parentId: selectdState && selectdState.id
-              }
-            };
-            try {
-              const districtList = await this.profileService.searchLocation(req).toPromise();
-
-              if (districtList && Object.keys(districtList).length) {
-                this.districtList = districtList;
-
-                this.districtList.forEach(districtData => {
-                  formDistrictList.push({ label: districtData.name, value: districtData.code });
-                });
-
-                if (!isFormLoaded) {
-                  if (this.editType === 'add' && this.availableLocationDistrict) {
-                    selectedDistrict = this.districtList.find(s =>
-                      (s.name === this.availableLocationDistrict)
-                    );
-                  }
-
-                  setTimeout(() => {
-                    formControl.patchValue(districtCode || (selectedDistrict && selectedDistrict.code) || null);
-                  }, 0);
-                } else {
-                  setTimeout(() => {
-                    formControl.patchValue(null);
-                  }, 0);
-                }
-
-              } else {
-                this.availableLocationDistrict = '';
-                this.districtList = [];
-                this.commonUtilService.showToast('NO_DATA_FOUND');
-              }
-            } catch (e) {
-              console.log(e);
-            } finally {
-              loader.dismiss();
-            }
-            return formDistrictList;
-          });
-        })
-      );
-    };
-  }
-
   private getStateIdFromCode(code) {
     if (this.stateList && this.stateList.length) {
       const selectedState = this.stateList.find(state => state.code === code);
@@ -606,13 +435,13 @@ export class SelfDeclaredTeacherEditPage {
 
   tenantPersonaFormValueChanges(event) {
     this.tenantPersonaLatestFormValue = event;
-    if (event && event.tenant && event.persona) {
+    if (event && event.tenant) {
       if (!this.selectedTenant) {
         this.selectedTenant = event.tenant;
-        this.getTeacherDetailsFormApi(this.selectedTenant, false);
+        this.initTenantSpecificForm(this.selectedTenant, false);
       } else if (event.tenant !== this.selectedTenant) {
         this.selectedTenant = event.tenant;
-        this.getTeacherDetailsFormApi(this.selectedTenant, true);
+        this.initTenantSpecificForm(this.selectedTenant, true);
       }
     }
   }
@@ -623,10 +452,11 @@ export class SelfDeclaredTeacherEditPage {
       if (!this.selectedStateCode && event.children.externalIds['declared-state']) {
         this.selectedStateCode = event.children.externalIds['declared-state'];
       }
-      if (event.children.externalIds['declared-state'] && this.selectedStateCode && this.selectedStateCode !== event.children.externalIds['declared-state']) {
+      if (event.children.externalIds['declared-state'] &&
+        this.selectedStateCode && this.selectedStateCode !== event.children.externalIds['declared-state']) {
         this.selectedStateCode = event.children.externalIds['declared-state'];
         const selectedState = this.getStateIdFromCode(this.selectedStateCode);
-        this.getTeacherDetailsFormApi(selectedState && selectedState.id, true);
+        this.initTenantSpecificForm(selectedState && selectedState.id, true);
       }
     }
   }
@@ -642,23 +472,20 @@ export class SelfDeclaredTeacherEditPage {
   linkClicked(event) {
     this.commonUtilService.openLink(event);
   }
-
-  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
-    const formReq: FormRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      type,
-      subType,
-      action,
-      rootOrgId: rootOrgId || '*',
-      component: 'app'
+  // todo Move this to consent service
+  public updateConsent(profileDetails, orgId) {
+    const request: Consent = {
+      status: ConsentStatus.ACTIVE,
+      userId: profileDetails.uid,
+      consumerId: orgId,
+      objectId: orgId,
+      objectType: 'Organisation'
     };
-
-    let formData: any = await this.fetchFormApi(formReq);
-    if (!formData) {
-      formReq.rootOrgId = '*';
-      formData = await this.fetchFormApi(formReq);
-    }
-    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+    this.profileService.updateConsent(request).toPromise()
+      .catch((e) => {
+        if (e.code === 'NETWORK_ERROR') {
+          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+        }
+      });
   }
-
 }

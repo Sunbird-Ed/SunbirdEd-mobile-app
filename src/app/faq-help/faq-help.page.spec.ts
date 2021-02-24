@@ -76,6 +76,11 @@ describe('FaqHelpPage', () => {
     }
 
     beforeAll(() => {
+        mockRouter.getCurrentNavigation = jest.fn(() => {
+            return {
+                extras: {}
+            };
+        });
         faqHelpPage = new FaqHelpPage(
             mockSharedPreferences as any,
             mockSystemSettingsService as any,
@@ -279,13 +284,15 @@ describe('FaqHelpPage', () => {
     describe('navigateToReportIssue', () => {
         it('navigate to report issue page', async () => {
             // arrange
+            faqHelpPage.corRelation = [];
             // act
             await faqHelpPage.navigateToReportIssue();
             // assert
             expect(mockRouter.navigate).toBeCalledWith(
                 [RouterLinks.FAQ_REPORT_ISSUE], {
                     state: {
-                        data: faqHelpPage.data
+                        data: faqHelpPage.data,
+                        corRelation: faqHelpPage.corRelation
                     }
                 }
             );

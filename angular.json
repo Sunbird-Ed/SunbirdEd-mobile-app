@@ -42,6 +42,11 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/common-consumption/assets",
                 "output": "./assets/common-consumption"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-pdf-player/lib/assets/",
+                "output": "/assets/"
               }
             ],
 
@@ -56,7 +61,9 @@
                 "input": "src/global.scss"
               }
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/@project-sunbird/telemetry-sdk/index.js"
+            ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true
           },
@@ -64,8 +71,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.prod.ts"
                 }
               ],
               "optimization": true,
@@ -88,8 +95,16 @@
             "hmr": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.hmr.ts"
+                }
+              ]
+            },
+            "debug": {
+              "fileReplacements": [
+                {
+                  "replace": "src/configuration/configuration.ts",
+                  "with": "src/configuration/configuration.debug.ts"
                 }
               ]
             },

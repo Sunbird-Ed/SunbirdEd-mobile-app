@@ -30,6 +30,10 @@ const routes: Routes = [
     resolve: { message: HasNotSelectedUserTypeGuard }
   },
   {
+    path: `${RouterLinks.USER_TYPE_SELECTION_LOGGEDIN}`,
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+  },
+  {
     path: RouterLinks.PROFILE_SETTINGS,
     loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
     canLoad: [HasNotBeenOnboardedGuard],
@@ -42,6 +46,14 @@ const routes: Routes = [
   {
     path: RouterLinks.RESOURCES,
     loadChildren: './resources/resources.module#ResourcesModule',
+  },
+  {
+    path: RouterLinks.HOME,
+    loadChildren: './home/home.module#HomePageModule'
+  },
+  {
+    path: RouterLinks.DISCOVER,
+    loadChildren: './discover/discover.module#DiscoverPageModule'
   },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
@@ -87,7 +99,12 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_GROUPS, loadChildren: './my-groups/my-groups.module#MyGroupsPageModule' },
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
+  { path: RouterLinks.CATEGORY_LIST, loadChildren: './category-list/category-list-page.module#CategoryListPageModule'},
+  { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
 
+  {
+    path: RouterLinks.DISCUSSION, loadChildren: './discussion-forum/discussion-forum.module#DiscussionForumModule'
+  }
 ];
 
 @NgModule({

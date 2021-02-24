@@ -5,11 +5,8 @@ import {
   ToastController,
   IonRefresher,
 } from '@ionic/angular';
-import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import {
   ContentCard,
-  ContentType,
-  MimeType,
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
@@ -40,7 +37,8 @@ import {
   NetworkError,
   FormRequest,
   FormService,
-  FrameworkService
+  FrameworkService,
+  ProfileType
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { Router, NavigationExtras } from '@angular/router';
@@ -48,17 +46,26 @@ import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit
 import {
   EditContactDetailsPopupComponent
 } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
-import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
+import {
+  AccountRecoveryInfoComponent
+} from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { AndroidPermissionsService } from '@app/services';
-import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
+import {
+  AndroidPermissionsStatus,
+  AndroidPermission
+} from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from 'common-form-elements';
-import {CertificateDownloadAsPdfService} from 'sb-svg2pdf';
+import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { FormConstants } from '../form.constants';
+import { ProfileHandler } from '@app/services/profile-handler';
 
 @Component({
   selector: 'app-profile',
@@ -82,10 +89,7 @@ export class ProfilePage implements OnInit {
   profileName: string;
   onProfile = true;
   roles = [];
-  userLocation = {
-    state: {},
-    district: {}
-  };
+  userLocation = {};
   appName = '';
 
   imageUri = 'assets/imgs/ic_profile_default.png';
@@ -94,7 +98,8 @@ export class ProfilePage implements OnInit {
   readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
   rolesLimit = 2;
   badgesLimit = 2;
-  trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
@@ -122,6 +127,7 @@ export class ProfilePage implements OnInit {
   personaTenantDeclaration: string;
   selfDeclaredDetails: any[] = [];
   selfDeclarationInfo: any;
+  learnerPassbook: any[] = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -138,15 +144,17 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    private socialShare: SocialSharing,
+    private socialSharing: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
+    private navService: NavigationService,
     private sbProgressLoader: SbProgressLoader,
     private fileOpener: FileOpener,
     private toastController: ToastController,
     private translate: TranslateService,
-    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService
+    private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
+    private profileHandler: ProfileHandler
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -179,11 +187,6 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     this.doRefresh();
-    this.events.subscribe('profilePicture:update', (res) => {
-      if (res.isUploading && res.url !== '') {
-        this.imageUri = res.url;
-      }
-    });
     this.appName = await this.appVersion.getAppName();
   }
 
@@ -228,14 +231,13 @@ export class ProfilePage implements OnInit {
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
-
+          this.getLearnerPassbook();
           this.getEnrolledCourses(refresher);
           this.searchContent();
           this.getSelfDeclaredDetails();
         });
       })
       .catch(async error => {
-        console.error('Error while Fetching Data', error);
         this.refresh = false;
         await loader.dismiss();
       });
@@ -279,6 +281,12 @@ export class ProfilePage implements OnInit {
                 that.profile = profileData;
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
+                const role: string = (!that.profile.userType ||
+                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
+                that.userLocation = that.commonUtilService.getUserLocation(that.profile);
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
+                      role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
                     that.formAndFrameworkUtilService.updateLoggedInUser(profileData, activeProfile)
@@ -291,20 +299,16 @@ export class ProfilePage implements OnInit {
                           }); */
 
                           // Need to test thoroughly
-                          that.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
-                            state: {
-                              showOnlyMandatoryFields: true,
-                              profile: frameWorkData['activeProfileData']
-                            }
-                          });
+                          // that.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                          //   state: {
+                          //     showOnlyMandatoryFields: true,
+                          //     profile: frameWorkData['activeProfileData']
+                          //   }
+                          // });
                         }
                       });
-                    if (profileData && profileData.avatar) {
-                      that.imageUri = profileData.avatar;
-                    }
                     that.formatRoles();
                     that.getOrgDetails();
-                    that.userLocation = that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
@@ -319,13 +323,6 @@ export class ProfilePage implements OnInit {
         }
       });
     });
-  }
-
-  /**
-   * Method to convert Array to Comma separated string
-   */
-  arrayToString(stringArray: Array<string>): string {
-    return stringArray.join(', ');
   }
 
   /**
@@ -351,7 +348,7 @@ export class ProfilePage implements OnInit {
    */
   showMoreItems(): void {
     this.rolesLimit = this.roles.length;
-    generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -370,7 +367,7 @@ export class ProfilePage implements OnInit {
 
   showMoreBadges(): void {
     this.badgesLimit = this.profile.badgeAssertions.length;
-    generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -383,9 +380,16 @@ export class ProfilePage implements OnInit {
     this.badgesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
 
-  showMoreTrainings(): void {
-    this.trainingsLimit = this.mappedTrainingCertificates.length;
-    generateInteractTelemetry(
+  showMoreTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.mappedTrainingCertificates.length;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.learnerPassbook.length;
+        break;
+    }
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
       Environment.HOME,
@@ -394,21 +398,16 @@ export class ProfilePage implements OnInit {
       undefined);
   }
 
-  showLessTrainings(): void {
-    this.trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+  showLessTrainings(listName): void {
+    switch (listName) {
+      case 'myLearning':
+        this.myLearningLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+      case 'learnerPassbook':
+        this.learnerPassbookLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
+        break;
+    }
   }
-
-
-  /**
-   *  Returns the Object with given Keys only
-   * @param keys - Keys of the object which are required in new sub object
-   * @param obj - Actual object
-   */
-  getSubset(keys, obj) {
-    return keys.reduce((a, c) => ({ ...a, [c]: obj[c] }), {});
-  }
-
-
 
   /**
    * To get enrolled course(s) of logged-in user i.e, trainings in the UI.
@@ -469,6 +468,40 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
+  async getLearnerPassbook() {
+    try {
+      const request = { userId: this.profile.userId || this.profile.id };
+      this.learnerPassbook = (await this.courseService.getLearnerCertificates(request).toPromise())
+        .filter((learnerCertificate: any) => (learnerCertificate &&
+          learnerCertificate._source && learnerCertificate._source.data && learnerCertificate._source.data.badge))
+        .map((learnerCertificate: any) => {
+          const oneCert: any = {
+            issuingAuthority: learnerCertificate._source.data.badge.issuer.name,
+            issuedOn: learnerCertificate._source.data.issuedOn,
+            courseName: learnerCertificate._source.data.badge.name,
+            courseId: learnerCertificate._source.related.courseId || learnerCertificate._source.related.Id
+          };
+          if (learnerCertificate._source.pdfUrl) {
+            oneCert.certificate = {
+              url: learnerCertificate._source.pdfUrl || undefined,
+              id: learnerCertificate._id || undefined,
+              issuedOn: learnerCertificate._source.data.issuedOn,
+              name: learnerCertificate._source.data.badge.issuer.name
+            };
+          } else {
+            oneCert.issuedCertificate = {
+              identifier: learnerCertificate._id,
+              name: learnerCertificate._source.data.badge.issuer.name,
+              issuedOn: learnerCertificate._source.data.issuedOn
+            };
+          }
+          return oneCert;
+        });
+    } catch (error) {
+      console.log('Learner Passbook API Error', error);
+    }
+  }
+
   async downloadTrainingCertificate(course: {
     courseName: string,
     dateTime: string,
@@ -484,7 +517,7 @@ export class ProfilePage implements OnInit {
 
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, ContentType.CERTIFICATE, undefined);
+        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
 
         const values = new Map();
         values['courseId'] = course.courseId;
@@ -502,25 +535,25 @@ export class ProfilePage implements OnInit {
         }
         if (course.issuedCertificate) {
           this.courseService.downloadCurrentProfileCourseCertificateV2(
-              { courseId: course.courseId, certificate: course.issuedCertificate },
-              (svgData, callback) => {
-                this.certificateDownloadAsPdfService.download(
-                    svgData, (fileName, pdfData) => callback(pdfData as any)
-                );
-              }).toPromise()
-              .then(async (res) => {
-                if (toast) {
-                  await toast.dismiss();
-                }
-                this.openpdf(res.path);
-              }).catch(async (err) => {
-                if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
-                  await this.downloadLegacyCertificate(course, toast);
-                }
-                await this.handleCertificateDownloadIssue(toast, err);
-          });
+            { courseId: course.courseId, certificate: course.issuedCertificate },
+            (svgData, callback) => {
+              this.certificateDownloadAsPdfService.download(
+                svgData, (fileName, pdfData) => callback(pdfData as any)
+              );
+            }).toPromise()
+            .then(async (res) => {
+              if (toast) {
+                await toast.dismiss();
+              }
+              this.openpdf(res.path);
+            }).catch(async (err) => {
+              if (!(err instanceof CertificateAlreadyDownloaded) && !(NetworkError.isInstance(err))) {
+                await this.downloadLegacyCertificate(course, toast);
+              }
+              await this.handleCertificateDownloadIssue(toast, err);
+            });
         } else {
-         await this.downloadLegacyCertificate(course, toast);
+          await this.downloadLegacyCertificate(course, toast);
         }
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
@@ -534,14 +567,14 @@ export class ProfilePage implements OnInit {
       certificate: course.certificate
     };
     this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then(async (res) => {
-          if (toast) {
-            await toast.dismiss();
-          }
-          this.openpdf(res.path);
-        }).catch(async (err) => {
-      await this.handleCertificateDownloadIssue(toast, err);
-    });
+      .then(async (res) => {
+        if (toast) {
+          await toast.dismiss();
+        }
+        this.openpdf(res.path);
+      }).catch(async (err) => {
+        await this.handleCertificateDownloadIssue(toast, err);
+      });
   }
 
   private async handleCertificateDownloadIssue(toast: any, err: any) {
@@ -567,11 +600,6 @@ export class ProfilePage implements OnInit {
       });
   }
 
-  isResource(contentType) {
-    return contentType === ContentType.STORY ||
-      contentType === ContentType.WORKSHEET;
-  }
-
   /**
    * Navigate to the course/content details page
    */
@@ -579,10 +607,9 @@ export class ProfilePage implements OnInit {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
     if (layoutName === ContentCard.LAYOUT_INPROGRESS) {
-      telemetryObject = new TelemetryObject(identifier, ContentType.COURSE, undefined);
+      telemetryObject = new TelemetryObject(identifier, CsPrimaryCategory.COURSE, undefined);
     } else {
-      const telemetryObjectType = this.isResource(content.contentType) ? ContentType.RESOURCE : content.contentType;
-      telemetryObject = new TelemetryObject(identifier, telemetryObjectType, undefined);
+      telemetryObject = ContentUtil.getTelemetryObject(content);
     }
 
     const values = new Map();
@@ -595,28 +622,12 @@ export class ProfilePage implements OnInit {
       PageId.PROFILE,
       telemetryObject,
       values);
-    if (content.contentType === ContentType.COURSE) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
-    } else {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          content
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
-    }
+    this.navService.navigateToDetailPage(
+      content,
+      {
+        content
+      }
+    );
   }
 
   updateLocalProfile(framework) {
@@ -624,6 +635,9 @@ export class ProfilePage implements OnInit {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .toPromise()
       .then((resp: any) => {
+        if (framework.userType) {
+          resp.profileType = framework.userType;
+        }
         this.formAndFrameworkUtilService.updateLoggedInUser(this.profile, resp)
           .then((success) => {
             console.log('updateLocalProfile-- ', success);
@@ -644,28 +658,9 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  navigateToEditPersonalDetails() {
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.EDIT_CLICKED,
-        Environment.HOME,
-        PageId.PROFILE, null);
-
-      const navigationExtras: NavigationExtras = {
-        state: {
-          profile: this.profile,
-          isShowBackButton: true
-        }
-      };
-
-      // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
-      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-    } else {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-    }
+  onEditProfileClicked() {
+    this.navService.navigateToEditPersonalDetails(this.profile, PageId.PROFILE);
   }
-
 
   /**
    * Searches contents created by the user
@@ -695,8 +690,6 @@ export class ProfilePage implements OnInit {
       });
   }
 
-
-
   async editMobileNumber() {
     const componentProps = {
       phone: this.profile.phone,
@@ -725,7 +718,7 @@ export class ProfilePage implements OnInit {
     await this.showEditContactPopup(componentProps);
   }
 
-  async showEditContactPopup(componentProps) {
+  private async showEditContactPopup(componentProps) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
@@ -735,11 +728,11 @@ export class ProfilePage implements OnInit {
     const { data } = await popover.onDidDismiss();
 
     if (data && data.isEdited) {
-      this.callOTPPopover(componentProps.type, data.value);
+      await this.callOTPPopover(componentProps.type, data.value);
     }
   }
 
-  async callOTPPopover(type: string, key?: any) {
+  private async callOTPPopover(type: string, key?: any) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
         key,
@@ -771,7 +764,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async openContactVerifyPopup(component, componentProps, cssClass) {
+  private async openContactVerifyPopup(component, componentProps, cssClass) {
     const popover = await this.popoverCtrl.create({ component, componentProps, cssClass });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -779,7 +772,7 @@ export class ProfilePage implements OnInit {
     return data;
   }
 
-  async updatePhoneInfo(phone) {
+  private async updatePhoneInfo(phone) {
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
       phone,
@@ -788,7 +781,7 @@ export class ProfilePage implements OnInit {
     await this.updateProfile(req, 'PHONE_UPDATE_SUCCESS');
   }
 
-  async updateEmailInfo(email) {
+  private async updateEmailInfo(email) {
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
       email,
@@ -797,7 +790,7 @@ export class ProfilePage implements OnInit {
     await this.updateProfile(req, 'EMAIL_UPDATE_SUCCESS');
   }
 
-  async updateProfile(request: UpdateServerProfileInfoRequest, successMessage: string) {
+  private async updateProfile(request: UpdateServerProfileInfoRequest, successMessage: string) {
     const loader = await this.commonUtilService.getLoader();
     this.profileService.updateServerProfile(request).toPromise()
       .then(async () => {
@@ -848,7 +841,7 @@ export class ProfilePage implements OnInit {
   }
 
 
-  dismissMessage() {
+  private dismissMessage() {
     this.timer = setTimeout(() => {
       this.informationProfileName = false;
       this.informationOrgName = false;
@@ -905,16 +898,6 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async showTeacherIdVerificationPopup() {
-    const popover = await this.popoverCtrl.create({
-      component: TeacherIdVerificationComponent,
-      backdropDismiss: false,
-      cssClass: 'popover-alert'
-    });
-
-    await popover.present();
-  }
-
   async openEnrolledCourse(coursecertificate) {
     try {
       const content = await this.contentService.getContentDetails({ contentId: coursecertificate.courseId }).toPromise();
@@ -924,7 +907,14 @@ export class ProfilePage implements OnInit {
           resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
         }
       };
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
+      console.log('Content Data', content);
+      this.navService.navigateToTrackableCollection(
+        {
+          content,
+          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
+        }
+      );
+      // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }
@@ -968,6 +958,7 @@ export class ProfilePage implements OnInit {
               InteractSubtype.ALLOW_CLICKED,
               Environment.SETTINGS,
               PageId.PERMISSION_POPUP);
+            this.appGlobalService.isNativePopupVisible = true;
             this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
               .subscribe(async (status: AndroidPermissionsStatus) => {
                 if (status.hasPermission) {
@@ -992,11 +983,12 @@ export class ProfilePage implements OnInit {
                   await this.commonUtilService.showSettingsPageToast
                     ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
                 }
+                this.appGlobalService.setNativePopupVisible(false);
                 resolve(undefined);
               });
           }
         }, this.appName, this.commonUtilService.translateMessage
-          ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        ('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
@@ -1030,18 +1022,19 @@ export class ProfilePage implements OnInit {
 
     if (this.isCustodianOrgId && this.profile && this.profile.declarations && this.profile.declarations.length) {
       this.selfDeclarationInfo = this.profile.declarations[0];
-      const tenantPersonaList = await this.getFormApiData('user', 'tenantPersonaInfo', 'get');
+      const tenantPersonaList = await this.formAndFrameworkUtilService.getFormFields(
+        FormConstants.TENANT_PERSONAINFO, this.profile.rootOrg.rootOrgId);
       const tenantConfig: any = tenantPersonaList.find(config => config.code === 'tenant');
       const tenantDetails = tenantConfig.templateOptions && tenantConfig.templateOptions.options &&
-      tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
+        tenantConfig.templateOptions.options.find(tenant => tenant.value === this.selfDeclarationInfo.orgId);
 
-      this.personaTenantDeclaration = this.commonUtilService.translateMessage('I_AM_A_PERSONA_WITH_TENANT', {
-        '%persona': this.selfDeclarationInfo.persona || '',
-        '%tenant': (tenantDetails && tenantDetails.label) || ''
-      });
+      this.personaTenantDeclaration = this.commonUtilService.translateMessage('FRMELEMNTS_LBL_SHARE_DATA_WITH', {
+          '%tenant': (tenantDetails && tenantDetails.label) || ''
+        });
 
       if (this.selfDeclarationInfo.orgId) {
-        const formConfig = await this.getFormApiData('user', 'selfDeclaration', 'submit', this.selfDeclarationInfo.orgId);
+        const formConfig = await this.formAndFrameworkUtilService.getFormFields(
+          FormConstants.SELF_DECLARATION, this.selfDeclarationInfo.orgId);
         const externalIdConfig = formConfig.find(config => config.code === 'externalIds');
         this.selfDeclaredDetails = [];
         (externalIdConfig.children as FieldConfig<any>[]).forEach(config => {
@@ -1049,42 +1042,21 @@ export class ProfilePage implements OnInit {
             this.selfDeclaredDetails.push({ name: config.fieldName, value: this.profile.declarations[0].info[config.code] });
           }
         });
-
-      }
-
-      this.selfDeclaredDetails.push({ name: 'Status', value: this.profile.declarations[0].status || 'PENDING' });
-
-      if (this.selfDeclarationInfo.errorType) {
-        this.selfDeclarationInfo.errorType = this.selfDeclarationInfo.errorType.split(',');
       }
     }
-
   }
 
-  private async fetchFormApi(req) {
-    return await this.formService.getForm(req).toPromise().then(res => {
-      return res;
-    }).catch(err => {
-      return null;
+  shareUsername() {
+    let fullName = this.profile.firstName;
+    if (this.profile.lastName) {
+      fullName = fullName + ' ' + this.profile.lastName;
+    }
+    const translatedMsg = this.commonUtilService.translateMessage('SHARE_USERNAME', {
+      app_name: this.appName,
+      user_name: fullName,
+      diksha_id: this.profile.userName
     });
-  }
-
-  async getFormApiData(type: string, subType: string, action: string, rootOrgId?: string) {
-    const formReq: FormRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      type,
-      subType,
-      action,
-      rootOrgId: rootOrgId || '*',
-      component: 'app'
-    };
-
-    let formData: any = await this.fetchFormApi(formReq);
-    if (!formData) {
-      formReq.rootOrgId = '*';
-      formData = await this.fetchFormApi(formReq);
-    }
-    return (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
+    this.socialSharing.share(translatedMsg);
   }
 
 }

@@ -44,6 +44,11 @@ export class LogoutHandlerService {
       tap(async (guestUserId: string) => {
         if (!guestUserId) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+        } else {
+          const allProfileDetais = await this.profileService.getAllProfiles().toPromise();
+          const currentProfile = allProfileDetais.find(ele => ele.uid === guestUserId);
+          const guestProfileType = (currentProfile && currentProfile.profileType) ? currentProfile.profileType : ProfileType.NONE;
+          await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, guestProfileType).toPromise();
         }
 
         splashscreen.clearPrefs();
@@ -77,7 +82,9 @@ export class LogoutHandlerService {
 
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
       true : false;
-    if (isOnboardingCompleted) {
+    if (selectedUserType === ProfileType.ADMIN) {
+      this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN]);
+    } else if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {

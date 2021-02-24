@@ -60,6 +60,7 @@ export class AppGlobalService implements OnDestroy {
     courseFrameworkId: string;
 
     currentPageId: string;
+    pdfPlayerConfiguratiion: boolean;
 
     guestUserProfile: Profile;
     isGuestUser = false;
@@ -85,6 +86,7 @@ export class AppGlobalService implements OnDestroy {
     private _formConfig: any;
     private _selectedActivityCourseId: string;
     private _redirectUrlAfterLogin: string;
+    private _isNativePopupVisible: boolean;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -158,6 +160,15 @@ export class AppGlobalService implements OnDestroy {
         return name;
     }
 
+
+    setpdfPlayerconfiguration(config) {
+        this.pdfPlayerConfiguratiion = config;
+    }
+
+    getPdfPlayerConfiguration() {
+        return this.pdfPlayerConfiguratiion;
+    }
+
     /**
      * This method stores the list of courses enrolled by user, and is updated every time
      * getEnrolledCourses is called.
@@ -205,7 +216,7 @@ export class AppGlobalService implements OnDestroy {
      * This method stores the location config, for a particular session of the app
      */
     setLocationConfig(locationConfig: Array<any>) {
-        this.courseFilterConfig = locationConfig;
+        this.locationConfig = locationConfig;
     }
 
     /**
@@ -454,6 +465,10 @@ export class AppGlobalService implements OnDestroy {
                             this.guestProfileType = ProfileType.TEACHER;
                         } else if (val === ProfileType.OTHER) {
                             this.guestProfileType = ProfileType.OTHER;
+                        } else if (val === ProfileType.ADMIN) {
+                            this.guestProfileType = ProfileType.ADMIN;
+                        } else if (val === ProfileType.PARENT) {
+                            this.guestProfileType = ProfileType.PARENT;
                         }
                         this.isGuestUser = true;
                         resolve(this.guestProfileType);
@@ -780,6 +795,24 @@ export class AppGlobalService implements OnDestroy {
 
     set redirectUrlAfterLogin(value) {
         this._redirectUrlAfterLogin = value;
+    }
+
+    get isNativePopupVisible() {
+        return this._isNativePopupVisible;
+    }
+
+    set isNativePopupVisible(value) {
+        this._isNativePopupVisible = value;
+    }
+
+    setNativePopupVisible(value, timeOut?) {
+        if (timeOut) {
+            setTimeout(() => {
+                this._isNativePopupVisible = value;
+            }, timeOut);
+        } else {
+            this._isNativePopupVisible = value;
+        }
     }
 
 

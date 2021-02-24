@@ -186,8 +186,6 @@
         display: block;
         width: 100%;
         padding: $base-block-space * 1;
-        border-top-left-radius: 0px !important;
-        border-top-right-radius: 0px !important;
         font-weight: 700;
         height: 3.2rem;
     }
@@ -220,6 +218,11 @@
         opacity: 0.5 !important;
         cursor: default;
       }
+
+    .play-btn-info{
+        position: absolute;
+        margin-top: 2px;
+    }
 }
     
     

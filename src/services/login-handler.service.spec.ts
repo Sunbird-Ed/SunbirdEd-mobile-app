@@ -1,30 +1,35 @@
-import { LoginHandlerService } from './login-handler.service';
-import { AppGlobalService } from './app-global-service.service';
-import { Events, NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { NgZone } from '@angular/core';
-import { ContainerService } from './../services/container.services';
-import { CommonUtilService } from './../services/common-util.service';
-import { FormAndFrameworkUtilService } from './../services/formandframeworkutil.service';
+import {LoginHandlerService} from './login-handler.service';
+import {AppGlobalService} from './app-global-service.service';
+import {Events, NavController} from '@ionic/angular';
+import {Router} from '@angular/router';
+import {TelemetryGeneratorService} from './telemetry-generator.service';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {NgZone} from '@angular/core';
+import {ContainerService} from './../services/container.services';
+import {CommonUtilService} from './../services/common-util.service';
+import {FormAndFrameworkUtilService} from './../services/formandframeworkutil.service';
 import {
-    ProfileService,
-    AuthService,
     ApiService,
+    AuthService,
+    Profile,
+    ProfileService,
+    ProfileSource,
+    ProfileType,
     SdkConfig,
     SharedPreferences,
-    ProfileType,
-    ProfileSource,
+    SignInError,
 } from 'sunbird-sdk';
-import { isRegExp } from 'util';
-import { of } from 'rxjs';
+import {of, throwError} from 'rxjs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {ProfileConstants} from '@app/app/app.constant';
+import {Environment, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
 
 jest.mock('sunbird-sdk', () => {
     const actual = require.requireActual('sunbird-sdk');
     return {
         ...actual,
-        WebviewLoginSessionProvider: function () {}
+        WebviewLoginSessionProvider() {
+        }
     };
 });
 
@@ -32,7 +37,8 @@ jest.mock('@app/app/module.service', () => {
     const actual = require.requireActual('@app/app/module.service');
     return {
         ...actual,
-        initTabs: jest.fn().mockImplementation(() => { })
+        initTabs: jest.fn().mockImplementation(() => {
+        })
     };
 });
 
@@ -80,6 +86,7 @@ describe('LoginHandlerService', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         loginHandlerService = new LoginHandlerService(
@@ -97,7 +104,8 @@ describe('LoginHandlerService', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockRouter as Router,
             mockEvents as Events,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 
@@ -115,7 +123,7 @@ describe('LoginHandlerService', () => {
     describe('signIn()', () => {
         it('should in-memory preference skipCoachScreenForDeeplink if limitedShareQuizContent', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -130,6 +138,7 @@ describe('LoginHandlerService', () => {
             mockNgZone.run = jest.fn((cb) => {
                 cb();
             }) as any;
+            mockSbProgressLoader.show = jest.fn();
             jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
             mockSharedPreferences.getString = jest.fn(() => of('false'));
             mockSharedPreferences.putString = jest.fn(() => of(undefined));
@@ -137,7 +146,7 @@ describe('LoginHandlerService', () => {
                 return Promise.resolve('profile');
             });
             jest.spyOn(loginHandlerService, 'refreshProfileData').mockImplementation(() => {
-                return Promise.resolve({ slug: 'SOME_SLUG', title: 'SOME_TITLE' });
+                return Promise.resolve({slug: 'SOME_SLUG', title: 'SOME_TITLE'});
             });
             jest.spyOn(loginHandlerService, 'refreshTenantData').mockImplementation(() => {
                 return Promise.resolve(undefined);
@@ -149,14 +158,14 @@ describe('LoginHandlerService', () => {
                 expect(dismissFn).toHaveBeenCalled();
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockAuthService.setSession).toHaveBeenCalled();
-                expect(mockAppGlobalService.limitedShareQuizContent).toEqual("limit");
+                expect(mockAppGlobalService.limitedShareQuizContent).toEqual('limit');
                 done();
             });
         });
 
         it('should in-memory preference showCoachScreenForDeeplink if nolimitedShareQuizContent', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
@@ -178,7 +187,7 @@ describe('LoginHandlerService', () => {
                 return Promise.resolve('profile');
             });
             jest.spyOn(loginHandlerService, 'refreshProfileData').mockImplementation(() => {
-                return Promise.resolve({ slug: 'SOME_SLUG', title: 'SOME_TITLE' });
+                return Promise.resolve({slug: 'SOME_SLUG', title: 'SOME_TITLE'});
             });
             jest.spyOn(loginHandlerService, 'refreshTenantData').mockImplementation(() => {
                 return Promise.resolve(undefined);
@@ -194,12 +203,198 @@ describe('LoginHandlerService', () => {
                 done();
             });
         });
+
+        it('should go to catch block if getWebviewSessionProviderConfig returns and error', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.reject('error'));
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            loginHandlerService.signIn().then(() => {
+                // assert
+                expect(dismissFn).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig).toHaveBeenCalledWith('login');
+                expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+                done();
+            });
+        });
+
+        it('should call setSession and call sharedPreferences returns true after onboarding ' +
+            'checks for skipNavigation in parameter to redirect', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
+            mockSbProgressLoader.show = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of('true'));
+            mockAuthService.getSession = jest.fn(() => of({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            const mockProfileData: Profile = {
+                uid: 'sample_id',
+                handle: 'sample_name',
+                profileType: ProfileType.TEACHER,
+                source: ProfileSource.SERVER,
+                userType: 'Teacher',
+                serverProfile: {
+                    uid: 'sample_id',
+                    handle: 'sample_name',
+                    profileType: ProfileType.TEACHER,
+                    source: ProfileSource.SERVER
+                },
+                rootOrg: {
+                    slug: 'sample_slug',
+                    orgName: 'sample_orgName'
+                }
+            };
+            const valuesMap = new Map();
+            valuesMap['UID'] = 'sample_id';
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of(mockProfileData));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
+            mockProfileService.createProfile = jest.fn(() => of(mockProfileData));
+            mockProfileService.setActiveSessionForProfile = jest.fn(() => of(true));
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve({}));
+            mockProfileService.getTenantInfo = jest.fn(() => of({
+                title: 'sample_title',
+                logo: 'sample_logo',
+            }));
+            mockProfileService.isDefaultChannelProfile = jest.fn(() => of(true));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('sample_app_name'));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
+            jest.spyOn(global.splashscreen, 'setContent').mockImplementation();
+            // act
+            loginHandlerService.signIn({redirectUrlAfterLogin: true, componentData: 'sample_data'});
+
+            setTimeout(() => {
+                // assert
+                expect(mockAuthService.getSession).toHaveBeenCalled();
+                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockProfileService.createProfile).toHaveBeenCalled();
+                // expect(mockProfileService.setActiveSessionForProfile).toHaveBeenCalled();
+               // expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
+              //  expect(global.splashscreen.setContent).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should go to catch part if refresh profile data and profileData returns error', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            const signInError = new SignInError('error');
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => throwError(signInError));
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            loginHandlerService.signIn();
+            setTimeout(() => {
+                // assert
+                expect(mockAuthService.setSession).toHaveBeenCalled();
+                expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(signInError.message);
+                done();
+            }, 0);
+        });
+
+        it('should go to catch part if refresh profile data and profileData returns error other in signin error', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => throwError());
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            loginHandlerService.signIn();
+            setTimeout(() => {
+                // assert
+                expect(mockAuthService.setSession).toHaveBeenCalled();
+                expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+                done();
+            }, 0);
+        });
+
+        it('should go to catch block if getSession returns undefined', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
+            mockSbProgressLoader.show = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of('true'));
+            mockAuthService.getSession = jest.fn(() => of(throwError('error')));
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of());
+            mockSbProgressLoader.hide = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            loginHandlerService.signIn();
+
+            setTimeout(() => {
+                expect(mockAuthService.getSession).toHaveBeenCalled();
+                expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_WHILE_LOGIN');
+                done();
+            }, 0);
+        });
     });
 
     describe('getDefaultProfileRequest()', () => {
         it('should return profile', () => {
             // arrange
-            jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue({ uid: 'uid' });
+            jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue({uid: 'uid'});
             // act
             const response = loginHandlerService.getDefaultProfileRequest();
             // assert
@@ -220,10 +415,10 @@ describe('LoginHandlerService', () => {
     describe('setDefaultProfileDetails()', () => {
         it('should call publish and putString methods', (done) => {
             // arrange
-            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' });
+            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({uid: 'uid'});
             jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'setActiveSessionForProfile').mockReturnValue(of({}));
-            jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of(Promise.resolve({ uid: 'uid' })));
+            jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of(Promise.resolve({uid: 'uid'})));
             jest.spyOn(mockEvents, 'publish');
             jest.spyOn(mockSharedPreferences, 'putString');
 
@@ -238,10 +433,10 @@ describe('LoginHandlerService', () => {
 
         it('should call publish, not putString', (done) => {
             // arrange
-            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' });
+            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({uid: 'uid'});
             jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'setActiveSessionForProfile').mockReturnValue(of({}));
-            jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of({ uid: 'null' }));
+            jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of({uid: 'null'}));
             jest.spyOn(mockEvents, 'publish');
             jest.spyOn(mockSharedPreferences, 'putString');
 

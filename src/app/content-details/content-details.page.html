@@ -195,7 +195,7 @@
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()" 
             [ngClass]="!(content?.contentData?.downloadUrl) ? 'download-disabled' : null"
             [disabled]="isDownloadStarted || (isContentDownloading$ | async)" fill="clear" icon-only class="sb-btn-tile">
-              <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
+              <img src="assets/imgs/outline_download.svg" alt="download content" class="mb-4">
               <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
               <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
                 <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
@@ -204,24 +204,24 @@
           </div>
 
           <button class="sb-btn-tile" *ngIf="contentDownloadable[content?.identifier]" (click)="showDeletePopup()">
-            <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
+            <img src="assets/imgs/outline_delete.svg" alt="delete content" class="mb-4">
             <span class="sb-btn-footer-text">{{'DELETE' | translate}}</span>
           </button>
           <button (click)="share()" class="sb-btn-tile" *ngIf="!this.limitedShareContentFlag">
-            <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
+            <img src="assets/imgs/outline_share.svg" alt="share content" class="mb-4">
             <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
           </button>
           <button class="sb-btn-tile" (click)="rateContent('manual')">
-            <ion-icon ios="ios-star-outline" md="md-star-outline" class="sb-dt-card-blue-icon"></ion-icon>
+            <img src="assets/imgs/outline_rate_star.svg" alt="rate content" class="mb-4">
             <span class="sb-btn-footer-text">{{'RATE' | translate}}</span>
           </button>
           <button class="sb-btn-tile" *ngIf="contentDownloadable[content?.identifier] && this.isUpdateAvail"
             (click)="openConfirmPopUp()">
-            <ion-icon ios="ios-refresh" md="md-refresh" class="sb-dt-card-blue-icon"></ion-icon>
+            <img src="assets/imgs/outline_update.svg" alt="update content" class="mb-4">
             <span class="sb-btn-footer-text">{{'UPDATE' | translate}}</span>
           </button>
           <button class="sb-btn-tile" (click)="openPDFPreview(content)" *ngIf="content?.contentData?.itemSetPreviewUrl">
-            <ion-icon ios="ios-print" md="md-print" class="sb-dt-card-blue-icon"></ion-icon>
+            <img src="assets/imgs/outline_print.svg" alt="print content" class="mb-4">
             <span class="sb-btn-footer-text">{{'PRINT' | translate}}</span>
           </button>
         </div>
@@ -242,7 +242,7 @@
           {{content?.description}}</div>
         <div class="sb-info" *ngIf="content?.contentData?.board">
           <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
-          <div class="sb-content-title-data">{{content?.contentData?.board}}</div>
+          <div class="sb-content-title-data">{{content?.contentData?.board | aliased}}</div>
         </div>
         <div *ngIf="showMoreFlag">
           <div class="sb-info" *ngIf="content?.contentData?.medium">
@@ -346,6 +346,6 @@
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
   [contentSize]="content?.contentData?.size">
 </app-sb-download-popup>
-<div *ngIf="isFromGroupFlow">
-  <add-activity-to-group [data]="addActivityToGroupData"></add-activity-to-group>
+<div>
+  <add-activity-to-group [identifier]="identifier" [pageId]="pageId"></add-activity-to-group>
 </div>

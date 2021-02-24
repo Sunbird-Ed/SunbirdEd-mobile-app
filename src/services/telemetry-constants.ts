@@ -7,7 +7,8 @@ export enum Environment {
     SETTINGS = 'settings',
     ONBOARDING = 'onboarding',
     NOTIFICATION = 'notification',
-    GROUP = 'group'
+    GROUP = 'group',
+    PLAYER = 'player'
 }
 
 export enum ErrorCode {
@@ -121,6 +122,7 @@ export enum PageId {
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
     PERMISSION_POPUP = 'permission-popup',
+    PLAYER_PAGE = 'player-page',
     /* New Telemetry */
     LANGUAGE = 'language',
     USER_TYPE = 'usertype',
@@ -143,13 +145,18 @@ export enum PageId {
     LOCATION = 'location',
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
+    PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
     MY_GROUP = 'my-group',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
     TEXTBOOK_IMPORT = 'textbookimport',
     ACTIVITY_TOC = 'activity-toc',
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
-    PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner'
+    PLANNED_MAINTENANCE_BANNER = 'planned-maintenance-banner',
+    FRAMEWORK_SELECTION = 'framework-selection',
+    RELEVANT_CONTENTS = 'relevant-contents',
+    PLAYER = 'player',
+    ADMIN_HOME = 'admin-home',
 }
 
 export enum LogType {
@@ -248,6 +255,7 @@ export enum InteractType {
     POPUP_LOADED = 'popup-loaded',
     INITIATED = 'initiated',
     SUCCESS = 'success',
+    FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
     SELECT_CARD = 'select-card'
@@ -324,7 +332,7 @@ export enum InteractSubtype {
     INITIAL_CONFIG = 'initial-config',
     FILTER_CONFIG = 'filter-config',
     APPLY_FILTER_CLICKED = 'apply-filter-clicked',
-    PROFILE_ATTRIBUTE_CHANGED = 'profile_attribute_changed',
+    PROFILE_ATTRIBUTE_CHANGED = 'profile-attribute-changed',
     SAVE_CLICKED = 'save-clicked',
     FINISH_CLICKED = 'finish-clicked',
     DEVICE_BACK_CLICKED = 'device-back-clicked',
@@ -462,8 +470,11 @@ export enum InteractSubtype {
     CLOSE_ICON = 'close-icon',
     OUTSIDE = 'outside',
     QR_NOT_LINKED = 'qr-not-linked',
+    GROUP_CLICKED = 'group-clicked',
     ADD_MEMBER_CLICKED = 'add-member-clicked',
     ADD_ACTIVITY_CLICKED = 'add-activity-clicked',
+    ACTIVITY_TYPE_CLICKED = 'activity-type-clicked',
+    SELECT_NESTED_ACTIVITY_CLICKED = 'select-nested-activity-clicked',
     DELETE_GROUP_CLICKED = 'delete-group-clicked',
     LEAVE_GROUP_CLICKED = 'leave-group-clicked',
     MAKE_GROUP_ADMIN_CLICKED = 'make-group-admin-clicked',
@@ -476,7 +487,10 @@ export enum InteractSubtype {
     ACTIVITY_TAB_CLICKED = 'activity-tab-clicked',
     MEMBER_TAB_CLICKED = 'member-tab-clicked',
     EDIT_GROUP_CLICKED = 'edit-group-clicked',
-    LET_US_KNOW_CLICKED = 'let-us-know-clicked'
+    LET_US_KNOW_CLICKED = 'let-us-know-clicked',
+    DOWNLOAD_PDF_CLICKED = 'download-pdf-clicked',
+    DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
+    REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked'
 }
 
 export enum ID {
@@ -498,6 +512,7 @@ export enum ID {
     BACKDROP_CLICKED = 'backdrop-clicked',
     CANCEL_CLICKED = 'cancel-clicked',
     NOTIFICATION_CLICKED = 'notification-clicked',
+    NOTIFICATION_RECEIVED = 'notification-received',
     SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked',
     BTN_CANCEL = 'btn-cancel',
     BTN_ADD = 'btn-add',
@@ -520,7 +535,10 @@ export enum ID {
     VERIFY_MEMBER = 'verify-member',
     ADD_MEMBER_TO_GROUP = 'add-member-to-group',
     ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group',
-    NOTIFICATION_REQUEST = 'notification-request'
+    NOTIFICATION_REQUEST = 'notification-request',
+    DEACTIVATE_GROUP= 'deactivate-group',
+    REACTIVATE_GROUP= 'reactivate-group',
+    ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines'
 }
 
 export enum ActionButtonType {
@@ -545,8 +563,11 @@ export enum CorReleationDataType {
     ACCESS_TYPE = 'AccessType',
     SCAN = 'Scan',
     SOURCE = 'Source',
-    NOTIFICATION_ID = 'NotificationID',
+    NOTIFICATION_ID = 'NotificationId',
+    NOTIFICATION_RECEIVED_AT = 'NotificationReceivedAt',
+    GROUP_ID = 'GroupId',
     CONTENT_TYPE = 'ContentType',
+    ACTIVITY_TYPE = 'ActivityType',
     /* New Telemetry for Telemetry Structure change
     * for old telemetry structure please add in above
     */
@@ -575,7 +596,7 @@ export enum CorReleationDataType {
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
     COUNT_NODE = 'CountNode',
-    CONTENT_NAME = 'ContentName',
+    CONTENT_NAME = 'ContentName'
 }
 
 export enum AuditProps {

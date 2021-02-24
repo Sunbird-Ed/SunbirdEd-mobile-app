@@ -25,7 +25,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'content',
+        'subType': 'content_v2',
         'action': 'filter'
     },
     {
@@ -57,9 +57,8 @@ var formRequestArray = [{
     },
     {
         'type': 'group',
-        'subType': 'activities',
-        'action': 'list',
-        'component': 'app'
+        'subType': 'activities_v2',
+        'action': 'list'
     },
     {
         'type': 'dynamicform',
@@ -72,7 +71,61 @@ var formRequestArray = [{
         'subType': 'boardContactInfo',
         'action': 'get',
         'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'notification',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'boardAlias',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'dynamicform',
+        'subType': 'consentdeclaration_v2',
+        'action': 'submit',
+        'component': 'app'
+    },
+    {
+        'type': 'dynamicform',
+        'subType': 'contentrequest',
+        'action': 'submit',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'library_v2',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'course',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'config',
+        'subType': 'pdfPlayer',
+        'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'userType',
+        'action': 'get',
+        'component': 'app'
+    },
+    {
+        'type': 'profileConfig',
+        'subType': 'default',
+        'action': 'get'
     }
+
+
 ];
 
 var state_list_request_body = {

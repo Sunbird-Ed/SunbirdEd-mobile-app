@@ -1,0 +1,1546 @@
+@import "src/assets/styles/_variables.scss";
+html[data-theme="JOYFUL"]{
+
+  --app-primary:#024f9d;
+  --app-primary-background:#E9E8D9;
+  --app-secondary-background:#F2F2EA;
+  --app-primary-header:#FFD954;
+  --joyful-light-yellow:#F9FFBE; // take it out
+  --joyful-light-blue:#DAECFF; // take it out
+
+  --app-white:#FFFFFF;
+  --app-black:#000000; // remove
+  --app-dark-gray:#222222;
+  --app-gray:#333333;
+  --app-light-gray:#999999;
+  --app-brown:#4F2C0D;
+
+  --app-green:#008840;
+  --app-light-green:#BFE1CF; // take it out
+
+  --app-shadow:rgba(0,0,0,0.1);
+
+  --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
+  --block-style-shadow: 0 2px 7px 0 var(--app-shadow);
+
+  ion-toolbar {
+    --background: var(--app-primary-header);
+    border-bottom-left-radius: 20px;
+    ion-buttons{
+      ion-button{
+        --background: var(--app-primary-header) !important;
+        --color: var(--app-primary) !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  ion-footer {
+    background: var(--app-primary-background) !important;
+  }
+
+  ion-button{
+    --background: var(--app-primary) !important;
+    --color: var(--app-white) !important;
+    --border-radius: 20px !important;
+    --border-color: var(--app-primary) !important;
+    button{
+      box-shadow: var(--button-style-shadow) !important;
+    }
+  }
+
+  ion-button.button-clear{
+    --background: transparent !important;
+    --color: var(--app-primary) !important;
+  }
+
+  button{
+    border-radius: 20px !important;
+    color: var(--app-white) !important;
+  }
+
+  input, textarea, ion-input, ion-textarea {
+    border-radius: 16px !important;
+  }
+
+  ion-list{
+    background: var(--app-primary-background) !important;
+  }
+
+  ion-item {
+    --background: var(--app-primary-background);
+    ion-label{
+      color: var(--app-light-gray) !important;
+      font-weight: bold !important;
+    }
+    ion-select{
+      border: none !important;
+      border-bottom: 1px solid var(--app-light-gray) !important;
+      color: var(--app-gray) !important;
+      padding-left: 0 !important;
+      .select-text{
+        color: var(--app-white) !important;
+        --color: var(--app-white) !important;
+      }
+    }
+  }
+
+  ion-radio {
+    --color-checked: var(--app-primary) !important;
+  }
+
+  ion-card, button{
+    box-shadow: var(--button-style-shadow) !important;
+  }
+
+  ion-back-button{
+    box-shadow: none !important;
+    button{
+      box-shadow: none !important;
+    }
+  }
+
+  ion-alert{ // EXCEPTION
+    [aria-checked=true].sc-ion-alert-md .alert-checkbox-icon.sc-ion-alert-md{
+      border-color: var(--app-primary) !important;
+      background-color: var(--app-primary) !important;
+    }
+
+    [aria-checked=true].sc-ion-alert-md .alert-radio-icon.sc-ion-alert-md{
+      border-color: var(--app-primary) !important;
+      .alert-radio-inner.sc-ion-alert-md{
+        background-color: var(--app-primary) !important;
+      }
+    }
+  }
+
+  ion-card{
+    border-radius: 16px !important;
+    box-shadow: var(--button-style-shadow) !important;
+    background-color: var(--app-white);
+    &.selected {
+      border:3px solid var(--app-primary) !important;
+    }
+  }
+
+  ion-title{
+    color: var(--app-primary) !important;
+  }
+
+  // SelectBox popup multi select styles
+  .select-box.select-alert, .ftue-changes.select-alert {
+    .alert-button {
+      border-color: var(--app-primary) !important;
+      border-radius: 20px !important;
+    }
+    .alert-button:first-child:not(:only-child) {
+      background: transparent !important;
+      color: var(--app-primary) !important;
+    }
+    .alert-button:last-child:not(:only-child) {
+      background: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
+    .alert-wrapper{
+      background-color: var(--app-secondary-background);
+      border-radius: 1rem 1rem 0 0;
+    }
+    .alert-tappable {
+      box-shadow: none !important;
+    }
+  }
+
+  // Courses Filter
+  .resource-filter{
+    .popover-content{
+      border-radius: 16px 16px 0 0;
+      background-color: var(--app-secondary-background) !important;
+    }
+  }
+
+  // SB- button styles
+  .sb-btn {
+    border-radius: 20px !important;
+    background-color: var(--app-primary) !important;
+    color: var(--app-white) !important;
+
+  }
+
+  .sb-btn-outline-secondary{  
+    background-color: var(--app-white) !important;
+    color: var(--app-primary) !important;
+  }
+
+  .sb--card{
+    box-shadow: var(--block-style-shadow) !important;
+    border-radius: 1rem !important;
+  }
+
+  .sb--card__title{
+    color: var(--app-gray) !important;
+  }
+
+  .sb--card__img{
+    border-radius: 0.5rem;
+  }
+
+  .sb--card--course{
+    margin: 0 0 1rem 0 !important;
+  }
+
+  sb-course-cards-hlist, sb-library-cards-stack{
+    .title{
+      color: var(--app-gray) !important;
+    }
+  }
+
+  sb-course-cards-hlist{
+    .sb-btn-outline-secondary{
+      border: none !important;
+    }
+    .sb--card--container{
+      margin: 0 1rem 0 0 !important;
+    }
+  }
+
+  sb-library-cards-stack{
+    .header{
+      i{
+        display: none;
+      }
+    }
+    .body{
+      box-shadow: none !important;
+    }
+    sb-library-card:first-child {
+      .sb--card{
+        border-radius: 1rem 1rem 0 0 !important;
+      }
+    }
+    sb-library-card:last-child {
+      .sb--card{
+        border-radius: 0 0 1rem 1rem !important;
+      }
+    }
+    sb-library-card:first-child:last-child {
+      .sb--card{
+        border-radius: 1rem !important;
+      }
+    }
+    sb-library-card:not(:first-child):not(:last-child){
+      .sb--card{
+        border-radius: 0 !important;
+      }
+    }
+    .sbbtn{
+      border-radius: 0 0 16px 16px !important;
+      background-color: var(--app-secondary-background) !important;
+      color: var(--app-gray) !important;
+    }
+  }
+
+  // sb-group-card
+  sb-group-card{
+    .sb-label-badge{
+      border-radius: 16px !important;
+      box-shadow: var(--button-style-shadow) !important;
+    }
+  }
+
+  sb-member-card{
+    .sb-members-list-item{
+      .status{
+        border-radius: 16px !important;
+        box-shadow: var(--button-style-shadow);
+      }
+    }
+    .sb-member__img{
+      box-shadow: var(--button-style-shadow) !important;
+    }
+  }
+
+  // application-header Component
+  app-application-header{
+    .sb-menu-list{
+      background-color: var(--app-white) !important;
+      border-radius: 16px 16px 0 0;
+    }
+    .sb-menu-item{
+      color: var(--app-primary);
+    }
+    .sb-menu-item-language{
+      color: var(--app-gray) !important;
+    }
+    ion-content{
+      --background: var(--app-white) !important;
+    }
+    ion-item{
+      --background: var(--app-white) !important;
+    }
+    .menu-section{
+      background-color: var(--app-primary-background) !important;
+      .menu-container{
+        --background: var(--app-primary-background) !important;
+        background-color: var(--app-primary-background) !important;
+        padding-bottom: 8px;
+        .user-container{
+          background-color: var(--app-primary-background) !important;
+        }
+        .another-user-title{
+          border-radius: 20px;
+          margin: 0 8px;
+          box-shadow: var(--button-style-shadow) !important;
+        }
+      }
+    }
+    .side-menu-footer{
+      border-radius: 16px 16px 0 0;
+    }
+
+  }
+
+  // language-settings page
+  page-language-settings{
+      .language-card {
+        &.selected {
+          .language-selection {
+            background-color: var(--app-primary) !important;
+          }
+          .label-text {
+            color: var(--app-white) !important;
+          }
+        }
+      }
+  }
+
+  // user-type-selection page
+  app-profile-settings{
+    .title{
+      color: var(--app-primary) !important;
+    }
+
+    .qr-btn{
+      background-color: var(--app-primary) !important;
+    }
+
+    .board-btn-text{
+      color: var(--app-primary) !important;
+    }
+
+    .ps-container {
+      .qr-container {
+        background-color: var(--app-primary-background) !important;
+      }
+    }
+
+    .board-select-dummy{
+      padding: 16px;
+      // ion-item{
+      //   --background: var(--app-white) !important;
+      // }
+      // ion-select{
+      //   border: 1px solid var(--app-primary) !important;
+      //   border-radius: 20px !important;
+      //   background-color: var(--app-primary) !important;
+      //   .select-text, .select-placeholder{
+      //     --color: var(--app-white) !important;
+      //     color: var(--app-white) !important;
+      //   }
+      // }
+
+      // ion-select::part(placeholder) { 
+      //   --color: red !important;
+      //   color: red !important;
+      //   opacity: 1;
+      // }
+      ion-item{
+        display: none !important;
+      }
+      .ps-board{
+        display: block !important;
+        .ps-board-label{
+          color: var(--app-primary);
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+
+  // District mapping
+  app-district-mapping{
+    .heading{
+      color: var(--app-primary) !important;
+    }
+
+    .block-button{
+      background-color: var(--app-primary) !important;
+      border-radius: 20px !important;
+    }
+
+    ion-item{
+      --border-width: 0 !important;
+    }
+
+    form{
+      padding-inline-start: 0 !important;
+      padding-inline-end: 0 !important;
+    }
+
+    .name{
+      .name-feild{
+        background-color: transparent;
+        border-radius: 0 !important;
+        padding-left: 0 !important;
+      }
+      .label{
+        padding-left: 0 !important;
+        color: var(--app-light-gray);
+        font-weight: bold;
+      }
+    }
+  }
+
+  // Resourses page
+  app-resources{
+    sb-library-filters{
+      .sb-pills-container{
+        background: transparent !important;
+      }
+
+      .sb-medium-pills-container, .sb-grade-pills-container {
+        .pill{
+          border-color: var(--app-white) !important;
+          color: var(--app-gray) !important;
+          box-shadow: var(--button-style-shadow) !important;
+          margin-right: 1rem !important;
+        }
+        .pill.active{
+          color: var(--app-white) !important;
+          background-color: var(--app-primary) !important;
+          border-color: var(--app-primary) !important;
+        }
+      }
+
+      .sb-medium-pills-container {
+        .pill{
+          border-radius: 4px !important;
+        }
+      }
+    }
+
+    .sb-textbook-container{
+      margin-bottom: 20px !important;
+    }
+
+    .sb-recenlty-viewed-title{
+      .sb-btn{
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        border-color: var(--app-white) !important;
+      }
+    }
+  }
+
+  // Courses page
+  app-courses{
+    .course-grid-bg{
+      background-color: var(--app-secondary-background) !important;
+    }
+    .enrolled-course-bg{
+      background: transparent !important;
+      sb-course-cards-hlist > .layout-course > .header > .title{
+        color: var(--app-gray) !important;
+      }
+    }
+  }
+
+  // View-more-activity page
+  app-view-more-activity{
+    .view-more-course-bg{
+      // background: var(--app-primary-background) !important;
+      background: transparent !important;
+    }
+
+    .title, .count-text{
+      color: var(--app-gray) !important;
+    }
+  }
+
+  // Sign-in-card page
+  app-sign-in-card{
+    .sign-in-card-title{
+      color: var(--app-gray) !important;
+    }
+    .sign-in-block{
+      box-shadow: 0 20px 40px -10px #D8D8D8 !important;
+      border-radius: 12px !important;
+    }
+
+    ion-card{
+      text-align: center;
+    }
+    .sign-in-card-text{
+      font-weight: normal !important;
+    }
+  }
+
+  // enrolled-course-details page
+  app-enrolled-course-details-page{
+    .enrolled-course-card-button{
+      background-color: var(--app-primary) !important;
+      border-radius: 50px !important;
+    }
+    .view-credits{
+      strong{
+        color: var(--app-dark-gray) !important;
+      }
+    }
+    .sb-dt-card-actions{
+      .card-button{
+        box-shadow: none !important;
+      }
+      .sb-course-progress-container{
+        background-color: var(--joyful-light-yellow) !important;
+        border-radius: 1rem;
+      }
+    }
+    .enrolled-course-container{
+      ion-card{
+        background-color: var(--joyful-light-blue) !important;
+      }
+    }
+    .certificate-container{
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+    .sb-course-complete-container, .sb-batch-end-container{
+      border-radius: 1rem;
+    }
+  }
+
+  // guest-profile page
+  app-guest-profile{
+    .profile-info{
+      background-color: transparent;
+      border-radius: 0 0 0 16px;
+      margin-top: 55px !important;
+    }
+    .details-container{
+      margin: 8px;
+      background-color: var(--app-white);
+      border-radius: 16px;
+    }
+    .signin-card-bg{
+      background-color: transparent !important;
+    }
+  }
+
+  // profile-page
+  app-profile{
+    .basic-profile-details{
+      background-color: transparent;
+      margin-top: 55px;
+      .profile-avatar{
+        background-color: var(--app-white);
+      }  
+    }
+    .roles-container{
+      .roles{
+        margin-bottom: 4px !important;
+        color: var(--app-primary) !important;
+        border: 1px solid var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
+      }
+    }
+    .self-declare-btn{
+      margin: 8px !important;
+      padding: 8px;
+      background-color: var(--app-light-green);
+      border-radius: 16px;
+      ion-button{
+        --background: var(--app-green) !important;
+      }
+    }
+    .contacts{
+      margin: 8px;
+      background-color: var(--app-white) !important;
+      border-radius: 16px;
+      .email ,.phone{
+        border: 1px solid var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
+        .icon{
+          color: var(--app-primary);
+        }
+        .value{
+          color: var(--app-gray);
+        }
+      }
+      .email.light ,.phone.light{
+        .icon{
+          color: var(--app-light-gray);
+        }
+        .value{
+          color: var(--app-light-gray);
+        }
+      }
+    }
+    .school-details{
+      margin: 8px;
+      border-radius: 16px;
+      background-color: var(--app-white) !important;
+    }
+    .self-declare-teacher-details{
+      margin: 8px;
+      border-radius: 16px;
+      background-color: var(--app-white) !important;
+      color: var(--app-gray) !important;
+      ion-button{
+        --color: var(--app-white) !important;
+        --background: var(--app-primary) !important;
+        border-radius: 1rem;
+        box-shadow: var(--button-style-shadow) !important;
+      }
+    }
+
+    .bottom-block{
+      margin: 0.5rem;
+      border-radius: 1rem;
+      padding-bottom: 0.5rem;
+      .trainings{
+        .heading{
+          border-radius: 1rem;
+        }
+        .content{
+          border-radius: 1rem !important;
+          .heading{
+            border-radius: 1rem 1rem 0 0 !important;
+          }
+        }
+      }
+    }
+  }
+
+  // collection-details-etb page
+  app-collection-detail-etb{
+    .sb-dt-card{
+      margin: 0 0 8px;
+      background-color: var(--app-white);
+      border-radius: 16px;
+      box-shadow: var(--button-style-shadow) !important;
+      .sb-btn-tile{
+        box-shadow: none !important;
+      }
+      .img-container{
+        border-radius: 8px !important;
+      }
+    }
+
+    .collection-etb-filter{
+      .sb-chapter-dd {
+        border-radius: 16px;
+        margin-bottom: 8px;
+        box-shadow: var(--button-style-shadow) !important;
+      }
+      .sb-slider-pills-container {
+        border-radius: 1.5rem;
+        // overflow: hidden !important;
+        margin-bottom: 8px;
+        background: var(--app-secondary-background) !important;
+        .sb-pills-container{
+          .pill{
+            box-shadow: var(--button-style-shadow) !important;
+            color: var(--app-dark-gray) !important;
+            .img-align{
+              margin-top: 0 !important;
+            }
+          }
+          .pill.active{
+            color: var(--app-white) !important;
+          }
+        }
+      }
+      .sticky-header-title-box {
+        --background: var(--app-secondary-background) !important;
+      }
+    }
+
+    .textbook-accordian{
+      background-color: transparent;
+      sb-accordion-header{
+        .sbaccordion__panel-header{
+          background-color: var(--app-secondary-background) !important;
+          box-shadow: var(--block-style-shadow) !important;
+        }
+      }
+      .accordion-item-header-expanded{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem 1.5rem 0 0 !important;
+        }
+      }
+      .accordion-item-header-collapsed{
+        .sbaccordion__panel-header{
+          border-radius: 1.5rem !important;
+        }
+      }
+      sb-accordion-body{
+        .sbaccordion__panel-content{
+          background-color: var(--app-secondary-background) !important;
+          border-radius: 0 0 1rem 1rem;
+        }
+      }
+      sb-toc-card{
+        .sbchapter__item{
+          border-radius: 1rem;
+          border-color: var(--app-white);
+          box-shadow: var(--block-style-shadow);
+          .d-inline-flex{
+            align-items: center;
+          }
+        }
+        .sbchapter__img{
+          border-radius: 0.5rem;
+          overflow: auto;
+        }
+      }
+      sb-accordion-item{
+        .sbaccordion{
+          box-shadow: none !important;
+        }
+      }
+      .sbchapter__play__btn{
+        color: var(--app-primary) !important;
+      }
+    }
+
+    .credit-label-padding{
+      background-color: var(--app-secondary-background) !important;
+    }
+
+    .drop-arrow{
+      box-shadow: var(--button-style-shadow);
+    }
+    .sb-topic-text{
+      color: var(--app-brown) !important;
+    }
+    .sb-chapter-dd{
+      margin-top: 0.5rem;
+    }
+  }
+  // app-collection-child component
+  app-collection-child{
+    .etb-card-item-play-container{
+      ion-button{
+        --background: var(--app-white) !important;
+        height: 2.5rem;
+      }
+    }
+    .sticky-header-title-box{
+      .sb-ftue-design{
+        margin-bottom: 0.5rem !important;
+      }
+    }
+    .etb-card-item{
+      padding: 0 0 0 0.5rem !important;
+      border-radius: 2rem;
+      border-color: var(--app-secondary-background);
+      .image-position{
+        .content-icon{
+          border-radius: 0.5rem;
+        }
+      }
+    }
+  }
+  // tab
+  ion-tab-bar{
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+  }
+  ion-tab-button {
+    --color-selected: #{$blue};
+    background: transparent;
+
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses1_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_joyful.svg);
+    }
+  }
+  ion-tab-button.tab-selected {
+    ion-icon[ng-reflect-name="courses"], ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="resources"], ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="profile"], ion-icon[aria-label="profile"] {
+      background-image: url(/assets/imgs/ic_profile_selected_joyful.svg);
+    }
+    ion-icon[ng-reflect-name="downloads"], ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_selected_joyful.svg);
+    }
+  }
+  // header
+  ion-header::after{
+    background-image: none;
+  }
+  .ui-container::after {
+    content: '';
+    width: 100%;
+    height: 172px;
+    display: block;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    border-bottom-left-radius: 20px;
+    background-color: var(--app-primary-header) !important;
+    background-image: url(/assets/imgs/header-background.svg);
+    background-repeat: no-repeat;
+    background-position: bottom center;
+  }
+  .backgrond-div::after{
+    top: -56px;
+  }
+  .ui-content{
+    z-index: 2;
+    position: relative;
+  }
+
+  .ps-container{
+    .back-btn-container {
+      z-index: 2;
+      &::after{
+        content: '';
+        background-color: var(--app-primary-header) !important;
+        width: 100vw;
+        height: 50px;
+        position: absolute;
+        z-index: -1;
+        border-bottom-left-radius: 20px;
+      }
+    }
+  }
+  .dm-header{
+    background-color: var(--app-primary-header);
+    border-bottom-left-radius: 20px;
+  }
+  .qr-content {
+    z-index: 2;
+  }
+
+  .sb-slider-pills-container{
+    .sb-grade-pills-container {
+      background: transparent !important;
+    }
+    .sb-medium-pills-container{
+      background: transparent !important;
+    }
+  }
+
+  // textbook-view-more component
+  app-textbook-view-more{
+    .sb-card-container{
+      box-shadow: none !important;
+      .sb-card-loop{
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  // page-fileter component
+  app-page-filter {
+    .filter-item {
+      border: 0.5px solid var(--app-light-gray);
+      border-radius: 30px;
+      color: var(--app-gray) !important;
+      font-weight: normal !important;
+    }
+  }
+
+  sb-toc-curriculum{
+    .sb-curiculum__border{
+      border-radius: 12px;
+      box-shadow: var(--button-style-shadow);
+    }
+    .sb-curiculum{
+      border: none !important;
+      border-radius: 12px !important;
+      .title{
+        color: var(--app-primary) !important;
+        font-weight: bold;
+      }
+      .sb-curiculum__chapter{
+        padding-top: 0.5rem !important;
+      }
+    }
+
+    sb-accordion-item{
+      .sbaccordion{
+        border-radius: 1rem !important;
+        overflow: hidden;
+        box-shadow: var(--block-style-shadow) !important;
+        .sbaccordion__panel{
+          margin-bottom: 0 !important;
+        }
+      }
+      .sbaccordion__panel-content{
+        background-color: var(--app-secondary-background) !important;
+        border-color: transparent !important;
+      }
+      .sbaccordion__panel-header{
+        border-color: transparent !important;
+      }
+    }
+    .sb-content__bar{
+      border-radius: 1rem;
+    }
+    .sbchapter__item{
+      border-radius: 1rem;
+      border-color: transparent !important;
+      background: var(--app-white) !important;
+      box-shadow: var(--button-style-shadow);
+    }
+
+    .disabled-toc-card {
+      background: var(--app-light-gray) !important;
+      border-color: var(--app-light-gray) !important;
+    }
+  }
+
+  // common-forms component
+  sb-form{
+    sb-multiple-dropdown{
+      .multi-select-section{
+        .placeholder{
+          color: var(--app-light-gray) !important;
+          margin-left: 0 !important;
+          font-size: 16px !important;
+        }
+      }
+      .multi-select-container{
+        sb-caret-down{
+          right: 0 !important;
+        }
+        ul{
+          padding-left: 0 !important;
+          margin-left: 0 !important;
+          span{
+            font-size: 16px !important;
+          }
+        }
+        .list-border{
+          border: none !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
+        }
+      }
+
+      .sb-modal{
+        background-color: var(--app-secondary-background) !important;
+        border-radius: 16px 16px 0 0;
+        .sb-form-button{
+          button{
+            border: 1px solid var(--app-primary) !important;
+            border-radius: 20px !important;
+          }
+          .sb-btn-primary-outline{
+            color: var(--app-primary) !important;
+            background-color: var(--app-white) !important;
+          }
+          .sb-btn-primary{
+            color: var(--app-white) !important;
+            background-color: var(--app-primary) !important;
+          }
+        }
+
+      }
+    }
+
+    sb-textbox {
+      .sb-input {
+        input {
+          background-color: transparent;
+          border: none !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
+          padding: 8px 16px 4px 0 !important;
+          border-radius: 0 !important;
+        }
+        input:focus{
+          outline: none !important;
+          border-bottom: 0.5px solid var(--app-green) !important;
+        }
+        input:blur{
+          outline: none !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
+        }
+        input::placeholder {
+          color: var(--app-light-gray);
+          margin-left: 0 !important;
+          font-size: 16px !important;
+          font-weight: normal !important;
+        }
+        input{
+          font-size: 16px !important;
+        }
+        .async-text{
+          border: none !important;
+          border-bottom: 0.5px solid var(--app-gray) !important;
+          input {
+            border: none !important;
+            padding-left: 0 !important;
+          }
+        }
+      }
+    }
+
+    sb-textarea{
+      textarea{
+        border-radius: 16px !important;
+      }
+      textarea::placeholder {
+        color: var(--app-light-gray);
+        font-size: 16px !important;
+        font-weight: normal !important;
+      }
+    }
+  }
+
+  // permission page
+  app-permission{
+    .permission-container{
+      margin-right: 16px;
+    }
+  }
+
+  // faq-help page
+  app-faq-help{
+    .info-msg{
+      background-color: transparent !important;
+    }
+    .panel{
+      .btn, .yesBtn{
+        border-radius: 16px !important;
+      }
+      .btn{
+        color: var(--app-primary) !important;
+      }
+      .yesBtn{
+        color: var(--app-green) !important;
+      }
+      
+      .panel-collapse{
+        background-color: var(--app-secondary-background) !important;
+        border-radius: 0 0 16px 16px;
+        margin: 0 8px 8px;
+        box-shadow: var(--button-style-shadow);
+      }
+    }
+    .send-email{
+      background-color: transparent !important;
+      .report-button{
+        border-radius: 20px !important;
+        box-shadow: var(--button-style-shadow) !important;
+      }
+    }
+  }
+
+  // faq-report-issue page
+  app-faq-report-issue{
+    .initiate-email-info-button{
+      background-color: transparent !important;
+      .submit-button{
+        border-radius: 20px !important;
+        background-color: var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow) !important;
+      }
+    }
+  }
+
+  // my-groups page
+  app-my-groups{
+    .my-cr-bg {
+      background: transparent !important;
+    }
+    .my-cr-title {
+      color: var(--app-primary) !important;
+    }
+    .my-cr-card{
+      border-radius: 16px;
+      background-color: var(--app-secondary-background);
+      box-shadow: var(--block-style-shadow) !important;
+    }
+  }
+
+  // my-groups-popover component
+  app-my-groups-popover{
+    .mg-popup-btn{
+      border-radius: 30px !important;
+    }
+  }
+
+  .tutorial-popover, .download-popover, .leave-training-popup, .cd-leave-training-popup {
+    .popover-content{
+      border-radius: 1rem !important;
+    }
+  }
+
+  .add-to-group-btn-container{
+    .open-btn {
+      color: var(--app-primary) !important;
+    }
+  }
+
+  // Group edit delete popup
+  .group-option-popover .popover-content{
+    border-radius: 1rem !important;
+    background-color: var(--app-primary-background) !important;
+  }
+
+  .enrollement-popover.popover-content{
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+
+  app-group-details{
+    .gd-header{
+      padding: 0 8px 8px;
+      border-radius: 16px;
+      background-color: var(--app-secondary-background) !important;
+      .gd-tab-header{
+        background-color: var(--app-white) !important;
+        border-radius: 24px;
+        .gd-tab:first-child{
+          border-radius: 24px 0 0 24px;
+        }
+        .gd-tab:last-child{
+          border-radius: 0 24px 24px 0;
+        }
+      }
+    }
+
+    .gd-tab-member-container{
+      border-radius: 16px;
+      background-color: var(--app-secondary-background) !important;
+    }
+  }
+
+  app-add-member-to-group{
+    .sb-btn-large.inactive{
+      background-color: var(--app-light-gray) !important;
+    }
+  }
+
+  app-activity-details{
+    .ad-member-container{
+      border-radius: 16px;
+      background-color: var(--app-secondary-background);
+      .activity-toc{
+        border-radius: 16px 16px 0 0;
+        background-color: var(--app-primary) !important;
+      }
+    }
+  }
+
+  add-activity-to-group{
+    .add-activity-container{
+      margin: 0 8px;
+      padding: 16px 0 8px;
+      border-radius: 16px;
+      background-color: var(--app-secondary-background);
+      box-shadow: var(--block-style-shadow) !important;
+    }
+  }
+
+  .sb-popover{
+    .popover-content{
+      border-radius: 16px 16px 0 0;
+      box-shadow: var(--button-style-shadow);
+    }
+
+    ion-content{
+      --background: var(--app-secondary-background) !important;
+    }
+
+    ion-header{
+      ion-toolbar{
+        --background: var(--app-secondary-background) !important;
+        min-height: 60px !important;
+        max-height: 60px !important;
+      }
+    }
+
+    .sb-popover-title{
+      color: var(--app-dark-gray) !important;
+      padding: 0 16px !important;
+      font-size: 20px !important;
+      text-align: unset !important;
+      margin-top: 28px !important;
+      ion-icon{
+        height: 30px !important;
+        width: 60px !important;
+        top: -20px !important;
+      }
+    }
+
+    .sb-popover-footer{
+      background: var(--app-secondary-background) !important;
+      align-items: normal !important;
+      justify-content: flex-end !important;
+
+      .sb-btn-outline-info{
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
+      }
+
+      .sb-popover-action-btn{
+        height: 40px !important;
+      }
+    }
+  }
+
+  app-manage-user-profiles{
+    .manage-user-section{
+      background-color: var(--app-secondary-background);
+      border-radius: 16px;
+      padding: 16px 8px;
+      box-shadow: var(--block-style-shadow);
+    }
+    .manage-user-item{
+      margin-bottom: 8px;
+    }
+    .mu-selected-user{
+      border-radius: 16px;
+    }
+    
+    sb-member-card{
+      .sb-members-list-item{
+        border-radius: 16px;
+        background-color: var(--app-primary-background);
+        box-shadow: var(--button-style-shadow);
+      }
+    }
+
+    .add-user{
+      .button-outline{
+        --border-color: transparent !important;
+      }
+    }
+  }
+
+  app-explore-books{
+    form{
+      .search-bar{
+        border-radius: 1rem !important;
+        button{
+          box-shadow: none !important;
+        }
+      }
+    }
+    .sb-slider-pills-container{
+      .pill{
+        box-shadow: var(--button-style-shadow);
+      }
+    }
+    .sb-medium-pills-container{
+      .pill{
+        border: none !important;
+        color: var(--app-primary) !important;
+      }
+      .pill.active{
+        background-color: var(--app-primary) !important;
+        color: var(--app-white) !important;
+      }
+    }
+    .explore-results-section{
+      margin: 1rem;
+      border-radius: 1rem;
+    }
+
+    ion-button{
+      border-radius: 1rem 1rem 0 0 !important;
+    }
+  }
+
+  app-create-edit-group{
+    ion-input, ion-textarea{
+      background-color: var(--app-white);
+    }
+  }
+
+  app-enrollment-details{
+    ion-item-group{
+      .subtitle{
+        background-color: var(--app-primary-background) !important;
+      }
+      .subtitle.buttontext{
+        --background: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        box-shadow: var(--button-style-shadow);
+        border-radius: 1rem !important;
+      }
+    }
+  }
+
+  app-content-details{
+    .sb-detail-card-info{
+      button{
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  app-course-batches{
+    ion-content{
+      --padding-start: 0 !important;
+      --padding-end: 0 !important;
+    }
+
+    .background-gray{
+      background: var(--app-primary-background) !important;
+    }
+
+    .batch-list{
+      margin: 0.5rem !important;
+      .flex-card-container{
+        background-color: var(--app-white);
+        border-radius: 1rem;
+        box-shadow: var(--block-style-shadow);
+      }
+    }
+  }
+
+  app-content-details{
+    .sb-dt-card{
+      border-radius: 0 0 1rem 1rem;
+      background-color: var(--app-white);
+      box-shadow: var(--button-style-shadow);
+    }
+    ion-card{
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background-color: transparent;
+    }
+  }
+
+  app-download-manager{
+    .sb-view-all-items{
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    .sb-card-download-container{
+      border-radius: 1rem;
+      overflow: hidden;
+      .img-container{
+        border-radius: 0.5rem;
+      }
+      .check-container{
+        background-color: var(--app-secondary-background);
+      }
+    }
+  }
+
+  app-sb-share-popup{
+    ion-list{
+      background: var(--app-secondary-background) !important;
+    }
+    ion-item{
+      --background: var(--app-secondary-background) !important;
+    }
+  }
+
+  textbook-toc{
+    ion-card{
+      background-color: var(--app-secondary-background) !important;
+      margin: 8px !important;
+      width: auto !important;
+      box-shadow: var(--block-style-shadow);
+    }
+  }
+
+  app-rating-alert{
+    .sb-popover-items{
+      background-color: var(--app-secondary-background) !important;
+    }
+    .app-rate-btn{
+      background-color: transparent !important;
+      --box-shadow: var(--button-style-shadow) !important;
+    }
+    .app-rate-btn-outline{
+      --background: var(--app-white) !important;
+      --box-shadow: var(--button-style-shadow) !important;
+    }
+  }
+
+  app-content-rating-alert{
+    .popover-ratings{
+      padding: 0 1rem !important;
+    }
+  }
+
+  app-chapter-details{
+    .cd-header-container{
+      border-radius: 1rem;
+      background-color: var(--app-white);
+      padding: 0 !important;
+      .cd-title-container{
+        padding: 16px 16px 0 !important;
+      }
+      .new-div{
+        padding-left: 16px;
+        padding-right: 16px;
+        .enrolled-course-card-button{
+          border-radius: 2rem !important;
+          background-color: var(--app-primary) !important;
+        }
+      }
+      ion-card-content{
+        margin: 0 16px;
+        .sb-course-complete-container{
+          border-radius: 16px;
+        }
+        .sb-course-progress-container{
+          background-color: var(--joyful-light-yellow) !important;
+          border-radius: 1rem;
+        }
+      }
+      .cd-flex-container{
+        padding: 16px;
+        background-color: var(--joyful-light-blue);
+        border-radius: 1rem;
+        .cd-chapter-card-button{
+          border-radius: 2rem !important;
+          background-color: var(--app-primary) !important;
+        }
+      }
+    }
+  }
+
+  app-consent-pii-popup{
+    .consent-popover-info{
+      background: var(--app-secondary-background) !important;
+    }
+    .sb-popover-toolbar{
+      margin-left: -3px !important;
+    }
+    .save-changes-not-agree{
+      color: var(--app-primary) !important;
+    }
+    .btn-info{
+      text-align: right !important;
+      button{
+        padding: 11px 16px;
+        border: none !important;
+      }
+    }
+  }
+  
+  app-toast-navigation{
+    div{
+      color: var(--app-gray);
+    }
+  }
+
+  app-sb-progress-loader{
+    ion-content{
+      --background: var(--app-primary-header) !important;
+    }
+    ion-progress-bar{
+      --ion-color-base: var(--app-primary) !important;
+    }
+  }
+
+  .player-exit-popup{
+    .alert-wrapper{
+      background-color: var(--app-secondary-background);
+      border-radius: 1rem;
+    }
+    .alert-button {
+      border: 1px solid var(--app-primary) !important;
+      border-radius: 2rem !important;
+    }
+    .alert-button:first-child:not(:only-child) {
+      background: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
+    .alert-button:last-child:not(:only-child) {
+      background: var(--app-white) !important;
+      color: var(--app-primary) !important;
+    }
+  }
+
+  app-qrcoderesult{
+    .download-info{
+      color:map-get($colors, dark_blue) !important;
+    }
+    .btn-space{
+      padding-right: 5px !important;
+    }
+    button{
+      box-shadow: none !important;
+    }
+    ion-card{
+      padding: 7px !important;
+    }
+  }
+
+  app-sb-download-popup{
+    .sb-modal-close{
+      color: var(--app-primary) !important;
+    }
+    .progress-highlight{
+      background: var(--app-white) !important;
+    }
+    .popover-progress-container{
+      background-color: var(--app-primary) !important;
+    }
+    .collapsed {
+      .sb-popover-title{
+        margin-top: 0 !important;
+      }
+    }
+  }
+
+  app-notification{
+    .sb-view-all-container{
+      .sb-view-all-items{
+        background: var(--app-secondary-background) !important;
+        border-radius: 20px !important;
+        width: 94% !important;
+        height: 55px !important;
+        left: 3% !important;
+        padding: 10px !important;
+        margin-bottom: 10px !important;
+        top: 8px !important;
+        .sb-view-all-title{
+          color: unset !important;
+          margin-left: 8px !important;
+        }
+      }
+    }
+    ion-item{
+      --background: var(--app-white) !important;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius: 0.5rem !important;
+    }
+    ion-item-sliding{
+      box-shadow: var(--block-style-shadow) !important;
+    }
+    .oval-wrapper{
+      h4{
+        color: unset !important;
+      }
+    }
+  }
+
+  .file-download__action-btns .cancel-btn{
+   color: var(--primary-color) !important;
+   font-size: .9rem !important;
+   padding: .75em 2.5rem !important;
+  }
+
+}

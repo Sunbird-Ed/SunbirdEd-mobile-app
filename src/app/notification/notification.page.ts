@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { NotificationService, NotificationStatus } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { NotificationService, Notification } from 'sunbird-sdk';
+import { Observable, Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -14,6 +14,7 @@ import {
   InteractSubtype,
   ImpressionType
 } from '@app/services/telemetry-constants';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notification',
@@ -22,29 +23,23 @@ import {
 })
 export class NotificationPage implements OnInit {
 
-  notificationList = [];
-  newNotificationCount = 0;
-  showClearNotificationButton: boolean;
+  notificationList$: Observable<Notification[]>;
+  unreadNotificationList$: Observable<Notification[]>;
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;
+  private loader?: any;
 
   constructor(
     @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
     private headerService: AppHeaderService,
-    public commonUtilService: CommonUtilService,
-    private events: Events,
-    public telemetryGeneratorService: TelemetryGeneratorService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
-    private location: Location
+    private location: Location,
+    private commonUtilService: CommonUtilService,
 
   ) { }
 
   ionViewWillEnter() {
-    this.getNotifications();
-    this.events.subscribe('notification:received', () => {
-      this.getNotifications();
-    });
-
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
@@ -55,16 +50,19 @@ export class NotificationPage implements OnInit {
     });
   }
 
-
-  private getNotifications() {
-    this.notificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
-      this.newNotificationCount = 0;
-      this.newNotificationCount = notificationList.filter(item => !item.isRead).length;
-      this.notificationList = notificationList;
-    });
-  }
-
-  ngOnInit() {
+  async ngOnInit() {
+    this.loader = await this.commonUtilService.getLoader();
+    this.notificationList$ = this.notificationService.notifications$.pipe(
+      tap(() => {
+        if (this.loader) {
+          this.loader.dismiss();
+          this.loader = undefined;
+        }
+      })
+    );
+    this.unreadNotificationList$ = this.notificationList$.pipe(
+      map((notifications) => notifications.filter((n) => !n.isRead))
+    );
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,
@@ -72,39 +70,27 @@ export class NotificationPage implements OnInit {
     );
   }
 
-  clearAllNotifications() {
-    this.notificationService.deleteNotification().subscribe((status) => {
-      this.notificationList = [];
-      this.newNotificationCount = 0;
-      this.events.publish('notification-status:update', { isUnreadNotifications: false });
-    });
-
+  async clearAllNotifications() {
+    if (!this.loader) {
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
+    }
+    this.notificationService.deleteAllNotifications().toPromise();
     const valuesMap = new Map();
     valuesMap['clearAllNotifications'] = true;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
   }
 
-  removeNotification(index: number, swipeDirection: string) {
+  async removeNotification(notification: Notification, swipeDirection: string) {
+    if (!this.loader) {
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
+    }
     const valuesMap = new Map();
-    valuesMap['deleteNotificationId'] = this.notificationList[index].id;
+    valuesMap['deleteNotificationId'] = notification.id;
     valuesMap['swipeDirection'] = swipeDirection;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
-
-    this.notificationService.deleteNotification(this.notificationList[index].id).subscribe((status) => {
-      if (!this.notificationList[index].isRead) {
-        this.updateNotificationCount();
-      }
-      this.notificationList.splice(index, 1);
-    });
-  }
-
-  updateNotificationCount(event?) {
-    if (this.newNotificationCount > 0) {
-      if (this.newNotificationCount === 1) {
-        this.events.publish('notification-status:update', { isUnreadNotifications: false });
-      }
-      this.newNotificationCount--;
-    }
+    this.notificationService.deleteNotification(notification).toPromise();
   }
 
   handleTelemetry(event) {
@@ -123,8 +109,12 @@ export class NotificationPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
-    this.headerObservable && this.headerObservable.unsubscribe();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
   }
 
   private handleHeaderEvents(event) {
