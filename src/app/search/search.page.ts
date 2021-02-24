@@ -786,7 +786,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source, undefined);
+      this.source || PageId.SEARCH, undefined);
     const filterCriteriaData = this.responseData.filterCriteria;
     filterCriteriaData.facetFilters.forEach(element => {
       this.searchFilterConfig.forEach(item => {
