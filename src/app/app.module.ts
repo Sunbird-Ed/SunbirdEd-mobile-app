@@ -1,62 +1,49 @@
 // Angular dependencies
-import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, Provider } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // ionic cordova dependencies/plugins
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Device } from '@ionic-native/device/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+// ionic cordova dependencies/plugins
+import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Network } from '@ionic-native/network/ngx';
-
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 // 3rd party dependencies
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
+import { CsContentType } from '@project-sunbird/client-services/services/content';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
 import { DirectivesModule } from '../directives/directives.module';
 import {
-  AppGlobalService,
-  CommonUtilService,
-  CourseUtilService,
-  TelemetryGeneratorService,
-  QRScannerResultHandler,
-  UtilityService,
+  ActivePageService, AndroidPermissionsService, AppGlobalService,
   AppHeaderService,
   AppRatingService,
-  LogoutHandlerService,
-  LoginHandlerService,
-  ContainerService,
-  AndroidPermissionsService,
-  ComingSoonMessageService,
-  NotificationService,
-  SunbirdQRScanner,
-  ActivePageService,
-  FormAndFrameworkUtilService,
   CanvasPlayerService,
-  SplashScreenService,
-  GroupHandlerService,
-  CollectionService,
-  ContentAggregatorHandler
+  CollectionService, ComingSoonMessageService, CommonUtilService,
+  ContainerService,
+  ContentAggregatorHandler, CourseUtilService,
+  FormAndFrameworkUtilService,
+  GroupHandlerService, LoginHandlerService, LogoutHandlerService,
+  NotificationService, QRScannerResultHandler,
+  SplashScreenService, SunbirdQRScanner, TelemetryGeneratorService,
+  UtilityService
 } from '../services/index';
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
+import { AppComponent } from './app.component';
 import { ComponentsModule } from './components/components.module';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-import { PageFilterPageModule } from './page-filter/page-filter.module';
-import { PageFilterPage } from './page-filter/page-filter.page';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
-import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
-import { File } from '@ionic-native/file/ngx';
+import { PageFilterPageModule } from './page-filter/page-filter.module';
+import { PageFilterPage } from './page-filter/page-filter.page';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import {
@@ -69,7 +56,6 @@ import { ExternalIdVerificationService } from '@app/services/externalid-verifica
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions/ngx';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { CsPrimaryCategory, CsContentType } from '@project-sunbird/client-services/services/content';
 import {AliasBoardName} from '../pipes/alias-board-name/alias-board-name';
 import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.service';
 import {ConsentService} from '@app/services/consent-service';
@@ -84,6 +70,7 @@ import {configuration} from '@app/configuration/configuration';
 import { LocationHandler } from '@app/services/location-handler';
 import { CoreModule } from './manage-learn/core/core.module';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {

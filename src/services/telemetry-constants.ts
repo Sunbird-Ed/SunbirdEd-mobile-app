@@ -54,7 +54,6 @@ export enum PageId {
     LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
-    CURRICULUM_COURSE_DETAIL = 'curriculum-course-detail',
     CONTENT_DETAIL = 'content-detail',
     COURSE_BATCHES = 'course-batches',
     SHARE_CONTENT = 'share-content',

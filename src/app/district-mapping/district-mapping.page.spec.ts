@@ -1,7 +1,7 @@
 import { DistrictMappingPage } from '../district-mapping/district-mapping.page';
 import {
     AppGlobalService, AppHeaderService, CommonUtilService,
-    FormAndFrameworkUtilService, TelemetryGeneratorService, AuditType
+    FormAndFrameworkUtilService, TelemetryGeneratorService, AuditType, InteractType, CorReleationDataType, InteractSubtype
 } from '../../services';
 import { featureIdMap } from '@app/feature-id-map';
 import { PageId, Environment, ImpressionType } from '@app/services/telemetry-constants';
@@ -14,11 +14,11 @@ import {
     ProfileService, Profile, SharedPreferences, ProfileType, ProfileSource, DeviceRegisterResponse,
     DeviceRegisterService
 } from 'sunbird-sdk';
-import { PreferenceKey} from '@app/app/app.constant';
+import { PreferenceKey } from '@app/app/app.constant';
 import { FormLocationFactory } from '../../services/form-location-factory/form-location-factory';
 import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';
-import { AuditState } from '@project-sunbird/sunbird-sdk';
+import { AuditState, CorrelationData } from '@project-sunbird/sunbird-sdk';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;
@@ -163,9 +163,62 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.ionViewWillLeave();
     });
 
+    it('should generate location capture telemetry', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const isEdited = true;
+        // act
+        districtMappingPage.generateLocationCaptured(true);
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.LOCATION_CAPTURED,
+            Environment.ONBOARDING,
+            PageId.DISTRICT_MAPPING,
+            undefined,
+            {
+              isEdited
+            }, undefined,
+            [{id: 'user:location_capture', type: 'Feature'}, {id: 'SB-14682', type: 'Task'}]
+        );
+    });
+
+    describe('isStateorDistrictChanged', () => {
+        it('should return changeStatue for state change', () => {
+            // arrange
+            const locationCodes = [{
+                type: 'state',
+                code: 'new-code'
+            }];
+            // act
+            const data = districtMappingPage.isStateorDistrictChanged(locationCodes);
+            // assert
+            expect(data).toBeUndefined();
+        });
+    });
+
     describe('submit', () => {
         beforeEach(() => {
             window.history.pushState({ isShowBackButton: true }, '', '');
+        });
+
+        it('should generate generateSubmitInteractEvent', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const correlationList: Array<CorrelationData> = [];
+            correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
+            // act
+            districtMappingPage.generateSubmitInteractEvent(correlationList);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.SELECT_SUBMIT, '',
+                Environment.ONBOARDING,
+                PageId.LOCATION,
+                undefined,
+                undefined,
+                undefined,
+                correlationList
+            );
         });
 
         it('should not submit form details for offline', (done) => {
@@ -428,7 +481,7 @@ describe('DistrictMappingPage', () => {
                     undefined,
                     undefined,
                     undefined,
-                    [{ code: undefined, type: 'sample-type' }]
+                    [{ id: '', type: 'sample-type' }]
                 );
                 expect(mockAppGlobalService.setOnBoardingCompleted).toHaveBeenCalled();
                 done();
@@ -451,7 +504,8 @@ describe('DistrictMappingPage', () => {
                 handle: 'sample-name'
             }));
             mockLocationHandler.getAvailableLocation = jest.fn(() => Promise.resolve([{
-                state: 'sample-state'
+                state: {code: 'sample-code', name: 'sample-name'},
+                district: {code: 'sample-code', name: 'sample-name'},
             }])) as any;
             mockFormAndFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
                 code: 'name',
@@ -473,30 +527,30 @@ describe('DistrictMappingPage', () => {
                 children: {
                     administrator: [
                         {
-                        code: 'state',
-                        type: 'select',
-                        templateOptions: {
-                            labelHtml: {
-                                contents: '<span>$0&nbsp;<span class=\'required-asterisk\'>*</span></span>',
-                                values: {
-                                    $0: 'State'
+                            code: 'state',
+                            type: 'select',
+                            templateOptions: {
+                                labelHtml: {
+                                    contents: '<span>$0&nbsp;<span class=\'required-asterisk\'>*</span></span>',
+                                    values: {
+                                        $0: 'State'
+                                    }
+                                },
+                                placeHolder: 'Select State',
+                                multiple: false,
+                                dataSrc: {
+                                    marker: 'STATE_LOCATION_LIST',
+                                    params: {
+                                        useCase: 'SIGNEDIN_GUEST'
+                                    }
                                 }
                             },
-                            placeHolder: 'Select State',
-                            multiple: false,
-                            dataSrc: {
-                                marker: 'STATE_LOCATION_LIST',
-                                params: {
-                                    useCase: 'SIGNEDIN_GUEST'
+                            validations: [
+                                {
+                                    type: 'required'
                                 }
-                            }
-                        },
-                        validations: [
-                            {
-                                type: 'required'
-                            }
-                        ]
-                    }, {
+                            ]
+                        }, {
                             code: 'subPersona',
                             type: 'select',
                             templateOptions: {
@@ -514,29 +568,29 @@ describe('DistrictMappingPage', () => {
                                         useCase: 'SIGNEDIN_GUEST'
                                     }
                                 },
-                                options: {value: 'hm', label: 'HM'}
+                                options: { value: 'hm', label: 'HM' }
                             }
-                    }, {
-                        code: 'district',
-                        type: 'select',
-                        templateOptions: {
-                            labelHtml: {
-                                contents: '<span>$0&nbsp;<span class=\'required-asterisk\'>*</span></span>',
-                                values: {
-                                    $0: 'State'
-                                }
-                            },
-                            placeHolder: 'Select State',
-                            multiple: false,
-                            dataSrc: {
-                                marker: 'LOCATION_LIST',
-                                params: {
-                                    useCase: 'SIGNEDIN_GUEST'
-                                }
-                            },
-                            options: {value: 'hm', label: 'HM'}
-                        }
-                }]
+                        }, {
+                            code: 'district',
+                            type: 'select',
+                            templateOptions: {
+                                labelHtml: {
+                                    contents: '<span>$0&nbsp;<span class=\'required-asterisk\'>*</span></span>',
+                                    values: {
+                                        $0: 'State'
+                                    }
+                                },
+                                placeHolder: 'Select State',
+                                multiple: false,
+                                dataSrc: {
+                                    marker: 'LOCATION_LIST',
+                                    params: {
+                                        useCase: 'SIGNEDIN_GUEST'
+                                    }
+                                },
+                                options: { value: 'hm', label: 'HM' }
+                            }
+                        }]
                 }
             }]));
             districtMappingPage.profile = {
@@ -596,5 +650,248 @@ describe('DistrictMappingPage', () => {
                 done();
             }, 0);
         });
+    });
+
+    it('should generate telemetry for cancel event', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const correlationList: Array<CorrelationData> = [];
+        correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
+        // act
+        districtMappingPage.cancelEvent('');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CANCEL, '',
+            Environment.ONBOARDING,
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            correlationList
+        );
+    });
+
+    describe('isChangedLocation', () => {
+        it('should change new location', () => {
+            // arrange
+            const curr = {
+                children: {
+                    persona: {
+                        state: { name: 'sample-state', id: 'state-id', code: 'new-code' }
+                    }
+                },
+                name: 'sample-user',
+                persona: 'teacher'
+            };
+            const prev = {
+                children: {
+                    persona: {
+                        state: { name: 'sample-state', id: 'state-id', code: 'old-code' },
+                    }
+                },
+                name: 'sample-user',
+                persona: 'teacher'
+            };
+            // act
+            const data = districtMappingPage.isChangedLocation(prev, curr);
+            // assert
+            expect(data).toStrictEqual({ name: 'sample-state', id: 'state-id', code: 'new-code' });
+        });
+
+        it('should not change location', () => {
+            // arrange
+            const curr = {
+                children: {
+                    persona: {
+                        state: { name: 'sample-state', id: 'state-id', code: 'old-code' }
+                    }
+                },
+                name: 'sample-user',
+                persona: 'teacher'
+            };
+            const prev = {
+                children: {
+                    persona: {
+                        state: { name: 'sample-state', id: 'state-id', code: 'old-code' },
+                    }
+                },
+                name: 'sample-user',
+                persona: 'teacher'
+            };
+            // act
+            const data = districtMappingPage.isChangedLocation(prev, curr);
+            // assert
+            expect(data).toBeUndefined();
+        });
+    });
+
+    it('should invoked generateTelemetryForCategoryClicked', () => {
+        // arrange
+        const location = { code: '33', name: 'Tamil Nadu', id: '91d9baae-14f1-477a-955c-f91bd9037f0b', type: 'state' }
+        const correlationList: Array<CorrelationData> = [];
+        correlationList.push({
+            id: location.name,
+            type: location.type.charAt(0).toUpperCase() + location.type.slice(1)
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        districtMappingPage.generateTelemetryForCategoryClicked(location);
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CATEGORY, '',
+            Environment.ONBOARDING,
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            correlationList
+        );
+    });
+
+    describe('onFormInitialize', () => {
+        it('should be generate event for category clicked', (done) => {
+            // arrange
+            const formGroup = {
+                valueChanges: of({
+                    children: {
+                        persona: {
+                            state: { name: 'sample-state', id: 'state-id' },
+                            district: { name: 'sample-dist', id: 'dist-id' },
+                            block: { name: 'sample-block', id: 'block-id' }
+                        }
+                    },
+                    name: 'sample-user',
+                    persona: 'teacher'
+                })
+            } as any;
+            jest.spyOn(districtMappingPage, 'isChangedLocation').mockImplementation(() => {
+                return ({});
+            });
+            // act
+            districtMappingPage.onFormInitialize(formGroup);
+            // assert
+            setTimeout(() => {
+                expect(districtMappingPage.formGroup.valueChanges).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('onDataLoadStatusChange', () => {
+        it('should initialized loader', (done) => {
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            districtMappingPage.initializeLoader();
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should be present loader if status is loading', (done) => {
+            // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+            }));
+            // act
+            districtMappingPage.onDataLoadStatusChange('LOADING');
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should initialized formData', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                dismiss: dismissFn,
+            }));
+            districtMappingPage.formGroup = {
+                value: 'sample-value', get: jest.fn(() => ({
+                    value: 'sample-value',
+                    valueChanges: of({
+                        children: {
+                            persona: {
+                                state: { name: 'sample-state', id: 'state-id', code: 'old-code' },
+                                district: { name: 'sample-dist', id: 'dist-id' },
+                                block: { name: 'sample-block', id: 'block-id' }
+                            }
+                        },
+                        name: 'sample-user',
+                        persona: 'teacher'
+                    }),
+                    patchValue: jest.fn()
+                }))
+            } as any;
+            districtMappingPage.profile = {
+                serverProfile: {
+                    userSubType: undefined
+                }
+            };
+            // act
+            districtMappingPage.onDataLoadStatusChange('');
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
+    it('should generate telemetry for calegory select', () => {
+        // arrange
+        const corRelationList: CorrelationData[] = [{ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI }];
+        corRelationList.push({
+            id: 'sample-id',
+            type: CorReleationDataType.STATE
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        districtMappingPage.generateTelemetryForCategorySelect('sample-id', true);
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_SUBMIT, '',
+            Environment.ONBOARDING,
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            corRelationList
+        );
+    });
+
+    it('should generate telemetry for clearUserLocationSelections', () => {
+        // arrange
+        const correlationList: Array<CorrelationData> = [];
+        correlationList.push({ id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        districtMappingPage.formGroup = {
+            get: jest.fn(() => ({
+                patchValue: jest.fn()
+            })) as any
+        } as any;
+        // act
+        districtMappingPage.clearUserLocationSelections();
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CANCEL, '',
+            Environment.ONBOARDING,
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            correlationList
+        );
+    });
+
+    it('should invoked ngOnDestroy for unsubscribe', () => {
+        districtMappingPage.ngOnDestroy();
     });
 });

@@ -219,6 +219,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
+    if (this.dialCode) {
+      this.enableSearch = true;
+    }
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton();
     });
