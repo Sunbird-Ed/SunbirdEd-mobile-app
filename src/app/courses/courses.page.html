@@ -14,18 +14,29 @@
       </sb-course-cards-hlist>
     </ng-container>
   </div>
-  <div *ngFor="let result of dynamicCourses">
-    <div *ngIf="!guestUser && result.theme.orientation === 'horizontal'" class="pt-8 enrolled-course-bg">
-      <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
-        <sb-course-cards-hlist [title]="result?.name" [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
-          [contentList]="enrolledCourses" [viewMoreButtonText]="'VIEW_ALL' | translate"
-          (viewMoreClick)="navigateToViewMoreContentsPage(true)" (cardClick)="openEnrolledCourseDetails($event)"
-          [hideProgress]="true"></sb-course-cards-hlist>
+  <div *ngFor="let section of dynamicCourses">
+    <div *ngIf="!guestUser && section?.theme?.component === 'sb-course-cards-hlist'" class="pt-8 enrolled-course-bg">
+      <ng-container *ngIf="section?.theme?.component === 'sb-course-cards-hlist'">
+        <ng-container *ngFor="let subSection of section?.data?.sections">
+          <ng-container *ngIf="subSection?.contents?.length">
+            <sb-course-cards-hlist
+              [title]="(section?.title) | translateJson"
+              [type]="section?.theme?.inputs?.type || courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID"
+              [contentList]="subSection.contents"
+              [hideProgress]="section?.theme?.inputs?.hideProgress || true"
+              [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
+              [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
+              [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
+              (viewMoreClick)="navigateToViewMoreContentsPage(true)"
+              (cardClick)="openEnrolledCourseDetails($event)">
+            </sb-course-cards-hlist>
+          </ng-container>
+        </ng-container>
       </ng-container>
     </div>
-    <div *ngIf="result.theme.orientation === 'vertical'">
-      <div class="section-header-style" *ngIf="popularAndLatestCourses.length">{{result.name}}</div>
-      <div *ngFor="let section of popularAndLatestCourses; let i=index">
+    <div *ngIf="section.theme.component === 'sb-library-cards-stack'">
+      <div class="section-header-style" *ngIf="section?.data.sections.length">{{section?.title | translateJson}}</div>
+      <div *ngFor="let section of section?.data.sections; let i=index">
         <div *ngIf="section?.contents?.length" class="sb-textbook-container">
           <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
             [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"

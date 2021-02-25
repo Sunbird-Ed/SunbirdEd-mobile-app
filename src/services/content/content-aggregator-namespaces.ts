@@ -1,5 +1,5 @@
 export enum AggregatorPageType {
-    COURSE = 'course_v2',
+    COURSE = 'course_v3',
     LIBRARY = 'library_v3',
     HOME = 'home_v2',
     DISCOVER = 'discover',

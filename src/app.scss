@@ -1674,6 +1674,15 @@ sb-pills-grid{
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
+
+  .sb-box-grid{
+    .img{
+      width: 3.5rem;
+      img {
+        margin-right: 0 !important;
+      }
+    }
+  }
 }
 
 app-user-home{
