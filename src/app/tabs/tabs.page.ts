@@ -70,8 +70,13 @@ export class TabsPage implements OnInit, AfterViewInit {
     }
 
     this.tabs = this.container.getAllTabs();
-    this.events.subscribe('UPDATE_TABS', () => {
-      this.tabs = this.container.getAllTabs();
+    this.events.subscribe('UPDATE_TABS', async (data) => {
+      if (data && data.type === 'SWITCH_TABS_USERTYPE') {
+        const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        initTabs(this.container, selectedUserType === ProfileType.ADMIN ? LOGIN_ADMIN_TABS : LOGIN_TEACHER_TABS);
+      } else {
+        this.tabs = this.container.getAllTabs();
+      }
     });
   }
 
