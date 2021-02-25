@@ -225,7 +225,7 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
           } else if (this.profile && this.source === PageId.PROFILE) {
               this.location.back();
-              this.events.publish('UPDATE_TABS', {});
+              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
