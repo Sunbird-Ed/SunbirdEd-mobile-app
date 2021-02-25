@@ -14,16 +14,15 @@
                         <ion-select style="border-radius: 16px; background-color: #ffffff;" multiple="false"
                                     class="ion-text-capitalize"
                                     [interfaceOptions]="primaryFacetFiltersTemplateOptions"
-                                    (ionCancel)="cancelEvent('medium')"
                                     [formControlName]="primaryFacetFilter.code"
                                     okText="{{'BTN_SUBMIT' | translate}}"
                                     cancelText="{{'CANCEL' | translate}}"
                                     placeholder="{{primaryFacetFilter.translations | translateJson}}">
                             <ion-select-option
-                                    *ngFor="let facet of (facetFilters[primaryFacetFilter.code] || [])"
+                                    *ngFor="let facet of ((initialFacetFilters && initialFacetFilters[primaryFacetFilter.code]) || [])"
                                     [value]="facet"
                                     class="ion-text-capitalize">
-                                {{facet.name}}
+                                {{facet.name | titlecase }}
                             </ion-select-option>
                         </ion-select>
                     </ion-col>
@@ -42,7 +41,7 @@
     <div class="px-8" *ngIf="!showSheenAnimation">
         <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
                        [pillsViewType]="'scroll'"
-                       [pillBorder]="'rounded'">
+                       [pillBorder]="'round'">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
         </sb-pills-grid>

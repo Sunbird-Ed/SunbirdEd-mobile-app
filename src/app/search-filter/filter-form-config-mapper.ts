@@ -1,8 +1,28 @@
+import { TitleCasePipe } from '@angular/common';
+import { Injectable } from '@angular/core';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {FieldConfig, FieldConfigInputType, FieldConfigValidationType} from 'common-form-elements';
-import {FilterValue} from 'sunbird-sdk';
+import { FilterValue } from 'sunbird-sdk';
 
+@Injectable()
 export class FilterFormConfigMapper {
-    static map(facetFilters: { [key: string]: FilterValue[] }, defaults: { [field: string]: any }): FieldConfig<string>[] {
+    constructor(
+        private commonUtilService: CommonUtilService,
+        private titlecasePipe: TitleCasePipe
+    ) {
+        
+    }
+    private static order = [
+        'board',
+        'medium',
+        'gradeLevel',
+        'subject',
+        'publisher',
+        'mimeType',
+        'primaryCategory'
+    ];
+
+    map(facetFilters: { [key: string]: FilterValue[] }, defaults: { [field: string]: any }): FieldConfig<string>[] {
         return Object.keys(facetFilters).reduce<FieldConfig<string>[]>((acc, key) => {
             switch (key) {
                 case 'board': {
@@ -12,13 +32,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'board',
                         default: (defaults && defaults['board']) || null,
                         templateOptions: {
-                            label: 'board',
+                            label: this.commonUtilService.translateMessage('BOARD'),
                             placeHolder: 'Select Board',
                             multiple: false,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         },
@@ -27,7 +47,6 @@ export class FilterFormConfigMapper {
                                 type: FieldConfigValidationType.REQUIRED
                             }
                         ]
-
                     });
                     break;
                 }
@@ -38,13 +57,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'medium',
                         default: (defaults && defaults['medium']) || null,
                         templateOptions: {
-                            label: 'medium',
+                            label: this.commonUtilService.translateMessage('MEDIUM'),
                             placeHolder: 'Select Medium',
                             multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         }
@@ -58,13 +77,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'gradeLevel',
                         default: (defaults && defaults['gradeLevel']) || null,
                         templateOptions: {
-                            label: 'class',
+                            label: this.commonUtilService.translateMessage('CLASS'),
                             placeHolder: 'Select Class',
                             multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         }
@@ -78,13 +97,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'subject',
                         default: (defaults && defaults['subject']) || null,
                         templateOptions: {
-                            label: 'subject',
+                            label: this.commonUtilService.translateMessage('SUBJECT'),
                             placeHolder: 'Select Subject',
                             multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         }
@@ -98,13 +117,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'publisher',
                         default: (defaults && defaults['publisher']) || null,
                         templateOptions: {
-                            label: 'publisher',
+                            label: this.commonUtilService.translateMessage('PUBLISHER'),
                             placeHolder: 'Select publisher',
                             multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         }
@@ -118,13 +137,13 @@ export class FilterFormConfigMapper {
                         fieldName: 'mediaType',
                         default: (defaults && defaults['mediaType']) || null,
                         templateOptions: {
-                            label: 'Media Type',
+                            label: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEDIA_TYPE'),
                             placeHolder: 'Select Media Type',
                             multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
                         }
@@ -138,22 +157,29 @@ export class FilterFormConfigMapper {
                         fieldName: 'primaryCategory',
                         default: (defaults && defaults['primaryCategory']) || null,
                         templateOptions: {
-                            label: 'Content Type',
+                            label: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
                             placeHolder: 'Select Content Type',
                             multiple: false,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
-                                label: f.name,
+                                label: this.titlecasePipe.transform(f.name),
                                 value: f.name
                             }))
-
                         }
                     });
                     break;
                 }
             }
             return acc;
-        }, []);
+        }, []).sort((a, b) => {
+            if (
+                FilterFormConfigMapper.order.includes(a.code) &&
+                FilterFormConfigMapper.order.includes(b.code)
+            ) {
+                return FilterFormConfigMapper.order.indexOf(a.code) - FilterFormConfigMapper.order.indexOf(b.code);
+            }
+            return 1;
+        });
     }
 }

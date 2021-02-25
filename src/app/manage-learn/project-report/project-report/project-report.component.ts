@@ -160,11 +160,11 @@ export class ProjectReportComponent implements OnInit {
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
       if (key == 'completed') {
-        color.push('green');
+        color.push({color:'green',pos:0});
       }
 
       if (key == 'notStarted') {
-        color.push('#B80000');
+        color.push({color:'#B80000',pos:2});
       }
     }
 
@@ -173,6 +173,7 @@ export class ProjectReportComponent implements OnInit {
       data: data,
       color: color,
       radius: radius,
+      total:obj['total']
     };
     debugger;
 

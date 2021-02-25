@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ContentStateResponse, GetContentStateRequest, SunbirdSdk, SharedPreferences } from 'sunbird-sdk';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'x2js';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import {MaxAttempt, PreferenceKey, ProfileConstants} from '@app/app/app.constant';
 import { Events } from '@ionic/angular';
 import { LocalCourseService } from './local-course.service';
 import { CommonUtilService } from './common-util.service';
@@ -72,6 +72,7 @@ export class CanvasPlayerService {
                     return this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise()
                         .then(async (context: string) => {
                             const courseContext = JSON.parse(context);
+                            let maxAttempt: MaxAttempt;
                             if (courseContext.courseId && courseContext.batchId && courseContext.leafNodeIds) {
                                 const getContentStateRequest: GetContentStateRequest = {
                                     userId: courseContext.userId,
@@ -87,10 +88,9 @@ export class CanvasPlayerService {
 
                                 const assessmentStatus = this.localCourseService.fetchAssessmentStatus(contentStateResponse, content);
 
-                                const skipPlay = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
-                                return skipPlay;
+                                maxAttempt = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
                             }
-                            return false;
+                            return maxAttempt;
                         });
                 default:
                     console.log('Please use valid method');

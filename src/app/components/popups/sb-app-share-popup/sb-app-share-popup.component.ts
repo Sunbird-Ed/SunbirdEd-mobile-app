@@ -1,16 +1,15 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ShareItemType, ShareMode } from '@app/app/app.constant';
+import { Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { UtilityService } from '../../../../services/utility-service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Platform, PopoverController, NavParams } from '@ionic/angular';
+import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype, AppGlobalService } from '@app/services';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ShareMode, ShareItemType } from '@app/app/app.constant';
 import { AndroidPermissionsService } from '../../../../services/android-permissions/android-permissions.service';
-import { Router } from '@angular/router';
-import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { UtilityService } from '../../../../services/utility-service';
 
 @Component({
   selector: 'app-sb-share-popup',

@@ -43,7 +43,7 @@ import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
-import { LibraryCardTypes } from '@project-sunbird/common-consumption-v8';
+import { LibraryCardTypes, PillBorder, PillsViewType, SelectMode } from '@project-sunbird/common-consumption-v8';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
@@ -147,7 +147,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   headerObservable: Subscription;
-  primaryCategoryFilters = [];
+  primaryCategoryFilters;
+  PillsViewType = PillsViewType;
+  PillBorder = PillBorder;
+  SelectMode = SelectMode;
+  appPrimaryColor: string;
+
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
@@ -216,9 +221,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.getAppName();
     this.supportedUserTypesConfig = await this.profileHandler.getSupportedUserTypes();
+    this.appPrimaryColor = getComputedStyle(document.querySelector('html')).getPropertyValue('--app-primary-medium');
   }
 
   async ionViewWillEnter() {
+    if (this.dialCode) {
+      this.enableSearch = true;
+    }
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton();
     });
@@ -783,7 +792,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source, undefined);
+      this.source || PageId.SEARCH, undefined);
     const filterCriteriaData = this.responseData.filterCriteria;
     filterCriteriaData.facetFilters.forEach(element => {
       this.searchFilterConfig.forEach(item => {
@@ -831,7 +840,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.zone.run(() => {
           this.responseData = responseData;
           if (responseData) {
-
             if (this.isDialCodeSearch) {
               this.processDialCodeResult(responseData.contentDataList);
             } else {
@@ -839,12 +847,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
               values.from = this.source;
-              if (this.responseData.filterCriteria && this.responseData.filterCriteria.facetFilters) {
-                this.fetchPrimaryCategoryFilters(this.responseData.filterCriteria.facetFilters);
-              }
               values.searchCount = this.responseData.length;
               values.searchCriteria = this.responseData.filterCriteria;
               this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
+            }
+            if (this.responseData.filterCriteria && this.responseData.filterCriteria.facetFilters) {
+              this.fetchPrimaryCategoryFilters(this.responseData.filterCriteria.facetFilters);
             }
             this.updateFilterIcon();
           } else {
@@ -957,6 +965,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             values.searchCount = this.searchContentResult ? this.searchContentResult.length : 0;
             values.searchCriteria = response.request;
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
+            if (response.filterCriteria && response.filterCriteria.facetFilters) {
+              this.fetchPrimaryCategoryFilters(response.filterCriteria.facetFilters);
+            }
           } else {
             this.isEmptyResult = true;
           }
@@ -1093,6 +1104,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.event.subscribe('search.applyFilter', (filterCriteria) => {
       this.responseData.filterCriteria = filterCriteria;
+      this.primaryCategoryFilters = undefined;
       this.applyFilter();
     });
   }
@@ -1740,11 +1752,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchPrimaryCategoryFilters(facetFilters) {
-    for (let index = 0; index < facetFilters.length; index++) {
-      if (facetFilters[index].name === 'primaryCategory') {
-        this.primaryCategoryFilters = facetFilters[index].values;
-        break;
-      }      
+    if (!this.primaryCategoryFilters) {
+      setTimeout(() => {
+        for (let index = 0; index < facetFilters.length; index++) {
+          if (facetFilters[index].name === 'primaryCategory') {
+            this.primaryCategoryFilters = facetFilters[index].values;
+            break;
+          }
+        }
+      });
     }
   }
 
@@ -1752,8 +1768,25 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (!event || !event.data || !event.data.length) {
       return;
     }
-    
-    
+    if (this.initialFilterCriteria) {
+      this.responseData.filterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+    }
+    let primaryCategoryFilter = (this.responseData.filterCriteria as ContentSearchCriteria).facetFilters.find(facet => {
+      return facet.name === 'primaryCategory'
+    });
+    if (!primaryCategoryFilter) {
+      return;
+    }
+    let primaryCategoryFilterValue = primaryCategoryFilter.values.find(f => {
+      return f.name ===  event.data[0].value.name;
+    })
+    if (!primaryCategoryFilterValue) {
+      return
+    }
+    if (!primaryCategoryFilterValue.apply) {
+      primaryCategoryFilterValue.apply = true;
+      this.applyFilter();
+    }
   }
 
 }

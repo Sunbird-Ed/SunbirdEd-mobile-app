@@ -15,7 +15,7 @@ import {
 } from 'sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
-    appLanguages, Location as loc
+    appLanguages, Location as loc, MaxAttempt
 } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -668,17 +668,24 @@ export class CommonUtilService {
     }
 
     async handleAssessmentStatus(assessmentStatus) {
-        if (assessmentStatus.isContentDisabled) {
+        const maxAttempt: MaxAttempt = {
+            limitExceeded: false,
+            isCloseButtonClicked: false,
+            isLastAttempt: false
+        };
+        if (assessmentStatus && assessmentStatus.isContentDisabled) {
+            maxAttempt.limitExceeded = true;
             this.showToast('FRMELMNTS_IMSG_LASTATTMPTEXCD');
-            return true;
+            return maxAttempt;
         }
-        if (assessmentStatus.isLastAttempt) {
-            return await this.showAssessmentLastAttemptPopup();
+        if (assessmentStatus && assessmentStatus.isLastAttempt) {
+            maxAttempt.isLastAttempt = true;
+            return await this.showAssessmentLastAttemptPopup(maxAttempt);
         }
-        return false;
+        return maxAttempt;
     }
 
-    async showAssessmentLastAttemptPopup() {
+    async showAssessmentLastAttemptPopup(maxAttempt?: MaxAttempt) {
         const confirm = await this.popOverCtrl.create({
             component: SbPopoverComponent,
             componentProps: {
@@ -697,9 +704,11 @@ export class CommonUtilService {
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
         if (data && data.canDelete) {
-            return false;
+            return maxAttempt;
+        } else {
+            maxAttempt.isCloseButtonClicked = true;
+            return maxAttempt;
         }
-        return true;
     }
 
 }

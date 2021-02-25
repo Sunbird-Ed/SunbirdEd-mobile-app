@@ -1,19 +1,6 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { Platform, PopoverController } from '@ionic/angular';
-import { NavParams } from '@ionic/angular';
-import {
-  ContentFeedback,
-  ContentFeedbackService,
-  TelemetryLogRequest,
-  TelemetryService,
-  TelemetryObject,
-  FormRequest,
-  FormService,
-  SharedPreferences,
-  TelemetryFeedbackRequest
-} from 'sunbird-sdk';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
+import { Location } from '@angular/common';
+import { Component, Inject } from '@angular/core';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -25,8 +12,18 @@ import {
   LogLevel,
   LogType
 } from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
-import { Location } from '@angular/common';
+import { NavParams, Platform, PopoverController } from '@ionic/angular';
+import {
+  ContentFeedback,
+  ContentFeedbackService,
+  FormRequest,
+  FormService,
+  SharedPreferences,
+  TelemetryFeedbackRequest, TelemetryLogRequest,
+  TelemetryObject, TelemetryService
+} from 'sunbird-sdk';
 
 @Component({
   selector: 'app-content-rating-alert',
