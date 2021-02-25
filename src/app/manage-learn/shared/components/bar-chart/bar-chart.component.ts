@@ -44,7 +44,7 @@ export class BarChartComponent implements OnInit {
               let result = [];
               for (let x = 0; x < strArr.length; x++) {
                 tempString += ' ' + strArr[x];
-                if ((x % 5 === 0 && x !== 0) || x == strArr.length - 1) {
+                if ((x % 4 === 0 && x !== 0) || x == strArr.length - 1) {
                   tempString = tempString.slice(1);
                   result.push(tempString);
                   tempString = '';

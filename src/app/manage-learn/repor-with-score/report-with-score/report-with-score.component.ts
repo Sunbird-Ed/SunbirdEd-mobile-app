@@ -125,9 +125,10 @@ export class ReportWithScoreComponent implements OnInit {
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...this.payload };
     if (this.observationId && this.entityId) {
-      url = 'v2' + url;
+      url = 'v3' + url; 
+
     } else {
-      url = 'v1' + url;
+      url = 'v2' + url;
     }
 
     const config = {
@@ -303,11 +304,11 @@ export class ReportWithScoreComponent implements OnInit {
     payload = { ...payload, ...this.payload };
 
     if (this.selectedTab == 'criteriawise') {
-      url = 'v2' + url;
+      url = 'v1' + url;
     } else if (this.observationId && this.entityId) {
-      url = 'v3' + url;
-    } else {
       url = 'v2' + url;
+    } else {
+      url = 'v1' + url;
     }
 
     const config = {
@@ -323,7 +324,7 @@ export class ReportWithScoreComponent implements OnInit {
         } else {
           this.toast.openToast(success.message);
         }
-        this.loader.stopLoader();
+        // this.loader.stopLoader();
       },
       (error) => {
         this.error = 'No data found';
@@ -354,7 +355,7 @@ export class ReportWithScoreComponent implements OnInit {
     // );
   }
   downloadSubmissionDoc(fileRemoteUrl) {
-    this.loader.startLoader();
+    // this.loader.startLoader();
     if (this.isIos) {
       this.checkForDowloadDirectory(fileRemoteUrl);
     } else {
