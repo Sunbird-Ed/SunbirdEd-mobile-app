@@ -1,0 +1,64 @@
+{
+    "message": "Targeted observations fetched successfully",
+    "status": 200,
+    "result": {
+        "data": [{
+            "_id": "60337ee01bfad8731adc6dc1",
+            "name": "AP-TEST-PROGRAM-3.6.5-OBS-IMP-PROJECT-2-HM",
+            "description": "AP-TEST-PROGRAM-3.6.5-OBS-IMP-PROJECT-2-HM",
+            "solutionId": "600b20877ea68a7ed927885f",
+            "programId": "600ab53cc7de076e6f993724",
+            "programName": "AP-TEST-PROGRAM-3.6.5"
+        }, {
+            "_id": "6034930f1bfad8731adc6dcb",
+            "name": "AP-TEST-PROGRAM-3.6.5-OBS-1-HM",
+            "description": "Description of AP-TEST-PROGRAM-3.6.5-OBS-1-HM",
+            "programId": "600ab53cc7de076e6f993724",
+            "solutionId": "600ab7b6c7de076e6f9939e0",
+            "programName": "AP-TEST-PROGRAM-3.6.5"
+        }, {
+            "_id": "603493181bfad8731adc6dcc",
+            "name": "AP-TEST-PROGRAM-3.6.5-OBS-ALL-QUESTION-TYPES-1-HM",
+            "description": "Description of AP-TEST-PROGRAM-3.6.5-OBS-ALL-QUESTION-TYPES-1-HM",
+            "programId": "600ab53cc7de076e6f993724",
+            "solutionId": "600e98803d379f0f7e54452f",
+            "programName": "AP-TEST-PROGRAM-3.6.5"
+        }, {
+            "_id": "603493411bfad8731adc6dcd",
+            "name": "AP-TEST-PROGRAM-3.6.5-OBS-1-DEO",
+            "description": "Description of AP-TEST-PROGRAM-3.6.5-OBS-1-DEO",
+            "programId": "600ab53cc7de076e6f993724",
+            "solutionId": "600ac0d1c7de076e6f9943b9",
+            "programName": "AP-TEST-PROGRAM-3.6.5"
+        }, {
+            "_id": "603493501bfad8731adc6dce",
+            "name": "Enrollment challenges in DIKSHA Courses-1613972479714",
+            "description": "Enrollment challenges in DIKSHA Courses-1613972479714",
+            "programId": "601429016a1ef53356b1d714",
+            "solutionId": "603343ff94572f6960e00f62",
+            "programName": "Regression Test Program 3.6.5"
+        }, {
+            "_id": "603493571bfad8731adc6dcf",
+            "name": "Enrollment challenges in DIKSHA Courses-1613065684746",
+            "description": "Enrollment challenges in DIKSHA Courses-1613065684746",
+            "programId": "601429016a1ef53356b1d714",
+            "solutionId": "60256dd4346e404edac7232e",
+            "programName": "Regression Test Program 3.6.5"
+        }, {
+            "_id": "603493571bfad8731adc6dd0",
+            "name": "Enrollment challenges in DIKSHA Courses-1613135097520",
+            "description": "Enrollment challenges in DIKSHA Courses-1613135097520",
+            "programId": "601429016a1ef53356b1d714",
+            "solutionId": "60267cf9262f8023e11072a2",
+            "programName": "Regression Test Program 3.6.5"
+        }, {
+            "_id": "",
+            "name": "AP TEST ALL ROLE",
+            "description": "AP TEST ALL ROLE",
+            "programId": "602d11f0473c59287ad538e1",
+            "programName": "Testing AP",
+            "solutionId": "602d14a6cdab7f1e8e1ad0f6"
+        }],
+        "count": 8
+    }
+}

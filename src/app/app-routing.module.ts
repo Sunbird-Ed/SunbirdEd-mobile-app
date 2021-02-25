@@ -123,6 +123,7 @@ const routes: Routes = [
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.DISCUSSION, loadChildren: './discussion-forum/discussion-forum.module#DiscussionForumModule' },
   { path: RouterLinks.SEARCH_FILTER, loadChildren: './search-filter/search-filter.module#SearchFilterPageModule' },
+  { path: RouterLinks.ASSESSMENT, loadChildren: './manage-learn/assessment/assessment.module#AssessmentModule' , canActivate:[MlGuard]},
 
 ];
 

@@ -598,6 +598,8 @@ export class RouterLinks {
     public static readonly HOME_ADMIN = 'admin';
     // filter page
     public static readonly SEARCH_FILTER = 'search-filter';
+    //assessment
+    public static readonly ASSESSMENT = 'assessment'
 }
 
 export class ShareItemType {
