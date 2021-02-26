@@ -212,10 +212,10 @@ export class DistrictMappingPage implements OnDestroy {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.events.publish('loggedInProfile:update', req);
           if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
-            this.location.back();
+              this.location.back();
           } else if (this.profile && this.source === PageId.PROFILE) {
-            this.location.back();
-            this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
+              this.location.back();
+              this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
