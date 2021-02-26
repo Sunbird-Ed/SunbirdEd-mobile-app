@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { TabsPage } from './tabs.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterLinks } from '../app.constant';
+import { UserTypeSpecificTabGuard } from './usertype-specific-tab.guard';
 
 const routes: Routes = [
   {
@@ -34,6 +35,7 @@ const routes: Routes = [
       },
       {
         path: RouterLinks.RESOURCES,
+        canActivate: [UserTypeSpecificTabGuard],
         children: [
           {
             path: '',
@@ -79,7 +81,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: RouterLinks.HOME,
+        redirectTo: RouterLinks.RESOURCES,
         pathMatch: 'full'
       }
     ]
@@ -94,6 +96,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild()
   ],
-  declarations: [TabsPage]
+  declarations: [TabsPage],
+  providers: [UserTypeSpecificTabGuard]
 })
 export class TabsPageModule { }
