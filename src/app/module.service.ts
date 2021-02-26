@@ -118,6 +118,14 @@ export const LOGGEDIN_HOME_SEARCH_TABS = [
     PROFILE_TAB
 ];
 
+export const LOGIN_ADMIN_TABS = [
+    HOME_TAB,
+    COURSE_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    PROFILE_TAB
+];
+
 // export const GUEST_STUDENT_TABS = [
 //     LIBRARY_TAB,
 //     COURSE_TAB_DISABLED,
