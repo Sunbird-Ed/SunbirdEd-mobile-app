@@ -57,9 +57,9 @@ describe('ContentAggregatorHandler', () => {
         mockappGlobalService.isUserLoggedIn = jest.fn(() => true);
         const data = jest.fn(() => of({
             result: [{
-                orientation: 'horizontal',
+                theme: {orientation: 'horizontal'},
                 title: JSON.stringify({ en: 'sample-enrolled-course' }),
-                section: {
+                data: {
                     sections: [{
                         contents: [{
                             appIcon: 'sample-icon',
@@ -68,9 +68,9 @@ describe('ContentAggregatorHandler', () => {
                     }]
                 }
             }, {
-                orientation: 'vertical',
+                theme: {orientation: 'vertical'},
                 title: JSON.stringify({ en: 'sample-course' }),
-                section: {
+                data: {
                     sections: [{
                         contents: {
                             appIcon: 'sample-icon',
@@ -121,9 +121,9 @@ describe('ContentAggregatorHandler', () => {
         mockappGlobalService.isUserLoggedIn = jest.fn(() => false);
         const data = jest.fn(() => of({
             result: [{
-                orientation: 'vertical',
+                theme: {orientation: 'vertical'},
                 title: JSON.stringify({ en: 'sample-course' }),
-                section: {
+                data: {
                     sections: [{
                         contents: [{
                             appIcon: 'sample-icon',
@@ -172,9 +172,9 @@ describe('ContentAggregatorHandler', () => {
         mockappGlobalService.isUserLoggedIn = jest.fn(() => true);
         const data = jest.fn(() => of({
             result: [{
-                orientation: 'horizontal',
+                theme: {orientation: 'horizontal'},
                 title: JSON.stringify({ en: 'sample-learning-course' }),
-                section: {
+                data: {
                     sections: [{
                         contents: [{
                             appIcon: 'sample-icon',
@@ -183,9 +183,9 @@ describe('ContentAggregatorHandler', () => {
                     }]
                 }
             }, {
-                orientation: 'vertical',
+                theme: {orientation: 'vertical'},
                 title: JSON.stringify({ en: 'sample-textbook' }),
-                section: {
+                data: {
                     sections: [{
                         contents: {
                             appIcon: 'sample-icon',
@@ -236,9 +236,9 @@ describe('ContentAggregatorHandler', () => {
         mockappGlobalService.isUserLoggedIn = jest.fn(() => false);
         const data = jest.fn(() => of({
             result: [{
-                orientation: 'horizontal',
+                theme: {orientation: 'horizontal'},
                 title: JSON.stringify({ en: 'sample-learning-course' }),
-                section: {
+                data: {
                     sections: [{
                         contents: [{
                             appIcon: 'sample-icon',
@@ -247,9 +247,9 @@ describe('ContentAggregatorHandler', () => {
                     }]
                 }
             }, {
-                orientation: 'vertical',
+                theme: {orientation: 'vertical'},
                 title: JSON.stringify({ en: 'sample-textbook' }),
-                section: {
+                data: {
                     sections: [{
                         contents: {
                             appIcon: 'sample-icon',
@@ -297,12 +297,13 @@ describe('ContentAggregatorHandler', () => {
             action: 'get',
             component: 'app',
         };
+        mockcommonUtilService.getTranslatedValue = jest.fn();
         mockappGlobalService.isUserLoggedIn = jest.fn(() => false);
         const data = jest.fn(() => of({
             result: [{
-                orientation: undefined,
+                theme: { orientation: undefined},
                 title: JSON.stringify({ en: 'sample-textbook' }),
-                section: {
+                data: {
                     sections: [{
                         contents: {
                             appIcon: 'sample-icon',
@@ -322,6 +323,7 @@ describe('ContentAggregatorHandler', () => {
             expect(mockappGlobalService.isUserLoggedIn).toHaveBeenCalled();
             expect(mockcontentService.buildContentAggregator).toHaveBeenCalledWith(mockformService, mockcourseService, mockprofileService);
             expect(data).toHaveBeenCalled();
+            expect(mockcommonUtilService.getTranslatedValue).toHaveBeenCalledWith('{\"en\":\"sample-textbook\"}', 'sample-textbook');
             done();
         }, 0);
     });
