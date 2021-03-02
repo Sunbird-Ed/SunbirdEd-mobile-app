@@ -989,8 +989,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             }
           ],
           icon: {
-            md: 'md-sad',
-            ios: 'ios-sad',
+            md: 'sad',
+            ios: 'sad',
             className: ''
           },
           metaInfo: '',
@@ -1034,8 +1034,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         actionsButtons: [
         ],
         icon: {
-          md: 'md-warning',
-          ios: 'ios-warning',
+          md: 'warning',
+          ios: 'warning',
           className: ''
         }
       },
