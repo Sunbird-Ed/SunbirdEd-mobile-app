@@ -374,7 +374,7 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    this.evdnsServ.openActionSheet(options, 'Observation');
+    this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
   }
   async openMenu(event, submission, index) {
     if (submission.ratingCompletedAt) {
