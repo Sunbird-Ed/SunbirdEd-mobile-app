@@ -4,10 +4,10 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
-  Events,
   Platform,
   PopoverController
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription, Observable } from 'rxjs';
 import {
   Content,

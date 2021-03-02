@@ -1,7 +1,8 @@
 import {ApplicationHeaderComponent} from '@app/app/components/application-header/application-header.component';
 import {DownloadService, EventsBusService, ProfileService, SharedPreferences} from 'sunbird-sdk';
 import {NotificationService as PushNotificationService} from 'sunbird-sdk/notification/def/notification-service';
-import {Events, MenuController, Platform, PopoverController} from '@ionic/angular';
+import {MenuController, Platform, PopoverController} from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     ActivePageService,
     AppGlobalService, AppHeaderService,

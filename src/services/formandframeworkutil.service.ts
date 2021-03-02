@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     CachedItemRequestSourceFrom,
     CategoryTerm,

@@ -9,7 +9,7 @@ import {
   HttpServerError
 } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { NgZone } from '@angular/core';

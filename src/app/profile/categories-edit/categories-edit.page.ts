@@ -1,7 +1,8 @@
 import { tap } from 'rxjs/operators';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { Events, IonSelect, Platform } from '@ionic/angular';
+import { IonSelect, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';

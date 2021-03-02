@@ -8,7 +8,8 @@ import { PageId, Environment, ImpressionType } from '@app/services/telemetry-con
 import { DeviceInfo } from '../../../../sunbird-mobile-sdk/src/util/device';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { of, throwError } from 'rxjs';
 import {
     ProfileService, Profile, SharedPreferences, ProfileType, ProfileSource, DeviceRegisterResponse,

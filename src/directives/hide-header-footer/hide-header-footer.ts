@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2 } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { defer, Subject, Subscription, timer } from 'rxjs';
 import { finalize, mergeMap, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 

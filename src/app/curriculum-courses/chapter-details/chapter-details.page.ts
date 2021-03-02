@@ -9,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption-v8';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   RouterLinks, PreferenceKey, EventTopics, AssessmentConstant,
   MimeType, ShareItemType, BatchConstants, ProfileConstants, MaxAttempt

@@ -3,7 +3,7 @@ import { ContentStateResponse, GetContentStateRequest, SunbirdSdk, SharedPrefere
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as X2JS from 'x2js';
 import {MaxAttempt, PreferenceKey, ProfileConstants} from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { LocalCourseService } from './local-course.service';
 import { CommonUtilService } from './common-util.service';
 
