@@ -52,6 +52,9 @@ export class CategoryListPage implements OnDestroy {
     facetFilters: {
         [code: string]: FilterValue []
     } = {};
+    initialFacetFilters?: {
+        [code: string]: FilterValue []
+    };
     primaryFacetFilters: {
         code: string,
         translations: string
@@ -159,6 +162,10 @@ export class CategoryListPage implements OnDestroy {
             acc[f.name] = f.values;
             return acc;
         }, {});
+
+        if (!this.initialFacetFilters) {
+            this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
+        }
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
