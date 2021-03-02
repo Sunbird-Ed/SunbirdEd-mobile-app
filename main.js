@@ -103,7 +103,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'course_v2',
+        'subType': 'course_v3',
         'action': 'get',
         'component': 'app'
     },
