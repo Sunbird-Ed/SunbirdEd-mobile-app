@@ -1528,4 +1528,10 @@ html[data-theme="JOYFUL"]{
    padding: .75em 2.5rem !important;
   }
 
+  app-district-mapping{
+    .block-button-clear {
+      color: $blue !important;
+    }
+  }
+
 }
