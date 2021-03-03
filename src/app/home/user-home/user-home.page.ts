@@ -120,7 +120,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.getUserProfileDetails();
   }
 
-  async getUserProfileDetails() {
+  private async getUserProfileDetails() {
     this.profile = await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }
     ).toPromise();
@@ -155,7 +155,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     }
   }
 
-  async getFrameworkDetails(frameworkId?: string) {
+  private async getFrameworkDetails(frameworkId?: string) {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
       frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
@@ -195,7 +195,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     return displayValues;
   }
 
-  async fetchDisplayElements() {
+  private async fetchDisplayElements() {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       userPreferences: {

@@ -10,8 +10,6 @@ import { PipesModule } from '@app/pipes/pipes.module';
 import { AdminHomePage } from './admin-home/admin-home.page';
 import { CoreModule } from '../manage-learn/core/core.module';
 import { UserTypeGuard } from './user-type.guard';
-import { ThemeInputsSelectorPipe } from './pipes/theme-inputs-selector.pipe';
-import { RandomColorMapPipe } from './pipes/random-color-map.pipe';
 import { ComponentsModule } from '@app/app/components/components.module';
 
 const routes: Routes = [
@@ -42,7 +40,7 @@ const routes: Routes = [
     PipesModule,
     CoreModule
   ],
-  declarations: [UserHomePage, AdminHomePage, ThemeInputsSelectorPipe, RandomColorMapPipe],
+  declarations: [UserHomePage, AdminHomePage],
   providers: [UserTypeGuard]
 })
 export class HomePageModule {}

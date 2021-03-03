@@ -1,41 +1,46 @@
 import { Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
-import { Events, ToastController, PopoverController, IonRefresher } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
-import has from 'lodash/has';
-import forEach from 'lodash/forEach';
-import {
-  ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-  ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, MimeType, ProgressPopupContext
-} from '../../app/app.constant';
-import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
-import { Network } from '@ionic-native/network/ngx';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { CourseUtilService } from '../../services/course-util.service';
-import { updateFilterInSearchQuery } from '../../util/filter.util';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import {
-  Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
-  CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
-  PageAssembleCriteria, PageName, SharedPreferences, NetworkError, CorrelationData,
-  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus,
-  CourseBatchesRequest, TelemetryObject, SortOrder, ContentAggregatorRequest, ContentSearchCriteria, ProfileService, Profile
-} from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
-import { AppHeaderService } from '../../services/app-header.service';
-import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
-import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
-import { ContentUtil } from '@app/util/content-util';
-import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { NavigationService } from '@app/services/navigation-handler.service';
+import { NavigationExtras, Router } from '@angular/router';
 import { ContentAggregatorHandler } from '@app/services/content/content-aggregator-handler.service';
 import { AggregatorPageType, Orientation } from '@app/services/content/content-aggregator-namespaces';
+import { NavigationService } from '@app/services/navigation-handler.service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { ContentUtil } from '@app/util/content-util';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { Events, IonRefresher, PopoverController, ToastController } from '@ionic/angular';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
+import forEach from 'lodash/forEach';
+import { Subscription } from 'rxjs';
+import {
+  CachedItemRequestSourceFrom,
+  Content,
+  ContentAggregatorRequest, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus,
+  ContentSearchCriteria, ContentService,
+  CorrelationData, Course,
+  CourseBatchesRequest, CourseBatchStatus, CourseEnrollmentType, CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService,
+  FrameworkService, NetworkError, PageAssembleCriteria, PageName,
+  Profile, ProfileService, SharedPreferences,
+  SortOrder, TelemetryObject
+} from 'sunbird-sdk';
+import {
+  BatchConstants, ContentCard,
+  ContentFilterConfig, EventTopics,
+  MimeType, PreferenceKey, ProfileConstants,
+  ProgressPopupContext, RouterLinks, ViewMore
+} from '../../app/app.constant';
+import { AppGlobalService } from '../../services/app-global-service.service';
+import { AppHeaderService } from '../../services/app-header.service';
+import { CommonUtilService } from '../../services/common-util.service';
+import { CourseUtilService } from '../../services/course-util.service';
+import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
+import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
+import { updateFilterInSearchQuery } from '../../util/filter.util';
+import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { PageFilterCallback, PageFilterPage } from '../page-filter/page-filter.page';
 
 @Component({
   selector: 'app-courses',
@@ -754,10 +759,8 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   openEnrolledCourseDetails(event) {
-    const contentIndex = this.getContentIndexOf(this.enrolledCourses, event.data);
     const params = {
       env: 'home',
-      index: contentIndex,
       sectionName: this.inProgressSection,
       pageName: 'course',
       course: event.data,
@@ -769,10 +772,9 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   openCourseDetails(event, section, index) {
-    const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
     const params = {
       env: 'home',
-      index: contentIndex,
+      index,
       sectionName: section.name,
       pageName: 'course',
       course: event.data,
@@ -922,11 +924,6 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  private getContentIndexOf(contentList, content) {
-    const contentIndex = contentList.findIndex(val => val.identifier === content.identifier);
-    return contentIndex;
-  }
-
   navigateToTextbookPage(items, subject) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
@@ -961,15 +958,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       }
     };
     try {
-      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
+      this.dynamicCourses = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.COURSE);
       if (this.dynamicCourses) {
-        this.dynamicCourses.forEach((val) => {
-          if (val.theme && val.theme.orientation === Orientation.HORIZONTAL) {
-            this.enrolledCourses = val.data && val.data.sections && val.data.sections.length && val.data.sections[0].contents;
-          } else if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
-            this.popularAndLatestCourses = val.data && val.data.sections;
-          }
-        });
         this.dynamicCourses = this.contentAggregatorHandler.populateIcons(this.dynamicCourses);
       }
       this.spinner(false);

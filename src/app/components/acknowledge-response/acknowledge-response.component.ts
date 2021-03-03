@@ -1,6 +1,5 @@
-import { Component, Output, OnDestroy, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonUtilService } from '@app/services';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'acknowledge-response',

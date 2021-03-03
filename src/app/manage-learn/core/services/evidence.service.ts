@@ -38,6 +38,7 @@ export class EvidenceService {
         'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
         'CANCEL',
         'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
+        'FRMELEMNTS_LBL_OBSERVATION'
       ])
       .subscribe(async (translations) => {
         translateObject = translations;
@@ -46,7 +47,7 @@ export class EvidenceService {
           header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
           buttons: [
             {
-              text: translateObject['START'] + ' ' + type,
+              text: translateObject['START'] + ' ' +( type ?  translateObject[type] : ""),
               icon: 'arrow-forward',
               handler: () => {
                 params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
@@ -67,7 +68,7 @@ export class EvidenceService {
               },
             },
             {
-              text: translateObject['VIEW'] + ' ' + type,
+              text: translateObject['VIEW'] + ' ' +( type ?  translateObject[type] : ""),
               icon: 'eye',
               handler: () => {
                 delete params.entityDetails;

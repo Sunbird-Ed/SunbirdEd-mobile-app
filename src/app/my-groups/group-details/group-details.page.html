@@ -1,7 +1,6 @@
 <ion-content>
   <div class="gd-deactivated" *ngIf="isSuspended">
-    <div class="gd-deactivated-info pull-left" *ngIf="!isGroupCreatorOrAdmin">{{'FRMELEMENTS_MSG_ACTIVATEGRPPOPUP' | translate}}</div>
-    <div class="gd-deactivated-info pull-left" *ngIf="isGroupCreatorOrAdmin">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
+    <div class="gd-deactivated-info pull-left">{{'FRMELEMENTS_MSG_ACTIVATEGRPMSG' | translate}}</div>
     <div class="gd-deactivated-btn pull-left text-center" *ngIf="isGroupCreatorOrAdmin">
       <button class="sb-btn-large sb-btn-small" (click)="showReactivateGroupPopup()">
         {{'FRMELEMENTS_BTN_ACTIVATEGRP' | translate}}

@@ -2259,9 +2259,12 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.content = {
                 contentData: undefined
             };
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: false, isCloseButtonClicked: false }));
             contentDetailsPage.handleContentPlay('');
             setTimeout(() => {
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2274,16 +2277,16 @@ describe('ContentDetailsPage', () => {
                     streamingUrl: 'streamingUrl'
                 }
             };
-            contentDetailsPage['isLastAttempt'] = true;
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
-            mockCommonUtilService.showAssessmentLastAttemptPopup = jest.fn(() => Promise.resolve(false));
             // act
             contentDetailsPage.handleContentPlay('');
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showAssessmentLastAttemptPopup).toHaveBeenCalled();
                 expect(contentDetailsPage.limitedShareContentFlag).toBeTruthy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2291,9 +2294,12 @@ describe('ContentDetailsPage', () => {
         it('should invoked showSwitchUserAlert page', (done) => {
             contentDetailsPage.limitedShareContentFlag = false;
             jest.spyOn(contentDetailsPage, 'showSwitchUserAlert').mockImplementation();
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             contentDetailsPage.handleContentPlay('');
             setTimeout(() => {
                 expect(contentDetailsPage.limitedShareContentFlag).toBeFalsy();
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -2301,12 +2307,13 @@ describe('ContentDetailsPage', () => {
         it('should show a toast message with User has exceeded the number of atempts', (done) => {
             // arrange
             contentDetailsPage['isContentDisabled'] = true;
-            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.handleAssessmentStatus =
+                jest.fn(() => Promise.resolve({ isLastAttempt: false, limitExceeded: true, isCloseButtonClicked: true }));
             // act
             contentDetailsPage.handleContentPlay('');
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FRMELMNTS_IMSG_LASTATTMPTEXCD');
+                expect(mockCommonUtilService.handleAssessmentStatus).toHaveBeenCalled();
                 done();
             }, 0);
         });

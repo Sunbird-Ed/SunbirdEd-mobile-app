@@ -550,7 +550,6 @@ export class RouterLinks {
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
-    public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
     public static readonly CHAPTER_DETAILS = 'chapter-details';
 
     //Manage learn router
@@ -744,4 +743,11 @@ export const PrimaryCaregoryMapping = {
         icon: 'assets/imgs/all_content.svg'
     }
 }
+
+export interface MaxAttempt {
+    isLastAttempt: boolean;
+    limitExceeded: boolean;
+    isCloseButtonClicked: boolean;
+}
+
 

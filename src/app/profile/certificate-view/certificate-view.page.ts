@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {CourseCertificate} from '@project-sunbird/client-services/models';
-import {CourseService} from 'sunbird-sdk';
-import {CommonUtilService} from '@app/services/common-util.service';
-import {filter, map, tap} from 'rxjs/operators';
-import {AppGlobalService, AppHeaderService} from '@app/services';
-import {Router} from '@angular/router';
-import {Subscription} from 'rxjs';
-import {CertificateDownloadService} from 'sb-svg2pdf';
-import {FileOpener} from '@ionic-native/file-opener/ngx';
-import { ToastController, PopoverController } from '@ionic/angular';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
+import { AppGlobalService, AppHeaderService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { PopoverController, ToastController } from '@ionic/angular';
+import { CourseCertificate } from '@project-sunbird/client-services/models';
+import { tap } from 'rxjs/operators';
+import { CertificateDownloadService } from 'sb-svg2pdf';
+import { CourseService } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-certificate-view',

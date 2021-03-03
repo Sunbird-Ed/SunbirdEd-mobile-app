@@ -73,6 +73,9 @@
           [showMoreViewType]="section?.theme?.inputs?.showMoreViewType"
           [pillsMultiRow]="section?.theme?.inputs?.pillsMultiRow"
           [pillBorder]="section?.theme?.inputs?.pillBorder"
+          [pillSize]="section?.theme?.inputs?.pillSize"
+          [pillTextElipsis]="section?.theme?.inputs?.pillTextElipsis"
+          [pillBoxShadow]="section?.theme?.inputs?.pillBoxShadow"
           (viewMorePillList)="onViewMorePillList($event, section?.title)"
           (select)="handlePillSelect($event)">
           <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase"

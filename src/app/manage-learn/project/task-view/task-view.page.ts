@@ -212,11 +212,11 @@ export class TaskViewPage implements OnInit {
   // task and project delete permission.
   async askPermissionToDelete(subtask, type) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
+      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
       buttons: [
         {
           text: data["CANCEL"],
@@ -225,7 +225,7 @@ export class TaskViewPage implements OnInit {
           handler: (blah) => { },
         },
         {
-          text: data["FRMELEMNTS_LBL_SUBMIT"],
+          text: data["BTN_SUBMIT"],
           handler: () => {
             this.delete(subtask);
           },

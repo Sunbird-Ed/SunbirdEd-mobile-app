@@ -137,7 +137,7 @@
     <!-- ...................................................................... -->
   </div>
   <div class="_flex-box _justify-content-center _errorBox" *ngIf="!reportObj?.response">
-    {{ error }}
+    {{reportObj?.data}}
   </div>
 
   <ion-fab vertical="bottom" horizontal="end" bottom right *ngIf="reportObj?.response" #fab slot="fixed">

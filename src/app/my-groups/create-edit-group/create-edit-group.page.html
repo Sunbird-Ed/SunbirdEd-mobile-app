@@ -22,7 +22,7 @@
     <div class="cr-terms-container" *ngIf="!groupDetails">
       <div class="input-item cr-input-primary" lines="none">
         <ion-checkbox id="cr-term-label-accessible" class="cr-terms-checkbox" formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
-        <label for="cr-term-label-accessible" >{{'I_AGREE_TO' | translate: {'app_name': appName} }} checkbox </label>
+        <label class="hide" for="cr-term-label-accessible" >{{'I_AGREE_TO' | translate: {'app_name': appName} }} checkbox </label>
         <p class="cr-terms-checkbox-label"> 
           <span>{{'I_AGREE_TO' | translate: {'app_name': appName} }} </span><span class="cr-terms" (click)="openTermsOfUse()">{{'GROUP_GUIDELINES' | translate}}</span>
         </p>

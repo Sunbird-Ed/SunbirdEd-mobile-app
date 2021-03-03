@@ -1,4 +1,4 @@
-import { TextbookTocService } from './textbook-toc-service';
+import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -9,9 +9,19 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import isObject from 'lodash/isObject';
+import { Router } from '@angular/router';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ContentUtil } from '@app/util/content-util';
 import { Events, IonContent as iContent, Platform, PopoverController } from '@ionic/angular';
+import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { ExpandBehavior, ExpandMode, IAccordianConfig, IButtonConfig, TocCardType } from '@project-sunbird/common-consumption-v8';
+import isObject from 'lodash/isObject';
+import { Observable, Subscription } from 'rxjs';
+import { share } from 'rxjs/operators';
 import {
   Content,
   ContentAccess,
@@ -41,32 +51,16 @@ import {
   TelemetryErrorCode,
   TelemetryObject
 } from 'sunbird-sdk';
-import {
-  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID, CorReleationDataType
-} from '../../services/telemetry-constants';
-import { Subscription, Observable } from 'rxjs';
 import { EventTopics, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
   TelemetryGeneratorService
 } from '../../services';
-import { Location } from '@angular/common';
-
-import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-
-import {
-  ConfirmAlertComponent, CollectionChildComponent
-} from '../components';
-import { Router } from '@angular/router';
-import { ContentUtil } from '@app/util/content-util';
-import { share } from 'rxjs/operators';
-import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
-import { ContentInfo } from '@app/services/content/content-info';
-import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
-import { IButtonConfig, TocCardType, IAccordianConfig, ExpandMode, ExpandBehavior } from '@project-sunbird/common-consumption-v8';
+import { CorReleationDataType, Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from '../../services/telemetry-constants';
+import { CollectionChildComponent, ConfirmAlertComponent } from '../components';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { TextbookTocService } from './textbook-toc-service';
 
 @Component({
   selector: 'app-collection-detail-etb',

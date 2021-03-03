@@ -474,7 +474,7 @@
   "FRMELEMNTS_LBL_ENTITIES":"Entities",
   "FRMELEMENTS_LBL_DEACTIVATEGRPQUES": "Deactivate group?",
   "FRMELEMENTS_MSG_ACTIVATEGRPFAILED": "Could not activate group, try again later",
-  "FRMELEMENTS_MSG_ACTIVATEGRPMSG": "Activating the group enables you to add members and activities. You can also track member progress",
+  "FRMELEMENTS_MSG_ACTIVATEGRPMSG": "This group is temporarily inactive. The group admin can re-activate the group if required. Group members can continue their discussions on the discussion forum.",
   "FRMELEMENTS_MSG_ACTIVATEGRPPOPUP": "This group is temporarily deactivated. Group Admin can activate the group",
   "FRMELEMENTS_MSG_ACTIVATEGRPSUCCESS": "Activated group successfully",
   "FRMELEMENTS_MSG_DEACTIVATEGRPFAILED": "Could not deactivate group, try again later",
@@ -1183,7 +1183,7 @@
   "FRMELEMNTS_LBL_SHARE_TASK": "Share Task",
   "FRMELEMNTS_LBL_SHARE_PROJECT": "Share Project",
   "FRMELEMNTS_LBL_VIEW_MORE": "View More",
-  "FRMELEMNTS_LBL_DELETE_CONFIRMATION": "Are you sure you want to delete your ",
+  "FRMELEMNTS_LBL_DELETE_CONFIRMATION": "Are you sure you want to delete?",
   "FRMELEMNTS_LBL_OBSERVATION": "Observation",
   "FRMELEMNTS_LBL_ADD_ENTITY": "Add Entity",
   "FRMELEMNTS_LBL_CREATE_NEW_PROGRAM": "Create new Program",
@@ -1376,5 +1376,7 @@
   "DISCUSSION_FORUM_ENABLE_SUCCESS": "Discussion forum enabled successfully",
   "DISCUSSION_FORUM_DISABLE_SUCCESS": "Discussion forum disabled successfully",
   "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
-  "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?"
+  "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?",
+  "FRMELEMNTS_LBL_PROJECT_DESCRIPTION":"Manage and track your school improvements by creating tasks and scheduling them",
+  "FRMELEMNTS_LBL_TAB_HOME":"Home"
 }
