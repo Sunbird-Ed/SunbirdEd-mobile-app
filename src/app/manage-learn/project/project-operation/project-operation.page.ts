@@ -59,10 +59,15 @@ export class ProjectOperationPage implements OnInit {
     private translate: TranslateService,
     private alertController: AlertController
   ) {
+    this.routerparam.params.subscribe(data => {
+      this.projectId = data.id;
+      console.log(data, "data");
+    })
     this.routerparam.queryParams.subscribe((params) => {
       console.log(params, "params")
       if (params && params.availableInLocal) {
-        this.button = params.isEdit ? 'FRMELEMNTS_BTN_SAVE_EDITS' : 'FRMELEMNTS_BTN_CREATE_PROJECT'
+        this.button = params.isEdit ? 'FRMELEMNTS_BTN_SAVE_EDITS' : 'FRMELEMNTS_BTN_CREATE_PROJECT';
+        console.log(this.button, " this.button ", params.isEdit);
         this.showLearningResources = true;
         this.showRatings = false;
         this.getProjectFromLocal(this.projectId);
@@ -71,9 +76,7 @@ export class ProjectOperationPage implements OnInit {
         // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
       }
     });
-    this.routerparam.params.subscribe(data => {
-      this.projectId = data.id;
-    })
+
   }
 
   ngOnInit() { }
@@ -99,6 +102,7 @@ export class ProjectOperationPage implements OnInit {
   }
 
   getProjectFromLocal(projectId) {
+    debugger
     this.db.query({ _id: projectId }).then(success => {
       this.template = success.docs[0];
       console.log(this.template, "this.template");
@@ -225,8 +229,6 @@ export class ProjectOperationPage implements OnInit {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
-
-    // this.db.createPouchDB(environment.db.projects);
     data.isEdit = true;
     data.isDeleted = false;
     this.db.update(data).then(success => {
@@ -235,6 +237,7 @@ export class ProjectOperationPage implements OnInit {
     })
   }
 
+  
   async createProjectModal(data, header, button) {
     let texts;
     this.translate.get([header, button]).subscribe(data => {
@@ -268,7 +271,11 @@ export class ProjectOperationPage implements OnInit {
       this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
     }
     this.template.learningResources = this.selectedResources;
-    this.update(this.template);
+
+    this.button == 'FRMELEMNTS_BTN_CREATE_PROJECT' ? this.newProjectCreate(this.template) : this.update(this.template);
+  }
+  newProjectCreate(template) {
+    console.log(template, "template");
   }
 }
 

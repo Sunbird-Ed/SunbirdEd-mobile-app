@@ -34,11 +34,14 @@ export class ProjectListingComponent implements OnInit {
     actionButtons: []
   };
   projects = [];
-  result = [
-    { name: 'Project 1', description: 'Project 1 Desc', id: 1 },
-    { name: 'Project 2', description: 'Project 2 Desc', id: 2 },
-    { name: 'Project 3', description: 'Project 3 Desc', id: 3 },
-  ]
+  filters = [{
+    name: 'FRMELEMNTS_LBL_ASSIGNED_TO_ME',
+    parameter: 'assignedToMe'
+  },
+  {
+    name: 'FRMELEMNTS_LBL_CREATED_BY_ME',
+    parameter: 'createdByMe'
+  }]
 
   constructor(private router: Router, private location: Location,
     private headerService: AppHeaderService, private platform: Platform,
@@ -66,7 +69,9 @@ export class ProjectListingComponent implements OnInit {
   //     this.projects = data.result.data;
   //   });
   // }
-
+  getDataByFilter(parameter) {
+    console.log(parameter,"parameter");
+  }
   async getProjectList() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
@@ -119,4 +124,9 @@ export class ProjectListingComponent implements OnInit {
     this.getProjectList()
   }
 
+  createProject() {
+    this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
+      queryParams: {}
+    })
+  }
 }

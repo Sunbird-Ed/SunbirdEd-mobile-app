@@ -1,41 +1,23 @@
 <ion-content fullscreen>
   <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECT' | translate }}" [subTitle]="description"> </app-common-header>
-  <ion-searchbar
-    debounce="2000"
-    placeholder="Search your projects here"
-    [(ngModel)]="searchText"
-    (ionChange)="onSearch($event)"
-  >
+  <ion-searchbar debounce="2000" placeholder="Search your projects here" [(ngModel)]="searchText"
+    (ionChange)="onSearch($event)">
   </ion-searchbar>
   <div class="container">
     <div class="scroll_chip" scrollX="true">
-      <ion-chip outline="true" color="primary">
-        <ion-label>Assigned to me</ion-label>
-      </ion-chip>
-      <ion-chip outline="true" color="primary">
-        <ion-label>Created by me</ion-label>
-      </ion-chip>
-      <ion-chip outline="true" color="primary">
-        <ion-label>Recently updated</ion-label>
+      <ion-chip outline="true" color="primary" *ngFor="let filter of filters">
+        <ion-label (click)="getDataByFilter(filter.parameter)">{{filter.name | translate}}</ion-label>
       </ion-chip>
     </div>
   </div>
 
-  <app-item-list-card
-    [title]="'Create New Project'"
-    [subTitle]="'Text Indicating The Below Cards'"
-    (cardSelect)="selectedProgram($event, project)"
-    class="create_header"
-  >
+  <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
+    subTitle="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING' | translate}}" class="create_header"
+    (cardSelect)="createProject()">
     <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
-  <app-item-list-card
-    *ngFor="let project of projects"
-    [title]="project?.name"
-    [subTitle]="project?.programName"
-    [id]="project?._id"
-    (cardSelect)="selectedProgram($event, project)"
-  ></app-item-list-card>
+  <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
+    [id]="project?._id" (cardSelect)="selectedProgram($event, project)"></app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
 <ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">
