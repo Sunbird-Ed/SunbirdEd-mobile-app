@@ -315,7 +315,7 @@ describe('enrollmentdetailcomponent', () => {
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
                 undefined,
-                undefined,
+                PageId.COURSE_BATCHES,
                 telemetryObj,
                 values
             );
@@ -350,7 +350,7 @@ describe('enrollmentdetailcomponent', () => {
                 InteractType.TOUCH,
                 InteractSubtype.CONTENT_CLICKED,
                 undefined,
-                PageId.COURSES,
+                PageId.COURSE_BATCHES,
                 telemetryObj,
                 values
             );
