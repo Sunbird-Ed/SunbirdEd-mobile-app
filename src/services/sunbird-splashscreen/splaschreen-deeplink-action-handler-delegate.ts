@@ -149,7 +149,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Dialcode parser',
         code: 'dialcode',
         values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))',
-        route: 'tabs/search'
+        route: 'search'
       },
       {
         name: 'content deatil',
@@ -196,7 +196,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Search Course',
         code: 'searchCourse',
         values: '\\/(explore-course|learn)(\\?.*|$)',
-        route: 'tabs/search',
+        route: 'search',
         search: {
           queryParam: 'key',
           filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
@@ -242,7 +242,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Search Textbook',
         code: 'searchTextbook',
         values: '\\/(resources|explore)(\\?.*selectedTab=textbook|$)',
-        route: 'tabs/search',
+        route: 'search',
         search: {
           queryParam: 'key',
           filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
@@ -256,7 +256,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Search TV Program',
         code: 'searchTvProgram',
         values: '\\/(resources|explore)\\?.*selectedTab=tvProgram',
-        route: 'tabs/search',
+        route: 'search',
         search: {
           queryParam: 'key',
           filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
@@ -270,7 +270,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         name: 'Search',
         code: 'searchAll',
         values: '\\/(search\\/Library|explore)\\/1(\\?.*|$)',
-        route: 'tabs/search',
+        route: 'search',
         search: {
           queryParam: 'key',
           filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel', 'mediaType'],

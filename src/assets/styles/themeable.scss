@@ -1549,4 +1549,11 @@ html[data-theme="JOYFUL"]{
       box-shadow: none !important;
     }
   }
+
+  app-district-mapping{
+    .block-button-clear {
+      color: $blue !important;
+    }
+  }
+  
 }
