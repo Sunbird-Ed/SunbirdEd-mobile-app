@@ -1,7 +1,7 @@
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { Observable, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { TelemetryService, InteractType, CorrelationData, SharedPreferences } from 'sunbird-sdk';
+import { TelemetryService, InteractType, CorrelationData } from 'sunbird-sdk';
 import { Environment, ImpressionType, PageId, CorReleationDataType } from '@app/services/telemetry-constants';
 import { mapTo } from 'rxjs/operators';
 
@@ -14,13 +14,10 @@ interface TelemetryActionPayload {
 
 @Injectable()
 export class SplashcreenTelemetryActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
-  constructor(
-    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences) {
+  constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
   }
 
   onAction(payload: TelemetryActionPayload): Observable<undefined> {
-    this.preferences.putBoolean('is_first_time_user', payload.extraInfo.isFirstTime ? true : false).toPromise();
     switch (payload.eid) {
       case 'IMPRESSION': {
         /* New Telemetry */

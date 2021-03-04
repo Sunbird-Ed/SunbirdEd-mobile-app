@@ -864,7 +864,7 @@ export class AppGlobalService implements OnDestroy {
             this.skipCoachScreenForDeeplink = false;
         } else {
             const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP).toPromise();
-            const isFirstTimeUser = await this.preferences.getBoolean(PreferenceKey.IS_FIRST_TIME_USER).toPromise();
+            const isFirstTimeUser = await this.preferences.getBoolean(PreferenceKey.IS_FIRST_TIME).toPromise();
             const isJoyfulThemeEnabled = (await this.preferences.getString('current_selected_theme').toPromise() === AppThemes.JOYFUL);
             if (!isFirstTimeUser) {
                if (isPopupDisplayed || isJoyfulThemeEnabled) {
