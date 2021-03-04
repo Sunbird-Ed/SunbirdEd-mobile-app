@@ -1696,3 +1696,12 @@ sb-library-card-v3 {
     width: 30% !important;
   }
 }
+
+.sb-new-theme-popup{
+  .popover-content {
+    width: 90vw !important;
+    height: 49vh!important;
+    left: 5% !important;
+    border-radius: 16px;
+  }
+}

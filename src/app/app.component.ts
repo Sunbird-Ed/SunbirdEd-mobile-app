@@ -158,6 +158,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAndroidWebViewVersion();
       await this.checkForTheme();
       this.onTraceIdUpdate();
+      await this.applyJoyfulTheme();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -955,5 +956,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         // do not show the toast.
       }
     });
+  }
+
+  async applyJoyfulTheme() {
+    const isJoyfulThemePopupSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+    if (!isJoyfulThemePopupSeen) {
+      await this.preferences.putString('current_selected_theme', 'JOYFUL').toPromise();
+      this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+      this.headerService.showStatusBar().then();
+    }
   }
 }
