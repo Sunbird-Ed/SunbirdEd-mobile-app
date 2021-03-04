@@ -76,6 +76,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   ShowMoreViewType = ShowMoreViewType;
   PillsMultiRow = PillsMultiRow;
   audienceFilter = [];
+  newThemeTimeout: any;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -324,6 +325,19 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+  }
+
+  ionViewDidLeave() {
+    if (this.newThemeTimeout && this.newThemeTimeout.clearTimeout) {
+      this.newThemeTimeout.clearTimeout();
+    }
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the newTheme screen and for the newTheme screen to hide if user comes from deeplink.
+    this.newThemeTimeout = setTimeout(() => {
+      this.appGlobalService.showJoyfulPopup();
+    }, 2000);
   }
 
   viewPreferenceInfo() {

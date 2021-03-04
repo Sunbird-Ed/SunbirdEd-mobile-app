@@ -1,5 +1,5 @@
 import { SplashcreenTelemetryActionHandlerDelegate } from './splashcreen-telemetry-action-handler-delegate';
-import { TelemetryService } from 'sunbird-sdk';
+import { TelemetryService, SharedPreferences } from 'sunbird-sdk';
 import { of } from 'rxjs';
 import { PageId, ImpressionType, Environment, InteractType } from '../telemetry-constants';
 
@@ -14,10 +14,12 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
   let splashcreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate;
 
   const mockTelemetryService: Partial<TelemetryService> = {};
+  const mockPreferences: Partial<SharedPreferences> = {};
 
   beforeAll(() => {
     splashcreenTelemetryActionHandlerDelegate = new SplashcreenTelemetryActionHandlerDelegate(
-      mockTelemetryService as TelemetryService
+      mockTelemetryService as TelemetryService,
+      mockPreferences as SharedPreferences
     );
   });
 
@@ -47,10 +49,12 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockTelemetryService.impression = jest.fn(() => {
         return of(undefined);
       });
+      mockPreferences.putBoolean = jest.fn(() => of(true));
       // act
       splashcreenTelemetryActionHandlerDelegate.onAction(payload);
       // assert
       expect(mockTelemetryService.impression).toHaveBeenCalledWith(telemetryData);
+      expect(mockPreferences.putBoolean).toHaveBeenCalledWith('is_first_time_user', true);
     });
 
     it('should generate an impression event if is firstTime is false', () => {
@@ -58,6 +62,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       const payload: TelemetryActionPayload = {
         eid: 'IMPRESSION',
         extraInfo: {
+          isFirstTime: false
         }
       };
       const telemetryData = {
@@ -103,7 +108,8 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     it('should not generate any event', (done) => {
       // arrange
       const payload: any = {
-        eid: 'ANY'
+        eid: 'ANY',
+        extraInfo: { isFirstTime: false }
       };
       // act
       splashcreenTelemetryActionHandlerDelegate.onAction(payload).toPromise().then(res => {
