@@ -1369,5 +1369,9 @@
   "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
   "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?",
   "FRMELEMNTS_LBL_PROJECT_DESCRIPTION":"Manage and track your school improvements by creating tasks and scheduling them",
-  "FRMELEMNTS_LBL_TAB_HOME":"Home"
+  "FRMELEMNTS_LBL_TAB_HOME":"Home",
+  "JOYFULPOPUP_HEADING": "DIKSHA has got a new look & feel",
+  "JOYFUL_LEARNING_TEXT": "For joyful learning, we have redesigned our platform making it easier for you to find content",
+  "JOYFUL_WARNING_TEXT": "If you want to change the theme, go to your menu and switch theme",
+  "LETS_GO": "Let's go"
 }

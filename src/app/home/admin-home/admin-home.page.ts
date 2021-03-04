@@ -35,6 +35,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   profile: Profile;
   guestUser: boolean;
   appLabel: string;
+  newThemeTimeout: any;
 
   displaySections: any[] = [];
   headerObservable: Subscription;
@@ -152,6 +153,19 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       };
       this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }
+  }
+
+  ionViewDidLeave() {
+    if (this.newThemeTimeout && this.newThemeTimeout.clearTimeout) {
+      this.newThemeTimeout.clearTimeout();
+    }
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    this.newThemeTimeout = setTimeout(() => {
+      this.appGlobalService.showJoyfulPopup();
+    }, 2000);
   }
 
   getFrameworkDetails(): void {

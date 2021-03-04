@@ -1,0 +1,21 @@
+<div>
+    <div class="header-info">
+        <div class="close-icon-info">
+            <img src="assets/imgs/close.png" alt="close-icon" (click)="closePopover(false)">
+        </div>
+        <h4 class="theme-header-info">{{'JOYFULPOPUP_HEADING' | translate}}</h4>
+        <p class="learning-info">{{'JOYFUL_LEARNING_TEXT' | translate}}</p>
+        <img src="./assets/imgs/ic_new-theme-img.svg">
+    </div>
+    <div>
+        <div>
+            <p class="chng-theme-text"><span class="sb-color-warning">*</span>{{'JOYFUL_WARNING_TEXT' | translate}}</p>
+        </div>
+            <div class="btn-info">
+                <button class="letsgo-info" (click)="switchToNewTheme()"><span>{{'LETS_GO' | translate}}</span>
+                    <img class="arrow-icon" src="assets/imgs/ic_back.svg" alt="arrow-icon"
+                             [class.animate]="isPopoverPresent">
+                </button>
+            </div>
+    </div>
+</div>
