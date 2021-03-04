@@ -14,7 +14,7 @@
   padding: 8px 0;
   margin-left: 18px;
   border: 2px solid $blue;
-  width: 30%;
+  width: 34%;
   float: right;
   border-radius: 20px !important;
 }
@@ -47,6 +47,7 @@ img.arrow-icon{
   display: inline-block;
   width: 18px;
   margin-top: -3px;
+  margin-left: 10px;
   &.animate {
     position: relative;
     animation: dropDown 5s linear infinite;

@@ -231,7 +231,6 @@ export class PreferenceKey {
     public static readonly CURRENT_SELECTED_THEME = 'current_selected_theme';
     public static readonly DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP = 'do_not_show_pnc_popup';
     public static readonly IS_JOYFUL_THEME_POPUP = 'is_joyful_theme_popup';
-    public static readonly IS_FIRST_TIME_USER = 'is_first_time_user';
 }
 
 export class GenericAppConfig {

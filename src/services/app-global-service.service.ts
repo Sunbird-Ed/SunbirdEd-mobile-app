@@ -863,24 +863,18 @@ export class AppGlobalService implements OnDestroy {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP).toPromise();
-            const isFirstTimeUser = await this.preferences.getBoolean(PreferenceKey.IS_FIRST_TIME).toPromise();
-            const isJoyfulThemeEnabled = (await this.preferences.getString('current_selected_theme').toPromise() === AppThemes.JOYFUL);
-            if (!isFirstTimeUser) {
-               if (isPopupDisplayed || isJoyfulThemeEnabled) {
-                   // do not display
-               } else {
-                const appLabel = await this.appVersion.getAppName();
-                const newThemePopover = await this.popoverCtrl.create({
-                    component: JoyfulThemePopupComponent,
-                    componentProps: {appLabel},
-                    backdropDismiss: false,
-                    showBackdrop: true,
-                    cssClass: 'sb-new-theme-popup'
-                });
-                newThemePopover.present();
-               }
-               this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP, true).toPromise().then();
+            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+            if (!isPopupDisplayed) {
+            const appLabel = await this.appVersion.getAppName();
+            const newThemePopover = await this.popoverCtrl.create({
+                component: JoyfulThemePopupComponent,
+                componentProps: {appLabel},
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'sb-new-theme-popup'
+            });
+            newThemePopover.present();
+            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }
     }
