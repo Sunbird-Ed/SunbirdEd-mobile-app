@@ -540,15 +540,16 @@ export class ProfilePage implements OnInit {
           values);
 
         if (course.issuedCertificate) {
+          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
-            return;
+            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+              this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+              return;
+            }
           }
 
           this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: {
-              request: { courseId: course.courseId, certificate: course.issuedCertificate }
-            }
+            state: { request }
           });
         } else {
           const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
