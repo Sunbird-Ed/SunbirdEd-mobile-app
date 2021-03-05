@@ -147,7 +147,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     loader.present();
 
-    await this.courseService.getCurrentProfileCourseCertificateV2(this.pageData).pipe(
+    await this.courseService.certificateManager.getCertificate(this.pageData).pipe(
       tap(this.initCertificateTemplate.bind(this)),
     ).toPromise();
 
@@ -198,7 +198,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           }
         })();
 
-        const { path } = await this.courseService.downloadCurrentProfileCourseCertificateV2(downloadRequest).toPromise();
+        const { path } = await this.courseService.certificateManager.downloadCertificate(downloadRequest).toPromise();
         await this.fileOpener.open(path, downloadRequest.mimeType);
       } catch (e) {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));

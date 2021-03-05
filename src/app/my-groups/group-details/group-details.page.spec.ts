@@ -56,9 +56,7 @@ describe('GroupDetailsPage', () => {
     };
     const mockViewMoreActivityDelegateService: Partial<ViewMoreActivityDelegateService> = {};
     const mockDiscussionService: Partial<DiscussionService> = {};
-    const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
-    };
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {}
     const mockFormService: Partial<FormService> = {
         getForm: jest.fn()
     };
@@ -81,7 +79,6 @@ describe('GroupDetailsPage', () => {
             mockFilterPipe as FilterPipe,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockViewMoreActivityDelegateService as ViewMoreActivityDelegateService,
-            mockDiscussionTelemetryService as DiscussionTelemetryService,
         );
     });
 
@@ -102,6 +99,12 @@ describe('GroupDetailsPage', () => {
             // jest.spyOn(groupDetailsPage, 'fetchForumIds').mockImplementation()
             mockDiscussionService.getForumIds = jest.fn(() => throwError({ error: 'error' })) as any;
             mockFormService.getForm = jest.fn(() => throwError({ error: 'error' })) as any;
+            const mockProfileRes = {
+                serverProfile: {
+                    userName: 'some_user'
+                }
+            };
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of(mockProfileRes) as any);
             // act
             groupDetailsPage.ngOnInit();
     
@@ -2691,94 +2694,6 @@ describe('GroupDetailsPage', () => {
         });
     });
 
-    describe('fetchForumIds', () => {
-        it('should fetch forumids with apropriate request ', (done) => {
-            // arrange
-            const res = {
-                result: [
-                    {
-                        cid: 'some_cid'
-                    }
-                ]
-            }
-            mockDiscussionService.getForumIds = jest.fn(() => of(res) as any);
-            // groupDetailsPage.groupId = 'some_group_id';
-            // act
-            groupDetailsPage.fetchForumIds()
-            // assert
-            expect(mockDiscussionService.getForumIds).toHaveBeenCalled();
-            setTimeout(() => {
-                expect(groupDetailsPage.forumDetails).toEqual(res.result[0]);
-                done()
-            });
-        });
-    });
-
-    describe('openDiscussionForum', () => {
-        it('should redirect to DF route', (done) => {
-            // arrange
-            const profileRes = {
-                serverProfile: [
-                    {
-                        userName: 'some_user_name'
-                    }
-                ]
-            }
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes) as any);
-            groupDetailsPage.forumDetails = {
-                cid: 'some_cid'
-            }
-            const res = {
-                result: {
-                    userName: 'some_user'
-                }
-            }
-            mockDiscussionService.createUser = jest.fn(() => of(res) as any);
-            // act
-            groupDetailsPage.openDiscussionForum()
-            // assert
-            setTimeout(() => {
-                expect(mockRouter.navigate).toHaveBeenCalledWith(
-                    ['/discussion-forum'],
-                    {
-                        queryParams: {
-                            categories: JSON.stringify({result:['some_cid']}),
-                            userName: 'some_user'
-                        }
-                    }
-                );
-                done()
-            })
-        });
-        it('should redirect to DF route', (done) => {
-            // arrange
-            const profileRes = {
-                serverProfile: [
-                    {
-                        userName: 'some_user_name'
-                    }
-                ]
-            }
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of(profileRes) as any);
-            groupDetailsPage.forumDetails = {
-                cid: 'some_cid'
-            }
-            const res = {
-                result: {
-                    userName: 'some_user'
-                }
-            }
-            mockDiscussionService.createUser = jest.fn(() => throwError('err') as any);
-            // act
-            groupDetailsPage.openDiscussionForum()
-            // assert
-            setTimeout(() => {
-                expect(mockDiscussionService.createUser).toHaveBeenCalled()
-                done()
-            })
-        });
-    })
-
     describe('enableDF', () => {
         beforeEach(() => {
             const dismissFn = jest.fn(() => Promise.resolve());
@@ -2794,12 +2709,12 @@ describe('GroupDetailsPage', () => {
             //     cid: 'some_cid'
             // }
             // groupDetailsPage.forumDetails = req;
-            mockDiscussionService.createForum = jest.fn(() => of({}) as any)
+            mockDiscussionService.attachForum = jest.fn(() => of({}) as any)
             // act
             groupDetailsPage.enableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.createForum).toHaveBeenCalled()
+                expect(mockDiscussionService.attachForum).toHaveBeenCalled()
                 done()
             });
         })
@@ -2810,13 +2725,13 @@ describe('GroupDetailsPage', () => {
             //     cid: 'some_cid'
             // }
             // groupDetailsPage.forumDetails = req;
-            mockDiscussionService.createForum = jest.fn(() => throwError('err') as any)
+            mockDiscussionService.attachForum = jest.fn(() => throwError('err') as any)
             mockCommonUtilService.showToast = jest.fn();
             // act
             groupDetailsPage.enableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.createForum).toHaveBeenCalled();
+                expect(mockDiscussionService.attachForum).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
                 done()
             });
@@ -2863,34 +2778,6 @@ describe('GroupDetailsPage', () => {
             setTimeout(() => {
                 expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
-                done()
-            });
-        })
-    })
-
-    describe('fetchForumConfig', () => {
-        it('should create request for createforum', (done) => {
-            // arrange
-            const res = {
-                form: {
-                    data: {
-                        fields: [
-                            {
-                                uid: 40,
-                                category: {
-                                    context: ''
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-            mockFormService.getForm = jest.fn(() => of(res) as any)
-            // act
-            groupDetailsPage.fetchForumConfig()
-            // assert
-            setTimeout(() => {
-                expect(groupDetailsPage.createForumRequest).toEqual(res.form.data.fields[0])
                 done()
             });
         })
