@@ -2,7 +2,8 @@ import { CategoriesEditPage } from './categories-edit.page';
 import {
     FrameworkService,
     FrameworkUtilService,
-    ProfileService} from 'sunbird-sdk';
+    ProfileService
+} from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -29,7 +30,7 @@ describe('CategoryEditPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
         closeSigninOnboardingLoader: jest.fn(),
-        getCurrentUser: jest.fn(() => ({ board: ['AP']}))
+        getCurrentUser: jest.fn(() => ({ board: ['AP'] }))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         translateMessage: jest.fn(() => 'select-box'),
@@ -52,7 +53,16 @@ describe('CategoryEditPage', () => {
                 userId: 'userId',
                 shouldGenerateEndTelemetry: false,
                 isNewUser: true,
-                lastCreatedProfile: { id: 'sample-id' }
+                lastCreatedProfile: { id: 'sample-id' },
+                showOnlyMandatoryFields: true,
+                hasFilledLocation: true,
+                isRootPage: true,
+                profile: {
+                    serverProfile: {
+                        userType: 'teacher',
+                        firstName: 'sample-user'
+                    }
+                }
             }
         }
     };
@@ -112,10 +122,63 @@ describe('CategoryEditPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should be create a instance of CategoryEditPage', () => {
         expect(categoryEditPage).toBeTruthy();
+    });
+
+    describe('get', () => {
+        it('should be initialized syllabus', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                get: jest.fn(() => ({
+                    syllabus: ['sample-syllabus']
+                })),
+            } as any;
+            expect(categoryEditPage.syllabusControl).toBeTruthy();
+        });
+
+        it('should be initialized boardControl', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                get: jest.fn(() => ({
+                    boards: ['sample-board']
+                })),
+            } as any;
+            expect(categoryEditPage.boardControl).toBeTruthy();
+        });
+
+        it('should be initialized mediumControl', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                get: jest.fn(() => ({
+                    medium: ['english']
+                })),
+            } as any;
+            expect(categoryEditPage.mediumControl).toBeTruthy();
+        });
+
+        it('should be initialized gradeControl', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                get: jest.fn(() => ({
+                    grades: ['sample-grade']
+                })),
+            } as any;
+            expect(categoryEditPage.gradeControl).toBeTruthy();
+        });
+
+        it('should be initialized subject', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                get: jest.fn(() => ({
+                    subjects: ['sample-grade']
+                })),
+            } as any;
+            expect(categoryEditPage.subjectControl).toBeTruthy();
+        });
     });
 
     describe('ngOnInit', () => {
@@ -143,6 +206,67 @@ describe('CategoryEditPage', () => {
                 done();
             });
         });
+    });
 
+    it('should unsubscribe formControl', () => {
+        categoryEditPage.ngOnDestroy();
+    });
+
+    describe('ionViewWillEnter', () => {
+        it('should subscribe back button for loggedIn User', () => {
+            // arrange
+            categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            categoryEditPage.getLoggedInFrameworkCategory = jest.fn(() => Promise.resolve());
+            mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
+                actionButtons: [''],
+                showHeader: true,
+                showBurgerMenu: true
+            })) as any;
+            mockHeaderService.updatePageConfig = jest.fn();
+            categoryEditPage.isRootPage = true;
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockActivePageService.computePageId = jest.fn(() => 'sample-page');
+            mockCommonUtilService.showExitPopUp = jest.fn(() => Promise.resolve());
+            // act
+            categoryEditPage.ionViewWillEnter();
+            // assert
+            expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(categoryEditPage.getLoggedInFrameworkCategory).toHaveBeenCalled();
+            expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(categoryEditPage.isRootPage).toBeTruthy();
+            expect(mockPlatform.backButton).toBeTruthy();
+            expect(subscribeWithPriorityData).toHaveBeenCalled();
+            expect(mockActivePageService.computePageId).toHaveBeenCalled();
+            expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
+        });
+
+        it('should invoked getSyllabusDetails for guest User', () => {
+            // arrange
+            categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
+                actionButtons: [''],
+                showHeader: true,
+                showBurgerMenu: true
+            })) as any;
+            mockHeaderService.updatePageConfig = jest.fn();
+            categoryEditPage.isRootPage = false;
+            // act
+            categoryEditPage.ionViewWillEnter();
+            // assert
+            expect(categoryEditPage.initializeLoader).toHaveBeenCalled();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(categoryEditPage.disableSubmitButton).toBeFalsy();
+            expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(categoryEditPage.isRootPage).toBeFalsy();
+        });
     });
 });
