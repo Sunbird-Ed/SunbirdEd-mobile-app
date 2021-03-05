@@ -863,7 +863,7 @@ export class AppGlobalService implements OnDestroy {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED).toPromise();
             if (!isPopupDisplayed) {
             const appLabel = await this.appVersion.getAppName();
             const newThemePopover = await this.popoverCtrl.create({
@@ -874,8 +874,9 @@ export class AppGlobalService implements OnDestroy {
                 cssClass: 'sb-new-theme-popup'
             });
             newThemePopover.present();
-            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+            this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
             }
+            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
         }
     }
 
