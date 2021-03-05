@@ -642,7 +642,10 @@ describe('Profile.page', () => {
                     id: 'sample_cert_id',
                     url: 'https://sampleCertUrl.com',
                     token: 'AXOBC'
-                }
+                },
+                courseName: 'sample_course',
+                dateTime: '1333065600000',
+                status: 0
             });
             // assert
             setTimeout(() => {
@@ -701,7 +704,10 @@ describe('Profile.page', () => {
                     id: 'sample_cert_id',
                     url: 'https://sampleCertUrl.com',
                     token: 'AXOBC'
-                }
+                },
+                courseName: 'sample_course',
+                dateTime: '1333065600000',
+                status: 0
             });
             // assert
             setTimeout(() => {
@@ -790,7 +796,10 @@ describe('Profile.page', () => {
                     id: 'sample_cert_id',
                     url: 'https://sampleCertUrl.com',
                     token: 'AXOBC'
-                }
+                },
+                courseName: 'sample_course',
+                dateTime: '1333065600000',
+                status: 0
             });
             // assert
             setTimeout(() => {
@@ -883,7 +892,7 @@ describe('Profile.page', () => {
                 );
                 expect(mockToastController.create).toHaveBeenCalledWith({message: 'Certificate is getting downloaded'});
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_INTERNET_TITLE', false, '', 3000, 'top');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
                 done();
             }, 0);
         });
@@ -898,10 +907,23 @@ describe('Profile.page', () => {
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
             mockCertificateDownloadPdfService.download = jest.fn(() => Promise.resolve());
             jest.spyOn(profilePage, 'openpdf').mockImplementation();
-            mockCourseService.downloadCurrentProfileCourseCertificateV2 = jest.fn(() => of({path: 'sample_url'}));
             mockCertificateDownloadPdfService.download = jest.fn(() => Promise.resolve());
+            mockCourseService.certificateManager = {
+                    isCertificateCached: jest.fn(() => of(true))
+                }
             // act
-            profilePage.downloadTrainingCertificate({courseId: 'sample_cert_id', issuedCertificate: {id: 'sample_cert_id', name: 'sample_cert_name', token: 'ABSCD'}}, );
+            profilePage.downloadTrainingCertificate(
+                {
+                    courseId: 'sample_cert_id',
+                    issuedCertificate: {
+                        id: 'sample_cert_id',
+                        name: 'sample_cert_name',
+                        token: 'ABSCD'
+                    },
+                    courseName: 'sample_course',
+                    dateTime: '1333065600000',
+                    status: 0
+                });
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
