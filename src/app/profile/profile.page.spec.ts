@@ -892,7 +892,7 @@ describe('Profile.page', () => {
                 );
                 expect(mockToastController.create).toHaveBeenCalledWith({message: 'Certificate is getting downloaded'});
                 expect(mockCourseService.downloadCurrentProfileCourseCertificate).toHaveBeenCalled();
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_INTERNET_TITLE', false, '', 3000, 'top');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
                 done();
             }, 0);
         });

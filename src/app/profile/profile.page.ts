@@ -543,7 +543,7 @@ export class ProfilePage implements OnInit {
           const request = { courseId: course.courseId, certificate: course.issuedCertificate };
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
-              this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
               return;
             }
           }
@@ -590,7 +590,7 @@ export class ProfilePage implements OnInit {
     if (err instanceof CertificateAlreadyDownloaded) {
       this.openpdf(err.filePath);
     } else if (NetworkError.isInstance(err)) {
-      this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+      this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
     }
