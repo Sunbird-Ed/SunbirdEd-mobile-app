@@ -229,6 +229,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   skipCheckRetiredOpenBatch = false;
   forumIds;
   private hasInit = false;
+  fetchForumIdReq = {
+    identifier: [],
+    type: ''
+  };
+  createUserReq = {
+    username: '',
+    identifier: ''
+  };
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -292,6 +300,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
+    this.generateDataForDF();
   }
 
   showDeletePopup() {
@@ -386,7 +395,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
-    this.fetchForumIds()
   }
 
   private checkUserLoggedIn() {
@@ -1364,7 +1372,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
     }
-    this.fetchForumIds();
   }
 
   ionViewDidEnter() {
@@ -2130,14 +2137,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.checkDataSharingStatus();
   }
 
-  openDiscussionForum(forumId: string) {
-    if(this.commonUtilService.networkInfo.isNetworkAvailable){
-      this.checkUserRegistration();
-    } else {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-    }
-    
-  }
+  // openDiscussionForum(forumId: string) {
+  //   if(this.commonUtilService.networkInfo.isNetworkAvailable){
+  //     this.checkUserRegistration();
+  //   } else {
+  //     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+  //   }
+  // }
 
   private async showProfileNameConfirmationPopup() {
     const popUp = await this.popoverCtrl.create({
@@ -2257,64 +2263,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       });
   }
 
-  async checkUserRegistration() {
-    const data = {
-      username: '',
-      identifier: this.userId,
-    };
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
-      data.username = p.serverProfile['userName']
-    });
-    this.discussionTelemetryService.contextCdata = [
-      {
-        id: this.identifier,
-        type: 'Course'
-      },
-      {
-        id: this.courseCardData.batchId,
-        type: 'Batch'
-      }
-    ];
-    this.discussionService.createUser(data).subscribe((response) => {
-      const userName = response.result.userName
-      const result = [this.forumIds];
-        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
-        queryParams: {
-          categories: JSON.stringify({ result }),
-          userName: userName
-        }
-      });
-    }, error => {
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
-    });
-  }
-
-  fetchForumIds() {
-    const requestBody = this.prepareRequestBody();
-    if (requestBody.identifier.length) {
-      this.discussionService.getForumIds(requestBody).subscribe(forumDetails => {
-        if (forumDetails.result.length) {
-          this.forumIds = forumDetails.result[0].cid;
-        }
-      }, error => {
-        console.error('error', error);
-      });
+  generateDataForDF() {
+    if (this.courseCardData.batchId) {
+      this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
+      this.fetchForumIdReq.type = 'batch';
+    } else {
+      this.fetchForumIdReq.identifier = [this.identifier];
+      this.fetchForumIdReq.type = 'course';
     }
-  }
-
-  private prepareRequestBody() {
-    const request = {
-      identifier: [],
-      type: ''
-    };
-    const isCreator = this.courseCardData.createdBy === this.userId;
-    if (isCreator) {
-      request.identifier = [this.identifier];
-      request.type = 'course';
-    } else if (this.isAlreadyEnrolled) {
-      request.identifier = [this.courseCardData.batchId];
-      request.type = 'batch';
-    }
-      return request;
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      this.createUserReq.username = p.serverProfile['userName'];
+    });
+    this.appGlobalService.getActiveProfileUid()
+      .then((uid) => {
+        this.userId = uid;
+        this.createUserReq.identifier = uid;
+      });
   }
 }
