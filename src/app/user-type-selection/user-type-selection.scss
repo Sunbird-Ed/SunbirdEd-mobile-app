@@ -92,6 +92,8 @@
     background-color: map-get($colors, white);
     justify-content: center;
     align-items: center;
+    height: 17rem;
+    text-align-last: center;
     &.selected {
       border:3px solid map-get($colors, vived_blue_fe);
     }
@@ -120,5 +122,9 @@
       transform: rotate(180deg);
       float: left !important;
     }
+  }
+
+  .card-header-info{
+    height: 5rem;
   }
 }
