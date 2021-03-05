@@ -5,7 +5,8 @@ import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Observable, Observer } from 'rxjs';
 import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,

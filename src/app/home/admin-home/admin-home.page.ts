@@ -9,7 +9,8 @@ import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup,
     CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events, IonContent as ContentView  } from '@ionic/angular';
+import { IonContent as ContentView  } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 
 @Component({

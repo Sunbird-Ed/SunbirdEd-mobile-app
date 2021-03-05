@@ -7,7 +7,8 @@ import { PageId } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ContainerService } from '@app/services/container.services';
-import { Events, IonTabs, ToastController } from '@ionic/angular';
+import { IonTabs, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 
 @Component({

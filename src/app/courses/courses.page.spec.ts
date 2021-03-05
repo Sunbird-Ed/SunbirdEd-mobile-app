@@ -3,7 +3,8 @@ import {FormAndFrameworkUtilService} from '../../services/formandframeworkutil.s
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {NgZone} from '@angular/core';
 import {SunbirdQRScanner} from '../../services/sunbirdqrscanner.service';
-import {Events, PopoverController, ToastController} from '@ionic/angular';
+import {PopoverController, ToastController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {AppGlobalService} from '../../services/app-global-service.service';
 import {CourseUtilService} from '../../services/course-util.service';
 import {CommonUtilService} from '../../services/common-util.service';

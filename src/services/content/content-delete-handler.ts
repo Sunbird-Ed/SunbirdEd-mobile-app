@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
-import { PopoverController, Events } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subject } from 'rxjs';
 import { ContentService, InteractType, Content, ContentDeleteStatus } from 'sunbird-sdk';
 

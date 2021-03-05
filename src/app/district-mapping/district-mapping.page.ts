@@ -15,7 +15,8 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { FieldConfig } from 'common-form-elements-v8';
 import { concat, defer, of, Subscription } from 'rxjs';

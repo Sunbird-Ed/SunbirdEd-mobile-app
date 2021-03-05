@@ -7,7 +7,8 @@ import { ProfileHandler } from '@app/services/profile-handler';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { Events, IonRefresher, PopoverController, ToastController } from '@ionic/angular';
+import { IonRefresher, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import forEach from 'lodash/forEach';
@@ -500,9 +501,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.toast = await this.toastController.create({
       duration: 3000,
       message: this.commonUtilService.translateMessage(msg),
-      showCloseButton: true,
+      buttons: [],
       position: 'top',
-      closeButtonText: '',
       cssClass: 'toastHeader'
     });
     await this.toast.present();
