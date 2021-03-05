@@ -27,6 +27,7 @@ import { DownloadPdfService } from '@app/services/download-pdf/download-pdf.serv
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { ContentUtil } from '@app/util/content-util';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 
 declare const cordova;
 
@@ -72,7 +73,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     private downloadPdfService: DownloadPdfService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private printPdfService: PrintPdfService
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -110,6 +112,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showDownload: true,
           showReplay: false,
           showExit: true,
+          showPrint: true
         }
       };
       this.config['context'].dispatcher = {
@@ -264,7 +267,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       } else {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       }
-    } else if (event.edata.type === 'compatibility-error') {
+    } else if(event.edata['type'] === 'PRINT') {
+        this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
+    }
+    else if (event.edata.type === 'compatibility-error') {
       cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
         () => {},
         () => {}

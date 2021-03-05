@@ -15,6 +15,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { LocalCourseService } from '@app/services/local-course.service';
 import { LocationHandler } from '@app/services/location-handler';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
@@ -453,6 +454,7 @@ declare const sbutility;
     AppRatingService,
     FormAndFrameworkUtilService,
     DownloadPdfService,
+    PrintPdfService,
     CollectionService,
     Device,
     Network,
