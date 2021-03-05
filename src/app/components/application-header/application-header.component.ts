@@ -226,6 +226,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       );
     }
     this.events.publish(EventTopics.HAMBURGER_MENU_CLICKED);
+    this.appTheme = document.querySelector('html').getAttribute('data-theme');
   }
 
   emitEvent($event, name) {
