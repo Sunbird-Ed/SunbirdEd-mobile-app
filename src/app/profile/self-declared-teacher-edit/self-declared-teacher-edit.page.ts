@@ -12,7 +12,8 @@ import {
 } from '@app/services';
 import { ConsentService } from '@app/services/consent-service';
 import { FormValidationAsyncFactory } from '@app/services/form-validation-async-factory/form-validation-async-factory';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ConsentStatus } from '@project-sunbird/client-services/models';
 import { FieldConfig } from 'common-form-elements-v8';
 import { Subscription } from 'rxjs';

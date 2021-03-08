@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
-import { Events, NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AuthService,

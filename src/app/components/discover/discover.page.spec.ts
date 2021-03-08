@@ -1,6 +1,7 @@
 import {DiscoverComponent} from './discover.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Events, PopoverController} from '@ionic/angular';
+import {PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {Router} from '@angular/router';
 import {AppHeaderService} from '../../../services/app-header.service';
 import {ContentAggregatorHandler} from '../../../services/content/content-aggregator-handler.service';

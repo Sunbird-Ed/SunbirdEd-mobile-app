@@ -1,6 +1,7 @@
 import {ContentActionsComponent} from '@app/app/components';
 import {AuthService, ContentDeleteStatus, ContentService} from 'sunbird-sdk';
-import {Events, NavParams, Platform, PopoverController, ToastController} from '@ionic/angular';
+import {NavParams, Platform, PopoverController, ToastController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {TranslateService} from '@ngx-translate/core';
 import {CommonUtilService, Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
 import {FileSizePipe} from '@app/pipes/file-size/file-size';

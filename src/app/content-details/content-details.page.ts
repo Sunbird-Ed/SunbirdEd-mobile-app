@@ -4,10 +4,10 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
-  Events,
   Platform,
   PopoverController
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription, Observable } from 'rxjs';
 import {
   Content,
@@ -989,8 +989,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             }
           ],
           icon: {
-            md: 'md-sad',
-            ios: 'ios-sad',
+            md: 'sad',
+            ios: 'sad',
             className: ''
           },
           metaInfo: '',
@@ -1034,8 +1034,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         actionsButtons: [
         ],
         icon: {
-          md: 'md-warning',
-          ios: 'ios-warning',
+          md: 'warning',
+          ios: 'warning',
           className: ''
         }
       },

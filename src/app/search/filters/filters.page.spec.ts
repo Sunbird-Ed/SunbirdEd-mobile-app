@@ -1,7 +1,8 @@
 
 import { FiltersPage } from './filters.page';
 import { ContentService } from '@project-sunbird/sunbird-sdk';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     CommonUtilService,
     TelemetryGeneratorService,

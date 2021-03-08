@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ProfileType, SharedPreferences, AuthService } from 'sunbird-sdk';
 
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
