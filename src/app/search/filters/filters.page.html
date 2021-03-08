@@ -9,7 +9,7 @@
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
         <div class="card-text">
-          <ion-label text-capitalize>{{ facet?.translatedName }}</ion-label>
+          <ion-label class="ion-text-capitalize">{{ facet?.translatedName }}</ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">

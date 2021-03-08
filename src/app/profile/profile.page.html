@@ -16,7 +16,7 @@
     <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
-            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol ion-text-left" item-right
                 (click)="toggleTooltips($event, 'name')">
                 <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
@@ -64,7 +64,7 @@
     </div>
     <div class="school-recent" *ngIf="organisationName">
         <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-            <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
+            <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol ion-text-left" item-right
                 (click)="toggleTooltips($event, 'org')">
                 <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>

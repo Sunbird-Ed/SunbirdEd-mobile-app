@@ -59,10 +59,10 @@
 
       </ion-row>
       <ion-row class="custom-shadow">
-        <ion-col padding>
+        <ion-col class="ion-padding">
           <ion-button expand="block" fill="outline" (click)="cancel($event)">{{ 'CANCEL' | translate }} </ion-button>
         </ion-col>
-        <ion-col padding>
+        <ion-col class="ion-padding">
           <ion-button expand="block" type="submit" (click)="validate()" [disabled]="!personEditForm.valid">
             {{ 'BTN_SUBMIT' | translate }}
           </ion-button>
