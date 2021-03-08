@@ -25,7 +25,8 @@ import {
   CorReleationDataType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
-import { NavController, Events } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';

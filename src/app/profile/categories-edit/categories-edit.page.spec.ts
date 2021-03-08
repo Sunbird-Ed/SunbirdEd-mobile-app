@@ -4,7 +4,8 @@ import {
     FrameworkUtilService,
     ProfileService} from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,

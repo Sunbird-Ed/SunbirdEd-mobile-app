@@ -11,7 +11,8 @@ import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { of, Subscription } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 

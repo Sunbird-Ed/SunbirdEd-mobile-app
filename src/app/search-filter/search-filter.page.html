@@ -1,7 +1,7 @@
 <ion-content>
     <div class="form-content">
         <ion-button class="reset-button" fill="clear" (click)="resetFilter()">
-            <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+            <ion-icon name="refresh"></ion-icon>
             {{'RESET' | translate}}
         </ion-button>
         <sb-form [config]="config" (initialize)="onFormInitialize($event)"></sb-form>

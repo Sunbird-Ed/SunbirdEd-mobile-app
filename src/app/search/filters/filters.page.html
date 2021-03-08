@@ -2,7 +2,7 @@
   <div class="subtitle ion-padding ion-no-margin">
     <h6 style="display:inline-block;" >{{ 'FILTER_BY' | translate }}</h6>
     <ion-button color="dark" class="reset_button" fill="outline" (click)="reset()">{{ 'RESET' | translate}}
-      <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
+      <ion-icon name="refresh"></ion-icon>
     </ion-button>
   </div>
   <div *ngIf="facetsFilter && facetsFilter.length">
@@ -13,7 +13,7 @@
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">
-          <ion-icon name="ios-arrow-forward"></ion-icon>
+          <ion-icon name="arrow-forward"></ion-icon>
         </div>
       </div>
     </div>

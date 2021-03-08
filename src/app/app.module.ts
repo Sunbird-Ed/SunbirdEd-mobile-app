@@ -73,6 +73,7 @@ import { DiscussionTelemetryService } from '@app/services/discussion/discussion-
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -463,6 +464,7 @@ declare const sbutility;
     AppRatingService,
     FormAndFrameworkUtilService,
     DownloadPdfService,
+    PrintPdfService,
     CollectionService,
     Device,
     Network,
