@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import {
@@ -42,6 +42,7 @@ import {
 } from '../view-more-activity/view-more-activity.page';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { AccessDiscussionComponent } from '@app/app/components/access-discussion/access-discussion.component';
 
 @Component({
   selector: 'app-group-details',
@@ -71,8 +72,13 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   isSuspended = false;
   isGroupCreatorOrAdmin = false;
   forumDetails;
-  createForumRequest;
-
+  // createForumRequest;
+  fetchForumIdReq;
+  createUserReq = {
+    username: '',
+    identifier: ''
+  };
+  @ViewChild(AccessDiscussionComponent, { static: false }) accessDiscussionComponent: AccessDiscussionComponent;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -89,8 +95,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     private commonUtilService: CommonUtilService,
     private filterPipe: FilterPipe,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private viewMoreActivityDelegateService: ViewMoreActivityDelegateService,
-    private discussionTelemetryService: DiscussionTelemetryService
+    private viewMoreActivityDelegateService: ViewMoreActivityDelegateService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -100,6 +105,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {
         this.userId = uid;
+        this.createUserReq.identifier = uid;
       });
 
     this.corRelationList.push({ id: this.groupId, type: CorReleationDataType.GROUP_ID });
@@ -107,8 +113,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       undefined, undefined, undefined, undefined, this.corRelationList);
 
     this.viewMoreActivityDelegateService.delegate = this;
-    this.fetchForumConfig()
-    this.fetchForumIds()
+    this.generateDataForDF();
   }
 
   ngOnDestroy() {
@@ -913,69 +918,29 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     );
   }
 
-  fetchForumIds() {
-    const request = {
-      identifier: [this.groupId],
-      type: 'group'
-    };
-    this.discussionService.getForumIds(request).toPromise().then(forumDetails => {
-      console.log('forumDetails', forumDetails)
-      if (forumDetails.result.length) {
-        this.forumDetails = forumDetails.result[0];
-      }
-    }).catch(error => {
-      console.log('error fetchForumIds', error);
-    });
-  }
-
-  async openDiscussionForum() {
-    const data = {
-      username: '',
-      identifier: this.userId,
-    };
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
-      data.username = p.serverProfile['userName']
-    });
-    console.log('createUser req', data);
-    this.discussionTelemetryService.contextCdata = [
-      {
-        id: this.groupId,
-        type: 'group'
-      }
-    ];
-    this.discussionService.createUser(data).subscribe((response) => {
-      console.log('discussionService.createUser', response)
-      const userName = response.result.userName
-      const result = [this.forumDetails.cid];
-      console.log('hello', this.forumDetails);
-        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
-        queryParams: {
-          categories: JSON.stringify({ result }),
-          userName: userName
-        }
-      });
-    }, error => {
-      console.log('err in discussionService.createUser', error)
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
-    });
-  }
-
   async enableDF(){
     this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.ENABLE_DISCUSSIONS_CLICKED);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.generateInteractTelemetry( InteractType.INITIATED, '', ID.ENABLE_DISCUSSIONS);
-    this.discussionService.createForum(this.createForumRequest).toPromise()
-    .then(async res => {
+    const request = {
+      context: {
+        type: 'group',
+        identifier: this.groupId
+      },
+      type: 'group'
+    }
+    this.discussionService.attachForum(request).toPromise()
+    .then(async (response) => {
       this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.ENABLE_DISCUSSIONS);
       await loader.dismiss();
-      this.fetchForumIds();
       this.commonUtilService.showToast('DISCUSSION_FORUM_ENABLE_SUCCESS');
-    }).catch(async err => {
+      this.accessDiscussionComponent.fetchForumIds();
+      }).catch(async (err) => {
       console.log('enableDF err', err)
-      await loader.dismiss();
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
-    });
+        await loader.dismiss();
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
+      });
   }
 
   async disableDF(){
@@ -988,6 +953,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       await loader.dismiss();
       this.forumDetails = '';
       this.commonUtilService.showToast('DISCUSSION_FORUM_DISABLE_SUCCESS');
+      this.accessDiscussionComponent.fetchForumIds();
     }).catch(async err => {
       console.log('disableDF err', err)
       await loader.dismiss();
@@ -1024,22 +990,19 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     }
   }
 
-  fetchForumConfig() {
-    const groupContext = [{
-      type: 'group',
-      identifier: this.groupId
-    }];
-    const req: FormRequest = {
-      type: 'forum',
-      action: 'create',
-      subType: 'group'
+  async generateDataForDF() {
+    this.fetchForumIdReq =  {
+      identifier: [this.groupId],
+      type: 'group'
     };
-    this.formService.getForm(req).subscribe((formData: any) => {
-      this.createForumRequest = formData.form.data.fields[0];
-      this.createForumRequest['category']['context'] = groupContext;
-    }, error => {
-      console.log('fetchForumConfig err', error)
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      this.createUserReq.username = p.serverProfile['userName'];
     });
   }
 
+  assignForumData(e){
+    console.log('assignForumData', e)
+    this.forumDetails = e;
+  }
+  
 }
