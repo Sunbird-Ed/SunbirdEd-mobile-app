@@ -1534,4 +1534,12 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  // DiscussionForum
+
+  .discussion-forum {
+    .reply-btn {
+      background-color: lighten(var(--app-light-gray), 20%);
+    }
+  }
+
 }
