@@ -166,6 +166,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.onTraceIdUpdate();
       this.utils.initilizeML();
       this.networkServ.netWorkCheck();
+      await this.applyJoyfulTheme();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -965,5 +966,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         // do not show the toast.
       }
     });
+  }
+
+  async applyJoyfulTheme() {
+    const isJoyfulThemePopupSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+    if (!isJoyfulThemePopupSeen) {
+      await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
+      this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+      this.headerService.showStatusBar().then();
+    }
   }
 }

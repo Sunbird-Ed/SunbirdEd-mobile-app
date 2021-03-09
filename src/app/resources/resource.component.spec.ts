@@ -1327,51 +1327,7 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.handleHeaderEvents({ name: 'information' });
             // assert
-            expect(resourcesComponent.appTutorialScreen).toHaveBeenCalled();
-        });
-
-        it('should call appTutorialScreen method', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: true } }))
-            } as any)));
-            // act
-            resourcesComponent.appTutorialScreen();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED,
-                Environment.HOME,
-                PageId.LIBRARY
-            );
-            setTimeout(() => {
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-
-        it('should generate close clicked telemetry', (done) => {
-            // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: { continueClicked: false } }))
-            } as any)));
-            // act
-            resourcesComponent.appTutorialScreen();
-            // assert
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.INFORMATION_ICON_CLICKED,
-                Environment.HOME,
-                PageId.LIBRARY
-            );
-            setTimeout(() => {
-                expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                done();
-            }, 0);
+          //  expect(resourcesComponent.appTutorialScreen).toHaveBeenCalled();
         });
 
         it('should go default section if event is not matched at all', () => {
