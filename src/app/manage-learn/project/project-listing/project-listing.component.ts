@@ -10,12 +10,9 @@ import { LoaderService } from "../../core";
 
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UtilsService } from '../../core';
-import {
-  Events, Platform, PopoverController
-} from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { HttpClient } from '@angular/common/http';
-
 @Component({
   selector: 'app-project-listing',
   templateUrl: './project-listing.component.html',
@@ -43,11 +40,16 @@ export class ProjectListingComponent implements OnInit {
     parameter: 'createdByMe'
   }]
 
-  constructor(private router: Router, private location: Location,
-    private headerService: AppHeaderService, private platform: Platform,
+  constructor(
+    private router: Router, 
+    private location: Location,
+    private headerService: AppHeaderService, 
+    private platform: Platform,
     private unnatiService: UnnatiDataService,
     private loader: LoaderService,
-    private db: DbService, private http: HttpClient, private utils: UtilsService, private kendraService: KendraApiService) { }
+    private db: DbService, 
+    private http: HttpClient, 
+    private utils: UtilsService) { }
 
   ngOnInit() {
   }
@@ -70,7 +72,7 @@ export class ProjectListingComponent implements OnInit {
   //   });
   // }
   getDataByFilter(parameter) {
-    console.log(parameter,"parameter");
+    console.log(parameter, "parameter");
   }
   async getProjectList() {
     this.loader.startLoader();
@@ -102,7 +104,7 @@ export class ProjectListingComponent implements OnInit {
     }
   }
 
-  private handleBackButton() {
+  public handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
       this.backButtonFunc.unsubscribe();
