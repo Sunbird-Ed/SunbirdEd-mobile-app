@@ -208,8 +208,42 @@ describe('CategoryEditPage', () => {
         });
     });
 
-    it('should unsubscribe formControl', () => {
-        categoryEditPage.ngOnDestroy();
+    it('should create a loader', (done) => {
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+            present: presentFn,
+            dismiss: jest.fn(() => Promise.resolve())
+        }));
+        categoryEditPage.initializeLoader();
+        setTimeout(() => {
+            expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    describe('getSyllabusDetails', () => {
+        it('should show a toast if framework is empty', (done) => {
+            // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([]));
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            categoryEditPage.getSyllabusDetails();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_DATA_FOUND');
+                done();
+            }, 0);
+        });
     });
 
     describe('ionViewWillEnter', () => {
@@ -249,6 +283,12 @@ describe('CategoryEditPage', () => {
 
         it('should invoked getSyllabusDetails for guest User', () => {
             // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn
+            }));
             categoryEditPage.initializeLoader = jest.fn(() => Promise.resolve());
             mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
             mockHeaderService.getDefaultPageConfig = jest.fn(() => ({
@@ -258,6 +298,7 @@ describe('CategoryEditPage', () => {
             })) as any;
             mockHeaderService.updatePageConfig = jest.fn();
             categoryEditPage.isRootPage = false;
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([]));
             // act
             categoryEditPage.ionViewWillEnter();
             // assert
@@ -267,6 +308,326 @@ describe('CategoryEditPage', () => {
             expect(mockHeaderService.getDefaultPageConfig).toHaveBeenCalled();
             expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
             expect(categoryEditPage.isRootPage).toBeFalsy();
+        });
+    });
+
+    it('should hide progress loader', () => {
+        mockProgressLoader.hide = jest.fn(() => Promise.resolve());
+        categoryEditPage.ionViewDidEnter();
+        expect(mockProgressLoader.hide).toHaveBeenCalled();
+    });
+
+    describe('initializeForm', () => {
+        it('should initialized edit form data if board length is greaterthan 1', () => {
+            // arrange
+            categoryEditPage.profile = {
+                board: ['cbsc', 'ncrt']
+            };
+            // act
+            categoryEditPage.initializeForm();
+            // assert
+            expect(categoryEditPage.profile).toBeTruthy();
+        });
+    });
+
+    describe('submitForm', () => {
+        it('should navigate to TABS if location is filled and SSO user ', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
+            mockCommonUtilService.showToast = jest.fn();
+            mockEvents.publish = jest.fn(() => []);
+            categoryEditPage.showOnlyMandatoryFields = true;
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of({
+                userId: 'user-id',
+                firstName: 'sample-user-name'
+            }));
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
+            categoryEditPage.hasFilledLocation = true;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.hasFilledLocation).toBeTruthy();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate to DISTRICT_MAPPING if location is not updated ', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
+            mockCommonUtilService.showToast = jest.fn();
+            mockEvents.publish = jest.fn(() => []);
+            categoryEditPage.showOnlyMandatoryFields = true;
+            mockProfileService.getServerProfilesDetails = jest.fn(() => of({
+                userId: 'user-id',
+                firstName: 'sample-user-name'
+            }));
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
+            categoryEditPage.hasFilledLocation = false;
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false));
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.hasFilledLocation).toBeFalsy();
+                expect(mockTncUpdateHandler.isSSOUser).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('onSubmit', () => {
+        it('should open board select popup', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: []
+                }
+            } as any;
+            categoryEditPage.isBoardAvailable = true;
+            categoryEditPage.showOnlyMandatoryFields = true;
+            const openFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.boardSelect = {
+                open: openFn
+            } as any;
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.isBoardAvailable).toBeTruthy();
+            expect(categoryEditPage.boardSelect).toBeTruthy();
+           // expect(openFn).toHaveBeenCalled();
+        });
+
+        it('should return error message if mandetoryMessage is false for board', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: []
+                }
+            } as any;
+            categoryEditPage.isBoardAvailable = true;
+            categoryEditPage.showOnlyMandatoryFields = false;
+            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-error-message');
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.isBoardAvailable).toBeTruthy();
+            expect(categoryEditPage.showOnlyMandatoryFields).toBeFalsy();
+        });
+
+        it('should open board select popup', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: []
+                }
+            } as any;
+            categoryEditPage.supportedProfileAttributes = { medium: 'sample-medium' };
+            categoryEditPage.showOnlyMandatoryFields = true;
+            const openFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.mediumSelect = {
+                open: openFn
+            } as any;
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.supportedProfileAttributes).toBeTruthy();
+            expect(categoryEditPage.mediumSelect).toBeTruthy();
+            expect(openFn).toHaveBeenCalled();
+        });
+
+        it('should return error message if mandetoryMessage is false for board', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: []
+                }
+            } as any;
+            categoryEditPage.supportedProfileAttributes = { medium: 'sample-medium' };
+            categoryEditPage.showOnlyMandatoryFields = false;
+            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-error-message');
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.supportedProfileAttributes).toBeTruthy();
+            expect(categoryEditPage.showOnlyMandatoryFields).toBeFalsy();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('sample-error-message', false, 'redErrorToast');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'MEDIUM');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'PLEASE_SELECT', 'sample-error-message');
+        });
+
+        it('should open board select popup', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: ['english'],
+                    grades: []
+                }
+            } as any;
+            categoryEditPage.supportedProfileAttributes = { gradeLevel: 'sample-gradeLevel' };
+            categoryEditPage.showOnlyMandatoryFields = true;
+            const openFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.gradeSelect = {
+                open: openFn
+            } as any;
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.supportedProfileAttributes).toBeTruthy();
+            expect(categoryEditPage.gradeSelect).toBeTruthy();
+            expect(openFn).toHaveBeenCalled();
+        });
+
+        it('should return error message if mandetoryMessage is false for board', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: ['english'],
+                    grades: []
+                }
+            } as any;
+            categoryEditPage.supportedProfileAttributes = { gradeLevel: 'sample-gradeLevel' };
+            categoryEditPage.showOnlyMandatoryFields = false;
+            mockCommonUtilService.showToast = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'sample-error-message');
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.supportedProfileAttributes).toBeTruthy();
+            expect(categoryEditPage.showOnlyMandatoryFields).toBeFalsy();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('sample-error-message', false, 'redErrorToast');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CLASS');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'PLEASE_SELECT', 'sample-error-message');
+        });
+
+        it('should invoked submitForm if all required fields is not missing', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: ['english'],
+                    grades: ['class 1']
+                }
+            } as any;
+            jest.spyOn(categoryEditPage, 'submitForm').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            categoryEditPage.onSubmit();
+            // assert
+            expect(categoryEditPage.profileEditForm).toBeTruthy();
+        });
+    });
+
+    describe('enableSubmitButton', () => {
+        it('should disable submit button', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: ['english'],
+                    grades: []
+                }
+            } as any;
+            // act
+            categoryEditPage.enableSubmitButton();
+            // assert
+            expect(categoryEditPage.btnColor).toBe('#8FC4FF');
+        });
+
+        it('should enable submit button', () => {
+            // arrange
+            categoryEditPage.profileEditForm = {
+                value: {
+                    boards: ['cbsc'],
+                    medium: ['english'],
+                    grades: ['class 1']
+                }
+            } as any;
+            // act
+            categoryEditPage.enableSubmitButton();
+            // assert
+            expect(categoryEditPage.btnColor).toBe('#006DE5');
         });
     });
 });
