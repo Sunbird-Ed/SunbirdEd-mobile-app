@@ -1,7 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonContent, ModalController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';

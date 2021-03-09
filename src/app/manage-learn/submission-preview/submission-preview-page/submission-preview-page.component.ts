@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
 import { Network } from '@ionic-native/network/ngx';
-import { AlertController, Events } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService, UtilsService } from '../../core';
 

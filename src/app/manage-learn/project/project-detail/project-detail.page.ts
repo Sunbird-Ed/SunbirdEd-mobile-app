@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
+import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
@@ -104,7 +104,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private modal: ModalController,
     private unnatiService: UnnatiDataService,
     // private iab: InAppBrowser,
-    private event: Events,
     private platform: Platform,
     private http: HttpClient,
     private kendraService: KendraApiService,
