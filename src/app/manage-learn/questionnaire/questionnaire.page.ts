@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, AlertController, Events, IonContent, ModalController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonContent, ModalController } from '@ionic/angular';
 import { LocalStorageService, LoaderService, UtilsService, ToastService } from '../core';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
@@ -9,6 +9,7 @@ import { QuestionMapModalComponent } from './question-map-modal/question-map-mod
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLinks } from '@app/app/app.constant';
 import { Network } from '@ionic-native/network/ngx';
+// import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-questionnaire',
@@ -58,7 +59,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private location: Location,
     // private feedback: FeedbackProvider,
     public actionSheetCtrl: ActionSheetController,
-    private events: Events,
+    // private events: Events,
     private routerParam: ActivatedRoute,
     // private diagnostic: Diagnostic,
     // private translate: TranslateService,
@@ -71,9 +72,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     private router: Router,
     private commonUtilService:CommonUtilService
   ) {
-    this.events.subscribe('network:offline', () => {
-      this.networkAvailable = false;
-    });
     // this.routerParam.params.subscribe((parameters) => {
     //   this.submissionId = parameters.submisssionId;
     //   this.selectedEvidenceIndex = parameters.evidenceIndex;
@@ -94,9 +92,6 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     });
 
     // Online event
-    this.events.subscribe('network:online', () => {
-      this.networkAvailable = true;
-    });
     // this.networkAvailable = this.ngps.getNetworkStatus();
   }
 

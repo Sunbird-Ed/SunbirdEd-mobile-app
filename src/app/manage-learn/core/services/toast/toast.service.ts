@@ -19,8 +19,8 @@ export class ToastService {
       message: msg,
       duration: closeBtn ? 0 : 2000,
       position: 'bottom',
-      closeButtonText: closeBtn,
-      showCloseButton: closeBtn ? true : false
+      // closeButtonText: closeBtn,
+      // showCloseButton: closeBtn ? true : false
     });
 
     toast.present();

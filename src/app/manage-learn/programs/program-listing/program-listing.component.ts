@@ -5,7 +5,7 @@ import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
 import { Subscription } from 'rxjs';
 import {
-    Events, Platform, PopoverController
+     Platform, PopoverController
 } from '@ionic/angular';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { urlConstants } from '../../core/constants/urlConstants';
