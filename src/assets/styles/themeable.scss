@@ -20,6 +20,7 @@ html[data-theme="JOYFUL"]{
   --app-gray:#333333;
   --app-medium-gray:#666666;
   --app-light-gray:#999999;
+  --app-lighter-gray:#cccccc;
 
   --app-brown:#4F2C0D;
   --app-green:#008840;
@@ -1538,7 +1539,7 @@ html[data-theme="JOYFUL"]{
 
   .discussion-forum {
     .reply-btn {
-      background-color: lighten(var(--app-light-gray), 20%);
+      background-color: var(--app-lighter-gray);
     }
   }
 
