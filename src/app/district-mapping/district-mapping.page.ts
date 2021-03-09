@@ -346,8 +346,7 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.profileType) ?
-        this.profile.profileType : ((this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType);
+        config.default = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }

@@ -463,7 +463,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       this.env,
-      this.pageName ? this.pageName : this.layoutName,
+      PageId.VIEW_MORE,
       ContentUtil.getTelemetryObject(content),
       values);
     this.navService.navigateToDetailPage(content, { content });

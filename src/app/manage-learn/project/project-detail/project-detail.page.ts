@@ -368,11 +368,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
+      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
       buttons: [
         {
           text: data["CANCEL"],
@@ -381,7 +381,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: (blah) => { },
         },
         {
-          text: data["FRMELEMNTS_LBL_SUBMIT"],
+          text: data["BTN_SUBMIT"],
           handler: () => {
             type == "task" ? this.deleteTask(id) : this.deleteProject();
           },

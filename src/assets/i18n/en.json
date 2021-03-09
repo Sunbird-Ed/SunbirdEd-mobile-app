@@ -1180,7 +1180,7 @@
   "FRMELEMNTS_LBL_SHARE_TASK": "Share Task",
   "FRMELEMNTS_LBL_SHARE_PROJECT": "Share Project",
   "FRMELEMNTS_LBL_VIEW_MORE": "View More",
-  "FRMELEMNTS_LBL_DELETE_CONFIRMATION": "Are you sure you want to delete your ",
+  "FRMELEMNTS_LBL_DELETE_CONFIRMATION": "Are you sure you want to delete?",
   "FRMELEMNTS_LBL_OBSERVATION": "Observation",
   "FRMELEMNTS_LBL_ADD_ENTITY": "Add Entity",
   "FRMELEMNTS_LBL_CREATE_NEW_PROGRAM": "Create new Program",
@@ -1340,7 +1340,7 @@
   "FRMELEMNTS_LBL_UNDERTAKEN_PROJECTS_IN_QUARTER": "Projects Undertaken this  quater",
   "COPY_TRACE_ID": "Copy trace id",
   "COPY_TRACE_ID_DESC": "Copy trace id for support",
-  "LEADER": "Leader",
+  "LEADER": "Head Teacher & Officials ",
   "FRMELEMNTS_LBL_BLOCK": "Block",
   "FRMELEMNTS_LBL_CLUSTER": "Cluster",
   "FRMELEMNTS_LBL_SCHOOL": "School",
@@ -1370,5 +1370,9 @@
   "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?",
   "FRMELEMNTS_LBL_PROJECT_DESCRIPTION":"Manage and track your school improvements by creating tasks and scheduling them",
   "FRMELEMNTS_LBL_TAB_HOME":"Home",
-  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate"
+  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate",
+  "JOYFULPOPUP_HEADING": "DIKSHA has got a new look & feel",
+  "JOYFUL_LEARNING_TEXT": "For joyful learning, we have redesigned our platform making it easier for you to find content",
+  "JOYFUL_WARNING_TEXT": "If you want to change the theme, go to your menu and switch theme",
+  "LETS_GO": "Let's go"
 }
