@@ -582,12 +582,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information', 'notification']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
 
     this.getCategoryData();
 
@@ -614,7 +614,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.refresher.disabled = false;
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
     this.coachTimeout = setTimeout(() => {
-      this.appGlobalService.showTutorialScreen();
+      this.appGlobalService.showJoyfulPopup();
     }, 2000);
   }
 
@@ -903,9 +903,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       case 'notification':
         this.redirectToNotifications();
         break;
-      case 'information':
-        this.appTutorialScreen();
-        break;
+      // case 'information':
+      //   this.appTutorialScreen();
+      //   break;
       default: console.warn('Use Proper Event name');
     }
   }

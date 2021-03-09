@@ -146,7 +146,7 @@ export class EnrollmentDetailsComponent implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.CONTENT_CLICKED,
             this.env,
-            this.pageName ? this.pageName : this.layoutName,
+            PageId.COURSE_BATCHES,
             telemetryObject,
             values
         );

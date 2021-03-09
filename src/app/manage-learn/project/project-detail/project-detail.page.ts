@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController, AlertController, Platform, Events, ModalController } from '@ionic/angular';
+import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
 import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
@@ -104,7 +104,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private modal: ModalController,
     private unnatiService: UnnatiDataService,
     // private iab: InAppBrowser,
-    private event: Events,
     private platform: Platform,
     private http: HttpClient,
     private kendraService: KendraApiService,
@@ -369,11 +368,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "FRMELEMNTS_LBL_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"] + type + "?",
+      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
       buttons: [
         {
           text: data["CANCEL"],
@@ -382,7 +381,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: (blah) => { },
         },
         {
-          text: data["FRMELEMNTS_LBL_SUBMIT"],
+          text: data["BTN_SUBMIT"],
           handler: () => {
             type == "task" ? this.deleteTask(id) : this.deleteProject();
           },

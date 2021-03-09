@@ -11,7 +11,7 @@ import { LoaderService } from "../../core";
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UtilsService } from '../../core';
 import {
-  Events, Platform, PopoverController
+  Platform, PopoverController
 } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { HttpClient } from '@angular/common/http';
