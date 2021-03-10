@@ -10,7 +10,8 @@ import { ModalController, PopoverController } from '@ionic/angular';
 export class CreateTaskComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
-  today
+  today;
+  
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,

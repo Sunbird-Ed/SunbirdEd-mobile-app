@@ -5,7 +5,7 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService } from "../../core";
 import { UtilsService } from '../../core';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { HttpClient } from '@angular/common/http';
@@ -102,6 +102,23 @@ describe('ProjectListingComponent', () => {
                 expect(mockAppHeaderService.updatePageConfig).toHaveBeenCalled();
                 expect(mockPlatform.backButton).not.toBeUndefined();
                 expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('Re assign project array if no projects is present', (done) => {
+            // arrange
+            mockUtilsService.getProfileInfo = jest.fn(() => Promise.resolve(true));
+            mockUnnatiDataService.post = jest.fn(() => throwError({}));
+            mockLoaderService.startLoader = jest.fn(() => Promise.resolve());
+            mockLoaderService.stopLoader = jest.fn(() => Promise.resolve());
+            // act
+            component.getProjectList();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilsService.getProfileInfo).toHaveBeenCalled();
+                expect(mockUnnatiDataService.post).toHaveBeenCalled();
+                expect(component.projects.length).toBe(0);
                 done();
             }, 0);
         });
