@@ -350,4 +350,17 @@ export class LocalCourseService {
     return assesmentsStatus;
   }
 
+  getTimeRemaining(endtime) {
+    const date = new Date().toString();
+    const total = Date.parse(endtime.toString()) - Date.parse(date);
+    const remainigDay = total / ( 1000 * 60 * 60 * 24);
+    const minutes = Math.floor( (total / 1000 / 60) % 60 );
+    const hours = Math.floor( (total / (1000 * 60 * 60)) % 24 );
+    const days = Math.floor( total / ( 1000 * 60 * 60 * 24) );
+    if (remainigDay <= 2) {
+      return days + ' ' + 'day(s)' + ' ' + hours + 'h' + ' ' + minutes + 'm';
+    }
+    return undefined;
+  }
+
 }
