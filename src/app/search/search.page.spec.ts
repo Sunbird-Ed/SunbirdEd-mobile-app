@@ -200,17 +200,6 @@ describe('SearchPage', () => {
             done();
         }, 0);
     });
-    // });
-
-    it('should hide header on ionview will enter', () => {
-        // arrange
-        spyOn(searchPage, 'handleDeviceBackButton').and.stub();
-        // act
-        searchPage.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.hideHeader).toHaveBeenCalled();
-        expect(searchPage.handleDeviceBackButton).toHaveBeenCalled();
-    });
 
     it('should focus the search bar', (done) => {
         // arrange
@@ -977,6 +966,7 @@ describe('SearchPage', () => {
             ];
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
             mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
+            searchPage.searchFilterConfig = [];
             // act
             searchPage.showFilter();
             // assert
@@ -1033,6 +1023,57 @@ describe('SearchPage', () => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
+            const searchContentResp = {
+                contentDataList: {
+                    identifier: 'id'
+                },
+                filterCriteria: {}
+            };
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
+            window.cordova.plugins = {
+                Keyboard: { close: jest.fn() }
+            };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
+            searchPage.profile = {
+                grade: ['grade1']
+            };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockTelemetryGeneratorService.generateLogEvent = jest.fn();
+            // act
+            searchPage.handleSearch();
+            // assert
+            expect(searchPage.showLoader).toEqual(true);
+            expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(searchPage.searchContentResult).toEqual(searchContentResp.contentDataList);
+                expect(searchPage.isEmptyResult).toBe(false);
+                expect(searchPage.responseData).toEqual(searchContentResp);
+                expect(searchPage.updateFilterIcon).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateLogEvent).toHaveBeenCalledWith(
+                    LogLevel.INFO,
+                    expect.anything(),
+                    Environment.HOME,
+                    ImpressionType.SEARCH,
+                    expect.anything()
+                );
+                done();
+            }, 0);
+        });
+        it('should handle search for preAppliedFilter', (done) => {
+            // arange
+            jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
+            searchPage.preAppliedFilter = {
+                filters: {
+                    status: ['Live'],
+                    objectType: ['Content'],
+                    board: ['cbse'],
+                    medium: ['Hindi', 'English']
+                }
+            };
+            // searchPage.searchKeywords = 'abcd';
             const searchContentResp = {
                 contentDataList: {
                     identifier: 'id'

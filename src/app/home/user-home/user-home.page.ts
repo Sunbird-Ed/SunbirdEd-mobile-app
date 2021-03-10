@@ -344,7 +344,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.showPreferenceInfo = !this.showPreferenceInfo;
   }
 
-  async onViewMorePillList(event, title) {
+  async onViewMorePillList(event, section) {
     if (!event || !event.data) {
       return;
     }
@@ -352,7 +352,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title
+        title: section && section.title,
+        theme: section && section.theme
       },
       backdropDismiss: true,
       showBackdrop: true,
