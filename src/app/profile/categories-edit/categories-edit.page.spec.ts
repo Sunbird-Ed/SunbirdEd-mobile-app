@@ -6,7 +6,7 @@ import {
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
     AppGlobalService,
     CommonUtilService,
@@ -21,9 +21,9 @@ import { ProfileHandler } from '@app/services/profile-handler';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { SharedPreferences } from '@project-sunbird/sunbird-sdk';
-import { PreferenceKey } from '../../app.constant';
+import { PreferenceKey, RouterLinks } from '../../app.constant';
 
 describe('CategoryEditPage', () => {
     let categoryEditPage: CategoriesEditPage;
@@ -246,6 +246,72 @@ describe('CategoryEditPage', () => {
         });
     });
 
+    describe('getLoggedInFrameworkCategory', () => {
+        it('should return error message for board', (done) => {
+            // arrange
+            mockFrameworkService.getChannelDetails = jest.fn(() => of({
+                identifier: 'sample-id',
+                code: 'sample-code'
+            }));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+                name: 'sample-name',
+                identifier: 'sample-id',
+                categories: [{code: 'board', identifier: 'sample-id'}, {code: 'medium', identifier: 'sample-id1'}]
+            }));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
+                name: 'sample-name',
+                identifier: 'sample-id'
+            }]));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Turn on WiFi or mobile data and try again');
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            categoryEditPage.getLoggedInFrameworkCategory();
+            // assert
+            setTimeout(() => {
+                expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Turn on WiFi or mobile data and try again');
+                done();
+            }, 0);
+        });
+
+        it('should return error message for medium', (done) => {
+            // arrange
+            mockFrameworkService.getChannelDetails = jest.fn(() => of({
+                identifier: 'sample-id',
+                code: 'sample-code'
+            }));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of({
+                name: 'sample-name',
+                identifier: 'sample-id',
+                categories: [{code: 'medium', identifier: 'sample-id1'}]
+            }));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{
+                name: 'sample-name',
+                identifier: 'sample-id'
+            }]));
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            // act
+            categoryEditPage.getLoggedInFrameworkCategory();
+            // assert
+            setTimeout(() => {
+                expect(mockFrameworkService.getChannelDetails).toHaveBeenCalled();
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                done();
+            }, 0);
+        });
+    });
+
     describe('ionViewWillEnter', () => {
         it('should subscribe back button for loggedIn User', () => {
             // arrange
@@ -357,6 +423,7 @@ describe('CategoryEditPage', () => {
                 code: 'class1',
                 name: 'Class 1'
             }];
+            categoryEditPage.isBoardAvailable = true;
             mockProfileService.updateServerProfile = jest.fn(() => of({}));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
             mockCommonUtilService.showToast = jest.fn();
@@ -383,6 +450,11 @@ describe('CategoryEditPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
                 expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeTruthy();
+                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
                 expect(categoryEditPage.hasFilledLocation).toBeTruthy();
                 expect(mockRouter.navigate).toHaveBeenCalled();
                 expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
@@ -442,9 +514,256 @@ describe('CategoryEditPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
                 expect(mockEvents.publish).toHaveBeenCalled();
-                expect(categoryEditPage.hasFilledLocation).toBeFalsy();
                 expect(mockTncUpdateHandler.isSSOUser).toHaveBeenCalled();
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeTruthy();
+                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
+                expect(categoryEditPage.hasFilledLocation).toBeFalsy();
                 expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate to TABS if location is filled for getServerProfile catch part', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus'],
+                subjects: ['math']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            categoryEditPage.subjectList = [{
+                code: 'math',
+                name: 'math'
+            }];
+            categoryEditPage.isBoardAvailable = false;
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
+            mockCommonUtilService.showToast = jest.fn();
+            mockEvents.publish = jest.fn(() => []);
+            categoryEditPage.showOnlyMandatoryFields = true;
+            mockProfileService.getServerProfilesDetails = jest.fn(() => throwError({ err: 'server error' }));
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
+            categoryEditPage.hasFilledLocation = true;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            mockExternalIdVerificationService.showExternalIdVerificationPopup = jest.fn(() => Promise.resolve());
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeTruthy();
+                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(categoryEditPage.hasFilledLocation).toBeTruthy();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate to district mapping if location is not updated for getServerProfile catch part', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus'],
+                subjects: ['math']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            categoryEditPage.subjectList = [{
+                code: 'math',
+                name: 'math'
+            }];
+            const navigationExtras: NavigationExtras = {
+                state: {
+                    isShowBackButton: false
+                }
+            }
+            categoryEditPage.isBoardAvailable = false;
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
+            mockCommonUtilService.showToast = jest.fn();
+            mockEvents.publish = jest.fn(() => []);
+            categoryEditPage.showOnlyMandatoryFields = true;
+            mockProfileService.getServerProfilesDetails = jest.fn(() => throwError({ err: 'server error' }));
+            mockContainer.removeAllTabs = jest.fn();
+            mockContainer.addTab = jest.fn();
+            mockFormAndFrameworkUtilService.updateLoggedInUser = jest.fn(() => Promise.resolve());
+            categoryEditPage.hasFilledLocation = false;
+            mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeTruthy();
+                expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalled();
+                expect(mockContainer.removeAllTabs).toHaveBeenCalled();
+                expect(mockContainer.addTab).toHaveBeenCalled();
+                expect(categoryEditPage.hasFilledLocation).toBeFalsy();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+                done();
+            }, 0);
+        });
+
+        it('should navigate to previous page if showOnlyMandatoryFields are empty', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus'],
+                subjects: ['math']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            categoryEditPage.subjectList = [{
+                code: 'math',
+                name: 'math'
+            }];
+            categoryEditPage.isBoardAvailable = false;
+            mockProfileService.updateServerProfile = jest.fn(() => of({}));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
+            mockCommonUtilService.showToast = jest.fn();
+            mockEvents.publish = jest.fn(() => []);
+            categoryEditPage.showOnlyMandatoryFields = false;
+            mockLocation.back = jest.fn();
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated successfully');
+                expect(mockEvents.publish).toHaveBeenCalled();
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeFalsy();
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should failed to update server profiile', (done) => {
+            // arrange
+            const formVal = {
+                boards: ['cbsc'],
+                medium: ['english'],
+                grades: ['class1'],
+                syllabus: ['sample-syllabus'],
+                subjects: ['math']
+            };
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            categoryEditPage.loader = {
+                present: presentFn,
+                dismiss: dismissFn
+            };
+            categoryEditPage.boardList = [{
+                code: 'cbsc',
+                name: 'CBSC'
+            }];
+            categoryEditPage.mediumList = [{
+                code: 'english',
+                name: 'English'
+            }];
+            categoryEditPage.gradeList = [{
+                code: 'class1',
+                name: 'Class 1'
+            }];
+            categoryEditPage.subjectList = [{
+                code: 'math',
+                name: 'math'
+            }];
+            categoryEditPage.isBoardAvailable = false;
+            mockProfileService.updateServerProfile = jest.fn(() => throwError({ err: 'PROFILE_UPDATE_FAILED' }));
+            mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated failed');
+            mockCommonUtilService.showToast = jest.fn();
+            categoryEditPage.showOnlyMandatoryFields = false;
+            mockLocation.back = jest.fn();
+            // act
+            categoryEditPage.submitForm(formVal);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockProfileService.updateServerProfile).toHaveBeenCalled();
+                expect(categoryEditPage.disableSubmitButton).toBeTruthy();
+                expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('PROFILE_UPDATE_FAILED');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('Profile updated failed');
+                expect(categoryEditPage.showOnlyMandatoryFields).toBeFalsy();
                 done();
             }, 0);
         });
@@ -469,7 +788,6 @@ describe('CategoryEditPage', () => {
             // assert
             expect(categoryEditPage.isBoardAvailable).toBeTruthy();
             expect(categoryEditPage.boardSelect).toBeTruthy();
-           // expect(openFn).toHaveBeenCalled();
         });
 
         it('should return error message if mandetoryMessage is false for board', () => {
