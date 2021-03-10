@@ -3,7 +3,7 @@ import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregato
   FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
-import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks } from '../../app.constant';
+import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
 import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
     Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
     CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
@@ -175,14 +175,13 @@ export class AdminHomePage implements OnInit, OnDestroy {
     }
   }
 
-  navigateToViewMoreContentsPage(section, pageName) {
+  navigateToViewMoreContentsPage(section) {
     const params: NavigationExtras = {
       state: {
-        requestParams: {
-          request: section.searchRequest
-        },
+        enrolledCourses: section.data.sections[0].contents,
+        pageName: ViewMore.PAGE_COURSE_ENROLLED,
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
-        pageName
+        userId: this.appGlobalService.getUserId()
       }
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
