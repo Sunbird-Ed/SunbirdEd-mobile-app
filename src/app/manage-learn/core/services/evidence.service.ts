@@ -30,86 +30,93 @@ export class EvidenceService {
     this.evidenceIndex = params.selectedEvidence;
     const selectedECM = this.entityDetails['assessment']['evidences'][this.evidenceIndex];
     let translateObject;
-    this.translate
-      .get([
-        'FRMELEMNTS_LBL_SURVEY_ACTION',
-        'VIEW',
-        'START',
-        'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
-        'CANCEL',
-        'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
-      ])
-      .subscribe(async (translations) => {
-        translateObject = translations;
-        console.log(JSON.stringify(translations));
-        let action = await this.actionSheet.create({
-          header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
-          buttons: [
-            {
-              text: translateObject['START'] + ' ' + type,
-              icon: 'arrow-forward',
-              handler: () => {
-                params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
 
-                this.localStorage.setLocalStorage(
-                  this.utils.getAssessmentLocalStorageKey(this.schoolId),
-                  params.entityDetails
-                );
-                delete params.entityDetails;
-                // this.appCtrl.getRootNav().push('SectionListPage', params);
-                this.router.navigate([RouterLinks.SECTION_LISTING], {
-                  queryParams: {
-                    submisssionId: this.schoolId,
-                    evidenceIndex: this.evidenceIndex,
-                    schoolName: params.name,
-                  },
-                });
+   return new Promise((resolve, reject) => {
+      this.translate
+        .get([
+          'FRMELEMNTS_LBL_SURVEY_ACTION',
+          'VIEW',
+          'START',
+          'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
+          'CANCEL',
+          'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
+        ])
+        .subscribe(async (translations) => {
+          translateObject = translations;
+          console.log(JSON.stringify(translations));
+          let action = await this.actionSheet.create({
+            header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
+            buttons: [
+              {
+                text: translateObject['START'] + ' ' + type,
+                icon: 'arrow-forward',
+                handler: () => {
+                  params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
+
+                  this.localStorage.setLocalStorage(
+                    this.utils.getAssessmentLocalStorageKey(this.schoolId),
+                    params.entityDetails
+                  );
+                  delete params.entityDetails;
+                  // this.appCtrl.getRootNav().push('SectionListPage', params);
+                  // this.router.navigate([RouterLinks.SECTION_LISTING], {
+                  //   queryParams: {
+                  //     submisssionId: this.schoolId,
+                  //     evidenceIndex: this.evidenceIndex,
+                  //     schoolName: params.name,
+                  //   },
+                  // });
+                  resolve('start');
+                  // return action.dismiss('start');
+                },
               },
-            },
-            {
-              text: translateObject['VIEW'] + ' ' + type,
-              icon: 'eye',
-              handler: () => {
-                delete params.entityDetails;
-                // this.appCtrl.getRootNav().push('SectionListPage', params);
-                this.router.navigate([RouterLinks.SECTION_LISTING], {
-                  queryParams: {
-                    submisssionId: this.schoolId,
-                    evidenceIndex: this.evidenceIndex,
-                    schoolName: params.name,
-                  },
-                });
+              {
+                text: translateObject['VIEW'] + ' ' + type,
+                icon: 'eye',
+                handler: () => {
+                  delete params.entityDetails;
+                  // this.appCtrl.getRootNav().push('SectionListPage', params);
+                  // this.router.navigate([RouterLinks.SECTION_LISTING], {
+                  //   queryParams: {
+                  //     submisssionId: this.schoolId,
+                  //     evidenceIndex: this.evidenceIndex,
+                  //     schoolName: params.name,
+                  //   },
+                  // });
+                  resolve('view');
+
+                  // return action.dismiss('view');
+                },
               },
-            },
-            {
-              text: selectedECM.canBeNotApplicable
-                ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
-                : translateObject['CANCEL'],
-              role: !selectedECM.canBeNotApplicable ? 'destructive' : '',
-              icon: selectedECM.canBeNotApplicable ? 'alert' : '',
-              handler: () => {
-                if (selectedECM.canBeNotApplicable) {
-                  this.openAlert(selectedECM);
-                }
+              {
+                text: selectedECM.canBeNotApplicable
+                  ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
+                  : translateObject['CANCEL'],
+                role: !selectedECM.canBeNotApplicable ? 'destructive' : '',
+                icon: selectedECM.canBeNotApplicable ? 'alert' : '',
+                handler: () => {
+                  if (selectedECM.canBeNotApplicable) {
+                    this.openAlert(selectedECM);
+                  }
+                },
               },
+            ],
+          });
+          const notAvailable = {
+            text: translateObject['FRMELEMNTS_LBL_ECM_NOT_ALLOWED'],
+            icon: 'alert',
+            handler: () => {
+              delete params.entityDetails;
+              this.openAlert(selectedECM);
             },
-          ],
+          };
+          if (selectedECM.canBeNotAllowed) {
+            // action.data.buttons.splice(action.data.buttons.length - 1, 0, notAvailable);TODO:need to verify
+            action.buttons.splice(action.buttons.length - 1, 0, notAvailable);
+          }
+          action.present();
         });
-        const notAvailable = {
-          text: translateObject['FRMELEMNTS_LBL_ECM_NOT_ALLOWED'],
-          icon: 'alert',
-          handler: () => {
-            delete params.entityDetails;
-            this.openAlert(selectedECM);
-          },
-        };
-        if (selectedECM.canBeNotAllowed) {
-          // action.data.buttons.splice(action.data.buttons.length - 1, 0, notAvailable);TODO:need to verify
-          action.buttons.splice(action.buttons.length - 1, 0, notAvailable);
-        }
-
-        action.present();
-      });
+    });
   }
 
   async openAlert(selectedECM) {

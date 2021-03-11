@@ -66,6 +66,7 @@
     "@project-sunbird/sunbird-pdf-player-v8": "3.6.0",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
+    "chartjs-plugin-stacked100": "^0.7.1",
     "@project-sunbird/sunbird-sdk": "3.7.10",
     "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
