@@ -1435,7 +1435,8 @@ describe('ResourcesComponent', () => {
         const request = {
             searchCriteria: undefined,
             title: JSON.stringify({en: 'TV Programs'}),
-            data: {sections: [{contents: {}}]}
+            data: {sections: [{contents: {}}]},
+            dataSrc: {type: 'TRACKABLE_COLLECTIONS'}
         };
         mockCommonUtilService.getTranslatedValue = jest.fn(() => 'TV Programs');
         const params = {

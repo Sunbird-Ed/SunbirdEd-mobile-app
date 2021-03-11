@@ -54,7 +54,7 @@ export class ContentAggregatorHandler {
                         }
                     } else if (val.theme.orientation === Orientation.VERTICAL) {
                         for (let i = 0; i < val.data.sections.length; i++) {
-                            if (val.data.sections[i].length && val.data.sections[i].contents && val.data.sections[i].contents.length) {
+                            if (val.data.sections[i].contents && val.data.sections[i].contents.length) {
                                 for (let count = 0; count < val.data.sections[i].contents.length; count++) {
                                     val.data.sections[i].contents[count]['cardImg'] =
                                         this.commonUtilService.getContentImg(val.data.sections[i].contents[count]);
