@@ -28,6 +28,8 @@ import { Location } from '@angular/common';
 import { NavigationService } from '../navigation-handler.service';
 import { ContentPlayerHandler } from '../content/player/content-player-handler';
 import { PageId } from '../telemetry-constants';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
+import { mockDeeplinkConfig } from './splashscreen-deeplink-action-handler-delegate.spec.data';
 
 
 
@@ -61,6 +63,9 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
   const mockLocation: Partial<Location> = {};
   const mockNavigationService: Partial<NavigationService> = {};
   const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+  const mockFormnFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+    getFormFields : jest.fn(() => Promise.resolve([]))
+  };
 
 
   beforeAll(() => {
@@ -89,6 +94,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockLocation as Location,
       mockNavigationService as NavigationService,
       mockContentPlayerHandler as ContentPlayerHandler,
+      mockFormnFrameworkUtilService as FormAndFrameworkUtilService
     );
   });
 
@@ -113,9 +119,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+      mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
-      //assert
+      // assert
       setTimeout(() => {
         expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
         done();
@@ -126,16 +133,17 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       // arrange
       const payload = {
         url: 'https://staging.sunbirded.org/profile'
-      }
+      };
       mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
       mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+      mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
-      //assert
+      // assert
       setTimeout(() => {
         expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
         done();
@@ -163,9 +171,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
         children: { identifier: 'do_212911645382959104166' }
       };
       mockContentService.getContentDetails = jest.fn(() => of(content));
+      mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
-      //assert
+      // assert
       setTimeout(() => {
         expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([{ id: 'asdsd', type: 'ContentId' }]);
@@ -183,18 +192,59 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       // arrange
       const payload = {
         url: 'https://staging.sunbirded.org/explore?medium=Hindi&medium=English&gradeLevel=Class%201&gradeLevel=Class%2010&&&publisher=NCERT&channel=01283607456185548825093&board=CBSE&mediaType=video&selectedTab=textbook'
-      }
+      };
       mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
       mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
       mockSbProgressLoader.show = jest.fn();
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+      mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
-      //assert
+      // assert
       setTimeout(() => {
-        expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
+        expect(mockRouter.navigate).toHaveBeenCalledWith([
+          'search'
+        ],
+        {
+          state: {
+            preAppliedFilter: {
+              filters: {
+                board: [
+                  'CBSE'
+                ],
+                channel: [
+                  '01283607456185548825093'
+                ],
+                gradeLevel: [
+                  'Class 1',
+                  'Class 10'
+                ],
+                medium: [
+                  'Hindi',
+                  'English'
+                ],
+                mimeType: [
+                ],
+                objectType: [
+                  'Content'
+                ],
+                primaryCategory: [
+                  'Digital Textbook',
+                  'eTextbook'
+                ],
+                status: [
+                  'Live'
+                ]
+              },
+              query: ''
+            },
+            source: 'splash'
+          }
+        });
         done();
       }, 0);
     });
@@ -210,9 +260,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       mockSbProgressLoader.hide = jest.fn();
       mockSharedPreferences.getString = jest.fn(() => of('true'));
       mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+      mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
       // act
       splaschreenDeeplinkActionHandlerDelegate.onAction(payload);
-      //assert
+      // assert
       setTimeout(() => {
         expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalledWith(payload.url);
         done();

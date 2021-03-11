@@ -42,4 +42,10 @@ export class FormConstants {
         action: 'get'
     };
 
+    public static  DEEPLINK_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'deeplink',
+        action: 'get'
+    };
+
 }
