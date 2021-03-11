@@ -357,8 +357,14 @@ export class LocalCourseService {
     const minutes = Math.floor( (total / 1000 / 60) % 60 );
     const hours = Math.floor( (total / (1000 * 60 * 60)) % 24 );
     const days = Math.floor( total / ( 1000 * 60 * 60 * 24) );
-    if (remainigDay <= 2) {
+    if (remainigDay <= 2 && remainigDay >= 1) {
       return days + ' ' + 'day(s)' + ' ' + hours + 'h' + ' ' + minutes + 'm';
+    } else if (remainigDay < 1 && remainigDay > 0) {
+       if (hours >= 1) {
+         return hours + 'h' + ' ' + minutes + 'm';
+       } else {
+          return minutes + 'm';
+       }
     }
     return undefined;
   }
