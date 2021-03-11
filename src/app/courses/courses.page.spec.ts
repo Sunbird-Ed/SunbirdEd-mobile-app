@@ -131,7 +131,7 @@ describe('CoursesPage', () => {
     describe('getAggregatorResult', () => {
         it('should return course for loggedIn user', (done) => {
             jest.spyOn(coursesPage, 'spinner').mockImplementation();
-            mockContentAggregatorHandler.aggregate = jest.fn(() => {
+            mockContentAggregatorHandler.newAggregate = jest.fn(() => {
                 Promise.resolve([{
                         orientation: 'horaizontal',
                         section: {
@@ -142,14 +142,14 @@ describe('CoursesPage', () => {
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });
 
         it('should return course for guest user', (done) => {
             jest.spyOn(coursesPage, 'spinner').mockImplementation();
-            mockContentAggregatorHandler.aggregate = jest.fn(() => {
+            mockContentAggregatorHandler.newAggregate = jest.fn(() => {
                 Promise.resolve([{
                         orientation: 'horaizontal',
                         section: {
@@ -160,7 +160,7 @@ describe('CoursesPage', () => {
             // act
             coursesPage.getAggregatorResult();
             setTimeout(() => {
-                expect(mockContentAggregatorHandler.aggregate).toHaveBeenCalled();
+                expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
                 done();
             }, 0);
         });

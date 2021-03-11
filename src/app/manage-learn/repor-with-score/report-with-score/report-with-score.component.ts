@@ -324,7 +324,7 @@ export class ReportWithScoreComponent implements OnInit {
         } else {
           this.toast.openToast(success.message);
         }
-        this.loader.stopLoader();
+        // this.loader.stopLoader();
       },
       (error) => {
         this.error = 'No data found';
@@ -355,7 +355,7 @@ export class ReportWithScoreComponent implements OnInit {
     // );
   }
   downloadSubmissionDoc(fileRemoteUrl) {
-    this.loader.startLoader();
+    // this.loader.startLoader();
     if (this.isIos) {
       this.checkForDowloadDirectory(fileRemoteUrl);
     } else {
