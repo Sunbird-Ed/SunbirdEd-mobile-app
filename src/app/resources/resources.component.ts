@@ -1128,14 +1128,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   }
 
   navigateToViewMoreContentsPage(section) {
-    const params: NavigationExtras = {
-      state: {
+    let navState = {};
+    switch (section.dataSrc.type) {
+      case 'TRACKABLE_COLLECTIONS':
+        navState = {
+          enrolledCourses: section.data.sections[0].contents,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
+          userId: this.appGlobalService.getUserId()
+        };
+        break;
+      case 'CONTENTS':
+      navState = {
         requestParams: {
           request: section.meta && section.meta.searchRequest
         },
         headerTitle: this.commonUtilService.getTranslatedValue(section.title, ''),
         pageName: ViewMore.PAGE_TV_PROGRAMS
-      }
+      };
+      break;
+    }
+    const params: NavigationExtras = {
+      state: navState
     };
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }

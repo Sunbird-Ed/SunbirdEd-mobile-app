@@ -93,7 +93,6 @@
     justify-content: center;
     align-items: center;
     height: 17rem;
-    text-align-last: center;
     &.selected {
       border:3px solid map-get($colors, vived_blue_fe);
     }
