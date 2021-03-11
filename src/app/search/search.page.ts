@@ -174,6 +174,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.userId = extras.userId;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.preAppliedFilter = extras.preAppliedFilter;
+      if (this.preAppliedFilter) {
+        this.searchKeywords = this.preAppliedFilter.query;
+      }
     }
 
     this.checkUserSession();
@@ -888,7 +891,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         medium: contentSearchRequest.medium || [],
         gradeLevel: contentSearchRequest.grade || []
       };
-      searchQuery.request.filters = { ...searchQuery.request.filters, ...profileFilters }
+      searchQuery.request.filters = {
+        ...searchQuery.request.filters,
+        ...profileFilters,
+        board: [...(searchQuery.request.filters.board || []), ...(profileFilters.board || [])],
+        medium: [...(searchQuery.request.filters.medium || []), ...(profileFilters.medium || [])],
+        gradeLevel: [...(searchQuery.request.filters.gradeLevel || []), ...(profileFilters.gradeLevel || [])]
+      };
     }
     this.contentService.searchContent(contentSearchRequest, searchQuery).toPromise()
       .then((response: ContentSearchResult) => {
