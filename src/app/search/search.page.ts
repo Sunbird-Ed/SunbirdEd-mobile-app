@@ -173,6 +173,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.userId = extras.userId;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.preAppliedFilter = extras.preAppliedFilter;
+      if (this.preAppliedFilter) {
+        this.searchKeywords = this.preAppliedFilter.query;
+      }
     }
 
     this.checkUserSession();
