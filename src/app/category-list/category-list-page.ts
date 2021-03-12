@@ -213,7 +213,10 @@ export class CategoryListPage implements OnDestroy {
     }
 
     scrollToSection(id: string) {
-        this.scrollService.scrollTo(id);
+        this.scrollService.scrollTo(id, {
+            block: 'center',
+            behavior: 'smooth'
+        });
     }
 
     async navigateToFilterFormPage() {

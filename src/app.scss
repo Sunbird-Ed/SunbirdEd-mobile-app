@@ -1705,3 +1705,11 @@ sb-library-card-v3 {
     border-radius: 16px;
   }
 }
+
+.sticky-header-pills{
+  sb-pills-grid{
+    .sb-label-grid{
+      margin: 0 !important;
+    }
+  }
+}
