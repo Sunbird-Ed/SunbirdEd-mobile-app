@@ -1,6 +1,6 @@
 <ion-content>
   <form [formGroup]="guestEditForm">
-    <ion-list (ionChange)="onProfileTypeChange()" class="MT6">
+    <ion-list (ionChange)="onProfileTypeChange()" class="MT6" *ngIf="profileTypeList && profileTypeList.length">
       <ion-radio-group formControlName="profileType">
 
         <ion-label class="type-label ion-text-uppercase">
