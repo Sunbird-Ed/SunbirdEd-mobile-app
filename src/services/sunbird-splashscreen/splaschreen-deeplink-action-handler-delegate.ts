@@ -313,11 +313,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     } = {};
     const filters = this.getDefaultFilter(matchedDeeplinkConfig.params);
     const queryParamFilters = {};
-    const params = url.searchParams;
     const urlAttributeList = [];
-    if (matchedDeeplinkConfig.params.query) {
-      request.query = url.searchParams.get(matchedDeeplinkConfig.params.query);
-    }
+    request.query = url.searchParams.get(matchedDeeplinkConfig.params.key) || '';
     url.searchParams.forEach((value, key) => {
       urlAttributeList.push(key);
     });
