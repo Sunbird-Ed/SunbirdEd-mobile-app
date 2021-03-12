@@ -42,4 +42,11 @@ export class FormConstants {
         action: 'get'
     };
 
+    public static  BATCH_END_TIMER: FormRequest = {
+        type: 'config',
+        subType: '',
+        action: 'get',
+        component: 'app'
+    };
+
 }

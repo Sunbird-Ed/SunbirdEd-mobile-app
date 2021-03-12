@@ -774,7 +774,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const currentBatchId = batchId || this.courseCardData.batchId;
     this.courseService.getBatchDetails({ batchId: currentBatchId }).toPromise()
       .then((data: Batch) => {
-        this.zone.run(async () => {
+        this.zone.run(() => {
           if (!data) {
             return;
           }
@@ -784,10 +784,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             this.batchRemaningTimingIntervalRef = undefined;
           }
           if (this.batchDetails.endDate) {
-            this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(this.batchDetails.endDate));
-            this.batchRemaningTimingIntervalRef = setInterval(async () => {
-              this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(this.batchDetails.endDate));
-            }, 1000 * 60);
+            this.batchEndDateStatus(this.batchDetails.endDate);
           }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
@@ -1262,7 +1259,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       };
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
@@ -1592,8 +1589,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
-    
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
       return;
     }
@@ -2295,5 +2292,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.userId = uid;
         this.createUserReq.identifier = uid;
       });
+  }
+
+  async batchEndDateStatus(batchEndDate) {
+    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    this.batchRemaningTimingIntervalRef = setInterval(async () => {
+      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    }, 1000 * 60);
   }
 }
