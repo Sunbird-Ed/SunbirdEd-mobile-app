@@ -23,6 +23,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { ConsentService } from './consent-service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 export interface ConsentPopoverActionsDelegate {
   onConsentPopoverShow(): void;
@@ -48,7 +49,8 @@ export class LocalCourseService {
     private sbProgressLoader: SbProgressLoader,
     private datePipe: DatePipe,
     private categoryKeyTranslator: CategoryKeyTranslator,
-    private consentService: ConsentService
+    private consentService: ConsentService,
+    public formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
   }
 
@@ -350,14 +352,16 @@ export class LocalCourseService {
     return assesmentsStatus;
   }
 
-  getTimeRemaining(endtime) {
+  async getTimeRemaining(endtime) {
     const date = new Date().toString();
     const total = Date.parse(endtime.toString()) - Date.parse(date);
     const remainigDay = total / ( 1000 * 60 * 60 * 24);
     const minutes = Math.floor( (total / 1000 / 60) % 60 );
     const hours = Math.floor( (total / (1000 * 60 * 60)) % 24 );
     const days = Math.floor( total / ( 1000 * 60 * 60 * 24) );
-    if (remainigDay <= 2 && remainigDay >= 1) {
+    // let timerFormConfig = await this.formAndFrameworkUtilService.getBathEndDateTimer();
+    const timerFormConfig = {batchEndDateTimer: 2};
+    if (remainigDay <= timerFormConfig.batchEndDateTimer && remainigDay >= 1) {
       return days + ' ' + 'day(s)' + ' ' + hours + 'h' + ' ' + minutes + 'm';
     } else if (remainigDay < 1 && remainigDay > 0) {
        if (hours >= 1) {

@@ -774,7 +774,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     const currentBatchId = batchId || this.courseCardData.batchId;
     this.courseService.getBatchDetails({ batchId: currentBatchId }).toPromise()
       .then((data: Batch) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           if (!data) {
             return;
           }
@@ -783,10 +783,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
           }
-          this.batchRemaningTime = this.localCourseService.getTimeRemaining(new Date('2021-03-12'));
-          this.batchRemaningTimingIntervalRef = setInterval(() => {
-            this.batchRemaningTime = this.localCourseService.getTimeRemaining(new Date('2021-03-12'));
-          }, 1000 * 60);
+          if (this.batchDetails.endDate) {
+            this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(this.batchDetails.endDate));
+            this.batchRemaningTimingIntervalRef = setInterval(async () => {
+              this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(this.batchDetails.endDate));
+            }, 1000 * 60);
+          }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
             this.isCertifiedCourse = true;
