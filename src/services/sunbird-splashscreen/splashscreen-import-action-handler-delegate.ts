@@ -17,7 +17,8 @@ import {
   ProfileService,
   SunbirdSdk,
   TelemetryErrorRequest,
-  TelemetryService
+  TelemetryService,
+  StorageService
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 
@@ -29,6 +30,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     @Inject('ARCHIVE_SERVICE') private archiveService: ArchiveService,
+    @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private splashscreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private events: Events,
     private commonUtilService: CommonUtilService,
@@ -68,7 +70,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
               takeUntil(
                 this.contentService.importEcar({
                   isChildContent: false,
-                  destinationFolder: cordova.file.externalDataDirectory,
+                  destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
                   sourceFilePath: filePath,
                   correlationData: []
                 }).pipe(
