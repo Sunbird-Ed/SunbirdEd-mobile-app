@@ -28,7 +28,7 @@ cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-3.3.0
-sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.7.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.8.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git
 sunbird-cordova-plugin=https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0
 sunbird-cordova-plugin=https://github.com/subranil/cordova-plugin-inappupdatemanager.git#release-3.7.0

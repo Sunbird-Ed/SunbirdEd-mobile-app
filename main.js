@@ -122,6 +122,11 @@ var formRequestArray = [{
         'type': 'profileConfig',
         'subType': 'default',
         'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'deeplink',
+        'action': 'get'
     }
 
 

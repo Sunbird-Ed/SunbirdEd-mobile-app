@@ -360,8 +360,9 @@ export class LocalCourseService {
     const minutes = Math.floor( (total / 1000 / 60) % 60 );
     const hours = Math.floor( (total / (1000 * 60 * 60)) % 24 );
     const days = Math.floor( total / ( 1000 * 60 * 60 * 24) );
-    const timerFormConfig = await this.formAndFrameworkUtilService.getFormFields(FormConstants.BATCH_END_TIMER);
-    if (remainigDay <= timerFormConfig.batchEndDateTimer) {
+    const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
+    const batchEndTimerConfig =  utilityConfigFields.find((config) => config.code === 'batchEndTimerConfig');
+    if (remainigDay <= Number(batchEndTimerConfig['config']['batchEndDateTimer'])) {
       if (remainigDay >= 1) {
         return days + ' ' + 'day(s)' + ' ' + hours + 'h' + ' ' + minutes + 'm';
       } else if (remainigDay < 1 && remainigDay > 0) {

@@ -929,7 +929,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       searchQuery = updateFilterInSearchQuery(query, undefined, false);
       searchQuery.request.query = this.searchKeywords;
       searchQuery.request.facets = contentSearchRequest.facets;
-      searchQuery.request.mode = contentSearchRequest.mode;
+      if (this.activityTypeData) {
+        searchQuery.request.mode = contentSearchRequest.mode;
+      }
       searchQuery.request.searchType = SearchType.FILTER;
       const profileFilters = {
         board: contentSearchRequest.board || [],

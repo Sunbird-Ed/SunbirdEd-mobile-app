@@ -42,9 +42,15 @@ export class FormConstants {
         action: 'get'
     };
 
-    public static  BATCH_END_TIMER: FormRequest = {
+    public static  DEEPLINK_CONFIG: FormRequest = {
         type: 'config',
-        subType: '',
+        subType: 'deeplink',
+        action: 'get'
+    };
+
+    public static  UTILITY_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'utility',
         action: 'get',
         component: 'app'
     };
