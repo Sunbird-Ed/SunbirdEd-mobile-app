@@ -125,15 +125,14 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library_v2',
+        'subType': 'adminHome',
         'action': 'get',
         'component': 'app'
     },
     {
         'type': 'config',
-        'subType': 'adminHome',
-        'action': 'get',
-        'component': 'app'
+        'subType': 'deeplink',
+        'action': 'get'
     }
 
 
