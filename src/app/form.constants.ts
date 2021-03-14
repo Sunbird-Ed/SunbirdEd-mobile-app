@@ -48,9 +48,9 @@ export class FormConstants {
         action: 'get'
     };
 
-    public static  BATCH_END_TIMER: FormRequest = {
+    public static  UTILITY_CONFIG: FormRequest = {
         type: 'config',
-        subType: '',
+        subType: 'utility',
         action: 'get',
         component: 'app'
     };
