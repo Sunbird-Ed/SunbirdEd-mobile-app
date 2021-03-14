@@ -1152,5 +1152,6 @@
   "DISCUSSION_FORUM_DISABLE_SUCCESS": "Discussion forum disabled successfully",
   "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
   "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?",
-  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate"
+  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate",
+  "BATCH_ENDS_TEXT": "Batch ends in"
 }
