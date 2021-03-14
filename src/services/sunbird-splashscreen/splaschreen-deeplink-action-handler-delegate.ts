@@ -57,6 +57,8 @@ import { NavigationService } from '../navigation-handler.service';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { ContentInfo } from '../content/content-info';
 import { ContentPlayerHandler } from '../content/player/content-player-handler';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
+import { FormConstants } from '@app/app/form.constants';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -102,7 +104,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private sbProgressLoader: SbProgressLoader,
     private location: Location,
     private navService: NavigationService,
-    private contentPlayerHandler: ContentPlayerHandler
+    private contentPlayerHandler: ContentPlayerHandler,
+    private formnFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -144,206 +147,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // TODO: Is supported URL or not.
     // Assumptions priority cannot have value as 0 and two simiar urls should not have same priority level;
 
-    const deepLinkUrlConfig: { name: string, code: string, values: string, route: string, priority?: number, search?: {} }[] = [
-      {
-        name: 'Dialcode parser',
-        code: 'dialcode',
-        values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))',
-        route: 'search'
-      },
-      {
-        name: 'content deatil',
-        code: 'contentDetail',
-        values: '(?:\\/(?:resources\\/play\\/content|play\\/content|play\\/quiz)\\/(?<quizId>\\w+))',
-        route: 'content-details'
-      },
-      {
-        name: 'Textbook detail',
-        code: 'textbookDetail',
-        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+))',
-        route: 'collection-detail-etb',
-        priority: 2
-      },
-      {
-        name: 'Textbook content detail',
-        code: 'textbookContentDetail',
-        values: '(?:\\/play\\/(?:collection)\\/(?<content_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
-        route: 'collection-detail-etb',
-        priority: 1
-      },
-      {
-        name: 'Course Detail',
-        code: 'courseDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+))',
-        route: 'enrolled-course-details',
-        priority: 3
-      },
-      {
-        name: 'Module Detail',
-        code: 'moduleDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+)\\?(?=.*\\bmoduleId\\b=(?<moduleId>([^&]*)).*))',
-        route: 'module-details',
-        priority: 1
-      },
-      {
-        name: 'Course Content Detail',
-        code: 'courseContentDetail',
-        values: '(?:\\/(?:explore-course|learn)\\/course\\/(?<course_id>\\w+)\\?(?=.*\\bcontentId\\b=(?<contentId>([^&]*)).*))',
-        route: 'course-content-details',
-        priority: 2
-      },
-      {
-        name: 'Search Course',
-        code: 'searchCourse',
-        values: '\\/(explore-course|learn)(\\?.*|$)',
-        route: 'search',
-        search: {
-          queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
-          filters: {
-            primaryCategory: ['Course', 'Course Assessment']
-          }
-        },
-        priority: 4
-      },
-      {
-        name: 'Library',
-        code: 'library',
-        values: '\\/(resources|explore)$',
-        route: 'tabs/resources'
-      },
-      {
-        name: 'TakeSurvey',
-        code: 'takeSurvey',
-        values: '\\/manage-learn\\/take-survey\\/(?<survey_id>\\w+)',
-        route: RouterLinks.SURVEY
-      },
-      {
-        name: 'Create Observation',
-        code: 'createObservation',
-        values: '\\/manage-learn\\/create-observation\\/(?<create_observation_id>\\w+)',
-        route: `${RouterLinks.DEEPLINK_REDIRECT}/observationLink`
-      },
-      {
-        name: 'Observation',
-        code: 'observation',
-        values: '\\/manage-learn\\/observation\\/(?<observation_id>\\w+)',
-        route: 'content-details',
-        priority: 6
-      },
-      {
-        name: 'Reports',
-        code: 'report',
-        values: '\\/manage-learn\\/observation\\/reports\\/(?<report_id>\\w+)',
-        route: 'content-details',
-        priority: 5
-      },
-      {
-        name: 'Search Textbook',
-        code: 'searchTextbook',
-        values: '\\/(resources|explore)(\\?.*selectedTab=textbook|$)',
-        route: 'search',
-        search: {
-          queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
-          filters: {
-            primaryCategory: ['Digital Textbook', 'eTextbook']
-          }
-        },
-        priority: 2
-      },
-      {
-        name: 'Search TV Program',
-        code: 'searchTvProgram',
-        values: '\\/(resources|explore)\\?.*selectedTab=tvProgram',
-        route: 'search',
-        search: {
-          queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel'],
-          filters: {
-            primaryCategory: ['TVLesson']
-          }
-        },
-        priority: 2
-      },
-      {
-        name: 'Search',
-        code: 'searchAll',
-        values: '\\/(search\\/Library|explore)\\/1(\\?.*|$)',
-        route: 'search',
-        search: {
-          queryParam: 'key',
-          filterQueryParams: ['medium', 'gradeLevel', 'board', 'subject', 'primaryCategory', 'audience', 'channel', 'mediaType'],
-          filters: {
-            primaryCategory: [
-              'Collection', 'Resource', 'Content Playlist', 'Course', 'Course Assessment', 'Digital Textbook',
-              'eTextbook', 'Explanation Content', 'Learning Resource',
-              'Practice Question Set', 'Teacher Resource',
-              'LessonPlan', 'FocusSpot', 'Learning Outcome Definition',
-              'Curiosity Questions', 'MarkingSchemeRubric', 'ExplanationResource',
-              'ExperientialResource', 'Practice Resource', 'TVLesson'
-            ]
-          },
-          mimeType: [
-            {
-              name: 'all',
-              values: [
-                'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive', 'application/vnd.android.package-archive',
-                'application/vnd.ekstep.content-archive', 'application/vnd.ekstep.content-collection', 'application/vnd.ekstep.plugin-archive',
-                'application/vnd.ekstep.h5p-archive', 'application/epub', 'text/x-url', 'video/x-youtube',
-                'application/octet-stream', 'application/msword', 'application/pdf', 'image/jpeg', 'image/jpg',
-                'image/png', 'image/tiff', 'image/bmp', 'image/gif', 'image/svg+xml',
-                'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm',
-                'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
-              ]
-            },
-            {
-              name: 'video',
-              values: [
-                'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm'
-              ]
-            },
-            {
-              name: 'documents',
-              values: [
-                'application/pdf', 'application/epub', 'application/msword'
-              ]
-            },
-            {
-              name: 'interactive',
-              values: [
-                'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.html-archive'
-              ]
-            },
-            {
-              name: 'audio',
-              values: [
-                'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
-              ]
-            }
-          ]
-        },
-        priority: 1
-      },
-      {
-        name: 'Profile',
-        code: 'profile',
-        values: '\\/(profile)$',
-        route: 'tabs/profile',
-      },
-      {
-        name: 'FAQ',
-        code: 'faq',
-        values: '\\/(faq)$',
-        route: 'faq-help'
-      }
-    ];
+    const deepLinkUrlConfig: { name: string, code: string, pattern: string, route: string, priority?: number, params?: {} }[] =
+        await this.formnFrameworkUtilService.getFormFields(FormConstants.DEEPLINK_CONFIG);
 
-    let matchedDeeplinkConfig: { name: string, code: string, values: string, route: string, priority?: number } = null;
+    let matchedDeeplinkConfig: { name: string, code: string, pattern: string, route: string, priority?: number } = null;
     let urlMatch;
 
     deepLinkUrlConfig.forEach(config => {
-      const urlRegexMatch = payloadUrl.match(new RegExp(config.values));
+      const urlRegexMatch = payloadUrl.match(new RegExp(config.pattern));
       if (!!urlRegexMatch && (!matchedDeeplinkConfig || this.validateDeeplinkPriority(matchedDeeplinkConfig, config))) {
         if (config.code === 'profile' && !this.appGlobalServices.isUserLoggedIn()) {
           config.route = 'tabs/guest-profile';
@@ -388,8 +199,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         // Set onboarding data if available in query params. e.g. channel, role, lang
         await this.setOnboradingData(payloadUrl);
       }
-
-      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig, urlMatch.groups);
+      const attributeConfig = deepLinkUrlConfig.find(config => config.code === 'attributes');
+      this.handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig, attributeConfig.params['attributes'], urlMatch.groups);
     }
   }
 
@@ -397,7 +208,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private validateDeeplinkPriority(matchedDeeplinkConfig, config) {
     return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
       (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-        && config.priority && matchedDeeplinkConfig.priority > config.priority)
+        && config.priority && matchedDeeplinkConfig.priority > config.priority);
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
@@ -490,40 +301,40 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       && this.currentAppVersionCode >= requiredVersionCode);
   }
 
-  private pick(payloadUrl: string, matchedDeeplinkConfig) {
-    if (!matchedDeeplinkConfig.search || !Object.keys(matchedDeeplinkConfig.search).length) {
+  private getRequest(payloadUrl: string, matchedDeeplinkConfig, attributeList) {
+    if (!matchedDeeplinkConfig.params || !Object.keys(matchedDeeplinkConfig.params).length) {
       return undefined;
     }
 
-    const filterQueryParams = matchedDeeplinkConfig.search.filterQueryParams;
     const url = new URL(payloadUrl);
-    let request: {
+    const request: {
       query?: string;
       filters?: {};
     } = {};
-    if (matchedDeeplinkConfig.search.queryParam) {
-      request.query = url.searchParams.get(matchedDeeplinkConfig.search.queryParam);
-    }
-    const filters = matchedDeeplinkConfig.search.filters || {};
+    const filters = this.getDefaultFilter(matchedDeeplinkConfig.params);
     const queryParamFilters = {};
-    filterQueryParams.forEach((queryParam) => {
-      const values = url.searchParams.getAll(queryParam);
-      if (queryParam === 'mediaType') {
-        const mimeType = this.getMiyeTypeByMediaType(matchedDeeplinkConfig.search.mimeType, 'all');
-        if (mimeType && mimeType.length) {
-          queryParamFilters['mimeType'] = mimeType;
-        }
+    const urlAttributeList = [];
+    request.query = url.searchParams.get(matchedDeeplinkConfig.params.key) || '';
+    url.searchParams.forEach((value, key) => {
+      urlAttributeList.push(key);
+    });
+
+    attributeList = attributeList.filter((attribute) =>  urlAttributeList.indexOf(attribute.code) >= 0
+          || urlAttributeList.indexOf(attribute.proxyCode) >= 0);
+    attributeList.forEach((attribute) => {
+      let values ;
+      if (attribute.type === 'Array') {
+         values = url.searchParams.getAll(attribute.proxyCode ? attribute.proxyCode : attribute.code);
+      } else if (attribute.type === 'String') {
+         values = url.searchParams.get(attribute.proxyCode ? attribute.proxyCode : attribute.code);
       }
-      if (values) {
-        if (queryParam === 'mediaType') {
-          values.forEach((v) => {
-            const mimeType = this.getMiyeTypeByMediaType(matchedDeeplinkConfig.search.mimeType, v);
-            if (mimeType && mimeType.length) {
-              queryParamFilters['mimeType'] = mimeType;
-            }
-          });
+
+      if (values && values.length) {
+        if (attribute.filter === 'custom') {
+          queryParamFilters[attribute.code] =
+                  this.getCustomFilterValues(matchedDeeplinkConfig.params, values, attribute);
         } else {
-          queryParamFilters[queryParam] = values;
+          queryParamFilters[attribute.code] = values;
         }
       }
     });
@@ -531,17 +342,37 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return request;
   }
 
-  private getMiyeTypeByMediaType(mimeTypes, name) {
-    const mimeType = mimeTypes.find(m => m.name === name);
-    if (mimeType) {
-      return mimeType.values;
+  private getDefaultFilter(deeplinkParams) {
+    if (!deeplinkParams || !deeplinkParams.data ||  !deeplinkParams.data.length) {
+      return {};
     }
-    else {
-      return [];
-    }
+    const defaultFilter = deeplinkParams.data.filter((param) => param.type === 'default');
+    return defaultFilter.reduce((acc, item) => {
+      acc[item.code] = item.values;
+      return acc;
+    }, {});
   }
 
-  private async upgradeAppPopover(requiredVersionCode) {
+  private getCustomFilterValues(deeplinkParams, values, attribute) {
+    if (!deeplinkParams || !deeplinkParams.data || !deeplinkParams.data.length) {
+      return [];
+    }
+    const customFilterData = deeplinkParams.data.find((param) => param.type === 'custom' && param.code === attribute.code);
+    console.log('deeplinkParams', deeplinkParams);
+    console.log('customFilterData', customFilterData);
+    console.log('attribute', attribute);
+
+    let customFilterOptions = [];
+    if (customFilterData && customFilterData.values) {
+      values.forEach((v) => {
+          const customFilterValues = customFilterData.values.find(m => m.name === v);
+          customFilterOptions = customFilterOptions.concat(customFilterValues ? customFilterValues.options : []);
+      });
+    }
+    return customFilterOptions;
+    }
+
+private async upgradeAppPopover(requiredVersionCode) {
     const packageName = await this.appVersion.getPackageName();
     const playStoreLink = `https://play.google.com/store/apps/details?id=${packageName}`;
     const result: any = {
@@ -698,7 +529,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig, urlMatchGroup) {
+  private async handleNavigation(payloadUrl, identifier, dialCode, matchedDeeplinkConfig, attributeList, urlMatchGroup) {
     const route = matchedDeeplinkConfig.route;
     if (dialCode) {
       this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, payloadUrl);
@@ -720,7 +551,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
     } else {
       let extras = {};
-      const request = this.pick(payloadUrl, matchedDeeplinkConfig);
+      const request = this.getRequest(payloadUrl, matchedDeeplinkConfig, attributeList);
       if (request && (request.query || request.filters && Object.keys(request.filters).length)) {
         extras = {
           state: {
