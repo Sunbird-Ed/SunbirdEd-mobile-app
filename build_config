@@ -35,7 +35,7 @@ cordova-plugin=cordova-plugin-photo-library
 cordova-plugin=cordova-plugin-filechooser
 cordova-plugin=cordova-plugin-filepath
 cordova-plugin=https://github.com/greybax/cordova-plugin-proguard.git
-cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.1.0
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.8.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
