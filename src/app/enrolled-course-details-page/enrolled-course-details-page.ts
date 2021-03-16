@@ -238,6 +238,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     username: '',
     identifier: ''
   };
+  batchRemaningTime: any;
+  private batchRemaningTimingIntervalRef?: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -778,6 +780,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             return;
           }
           this.batchDetails = data;
+          if (this.batchRemaningTimingIntervalRef) {
+            clearInterval(this.batchRemaningTimingIntervalRef);
+            this.batchRemaningTimingIntervalRef = undefined;
+          }
+          if (this.batchDetails.endDate) {
+            this.batchEndDateStatus(this.batchDetails.endDate);
+          }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
             this.isCertifiedCourse = true;
@@ -1251,7 +1260,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       };
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
@@ -1565,6 +1574,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
     this.events.unsubscribe('header:setzIndexToNormal');
     this.events.unsubscribe('header:decreasezIndex');
+    if (this.batchRemaningTimingIntervalRef) {
+      clearInterval(this.batchRemaningTimingIntervalRef);
+      this.batchRemaningTimingIntervalRef = undefined;
+    }
   }
 
   /**
@@ -1577,8 +1590,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
-    
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
       return;
     }
@@ -2280,5 +2293,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.userId = uid;
         this.createUserReq.identifier = uid;
       });
+  }
+
+  async batchEndDateStatus(batchEndDate) {
+    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    this.batchRemaningTimingIntervalRef = setInterval(async () => {
+      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    }, 1000 * 60);
   }
 }

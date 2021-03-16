@@ -1435,24 +1435,27 @@ describe('ResourcesComponent', () => {
     it('should navigate To ViewMoreContentsPage for horizontal section', () => {
         const request = {
             searchCriteria: undefined,
-            title: JSON.stringify({en: 'TV Programs'})
+            title: JSON.stringify({en: 'TV Programs'}),
+            data: {sections: [{contents: {}}]},
+            dataSrc: {type: 'TRACKABLE_COLLECTIONS'}
         };
         mockCommonUtilService.getTranslatedValue = jest.fn(() => 'TV Programs');
         const params = {
             state: {
-              requestParams: {
-                request: request.searchCriteria
-              },
-              headerTitle: 'TV Programs',
-              pageName: ViewMore.PAGE_TV_PROGRAMS
+                enrolledCourses: {},
+                headerTitle: 'TV Programs',
+                pageName: ViewMore.PAGE_COURSE_ENROLLED,
+                userId: 'sample-user'
             }
           };
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        mockAppGlobalService.getUserId = jest.fn(() => 'sample-user');
         // act
         resourcesComponent.navigateToViewMoreContentsPage(request);
         // assert
         expect(mockCommonUtilService.getTranslatedValue).toHaveBeenCalledWith(request.title, '');
         expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.VIEW_MORE_ACTIVITY], params);
+        expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
     });
 
     describe('requestMoreContent()', () => {

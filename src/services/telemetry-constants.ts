@@ -9,7 +9,8 @@ export enum Environment {
     NOTIFICATION = 'notification',
     GROUP = 'group',
     PLAYER = 'player',
-    DISCUSSION = 'discussion'
+    DISCUSSION = 'discussion',
+    FAQ = 'faq'
 }
 
 export enum ErrorCode {
