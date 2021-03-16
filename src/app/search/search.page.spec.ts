@@ -1722,4 +1722,314 @@ describe('SearchPage', () => {
         });
     });
 
+    describe('searchOnFocus()', ()=> {
+        it('should animate the screen and show the search page', () => {
+            // arrange
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            // act
+            searchPage.searchOnFocus();
+            // assert
+            expect(searchPage.enableSearch).toBeTruthy();
+        });
+    })
+
+    describe('handleHeaderEvents()', () => {
+        it('should animate the screen and show the discover page on heaser back button is clicked', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = false;
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(searchPage.enableSearch).toBeFalsy();
+        });
+
+        it('should navigate to previous screen if its from group flow', () => {
+            // arrange
+            mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            searchPage.isFromGroupFlow = true;
+            // act
+            searchPage.handleHeaderEvents({ name: 'back' });
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled();
+        });
+    });
+
+    describe('fetchPrimaryCategoryFilters()', () => {
+        it('should not assign any value to primaryCategoryFilters if the value is already assigned', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = [];
+            // act
+            searchPage.fetchPrimaryCategoryFilters([]);
+            // assert
+            expect(searchPage.primaryCategoryFilters).toEqual([]);
+        });
+
+        it('should not assign any value to primaryCategoryFilters if the value is not assigned and primary category is not present i facetfilters', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = [];
+            const facetFilters = [
+                {
+                    name: 'primaryCategory',
+                    value: [
+                        {
+                            name: 'category1'
+                        },
+                        {
+                            name: 'category2'
+                        },
+                        {
+                            name: 'category3'
+                        }
+                    ]
+                },
+                {
+                    name: 'medium',
+                    value: [
+                        {
+                            name: 'medium1'
+                        },
+                        {
+                            name: 'medium2'
+                        },
+                        {
+                            name: 'medium3'
+                        }
+                    ]
+                }
+            ]
+            // act
+            searchPage.fetchPrimaryCategoryFilters([]);
+            // assert
+            expect(searchPage.primaryCategoryFilters).toEqual([]);
+        });
+
+        it('should assign value to primaryCategoryFilters if the value is not assigned and primary category is present in facetfilters', () => {
+            // arrange
+            searchPage.primaryCategoryFilters = undefined;
+            const facetFilters = [
+                {
+                    name: 'board',
+                    value: [
+                        {
+                            name: 'board1'
+                        },
+                        {
+                            name: 'board2'
+                        }
+                    ]
+                },
+                {
+                    name: 'primaryCategory',
+                    value: [
+                        {
+                            name: 'category1'
+                        },
+                        {
+                            name: 'category2'
+                        }
+                    ]
+                }
+            ]
+            // act
+            searchPage.fetchPrimaryCategoryFilters(facetFilters);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.primaryCategoryFilters).toEqual(facetFilters[1].value);
+            });
+        });
+    });
+
+    describe('handleFilterSelect', () => {
+        it('should terminate the flow if the event has no data', () => {
+            // arrange
+            const event = {};
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should terminate the flow if the initialFilterCriteria does not have the facet primaryCategory', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'value1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'medium'
+                    },
+                    {
+                        name: 'grade'
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should terminate the flow if the primaryCategory values does not have the value of the selected pill', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'value1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should not apply the filter if the primaryCategory values have the same value of the selected pill but its already applied is true', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'category 1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1',
+                                apply: true
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2',
+                                apply: false
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).not.toHaveBeenCalled();
+        });
+
+        it('should apply the filter if the primaryCategory values have the same value of the selected pill', () => {
+            // arrange
+            const event = {
+                data: [
+                    {
+                        name: 'facet 1',
+                        value: {
+                            name: 'category 1'
+                        }
+                    }
+                ]
+            };
+            searchPage.initialFilterCriteria = {
+                facetFilters: [
+                    {
+                        name: 'primaryCategory',
+                        values: [
+                            {
+                                name: 'category 1',
+                                value: 'value 1',
+                                apply: false
+                            },
+                            {
+                                name: 'category 2',
+                                value: 'value 2',
+                                apply: false
+                            }
+                        ]
+                    },
+                    {
+                        name: 'grade',
+                        values: [
+                            {
+                                name: 'grade 1',
+                                value: 'value 1'
+                            },
+                            {
+                                name: 'grade 2',
+                                value: 'value 2'
+                            }
+                        ]
+                    }
+                ]
+            }
+            searchPage.applyFilter = jest.fn();
+            // act
+            searchPage.handleFilterSelect(event);
+            // assert
+            expect(searchPage.applyFilter).toHaveBeenCalled();
+        });
+    });
+
 });

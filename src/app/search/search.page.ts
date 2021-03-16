@@ -1781,7 +1781,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     let primaryCategoryFilterValue = primaryCategoryFilter.values.find(f => {
-      return f.name ===  event.data[0].value.name;
+      return f.name ===  (event.data[0].value && event.data[0].value.name);
     })
     if (!primaryCategoryFilterValue) {
       return

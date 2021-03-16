@@ -1711,5 +1711,9 @@ sb-library-card-v3 {
     .sb-label-grid{
       margin: 0 !important;
     }
+    .sb-label-grid .item:hover{
+      background-color: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
   }
 }
