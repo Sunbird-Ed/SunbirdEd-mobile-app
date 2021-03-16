@@ -34,9 +34,9 @@
       </ion-item>
     </ng-container>
   </ion-item-group>
-   <div margin class="border-radius" *ngIf="currentEvidence?.description">
-    <h2 padding-left>{{'FRMELEMNTS_LBL_DESCRIPTION' | translate}}</h2>
-    <div padding-left padding-right padding-bottom>
+   <div class="border-radius ion-margin" *ngIf="currentEvidence?.description">
+    <h2 class="ion-padding-start">{{'FRMELEMNTS_LBL_DESCRIPTION' | translate}}</h2>
+    <div class="ion-padding-horizontal ion-padding-bottom">
       {{currentEvidence?.description}}
     </div>
   </div>
