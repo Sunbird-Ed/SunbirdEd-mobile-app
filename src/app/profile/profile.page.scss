@@ -410,5 +410,10 @@
       color: map-get($colors, black);
     }
   }
+  .preference-info {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+  }
 
 }

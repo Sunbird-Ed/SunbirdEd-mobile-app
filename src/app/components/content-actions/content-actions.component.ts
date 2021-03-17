@@ -202,6 +202,20 @@ export class ContentActionsComponent {
       });
   }
 
+  async syncCourseProgress() {
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SYNC_PROGRESS_CLICKED,
+      Environment.HOME,
+      this.pageName,
+      ContentUtil.getTelemetryObject(this.content),
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+    this.popOverCtrl.dismiss({ syncProgress: true });
+  }
+
 
   async showToaster(message) {
     const toast = await this.toastCtrl.create({
