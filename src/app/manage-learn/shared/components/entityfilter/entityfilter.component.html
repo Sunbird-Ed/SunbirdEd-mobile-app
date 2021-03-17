@@ -11,7 +11,7 @@
   </ion-list> -->
   <ion-toolbar>
     <!-- <div class="" *ngIf="!isProfileAssignedWithState"> -->
-    <div>
+    <!-- <div>
       <ion-item>
         <ion-label>{{ 'FRMELEMENTS_LBL_SELECTED_STATE' | translate }}</ion-label>
         <ion-select
@@ -27,7 +27,7 @@
           </ion-select-option>
         </ion-select>
       </ion-item>
-    </div>
+    </div> -->
     <!-- <div class="_flex-box searchCard" *ngIf="selectedState || profileMappedState"> -->
     <div class="_flex-box searchCard">
       <ion-searchbar
@@ -79,8 +79,8 @@
   </ion-toolbar> -->
 </ion-header>
 <ion-content padding [ngStyle]="{ 'margin-top': profileMappedState ? '0px' : '50px' }">
-  <div *ngIf="selectedState || profileMappedState">
-    <ion-list *ngIf="selectableList" (ionScroll)="detectBottom()">
+  <div>
+    <ion-list *ngIf="selectableList && selectableList?.length" (ionScroll)="detectBottom()">
       <ng-container *ngFor="let listItem of selectableList">
         <ion-item *ngIf="!listItem.isSelected">
           <ion-label text-wrap>{{ listItem.name }}</ion-label>
@@ -88,7 +88,13 @@
         </ion-item>
       </ng-container>
     </ion-list>
-    <ion-list *ngIf="!selectableList?.length && !loading">
+    <ion-list *ngIf="!selectableList?.length ">
+      hideNotificationhi
+      hi
+      <dfn>FRMELEMNTS_MSG_NO_SCHOOL_FOUNDsdf
+        FRMELEMNTS_MSG_NO_SCHOOL_FOUNDsdfsdf
+        <s>df</s>
+      </dfn>
       <div class="_flex-box _justify-content-center noDataMsg">
         {{ 'FRMELEMNTS_MSG_NO_SCHOOL_FOUND' | translate }}
       </div>
