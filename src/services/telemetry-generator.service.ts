@@ -14,7 +14,8 @@ import {
     TelemetryInterruptRequest,
     DeviceSpecification,
     Actor,
-    AuditState
+    AuditState,
+    TelemetrySummaryRequest
 } from 'sunbird-sdk';
 import {Map} from '../app/telemetryutil';
 import {
@@ -24,7 +25,6 @@ import {
 import {MimeType} from '../app/app.constant';
 import {ContentUtil} from '@app/util/content-util';
 import {SbProgressLoader} from '../services/sb-progress-loader.service';
-import {TelemetrySummaryRequest} from '../../../../IonicWorkspace/sunbird-mobile-sdk/tmp';
 
 @Injectable()
 export class TelemetryGeneratorService {
