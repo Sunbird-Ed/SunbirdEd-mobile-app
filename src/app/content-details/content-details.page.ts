@@ -50,7 +50,7 @@ import {
   LocalCourseService,
   UtilityService,
   TelemetryGeneratorService,
-  CommonUtilService,
+  CommonUtilService, FormAndFrameworkUtilService,
 } from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
@@ -82,6 +82,8 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 import { AddActivityToGroup } from '../my-groups/group.interface';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
+import {FormConstants} from '@app/app/form.constants';
 
 declare const window;
 @Component({
@@ -177,6 +179,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isCourseCertificateShown: boolean;
   pageId = PageId.CONTENT_DETAIL;
   maxAttemptAssessment: any;
+  isCompatibleWithVendorApps = false;
+  appLists: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -211,7 +215,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private sbProgressLoader: SbProgressLoader,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private formFrameworkUtilService: FormAndFrameworkUtilService,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -255,8 +260,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.subscribeEvents();
+    this.appLists = await this.formFrameworkUtilService.getFormFields(FormConstants.VENDOR_APPS_CONFIG);
+    this.appLists = this.appLists.filter((appData) => {
+      if (appData.target.mimeType &&
+          appData.target.mimeType.indexOf(this.cardData.mimeType) !== -1 &&
+          appData.target.primaryCategory &&
+          appData.target.primaryCategory.indexOf(this.cardData.primaryCategory)) {
+        return true;
+      }
+    });
+    if (this.appLists.length) {
+      this.isCompatibleWithVendorApps = true;
+    }
   }
 
   subscribeEvents() {
@@ -1428,6 +1445,25 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       return '';
     }
 
+  }
+
+  async openWithVendorApps() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.OPEN_WITH_PLAYER_CLICKED,
+        Environment.HOME,
+        PageId.CONTENT_DETAIL,
+    );
+    const popoverElement = await this.popoverCtrl.create({
+        component: ShowVendorAppsComponent,
+        componentProps: {
+          content: this.content,
+          appLists: this.appLists
+        },
+        cssClass: 'sb-popover'
+      });
+
+    await popoverElement.present();
   }
 
 }
