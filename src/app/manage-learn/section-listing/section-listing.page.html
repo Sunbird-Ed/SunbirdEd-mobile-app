@@ -10,33 +10,33 @@
       <ion-item (click)="goToQuestioner(i)" *ngIf="section?.questions?.length">
         <div class="d-flex flex-ai-center flex-jc-space-between w-100">
           <div class="d-flex flex-ai-center">
-            <ion-icon name="list-box" class="margin-right mr-5"></ion-icon>
+            <ion-icon name="list" class="margin-right mr-5"></ion-icon>
             <span>
               {{ section?.name }}
             </span>
           </div>
           <span class="float-right" *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
             {{ 'COMPLETED' | translate }}
-            <ion-icon name="checkmark-circle" class="_progressIcon" margin-left> </ion-icon>
+            <ion-icon name="checkmark-circle" class="_progressIcon ion-margin-start"> </ion-icon>
           </span>
           <span class="float-right" *ngIf="!section.progressStatus && !isIos" class="_flex-box">
-            <ion-icon name="arrow-forward" class="_progressIcon" margin-left></ion-icon>
+            <ion-icon name="arrow-forward" class="_progressIcon ion-margin-start"></ion-icon>
           </span>
           <span class="float-right" *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box">
             {{ 'FRMELEMNTS_LBL_IN_PROGRESS' | translate }}
-            <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon>
+            <ion-icon name="contrast" class="_progressIcon ion-margin-start" ></ion-icon>
           </span>
           <span class="float-right" *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
             {{ 'FRMELEMNTS_LBL_SUBMITTTED' | translate }}
-            <ion-icon name="cloud-done" class="_progressIcon" margin-left></ion-icon>
+            <ion-icon name="cloud-done" class="_progressIcon ion-margin-start" ></ion-icon>
           </span>
         </div>
       </ion-item>
     </ng-container>
   </ion-item-group>
-   <div margin class="border-radius" *ngIf="currentEvidence?.description">
-    <h2 padding-left>{{'FRMELEMNTS_LBL_DESCRIPTION' | translate}}</h2>
-    <div padding-left padding-right padding-bottom>
+   <div class="border-radius ion-margin" *ngIf="currentEvidence?.description">
+    <h2 class="ion-padding-start">{{'FRMELEMNTS_LBL_DESCRIPTION' | translate}}</h2>
+    <div class="ion-padding-horizontal ion-padding-bottom">
       {{currentEvidence?.description}}
     </div>
   </div>

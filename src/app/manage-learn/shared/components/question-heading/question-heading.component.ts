@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Events } from '@app/util/events';
+
 @Component({
   selector: 'app-question-heading',
   templateUrl: './question-heading.component.html',

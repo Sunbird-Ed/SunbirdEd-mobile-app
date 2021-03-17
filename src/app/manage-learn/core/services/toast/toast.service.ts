@@ -18,7 +18,7 @@ export class ToastService {
     let toast = await this.toastCtrl.create({
       message: msg,
       duration: closeBtn ? 0 : 2000,
-      position: 'bottom'
+      position: 'bottom',
       // closeButtonText: closeBtn,
       // showCloseButton: closeBtn ? true : false
     });

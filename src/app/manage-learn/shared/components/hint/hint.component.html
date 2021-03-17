@@ -2,11 +2,11 @@
   <ion-navbar color="primary">
     <div class="_flex-box">
       <ion-title text-capitalize>{{ 'FRMELEMENTS_LBL_HINT' | translate }}</ion-title>
-      <ion-icon name="close" isActive="true" class="closeBtn" margin-right float-right (click)="cancel()"></ion-icon>
+      <ion-icon name="close" isActive="true" class="closeBtn ion-margin-end ion-float-right" (click)="cancel()"></ion-icon>
     </div>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding" >
   {{ hint }}
 </ion-content>

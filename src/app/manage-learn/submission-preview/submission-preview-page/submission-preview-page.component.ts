@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services';
+// import { Events } from '@app/util/events';
 import { Network } from '@ionic-native/network/ngx';
 import { AlertController } from '@ionic/angular';
-import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService, UtilsService } from '../../core';
 
@@ -26,7 +26,7 @@ export class SubmissionPreviewPageComponent implements OnInit {
   loaded: boolean = false;
   goBackNum: any;
   constructor(
-    private events: Events,
+    // private events: Events,
     private commonUtils: CommonUtilService,
     private routerParam: ActivatedRoute,
     private localStorage: LocalStorageService,
@@ -36,12 +36,12 @@ export class SubmissionPreviewPageComponent implements OnInit {
     private alertCtrl: AlertController,
     private router: Router
   ) {
-    this.events.subscribe('network:offline', () => {
-      this.networkAvailable = false;
-    });
-    this.events.subscribe('network:online', () => {
-      this.networkAvailable = true;
-    });
+    // this.events.subscribe('network:offline', () => {
+    //   this.networkAvailable = false;
+    // });
+    // this.events.subscribe('network:online', () => {
+    //   this.networkAvailable = true;
+    // });
     // this.networkAvailable = this.commonUtils.getNetworkStatus() //TODO:check workng
     this.networkAvailable = this.commonUtils.networkInfo.isNetworkAvailable;
     this.routerParam.queryParams.subscribe((params) => {
