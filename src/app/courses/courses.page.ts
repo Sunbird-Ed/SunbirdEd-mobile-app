@@ -14,6 +14,7 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import forEach from 'lodash/forEach';
 import { Subscription } from 'rxjs';
 import {
+  CachedItemRequestSourceFrom,
   Content,
   ContentAggregatorRequest, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus,
   ContentSearchCriteria, ContentService,
@@ -758,10 +759,8 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   openEnrolledCourseDetails(event) {
-    const contentIndex = this.getContentIndexOf(this.enrolledCourses, event.data);
     const params = {
       env: 'home',
-      index: contentIndex,
       sectionName: this.inProgressSection,
       pageName: 'course',
       course: event.data,
@@ -773,10 +772,9 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   openCourseDetails(event, section, index) {
-    const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
     const params = {
       env: 'home',
-      index: contentIndex,
+      index,
       sectionName: section.name,
       pageName: 'course',
       course: event.data,
@@ -926,11 +924,6 @@ export class CoursesPage implements OnInit, OnDestroy {
     }
   }
 
-  private getContentIndexOf(contentList, content) {
-    const contentIndex = contentList.findIndex(val => val.identifier === content.identifier);
-    return contentIndex;
-  }
-
   navigateToTextbookPage(items, subject) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
@@ -965,15 +958,8 @@ export class CoursesPage implements OnInit, OnDestroy {
       }
     };
     try {
-      this.dynamicCourses = await this.contentAggregatorHandler.aggregate(request, AggregatorPageType.COURSE);
+      this.dynamicCourses = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.COURSE);
       if (this.dynamicCourses) {
-        this.dynamicCourses.forEach((val) => {
-          if (val.theme && val.theme.orientation === Orientation.HORIZONTAL) {
-            this.enrolledCourses = val.data && val.data.sections && val.data.sections.length && val.data.sections[0].contents;
-          } else if (val.theme && val.theme.orientation === Orientation.VERTICAL) {
-            this.popularAndLatestCourses = val.data && val.data.sections;
-          }
-        });
         this.dynamicCourses = this.contentAggregatorHandler.populateIcons(this.dynamicCourses);
       }
       this.spinner(false);

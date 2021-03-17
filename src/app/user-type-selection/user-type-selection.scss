@@ -92,6 +92,7 @@
     background-color: map-get($colors, white);
     justify-content: center;
     align-items: center;
+    height: 17rem;
     &.selected {
       border:3px solid map-get($colors, vived_blue_fe);
     }

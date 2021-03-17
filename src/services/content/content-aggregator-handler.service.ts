@@ -46,16 +46,19 @@ export class ContentAggregatorHandler {
             if (this.aggregatorResponse && this.aggregatorResponse.result) {
                 this.aggregatorResponse.result.forEach((val) => {
                     val['name'] = this.commonUtilService.getTranslatedValue(val.title, JSON.parse(val.title)['en']);
-                    if (val.orientation === Orientation.HORIZONTAL) {
-                        for (let count = 0; count < val.section.sections[0].contents.length; count++) {
-                            val.section.sections[0].contents[count]['cardImg'] =
-                                this.commonUtilService.getContentImg(val.section.sections[0].contents[count]);
+                    if (val.theme.orientation === Orientation.HORIZONTAL && val.data.sections.length
+                        && val.data.sections[0].contents && val.data.sections[0].contents.length) {
+                        for (let count = 0; count < val.data.sections[0].contents.length; count++) {
+                            val.data.sections[0].contents[count]['cardImg'] =
+                                this.commonUtilService.getContentImg(val.data.sections[0].contents[count]);
                         }
-                    } else if (val.orientation === Orientation.VERTICAL) {
-                        for (let i = 0; i < val.section.sections.length; i++) {
-                            for (let count = 0; count < val.section.sections[i].contents.length; count++) {
-                                val.section.sections[i].contents[count]['cardImg'] =
-                                    this.commonUtilService.getContentImg(val.section.sections[i].contents[count]);
+                    } else if (val.theme.orientation === Orientation.VERTICAL) {
+                        for (let i = 0; i < val.data.sections.length; i++) {
+                            if (val.data.sections[i].contents && val.data.sections[i].contents.length) {
+                                for (let count = 0; count < val.data.sections[i].contents.length; count++) {
+                                    val.data.sections[i].contents[count]['cardImg'] =
+                                        this.commonUtilService.getContentImg(val.data.sections[i].contents[count]);
+                                }
                             }
                         }
                     }
@@ -105,7 +108,8 @@ export class ContentAggregatorHandler {
                 displaySection.data.forEach((element) => {
                     element['icon'] = this.iconMap[element.code];
                 });
-            } else if (displaySection.dataSrc.type === 'TRACKABLE_COLLECTIONS') {
+            } else if (displaySection.dataSrc.type === 'TRACKABLE_COLLECTIONS' &&
+            displaySection.data.sections.length && displaySection.data.sections[0].contents) {
                 displaySection.data.sections[0].contents.forEach((value, index) => {
                     value['cardImg'] = value['courseLogoUrl'] || (value.content && value.content['appIcon']) ||
                     'assets/imgs/ic_launcher.png';

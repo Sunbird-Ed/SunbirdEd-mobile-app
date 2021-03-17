@@ -212,9 +212,11 @@ export class DistrictMappingPage implements OnDestroy {
           this.generateLocationCaptured(false);
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.events.publish('loggedInProfile:update', req);
-          if (this.profile && (this.source === PageId.PROFILE ||
-            this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
+          if (this.profile && (this.source === PageId.GUEST_PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
             this.location.back();
+          } else if (this.profile && this.source === PageId.PROFILE) {
+            this.location.back();
+            this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
           } else {
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
@@ -339,13 +341,14 @@ export class DistrictMappingPage implements OnDestroy {
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
-        config.default = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile.firstName : this.profile.handle;
+        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.firstName) ?
+        this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.profileType) ?
-        this.profile.profileType : ((this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType);
+        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.userType) ?
+        this.profile.serverProfile.userType : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
