@@ -13,7 +13,7 @@
           [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount">
         </progress-bar>
         <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMENTS_BTN_SUBMIT'| translate}}
-          <ion-icon name="arrow-dropup-circle" style="padding: 0 9px;"></ion-icon></ion-button>
+          <ion-icon name="chevron-up-circle" style="padding: 0 9px;"></ion-icon></ion-button>
       </ion-col>
       <ion-col>
         <ion-button  icon-end class="ion-float-right" color="light" (click)="next()"
@@ -21,7 +21,7 @@
           translate}} <ion-icon name="arrow-forward"></ion-icon></ion-button>
         <ion-button  icon-start class="ion-float-right" color="light"
           (click)="next('completed')" *ngIf="isLast">
-          <ion-icon name="filing"></ion-icon>{{'SAVE'| translate}}
+          <ion-icon name="save"></ion-icon>{{'SAVE'| translate}}
         </ion-button>
       </ion-col>
     </ion-row>
