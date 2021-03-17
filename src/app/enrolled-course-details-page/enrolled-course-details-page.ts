@@ -30,7 +30,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest, DiscussionService
+  UnenrollCourseRequest, DiscussionService, LogLevel
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -38,6 +38,7 @@ import {
   CorReleationDataType,
   Environment, ErrorType,
   ImpressionType, InteractSubtype, InteractType,
+  LogType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';
@@ -541,14 +542,48 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.course,
         batchDetails: this.batchDetails,
-        pageName: PageId.COURSE_DETAIL
+        pageName: PageId.COURSE_DETAIL,
+        corRelationList: this.corRelationList,
+        objRollup: this.telemetryObject
       },
     });
     await this.leaveTrainigPopover.present();
     const { data } = await this.leaveTrainigPopover.onDidDismiss();
     if (data && data.unenroll) {
       this.showConfirmAlert();
+    } else if (data && data.syncProgress) {
+      this.syncProgress();
     }
+  }
+
+  async  syncProgress() {
+    const loader = await this.commonUtilService.getLoader();
+    this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_INITIATE);
+    await loader.present();
+    this.courseService.syncCourseProgress({
+      courseId:  this.identifier,
+      userId: this.userId,
+      batchId: this.batchDetails.id
+    }).toPromise()
+      .then(async () => {
+        this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_SUCCESS);
+        await loader.dismiss();
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_SYNC_COURSE_PROGRESS_SUCCESS');
+      }).catch(async () => {
+        await loader.dismiss();
+        this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_FAILED);
+        this.commonUtilService.showToast('ERROR_TECHNICAL_PROBLEM');
+      });
+  }
+
+  private generateLogEvent(message: string) {
+    this.telemetryGeneratorService.generateLogEvent(
+      LogLevel.INFO,
+      message,
+      Environment.COURSE,
+      'api_call',
+      this.corRelationList || []
+    );
   }
 
   async showConfirmAlert() {
