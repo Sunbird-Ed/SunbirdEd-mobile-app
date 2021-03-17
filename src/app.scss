@@ -1587,6 +1587,15 @@ sb-pills-grid{
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
+
+  .sb-box-grid{
+    .img{
+      width: 3.5rem;
+      img {
+        margin-right: 0 !important;
+      }
+    }
+  }
 }
 
 app-user-home{
@@ -1685,5 +1694,15 @@ sb-library-card-v3 {
     top: 150px !important;
     right: 3rem;
     width: 30% !important;
+  }
+}
+
+.sb-new-theme-popup{
+  .popover-content {
+    width: 90vw !important;
+    height: 26rem !important;
+    left: 5% !important;
+    border-radius: 16px;
+    position: initial
   }
 }

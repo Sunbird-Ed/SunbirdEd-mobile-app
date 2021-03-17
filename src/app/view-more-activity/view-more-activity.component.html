@@ -8,7 +8,7 @@
     <div>
       <div class="view-more-course-bg">
         <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
-        <p class="title" *ngIf="pageType === 'popularCourses'">{{title}}</p>
+        <p class="title" *ngIf="pageType === 'popularCourses' || pageType === 'tvPrograms'">{{title}}</p>
         <p *ngIf="searchList && searchList.length" class="count-text">
           {{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
         <ng-container *ngIf="!isLoading">

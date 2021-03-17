@@ -62,6 +62,7 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
 import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { DiscoverComponent } from './discover/discover.page';
 import { AccessDiscussionComponent } from './access-discussion/access-discussion.component';
+import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
 import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 
 @NgModule({
@@ -117,6 +118,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     SbSubjectListPopupComponent,
     DiscoverComponent,
     AccessDiscussionComponent,
+    JoyfulThemePopupComponent,
     ShowVendorAppsComponent
   ],
   imports: [
@@ -171,6 +173,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
+    JoyfulThemePopupComponent,
     ShowVendorAppsComponent
   ],
   exports: [
@@ -223,6 +226,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
+    JoyfulThemePopupComponent
     AccessDiscussionComponent,
     ShowVendorAppsComponent
   ],
