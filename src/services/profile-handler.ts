@@ -28,7 +28,7 @@ export class ProfileHandler {
             userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         }
         const userTypeSpecificConfig = formFields.find(config => config.code === userType);
-        if(!userTypeSpecificConfig){
+        if (!userTypeSpecificConfig) {
             return {};
         }
         let supportedAttribute = userTypeSpecificConfig['attributes']['mandatory'];
