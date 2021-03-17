@@ -33,22 +33,25 @@ export class ProjectListingComponent implements OnInit {
   projects = [];
   filters = [{
     name: 'FRMELEMNTS_LBL_ASSIGNED_TO_ME',
-    parameter: 'assignedToMe'
+    parameter: 'assignedToMe',
+    selected: true
   },
   {
     name: 'FRMELEMNTS_LBL_CREATED_BY_ME',
-    parameter: 'createdByMe'
-  }]
+    parameter: 'createdByMe',
+    selected: false
+  }];
+  selectedFilter = this.filters[0].parameter;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private location: Location,
-    private headerService: AppHeaderService, 
+    private headerService: AppHeaderService,
     private platform: Platform,
     private unnatiService: UnnatiDataService,
     private loader: LoaderService,
-    private db: DbService, 
-    private http: HttpClient, 
+    private db: DbService,
+    private http: HttpClient,
     private utils: UtilsService) { }
 
   ngOnInit() {
@@ -73,13 +76,20 @@ export class ProjectListingComponent implements OnInit {
   // }
   getDataByFilter(parameter) {
     console.log(parameter, "parameter");
+    this.projects = [];
+    this.filters.forEach(element => {
+      element.selected = element.parameter == parameter.parameter ? true : false;
+    });
+    console.log( this.filters," this.filters ");
+    this.selectedFilter = parameter.parameter;
+    this.getProjectList();
   }
   async getProjectList() {
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
     if (payload) {
       const config = {
-        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText,
+        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + this.selectedFilter,
         payload: payload
       }
       this.unnatiService.post(config).subscribe(success => {
@@ -120,7 +130,8 @@ export class ProjectListingComponent implements OnInit {
     this.getProjectList();
   }
   onSearch(e) {
-    this.getProjectList()
+    this.projects =[];
+    this.getProjectList();
   }
 
   createProject() {

@@ -49,8 +49,10 @@ describe('ProjectListingComponent', () => {
     it('Should be intiate Project listing compnent', () => {
         expect(ProjectListingComponent).toBeTruthy();
     })
+
     describe('ionViewWillEnter', () => {
         it('Should return list of projects / projectsList by invoked ionViewWillEnter', (done) => {
+            // arrange 
             mockUtilsService.getProfileInfo = jest.fn(() => Promise.resolve(true));
             mockUnnatiDataService.post = jest.fn(() =>
                 of({
@@ -71,6 +73,7 @@ describe('ProjectListingComponent', () => {
                     },
                 })
             );
+            
             mockAppHeaderService.getDefaultPageConfig = jest.fn(() => ({
                 showHeader: true,
                 showBurgerMenu: true,
@@ -179,4 +182,18 @@ describe('ProjectListingComponent', () => {
             }, 0);
         })
     });
+
+    describe('Loadmore', () => {
+        it('Should load more projects based on limit and page.', (done) => {
+            //arrange
+            component.page = 0;
+            // act
+            component.loadMore();
+            // assert 
+            setTimeout(() => {
+                expect(component.page).toBe(1);
+                done();
+            }, 0);
+        })
+    })
 });

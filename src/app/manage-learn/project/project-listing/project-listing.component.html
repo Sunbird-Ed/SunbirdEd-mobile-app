@@ -5,8 +5,8 @@
   </ion-searchbar>
   <div class="container">
     <div class="scroll_chip" scrollX="true">
-      <ion-chip outline="true" color="primary" *ngFor="let filter of filters">
-        <ion-label (click)="getDataByFilter(filter.parameter)">{{filter.name | translate}}</ion-label>
+      <ion-chip outline="true"  *ngFor="let filter of filters" [color]="filter.selected ? 'primary' : ''">
+        <ion-label (click)="getDataByFilter(filter)">{{filter.name | translate}}</ion-label>
       </ion-chip>
     </div>
   </div>

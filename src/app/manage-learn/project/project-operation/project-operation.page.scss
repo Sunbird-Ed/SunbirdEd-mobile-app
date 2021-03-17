@@ -5,10 +5,11 @@
 }
 
 .skip-button {
+    right: -12%;
+    position: relative;
+    margin-top: 10%;
     text-align: right;
-    margin: -10px 5px;
-    z-index: 9999999;
-    // background: $white-color;
+    margin-bottom: 0px;
 }
 
 .project-title {
@@ -18,10 +19,12 @@
         --padding-start: 0px;
     }
 }
+.resources-link{
+    color:$info-color;
+}
 
 .program-block {
     margin: 30px 0px;
-
     ion-item {
         // border: 1px solid $dark-grey-color;
         border-radius: 6px;
