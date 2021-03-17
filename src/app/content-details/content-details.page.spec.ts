@@ -20,7 +20,7 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService,
-    CourseUtilService,
+    CourseUtilService, FormAndFrameworkUtilService,
     TelemetryGeneratorService,
     UtilityService,
 } from '@app/services';
@@ -122,6 +122,7 @@ describe('ContentDetailsPage', () => {
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockCourseService: Partial<CourseService> = {};
+    const mockFormFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -158,6 +159,7 @@ describe('ContentDetailsPage', () => {
             mockFileTransfer as FileTransfer,
             mockSbProgressLoader as SbProgressLoader,
             mockLocalCourseService as LocalCourseService,
+            mockFormFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
     beforeEach(() => {
@@ -179,13 +181,27 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.getNavParams).toHaveBeenCalled();
     });
 
-    it('should call subscribeEvents when ngOnInit() invoked', () => {
+    it('should call subscribeEvents when ngOnInit() invoked', (done) => {
         // arrange
         spyOn(contentDetailsPage, 'subscribeEvents').and.stub();
+        mockFormFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve([{
+            target: {
+                mimeType: [
+                    'application/pdf'
+                ],
+                primaryCategory: [
+                    'LearningResource'
+                ]
+            }
+        }]));
         // act
         contentDetailsPage.ngOnInit();
         // assert
-        expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(contentDetailsPage.subscribeEvents).toHaveBeenCalled();
+            expect(mockFormFrameworkUtilService.getFormFields).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
     describe('showSwitchUserAlert', () => {
