@@ -30,17 +30,14 @@
                 <ion-icon md="md-share" class="share-icon"></ion-icon>
             </span>
         </p>
-        <div *ngIf="profile?.persona?.name" class="text-center">
-            <div>
-                <span class="bolder">{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
-                <span>{{profile?.persona?.name}}</span>
-            </div>
-        </div>
-        <div *ngIf="profile?.subPersona" class="text-center">
-            <div>
-                <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
-                <span>{{profile?.subPersona}}</span>
-            </div>
+        <div class="school-recent" *ngIf="organisationName">
+            <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
+                <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
+                    (click)="toggleTooltips($event, 'org')">
+                    <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
+                    <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
+                </span>
+            </p>
         </div>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
@@ -62,16 +59,20 @@
             </ion-button>
         </div>
     </div>
-    <div class="school-recent" *ngIf="organisationName">
-        <p class="bolder MB5" style="position: relative; font-size: 1.2rem;">{{organisationName}}
-            <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
-                (click)="toggleTooltips($event, 'org')">
-                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
-                <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
-            </span>
-        </p>
+    <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+   <div *ngIf="profile?.persona" class="school-details text-center">
+    <div *ngIf="profile?.persona?.name" class="text-center">
+        <div>
+            <span class="bolder">{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
+            <span>{{profile?.persona?.name}}</span>
+        </div>
     </div>
-
+    <div *ngIf="profile?.subPersona" class="text-center">
+        <div>
+            <span class="bolder">{{'FRMELEMNTS_LBL_SUBPERSONA' | translate}}: </span>
+            <span>{{profile?.subPersona}}</span>
+        </div>
+    </div>
     <div *ngIf="userLocation" class="location text-center">
         <div *ngIf="userLocation?.school && userLocation?.school?.name && userLocation?.school?.name?.length">
             <span class="bolder">{{'FRMELEMNTS_LBL_SCHOOL' | translate}}: </span>
@@ -109,13 +110,36 @@
                 class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
-
-            <div class="self-declare-btn" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
-                <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
-                    {{'SUBMIT_MY_DETAILS' | translate}}
-                </ion-button>
-            </div>
         </div>
+    </div>
+   </div>
+    <div class="school-details" *ngIf="profile?.framework">
+        <div class="container" *ngIf="profile?.framework?.board">
+            <div>{{'BOARD' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.medium">
+            <div>{{'MEDIUM' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.medium.join(', ')}}</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.gradeLevel">
+            <div>{{'CLASSES' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</div>
+        </div>
+        <div class="container" *ngIf="profile?.framework?.subject">
+            <div>{{'SUBJECTS' | translate }}: </div>
+            <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
+        </div>
+        <div class="container">
+            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
+                {{'EDIT' | translate }}
+            </ion-button>
+        </div>
+    </div>
+    <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
+        <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
+            {{'SUBMIT_MY_DETAILS' | translate}}
+        </ion-button>
     </div>
     <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
         <div *ngIf="profile?.phone">
@@ -170,29 +194,6 @@
                 </span>
                 <span class="value align-middle">{{'ADD_RECOVERY_ACCOUNT' | translate}}</span>
             </div>
-        </div>
-    </div>
-    <div class="school-details" *ngIf="profile?.framework">
-        <div class="container" *ngIf="profile?.framework?.board">
-            <div>{{'BOARD' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.medium">
-            <div>{{'MEDIUM' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.medium.join(', ')}}</div>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.gradeLevel">
-            <div>{{'CLASSES' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.gradeLevel.join(', ')}}</div>
-        </div>
-        <div class="container" *ngIf="profile?.framework?.subject">
-            <div>{{'SUBJECTS' | translate }}: </div>
-            <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
-        </div>
-        <div class="container">
-            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
-                {{'EDIT' | translate }}
-            </ion-button>
         </div>
     </div>
 

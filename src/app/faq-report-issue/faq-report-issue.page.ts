@@ -18,7 +18,9 @@ import {
   FrameworkService,
   TelemetryService,
   TelemetrySyncStat,
-  CorrelationData
+  CorrelationData,
+  LogLevel,
+  LogType
 } from 'sunbird-sdk';
 import {
   Environment,
@@ -342,6 +344,34 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         corRelationList,
         ID.SUBMIT_CLICKED
       );
+
+      const paramsList = [];
+      paramsList.push({ category : this.formValues['category']});
+      paramsList.push({ subcategory : this.formValues['subcategory']});
+      const subCategories = this.formValues.children.subcategory;
+      Object.keys(subCategories).forEach((key) => {
+        const subCategory =  subCategories[key];
+        if (Array.isArray(subCategory)) {
+          const params = {};
+          params[key] = subCategory.map((item) => {
+            return item['name'];
+          });
+          paramsList.push(params);
+        } else if (typeof subCategory === 'object') {
+          const params = {};
+          params[key] = subCategory['name'];
+          paramsList.push(params);
+        } else {
+          const params = {};
+          params[key] = subCategory;
+          paramsList.push(params);
+        }
+      });
+      this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,
+        PageId.FAQ,
+        Environment.FAQ,
+        'system',
+        paramsList);
     }
 
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory &&
@@ -363,6 +393,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       );
     }
     this.syncTelemetry();
+  }
+
+  private generateLogTelemetry(){
+
   }
 
   takeAction(action?: string) {

@@ -784,7 +784,7 @@
   "RESUME": "RESUME",
   "RETRY": "Retry",
   "RETRY_ACTION": "Try again",
-  "ROLE_SELECTOR_QUERY": "You are a",
+  "ROLE_SELECTOR_QUERY": "You are interested in content meant for",
   "SAVE": "Save",
   "SAVED_ON": "Saved on",
   "SAVE_FILE_ON_DEVICE": "Save file on device",
@@ -1152,5 +1152,10 @@
   "DISCUSSION_FORUM_DISABLE_SUCCESS": "Discussion forum disabled successfully",
   "DISCUSSION_FORUM_DISABLE_CONFIRM": "Disable discussion forum?",
   "DISCUSSION_FORUM_DISABLE_CONFIRM_DESC": "Disabling the discussion forum clears all discussions held in the group to date. If you choose to enable discussions for the group again, there will be no past history of the discussions. They will begin afresh. Do you want to continue?",
-  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate"
+  "OFFLINE_CERTIFICATE_MESSAGE": "You need to go online to view certificate",
+  "BATCH_ENDS_TEXT": "Batch ends in",
+  "FRMELEMNTS_LBL_SYNC_COURSE_PROGRESS": "Sync Pogress now",
+  "FRMELEMNTS_MSG_SYNC_COURSE_PROGRESS_SUCCESS": "Progress synced successfully",
+  "CONTENT_PREFERENCE": "Content Preference",
+  "SET_PREFERENCE": "Set your preference"
 }
