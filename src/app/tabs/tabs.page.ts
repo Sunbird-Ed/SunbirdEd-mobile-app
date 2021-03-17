@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventTopics, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGIN_ADMIN_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { PageId } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -9,7 +9,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ContainerService } from '@app/services/container.services';
 import { IonTabs, ToastController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { ProfileService, SharedPreferences } from 'sunbird-sdk';
+import { ProfileService, ProfileType, SharedPreferences } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-tabs',
@@ -65,12 +65,19 @@ export class TabsPage implements OnInit, AfterViewInit {
         }).toPromise();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      initTabs(this.container, LOGIN_TEACHER_TABS);
+      const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+      initTabs(this.container,
+        selectedUserType === ProfileType.ADMIN ? LOGIN_ADMIN_TABS : LOGIN_TEACHER_TABS);
     }
 
     this.tabs = this.container.getAllTabs();
-    this.events.subscribe('UPDATE_TABS', () => {
-      this.tabs = this.container.getAllTabs();
+    this.events.subscribe('UPDATE_TABS', async (data) => {
+      if (data && data.type === 'SWITCH_TABS_USERTYPE') {
+        const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        initTabs(this.container, selectedUserType === ProfileType.ADMIN ? LOGIN_ADMIN_TABS : LOGIN_TEACHER_TABS);
+      } else {
+        this.tabs = this.container.getAllTabs();
+      }
     });
   }
 
