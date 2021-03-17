@@ -70,6 +70,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
   public gradeList: { name: string, code: string }[] = [];
   public subjectList: { name: string, code: string }[] = [];
   public supportedProfileAttributes: { [key: string]: string } = {};
+  public supportedUserTypes: Array<any> = [];
 
   syllabusOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
@@ -174,6 +175,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
       PageId.CREATE_USER
     );
     this.addAttributeSubscription(this.profile.profileType || undefined);
+    this.supportedUserTypes = await this.profileHandler.getSupportedUserTypes();
   }
 
   private async addAttributeSubscription(userType: string) {

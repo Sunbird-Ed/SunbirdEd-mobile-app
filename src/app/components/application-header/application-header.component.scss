@@ -58,7 +58,7 @@ ion-icon {
     }
 
     .managed-user-container {
-        display: flex;
+        display: -webkit-box;
         text-align: center;
 
         .mu-card {

@@ -20,6 +20,7 @@ html[data-theme="JOYFUL"]{
   --app-gray:#333333;
   --app-medium-gray:#666666;
   --app-light-gray:#999999;
+  --app-lighter-gray:#cccccc;
 
   --app-brown:#4F2C0D;
   --app-green:#008840;
@@ -1526,6 +1527,20 @@ html[data-theme="JOYFUL"]{
    color: var(--primary-color) !important;
    font-size: .9rem !important;
    padding: .75em 2.5rem !important;
+  }
+
+  app-district-mapping{
+    .block-button-clear {
+      color: $blue !important;
+    }
+  }
+
+  // DiscussionForum
+
+  .discussion-forum {
+    .reply-btn {
+      background-color: var(--app-lighter-gray);
+    }
   }
 
 }

@@ -2,6 +2,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { animationGrowInTopRight } from '@app/app/animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink-out-top-right';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
+import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -11,7 +12,7 @@ import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
     OAuthSession, Profile, ProfileService, ProfileSession, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
+import { AppThemes, GenericAppConfig, PreferenceKey, ProfileConstants } from '../app/app.constant';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { Environment, ID, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
@@ -855,6 +856,27 @@ export class AppGlobalService implements OnDestroy {
                 tutorialPopover.present();
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
+        }
+    }
+
+    async showJoyfulPopup() {
+        if (this.skipCoachScreenForDeeplink) {
+            this.skipCoachScreenForDeeplink = false;
+        } else {
+            const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED).toPromise();
+            if (!isPopupDisplayed) {
+            const appLabel = await this.appVersion.getAppName();
+            const newThemePopover = await this.popoverCtrl.create({
+                component: JoyfulThemePopupComponent,
+                componentProps: {appLabel},
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'sb-new-theme-popup'
+            });
+            newThemePopover.present();
+            this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+            }
+            this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
         }
     }
 
