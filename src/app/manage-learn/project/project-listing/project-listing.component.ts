@@ -75,12 +75,10 @@ export class ProjectListingComponent implements OnInit {
   //   });
   // }
   getDataByFilter(parameter) {
-    console.log(parameter, "parameter");
     this.projects = [];
     this.filters.forEach(element => {
       element.selected = element.parameter == parameter.parameter ? true : false;
     });
-    console.log( this.filters," this.filters ");
     this.selectedFilter = parameter.parameter;
     this.getProjectList();
   }
@@ -122,7 +120,13 @@ export class ProjectListingComponent implements OnInit {
   }
 
   selectedProgram(id, project) {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, id, project.programId, project.solutionId]);
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`],{
+      queryParams: {
+        projectId: id,
+        programId: project.programId,
+        solutionId: project.solutionId
+      }
+    });
   }
 
   loadMore() {
@@ -130,7 +134,7 @@ export class ProjectListingComponent implements OnInit {
     this.getProjectList();
   }
   onSearch(e) {
-    this.projects =[];
+    this.projects = [];
     this.getProjectList();
   }
 

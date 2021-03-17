@@ -35,6 +35,7 @@ export class ProjectOperationPage implements OnInit {
 
   selectedProgram;
   selectedResources;
+  showSkip: boolean;
   today: any = new Date();
   currentYear = new Date().getFullYear();
   endDateMin: any = this.currentYear - 2;
@@ -72,8 +73,10 @@ export class ProjectOperationPage implements OnInit {
       if (params && params.availableInLocal) {
         if (params.isEdit) {
           this.button = 'FRMELEMNTS_BTN_SAVE_EDITS';
+          this.showSkip = false;
         } else if (params.isCreate) {
-          this.button = 'FRMELEMNTS_BTN_CREATE_PROJECT';
+          this.button = 'FRMELEMNTS_BTN_VIEW_PROJECT';
+          this.showSkip = true;
         }
         this.showLearningResources = true;
         this.showRatings = false;
@@ -255,7 +258,11 @@ export class ProjectOperationPage implements OnInit {
   }
 
   resetEndDate(event) {
-    if (event.detail && event.detail.value) {
+    console.log(event.detail.value, "event.detail.value");
+    console.log(this.template.endDate, "this.template.endDate");
+    if (event.detail && event.detail.value && (event.detail.value != this.template.endDate)) {
+      console.log('in if');
+      event.detail.value = this.template.endDate;
       this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
       this.template.endDate = this.template.endDate ? '' : '';
     }
@@ -316,7 +323,7 @@ export class ProjectOperationPage implements OnInit {
       this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
     }
     this.template.learningResources = this.selectedResources;
-    this.button == 'FRMELEMNTS_BTN_CREATE_PROJECT' ? this.newProjectCreate() : this.update(this.template);
+    this.button == 'FRMELEMNTS_BTN_VIEW_PROJECT' ? this.newProjectCreate() : this.update(this.template);
   }
 
   newProjectCreate() {
@@ -329,11 +336,13 @@ export class ProjectOperationPage implements OnInit {
       payload: this.template
     }
     this.unnatiDataService.post(config).subscribe(data => {
-      this.loaderService.stopLoader();
+      this.template.isNew = false;
+      this.template.isEdit = false;
       this.db.delete(id, this.template._rev).then(res => {
         this.template._id = data.result.projectId;
         this.template.programId = data.result.programId;
         delete this.template._rev;
+        this.loaderService.stopLoader();
         this.db
           .create(this.template)
           .then((success) => {
@@ -342,6 +351,7 @@ export class ProjectOperationPage implements OnInit {
           .catch((error) => {
           });
       }).catch((error) => {
+        this.loaderService.stopLoader();
       });
     }, error => {
       this.loaderService.stopLoader();

@@ -276,7 +276,8 @@ export class CreateProjectPage implements OnInit {
         }
       });
       this.projectForm.value.categories = this.selectedCategories;
-      this.parameters ? this.update(this.projectForm.value) : this.saveData(this.projectForm.value);
+      this.parameters ? this.update(this.projectForm.value) :
+        this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMENTS_BTN_BACK', 'FRMELEMNTS_LBL_CONTINUE');
     } else {
       this.translate.get(['FRMELEMNTS_MSG_REQUIRED_FIELDS']).subscribe((data) => {
         this.toast.showMessage(data['FRMELEMNTS_MSG_REQUIRED_FIELDS'], 'danger');
@@ -317,9 +318,12 @@ export class CreateProjectPage implements OnInit {
       this.db
         .create(modifiedData)
         .then((success) => {
-          console.log(success, "successss");
           this.projectId = success.id;
-          this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMENTS_BTN_BACK', 'FRMELEMNTS_LBL_CONTINUE');
+          this.ngZone.run(() =>
+            this.router.navigate([`${RouterLinks.PROJECT_OPERATION_PAGE}`, this.projectId], {
+              queryParams: { availableInLocal: true, isCreate: true }, replaceUrl: true,
+            })
+          );
         })
         .catch((error) => { });
     } else {
@@ -366,11 +370,7 @@ export class CreateProjectPage implements OnInit {
           text: texts[button1],
           cssClass: 'secondary',
           handler: () => {
-            this.ngZone.run(() =>
-              this.router.navigate([`${RouterLinks.PROJECT_OPERATION_PAGE}`, this.projectId], {
-                queryParams: { availableInLocal: true, isCreate: true }, replaceUrl: true,
-              })
-            );
+            this.saveData(this.projectForm.value)
           }
         }
       ]

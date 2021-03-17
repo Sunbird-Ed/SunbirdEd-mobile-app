@@ -4,7 +4,7 @@
       <ion-icon slot="start" name="close"></ion-icon>
     </ion-button>
   </ion-buttons>
-  <ion-buttons slot="end" (click)="createProject()">
+  <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
     <ion-button>
       <ion-icon slot="end" name="skip-forward"></ion-icon>
     </ion-button>
@@ -33,7 +33,7 @@
 
           <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"
             display-timezone="utc" value={{today}} [(ngModel)]="template.startDate" class="project-date"
-            placeholder={{today}} (ionChange)="resetEndDate($event)">
+            placeholder={{today}} (click)="resetEndDate($event)">
           </ion-datetime>
 
           <ion-icon name="caret-down" slot="end"></ion-icon>
