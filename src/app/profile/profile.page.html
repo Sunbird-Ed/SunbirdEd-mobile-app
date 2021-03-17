@@ -59,8 +59,9 @@
             </ion-button>
         </div>
     </div>
-    <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
    <div *ngIf="profile?.persona" class="school-details text-center">
+    <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
+    <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
         <div>
             <span class="bolder">{{'FRMELEMNTS_LBL_PERSONA' | translate}}: </span>
@@ -112,8 +113,8 @@
             </ion-button>
         </div>
     </div>
-   </div>
-    <div class="school-details" *ngIf="profile?.framework">
+    </div>
+    <div class="framework-block" *ngIf="profile?.framework">
         <div class="container" *ngIf="profile?.framework?.board">
             <div>{{'BOARD' | translate }}: </div>
             <div class="bolder">{{profile?.framework?.board.join(', ') | aliased}} &lrm;</div>
@@ -136,6 +137,7 @@
             </ion-button>
         </div>
     </div>
+   </div>
     <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
         <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
             {{'SUBMIT_MY_DETAILS' | translate}}
