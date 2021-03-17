@@ -239,7 +239,7 @@ export class UtilityService {
 
     checkAvailableAppList(packageIds: Array<string>): Promise<{[packageId: string]: boolean}> {
         return new Promise((resolve, reject) => {
-            sbutility.getAvailableAppLists(packageIds, (data) => {
+            sbutility.getAppAvailabilityStatus(packageIds, (data) => {
                 resolve(data);
             }, err => {
                 reject(err);
