@@ -87,7 +87,9 @@ describe('LoginHandlerService', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getCurrentUser: jest.fn()
     };
-    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {
+        hide: jest.fn()
+    };
 
     beforeAll(() => {
         loginHandlerService = new LoginHandlerService(
