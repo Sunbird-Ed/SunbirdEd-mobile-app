@@ -15,7 +15,6 @@ import { DbService } from '../../core/services/db.service';
 import { LoaderService, ToastService } from '../../core';
 import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
@@ -23,6 +22,8 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { CreateTaskFormComponent } from '../../shared';
+
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -80,7 +81,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     pageTitle: '',
     actionButtons: [] as string[]
   };
-
   isNotSynced: boolean;
   locationChangeTriggered: boolean = false;
   allStrings;
@@ -112,7 +112,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private navigateService: NavigationService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
-    params.params.subscribe((parameters) => {
+    params.queryParams.subscribe((parameters) => {
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -125,8 +125,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       });
 
     this.platform.resume.subscribe((result) => {
-      console.log("Platform Resume Event");
-      this.getProjectTaskStatus()
+      this.getProjectTaskStatus();
     });
   }
 
@@ -509,7 +508,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   async addTask() {
     const modal = await this.modal.create({
-      component: CreateTaskComponent,
+      component: CreateTaskFormComponent,
       cssClass: "create-task-modal",
     });
     modal.onDidDismiss().then((data) => {
@@ -583,14 +582,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     };
     this.unnatiService.post(config).subscribe(
       (success) => {
-        console.log(success);
         if (!success.result) {
           return;
         }
         this.updateAssessmentStatus(success.result);
       },
       (error) => {
-        console.log(error);
       }
     );
   }

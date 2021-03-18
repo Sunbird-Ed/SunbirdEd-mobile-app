@@ -42,6 +42,7 @@ export const urlConstants = {
     PROFILE_INFO: 'v1/users/getProfile',
     SYNC_PROJECT: 'v1/userProjects/sync/',
     CREATE_PROJECT_DOC: 'v1/userProjects/create',
+    CREATE_PROJECT :'v1/userProjects/add',
     GET_IMAGE_UPLOAD_URLS: 'v1/userProjects/getFileUploadUrl',
     START_ASSESSMENT: 'v1/userProjects/solutionDetails/',
     PROJCET_TASK_STATUS: 'v1/userProjects/tasksStatus/',

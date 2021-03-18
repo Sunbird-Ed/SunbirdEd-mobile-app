@@ -28,7 +28,7 @@ const routes: Routes = [
     component: ProjectListingComponent
   },
   {
-    path: `${RouterLinks.DETAILS}/:projectId/:programId/:solutionId`,
+    path: `${RouterLinks.DETAILS}`,
     component: ProjectDetailPage
   },
   {

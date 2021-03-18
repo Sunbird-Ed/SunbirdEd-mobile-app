@@ -13,7 +13,10 @@ import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
-
+import { UnnatiDataService } from '../../core/services/unnati-data.service';
+import { LoaderService } from '../../core';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { RouterLinks } from '@app/app/app.constant';
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -28,9 +31,11 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ProjectOperationPage implements OnInit {
   button = 'FRMELEMNTS_BTN_IMPORT_PROJECT';
+  private _appHeaderSubscription?: Subscription;
 
   selectedProgram;
   selectedResources;
+  showSkip: boolean;
   today: any = new Date();
   currentYear = new Date().getFullYear();
   endDateMin: any = this.currentYear - 2;
@@ -49,6 +54,7 @@ export class ProjectOperationPage implements OnInit {
   };
   constructor(
     private routerparam: ActivatedRoute,
+    private router: Router,
     private modalController: ModalController,
     private http: HttpClient,
     private utils: UtilsService,
@@ -57,12 +63,22 @@ export class ProjectOperationPage implements OnInit {
     private platform: Platform,
     private db: DbService,
     private translate: TranslateService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private unnatiDataService: UnnatiDataService,
+    private loaderService: LoaderService
   ) {
+    this.routerparam.params.subscribe(data => {
+      this.projectId = data.id;
+    })
     this.routerparam.queryParams.subscribe((params) => {
-      console.log(params, "params")
       if (params && params.availableInLocal) {
-        this.button = params.isEdit ? 'FRMELEMNTS_BTN_SAVE_EDITS' : 'FRMELEMNTS_BTN_CREATE_PROJECT'
+        if (params.isEdit) {
+          this.button = 'FRMELEMNTS_BTN_SAVE_EDITS';
+          this.showSkip = false;
+        } else if (params.isCreate) {
+          this.button = 'FRMELEMNTS_BTN_VIEW_PROJECT';
+          this.showSkip = true;
+        }
         this.showLearningResources = true;
         this.showRatings = false;
         this.getProjectFromLocal(this.projectId);
@@ -71,25 +87,31 @@ export class ProjectOperationPage implements OnInit {
         // this.networkService.isNetworkAvailable ? this.getTemplate(this.projectId) : this.toast.showMessage('MESSAGEs.OFFLINE', 'danger');
       }
     });
-    this.routerparam.params.subscribe(data => {
-      this.projectId = data.id;
-    })
+
   }
 
   ngOnInit() { }
   ionViewWillEnter() {
+    this.initApp();
     let data;
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
-      console.log(data, "data 81");
     });
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
-    this.headerConfig.showHeader = true;
+    this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this.headerConfig);
     this.handleBackButton();
+  }
+
+  initApp() {
+    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      if (eventName.name === 'skip') {
+        this.createProject();
+      }
+    });
   }
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
@@ -97,11 +119,43 @@ export class ProjectOperationPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
+  async confirmToClose() {
+    let text;
+    this.translate
+      .get([
+        'FRMELEMNTS_LBL_DISCARD_PROJECT',
+        'FRMELEMNTS_MSG_DISCARD_PROJECT',
+        'FRMELEMNTS_BTN_DISCARD',
+        'FRMELEMNTS_BTN_CONTINUE',
+      ])
+      .subscribe((data) => {
+        text = data;
+      });
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
+      message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
+      buttons: [
+        {
+          text: text['FRMELEMNTS_BTN_DISCARD'],
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            this.location.back();
+          },
+        },
+        {
+          text: text['FRMELEMNTS_BTN_CONTINUE'],
+          handler: () => { },
+        },
+      ],
+    });
+    await alert.present();
+  }
 
   getProjectFromLocal(projectId) {
     this.db.query({ _id: projectId }).then(success => {
       this.template = success.docs[0];
-      console.log(this.template, "this.template");
       if (this.template.entityName) {
         this.selectedEntity = {
           name: this.template.entityName ? this.template.entityName : '',
@@ -122,7 +176,6 @@ export class ProjectOperationPage implements OnInit {
   }
 
   async openSearchModel(type, url?) {
-
     const modal = await this.modalController.create({
       component: AddProgramsComponent,
       componentProps: {
@@ -206,7 +259,11 @@ export class ProjectOperationPage implements OnInit {
   }
 
   resetEndDate(event) {
-    if (event.detail && event.detail.value) {
+    console.log(event.detail.value, "event.detail.value");
+    console.log(this.template.endDate, "this.template.endDate");
+    if (event.detail && event.detail.value && (event.detail.value != this.template.endDate)) {
+      console.log('in if');
+      event.detail.value = this.template.endDate;
       this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
       this.template.endDate = this.template.endDate ? '' : '';
     }
@@ -225,8 +282,6 @@ export class ProjectOperationPage implements OnInit {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
-
-    // this.db.createPouchDB(environment.db.projects);
     data.isEdit = true;
     data.isDeleted = false;
     this.db.update(data).then(success => {
@@ -235,12 +290,13 @@ export class ProjectOperationPage implements OnInit {
     })
   }
 
-  async createProjectModal(data, header, button) {
+
+
+  async createProjectModal(project, header, button, isNew?) {
     let texts;
     this.translate.get([header, button]).subscribe(data => {
       texts = data;
     })
-    let programName = data.programInformation ? data.programInformation.name : '';
     this.viewProjectAlert = await this.alertController.create({
       cssClass: 'my-custom-class',
       subHeader: texts[header],
@@ -250,7 +306,13 @@ export class ProjectOperationPage implements OnInit {
           text: texts[button],
           cssClass: 'secondary',
           handler: (blah) => {
-            this.location.back();
+            isNew ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+              queryParams: {
+                projectId: project._id,
+                programId: project.programId,
+                solutionId: project.solutionId
+              }, replaceUrl: true,
+            }) : this.location.back();
           }
         }
       ]
@@ -268,7 +330,39 @@ export class ProjectOperationPage implements OnInit {
       this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
     }
     this.template.learningResources = this.selectedResources;
-    this.update(this.template);
+    this.button == 'FRMELEMNTS_BTN_VIEW_PROJECT' ? this.newProjectCreate() : this.update(this.template);
+  }
+
+  newProjectCreate() {
+    this.loaderService.startLoader();
+    let id = this.template._id;;
+    this.template.isDeleted = false;
+    delete this.template._id;
+    const config = {
+      url: urlConstants.API_URLS.CREATE_PROJECT,
+      payload: this.template
+    }
+    this.unnatiDataService.post(config).subscribe(data => {
+      this.template.isNew = false;
+      this.template.isEdit = false;
+      this.db.delete(id, this.template._rev).then(res => {
+        this.template._id = data.result.projectId;
+        this.template.programId = data.result.programId;
+        delete this.template._rev;
+        this.loaderService.stopLoader();
+        this.db
+          .create(this.template)
+          .then((success) => {
+            this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true);
+          })
+          .catch((error) => {
+          });
+      }).catch((error) => {
+        this.loaderService.stopLoader();
+      });
+    }, error => {
+      this.loaderService.stopLoader();
+    })
   }
 }
 

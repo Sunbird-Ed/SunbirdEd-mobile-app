@@ -25,7 +25,8 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
-  ChartComponent
+  ChartComponent,
+  CreateTaskFormComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -102,6 +103,7 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
+    CreateTaskFormComponent,
     HintComponent,
   ],
 
@@ -147,7 +149,8 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     SurveyMsgComponent,
     ChartComponent,
     HintComponent,
-    ChartsModule
+    ChartsModule,
+    CreateTaskFormComponent
   ],
   providers: [
     Camera,
@@ -178,7 +181,8 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     ViewDetailComponent,
     StateModalComponent,
     HintComponent,
-    SurveyMsgComponent
+    SurveyMsgComponent,
+    CreateTaskFormComponent
   ],
 })
 export class SharedModule {}
