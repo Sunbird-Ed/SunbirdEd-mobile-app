@@ -61,6 +61,8 @@ import {
 import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/copy-trace-id-popup.component';
 import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { DiscoverComponent } from './discover/discover.page';
+import { AccessDiscussionComponent } from './access-discussion/access-discussion.component';
+import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +115,9 @@ import { DiscoverComponent } from './discover/discover.page';
     ProfileNameConfirmationPopoverComponent,
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
-    DiscoverComponent
+    DiscoverComponent,
+    AccessDiscussionComponent,
+    JoyfulThemePopupComponent
   ],
   imports: [
     CommonModule,
@@ -166,7 +170,8 @@ import { DiscoverComponent } from './discover/discover.page';
     ProfileNameConfirmationPopoverComponent,
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
-    DiscoverComponent
+    DiscoverComponent,
+    JoyfulThemePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -217,7 +222,9 @@ import { DiscoverComponent } from './discover/discover.page';
     ProfileNameConfirmationPopoverComponent,
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
-    DiscoverComponent
+    DiscoverComponent,
+    AccessDiscussionComponent,
+    JoyfulThemePopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

@@ -38,7 +38,8 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { Events, IonContent as ContentView, PopoverController } from '@ionic/angular';
+import { IonContent as ContentView, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
@@ -76,6 +77,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   ShowMoreViewType = ShowMoreViewType;
   PillsMultiRow = PillsMultiRow;
   audienceFilter = [];
+  newThemeTimeout: any;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -324,6 +326,19 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+  }
+
+  ionViewDidLeave() {
+    if (this.newThemeTimeout && this.newThemeTimeout.clearTimeout) {
+      this.newThemeTimeout.clearTimeout();
+    }
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the newTheme screen and for the newTheme screen to hide if user comes from deeplink.
+    this.newThemeTimeout = setTimeout(() => {
+      this.appGlobalService.showJoyfulPopup();
+    }, 2000);
   }
 
   viewPreferenceInfo() {

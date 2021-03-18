@@ -16,7 +16,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import {
   Batch, Content,
@@ -462,7 +463,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       this.env,
-      this.pageName ? this.pageName : this.layoutName,
+      PageId.VIEW_MORE,
       ContentUtil.getTelemetryObject(content),
       values);
     this.navService.navigateToDetailPage(content, { content });

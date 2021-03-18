@@ -921,7 +921,7 @@ ion-split-pane {
     --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
-    width: 36% !important;
+    width: 45% !important;
     .list-md {
       padding-top: 0px !important;
       padding-bottom: 0px !important;
@@ -1815,5 +1815,14 @@ sb-library-card-v3 {
     top: 150px !important;
     right: 3rem;
     width: 30% !important;
+  }
+}
+
+.sb-new-theme-popup{
+  .popover-content {
+    width: 90vw !important;
+    height: 49vh!important;
+    left: 5% !important;
+    border-radius: 16px;
   }
 }

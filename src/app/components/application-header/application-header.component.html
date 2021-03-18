@@ -8,7 +8,7 @@
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
       <ion-button icon-only (click)="emitEvent($event, 'back');">
-        <ion-icon class="arrow-icon" ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+        <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
@@ -72,7 +72,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
-        <ion-icon md="md-share" class="ion-float-right"></ion-icon>
+        <ion-icon name="share" class="ion-float-right"></ion-icon>
       </ion-button>
       <ion-buttons icon-only *ngIf="headerConfig?.actionButtons?.indexOf('sync-done') >=0"
         (click)="emitEvent($event, 'sync');" style="font-size: 1.8rem;">
@@ -84,11 +84,11 @@
       </ion-buttons>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" md="md-more"></ion-icon>
+        <ion-icon class="ion-float-end" md="ellipsis-vertical"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" name="ios-information-circle-outline"></ion-icon>
+        <ion-icon class="ion-float-end" name="information-circle-outline"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('questionMap') >=0"
         (click)="emitEvent($event, 'questionMap');" style="font-size: 1.8rem;">

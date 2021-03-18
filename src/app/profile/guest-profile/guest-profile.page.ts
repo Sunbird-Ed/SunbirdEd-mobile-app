@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
-import { Events, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   Framework,
   FrameworkCategoryCodesGroup,

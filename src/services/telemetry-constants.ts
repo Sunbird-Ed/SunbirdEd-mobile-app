@@ -9,7 +9,8 @@ export enum Environment {
     NOTIFICATION = 'notification',
     GROUP = 'group',
     PLAYER = 'player',
-    DISCUSSION = 'discussion'
+    DISCUSSION = 'discussion',
+    FAQ = 'faq'
 }
 
 export enum ErrorCode {
@@ -162,6 +163,7 @@ export enum PageId {
 export enum LogType {
     NOTIFICATION = 'notification'
 }
+
 
 export enum LogLevel {
     TRACE = 'TRACE',
@@ -492,7 +494,12 @@ export enum InteractSubtype {
     DEACTIVATE_GROUP_CLICKED = 'deactivate-group-clicked',
     REACTIVATE_GROUP_CLICKED = 'reactivate-group-clicked',
     ENABLE_DISCUSSIONS_CLICKED = 'enable-discussions-clicked',
-    DISABLE_DISCUSSIONS_CLICKED = 'disable-discussions-clicked'
+    DISABLE_DISCUSSIONS_CLICKED = 'disable-discussions-clicked',
+    SYNC_PROGRESS_CLICKED = 'sync-progress-clicked',
+    SYNC_PROGRESS_INITIATE = 'sync-progress-initiated',
+    SYNC_PROGRESS_SUCCESS = 'sync-progress-success',
+    SYNC_PROGRESS_FAILED = 'sync-progress-failed',
+
 }
 
 export enum ID {
@@ -600,7 +607,9 @@ export enum CorReleationDataType {
     CATEGORY = 'Category',
     SUBCATEGORY = 'Subcategory',
     COUNT_NODE = 'CountNode',
-    CONTENT_NAME = 'ContentName'
+    CONTENT_NAME = 'ContentName',
+    CONTENT = 'Content',
+    BATCH = 'Batch',
 }
 
 export enum AuditProps {

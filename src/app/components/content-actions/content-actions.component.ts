@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
-import { Events, NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { NavParams, PopoverController, ToastController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AuthService,
@@ -199,6 +200,20 @@ export class ContentActionsComponent {
         this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
         this.popOverCtrl.dismiss();
       });
+  }
+
+  async syncCourseProgress() {
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SYNC_PROGRESS_CLICKED,
+      Environment.HOME,
+      this.pageName,
+      ContentUtil.getTelemetryObject(this.content),
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+    this.popOverCtrl.dismiss({ syncProgress: true });
   }
 
 

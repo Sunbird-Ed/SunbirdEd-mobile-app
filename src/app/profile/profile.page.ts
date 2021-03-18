@@ -1,10 +1,10 @@
 import { Component, NgZone, OnInit, Inject, ViewChild } from '@angular/core';
 import {
-  Events,
   PopoverController,
   ToastController,
   IonRefresher,
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   ContentCard,
   ProfileConstants,
@@ -540,15 +540,16 @@ export class ProfilePage implements OnInit {
           values);
 
         if (course.issuedCertificate) {
+          const request = { courseId: course.courseId, certificate: course.issuedCertificate };
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
-            return;
+            if (!(await this.courseService.certificateManager.isCertificateCached(request).toPromise())) {
+              this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+              return;
+            }
           }
 
           this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CERTIFICATE_VIEW}`], {
-            state: {
-              request: { courseId: course.courseId, certificate: course.issuedCertificate }
-            }
+            state: { request }
           });
         } else {
           const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
@@ -589,7 +590,7 @@ export class ProfilePage implements OnInit {
     if (err instanceof CertificateAlreadyDownloaded) {
       this.openpdf(err.filePath);
     } else if (NetworkError.isInstance(err)) {
-      this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
+      this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
     }

@@ -271,7 +271,7 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    let action = await this.evdnsServ.openActionSheet(options, 'Observation');
+    let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
    debugger
    if (action) {
      this.router.navigate([RouterLinks.QUESTIONNAIRE], {

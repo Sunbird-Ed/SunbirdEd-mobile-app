@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Platform, Events } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
 import { NotificationService, Notification } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
