@@ -84,7 +84,7 @@ export class EntityfilterComponent implements OnInit {
   async getTargettedEntityType() {
     this.payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.TARGETTED_ENTITY_TYPES + this.solutionId,
+      url: urlConstants.API_URLS.TARGETTED_ENTITY_TYPES,
       payload: this.payload,
     };
 
