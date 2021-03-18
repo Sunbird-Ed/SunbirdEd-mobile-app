@@ -9,30 +9,38 @@
           </ion-text>
         </ion-label>
 
-        <ion-item lines="none" class="MT4">
+        <ion-item lines="none" class="MT4" *ngIf="supportedUserTypes?.indexOf(ProfileType.STUDENT) >=0" >
           <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.STUDENT }">
             {{ 'USER_TYPE_2' | translate | titlecase }}
           </ion-label>
           <ion-radio [value]="ProfileType.STUDENT" class="MR10" slot="start"></ion-radio>
         </ion-item>
 
-        <ion-item lines="none">
+        <ion-item lines="none" *ngIf="supportedUserTypes?.indexOf(ProfileType.TEACHER) >=0">
           <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.TEACHER }">
             {{ 'USER_TYPE_1' | translate | titlecase }}
           </ion-label>
           <ion-radio [value]="ProfileType.TEACHER" class="MR10" slot="start"></ion-radio>
         </ion-item>
 
-        <ion-item lines="none">
-          <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.OTHER }">
-            {{ 'USER_TYPE_3' | translate | titlecase }}</ion-label>
-          <ion-radio [value]="ProfileType.OTHER" class="MR10" slot="start"></ion-radio>
-        </ion-item>
-        <ion-item lines="none">
+        <ion-item lines="none" *ngIf="supportedUserTypes?.indexOf(ProfileType.ADMIN) >=0">
           <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.ADMIN }">
             {{ 'LEADER' | translate | titlecase }}</ion-label>
           <ion-radio [value]="ProfileType.ADMIN" class="MR10" slot="start"></ion-radio>
         </ion-item>
+
+        <ion-item lines="none" *ngIf="supportedUserTypes?.indexOf(ProfileType.PARENT) >=0">
+          <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.PARENT }">
+            {{ 'USER_TYPE_5' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.PARENT" class="MR10" slot="start"></ion-radio>
+        </ion-item>
+
+        <ion-item lines="none" *ngIf="supportedUserTypes?.indexOf(ProfileType.OTHER) >=0">
+          <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.OTHER }">
+            {{ 'USER_TYPE_3' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.OTHER" class="MR10" slot="start"></ion-radio>
+        </ion-item>
+
       </ion-radio-group>
     </ion-list>
     <ion-item class="ge-item-16">
@@ -115,7 +123,7 @@
   </form>
 </ion-content>
 
-  <div class="ion-padding" no-border style="background: white;">
+  <div class="ion-padding ion-no-border" style="background: white;">
     <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block ion-text-uppercase"
     [style.background-color]="btnColor" (click)="onSubmit()">{{'SAVE' | translate}}</button>
   </div>

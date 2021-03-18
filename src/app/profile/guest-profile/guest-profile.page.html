@@ -5,19 +5,8 @@
       <div class="profile-icon">
         <img src="./assets/imgs/guest_profile.svg" alt="guest-profile">
       </div>
-      <p class="profile-name">
-        <span class="user">{{profile?.handle | titlecase}}</span>
-        <span>
-          <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
-          </ion-icon>
-        </span>
-      </p>
-
-      <p class="change-role ion-text-uppercase" (click)="editGuestProfile(true,'change-role')">
-        {{'CHANGE_ROLE' | translate }}
-      </p>
-      <p class="user-type">{{currentUserTypeConfig?.name}}</p>
     </div>
+    <div class="content-header-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
 
     <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
       <h2 class="section-title padding-left-10 ion-no-padding">
@@ -25,6 +14,24 @@
       </h2>
 
       <div class="grid-container">
+        <!-- Name -->
+        <div *ngIf="profile?.handle" class="grid-item info-title text-align-start ion-text-uppercase">{{ 'NAME' | translate}}</div>
+        <div *ngIf="profile?.handle" class="grid-item text-align-end" (click)="editGuestProfile(false,'edit-profile')">
+          <div *ngIf="profile?.handle" class="align-content">
+            <div class="ellipsis text-align width-100">{{profile?.handle | aliased}}&lrm;</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+        </div>
+        <!-- Role -->
+        <div *ngIf="profile?.profileType" class="grid-item info-title text-align-start ion-text-uppercase">{{'FRMELEMNTS_LBL_PERSONA' | translate}}</div>
+        <div *ngIf="profile?.profileType" class="grid-item text-align-end" (click)="editGuestProfile(true,'change-role')">
+          <div *ngIf="profile?.profileType" class="align-content">
+            <div class="ellipsis text-align width-100">{{currentUserTypeConfig?.name}}&lrm;</div>
+            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            </ion-icon>
+          </div>
+        </div>
         <!-- Syllabus -->
         <div [hidden]="true" class="grid-item info-title text-align-start ion-text-uppercase">
           {{'SYLLABUS' | translate}}
@@ -32,7 +39,7 @@
         <div [hidden]="true" class="grid-item text-align-end" (click)="editGuestProfile(false,'syllabus')">
           <div *ngIf="profile?.syllabus && profile?.syllabus !== ''" class="align-content">
             <div class="ellipsis text-align width-100">{{syllabus}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            <ion-icon class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length" class="vertical-align">
@@ -45,7 +52,7 @@
         <div *ngIf="!!supportedProfileAttributes['board']" class="grid-item text-align-end" (click)="editGuestProfile(false,'board')">
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length" class="align-content">
             <div class="ellipsis text-align width-100">{{boards | aliased}}&lrm;</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            <ion-icon class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length" class="vertical-align">{{'ADD' | translate}}
@@ -59,7 +66,7 @@
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{medium}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            <ion-icon class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div *ngIf="!profile?.syllabus?.length || !profile?.board?.length || !profile?.medium?.length"
@@ -74,7 +81,7 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{grade}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            <ion-icon class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div
@@ -90,7 +97,7 @@
             *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length"
             class="align-content">
             <div class="ellipsis text-align width-100">{{subjects}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary">
+            <ion-icon class="icon-align" float="end" name="create" color="primary">
             </ion-icon>
           </div>
           <div
@@ -108,7 +115,7 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.state}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.state" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
@@ -117,7 +124,7 @@
         <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.district}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.district" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
@@ -126,7 +133,7 @@
         <div *ngIf="deviceLocation && deviceLocation.block" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.block}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.block" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
@@ -135,7 +142,7 @@
         <div *ngIf="deviceLocation && deviceLocation.cluster" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.cluster}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.cluster" class="vertical-align">{{'ADD' | translate}}</div>
         </div>
@@ -144,7 +151,7 @@
         <div *ngIf="deviceLocation && deviceLocation.school" class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
           <div *ngIf="deviceLocation" class="align-content">
             <div class="ellipsis text-align width-100">{{deviceLocation?.school}}</div>
-            <ion-icon class="icon-align" float="end" name="md-create" color="primary"></ion-icon>
+            <ion-icon class="icon-align" float="end" name="create" color="primary"></ion-icon>
           </div>
           <div *ngIf="!deviceLocation?.school" class="vertical-align">{{'ADD' | translate}}</div>
         </div> -->

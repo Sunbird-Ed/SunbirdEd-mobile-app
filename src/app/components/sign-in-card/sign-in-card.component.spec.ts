@@ -4,7 +4,8 @@ import {
     CommonUtilService, AppGlobalService, TelemetryGeneratorService,
     ContainerService, FormAndFrameworkUtilService
 } from '../../../services';
-import {NavController, Events} from '@ionic/angular';
+import {NavController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {NgZone} from '@angular/core';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {of, throwError} from 'rxjs';

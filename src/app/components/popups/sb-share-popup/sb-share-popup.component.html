@@ -35,7 +35,7 @@
       <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
 
       <div *ngIf="!content.isAvailableLocally" class="share-info">
-        <ion-icon name="ios-information-circle-outline"></ion-icon>
+        <ion-icon name="information-circle-outline"></ion-icon>
         {{'DOWNLOAD_FILE_INFO' | translate}}
       </div>
     </ion-radio-group>
@@ -64,31 +64,33 @@
     </ion-toolbar>
   </ion-header>
   <div class="share-player-container">
-    <ion-item lines="none">
-      <ion-label>{{shareOptions.link.name | translate}}</ion-label>
-      <ion-radio slot="start" value="{{shareOptions.link.value}}" checked={{shareOptions.link.value}}></ion-radio>
-    </ion-item>
-    <div>
-      <p class="share-url">{{shareUrl}}</p>
-    </div>
-    <ion-item lines="none">
-      <ion-label>{{shareOptions.file.name | translate}}</ion-label>
-      <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!content.isAvailableLocally">
-      </ion-radio>
-    </ion-item>
-    <div>
-      <p class="share-desc">
-        {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
-      </p>
-    </div>
-    <ion-item lines="none">
-      <ion-label>{{shareOptions.save.name | translate}}</ion-label>
-      <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
-      </ion-radio>
-    </ion-item>
-    <div>
-      <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
-    </div>
+    <ion-radio-group [value]="shareOptions?.link?.value">
+      <ion-item lines="none">
+        <ion-label>{{shareOptions.link.name | translate}}</ion-label>
+        <ion-radio slot="start" value="{{shareOptions.link.value}}"></ion-radio>
+      </ion-item>
+      <div>
+        <p class="share-url">{{shareUrl}}</p>
+      </div>
+      <ion-item lines="none">
+        <ion-label>{{shareOptions.file.name | translate}}</ion-label>
+        <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!content.isAvailableLocally">
+        </ion-radio>
+      </ion-item>
+      <div>
+        <p class="share-desc">
+          {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
+        </p>
+      </div>
+      <ion-item lines="none">
+        <ion-label>{{shareOptions.save.name | translate}}</ion-label>
+        <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!content.isAvailableLocally">
+        </ion-radio>
+      </ion-item>
+      <div>
+        <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
+      </div>
+    </ion-radio-group>
   </div>
   <div class="sb-popover-footer">
     <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.link.value"

@@ -1,6 +1,7 @@
 import {LoginHandlerService} from './login-handler.service';
 import {AppGlobalService} from './app-global-service.service';
-import {Events, NavController} from '@ionic/angular';
+import {NavController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {Router} from '@angular/router';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {AppVersion} from '@ionic-native/app-version/ngx';

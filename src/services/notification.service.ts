@@ -7,7 +7,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen
 import { CorReleationDataType } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { CorrelationData, TelemetryService } from '@project-sunbird/sunbird-sdk';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 
 declare const cordova;
 

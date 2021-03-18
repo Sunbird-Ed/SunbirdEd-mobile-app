@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Platform, Events, AlertController, PopoverController } from '@ionic/angular';
+import { Platform, AlertController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { CourseService, SunbirdSdk, TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';

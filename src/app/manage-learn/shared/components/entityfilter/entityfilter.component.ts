@@ -37,6 +37,8 @@ export class EntityfilterComponent implements OnInit {
   profileData: any;
   selectedState;
   loading: boolean = false;
+  payload;
+  entityType;
   constructor(
     private localStorage: LocalStorageService,
     private navParams: NavParams,
@@ -56,10 +58,10 @@ export class EntityfilterComponent implements OnInit {
   }
 
   async getAllStatesApi() {
-    let payload = await this.utils.getProfileInfo();
+    this.payload = await this.utils.getProfileInfo();
     const config = {
       url: urlConstants.API_URLS.ENTITY_LIST_BASED_ON_ENTITY_TYPE + 'state',
-      payload: payload,
+      payload: this.payload,
     };
     this.loader.startLoader();
     this.kendra.post(config).subscribe(
@@ -67,7 +69,7 @@ export class EntityfilterComponent implements OnInit {
         this.loader.stopLoader();
         this.allStates = success.result;
         if (this.allStates && this.allStates.length) {
-          this.selectedState = this.allStates.filter((s: any) => s.locationId == payload.state)[0];
+          this.selectedState = this.allStates.filter((s: any) => s.locationId == this.payload.state)[0];
           this.selectedState = this.selectedState._id;
           this.search();
         }
@@ -77,6 +79,21 @@ export class EntityfilterComponent implements OnInit {
         this.allStates = [];
       }
     );
+  }
+
+  async getTargettedEntityType() {
+    this.payload = await this.utils.getProfileInfo();
+    const config = {
+      url: urlConstants.API_URLS.TARGETTED_ENTITY_TYPES,
+      payload: this.payload,
+    };
+
+    this.kendra.post(config).subscribe(success => {
+      this.entityType = success.result ? success.result._id : null;
+      this.search();
+    }, error => {
+
+    })
   }
 
   openSelect() {
@@ -135,7 +152,8 @@ export class EntityfilterComponent implements OnInit {
     apiUrl =
       apiUrl +
       `&parentEntityId=${encodeURIComponent(
-        this.isProfileAssignedWithState ? this.profileMappedState : this.selectedState
+        this.entityType
+        // this.isProfileAssignedWithState ? this.profileMappedState : this.selectedState
       )}`;
     this.loading = true;
 
@@ -147,6 +165,7 @@ export class EntityfilterComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.loading = false;
+        debugger
         this.selectableList = !event ? [] : this.selectableList;
         for (let i = 0; i < success.result[0].data.length; i++) {
           success.result[0].data[i].isSelected = success.result[0].data[i].selected;
@@ -201,6 +220,7 @@ export class EntityfilterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getAllStatesApi();
+    // this.getAllStatesApi();
+    this.getTargettedEntityType();
   }
 }

@@ -1,5 +1,6 @@
 import { Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -30,7 +31,7 @@ import {
   Rollup,
   ServerProfileDetailsRequest, SharedPreferences, SortOrder,
   TelemetryErrorCode, TelemetryObject,
-  UnenrollCourseRequest, DiscussionService
+  UnenrollCourseRequest, DiscussionService, LogLevel
 } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 import {
@@ -38,6 +39,7 @@ import {
   CorReleationDataType,
   Environment, ErrorType,
   ImpressionType, InteractSubtype, InteractType,
+  LogType,
   Mode,
   PageId
 } from '../../services/telemetry-constants';
@@ -229,6 +231,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   skipCheckRetiredOpenBatch = false;
   forumIds;
   private hasInit = false;
+  fetchForumIdReq = {
+    identifier: [],
+    type: ''
+  };
+  createUserReq = {
+    username: '',
+    identifier: ''
+  };
+  batchRemaningTime: any;
+  private batchRemaningTimingIntervalRef?: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -292,6 +304,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
+    this.generateDataForDF();
   }
 
   showDeletePopup() {
@@ -386,7 +399,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         });
       }
     }
-    this.fetchForumIds()
   }
 
   private checkUserLoggedIn() {
@@ -531,14 +543,48 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       componentProps: {
         content: this.course,
         batchDetails: this.batchDetails,
-        pageName: PageId.COURSE_DETAIL
+        pageName: PageId.COURSE_DETAIL,
+        corRelationList: this.corRelationList,
+        objRollup: this.telemetryObject
       },
     });
     await this.leaveTrainigPopover.present();
     const { data } = await this.leaveTrainigPopover.onDidDismiss();
     if (data && data.unenroll) {
       this.showConfirmAlert();
+    } else if (data && data.syncProgress) {
+      this.syncProgress();
     }
+  }
+
+  async  syncProgress() {
+    const loader = await this.commonUtilService.getLoader();
+    this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_INITIATE);
+    await loader.present();
+    this.courseService.syncCourseProgress({
+      courseId:  this.identifier,
+      userId: this.userId,
+      batchId: this.batchDetails.id
+    }).toPromise()
+      .then(async () => {
+        this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_SUCCESS);
+        await loader.dismiss();
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_SYNC_COURSE_PROGRESS_SUCCESS');
+      }).catch(async () => {
+        await loader.dismiss();
+        this.generateLogEvent(InteractSubtype.SYNC_PROGRESS_FAILED);
+        this.commonUtilService.showToast('ERROR_TECHNICAL_PROBLEM');
+      });
+  }
+
+  private generateLogEvent(message: string) {
+    this.telemetryGeneratorService.generateLogEvent(
+      LogLevel.INFO,
+      message,
+      Environment.COURSE,
+      'api_call',
+      this.corRelationList || []
+    );
   }
 
   async showConfirmAlert() {
@@ -769,6 +815,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             return;
           }
           this.batchDetails = data;
+          if (this.batchRemaningTimingIntervalRef) {
+            clearInterval(this.batchRemaningTimingIntervalRef);
+            this.batchRemaningTimingIntervalRef = undefined;
+          }
+          if (this.batchDetails.endDate) {
+            this.batchEndDateStatus(this.batchDetails.endDate);
+          }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
             this.isCertifiedCourse = true;
@@ -1242,7 +1295,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       };
       const assessmentStatus = this.localCourseService.fetchAssessmentStatus(this.contentStatusData, this.nextContent);
 
-      const maxAttempt: MaxAttempt =  await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
+      const maxAttempt: MaxAttempt = await this.commonUtilService.handleAssessmentStatus(assessmentStatus);
       if (maxAttempt.isCloseButtonClicked || maxAttempt.limitExceeded) {
         return;
       }
@@ -1364,7 +1417,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
     }
-    this.fetchForumIds();
   }
 
   ionViewDidEnter() {
@@ -1557,6 +1609,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
     this.events.unsubscribe('header:setzIndexToNormal');
     this.events.unsubscribe('header:decreasezIndex');
+    if (this.batchRemaningTimingIntervalRef) {
+      clearInterval(this.batchRemaningTimingIntervalRef);
+      this.batchRemaningTimingIntervalRef = undefined;
+    }
   }
 
   /**
@@ -1569,8 +1625,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED, Environment.HOME,
       PageId.COURSE_DETAIL, this.telemetryObject, reqvalues, this.objRollup);
-    
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
       return;
     }
@@ -2130,14 +2186,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.checkDataSharingStatus();
   }
 
-  openDiscussionForum(forumId: string) {
-    if(this.commonUtilService.networkInfo.isNetworkAvailable){
-      this.checkUserRegistration();
-    } else {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-    }
-    
-  }
+  // openDiscussionForum(forumId: string) {
+  //   if(this.commonUtilService.networkInfo.isNetworkAvailable){
+  //     this.checkUserRegistration();
+  //   } else {
+  //     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+  //   }
+  // }
 
   private async showProfileNameConfirmationPopup() {
     const popUp = await this.popoverCtrl.create({
@@ -2257,64 +2312,28 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       });
   }
 
-  async checkUserRegistration() {
-    const data = {
-      username: '',
-      identifier: this.userId,
-    };
-    await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
-      data.username = p.serverProfile['userName']
+  generateDataForDF() {
+    if (this.courseCardData.batchId) {
+      this.fetchForumIdReq.identifier = [this.courseCardData.batchId];
+      this.fetchForumIdReq.type = 'batch';
+    } else {
+      this.fetchForumIdReq.identifier = [this.identifier];
+      this.fetchForumIdReq.type = 'course';
+    }
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
+      this.createUserReq.username = p.serverProfile['userName'];
     });
-    this.discussionTelemetryService.contextCdata = [
-      {
-        id: this.identifier,
-        type: 'Course'
-      },
-      {
-        id: this.courseCardData.batchId,
-        type: 'Batch'
-      }
-    ];
-    this.discussionService.createUser(data).subscribe((response) => {
-      const userName = response.result.userName
-      const result = [this.forumIds];
-        this.router.navigate([`/${RouterLinks.DISCUSSION}`], {
-        queryParams: {
-          categories: JSON.stringify({ result }),
-          userName: userName
-        }
+    this.appGlobalService.getActiveProfileUid()
+      .then((uid) => {
+        this.userId = uid;
+        this.createUserReq.identifier = uid;
       });
-    }, error => {
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG')
-    });
   }
 
-  fetchForumIds() {
-    const requestBody = this.prepareRequestBody();
-    if (requestBody.identifier.length) {
-      this.discussionService.getForumIds(requestBody).subscribe(forumDetails => {
-        if (forumDetails.result.length) {
-          this.forumIds = forumDetails.result[0].cid;
-        }
-      }, error => {
-        console.error('error', error);
-      });
-    }
-  }
-
-  private prepareRequestBody() {
-    const request = {
-      identifier: [],
-      type: ''
-    };
-    const isCreator = this.courseCardData.createdBy === this.userId;
-    if (isCreator) {
-      request.identifier = [this.identifier];
-      request.type = 'course';
-    } else if (this.isAlreadyEnrolled) {
-      request.identifier = [this.courseCardData.batchId];
-      request.type = 'batch';
-    }
-      return request;
+  async batchEndDateStatus(batchEndDate) {
+    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    this.batchRemaningTimingIntervalRef = setInterval(async () => {
+      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    }, 1000 * 60);
   }
 }

@@ -97,13 +97,13 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library_v3',
+        'subType': 'library_v4',
         'action': 'get',
         'component': 'app'
     },
     {
         'type': 'config',
-        'subType': 'course_v2',
+        'subType': 'course_v3',
         'action': 'get',
         'component': 'app'
     },
@@ -125,15 +125,14 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'library_v2',
+        'subType': 'adminHome',
         'action': 'get',
         'component': 'app'
     },
     {
         'type': 'config',
-        'subType': 'adminHome',
-        'action': 'get',
-        'component': 'app'
+        'subType': 'deeplink',
+        'action': 'get'
     }
 
 

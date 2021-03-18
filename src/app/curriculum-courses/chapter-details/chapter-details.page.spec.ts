@@ -10,7 +10,8 @@ import {
     CourseService, DownloadService,
     EventsBusService, ContentService, TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import { DatePipe, Location } from '@angular/common';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';

@@ -27,7 +27,7 @@
       <ion-icon name="document" *ngIf="pdfFormats.includes(image?.extension) || wordFormats.includes(image?.extension) || pptFormats.includes(image?.extension) "></ion-icon>
       <ion-icon name="musical-notes" *ngIf="audioFormats.includes(image?.extension)"></ion-icon>
       <ion-icon name="videocam"  *ngIf="videoFormats.includes(image?.extension)"></ion-icon>
-      <ion-icon class="attachmentIcon" name="image-outline" *ngIf="imageFormats.includes(image?.extension)"></ion-icon>
+      <ion-icon class="attachmentIcon" name="image" *ngIf="imageFormats.includes(image?.extension)"></ion-icon>
     </span>
   </div>
   <ion-card *ngIf="datas?.allowAudioRecording">

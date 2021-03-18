@@ -14,7 +14,8 @@ import {
     ContentImportStatus
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, NavController, PopoverController } from '@ionic/angular';
+import { Platform, NavController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import {
   Content,

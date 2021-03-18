@@ -18,7 +18,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { Network } from '@ionic-native/network/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Events, IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
+import { IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';
@@ -165,6 +166,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.onTraceIdUpdate();
       this.utils.initilizeML();
       this.networkServ.netWorkCheck();
+      await this.applyJoyfulTheme();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -964,5 +966,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         // do not show the toast.
       }
     });
+  }
+
+  async applyJoyfulTheme() {
+    const isJoyfulThemePopupSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+    if (!isJoyfulThemePopupSeen) {
+      await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
+      this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+      this.headerService.showStatusBar().then();
+    }
   }
 }

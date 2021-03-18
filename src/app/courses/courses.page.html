@@ -26,7 +26,6 @@
               [hideProgress]="section?.theme?.inputs?.hideProgress || true"
               [viewMoreButtonText]="(section?.theme?.inputs?.viewMoreButtonText | translateJson) || ('VIEW_ALL' | translate)"
               [maxCardCount]="section?.theme?.inputs?.maxCardCount || 10"
-              [viewMoreButtonPosition]="section?.theme?.inputs?.viewMoreButtonPosition || ButtonPosition.RIGHT"
               (viewMoreClick)="navigateToViewMoreContentsPage(true)"
               (cardClick)="openEnrolledCourseDetails($event)">
             </sb-course-cards-hlist>

@@ -12,7 +12,7 @@
         <p class="scroll">{{upgradeType?.desc | translate }}</p>
     </div>
 </ion-content>
-<ion-footer no-border padding>
+<ion-footer class="ion-no-border ion-padding">
     <ion-button *ngIf="!isMandatoryUpgrade && actionButtonNo" expand="block" fill="outline" size="small"
         (click)="cancel() ">
         {{ actionButtonNo.label | translate }}

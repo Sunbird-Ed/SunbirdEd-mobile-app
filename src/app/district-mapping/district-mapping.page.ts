@@ -15,7 +15,8 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Events, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
 import { FieldConfig } from 'common-form-elements-v8';
 import { concat, defer, of, Subscription } from 'rxjs';
@@ -340,13 +341,14 @@ export class DistrictMappingPage implements OnDestroy {
     for (const config of locationMappingConfig) {
       if (config.code === 'name' && (this.source === PageId.PROFILE || this.source === PageId.PROFILE_NAME_CONFIRMATION_POPUP)) {
         config.templateOptions.hidden = false;
-        config.default = (this.profile && this.profile.serverProfile) ? this.profile.serverProfile.firstName : this.profile.handle;
+        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.firstName) ?
+        this.profile.serverProfile.firstName : this.profile.handle;
       } else if (config.code === 'name' && this.source !== PageId.PROFILE) {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.profileType) ?
-        this.profile.profileType : ((this.profile && this.profile.serverProfile) ? this.profile.serverProfile.userType : selectedUserType);
+        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.userType) ?
+        this.profile.serverProfile.userType : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
