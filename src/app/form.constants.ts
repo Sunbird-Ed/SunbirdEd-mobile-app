@@ -55,4 +55,11 @@ export class FormConstants {
         component: 'app'
     };
 
+    public static  VENDOR_APPS_CONFIG: FormRequest = {
+        type: 'config',
+        subType: 'vendorapps',
+        action: 'get',
+        component: 'app',
+    };
+
 }
