@@ -226,7 +226,7 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
     AccessDiscussionComponent,
     ShowVendorAppsComponent
   ],

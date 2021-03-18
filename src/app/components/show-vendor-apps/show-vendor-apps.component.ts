@@ -25,7 +25,7 @@ export class ShowVendorAppsComponent implements OnInit {
         this.systemAppsLists = await this.utilityService.checkAvailableAppList(this.appLists.map((a) => a.android.packageId));
     }
 
-    open3rdPartyApps(packageId: string) {
+    openThirdPartyApps(packageId: string) {
         this.utilityService.startActivityForResult({
             package: packageId,
             extras: {
