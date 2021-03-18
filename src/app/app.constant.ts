@@ -558,6 +558,8 @@ export class RouterLinks {
     public static readonly SURVEY = 'survey';
     public static readonly PROJECT = 'project';
     public static readonly REPORTS = "reports";
+    public static readonly OBSERVATION_SOLUTION_LISTING = `observation-solution-listing`;
+    public static readonly OBSERVATION_SOLUTION_ENTITY_LISTING = `observation-solution-entity-listing`
     public static readonly PROJECT_REPORT = "project-report";
     public static readonly PROJECT_FULL_REPORT = "project-full-report";
     public static readonly DEEPLINK_REDIRECT = "deeplink-redirect";
