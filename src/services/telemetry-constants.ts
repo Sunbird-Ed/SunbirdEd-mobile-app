@@ -499,7 +499,7 @@ export enum InteractSubtype {
     SYNC_PROGRESS_INITIATE = 'sync-progress-initiated',
     SYNC_PROGRESS_SUCCESS = 'sync-progress-success',
     SYNC_PROGRESS_FAILED = 'sync-progress-failed',
-
+    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked'
 }
 
 export enum ID {

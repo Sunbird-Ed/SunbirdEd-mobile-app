@@ -1,0 +1,9 @@
+.app-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.not-available {
+  filter: grayscale(1);
+}

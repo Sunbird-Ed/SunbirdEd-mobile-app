@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { DeviceSpecification } from 'sunbird-sdk';
-import { GenericAppConfig } from '@app/app/app.constant';
+import {Injectable} from '@angular/core';
+import {DeviceSpecification} from 'sunbird-sdk';
+import {GenericAppConfig} from '@app/app/app.constant';
 
 declare const sbutility;
 
@@ -196,7 +196,7 @@ export class UtilityService {
 
     getMetaData(filePath: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            sbutility.getMetaData([{ path: filePath, identifier: 'ecar' }], (data) => {
+            sbutility.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
                 resolve(data.ecar.size);
             }, err => {
                 reject(err);
@@ -230,6 +230,26 @@ export class UtilityService {
     verifyCaptcha(apiKey: string): Promise<string> {
         return new Promise((resolve, reject) => {
             sbutility.verifyCaptcha(apiKey, (data) => {
+                resolve(data);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
+
+    checkAvailableAppList(packageIds: Array<string>): Promise<{[packageId: string]: boolean}> {
+        return new Promise((resolve, reject) => {
+            sbutility.getAppAvailabilityStatus(packageIds, (data) => {
+                resolve(data);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
+
+    startActivityForResult(params: {}): Promise<string> {
+        return new Promise((resolve, reject) => {
+            sbutility.startActivityForResult(params, (data) => {
                 resolve(data);
             }, err => {
                 reject(err);
