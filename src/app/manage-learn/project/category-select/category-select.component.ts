@@ -23,18 +23,19 @@ export class CategorySelectComponent implements OnInit {
     private modal: ModalController
   ) { }
   ngOnInit() {
-    let other = this.selectedCategories.filter(obj1 => {
-       return !this.categories.options.find((s) => s.label == obj1.label);
-    })[0]
-
-
-    this.selectedCategories.map(c => {
+    let other;
+    if( this.selectedCategories){
+      other = this.selectedCategories.filter(obj1 => {
+        return !this.categories.options.find((s) => s.label == obj1.label);
+     })[0]
+     this.selectedCategories.map(c => {
       if (c.label && other && other.label && c.label == other.label) {
         c.value = other.label
         c.label = "Others"
       }
     })
-    
+    }
+   
     this.categoryData.push(this.categories);
     this.categoryData.push(this.otherCategory);
     if (this.selectedCategories.length) {

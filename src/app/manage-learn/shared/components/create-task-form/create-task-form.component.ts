@@ -1,23 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-create-task',
-  templateUrl: './create-task.component.html',
-  styleUrls: ['./create-task.component.scss'],
+  selector: 'app-create-task-form',
+  templateUrl: './create-task-form.component.html',
+  styleUrls: ['./create-task-form.component.scss'],
 })
-export class CreateTaskComponent implements OnInit {
+export class CreateTaskFormComponent implements OnInit {
   newTask;
   currentYear = new Date().getFullYear();
-  today;
-  
+  today
   constructor(
     private modalCtrl: ModalController,
     private utils: UtilsService,
     private attachmentService: AttachmentService,
-    private toast: ToastService,
-    public popOverCtrl: PopoverController
+    private toast: ToastService
   ) { }
 
   ngOnInit() {
@@ -37,13 +35,10 @@ export class CreateTaskComponent implements OnInit {
   }
 
   addTask() {
-    this.newTask.name ? this.popOverCtrl.dismiss(this.newTask) : this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
+    this.newTask.name ? this.modalCtrl.dismiss(this.newTask) : this.toast.showMessage('FRMELEMNTS_MSG_REQUIRED_FIELDS', 'danger');
   }
 
   share() {
     this.toast.showMessage('FRMELEMNTS_MSG_COMING_SOON', 'danger');
-  }
-  closePopover() {
-    this.popOverCtrl.dismiss();
   }
 }

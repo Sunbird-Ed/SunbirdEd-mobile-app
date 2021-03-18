@@ -23,7 +23,8 @@ export class ReportsListingComponent implements OnInit {
     {
       title: 'FRMELEMNTS_LBL_OBSERVATION_REPORTS',
       subTitle: 'FRMELEMNTS_LBL_OBSERVATION_REPORTS_DEC',
-      link: RouterLinks.OBSERVATION,
+      link:`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_LISTING}`
+      // link: RouterLinks.OBSERVATION,
     },
     {
       title: 'FRMELEMNTS_LBL_SURVEY_REPORTS',

@@ -18,14 +18,7 @@
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_DURATION' | translate}} : </ion-label>
         {{project?.duration}}
       </div>
-      <div class="custom-filed _capitalize" *ngIf="project?.startDate">
-        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
-        {{project?.startDate | date : 'dd/MM/yyyy' }}
-      </div>
-      <div class="custom-filed _capitalize" *ngIf="project?.endDate">
-        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
-        {{project?.endDate | date : 'dd/MM/yyyy' }}
-      </div>
+
       <div class="custom-filed _capitalize">
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_CATEGORIES' | translate}} : </ion-label>
         <!-- {{categories}} -->
@@ -42,6 +35,14 @@
       </div>
     </ion-card-header>
     <ion-card-content>
+      <div class="custom-filed _capitalize" *ngIf="project?.startDate">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_START_DATE' | translate}} : </ion-label>
+        {{project?.startDate | date : 'dd/MM/yyyy' }}
+      </div>
+      <div class="custom-filed _capitalize" *ngIf="project?.endDate">
+        <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
+        {{project?.endDate | date : 'dd/MM/yyyy' }}
+      </div>
       <div class="custom-filed _capitalize">
         <ion-label> {{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} : </ion-label>
         {{project?.programName}}
