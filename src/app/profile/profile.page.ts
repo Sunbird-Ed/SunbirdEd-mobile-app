@@ -421,7 +421,7 @@ export class ProfilePage implements OnInit {
   async getEnrolledCourses(refresher?, refreshCourseList?) {
     const loader = await this.commonUtilService.getLoader();
     if (refreshCourseList) {
-      loader.present();
+      await loader.present();
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.REFRESH_CLICKED,
@@ -435,11 +435,11 @@ export class ProfilePage implements OnInit {
     };
     this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then((res: Course[]) => {
+      .then(async (res: Course[]) => {
         if (res.length) {
           this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
         }
-        refreshCourseList ? loader.dismiss() : false;
+        refreshCourseList ? await loader.dismiss() : false;
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);

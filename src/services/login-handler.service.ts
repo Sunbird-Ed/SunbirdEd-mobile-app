@@ -119,6 +119,7 @@ export class LoginHandlerService {
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+            this.sbProgressLoader.hide({id: 'login'});
           });
         })
         .catch(async (err) => {
