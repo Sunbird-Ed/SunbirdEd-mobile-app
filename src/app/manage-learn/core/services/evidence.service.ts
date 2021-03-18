@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { ActionSheetController, AlertController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { RemarksPageComponent } from '../../shared/components/remarks-page/remarks-page.component';
+import { urlConstants } from '../constants/urlConstants';
+import { LoaderService } from './loader/loader.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
+import { ToastService } from './toast/toast.service';
 import { UtilsService } from './utils.service';
 
 @Injectable({
@@ -19,18 +23,21 @@ export class EvidenceService {
     private utils: UtilsService,
     private translate: TranslateService,
     private alertCtrl: AlertController,
-    private router: Router
+    private router: Router,
+    private modalCtrl: ModalController,
+    private loader: LoaderService,
+    private toast:ToastService
   ) {}
 
   openActionSheet(params, type?) {
-    type = type ? type : 'Survey';
+    type = type ? type : '';
     console.log(JSON.stringify(params) + ' test');
     this.entityDetails = params.entityDetails;
     this.schoolId = params._id;
     this.evidenceIndex = params.selectedEvidence;
     const selectedECM = this.entityDetails['assessment']['evidences'][this.evidenceIndex];
     let translateObject;
-   return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.translate
         .get([
           'FRMELEMNTS_LBL_SURVEY_ACTION',
@@ -39,8 +46,7 @@ export class EvidenceService {
           'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE',
           'CANCEL',
           'FRMELEMNTS_LBL_ECM_NOT_ALLOWED',
-          'FRMELEMNTS_LBL_OBSERVATION'
-
+          'FRMELEMNTS_LBL_OBSERVATION',
         ])
         .subscribe(async (translations) => {
           translateObject = translations;
@@ -49,7 +55,7 @@ export class EvidenceService {
             header: translateObject['FRMELEMNTS_LBL_SURVEY_ACTION'],
             buttons: [
               {
-                text: translateObject['START'] + ' ' +( type ?  translateObject[type] : ""),
+                text: translateObject['START'] + ' ' + (type ? translateObject[type] : ''),
                 icon: 'arrow-forward',
                 handler: () => {
                   params.entityDetails['assessment']['evidences'][params.selectedEvidence].startTime = Date.now();
@@ -72,7 +78,7 @@ export class EvidenceService {
                 },
               },
               {
-                text:  translateObject['VIEW'] + ' ' +( type ?  translateObject[type] : ""),
+                text: translateObject['VIEW'] + ' ' + (type ? translateObject[type] : ''),
                 icon: 'eye',
                 handler: () => {
                   delete params.entityDetails;
@@ -123,7 +129,7 @@ export class EvidenceService {
   async openAlert(selectedECM) {
     let translateObject;
     this.translate
-      .get(['CANCEL', '"FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
+      .get(['CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
       .subscribe((translations) => {
         translateObject = translations;
         console.log(JSON.stringify(translations));
@@ -142,11 +148,50 @@ export class EvidenceService {
         {
           text: translateObject['FRMELEMNTS_LBL_CONFIRM'],
           handler: () => {
-            // this.openRemarksModal(selectedECM); //TODO:Verify its use?
+            this.openRemarksModal(selectedECM);
           },
         },
       ],
     });
     await alert.present();
+  }
+
+  async openRemarksModal(selectedECM) {
+    const modal = await this.modalCtrl.create({
+      component: RemarksPageComponent,
+      componentProps: { data: selectedECM, button: 'submit', required: true },
+    });
+    await modal.present();
+
+    await modal.onDidDismiss().then((remarks) => {
+      if (remarks) {
+        selectedECM.remarks = remarks;
+        this.notApplicable(selectedECM);
+      }
+    });
+  }
+
+  notApplicable(selectedECM) {
+    // this.loader.startLoader();
+    // const payload = this.constructPayload(selectedECM);
+    // const submissionId = this.entityDetails['assessment'].submissionId;
+    // // const url = AppConfigs.survey.submission + submissionId;
+    // const url = urlConstants.API_URLS.SUBMISSION + submissionId;
+    // this.apiService.httpPost(
+    //   url,
+    //   payload,
+    //   (response) => {
+    //     console.log(JSON.stringify(response));
+    //     this.toast.openToast(response.message);
+    //     this.entityDetails['assessment']['evidences'][this.evidenceIndex].isSubmitted = true;
+    //     this.entityDetails['assessment']['evidences'][this.evidenceIndex].notApplicable = true;
+    //     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.schoolId), this.entityDetails);
+    //     // this.utils.setLocalSchoolData(this.entityDetails);
+    //     this.loader.stopLoader();
+    //   },
+    //   (error) => {
+    //     this.loader.stopLoader();
+    //   }
+    // );
   }
 }

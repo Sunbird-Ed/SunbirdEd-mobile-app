@@ -118,7 +118,7 @@ export class DomainEcmLsitingComponent implements OnInit {
       selectedEvidence: evidenceIndex,
       entityDetails: this.entityData,
     };
-    return await this.evdnsServ.openActionSheet(options);
+    return await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
   }
 
   async openEvidence(evidenceIndex) {

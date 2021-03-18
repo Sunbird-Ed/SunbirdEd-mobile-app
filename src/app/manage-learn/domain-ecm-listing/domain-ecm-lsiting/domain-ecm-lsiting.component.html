@@ -3,7 +3,7 @@
     <h3 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
       {{ entityData?.assessment?.pageHeading }}
     </h3>
-    <h3 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domain</h3>
+    <h3 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h3>
   </ion-text>
   <!-- for Domain/ecm -->
   <div *ngFor="let evidence of entityEvidences; let arrIndex = index">
@@ -16,7 +16,7 @@
         <progress-bar [progress]="100" class="_full-width"></progress-bar>
       </div>
       <div arrow *ngIf="!evidence.progressStatus && !evidence?.notApplicable && !isIos" class="_flex-box">
-        <ion-icon name="arrow-dropdown" class="_progressIcon ion-float-right ion-margin-right"></ion-icon>
+        <ion-icon name="caret-down-circle" class="_progressIcon ion-float-right ion-margin-right"></ion-icon>
       </div>
       <div
         arrow
@@ -52,23 +52,23 @@
         >
           <div class="d-flex flex-ai-center flex-jc-space-between w-100">
             <div class="d-flex flex-ai-center">
-              <ion-icon name="list-box" class="margin-right mr-5"></ion-icon>
+              <ion-icon name="document-text" class="margin-right mr-5"></ion-icon>
               <span>
                 {{ section?.name }}
               </span>
             </div>
-            <span class="float-right" *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
+            <span *ngIf="section.progressStatus === 'completed'" class="_completed _flex-box">
               {{ 'COMPLETED' | translate }}
               <ion-icon name="checkmark-circle" class="_progressIcon" margin-left> </ion-icon>
             </span>
-            <span class="float-right" *ngIf="!section.progressStatus && !isIos" class="_flex-box">
+            <span *ngIf="!section.progressStatus && !isIos" class="_flex-box">
               <ion-icon name="arrow-forward" class="_progressIcon" margin-left></ion-icon>
             </span>
-            <span class="float-right" *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box">
+            <span *ngIf="section.progressStatus === 'inProgress'" class="_inProgress _flex-box" style="font-size: 11">
               {{ 'FRMELEMNTS_LBL_IN_PROGRESS' | translate }}
               <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon>
             </span>
-            <span class="float-right" *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
+            <span *ngIf="section.progressStatus === 'submitted'" class="_submitted _flex-box">
               {{ 'FRMELEMNTS_LBL_SUBMITTTED' | translate }}
               <ion-icon name="cloud-done" class="_progressIcon" margin-left></ion-icon>
             </span>

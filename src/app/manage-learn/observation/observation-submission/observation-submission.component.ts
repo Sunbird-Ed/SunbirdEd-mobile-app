@@ -219,7 +219,11 @@ export class ObservationSubmissionComponent implements OnInit {
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
         debugger
-        if (successData.assessment.evidences.length > 1 || successData.assessment.evidences[0].sections.length>1) {
+        if (
+          successData.assessment.evidences.length > 1 ||
+          successData.assessment.evidences[0].sections.length > 1 ||
+          successData.solution.scoringSystem != 'pointsBasedScoring'
+        ) {
           // this.router.navigate([RouterLinks.ECM_LISTING], {
           //   queryParams: {
           //     submisssionId: submissionId,
@@ -255,7 +259,7 @@ export class ObservationSubmissionComponent implements OnInit {
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
-            debugger
+            debugger;
           }
         }
       })

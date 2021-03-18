@@ -73,7 +73,7 @@ export class ObservationDetailComponent implements OnInit {
         this.submissionIdArr = ids;
       })
       .catch((error) => {
-        console.log(error);
+        this.submissionIdArr=[]
       });
   }
 
