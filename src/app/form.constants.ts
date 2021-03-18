@@ -57,7 +57,7 @@ export class FormConstants {
 
     public static  VENDOR_APPS_CONFIG: FormRequest = {
         type: 'config',
-        subType: 'vendor',
+        subType: 'vendorapps',
         action: 'get',
         component: 'app',
     };

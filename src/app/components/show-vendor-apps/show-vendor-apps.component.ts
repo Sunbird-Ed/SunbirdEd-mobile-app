@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {TelemetryGeneratorService, UtilityService} from '@app/services';
-import {NavParams} from '@ionic/angular';
+import {NavParams, PopoverController} from '@ionic/angular';
 
 @Component({
     selector: 'show-vendor-apps',
@@ -10,12 +10,13 @@ import {NavParams} from '@ionic/angular';
 export class ShowVendorAppsComponent implements OnInit {
     appLists = [];
     content: any;
-    systemAppsLists;
+    systemAppsLists = {};
 
     constructor(
         private navParams: NavParams,
         private utilityService: UtilityService,
-        private telemetryGeneratorService: TelemetryGeneratorService
+        private telemetryGeneratorService: TelemetryGeneratorService,
+        private popOverCtrl: PopoverController
     ) {
         this.content = this.navParams.get('content');
         this.appLists = this.navParams.get('appLists');
@@ -43,6 +44,7 @@ export class ShowVendorAppsComponent implements OnInit {
                 telemetryResult.edata.interactions,
                 'home'
             );
+            this.popOverCtrl.dismiss();
         }).catch((error) => {
             // error
             console.log('------------', error);
