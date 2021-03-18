@@ -112,7 +112,9 @@ export class GuestProfilePage implements OnInit {
   }
 
   async refreshProfileData(refresher: any = false, showLoader: boolean = true) {
-    this.loader = await this.commonUtilService.getLoader();
+    if (!this.loader) {
+      this.loader = await this.commonUtilService.getLoader();
+    }
 
     if (showLoader) {
       await this.loader.present();
@@ -179,7 +181,7 @@ export class GuestProfilePage implements OnInit {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then((result: Framework[]) => {
+      .then(async (result: Framework[]) => {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             if (this.profile && this.profile.syllabus && this.profile.syllabus.length && this.profile.syllabus[0] === element.identifier) {
@@ -191,10 +193,10 @@ export class GuestProfilePage implements OnInit {
           if (selectedFrameworkId !== undefined && selectedFrameworkId.length > 0) {
             this.getFrameworkDetails();
           } else {
-            this.loader.dismiss();
+            await this.loader.dismiss();
           }
         } else {
-          this.loader.dismiss();
+          await this.loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       });
@@ -221,7 +223,6 @@ export class GuestProfilePage implements OnInit {
         if (this.profile.subject && this.profile.subject.length) {
           this.subjects = this.getFieldDisplayValues(this.profile.subject, 3);
         }
-
         await this.loader.dismiss();
       });
   }
