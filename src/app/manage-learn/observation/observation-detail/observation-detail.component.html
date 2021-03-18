@@ -8,8 +8,9 @@
       >{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}</ion-button
     >
   </div>
-  <div *ngFor="let entity of selectedSolution" (click)="goToObservationSubmission(entity)">
-    <app-item-list-card [title]="entity?.name" (cardSelect)="goToObservationSubmission(entity)">
+  <!-- <div *ngFor="let entity of selectedSolution" (click)="goToObservationSubmission(entity)"> -->
+  <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
+    <app-item-list-card [title]="entity?.name">
       <ion-icon
         class="mg-popup-btn-icon"
         name="ios-arrow-round-forward"
@@ -25,7 +26,7 @@
       ></ion-icon>
     </app-item-list-card>
   </div>
-  <app-no-data *ngIf="!selectedSolution?.length"></app-no-data>
+  <app-no-data *ngIf="!entities?.length"></app-no-data>
 </ion-content>
 //TODO: Add report button observation report
 <!-- <ion-button class="view-more" expand="block">

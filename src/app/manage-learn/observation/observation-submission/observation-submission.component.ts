@@ -207,19 +207,26 @@ export class ObservationSubmissionComponent implements OnInit {
     let submissionId = submission._id;
     // let heading = this.selectedSolution.entities[this.entityIndex].name;
     let heading = this.entityName;
-    this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
-      queryParams: {
-        submisssionId: submissionId,
-        schoolName: heading,
-      },
-    });
-    return;
+    // this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
+    //   queryParams: {
+    //     submisssionId: submissionId,
+    //     schoolName: heading,
+    //   },
+    // });
+    // return;
 
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
-        if (successData.assessment.evidences.length > 1) {
-          this.router.navigate([RouterLinks.ECM_LISTING], {
+        debugger
+        if (successData.assessment.evidences.length > 1 || successData.assessment.evidences[0].sections.length>1) {
+          // this.router.navigate([RouterLinks.ECM_LISTING], {
+          //   queryParams: {
+          //     submisssionId: submissionId,
+          //     schoolName: heading,
+          //   },
+          // });
+          this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
             queryParams: {
               submisssionId: submissionId,
               schoolName: heading,
@@ -228,22 +235,33 @@ export class ObservationSubmissionComponent implements OnInit {
         } else {
           if (successData.assessment.evidences[0].startTime) {
             this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
-            this.router.navigate([RouterLinks.SECTION_LISTING], {
+
+            this.router.navigate([RouterLinks.QUESTIONNAIRE], {
               queryParams: {
                 submisssionId: submissionId,
                 evidenceIndex: 0,
-                schoolName: heading,
+                sectionIndex: 0,
+                schoolName: this.entityName,
               },
             });
+
+            // this.router.navigate([RouterLinks.SECTION_LISTING], {
+            //   queryParams: {
+            //     submisssionId: submissionId,
+            //     evidenceIndex: 0,
+            //     schoolName: heading,
+            //   },
+            // });
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
+            debugger
           }
         }
       })
       .catch((error) => {});
   }
-  openAction(assessment, aseessmemtData, evidenceIndex) {
+ async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
     const options = {
       _id: assessment._id,
@@ -253,7 +271,18 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    this.evdnsServ.openActionSheet(options, 'Observation');
+    let action = await this.evdnsServ.openActionSheet(options, 'Observation');
+   debugger
+   if (action) {
+     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+       queryParams: {
+         submisssionId: assessment._id,
+         evidenceIndex: 0,
+         sectionIndex: 0,
+         schoolName: this.entityName,
+       },
+     });
+   }
   }
   async openMenu(event, submission, index) {
     if (submission.ratingCompletedAt) {

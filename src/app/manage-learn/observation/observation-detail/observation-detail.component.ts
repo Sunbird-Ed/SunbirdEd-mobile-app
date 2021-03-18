@@ -4,12 +4,14 @@ import { AlertController, ModalController, Platform, PopoverController, ToastCon
 import { RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
-import { LoaderService, ToastService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ObservationService } from '../observation.service';
+import { storageKeys } from '../../storageKeys';
 
 @Component({
   selector: 'app-observation-detail',
@@ -25,10 +27,13 @@ export class ObservationDetailComponent implements OnInit {
   observationId: any;
   solutionId: any;
   programId: any;
-  selectedSolution: any;
   submissionCount: any;
   solutionName: any;
   entityType: any;
+  entities: any[];
+  solutionData: any;
+  submissionId: unknown;
+  submissionIdArr: any;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -40,7 +45,9 @@ export class ObservationDetailComponent implements OnInit {
     private dhiti: DhitiApiService,
     private translate: TranslateService,
     private alertCntrl: AlertController,
-    private toast: ToastService
+    private toast: ToastService,
+    private observationService: ObservationService,
+    private localStorage: LocalStorageService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -59,7 +66,16 @@ export class ObservationDetailComponent implements OnInit {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.localStorage
+      .getLocalStorage(storageKeys.observationSubmissionIdArr)
+      .then((ids) => {
+        this.submissionIdArr = ids;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   async getObservationEntities() {
     let payload = await this.utils.getProfileInfo();
@@ -78,21 +94,22 @@ export class ObservationDetailComponent implements OnInit {
         (success) => {
           this.loader.stopLoader();
           if (success && success.result && success.result.entities) {
-            this.selectedSolution = success.result.entities;
+            this.solutionData = success.result;
+            this.entities = success.result.entities;
             this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
             //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {
-            this.selectedSolution = [];
+            this.entities = [];
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
           }
         },
         (error) => {
-          this.selectedSolution = [];
+          this.entities = [];
           this.loader.stopLoader();
         }
       );
@@ -233,5 +250,54 @@ export class ObservationDetailComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
+  }
+
+  entityClickAction(e): void {
+    if (this.solutionData.allowMultipleAssessemts) {
+      this.goToObservationSubmission(e);
+      return;
+    }
+
+    let presentLocally = this.submissionIdArr.find((id) => id == e.submissionId);
+
+    if (e.submissionId && presentLocally) {
+      this.goToEcm(e.submissionId, e.name);
+      return;
+    }
+
+    if (!e.submissionId || !presentLocally) {
+      let event = {
+        entityId: e._id,
+        observationId: this.solutionData._id,
+        submission: {
+          submissionNumber: 1,
+        },
+      };
+      this.observationService
+        .getAssessmentDetailsForObservation(event)
+        .then((subId) => {
+          this.submissionId = subId;
+          return this.localStorage.getLocalStorage(storageKeys.observationSubmissionIdArr);
+        })
+        .then((ids) => {
+          this.submissionIdArr = ids;
+          let sId = ids.find((id) => id == this.submissionId);
+          if (sId) {
+            this.goToEcm(sId, e.name);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
+  goToEcm(submissionId, entityName) {
+    this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
+      queryParams: {
+        submisssionId: submissionId,
+        schoolName: entityName,
+      },
+    });
   }
 }
