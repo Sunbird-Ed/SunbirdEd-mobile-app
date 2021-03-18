@@ -63,6 +63,7 @@ import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-s
 import { DiscoverComponent } from './discover/discover.page';
 import { AccessDiscussionComponent } from './access-discussion/access-discussion.component';
 import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
+import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 
 @NgModule({
   declarations: [
@@ -117,7 +118,8 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     SbSubjectListPopupComponent,
     DiscoverComponent,
     AccessDiscussionComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
+    ShowVendorAppsComponent
   ],
   imports: [
     CommonModule,
@@ -171,7 +173,8 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
+    ShowVendorAppsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -223,8 +226,9 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
+    JoyfulThemePopupComponent,
     AccessDiscussionComponent,
-    JoyfulThemePopupComponent
+    ShowVendorAppsComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
