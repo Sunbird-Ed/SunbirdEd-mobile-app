@@ -91,7 +91,6 @@ export class EntityfilterComponent implements OnInit {
     this.kendra.post(config).subscribe(success => {
       this.entityType = success.result ? success.result._id : null;
       this.search();
-      debugger
     }, error => {
 
     })
