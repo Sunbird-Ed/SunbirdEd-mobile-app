@@ -10,9 +10,6 @@ import { Router } from '@angular/router';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
-import { KendraApiService } from '../../core/services/kendra-api.service';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-observation-home',
@@ -33,12 +30,8 @@ export class ObservationHomeComponent implements OnInit {
   count: any;
 
   constructor(
-    private httpClient: HttpClient,
-    private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
     private router: Router,
-    private observationService: ObservationService,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService, // private kendraService: KendraApiService
     private loader: LoaderService

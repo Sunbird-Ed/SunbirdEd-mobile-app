@@ -1,0 +1,30 @@
+<ion-content>
+  <div slot="fixed" class="fixed-container">
+    <app-common-header title="{{ 'FRMELEMNTS_LBL_OBSERVATION_REPORTS' | translate }}"
+      subTitle="{{ 'FRMELEMNTS_LBL_OBSERVATION_REPORTS_DESC' | translate }}"></app-common-header>
+    <sb-library-filters [list]="filters" [layout]="layout" (selectedFilter)="applyFilter($event);"
+      *ngIf="filters?.length">
+    </sb-library-filters>
+  </div>
+
+  <div class="scrollable-container">
+    <div *ngFor="let solution of solutionList; let solutionIndex = index">
+      <app-item-list-card [title]="solution?.name" [subTitle]="solution?.programName"
+        (cardSelect)="goToEntityList(solution)">
+        <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
+      </app-item-list-card>
+    </div>
+  </div>
+
+
+  <app-no-data *ngIf="!solutionList?.length"></app-no-data>
+
+</ion-content>
+
+<ion-footer class="ion-no-border ion-padding-horizontal" *ngIf="showLoadMore">
+  <ion-toolbar>
+    <ion-button expand="block" (click)="loadMore()">
+      {{ 'VIEW_MORE' | translate }}
+      </ion-button>
+  </ion-toolbar>
+</ion-footer>

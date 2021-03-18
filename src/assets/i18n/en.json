@@ -1394,5 +1394,6 @@
   "FRMELEMNTS_LBL_SYNC_COURSE_PROGRESS": "Sync Pogress now",
   "FRMELEMNTS_MSG_SYNC_COURSE_PROGRESS_SUCCESS": "Progress synced successfully",
   "CONTENT_PREFERENCE": "Content Preference",
-  "SET_PREFERENCE": "Set your preference"
+  "SET_PREFERENCE": "Set your preference",
+  "FRMELEMNTS_LBL_OBSERVATION_REPORTS_DESC":"Provides insight of the observations done."
 }
