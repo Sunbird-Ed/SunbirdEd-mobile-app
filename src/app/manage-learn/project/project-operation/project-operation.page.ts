@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
-
+import { RouterLinks } from '@app/app/app.constant';
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -54,6 +54,7 @@ export class ProjectOperationPage implements OnInit {
   };
   constructor(
     private routerparam: ActivatedRoute,
+    private router: Router,
     private modalController: ModalController,
     private http: HttpClient,
     private utils: UtilsService,
@@ -291,7 +292,7 @@ export class ProjectOperationPage implements OnInit {
 
 
 
-  async createProjectModal(project, header, button) {
+  async createProjectModal(project, header, button, isNew?) {
     let texts;
     this.translate.get([header, button]).subscribe(data => {
       texts = data;
@@ -305,7 +306,13 @@ export class ProjectOperationPage implements OnInit {
           text: texts[button],
           cssClass: 'secondary',
           handler: (blah) => {
-            this.location.back();
+            isNew ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+              queryParams: {
+                projectId: project._id,
+                programId: project.programId,
+                solutionId: project.solutionId
+              }, replaceUrl: true,
+            }) : this.location.back();
           }
         }
       ]
@@ -346,7 +353,7 @@ export class ProjectOperationPage implements OnInit {
         this.db
           .create(this.template)
           .then((success) => {
-            this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
+            this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true);
           })
           .catch((error) => {
           });

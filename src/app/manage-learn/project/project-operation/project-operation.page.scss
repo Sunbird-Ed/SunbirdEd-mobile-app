@@ -5,11 +5,10 @@
 }
 
 .skip-button {
-    right: -12%;
-    position: relative;
-    margin-top: 10%;
-    text-align: right;
-    margin-bottom: 0px;
+    position: absolute;
+    margin-top: 20px;
+    z-index: 99999999999999999999;
+    margin-left: 12px;
 }
 
 .project-title {

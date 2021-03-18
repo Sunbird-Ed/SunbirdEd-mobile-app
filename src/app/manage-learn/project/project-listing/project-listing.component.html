@@ -5,7 +5,7 @@
   </ion-searchbar>
   <div class="container">
     <div class="scroll_chip" scrollX="true">
-      <ion-chip outline="true"  *ngFor="let filter of filters" [color]="filter.selected ? 'primary' : ''">
+      <ion-chip outline="true" *ngFor="let filter of filters" [color]="filter.selected ? 'primary' : ''">
         <ion-label (click)="getDataByFilter(filter)">{{filter.name | translate}}</ion-label>
       </ion-chip>
     </div>
@@ -16,6 +16,10 @@
     (cardSelect)="createProject()">
     <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
+  <h5 class="projects-labels"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
+  <div *ngFor="let filter of filters">
+    <h5 *ngIf="filter.selected" class="projects-labels">{{filter.name | translate}} </h5>
+  </div>
   <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
     [id]="project?._id" (cardSelect)="selectedProgram($event, project)"></app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>

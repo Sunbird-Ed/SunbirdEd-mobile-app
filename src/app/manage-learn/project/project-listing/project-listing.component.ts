@@ -23,7 +23,7 @@ export class ProjectListingComponent implements OnInit {
   page = 1;
   count = 0;
   description;
-  limit = 25;
+  limit = 10;
   searchText: string = '';
   headerConfig = {
     showHeader: true,
