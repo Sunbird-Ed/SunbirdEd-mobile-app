@@ -9,10 +9,14 @@ export class TranslateJsonPipe implements PipeTransform {
 
   constructor(private translate: TranslateService) {}
 
-  transform(value: string): string {
+  transform(value: string, args?:{[key: string]: string}): string {
     try {
       const availableTranslation = JSON.parse(value);
-      return (availableTranslation.hasOwnProperty(this.translate.currentLang)) ? availableTranslation[this.translate.currentLang] : '';
+      let outputStr = (availableTranslation.hasOwnProperty(this.translate.currentLang)) ? availableTranslation[this.translate.currentLang] : '';
+      for (const key in args) {
+        outputStr = outputStr.replace(key, args[key]);
+      }
+      return outputStr;
     } catch (e) {
       return value;
     }

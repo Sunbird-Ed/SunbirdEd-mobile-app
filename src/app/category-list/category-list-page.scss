@@ -10,3 +10,10 @@
   z-index: 9;
   background-color: var(--app-primary-background);
 }
+
+.filter-items{
+  border-radius: 2rem;
+  .hide-label{
+    display: none;
+  }
+}

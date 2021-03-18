@@ -46,19 +46,18 @@ export class CategoryListPage implements OnDestroy {
     defaultImg: string;
     showSheenAnimation = true;
     primaryFacetFiltersTemplateOptions = {
-        title: this.commonUtilService.translateMessage('MEDIUM_OPTION_TEXT'),
         cssClass: 'select-box'
     };
     facetFilters: {
-        [code: string]: FilterValue []
+        [code: string]: FilterValue[]
     } = {};
     initialFacetFilters?: {
-        [code: string]: FilterValue []
+        [code: string]: FilterValue[]
     };
     primaryFacetFilters: {
         code: string,
         translations: string
-    } [];
+    }[];
     fromLibrary = false;
     primaryFacetFiltersFormGroup: FormGroup;
 
@@ -66,12 +65,13 @@ export class CategoryListPage implements OnDestroy {
     private readonly filterCriteria: ContentSearchCriteria;
 
     private supportedUserTypesConfig: Array<any>;
-    private supportedFacets?: string [];
+    private supportedFacets?: string[];
     private subscriptions: Subscription[] = [];
     layoutConfiguration = {
         layout: 'v3'
     };
     appName = '';
+    categoryDescription = '';
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -94,7 +94,7 @@ export class CategoryListPage implements OnDestroy {
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
-
+            this.categoryDescription = extrasState.description || '';
             if (this.fromLibrary) {
                 this.primaryFacetFiltersFormGroup = this.primaryFacetFilters.reduce<FormGroup>((acc, filter) => {
                     const facetFilterControl = new FormControl();
@@ -117,9 +117,9 @@ export class CategoryListPage implements OnDestroy {
         if (!this.supportedFacets) {
             this.supportedFacets = (await this.formAndFrameworkUtilService
                 .getFormFields(FormConstants.SEARCH_FILTER)).reduce((acc, filterConfig) => {
-                acc.push(filterConfig.code);
-                return acc;
-            }, []);
+                    acc.push(filterConfig.code);
+                    return acc;
+                }, []);
         }
 
         await this.fetchAndSortData({
@@ -133,10 +133,10 @@ export class CategoryListPage implements OnDestroy {
     private async fetchAndSortData(searchCriteria) {
         this.showSheenAnimation = true;
         const temp = ((await this.contentService.buildContentAggregator
-        (this.formService, this.courseService, this.profileService)
+            (this.formService, this.courseService, this.profileService)
             .aggregate({
-                    interceptSearchCriteria: () => (searchCriteria)
-                },
+                interceptSearchCriteria: () => (searchCriteria)
+            },
                 [], null, [{
                     dataSrc: {
                         type: 'CONTENTS',
@@ -166,6 +166,19 @@ export class CategoryListPage implements OnDestroy {
         if (!this.initialFacetFilters) {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
         }
+
+        this.primaryFacetFiltersFormGroup.patchValue(
+            this.primaryFacetFilters.reduce((acc, p) => {
+                acc[p.code] = this.facetFilters[p.code]
+                    .filter(v => v.apply)
+                    .map(v => {
+                        return this.initialFacetFilters[p.code].find(i => (i.name === v.name));
+                    });
+                return acc;
+            }, {}),
+            { emitEvent: false }
+        );
+
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
     }
@@ -193,7 +206,7 @@ export class CategoryListPage implements OnDestroy {
         const item = event.data;
         const index = event.index;
         const identifier = item.contentId || item.identifier;
-        const corRelationList = [{id: sectionName || '', type: CorReleationDataType.SECTION}];
+        const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
         const values = {};
         values['sectionName'] = sectionName;
         values['positionClicked'] = index;
@@ -206,7 +219,7 @@ export class CategoryListPage implements OnDestroy {
             ContentUtil.generateRollUp(undefined, identifier),
             corRelationList);
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-            this.navService.navigateToDetailPage(item, {content: item, corRelation: corRelationList});
+            this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
             this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1').then();
         }
@@ -234,18 +247,20 @@ export class CategoryListPage implements OnDestroy {
         });
     }
 
-    async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, filterValue: FilterValue) {
+    async onPrimaryFacetFilterSelect(primaryFacetFilter: { code: string }, toApply: FilterValue[]) {
         const appliedFilterCriteria: ContentSearchCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
         const facetFilter = appliedFilterCriteria.facetFilters.find(f => f.name === primaryFacetFilter.code);
 
         if (facetFilter) {
-            const value = facetFilter.values.find(v => v.name === filterValue.name);
+            facetFilter.values.forEach(facetFilterValue => {
+                if (toApply.find(apply => facetFilterValue.name === apply.name)){
+                    facetFilterValue.apply = true;
+                } else {
+                    facetFilterValue.apply = false;
+                }
+            });
 
-            if (value) {
-                value.apply = true;
-
-                await this.applyFilter(appliedFilterCriteria);
-            }
+            await this.applyFilter(appliedFilterCriteria);
         }
     }
 
@@ -258,7 +273,7 @@ export class CategoryListPage implements OnDestroy {
         };
         tempSearchCriteria.facetFilters.forEach(facet => {
             if (facet.values && facet.values.length > 0) {
-                if (facet.name === 'audience') {
+                if (facet.name === 'audience' && this.supportedUserTypesConfig) {
                     facet.values = ContentUtil.getAudienceFilter(facet, this.supportedUserTypesConfig);
                 }
             }
