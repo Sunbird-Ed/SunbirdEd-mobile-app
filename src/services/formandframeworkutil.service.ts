@@ -502,7 +502,7 @@ export class FormAndFrameworkUtilService {
                             });
                     } else {
                         keysLength++;
-                        if (categoryKeysLen === keysLength && (profileData.profileType === ProfileType.ADMIN)) {
+                        if (categoryKeysLen === keysLength) {
                             this.updateProfileInfo(profile, profileData, eventParams)
                                 .then((response) => {
                                     resolve(response);
