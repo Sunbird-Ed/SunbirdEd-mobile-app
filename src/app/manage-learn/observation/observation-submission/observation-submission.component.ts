@@ -289,24 +289,38 @@ export class ObservationSubmissionComponent implements OnInit {
    }
   }
   async openMenu(event, submission, index) {
-    if (submission.ratingCompletedAt) {
-      let popover = await this.popoverCtrl.create({
-        component: ScroreReportMenusComponent,
-        componentProps: {
-          submission: submission,
-          entityType: submission.entityType,
-        },
-        event: event,
-      });
-      popover.present();
-    } else {
-      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-        queryParams: {
-          submissionId: submission._id,
-          entityType: submission.entityType,
-        },
-      });
+    if (submission.scoringSystem != 'pointsBasedScoring') {
+        this.router.navigate([RouterLinks.GENERIC_REPORT], {
+          state: {
+            scores: true,
+            observation: true,
+            pdf: false,
+            entityId: submission.entityId,
+            entityType: submission.entityType,
+            observationId: submission.observationId,
+            submissionId: submission._id
+          },
+        });
+      return
     }
+      if (submission.ratingCompletedAt) {
+        let popover = await this.popoverCtrl.create({
+          component: ScroreReportMenusComponent,
+          componentProps: {
+            submission: submission,
+            entityType: submission.entityType,
+          },
+          event: event,
+        });
+        popover.present();
+      } else {
+        this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+          queryParams: {
+            submissionId: submission._id,
+            entityType: submission.entityType,
+          },
+        });
+      }
   }
   //  entity actions
   entityActions(e) {

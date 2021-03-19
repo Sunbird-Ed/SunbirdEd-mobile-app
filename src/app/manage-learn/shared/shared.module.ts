@@ -62,6 +62,9 @@ import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component
 import { ChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
 import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-modal.component';
+import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
+import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
+import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +109,10 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
     ChartComponent,
     CreateTaskFormComponent,
     HintComponent,
-    RemarksModalComponent
+    RemarksModalComponent,
+    PercentageColumnChartsComponent,
+    ExpansionPanelComponent,
+    ExpansionTableComponent,
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -153,6 +159,9 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
     HintComponent,
     ChartsModule,
     CreateTaskFormComponent,
+    PercentageColumnChartsComponent,
+    ExpansionPanelComponent,
+    ExpansionTableComponent,
   ],
   providers: [
     Camera,
@@ -185,7 +194,7 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
     HintComponent,
     SurveyMsgComponent,
     CreateTaskFormComponent,
-    RemarksModalComponent
+    RemarksModalComponent,
   ],
 })
 export class SharedModule {}

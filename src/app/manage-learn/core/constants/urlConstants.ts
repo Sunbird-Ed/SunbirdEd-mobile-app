@@ -77,7 +77,8 @@ export const urlConstants = {
     GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
     GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
     TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity",
-    OBSERVATION_REPORT_SOLUTION_LIST:"v1/observationSubmissions/solutionList?",
+    OBSERVATION_REPORT_SOLUTION_LIST: "v1/observationSubmissions/solutionList?",
+    GENERIC_REPORTS:'v1/reports/fetch',
 
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',

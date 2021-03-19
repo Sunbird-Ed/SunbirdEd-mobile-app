@@ -601,7 +601,7 @@ export class RouterLinks {
     // filter page
     public static readonly SEARCH_FILTER = 'search-filter';
     //assessment
-    public static readonly ASSESSMENT_REPORT = 'assessment-report';
+    public static readonly GENERIC_REPORT = 'generic-report';
 }
 
 export class ShareItemType {
