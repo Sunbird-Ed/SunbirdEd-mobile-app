@@ -1,5 +1,19 @@
 @import "../../assets/styles/variables";
 .animation-background {
-    padding: 0 8px 0 8px;
-    background-color: map-get($colors, white_f2);
+  padding: 0 8px 0 8px;
+  background-color: map-get($colors, white_f2);
+}
+
+.sticky-header-pills{
+  position: sticky;
+  top: 1rem;
+  z-index: 9;
+  background-color: var(--app-primary-background);
+}
+
+.filter-items{
+  border-radius: 2rem;
+  .hide-label{
+    display: none;
   }
+}

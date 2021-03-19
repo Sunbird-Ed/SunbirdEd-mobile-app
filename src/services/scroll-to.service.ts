@@ -9,7 +9,7 @@ export class ScrollToService {
     constructor() {
     }
 
-    scrollTo(elementId: string, options?: ScrollToOptions): void {
+    scrollTo(elementId: string, options?: boolean | ScrollIntoViewOptions): void {
         const element = document.getElementById(elementId);
         if (!element) {
             return;

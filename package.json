@@ -47,7 +47,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@project-sunbird/client-services": "3.7.4",
-    "@project-sunbird/common-consumption-v8": "3.7.3",
+    "@project-sunbird/common-consumption-v8": "3.7.7",
     "@project-sunbird/content-player": "3.7.1",
     "@project-sunbird/discussions-ui-v8": "2.0.21",
     "@project-sunbird/sb-styles": "0.0.7",

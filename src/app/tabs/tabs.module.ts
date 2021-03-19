@@ -81,7 +81,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: RouterLinks.RESOURCES,
+        redirectTo: RouterLinks.HOME,
         pathMatch: 'full'
       }
     ]

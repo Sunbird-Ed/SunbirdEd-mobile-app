@@ -386,6 +386,9 @@ describe('CategoryListPage', () => {
         // act
         categoryListPage.scrollToSection('Mathematics');
         // assert
-        expect(mockScrollService.scrollTo).toHaveBeenCalledWith('Mathematics');
+        expect(mockScrollService.scrollTo).toHaveBeenCalledWith('Mathematics', {
+            block: 'center',
+            behavior: 'smooth'
+        });
     });
 });
