@@ -623,6 +623,7 @@ describe('ContentShareHandlerService', () => {
             const values = new Map();
             values['ContentType'] = content.contentData.contentType;
             mockCommonUtilService.showToast = jest.fn();
+            mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => 'sample_path');
 
             // act
             contentShareHandlerService.shareContent(shareParams, content as Content, undefined, [], [], { l1: 'do_id' },
@@ -647,7 +648,7 @@ describe('ContentShareHandlerService', () => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockContentService.exportContent).toHaveBeenCalledWith(
-                    { contentIds: ['do_id'], destinationFolder: '/pathDownload/', saveLocally: true, subContentIds: [] }
+                    { contentIds: ['do_id'], destinationFolder: 'sample_path', saveLocally: true, subContentIds: [] }
                 );
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FILE_SAVED', '', 'green-toast');
                 done();
