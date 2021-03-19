@@ -89,7 +89,7 @@ export class ContentShareHandlerService {
       exportContentRequest = {
         contentIds: [rootContentIdentifier],
         subContentIds,
-        destinationFolder: cordova.file.externalRootDirectory + 'Download/',
+        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
         saveLocally: true
       };
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup, pageId);
