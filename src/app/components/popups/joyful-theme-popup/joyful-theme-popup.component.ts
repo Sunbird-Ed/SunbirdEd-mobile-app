@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 import { AppThemes } from '@app/app/app.constant';
+import { SharedPreferences } from 'sunbird-sdk';
+import { AppHeaderService } from '@app/services';
 
 
 @Component({
@@ -13,8 +15,10 @@ export class JoyfulThemePopupComponent implements OnInit {
     appTheme = AppThemes.DEFAULT;
     isPopoverPresent = false;
     constructor(
+        @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
         private popoverCtrl: PopoverController,
         private navParams: NavParams,
+        private appHeaderService: AppHeaderService
     ) {
     }
 
@@ -26,11 +30,21 @@ export class JoyfulThemePopupComponent implements OnInit {
         }, 2000);
     }
 
-    closePopover() {
+    async closePopover() {
+        await this.switchToJoyfulTheme();
         this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {
+        await this.switchToJoyfulTheme();
         this.popoverCtrl.dismiss();
+    }
+
+    async switchToJoyfulTheme() {
+        if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
+            this.appTheme = AppThemes.JOYFUL;
+            await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
+            this.appHeaderService.showStatusBar().then();
+        }
     }
 }

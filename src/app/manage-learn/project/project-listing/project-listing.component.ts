@@ -13,6 +13,9 @@ import { UtilsService } from '../../core';
 import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { HttpClient } from '@angular/common/http';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
+import { TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-project-listing',
   templateUrl: './project-listing.component.html',
@@ -31,17 +34,21 @@ export class ProjectListingComponent implements OnInit {
     actionButtons: []
   };
   projects = [];
-  filters = [{
-    name: 'FRMELEMNTS_LBL_ASSIGNED_TO_ME',
-    parameter: 'assignedToMe',
-    selected: true
-  },
-  {
-    name: 'FRMELEMNTS_LBL_CREATED_BY_ME',
-    parameter: 'createdByMe',
-    selected: false
-  }];
-  selectedFilter = this.filters[0].parameter;
+  // filters = [{
+  //   name: 'FRMELEMNTS_LBL_ASSIGNED_TO_ME',
+  //   parameter: 'assignedToMe',
+  //   selected: true
+  // },
+  // {
+  //   name: 'FRMELEMNTS_LBL_CREATED_BY_ME',
+  //   parameter: 'createdByMe',
+  //   selected: false
+  // }];
+  filters = [];
+  selectedFilterIndex = 0;
+  selectedFilter;
+  layout = LibraryFiltersLayout.ROUND;
+  payload;
 
   constructor(
     private router: Router,
@@ -50,9 +57,13 @@ export class ProjectListingComponent implements OnInit {
     private platform: Platform,
     private unnatiService: UnnatiDataService,
     private loader: LoaderService,
-    private db: DbService,
-    private http: HttpClient,
-    private utils: UtilsService) { }
+    private translate: TranslateService,
+    private utils: UtilsService) { 
+      this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
+        this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
+        this.selectedFilter = this.filters[0];
+      })
+    }
 
   ngOnInit() {
   }
@@ -74,21 +85,26 @@ export class ProjectListingComponent implements OnInit {
   //     this.projects = data.result.data;
   //   });
   // }
-  getDataByFilter(parameter) {
+  getDataByFilter(filter) {
+    debugger
     this.projects = [];
-    this.filters.forEach(element => {
-      element.selected = element.parameter == parameter.parameter ? true : false;
-    });
-    this.selectedFilter = parameter.parameter;
+    // this.filters.forEach(element => {
+    //   element.selected = element.parameter == parameter.parameter ? true : false;
+    // });
+    // this.selectedFilter = parameter.parameter;
+    this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
+    this.selectedFilterIndex = filter ?  filter.data.index : this.selectedFilterIndex;
+    this.searchText = "";
     this.getProjectList();
   }
   async getProjectList() {
     this.loader.startLoader();
-    let payload = await this.utils.getProfileInfo();
-    if (payload) {
+    this.payload = !this.payload ? await this.utils.getProfileInfo(): this.payload;
+    const selectedFilter = this.selectedFilterIndex === 1? 'assignedToMe':'createdByMe';
+    if (this.payload) {
       const config = {
-        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + this.selectedFilter,
-        payload: payload
+        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
+        payload: this.payload
       }
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();

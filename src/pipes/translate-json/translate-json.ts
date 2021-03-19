@@ -13,7 +13,7 @@ export class TranslateJsonPipe implements PipeTransform {
     try {
       const availableTranslation = JSON.parse(value);
       return (availableTranslation.hasOwnProperty(this.translate.currentLang)) ? availableTranslation[this.translate.currentLang] :
-      availableTranslation['en'];
+              availableTranslation['en'];
     } catch (e) {
       return value;
     }
