@@ -1,12 +1,12 @@
 <ion-toolbar>
-  <ion-buttons slot="start">
+  <!-- <ion-buttons slot="start">
     <ion-button (click)="confirmToClose()">
       <ion-icon slot="start" name="close"></ion-icon>
     </ion-button>
-  </ion-buttons>
+  </ion-buttons> -->
   <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
     <ion-button>
-      <ion-icon slot="end" name="skip-forward"></ion-icon>
+      <ion-icon slot="end" name="play-skip-forward"></ion-icon>
     </ion-button>
     <ion-label class="skip-button"> {{'FRMELEMNTS_LBL_SKIP' | translate}}
     </ion-label>
@@ -69,7 +69,7 @@
     <ion-card class="data-list">
       <ion-item lines="none">
         {{selectedProgram.name}}
-        <ion-icon name="close" slot="end" class="remove-icon" *ngIf="selectedProgram.isAPrivateProgram"
+        <ion-icon name="close" slot="end" class="remove-icon" *ngIf="selectedProgram?.isAPrivateProgram"
           (click)="remove(selectedProgram,'program')">
         </ion-icon>
       </ion-item>

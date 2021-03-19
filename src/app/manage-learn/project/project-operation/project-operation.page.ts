@@ -17,6 +17,7 @@ import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
+import { SyncService } from '../../core/services/sync.service';
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -65,7 +66,8 @@ export class ProjectOperationPage implements OnInit {
     private translate: TranslateService,
     private alertController: AlertController,
     private unnatiDataService: UnnatiDataService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private syncServ: SyncService
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -245,11 +247,11 @@ export class ProjectOperationPage implements OnInit {
         this.template.entityId ? delete this.template.entityId : '';
       }
     } else if (type == 'program') {
-      if (this.template.isAPrivateProgram) {
+      // if (this.template.isAPrivateProgram) {
         this.selectedProgram = '';
         this.template.programId ? delete this.template.programId : '';
         this.template.programName ? delete this.template.programName : '';
-      }
+      // }
     } else if (type == 'resources') {
       const index = this.selectedResources.indexOf(data, 0);
       if (index > -1) {
@@ -306,7 +308,7 @@ export class ProjectOperationPage implements OnInit {
           text: texts[button],
           cssClass: 'secondary',
           handler: (blah) => {
-            isNew ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            this.showSkip ? this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
               queryParams: {
                 projectId: project._id,
                 programId: project.programId,
@@ -338,9 +340,11 @@ export class ProjectOperationPage implements OnInit {
     let id = this.template._id;;
     this.template.isDeleted = false;
     delete this.template._id;
+    const payload = this.syncServ.removeKeys(JSON.parse(JSON.stringify(this.template)), ['isNew', 'isEdit']);
+    delete payload._rev;
     const config = {
       url: urlConstants.API_URLS.CREATE_PROJECT,
-      payload: this.template
+      payload: payload
     }
     this.unnatiDataService.post(config).subscribe(data => {
       this.template.isNew = false;
@@ -348,6 +352,7 @@ export class ProjectOperationPage implements OnInit {
       this.db.delete(id, this.template._rev).then(res => {
         this.template._id = data.result.projectId;
         this.template.programId = data.result.programId;
+        this.template.lastDownloadedAt = data.result.lastDownloadedAt;
         delete this.template._rev;
         this.loaderService.stopLoader();
         this.db
