@@ -61,6 +61,7 @@ import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
+import { RemarksPageComponent } from './components/remarks-page/remarks-page.component';
 
 @NgModule({
   declarations: [
@@ -105,9 +106,10 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     ChartComponent,
     CreateTaskFormComponent,
     HintComponent,
+    RemarksPageComponent,
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule,ChartsModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,
@@ -150,7 +152,8 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     ChartComponent,
     HintComponent,
     ChartsModule,
-    CreateTaskFormComponent
+    CreateTaskFormComponent,
+    RemarksPageComponent
   ],
   providers: [
     Camera,
@@ -166,7 +169,7 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
     ThemeService,
-    SurveyProviderService
+    SurveyProviderService,
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -182,7 +185,8 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     StateModalComponent,
     HintComponent,
     SurveyMsgComponent,
-    CreateTaskFormComponent
+    CreateTaskFormComponent,
+    RemarksPageComponent
   ],
 })
 export class SharedModule {}

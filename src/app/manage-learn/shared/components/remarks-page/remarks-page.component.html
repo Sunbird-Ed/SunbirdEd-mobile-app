@@ -1,0 +1,29 @@
+<ion-content padding>
+  <ion-item>
+    <ion-textarea [(ngModel)]="data.remarks" placeholder="Remarks" #remarkInput style="height: 40vh"></ion-textarea>
+  </ion-item>
+</ion-content>
+
+<div class="_footer" no-padding>
+  <ion-row>
+    <ion-col>
+      <ion-button ion-button icon-start full color="light" (click)="close()" class="w-100">
+        {{ 'FRMELEMNTS_BTN_CANCEL' | translate }}
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button
+        ion-button
+        icon-start
+        full
+        float-right
+        color="primary"
+        (click)="update()"
+        [disabled]="required ? !data.remarks : false"
+        class="w-100"
+      >
+        {{ 'FRMELEMNTS_BTN_UPDATE' | translate }}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</div>

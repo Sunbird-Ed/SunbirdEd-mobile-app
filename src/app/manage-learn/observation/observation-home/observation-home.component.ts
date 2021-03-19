@@ -21,6 +21,7 @@ export class ObservationHomeComponent implements OnInit {
   page = 1;
   limit = 10;
   count: any;
+  searchText: string = '';
 
   constructor(
     private headerService: AppHeaderService,
@@ -39,7 +40,9 @@ export class ObservationHomeComponent implements OnInit {
     if (payload) {
       this.loader.startLoader();
       const config = {
-        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=${this.page}&limit=${this.limit}`,
+        url:
+          urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION +
+          `?page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
         payload: payload,
       };
       this.assessmentService.post(config).subscribe(
@@ -81,6 +84,10 @@ export class ObservationHomeComponent implements OnInit {
   }
   loadMore() {
     this.page = this.page + 1;
+    this.getPrograms();
+  }
+  onSearch(e) {
+    this.solutionList = [];
     this.getPrograms();
   }
 }

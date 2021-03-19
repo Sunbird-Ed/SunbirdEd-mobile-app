@@ -73,7 +73,7 @@ export class ObservationDetailComponent implements OnInit {
         this.submissionIdArr = ids;
       })
       .catch((error) => {
-        this.submissionIdArr=[]
+        this.submissionIdArr = [];
       });
   }
 
@@ -149,23 +149,30 @@ export class ObservationDetailComponent implements OnInit {
   async addEntity() {
     const type = this.entityType;
     let entityListModal;
-    if (type == 'state') {
-      entityListModal = await this.modalCtrl.create({
-        component: StateModalComponent,
-        componentProps: {
-          data: this.observationId,
-          solutionId: this.solutionId,
-        },
-      });
-    } else {
-      entityListModal = await this.modalCtrl.create({
-        component: EntityfilterComponent,
-        componentProps: {
-          data: this.observationId,
-          solutionId: this.solutionId,
-        },
-      });
-    }
+    entityListModal = await this.modalCtrl.create({
+      component: EntityfilterComponent,
+      componentProps: {
+        data: this.observationId,
+        solutionId: this.solutionId,
+      },
+    });
+    // if (type == 'state') {
+    //   entityListModal = await this.modalCtrl.create({
+    //     component: StateModalComponent,
+    //     componentProps: {
+    //       data: this.observationId,
+    //       solutionId: this.solutionId,
+    //     },
+    //   });
+    // } else {
+    //   entityListModal = await this.modalCtrl.create({
+    //     component: EntityfilterComponent,
+    //     componentProps: {
+    //       data: this.observationId,
+    //       solutionId: this.solutionId,
+    //     },
+    //   });
+    // }
     await entityListModal.present();
 
     await entityListModal.onDidDismiss().then(async (entityList) => {

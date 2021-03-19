@@ -5,6 +5,7 @@ import { ActionSheetController, AlertController, ModalController, ToastControlle
 import { TranslateService } from '@ngx-translate/core';
 import { RemarksPageComponent } from '../../shared/components/remarks-page/remarks-page.component';
 import { urlConstants } from '../constants/urlConstants';
+import { AssessmentApiService } from './assessment-api.service';
 import { LoaderService } from './loader/loader.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { ToastService } from './toast/toast.service';
@@ -26,7 +27,8 @@ export class EvidenceService {
     private router: Router,
     private modalCtrl: ModalController,
     private loader: LoaderService,
-    private toast:ToastService
+    private toast: ToastService,
+    private assessmentService: AssessmentApiService
   ) {}
 
   openActionSheet(params, type?) {
@@ -129,7 +131,7 @@ export class EvidenceService {
   async openAlert(selectedECM) {
     let translateObject;
     this.translate
-      .get(['CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
+      .get(['FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
       .subscribe((translations) => {
         translateObject = translations;
         console.log(JSON.stringify(translations));
@@ -139,7 +141,7 @@ export class EvidenceService {
       message: translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'],
       buttons: [
         {
-          text: translateObject['CANCEL'],
+          text: translateObject['FRMELEMNTS_BTN_CANCEL'],
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');
@@ -164,34 +166,117 @@ export class EvidenceService {
     await modal.present();
 
     await modal.onDidDismiss().then((remarks) => {
-      if (remarks) {
-        selectedECM.remarks = remarks;
+      debugger
+      if (remarks.data) {
+        selectedECM.remarks = remarks.data;
         this.notApplicable(selectedECM);
       }
     });
   }
 
-  notApplicable(selectedECM) {
-    // this.loader.startLoader();
-    // const payload = this.constructPayload(selectedECM);
-    // const submissionId = this.entityDetails['assessment'].submissionId;
-    // // const url = AppConfigs.survey.submission + submissionId;
-    // const url = urlConstants.API_URLS.SUBMISSION + submissionId;
-    // this.apiService.httpPost(
-    //   url,
-    //   payload,
-    //   (response) => {
-    //     console.log(JSON.stringify(response));
-    //     this.toast.openToast(response.message);
-    //     this.entityDetails['assessment']['evidences'][this.evidenceIndex].isSubmitted = true;
-    //     this.entityDetails['assessment']['evidences'][this.evidenceIndex].notApplicable = true;
-    //     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.schoolId), this.entityDetails);
-    //     // this.utils.setLocalSchoolData(this.entityDetails);
-    //     this.loader.stopLoader();
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
+  async notApplicable(selectedECM) {
+    this.loader.startLoader();
+    const constructPayload = this.constructPayload(selectedECM);
+    const submissionId = this.entityDetails['assessment'].submissionId;
+    // const url = AppConfigs.survey.submission + submissionId;
+    const url = urlConstants.API_URLS.SUBMISSION + submissionId;
+    let payload = await this.utils.getProfileInfo();
+    payload = { ...payload, ...constructPayload };
+    const config = {
+      url: url,
+      payload: payload,
+    };
+
+    this.assessmentService.post(config).subscribe(
+      (response) => {
+        console.log(JSON.stringify(response));
+        this.toast.openToast(response.message);
+        this.entityDetails['assessment']['evidences'][this.evidenceIndex].isSubmitted = true;
+        this.entityDetails['assessment']['evidences'][this.evidenceIndex].notApplicable = true;
+        this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.schoolId), this.entityDetails);
+        this.loader.stopLoader();
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
+  }
+
+  constructPayload(selectedECM): any {
+    console.log('in construct');
+    const payload = {
+      evidence: {},
+    };
+    const evidence = {
+      id: '',
+      externalId: '',
+      answers: {},
+      startTime: 0,
+      endTime: 0,
+      notApplicable: true,
+    };
+
+    const currentEvidence = selectedECM;
+    evidence.id = currentEvidence._id;
+    evidence.externalId = currentEvidence.externalId;
+    evidence.startTime = Date.now();
+    evidence.endTime = Date.now();
+    for (const section of selectedECM.sections) {
+      for (const question of section.questions) {
+        let obj = {
+          qid: question._id,
+          value:
+            question.responseType === 'matrix'
+              ? this.constructMatrixObject(question, evidence.endTime)
+              : question.value,
+          remarks: question.remarks,
+          fileName: question.fileName,
+          notApplicable: true,
+          startTime: evidence.endTime,
+          endTime: evidence.endTime,
+          payload: {
+            question: question.question,
+            labels: [],
+            responseType: question.responseType,
+          },
+        };
+
+        for (const key of Object.keys(question.payload)) {
+          obj[key] = question.payload[key];
+        }
+        evidence.answers[obj.qid] = obj;
+      }
+    }
+    payload.evidence = evidence;
+    return payload;
+  }
+
+  constructMatrixObject(question, evidenceEndTime) {
+    const value = [];
+    for (const instance of question.value) {
+      let eachInstance = {};
+      for (let qst of instance) {
+        const obj1 = {
+          qid: qst._id,
+          value: qst.value,
+          remarks: qst.remarks,
+          fileName: qst.fileName,
+          notApplicable: true,
+          startTime: evidenceEndTime,
+          endTime: evidenceEndTime,
+          payload: {
+            question: qst.question,
+            labels: [],
+            responseType: qst.responseType,
+          },
+        };
+        for (const key of Object.keys(qst.payload)) {
+          obj1[key] = qst.payload[key];
+        }
+        eachInstance[obj1.qid] = obj1;
+      }
+      value.push(eachInstance);
+    }
+    return value;
   }
 }

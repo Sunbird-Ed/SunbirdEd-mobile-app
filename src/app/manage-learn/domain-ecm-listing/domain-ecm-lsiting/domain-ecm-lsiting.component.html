@@ -1,9 +1,9 @@
 <ion-content>
   <ion-text>
-    <h3 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
+    <h5 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
       {{ entityData?.assessment?.pageHeading }}
-    </h3>
-    <h3 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h3>
+    </h5>
+    <h5 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h5>
   </ion-text>
   <!-- for Domain/ecm -->
   <div *ngFor="let evidence of entityEvidences; let arrIndex = index">
