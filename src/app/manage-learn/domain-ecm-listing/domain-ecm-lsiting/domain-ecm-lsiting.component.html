@@ -1,12 +1,15 @@
 <ion-content>
   <ion-text>
-    <h5 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
+    <h4 class="p-15" *ngIf="entityData?.assessment?.pageHeading">
       {{ entityData?.assessment?.pageHeading }}
-    </h5>
-    <h5 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h5>
+    </h4>
+    <h4 class="p-15" *ngIf="!entityData?.assessment?.pageHeading">Domains</h4>
   </ion-text>
   <!-- for Domain/ecm -->
-  <div *ngFor="let evidence of entityEvidences; let arrIndex = index">
+  <div
+    *ngFor="let evidence of entityEvidences; let arrIndex = index"
+    [ngClass]="{ 'restrict': evidence?.notApplicable === true }"
+  >
     <app-item-list-card [title]="evidence?.name" (click)="openEvidence(arrIndex)">
       <div
         arrow
@@ -36,7 +39,7 @@
         <div class="f11">Completed</div>
       </div>
       <div arrow *ngIf="evidence?.notApplicable" class="_na _flex-box _float-right">
-        {{ 'labels.notApplicable' | translate }}
+        {{ 'FRMELEMNTS_LBL_NOT_APPLICABLE' | translate }}
         <ion-icon name="alert" class="_progressIcon ion-margin-left"></ion-icon>
       </div>
     </app-item-list-card>

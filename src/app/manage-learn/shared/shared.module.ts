@@ -61,7 +61,7 @@ import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
-import { RemarksPageComponent } from './components/remarks-page/remarks-page.component';
+import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-modal.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +106,7 @@ import { RemarksPageComponent } from './components/remarks-page/remarks-page.com
     ChartComponent,
     CreateTaskFormComponent,
     HintComponent,
-    RemarksPageComponent,
+    RemarksModalComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -153,7 +153,6 @@ import { RemarksPageComponent } from './components/remarks-page/remarks-page.com
     HintComponent,
     ChartsModule,
     CreateTaskFormComponent,
-    RemarksPageComponent
   ],
   providers: [
     Camera,
@@ -186,7 +185,7 @@ import { RemarksPageComponent } from './components/remarks-page/remarks-page.com
     HintComponent,
     SurveyMsgComponent,
     CreateTaskFormComponent,
-    RemarksPageComponent
+    RemarksModalComponent
   ],
 })
 export class SharedModule {}

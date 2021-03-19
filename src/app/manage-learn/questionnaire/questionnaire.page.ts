@@ -294,7 +294,7 @@ export class QuestionnairePage implements OnInit, OnDestroy {
         },
         {
           text: translateObject['FRMELEMNTS_BTN_SAVE_FORM'],
-          icon: 'filing',
+          icon: 'file-tray-full',
           handler: () => {
             this.location.back();
           },

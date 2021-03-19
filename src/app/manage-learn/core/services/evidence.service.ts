@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { RemarksPageComponent } from '../../shared/components/remarks-page/remarks-page.component';
+import { RemarksModalComponent } from '../../questionnaire/remarks-modal/remarks-modal.component';
 import { urlConstants } from '../constants/urlConstants';
 import { AssessmentApiService } from './assessment-api.service';
 import { LoaderService } from './loader/loader.service';
@@ -160,13 +160,12 @@ export class EvidenceService {
 
   async openRemarksModal(selectedECM) {
     const modal = await this.modalCtrl.create({
-      component: RemarksPageComponent,
+      component: RemarksModalComponent,
       componentProps: { data: selectedECM, button: 'submit', required: true },
     });
     await modal.present();
 
     await modal.onDidDismiss().then((remarks) => {
-      debugger
       if (remarks.data) {
         selectedECM.remarks = remarks.data;
         this.notApplicable(selectedECM);
@@ -179,7 +178,7 @@ export class EvidenceService {
     const constructPayload = this.constructPayload(selectedECM);
     const submissionId = this.entityDetails['assessment'].submissionId;
     // const url = AppConfigs.survey.submission + submissionId;
-    const url = urlConstants.API_URLS.SUBMISSION + submissionId;
+    const url = urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION + submissionId;
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...constructPayload };
     const config = {

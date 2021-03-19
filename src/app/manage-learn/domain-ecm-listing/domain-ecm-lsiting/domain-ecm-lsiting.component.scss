@@ -1,9 +1,13 @@
 ._completed,
 ._inProgress,
-._submitted {
+._submitted,._na {
   font-size: 11px !important;
 }
 ._progressIcon {
   font-size: 11px !important;
   padding-left: 3px;
+}
+
+.restrict{
+  pointer-events:none;
 }
