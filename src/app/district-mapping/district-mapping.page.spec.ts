@@ -19,7 +19,6 @@ import { FormLocationFactory } from '../../services/form-location-factory/form-l
 import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';
 import { AuditState, CorrelationData } from '@project-sunbird/sunbird-sdk';
-import {TncUpdateHandlerService} from '@app/services/handlers/tnc-update-handler.service';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;

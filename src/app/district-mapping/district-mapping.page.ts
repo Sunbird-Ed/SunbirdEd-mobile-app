@@ -57,7 +57,6 @@ export class DistrictMappingPage implements OnDestroy {
   private formValueSubscription?: Subscription;
   private initialFormLoad = true;
   private isLocationUpdated = false;
-  isSsoUser = false;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
