@@ -15,7 +15,6 @@ import { DbService } from '../../core/services/db.service';
 import { LoaderService, ToastService } from '../../core';
 import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { CreateTaskComponent } from '../../shared/components/create-task/create-task.component';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { HttpClient } from '@angular/common/http';
@@ -23,6 +22,8 @@ import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Location } from '@angular/common';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
+import { CreateTaskFormComponent } from '../../shared';
+
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -41,6 +42,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   statuses = statuses;
   project: any;
   projectId;
+  projectType = '';
   categories = [];
   taskCount: number = 0;
   filters: any = {};
@@ -80,7 +82,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     pageTitle: '',
     actionButtons: [] as string[]
   };
-
   isNotSynced: boolean;
   locationChangeTriggered: boolean = false;
   allStrings;
@@ -112,10 +113,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private navigateService: NavigationService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
-    params.params.subscribe((parameters) => {
+    params.queryParams.subscribe((parameters) => {
+      console.log(parameters, "parameters");
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
+      this.projectType = parameters.type ? parameters.type : '';
       this.getProject();
     });
     this.translate
@@ -125,8 +128,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       });
 
     this.platform.resume.subscribe((result) => {
-      console.log("Platform Resume Event");
-      this.getProjectTaskStatus()
+      this.getProjectTaskStatus();
     });
   }
 
@@ -157,13 +159,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   async getProjectsApi() {
     this.loader.startLoader();
-    let payload = await this.utils.getProfileInfo();
-    if (payload) {
+    let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
+    console.log(this.projectType, "projectType");
       let id = this.projectId ? '/' + this.projectId : '';
       const config = {
         url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
-        payload: payload
+        payload: this.projectType == 'assignedToMe' ? payload : {}
       }
+      console.log(config, "config");
       this.unnatiService.post(config).subscribe(success => {
         this.loader.stopLoader();
         // this.projectId = success.result._id;
@@ -196,20 +199,28 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         // TODO:till here
         this.db.create(success.result).then(successData => {
           this.projectId ? this.getProject() :
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+              queryParams: {
+                projectId: success.result._id,
+                programId: this.programId,
+                solutionId: this.solutionId
+              }, replaceUrl: true
+            });
         }).catch(error => {
           if (error.status === 409) {
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`, success.result._id, this.programId, this.solutionId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+              queryParams: {
+                projectId: success.result._id,
+                programId: this.programId,
+                solutionId: this.solutionId
+              }, replaceUrl: true
+            })
           }
         })
       }, error => {
 
         this.loader.stopLoader();
       })
-    } else {
-      this.loader.stopLoader();
-    }
-
   }
 
   ngOnInit() { }
@@ -491,7 +502,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             this.loader.stopLoader();
             this.projectId = newObj._id;
             this.project = newObj;
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}` + this.projectId], { replaceUrl: true });
+            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+              queryParams: {
+                projectId: this.projectId,
+              }, replaceUrl: true
+            }
+            );
             setTimeout(() => {
               this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
             }, 0);
@@ -509,7 +525,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   async addTask() {
     const modal = await this.modal.create({
-      component: CreateTaskComponent,
+      component: CreateTaskFormComponent,
       cssClass: "create-task-modal",
     });
     modal.onDidDismiss().then((data) => {
@@ -583,14 +599,12 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     };
     this.unnatiService.post(config).subscribe(
       (success) => {
-        console.log(success);
         if (!success.result) {
           return;
         }
         this.updateAssessmentStatus(success.result);
       },
       (error) => {
-        console.log(error);
       }
     );
   }

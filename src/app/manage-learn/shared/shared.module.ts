@@ -25,7 +25,8 @@ import {
   TextTypeInputComponent,
   ProgressBarComponent,
   NoDataComponent,
-  ChartComponent
+  ChartComponent,
+  CreateTaskFormComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -60,6 +61,10 @@ import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
 import { SurveyProviderService } from '../core/services/survey-provider.service';
+import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-modal.component';
+import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
+import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
+import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
 
 @NgModule({
   declarations: [
@@ -102,10 +107,15 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
+    CreateTaskFormComponent,
     HintComponent,
+    RemarksModalComponent,
+    PercentageColumnChartsComponent,
+    ExpansionPanelComponent,
+    ExpansionTableComponent,
   ],
 
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule,ChartsModule],
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
     CreateTaskComponent,
@@ -147,7 +157,11 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     SurveyMsgComponent,
     ChartComponent,
     HintComponent,
-    ChartsModule
+    ChartsModule,
+    CreateTaskFormComponent,
+    PercentageColumnChartsComponent,
+    ExpansionPanelComponent,
+    ExpansionTableComponent,
   ],
   providers: [
     Camera,
@@ -163,7 +177,7 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     HttpClientModule, //TODO:remove after api integration
     ReactiveFormsModule,
     ThemeService,
-    SurveyProviderService
+    SurveyProviderService,
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -178,7 +192,9 @@ import { SurveyProviderService } from '../core/services/survey-provider.service'
     ViewDetailComponent,
     StateModalComponent,
     HintComponent,
-    SurveyMsgComponent
+    SurveyMsgComponent,
+    CreateTaskFormComponent,
+    RemarksModalComponent,
   ],
 })
 export class SharedModule {}

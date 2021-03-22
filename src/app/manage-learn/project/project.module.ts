@@ -21,6 +21,7 @@ import { AddProgramsComponent } from './add-programs/add-programs.component';
 import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 
 const routes: Routes = [
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
     component: ProjectListingComponent
   },
   {
-    path: `${RouterLinks.DETAILS}/:projectId/:programId/:solutionId`,
+    path: `${RouterLinks.DETAILS}`,
     component: ProjectDetailPage
   },
   {
@@ -77,6 +78,7 @@ const routes: Routes = [
     SharedModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
+    CommonConsumptionModule
   ]
 })
 export class ProjectModule { }

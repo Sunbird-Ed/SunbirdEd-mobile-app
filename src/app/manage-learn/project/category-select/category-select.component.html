@@ -15,7 +15,7 @@
         
       </div>
       <ion-item *ngIf="data.input == 'text' && data.show">
-        <ion-input type="text" name="{{data.field}}"  [formControlName]="data.field"  value="{{data.value}}"></ion-input>
+        <ion-input type="text" name="{{data.field}}" placeholder="{{'FRMELEMNTS_LBL_SPECIFY_OTHER' | translate}}"  [formControlName]="data.field"  value="{{data.value}}"></ion-input>
       </ion-item>
     </div>
     </form>

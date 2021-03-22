@@ -1,18 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppGlobalService, AppHeaderService } from '@app/services';
-import { Platform } from '@ionic/angular';
-import { Location } from '@angular/common';
-import { ObservationService } from '../observation.service';
-import { Subscription } from 'rxjs';
+import { AppHeaderService } from '@app/services';
 import { Router } from '@angular/router';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
-import { KendraApiService } from '../../core/services/kendra-api.service';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-observation-home',
@@ -20,27 +12,22 @@ import { Label, SingleDataSet } from 'ng2-charts';
   styleUrls: ['./observation-home.component.scss'],
 })
 export class ObservationHomeComponent implements OnInit {
-  private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: [],
   };
-  // programList: any;
   solutionList: any;
   page = 1;
   limit = 10;
   count: any;
+  searchText: string = '';
 
   constructor(
-    private httpClient: HttpClient,
-    private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
     private router: Router,
-    private observationService: ObservationService,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService, // private kendraService: KendraApiService
+    private assessmentService: AssessmentApiService,
     private loader: LoaderService
   ) {}
 
@@ -53,7 +40,9 @@ export class ObservationHomeComponent implements OnInit {
     if (payload) {
       this.loader.startLoader();
       const config = {
-        url: urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION + `?page=${this.page}&limit=${this.limit}`,
+        url:
+          urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION +
+          `?page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
         payload: payload,
       };
       this.assessmentService.post(config).subscribe(
@@ -82,15 +71,8 @@ export class ObservationHomeComponent implements OnInit {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ionViewWillLeave() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
-  }
-
   observationDetails(solution) {
     let { programId, solutionId, _id: observationId, name: solutionName } = solution;
-    // this.observationService.setIndex(programIndex, solutionIndex);
     this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
       queryParams: {
         programId: programId,
@@ -99,13 +81,13 @@ export class ObservationHomeComponent implements OnInit {
         solutionName: solutionName,
       },
     });
-    /*  this.navCtrl.push(ProgramSolutionObservationDetailPage, {
-      programIndex: this.programIndex,
-      solutionIndex: this.solutionIndex,
-    }); */
   }
   loadMore() {
     this.page = this.page + 1;
+    this.getPrograms();
+  }
+  onSearch(e) {
+    this.solutionList = [];
     this.getPrograms();
   }
 }

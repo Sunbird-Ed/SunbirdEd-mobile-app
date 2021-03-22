@@ -8,7 +8,7 @@
 </ion-toolbar>
 <ion-content>
   <div *ngIf="subEntities ">
-    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)"></ion-searchbar>
+    <ion-searchbar debounce="1000" (ionInput)="onSearch($event)" search-icon="search"></ion-searchbar>
     <div class="ion-padding">
       <ion-icon name="funnel" color="primary"></ion-icon> {{'FRMELEMNTS_LBL_FILTER' | translate}}
         <ion-row>

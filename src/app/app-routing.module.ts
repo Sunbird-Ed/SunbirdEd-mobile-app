@@ -98,7 +98,7 @@ const routes: Routes = [
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
   { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule', canActivate:[MlGuard] },
   { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule', canActivate:[MlGuard] },
-  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule', canActivate:[MlGuard] },
+  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule'},
   { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule',canActivate:[MlGuard] },
   {
     path: RouterLinks.QUESTIONNAIRE,
@@ -123,6 +123,8 @@ const routes: Routes = [
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.DISCUSSION, loadChildren: './discussion-forum/discussion-forum.module#DiscussionForumModule' },
   { path: RouterLinks.SEARCH_FILTER, loadChildren: './search-filter/search-filter.module#SearchFilterPageModule' },
+  { path: RouterLinks.GENERIC_REPORT, loadChildren: './manage-learn/generic-reports/generic-reports.module#GenericReportsModule' , canActivate:[MlGuard]},
+  { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: './manage-learn/domain-ecm-listing/domain-ecm-listing.module#DomainEcmListingModule' },
 
 ];
 

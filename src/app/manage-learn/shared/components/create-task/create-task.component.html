@@ -1,59 +1,27 @@
-<ion-toolbar>
-  <!-- <ion-title>
-    {{title | translate}}
-  </ion-title> -->
-  <ion-buttons (click)="close()" slot="start" class="padding">
-    <ion-icon name="close" slot="icon-only" style="padding-left: 10px;"></ion-icon>
-  </ion-buttons>
-</ion-toolbar>
-<ion-content class="ion-padding">
-  <h5>{{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
-  <ion-item>
-    <ion-label position="stacked" class="custom-label">
-      {{'FRMELEMNTS_LBL_ASSIGNED_TO' | translate}}
-    </ion-label>
-    <ion-icon name="person" slot="start"></ion-icon>
-    <ion-icon name="share-social" slot="end" (click)="share()"></ion-icon>
-    <ion-input type="text" [(ngModel)]="newTask.assignee">
-    </ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="stacked" class="custom-label">
-      {{'FRMELEMNTS_LBL_END_DATE' | translate}}
-    </ion-label>
-    <ion-icon name="calendar" slot="start"></ion-icon>
-    <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"  displayFormat="DD/MM/YYYY" display-timezone="utc"
-    value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date" placeholder={{today}}>
-    </ion-datetime>
-  </ion-item>
-  <ion-item>
-    <ion-label position="stacked" class="custom-label">
-      {{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}<span class="reuired-field">* </span>
-    </ion-label>
-    <ion-icon name="newspaper" slot="start"></ion-icon>
-    <ion-textarea type="text" [(ngModel)]="newTask.name">
-    </ion-textarea>
-  </ion-item>
-  <div class="attachments-box">
-    <div *ngIf="newTask.attachments.length > 0">
-      <p *ngFor="let file of newTask.attachments">
-        <ion-icon name="attach" class="img"></ion-icon>
-        {{file.name}}
-      </p>
-    </div>
-    <ion-row class="file-box">
-      <ion-col size="6" class="file-list">
-        <div *ngIf="newTask.attachments.length == 0">
-          <ion-icon name="image"></ion-icon>
-          <!-- <ion-icon name="attach"></ion-icon> -->
-        </div>
-      </ion-col>
-      <ion-col size="6">
-        <a class="attach-label" (click)="openAction()">{{'FRMELEMNTS_LBL_ATTACH' | translate}}</a>
+<ion-content class="P0">
+  <div class="ecd-header ion-text-center">
+    <!-- <h6 class="M0">{{title | titlecase}}</h6> -->
+  </div>
+  <ion-grid class="P0">
+    <ion-icon name="close" class="sb-modal-close close-popup" (click)="closePopover()"></ion-icon>
+    <ion-row class="P16">
+      <h5> {{'FRMELEMNTS_LBL_ADD_NEW_TASK' | translate}}</h5>
+      <section class="W100 MT3V">
+        <p>{{'FRMELEMNTS_LBL_TASK_DESCRIPTION' | translate}}</p>
+        <ion-col size="12" class="ion-no-padding">
+          <div class="W100 merged-input-container MT10">
+            <ion-textarea type="text" placeholder="{{'FRMELEMNTS_LBL_ADD_DESCRIPTION_HERE' | translate}}" class="form-control custom task-desc" [(ngModel)]="newTask.name">
+            </ion-textarea>
+          </div>
+        </ion-col>
+      </section>
+    </ion-row>
+    <ion-row class="custom-shadow">
+      <ion-col padding size="12">
+        <ion-button expand="block" type="submit" (click)="addTask()">
+          {{ 'FRMELEMNTS_LBL_ADD_TASK' | translate }}
+        </ion-button>
       </ion-col>
     </ion-row>
-  </div>
-  <ion-button expand="block" (click)="addTask()">
-    {{'FRMELEMNTS_LBL_ADD_TASK' | translate}}
-  </ion-button>
+  </ion-grid>
 </ion-content>

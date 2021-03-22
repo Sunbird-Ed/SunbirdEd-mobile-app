@@ -3,12 +3,14 @@
 .custom-padding {
     padding: 0px 10px;
 }
-
+.skip-icon{
+    margin-bottom: 10px;
+}
 .skip-button {
-    text-align: right;
-    margin: -10px 5px;
-    z-index: 9999999;
-    // background: $white-color;
+    position: absolute;
+    margin-top: 20px;
+    z-index: 99999999999999999999;
+    margin-left: 12px;
 }
 
 .project-title {
@@ -18,10 +20,12 @@
         --padding-start: 0px;
     }
 }
+.resources-link{
+    color:$info-color;
+}
 
 .program-block {
     margin: 30px 0px;
-
     ion-item {
         // border: 1px solid $dark-grey-color;
         border-radius: 6px;
@@ -61,10 +65,7 @@
         --padding-start: 0px;
     }
 
-    .remove-icon {
-        margin-top: -20px;
-        margin-right: -15px;
-    }
+
 }
 
 .footer-btn {

@@ -91,6 +91,9 @@ export class SyncService {
     const obj = this.processPayload(payload);
     const { _id } = payload;
     delete payload._id;
+    if(!obj.programId){
+      delete obj.programId
+    }
     showLoader ? this.loader.startLoader() : null;
     const config = {
       url: urlConstants.API_URLS.SYNC_PROJECT + _id + `?lastDownloadedAt=${payload.lastDownloadedAt}`,

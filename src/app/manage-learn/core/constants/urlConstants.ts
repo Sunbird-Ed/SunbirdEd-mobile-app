@@ -42,6 +42,7 @@ export const urlConstants = {
     PROFILE_INFO: 'v1/users/getProfile',
     SYNC_PROJECT: 'v1/userProjects/sync/',
     CREATE_PROJECT_DOC: 'v1/userProjects/create',
+    CREATE_PROJECT :'v1/userProjects/add',
     GET_IMAGE_UPLOAD_URLS: 'v1/userProjects/getFileUploadUrl',
     START_ASSESSMENT: 'v1/userProjects/solutionDetails/',
     PROJCET_TASK_STATUS: 'v1/userProjects/tasksStatus/',
@@ -75,6 +76,9 @@ export const urlConstants = {
     SUBMISSION: 'v1/submissions/make/',
     GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
     GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
+    TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity/",
+    OBSERVATION_REPORT_SOLUTION_LIST: "v1/observationSubmissions/solutionList?",
+    GENERIC_REPORTS:'v1/reports/fetch',
 
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',
