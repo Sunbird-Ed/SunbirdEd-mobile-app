@@ -26,7 +26,7 @@
             <p>{{'SELECT_YOUR_STATE' | translate}}</p>
             <div class="input-container">
                 <input type="text" class="input" placeholder="Select State" [(ngModel)]="stateName">
-                <ion-icon (click)="showStates = !showStates;" class="input-icon" name="ios-arrow-down">
+                <ion-icon (click)="showStates = !showStates;" class="input-icon" name="arrow-down">
                 </ion-icon>
             </div>
             <div class="showList" *ngIf="showStates">

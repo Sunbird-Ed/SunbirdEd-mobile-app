@@ -9,7 +9,7 @@ import {
     SharedPreferences
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, AlertController, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
     AppGlobalService,

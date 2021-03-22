@@ -7,9 +7,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import {
-  Events
-} from '@ionic/angular';
+import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-sb-download-popup',

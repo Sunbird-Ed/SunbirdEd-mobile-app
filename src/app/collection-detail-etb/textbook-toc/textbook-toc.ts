@@ -12,7 +12,8 @@ import {
     PageId
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Events, IonContent, Platform, PopoverController } from '@ionic/angular';
+import { IonContent, Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { TextbookTocService } from './../textbook-toc-service';

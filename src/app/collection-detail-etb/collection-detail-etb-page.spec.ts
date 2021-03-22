@@ -10,7 +10,8 @@ import {
     TelemetryErrorCode,
     TelemetryObject
 } from 'sunbird-sdk';
-import {Events, IonContent, Platform, PopoverController} from '@ionic/angular';
+import {IonContent, Platform, PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {ChangeDetectorRef, NgZone} from '@angular/core';
 import {
     AppGlobalService,

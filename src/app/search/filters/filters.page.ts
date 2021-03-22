@@ -1,5 +1,6 @@
-import { Component, Inject } from '@angular/core';
-import { PopoverController, Events, Platform } from '@ionic/angular';
+import { Component, Inject, OnDestroy } from '@angular/core';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { ContentUtil } from '@app/util/content-util';
   templateUrl: './filters.page.html',
   styleUrls: ['./filters.page.scss']
 })
-export class FiltersPage {
+export class FiltersPage implements OnDestroy {
 
   filterCriteria: any;
   initialFilterCriteria: any;
@@ -227,6 +228,10 @@ export class FiltersPage {
         await loader.dismiss();
         this.shouldEnableFilter = true;
       });
+  }
+
+  ngOnDestroy() {
+    this.events.publish('update_back_header', true);
   }
 
 }

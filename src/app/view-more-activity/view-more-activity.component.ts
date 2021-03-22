@@ -16,7 +16,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentUtil } from '@app/util/content-util';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import {
   Batch, Content,

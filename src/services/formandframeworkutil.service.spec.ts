@@ -12,7 +12,7 @@ import {
 import { AppGlobalService } from './app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { of, throwError } from 'rxjs';
 import {
   mockWebviewFormResponse,

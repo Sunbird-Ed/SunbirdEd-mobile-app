@@ -1,10 +1,10 @@
 import { Component, NgZone, OnInit, Inject, ViewChild } from '@angular/core';
 import {
-  Events,
   PopoverController,
   ToastController,
   IonRefresher,
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   ContentCard,
   ProfileConstants,

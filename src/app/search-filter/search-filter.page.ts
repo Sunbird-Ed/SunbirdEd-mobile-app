@@ -38,18 +38,6 @@ export class SearchFilterPage implements OnInit {
         this.resetFilter();
     }
 
-    onFormInitialize(formGroup: FormGroup) {
-        this.formGroup = formGroup;
-
-        if (this.formValueSubscription) {
-            this.formValueSubscription.unsubscribe();
-        }
-
-        this.formValueSubscription = this.formGroup.valueChanges.subscribe((formValue) => {
-            this.refreshForm(formValue);
-        });
-    }
-
     resetFilter() {
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
         this.config = this.buildConfig(this.appliedFilterCriteria);
@@ -77,17 +65,10 @@ export class SearchFilterPage implements OnInit {
         searchCriteria.facetFilters.forEach((facetFilter) => {
             const selection = formValue[facetFilter.name];
 
-            const valueToApply = facetFilter.values.find((value) => {
-                if (Array.isArray(selection)) {
-                    return selection.includes(value.name);
-                } else {
-                    return selection === value.name;
-                }
+            facetFilter.values.forEach(f => {
+                f.apply = (selection && (selection.indexOf(f.name) === -1)) ? false : true;
             });
 
-            if (valueToApply) {
-                valueToApply.apply = true;
-            }
         });
 
         const loader = await this.commonUtilService.getLoader();
@@ -96,7 +77,7 @@ export class SearchFilterPage implements OnInit {
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
             this.appliedFilterCriteria = contentSearchResult.filterCriteria;
-            this.config = this.buildConfig(contentSearchResult.filterCriteria, this.formGroup.value);
+            this.config = this.buildConfig(contentSearchResult.filterCriteria, formValue);
         } catch (e) {
             // todo show error toast
             console.error(e);
@@ -110,8 +91,14 @@ export class SearchFilterPage implements OnInit {
             filterCriteria.facetFilters.reduce((acc, f) => {
                 acc[f.name] = f.values;
                 return acc;
-            }, {}),
-            defaults
+            }, {})
         );
+    }
+
+    valueChanged(event) {
+        if (!event) {
+            return;
+        }
+        this.refreshForm(event);
     }
 }
