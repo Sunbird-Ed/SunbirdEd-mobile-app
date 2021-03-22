@@ -87,7 +87,6 @@ describe('DistrictMappingPage', () => {
             extras: { state: {} }
         };
     }) as any;
-    const mockTncUpdateHandler: Partial<TncUpdateHandlerService> = {};
 
     beforeAll(() => {
         //  window.history.state.source({query: 'google'}, 'MOCK');
@@ -107,8 +106,7 @@ describe('DistrictMappingPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormLocationFactory as FormLocationFactory,
             mockLocationHandler as LocationHandler,
-            mockProfileHandler as ProfileHandler,
-            mockTncUpdateHandler as TncUpdateHandlerService
+            mockProfileHandler as ProfileHandler
         );
     });
 

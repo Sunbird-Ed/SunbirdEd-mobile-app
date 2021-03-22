@@ -28,7 +28,6 @@ import {
 } from 'sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
-import {TncUpdateHandlerService} from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-district-mapping',
@@ -75,8 +74,7 @@ export class DistrictMappingPage implements OnDestroy {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
     private locationHandler: LocationHandler,
-    private profileHandler: ProfileHandler,
-    private tncUpdateHandler: TncUpdateHandlerService
+    private profileHandler: ProfileHandler
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -93,9 +91,6 @@ export class DistrictMappingPage implements OnDestroy {
 
   async ionViewWillEnter() {
     this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-    if (this.profile && this.profile.serverProfile) {
-      this.isSsoUser = await this.tncUpdateHandler.isSSOUser(this.profile);
-    }
     this.presetLocation = (await this.locationHandler.getAvailableLocation(
       this.profile.serverProfile ? this.profile.serverProfile : this.profile))
       .reduce<{ [code: string]: LocationSearchResult }>((acc, loc) => {
