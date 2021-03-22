@@ -180,7 +180,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       });
   }
 
-  getFieldDisplayValues(field: Array<any>, categoryCode: string): any[] {
+  getFieldDisplayValues(field: Array<any>, categoryCode: string, lowerCase?: boolean): any[] {
     const displayValues = [];
 
     if (!this.frameworkCategoriesMap[categoryCode]) {
@@ -189,7 +189,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
     this.frameworkCategoriesMap[categoryCode].terms.forEach(element => {
       if (field.includes(element.code)) {
-        displayValues.push(element.name.toLowerCase());
+        if (lowerCase) {
+          element.name = element.name.toLowerCase();
+        }
+        displayValues.push(element.name);
       }
     });
 
@@ -200,15 +203,15 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       userPreferences: {
-        'board': this.getFieldDisplayValues(this.profile.board, 'board'),
-        'medium': this.getFieldDisplayValues(this.profile.medium, 'medium'),
-        'gradeLevel': this.getFieldDisplayValues(this.profile.grade, 'gradeLevel'),
-        'subject': this.getFieldDisplayValues(this.profile.subject, 'subject'),
+        'board': this.getFieldDisplayValues(this.profile.board, 'board', true),
+        'medium': this.getFieldDisplayValues(this.profile.medium, 'medium', true),
+        'gradeLevel': this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true),
+        'subject': this.getFieldDisplayValues(this.profile.subject, 'subject', true),
       },
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
-        contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board');
-        contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium');
-        contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel');
+        contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board' , true);
+        contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
+        contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
         return contentSearchCriteria;
       }, from: CachedItemRequestSourceFrom.SERVER
     };

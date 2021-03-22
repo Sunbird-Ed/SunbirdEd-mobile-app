@@ -167,17 +167,19 @@ export class CategoryListPage implements OnDestroy {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
         }
 
-        this.primaryFacetFiltersFormGroup.patchValue(
-            this.primaryFacetFilters.reduce((acc, p) => {
-                acc[p.code] = this.facetFilters[p.code]
-                    .filter(v => v.apply)
-                    .map(v => {
-                        return this.initialFacetFilters[p.code].find(i => (i.name === v.name));
-                    });
-                return acc;
-            }, {}),
-            { emitEvent: false }
-        );
+        if (this.primaryFacetFiltersFormGroup) {
+            this.primaryFacetFiltersFormGroup.patchValue(
+                this.primaryFacetFilters.reduce((acc, p) => {
+                    acc[p.code] = this.facetFilters[p.code]
+                        .filter(v => v.apply)
+                        .map(v => {
+                            return this.initialFacetFilters[p.code].find(i => (i.name === v.name));
+                        });
+                    return acc;
+                }, {}),
+                { emitEvent: false }
+            );
+        }
 
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
