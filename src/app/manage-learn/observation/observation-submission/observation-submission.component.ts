@@ -222,7 +222,7 @@ export class ObservationSubmissionComponent implements OnInit {
         if (
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
-          successData.solution.scoringSystem != 'pointsBasedScoring'
+          (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
         ) {
           // this.router.navigate([RouterLinks.ECM_LISTING], {
           //   queryParams: {
