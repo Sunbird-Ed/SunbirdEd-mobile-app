@@ -23,7 +23,8 @@ export class ObservationSolutionEntityListingComponent implements OnInit {
   ngOnInit() { }
 
   goToReports(entity) {
-    if (!this.solutionDetails.scoringSystem || this.solutionDetails.scoringSystem === 'pointBasedScoring') {
+    // if (!this.solutionDetails.scoringSystem || this.solutionDetails.scoringSystem === 'pointBasedScoring') {
+    if (this.solutionDetails.scoringSystem === 'pointBasedScoring') {
       const queryParams = {
         queryParams: {
           observationId: this.solutionDetails.observationId,
@@ -36,7 +37,17 @@ export class ObservationSolutionEntityListingComponent implements OnInit {
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
 
     } else {
-      this.toast.openToast("coming soon")
+      // this.toast.openToast("coming soon")
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: entity._id,
+          entityType: this.solutionDetails.entityType,
+          observationId: this.solutionDetails.observationId,
+        },
+      });
     }
   }
 

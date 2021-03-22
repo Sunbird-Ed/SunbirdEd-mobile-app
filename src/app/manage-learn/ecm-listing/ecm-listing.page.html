@@ -14,7 +14,7 @@
         <div style="flex: 1;">{{ evidence?.name }}</div>
         <div *ngIf="evidence.progressStatus === 'completed' && !evidence?.notApplicable"
           class="_completed _flex-box progressWidth ion-float-right">
-          <app-progress-bar [progress]="100" class="_full-width"></app-progress-bar>
+          <progress-bar [progress]="100" class="_full-width"></progress-bar>
           <!-- {{'labels.completed'|translate}} <ion-icon name="checkmark-circle" class="_progressIcon" margin-left>
           </ion-icon> -->
         </div>
@@ -23,7 +23,7 @@
         </div>
         <div *ngIf="evidence.progressStatus === 'inProgress' && !evidence?.notApplicable"
           class="_inProgress _flex-box progressWidth ion-float-right">
-          <app-progress-bar [progress]="evidence?.completePercentage" class=" _full-width"></app-progress-bar>
+          <progress-bar [progress]="evidence?.completePercentage" class=" _full-width"></progress-bar>
           <!-- {{'labels.inprogress'|translate}} <ion-icon name="contrast" class="_progressIcon" margin-left></ion-icon> -->
         </div>
         <div *ngIf="evidence.progressStatus === 'submitted' && !evidence?.notApplicable"

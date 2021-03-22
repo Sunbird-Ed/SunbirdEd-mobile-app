@@ -567,7 +567,7 @@ export class RouterLinks {
     public static readonly TASK_VIEW = 'task-view';
     public static readonly LEARNING_RESOURCES = 'learning-resources';
     public static readonly SYNC = 'sync';
-    public static readonly ATTACHMENTS = 'attachments'
+    public static readonly ATTACHMENTS = 'attachments';
     public static readonly PROJECT_EDIT = 'project-edit';
     public static readonly PROJECT_OPERATION = `project-operation`;
     public static readonly CREATE_PROJECT = `create-project`;
@@ -584,7 +584,7 @@ export class RouterLinks {
     public static readonly SUBMISSION_PREVIEW = 'submission_preview';
     public static readonly IMAGE_LISTING = 'image-listing';
     public static readonly ALL_EVIDENCE = 'all-evidence';
-
+    public static readonly DOMAIN_ECM_LISTING = 'domain-ecm-listing';
 
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';
@@ -600,6 +600,8 @@ export class RouterLinks {
     public static readonly HOME_ADMIN = 'admin';
     // filter page
     public static readonly SEARCH_FILTER = 'search-filter';
+    //assessment
+    public static readonly GENERIC_REPORT = 'generic-report';
 }
 
 export class ShareItemType {

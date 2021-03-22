@@ -1,0 +1,62 @@
+<ion-content padding>
+  <h2>{{ data?.programName ? data?.programName : data?.solutionName }}</h2>
+  <!-- for dropdown type  -->
+  <div *ngFor="let filter of data?.filters">
+    <div *ngIf="filter.filter.type == 'dropdown'" class="d-flex flex-ai-center w-100">
+      <div>
+        <ion-select
+          okText="Select"
+          cancelText="Dismiss"
+          placeholder="Submission Filter"
+          [ngModel]="submissionId"
+          (ionChange)="instanceReport($event)"
+        >
+          <ion-select-option [value]="s._id" *ngFor="let s of filter.filter.data">{{
+            s.name
+          }}</ion-select-option></ion-select
+        >
+      </div>
+      <div>
+        <ion-icon name="close" class="sb-modal-close" (click)="submissionId = null" *ngIf="submisison"></ion-icon>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let item of data?.reportSections">
+    <percentage-column-charts
+      [chartData]="item"
+      *ngIf="item.chart.type != 'expansion' && item.chart.type != 'expansion-table'"
+      (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
+    ></percentage-column-charts>
+    <expansion-panel [datas]="item" *ngIf="item.chart.type == 'expansion'"></expansion-panel>
+    <expansion-table [datas]="item" *ngIf="item.chart.type == 'expansion-table'"></expansion-table>
+  </div>
+  <!-- <div *ngIf="data?.reportSections && !data?.reportSections.length" class="_flex-box _justify-content-center">
+    {{ data?.message ? data.message : ('message.ratingPending' | translate) }}
+  </div>
+  <div *ngIf="data && !data?.reportSections" class="_flex-box _justify-content-center">
+    {{ 'message.noReportsFound' | translate }}
+  </div> -->
+   <div *ngIf="!data?.result" class="_flex-box _justify-content-center">
+    {{data?.message}}
+  </div>
+  <!-- <div class="_flex-box _justify-content-center" *ngIf="data?.reportSections && data?.reportSections.length ">
+    <button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
+      {{'buttons.clickHereToImprove' | translate}}
+    </button>
+  </div> -->
+  <!-- INFO: click to improve feature not threre as of now  -->
+
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="data?.reportSections" #fab slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="ellipsis-vertical"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="downloadSharePdf('download')">
+        <ion-icon name="download"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="downloadSharePdf('share')">
+        <ion-icon name="share"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

@@ -39,7 +39,7 @@ export class ObservationService {
         payload: payload,
       };
       this.assessmentService.post(config).subscribe(
-        (success) => {
+       async (success) => {
           console.log(success);
           this.ulsdp.mapSubmissionDataToQuestion(success.result, true);
           const generalQuestions = success.result['assessment']['generalQuestions']
@@ -56,11 +56,11 @@ export class ObservationService {
 
           this.ulsdp.storeObsevationSubmissionId(success.result['assessment']['submissionId']);
 
-          this.localStorage.setLocalStorage(
+          await this.localStorage.setLocalStorage(
             this.utils.getAssessmentLocalStorageKey(success.result.assessment.submissionId),
             success.result
           );
-          resolve(true);
+          resolve(success.result.assessment.submissionId);
         },
         (error) => {
           // this.utils.stopLoader();
