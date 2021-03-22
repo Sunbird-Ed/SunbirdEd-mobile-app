@@ -1155,5 +1155,14 @@
   "JOYFULPOPUP_HEADING": "DIKSHA has got a new look & feel",
   "JOYFUL_LEARNING_TEXT": "For joyful learning, we have redesigned our platform making it easier for you to find content",
   "JOYFUL_WARNING_TEXT": "If you want to change the theme, go to your menu and switch theme",
-  "LETS_GO": "Let's go"
+  "LETS_GO": "Let's go",
+  "SET_PREFERENCE": "Set your preference",
+  "FRMELEMNTS_LBL_OPEN_WITH": "Open With",
+  "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With",
+  "NEW_EXPERIENCE_POPUP_HEADING": "We've made it easier for you to find content on {{app_name}}",
+  "NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need. and adds a splash af joy to your learning experience",
+  "NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
+  "SWITCH_TO_NEW_EXPERIENCE": "SWITCH TO NEW EXPERIENCE",
+  "SWITCH_TO_HOME": "Switch to home",
+  "SWITCH_TO_LIBRARY": "Switch to library"
 }

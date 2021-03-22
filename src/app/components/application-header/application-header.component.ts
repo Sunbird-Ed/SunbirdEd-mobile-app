@@ -19,7 +19,7 @@ import {
 } from 'sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
-  ProfileConstants, RouterLinks
+  ProfileConstants, RouterLinks, SwitchableTabsConfig
 } from '../../../app/app.constant';
 import {
   ActivePageService, AppGlobalService,
@@ -61,6 +61,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   appTheme = AppThemes.DEFAULT;
   unreadNotificationsCount = 0;
   isUpdateAvailable = false;
+  currentSelectedTabs: string;
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -213,7 +214,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleMenu() {
+  async toggleMenu() {
     this.menuCtrl.toggle();
     if (this.menuCtrl.isOpen()) {
       const pageId = this.activePageService.computePageId(this.router.url);
@@ -225,7 +226,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       );
     }
     this.events.publish(EventTopics.HAMBURGER_MENU_CLICKED);
-    this.appTheme = document.querySelector('html').getAttribute('data-theme');
+   // this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
   }
 
   emitEvent($event, name) {
@@ -396,6 +398,20 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.appTheme = AppThemes.DEFAULT;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
       this.appHeaderService.hideStatusBar();
+    }
+    this.menuCtrl.close();
+  }
+
+  async switchTabs() {
+    this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+    if (this.currentSelectedTabs === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
+      this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
+      this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+    } else if (!this.currentSelectedTabs || this.currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG) {
+      this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
+        SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
+      this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
     }
     this.menuCtrl.close();
   }

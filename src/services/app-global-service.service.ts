@@ -4,6 +4,7 @@ import { animationShrinkOutTopRight } from '@app/app/animations/animation-shrink
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { JoyfulThemePopupComponent } from '@app/app/components/popups/joyful-theme-popup/joyful-theme-popup.component';
 import { SbTutorialPopupComponent } from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { NewExperiencePopupComponent } from '@app/app/components/popups/new-experience-popup/new-experience-popup.component';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, PopoverController } from '@ionic/angular';
@@ -865,18 +866,33 @@ export class AppGlobalService implements OnDestroy {
         } else {
             const isPopupDisplayed = await this.preferences.getBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED).toPromise();
             if (!isPopupDisplayed) {
-            const appLabel = await this.appVersion.getAppName();
-            const newThemePopover = await this.popoverCtrl.create({
-                component: JoyfulThemePopupComponent,
-                componentProps: {appLabel},
-                backdropDismiss: false,
-                showBackdrop: true,
-                cssClass: 'sb-new-theme-popup'
-            });
-            newThemePopover.present();
-            this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
+                const appLabel = await this.appVersion.getAppName();
+                const newThemePopover = await this.popoverCtrl.create({
+                    component: JoyfulThemePopupComponent,
+                    componentProps: { appLabel },
+                    backdropDismiss: false,
+                    showBackdrop: true,
+                    cssClass: 'sb-new-theme-popup'
+                });
+                newThemePopover.present();
+                this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
             }
             this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
+        }
+    }
+
+    async showNewTabsSwitchPopup() {
+        const isPopupDisplayed = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+        if (!isPopupDisplayed) {
+            const appLabel = await this.appVersion.getAppName();
+            const newThemePopover = await this.popoverCtrl.create({
+                component: NewExperiencePopupComponent,
+                componentProps: { appLabel },
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'sb-switch-new-experience-popup'
+            });
+            newThemePopover.present();
         }
     }
 
