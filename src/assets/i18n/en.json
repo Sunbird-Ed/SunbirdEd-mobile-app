@@ -1399,5 +1399,6 @@
   "LETS_GO": "Let's go",
   "SET_PREFERENCE": "Set your preference",
   "FRMELEMNTS_LBL_OPEN_WITH": "Open With",
-  "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With"
+  "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With",
+  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice"
 }

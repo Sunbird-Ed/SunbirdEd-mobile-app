@@ -8,6 +8,7 @@ import 'hammerjs';
 import * as dayjs from 'dayjs';
 
 window.dayjs = dayjs;
+window.dayjs.extend(require('dayjs/plugin/duration'));
 
 if (configuration.production) {
   enableProdMode();
