@@ -5,13 +5,13 @@
     </ion-button>
   </ion-buttons> -->
   <ion-buttons slot="end" (click)="createProject()" *ngIf="showSkip">
-    <ion-button>
+    <ion-button class="skip-icon">
       <ion-icon slot="end" name="play-skip-forward"></ion-icon>
     </ion-button>
     <ion-label class="skip-button"> {{'FRMELEMNTS_LBL_SKIP' | translate}}
     </ion-label>
   </ion-buttons>
-  
+
 </ion-toolbar>
 
 <ion-content *ngIf="template" class="ion-padding">
@@ -34,7 +34,7 @@
 
           <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"
             display-timezone="utc" value={{today}} [(ngModel)]="template.startDate" class="project-date"
-            placeholder={{today}} (click)="resetEndDate($event)">
+            placeholder={{today}} (ionChange)="resetEndDate($event)">
           </ion-datetime>
 
           <ion-icon name="caret-down" slot="end"></ion-icon>
@@ -45,8 +45,8 @@
           <ion-label position="stacked">
             {{'FRMELEMNTS_LBL_TO' | translate}}
           </ion-label>
-          <ion-datetime min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
-            value={{today}} [(ngModel)]="template.endDate" class="project-date" placeholder={{today}}>
+          <ion-datetime min="{{endDateMin}}" max="{{endDateMin + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
+            value={{endDateMin}} [(ngModel)]="template.endDate" class="project-date" placeholder={{endDateMin}}>
           </ion-datetime>
           <ion-icon name="caret-down" slot="end"></ion-icon>
         </ion-item>
@@ -107,7 +107,8 @@
     </div>
     <div class="text-center">
       <ion-icon name="link"></ion-icon>
-      <span (click)="addLearningResources()" class="resources-link"> {{'FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY' | translate}} </span>
+      <span (click)="addLearningResources()" class="resources-link">
+        {{'FRMELEMNTS_LBL_CLICK_HERE_TO_VIEW_LIBRARY' | translate}} </span>
     </div>
   </div>
 </ion-content>

@@ -167,8 +167,8 @@ export class CreateProjectPage implements OnInit {
       .get([
         'FRMELEMNTS_LBL_DISCARD_PROJECT',
         'FRMELEMNTS_MSG_DISCARD_PROJECT',
-        'FRMELEMNTS_BTN_DISCARD',
-        'FRMELEMNTS_BTN_CONTINUE',
+        'FRMELEMNTS_BTN_DISCARD_YES',
+        'FRMELEMNTS_BTN_CONTINUE_TO_EDIT',
       ])
       .subscribe((data) => {
         text = data;
@@ -179,15 +179,16 @@ export class CreateProjectPage implements OnInit {
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
         {
-          text: text['FRMELEMNTS_BTN_DISCARD'],
+          text: text['FRMELEMNTS_BTN_DISCARD_YES'],
           role: 'cancel',
-          cssClass: 'secondary',
+          cssClass: 'text-transform-free',
           handler: (blah) => {
             this.location.back();
           },
         },
         {
-          text: text['FRMELEMNTS_BTN_CONTINUE'],
+          text: text['FRMELEMNTS_BTN_CONTINUE_TO_EDIT'],
+          cssClass: 'text-transform-free',
           handler: () => { },
         },
       ],
@@ -210,11 +211,12 @@ export class CreateProjectPage implements OnInit {
         {
           text: text['CANCEL'],
           role: 'cancel',
-          cssClass: 'secondary',
+          cssClass: 'text-transform-free',
           handler: (blah) => { },
         },
         {
           text: text['FRMELEMNTS_BTN_DELETE'],
+          cssClass: 'text-transform-free',
           handler: () => {
             if (type == 'task') {
               this.removeTask(data);
