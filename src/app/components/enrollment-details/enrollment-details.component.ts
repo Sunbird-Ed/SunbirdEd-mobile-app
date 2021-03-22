@@ -1,7 +1,8 @@
 import { Component, NgZone, Inject, OnInit } from '@angular/core';
 import {
-    NavController, Events, PopoverController, NavParams
+    NavController, PopoverController, NavParams
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     SharedPreferences, TelemetryObject, InteractType,
 } from 'sunbird-sdk';

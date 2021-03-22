@@ -38,7 +38,8 @@ import {
   SunbirdQRScanner,
   TelemetryGeneratorService
 } from 'services';
-import { AlertController, Events, Platform } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';

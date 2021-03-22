@@ -2,7 +2,7 @@ import { LogoutHandlerService } from './logout-handler.service';
 import {
     AuthService, ProfileService, SharedPreferences, ProfileType, InteractType
 } from 'sunbird-sdk';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { ContainerService } from '../container.services';
 import { Router } from '@angular/router';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../services';

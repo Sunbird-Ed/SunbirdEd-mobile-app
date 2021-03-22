@@ -12,12 +12,12 @@
 <ion-content class="ion-padding" overflow-scroll="true">
   <div *ngIf="ongoingBatches && ongoingBatches.length">
     <div class="background-gray">
-      <div class="width-100 batch-font" text-capitalize>
+      <div class="width-100 batch-font ion-text-capitalize">
         {{ 'VIEW_ONGOING_BATCHES' | translate }}
       </div>
     </div>
 
-    <div class="batch-list" padding-top>
+    <div class="batch-list ion-padding-top">
       <div *ngIf="ongoingBatches && ongoingBatches.length">
         <div class="flex-card-container" *ngFor="let batch of ongoingBatches">
           <div class="card-text">
@@ -53,11 +53,11 @@
 
   <div *ngIf="upcommingBatches && upcommingBatches.length">
     <div class="background-gray">
-      <div class="width-100 batch-font" text-capitalize>
+      <div class="width-100 batch-font ion-text-capitalize">
         {{ 'VIEW_UPCOMING_BATCHES' | translate }}
       </div>
     </div>
-    <div class="batch-list" padding-top>
+    <div class="batch-list ion-padding-top">
       <div *ngIf="upcommingBatches && upcommingBatches.length">
         <div class="flex-card-container" *ngFor="let batch of upcommingBatches">
           <div class="card-text">

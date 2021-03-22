@@ -1,6 +1,7 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import each from 'lodash/each';

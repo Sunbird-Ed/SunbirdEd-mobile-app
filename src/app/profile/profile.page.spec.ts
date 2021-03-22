@@ -10,7 +10,8 @@ import {
 } from 'sunbird-sdk';
 import {NgZone} from '@angular/core';
 import {Router} from '@angular/router';
-import {Events, PopoverController, ToastController} from '@ionic/angular';
+import {PopoverController, ToastController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {
     AndroidPermissionsService,
     AppGlobalService,

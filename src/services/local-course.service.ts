@@ -14,7 +14,7 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';

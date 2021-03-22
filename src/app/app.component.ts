@@ -18,7 +18,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { Network } from '@ionic-native/network/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Events, IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
+import { IonRouterOutlet, MenuController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { combineLatest, Observable, Subscription } from 'rxjs';

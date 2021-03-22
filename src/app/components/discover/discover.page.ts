@@ -4,7 +4,8 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import {ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService, ContentAggregatorHandler, PageId } from '@app/services';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { CachedItemRequestSourceFrom, ContentAggregatorRequest, ContentSearchCriteria } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';

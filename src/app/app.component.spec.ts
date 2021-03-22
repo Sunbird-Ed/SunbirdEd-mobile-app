@@ -13,7 +13,8 @@ import {
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
     TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from 'sunbird-sdk';
-import { Platform, Events, MenuController } from '@ionic/angular';
+import { Platform, MenuController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { NgZone, EventEmitter } from '@angular/core';

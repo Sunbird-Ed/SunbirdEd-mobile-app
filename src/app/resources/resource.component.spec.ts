@@ -33,7 +33,8 @@ import {
     TelemetryGeneratorService,
     ProfileHandler
 } from '@app/services';
-import {Events, MenuController, PopoverController, ToastController} from '@ionic/angular';
+import {MenuController, PopoverController, ToastController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {Network} from '@ionic-native/network/ngx';
 import {TranslateService} from '@ngx-translate/core';

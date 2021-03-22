@@ -75,7 +75,7 @@
 										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
-											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
+											<ion-icon name="cloud-download"
 												[ngClass]="(downloads.queued.length)? 'card-icons-downloadStarted': 'card-icons'">
 											</ion-icon>
 											<p class="card-text">{{'DOWNLOAD' | translate}}
@@ -84,12 +84,12 @@
 										<button *ngIf="isDownloadComplete || course?.isAvailableLocally"
 												[disabled]="downloads.queued.length" (click)="showDeletePopup()"
 												slot="icon-only" class="card-button">
-											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
+											<ion-icon name="trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
 										</button>
 										<button slot="icon-only" (click)="share()" class="card-button">
-											<ion-icon ios="ios-share" md="md-share" class="card-icons"></ion-icon>
+											<ion-icon name="share" class="card-icons"></ion-icon>
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 										<accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
@@ -312,10 +312,10 @@
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
 								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
 								<span *ngIf="isDataShare">
-									<ion-icon name="ios-arrow-up"></ion-icon>
+									<ion-icon name="arrow-up"></ion-icon>
 								</span>
 								<span *ngIf="!isDataShare">
-									<ion-icon name="ios-arrow-down"></ion-icon>
+									<ion-icon name="arrow-down"></ion-icon>
 								</span>
 							</div>
 							<div *ngIf="isDataShare" class="showLicensce data-share-header">
@@ -336,15 +336,15 @@
 										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
 									<ion-list lines="none" style="margin-left: -4px;">
-										<ion-radio-group>
+										<ion-radio-group [value]="dataSharingStatus">
 										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='REVOKED'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" [value]="'REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
 										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
-											<ion-radio class="ds-m0" [checked]="dataSharingStatus==='ACTIVE'" slot="start" ></ion-radio>
+											<ion-radio class="ds-m0" [value]="'ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
 										</ion-radio-group>
 									  </ion-list>
