@@ -78,11 +78,6 @@ const routes: Routes = [
             loadChildren: '../download-manager/download-manager.module#DownloadManagerPageModule'
           }
         ]
-      },
-      {
-        path: '',
-        redirectTo: RouterLinks.RESOURCES,
-        pathMatch: 'full'
       }
     ]
   }

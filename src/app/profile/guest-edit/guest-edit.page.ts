@@ -71,6 +71,15 @@ export class GuestEditPage implements OnInit, OnDestroy {
   public supportedProfileAttributes: { [key: string]: string } = {};
   public supportedUserTypes: Array<any> = [];
 
+  private availableProfileTypes = [
+    { profileType: ProfileType.STUDENT, name: this.commonUtilService.translateMessage('USER_TYPE_2') },
+    { profileType: ProfileType.TEACHER, name: this.commonUtilService.translateMessage('USER_TYPE_1') },
+    { profileType: ProfileType.ADMIN, name: this.commonUtilService.translateMessage('LEADER') },
+    { profileType: ProfileType.PARENT, name: this.commonUtilService.translateMessage('USER_TYPE_5') },
+    { profileType: ProfileType.OTHER, name: this.commonUtilService.translateMessage('USER_TYPE_3') }
+  ];
+  public profileTypeList = [];
+
   syllabusOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
     cssClass: 'select-box'
