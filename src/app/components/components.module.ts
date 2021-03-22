@@ -62,6 +62,7 @@ import { CopyTraceIdPopoverComponent } from './popups/copy-trace-id-popup.ts/cop
 import { SbSubjectListPopupComponent } from './popups/sb-subject-list-popup/sb-subject-list-popup.component';
 import { DiscoverComponent } from './discover/discover.page';
 import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
+import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +116,8 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
+    NewExperiencePopupComponent
   ],
   imports: [
     CommonModule,
@@ -169,7 +171,8 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
+    NewExperiencePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -221,7 +224,8 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
     CopyTraceIdPopoverComponent,
     SbSubjectListPopupComponent,
     DiscoverComponent,
-    JoyfulThemePopupComponent
+    JoyfulThemePopupComponent,
+    NewExperiencePopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })

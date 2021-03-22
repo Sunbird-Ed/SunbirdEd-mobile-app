@@ -338,9 +338,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   ionViewDidEnter() {
     // Need timer to load the newTheme screen and for the newTheme screen to hide if user comes from deeplink.
-    this.newThemeTimeout = setTimeout(() => {
-      this.appGlobalService.showJoyfulPopup();
-    }, 2000);
+    // this.newThemeTimeout = setTimeout(() => {
+    //   this.appGlobalService.showJoyfulPopup();
+    // }, 2000);
   }
 
   viewPreferenceInfo() {
