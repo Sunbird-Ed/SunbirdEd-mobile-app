@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {PopoverController} from '@ionic/angular';
-import { PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow } from '@project-sunbird/common-consumption';
+import { PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize } from '@project-sunbird/common-consumption';
 
 @Component({
     selector: 'app-sb-subject-list-popup',
@@ -10,12 +10,14 @@ import { PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow }
 export class SbSubjectListPopupComponent {
     @Input() public subjectList = [];
     @Input() public title = '';
+    @Input() public theme;
 
     PillShape = PillShape;
     PillsViewType = PillsViewType;
     PillBorder = PillBorder;
     PillsMultiRow = PillsMultiRow;
     ShowMoreViewType = ShowMoreViewType;
+    PillSize = PillSize;
 
     constructor(
         private popoverCtrl: PopoverController

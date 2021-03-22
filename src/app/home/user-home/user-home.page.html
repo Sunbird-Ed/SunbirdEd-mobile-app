@@ -76,7 +76,7 @@
           [pillSize]="section?.theme?.inputs?.pillSize"
           [pillTextElipsis]="section?.theme?.inputs?.pillTextElipsis"
           [pillBoxShadow]="section?.theme?.inputs?.pillBoxShadow"
-          (viewMorePillList)="onViewMorePillList($event, section?.title)"
+          (viewMorePillList)="onViewMorePillList($event, section)"
           (select)="handlePillSelect($event)">
           <sb-pill-item *ngFor="let pillData of section.data" [name]="pillData?.facet | titlecase"
                         [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"

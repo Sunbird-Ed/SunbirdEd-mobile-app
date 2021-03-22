@@ -64,6 +64,7 @@ import { DiscoverComponent } from './discover/discover.page';
 import { AccessDiscussionComponent } from './access-discussion/access-discussion.component';
 import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
 import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
+import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 
 @NgModule({
   declarations: [
@@ -119,7 +120,9 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     DiscoverComponent,
     AccessDiscussionComponent,
     JoyfulThemePopupComponent,
-    ShowVendorAppsComponent
+    ShowVendorAppsComponent,
+    JoyfulThemePopupComponent,
+    NewExperiencePopupComponent
   ],
   imports: [
     CommonModule,
@@ -174,7 +177,8 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     SbSubjectListPopupComponent,
     DiscoverComponent,
     JoyfulThemePopupComponent,
-    ShowVendorAppsComponent
+    ShowVendorAppsComponent,
+    NewExperiencePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -228,7 +232,8 @@ import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/sho
     DiscoverComponent,
     JoyfulThemePopupComponent,
     AccessDiscussionComponent,
-    ShowVendorAppsComponent
+    ShowVendorAppsComponent,
+    NewExperiencePopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
