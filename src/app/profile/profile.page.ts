@@ -552,6 +552,10 @@ export class ProfilePage implements OnInit {
             state: { request }
           });
         } else {
+          if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+            this.commonUtilService.showToast('OFFLINE_CERTIFICATE_MESSAGE', false, '', 3000, 'top');
+            return;
+          }
           const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
           const toastOptions = {
             message: downloadMessage || 'Certificate getting downloaded'

@@ -1,7 +1,7 @@
 import {  Component, Inject, Input, OnInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { DiscussionService } from '@project-sunbird/sunbird-sdk';
 
@@ -20,7 +20,8 @@ export class AccessDiscussionComponent implements OnInit {
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
     private router: Router,
     private commonUtilService: CommonUtilService,
-    private discussionTelemetryService: DiscussionTelemetryService
+    private discussionTelemetryService: DiscussionTelemetryService,
+    private headerService: AppHeaderService
 ) {}
 
   ngOnInit() {
@@ -39,6 +40,7 @@ export class AccessDiscussionComponent implements OnInit {
   }
 
   async openDiscussionForum() {
+    this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [
       {
         id: this.fetchForumIdReq.identifier[0],
