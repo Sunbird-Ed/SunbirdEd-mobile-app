@@ -964,6 +964,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   async applyJoyfulTheme() {
       await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
-      this.headerService.showStatusBar().then();
+      this.headerService.showStatusBar();
   }
 }
