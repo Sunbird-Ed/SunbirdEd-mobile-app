@@ -141,7 +141,7 @@
 			<div #stickyPillsRef
 				*ngIf="!isFromGroupFlow && !showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
 				class="enrolled-course-container">
-				<div class="timer-info" *ngIf="batchRemaningTime"><div><span>{{ 'BATCH_ENDS_TEXT' | translate }}</span><span>{{batchRemaningTime}}</span></div></div>
+				<div class="timer-info" *ngIf="batchRemaningTime"><div><span>{{ 'BATCH_ENDS_TEXT' | translate }}</span>&nbsp;<span>{{batchRemaningTime}}</span></div></div>
 				<ion-card class="enrolled-course-card">
 					<ion-card-content class="ion-padding-top">
 						<ion-card-title class="last-read-content padding-bottom-8">{{nextContent?.name}}
