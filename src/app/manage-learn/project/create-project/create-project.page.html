@@ -75,6 +75,8 @@
   </div> -->
 </ion-content>
 <ion-footer>
-  <ion-button (click)="next()" expand="block">{{button | translate}}
+  <ion-button (click)="next()" expand="block"
+    [disabled]="!this.projectForm?.value?.description || !this.projectForm?.value?.title || !this.selectedCategories?.length">
+    {{button | translate}}
   </ion-button>
 </ion-footer>

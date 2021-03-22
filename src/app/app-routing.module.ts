@@ -98,7 +98,7 @@ const routes: Routes = [
   { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
   { path: RouterLinks.PROGRAM, loadChildren: './manage-learn/programs/programs.module#ProgramsModule', canActivate:[MlGuard] },
   { path: RouterLinks.SURVEY, loadChildren: './manage-learn/survey/survey.module#SurveyModule', canActivate:[MlGuard] },
-  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule', canActivate:[MlGuard] },
+  { path: RouterLinks.PROJECT, loadChildren: './manage-learn/project/project.module#ProjectModule'},
   { path: RouterLinks.REPORTS, loadChildren: './manage-learn/reports/reports.module#ReportsModule',canActivate:[MlGuard] },
   {
     path: RouterLinks.QUESTIONNAIRE,
