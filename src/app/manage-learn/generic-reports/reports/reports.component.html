@@ -30,11 +30,14 @@
     <expansion-panel [datas]="item" *ngIf="item.chart.type == 'expansion'"></expansion-panel>
     <expansion-table [datas]="item" *ngIf="item.chart.type == 'expansion-table'"></expansion-table>
   </div>
-  <div *ngIf="data?.reportSections && !data?.reportSections.length" class="_flex-box _justify-content-center">
+  <!-- <div *ngIf="data?.reportSections && !data?.reportSections.length" class="_flex-box _justify-content-center">
     {{ data?.message ? data.message : ('message.ratingPending' | translate) }}
   </div>
   <div *ngIf="data && !data?.reportSections" class="_flex-box _justify-content-center">
     {{ 'message.noReportsFound' | translate }}
+  </div> -->
+   <div *ngIf="!data?.result" class="_flex-box _justify-content-center">
+    {{data?.message}}
   </div>
   <!-- <div class="_flex-box _justify-content-center" *ngIf="data?.reportSections && data?.reportSections.length ">
     <button ion-button round class="viewReportBtn" (click)="goToImpSugg()">

@@ -112,6 +112,7 @@ export class ReportsComponent implements OnInit {
           this.data = success;
         } else {
           this.toast.openToast(success.message);
+          this.data = success;
         }
       },
       (error) => {
@@ -121,9 +122,9 @@ export class ReportsComponent implements OnInit {
     );
   }
 
-  instanceReport() {
-    console.log('called instance')
-    this.data.submissionId = this.submissionId
-    this.getReport()
+  instanceReport(e) {
+    console.log('called instance');
+    this.data.submissionId = this.submissionId;
+    this.getReport();
   }
 }
