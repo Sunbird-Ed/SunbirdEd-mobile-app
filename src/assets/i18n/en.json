@@ -1159,10 +1159,10 @@
   "SET_PREFERENCE": "Set your preference",
   "FRMELEMNTS_LBL_OPEN_WITH": "Open With",
   "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With",
-  "NEW_EXPERIENCE_POPUP_HEADING": "We've made it easier for you to find content on {{app_name}}",
-  "NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need. and adds a splash af joy to your learning experience",
-  "NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
-  "SWITCH_TO_NEW_EXPERIENCE": "SWITCH TO NEW EXPERIENCE",
-  "SWITCH_TO_HOME": "Switch to home",
-  "SWITCH_TO_LIBRARY": "Switch to library"
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_POPUP_HEADING": "We've made it easier for you to find content on {{app_name}}",
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need. and adds a splash af joy to your learning experience",
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
+  "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
+  "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
+  "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library"
 }
