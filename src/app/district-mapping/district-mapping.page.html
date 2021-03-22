@@ -1,7 +1,7 @@
 <ion-content>
   <div class="dm-header ion-padding">
     <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack(true)"
-      class="top-back-button"></ion-icon><span class="preference-info">{{ 'SET_PREFERENCE' | translate }}</span>
+      class="top-back-button"></ion-icon><span class="preference-info" *ngIf="isSsoUser">{{ 'SET_PREFERENCE' | translate }}</span>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
