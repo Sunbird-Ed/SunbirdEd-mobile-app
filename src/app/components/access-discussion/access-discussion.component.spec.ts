@@ -1,9 +1,9 @@
 import {DiscussionService,} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from './access-discussion.component';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 
 describe('GroupDetailsPage', () => {
     let accessDiscussionComponent: AccessDiscussionComponent;
@@ -15,6 +15,9 @@ describe('GroupDetailsPage', () => {
     };
     const mockDiscussionService: Partial<DiscussionService> = {};
     const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {};
+    const mockHeaderService: Partial<AppHeaderService> = {
+        hideHeader: jest.fn()
+    };
 
     beforeAll(() => {
         accessDiscussionComponent = new AccessDiscussionComponent(
@@ -22,6 +25,7 @@ describe('GroupDetailsPage', () => {
             mockRouter as Router,
             mockCommonUtilService as CommonUtilService,
             mockDiscussionTelemetryService as DiscussionTelemetryService,
+            mockHeaderService as AppHeaderService
         );
     });
 
