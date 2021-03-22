@@ -90,14 +90,14 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
-  handlePillSelect(event) {
-    console.log(event);
+  handlePillSelect(event, section) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
     const params = {
       formField: event.data[0].value,
-      fromLibrary: true
+      fromLibrary: true,
+      description: (section && section.description) || ''
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -126,7 +126,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
   }
 
-  async onViewMorePillList(event, title) {
+  async onViewMorePillList(event, section) {
     if (!event || !event.data) {
       return;
     }
@@ -134,7 +134,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       component: SbSubjectListPopupComponent,
       componentProps: {
         subjectList: event.data,
-        title
+        title: section && section.title
       },
       backdropDismiss: true,
       showBackdrop: true,
@@ -142,7 +142,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data);
+    this.handlePillSelect(data, section);
   }
 
   ionViewWillLeave() {

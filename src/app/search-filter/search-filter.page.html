@@ -4,7 +4,7 @@
             <ion-icon ios="ios-refresh" md="md-refresh"></ion-icon>
             {{'RESET' | translate}}
         </ion-button>
-        <sb-form [config]="config" (initialize)="onFormInitialize($event)"></sb-form>
+        <sb-form [config]="config" (valueChanges)="valueChanged($event)"></sb-form>
     </div>
 </ion-content>
 

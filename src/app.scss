@@ -1706,3 +1706,25 @@ sb-library-card-v3 {
     position: initial
   }
 }
+
+.sticky-header-pills{
+  sb-pills-grid{
+    .sb-label-grid{
+      margin: 0 !important;
+    }
+    .sb-label-grid .item:hover{
+      background-color: var(--app-primary) !important;
+      color: var(--app-white) !important;
+    }
+  }
+}
+
+.sb-switch-new-experience-popup{
+  .popover-content {
+    width: 90vw !important;
+    height: 37rem !important;
+    left: 5% !important;
+    border-radius: 16px;
+    position: initial
+  }
+}
