@@ -1,10 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { Events, NavParams, PopoverController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '@app/app/app.constant';
 import { SharedPreferences } from 'sunbird-sdk';
-import { AppHeaderService } from '@app/services';
-import { ContainerService } from '@app/services/container.services';
-import { Router } from '@angular/router';
+import { Events } from '@app/util/events';
 
 
 @Component({
@@ -20,9 +18,6 @@ export class NewExperiencePopupComponent implements OnInit {
         @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
         private popoverCtrl: PopoverController,
         private navParams: NavParams,
-        private appHeaderService: AppHeaderService,
-        private router: Router,
-        private container: ContainerService,
         private events: Events,
     ) {
     }
