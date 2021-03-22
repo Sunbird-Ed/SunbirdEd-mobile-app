@@ -152,6 +152,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   PillBorder = PillBorder;
   SelectMode = SelectMode;
   appPrimaryColor: string;
+  selectedPrimaryCategoryFilter: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -1787,6 +1788,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       return
     }
     if (!primaryCategoryFilterValue.apply) {
+      this.selectedPrimaryCategoryFilter = primaryCategoryFilterValue;
       primaryCategoryFilterValue.apply = true;
       this.applyFilter();
     }

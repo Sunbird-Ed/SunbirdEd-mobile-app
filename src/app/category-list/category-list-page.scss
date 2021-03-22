@@ -11,7 +11,17 @@
   background-color: var(--app-primary-background);
 }
 
+.filter-container{
+  ion-row{
+    height: 3rem;
+  }
+}
+
 .filter-items{
+  height: 70%;
+  ion-select{
+    border: none !important;
+  }
   border-radius: 2rem;
   .hide-label{
     display: none;

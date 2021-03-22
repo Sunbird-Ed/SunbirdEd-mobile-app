@@ -8,11 +8,11 @@
 
         <!-- filter from discover search page-->
         <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
-            <ion-grid>
+            <ion-grid class="filter-container">
                 <ion-row>
                     <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
                         <ion-item class="filter-items">
-                            <ion-label class="hide-label">
+                            <ion-label position="stacked" class="hide-label">
                                 {{primaryFacetFilter.translations | translateJson}}
                             </ion-label>
                             <ion-select class="ion-text-capitalize"
