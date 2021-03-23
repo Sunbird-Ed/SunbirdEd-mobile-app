@@ -193,6 +193,15 @@
         position: absolute;
         margin-left: 10px;
     }
+
+    .blur-clear-btn{
+        color: $primary-100 !important;
+        border-color: 2px solid $primary-100 !important;
+    }
+    .blur-save-btn{
+        background-color: map-get($colors, light_blue_color) !important;
+        border-color: 2px solid $primary-100 !important;
+    }
 }
 
 @keyframes upDownAnimate {
