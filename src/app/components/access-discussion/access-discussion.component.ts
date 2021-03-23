@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { NavigationService } from '@app/services/navigation-handler.service';
 import { DiscussionService } from '@project-sunbird/sunbird-sdk';
 
 @Component({
@@ -21,7 +22,8 @@ export class AccessDiscussionComponent implements OnInit {
     private router: Router,
     private commonUtilService: CommonUtilService,
     private discussionTelemetryService: DiscussionTelemetryService,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    private navigationService: NavigationService
 ) {}
 
   ngOnInit() {
@@ -47,6 +49,7 @@ export class AccessDiscussionComponent implements OnInit {
         type: this.fetchForumIdReq.type
       }
     ];
+    this.navigationService.setNavigationUrl(this.router.url);
     this.discussionService.createUser(this.createUserReq).subscribe((response) => {
       const userName = response.result.userName
       const result = [this.forumDetails.cid];
