@@ -1,19 +1,17 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { AppHeaderService } from '@app/services';
 import { AlertController, ModalController, Platform, PopoverController, ToastController } from '@ionic/angular';
-import { ObservationService } from '../observation.service';
-import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityfilterComponent } from '../../shared/components/entityfilter/entityfilter.component';
-import { LoaderService, ToastService, UtilsService } from '../../core';
+import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ObservationService } from '../observation.service';
+import { storageKeys } from '../../storageKeys';
 
 @Component({
   selector: 'app-observation-detail',
@@ -21,29 +19,24 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./observation-detail.component.scss'],
 })
 export class ObservationDetailComponent implements OnInit {
-  private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: [],
   };
-  // programIndex: any;
-  // solutionIndex: any;
   observationId: any;
   solutionId: any;
   programId: any;
-  selectedSolution: any;
   submissionCount: any;
   solutionName: any;
   entityType: any;
+  entities: any[];
+  solutionData: any;
+  submissionId: unknown;
+  submissionIdArr: any;
   constructor(
-    private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
-    private httpClient: HttpClient,
-    private observationService: ObservationService,
     private router: Router,
-    private popCtrl: PopoverController,
     private modalCtrl: ModalController,
     private routerParam: ActivatedRoute,
     private utils: UtilsService,
@@ -52,7 +45,9 @@ export class ObservationDetailComponent implements OnInit {
     private dhiti: DhitiApiService,
     private translate: TranslateService,
     private alertCntrl: AlertController,
-    private toast: ToastService
+    private toast: ToastService,
+    private observationService: ObservationService,
+    private localStorage: LocalStorageService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.observationId = params.observationId;
@@ -71,17 +66,15 @@ export class ObservationDetailComponent implements OnInit {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ionViewWillLeave() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
-  }
-
   ngOnInit() {
-    // this.programIndex = this.observationService.getProgramIndex();
-    // this.solutionIndex = this.observationService.getSolutionIndex(); //
-    // this.getLocalStorageData();
-    // this.getObservationEntities();
+    this.localStorage
+      .getLocalStorage(storageKeys.observationSubmissionIdArr)
+      .then((ids) => {
+        this.submissionIdArr = ids;
+      })
+      .catch((error) => {
+        this.submissionIdArr = [];
+      });
   }
 
   async getObservationEntities() {
@@ -100,23 +93,23 @@ export class ObservationDetailComponent implements OnInit {
       this.assessmentService.post(config).subscribe(
         (success) => {
           this.loader.stopLoader();
-          console.log(success);
           if (success && success.result && success.result.entities) {
-            this.selectedSolution = success.result.entities;
+            this.solutionData = success.result;
+            this.entities = success.result.entities;
             this.entityType = success.result.entityType;
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
             //   this.checkForAnySubmissionsMade(); TODO:Implement
           } else {
-            this.selectedSolution = [];
+            this.entities = [];
             if (!this.observationId) {
               this.observationId = success.result._id; // for autotargeted if get observationId
             }
           }
         },
         (error) => {
-          this.selectedSolution = [];
+          this.entities = [];
           this.loader.stopLoader();
         }
       );
@@ -137,17 +130,6 @@ export class ObservationDetailComponent implements OnInit {
       },
       (error) => {}
     );
-
-    //   this.apiProviders.httpPost(
-    //     AppConfigs.cro.observationSubmissionCount,
-    //     payload,
-    //     (success) => {
-    //       this.submissionCount = success.data.noOfSubmissions;
-    //     },
-    //     (error) => {},
-    //     { baseUrl: "dhiti" }
-    //   );
-    // }
   }
 
   goToObservationSubmission(entity) {
@@ -162,61 +144,35 @@ export class ObservationDetailComponent implements OnInit {
       },
     });
     // TODO:till here
-    // let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
-    // if (
-    //   this.selectedSolution.entities[entityIndex].submissions &&
-    //   this.selectedSolution.entities[entityIndex].submissions.length
-    // ) {
-    //   // this.observationService.setIndex(this.programIndex, this.solutionIndex, entityIndex);
-    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`]);
-    // }
-    /* else {
-      let event = {
-        programIndex: this.programIndex,
-        solutionIndex: this.solutionIndex,
-        entityIndex: entityIndex,
-        submission: {
-          submissionNumber: 1,
-          observationId: this.selectedSolution._id,
-        },
-      };
-
-      this.programService
-        .getAssessmentDetailsForObservation(event, this.programs)
-        .then(async (programs) => {
-          this.utils.startLoader();
-          await this.programService.refreshObservationList();
-          await this.getLocalStorageData();
-          this.utils.stopLoader();
-          this.app.getRootNav().push(ProgramObservationSubmissionPage, { data });
-        })
-        .catch((err) => {});
-    } */
   }
 
-  async addEntity(...params) {
-    // console.log(JSON.stringify(params))
-    // const type = this.selectedSolution.entityType
+  async addEntity() {
     const type = this.entityType;
     let entityListModal;
-    if (type == 'state') {
-      // TODO:implement
-      entityListModal = await this.modalCtrl.create({
-        component: StateModalComponent,
-        componentProps: {
-          data: this.observationId,
-          solutionId: this.solutionId,
-        },
-      });
-    } else {
-      entityListModal = await this.modalCtrl.create({
-        component: EntityfilterComponent,
-        componentProps: {
-          data: this.observationId,
-          solutionId: this.solutionId,
-        },
-      });
-    }
+    entityListModal = await this.modalCtrl.create({
+      component: EntityfilterComponent,
+      componentProps: {
+        data: this.observationId,
+        solutionId: this.solutionId,
+      },
+    });
+    // if (type == 'state') {
+    //   entityListModal = await this.modalCtrl.create({
+    //     component: StateModalComponent,
+    //     componentProps: {
+    //       data: this.observationId,
+    //       solutionId: this.solutionId,
+    //     },
+    //   });
+    // } else {
+    //   entityListModal = await this.modalCtrl.create({
+    //     component: EntityfilterComponent,
+    //     componentProps: {
+    //       data: this.observationId,
+    //       solutionId: this.solutionId,
+    //     },
+    //   });
+    // }
     await entityListModal.present();
 
     await entityListModal.onDidDismiss().then(async (entityList) => {
@@ -240,7 +196,6 @@ export class ObservationDetailComponent implements OnInit {
         };
         this.assessmentService.post(config).subscribe(
           (success) => {
-            console.log(success);
             if (success) {
               this.getObservationEntities();
             }
@@ -251,14 +206,12 @@ export class ObservationDetailComponent implements OnInit {
     });
   }
   async removeEntity(entity) {
-    // let entityIndex = this.selectedSolution.entities.findIndex((e) => e._id == entity._id);
     let entityId = entity._id;
     let translateObject;
     this.translate
       .get(['FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_DELETE_ENTITY', 'FRMELEMNTS_LBL_NO', 'FRMELEMNTS_LBL_YES'])
       .subscribe((translations) => {
         translateObject = translations;
-        console.log(JSON.stringify(translations));
       });
     let alert = await this.alertCntrl.create({
       header: translateObject['FRMELEMNTS_LBL_CONFIRM'],
@@ -271,62 +224,87 @@ export class ObservationDetailComponent implements OnInit {
         },
         {
           text: translateObject['FRMELEMNTS_LBL_YES'],
-          handler: async () => {
-            // let obj = {
-            //   data: [this.selectedSolution.entities[entityIndex]._id],
-            // };
-            this.loader.startLoader();
-            let payload = await this.utils.getProfileInfo();
-            payload.data = [entityId];
-
-            const config = {
-              url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
-              payload: payload,
-            };
-            this.assessmentService.post(config).subscribe(
-              (success) => {
-                let okMessage;
-                this.translate.get('FRMELEMNTS_LBL_OK').subscribe((translations) => {
-                  okMessage = translations;
-                });
-                this.toast.openToast(success.message);
-
-                this.loader.stopLoader();
-                this.getObservationEntities();
-              },
-              (error) => {
-                this.loader.stopLoader();
-                console.log(JSON.stringify(error));
-              }
-            );
-            // this.apiProviders.httpPost(
-            //   AppConfigs.cro.unMapEntityToObservation + this.selectedSolution._id,
-            //   obj,
-            //   async (success) => {
-            //     let okMessage;
-            //     this.translate.get("toastMessage.ok").subscribe((translations) => {
-
-            //       okMessage = translations;
-            //     });
-            //     this.toast.openToast(success.message);
-
-            //     this.loader.stopLoader();
-            //     console.log(JSON.stringify(success));
-
-            //     await this.programService.refreshObservationList();
-            //     this.getLocalStorageData();
-            //   },
-            //   (error) => {
-            //     this.loader.stopLoader();
-
-            //     console.log(JSON.stringify(error));
-            //     console.log("error");
-            //   }
-            // );
+          handler: () => {
+            this.deleteEntity(entityId);
           },
         },
       ],
     });
     alert.present();
+  }
+
+  async deleteEntity(entityId) {
+    this.loader.startLoader();
+    let payload = await this.utils.getProfileInfo();
+    payload.data = [entityId];
+
+    const config = {
+      url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
+      payload: payload,
+    };
+    this.assessmentService.post(config).subscribe(
+      (success) => {
+        let okMessage;
+        this.translate.get('FRMELEMNTS_LBL_OK').subscribe((translations) => {
+          okMessage = translations;
+        });
+        this.toast.openToast(success.message);
+
+        this.loader.stopLoader();
+        this.getObservationEntities();
+      },
+      (error) => {
+        this.loader.stopLoader();
+      }
+    );
+  }
+
+  entityClickAction(e): void {
+    if (this.solutionData.allowMultipleAssessemts) {
+      this.goToObservationSubmission(e);
+      return;
+    }
+
+    let presentLocally = this.submissionIdArr.find((id) => id == e.submissionId);
+
+    if (e.submissionId && presentLocally) {
+      this.goToEcm(e.submissionId, e.name);
+      return;
+    }
+
+    if (!e.submissionId || !presentLocally) {
+      let event = {
+        entityId: e._id,
+        observationId: this.solutionData._id,
+        submission: {
+          submissionNumber: 1,
+        },
+      };
+      this.observationService
+        .getAssessmentDetailsForObservation(event)
+        .then((subId) => {
+          this.submissionId = subId;
+          return this.localStorage.getLocalStorage(storageKeys.observationSubmissionIdArr);
+        })
+        .then((ids) => {
+          this.submissionIdArr = ids;
+          let sId = ids.find((id) => id == this.submissionId);
+          if (sId) {
+            this.goToEcm(sId, e.name);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+
+  goToEcm(submissionId, entityName) {
+    this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
+      queryParams: {
+        submisssionId: submissionId,
+        schoolName: entityName,
+      },
+    });
   }
 }

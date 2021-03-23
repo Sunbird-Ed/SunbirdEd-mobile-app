@@ -420,6 +420,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
 
       if (!batchDetails && !limitedSharingContentDetails) {
+        if (this.routerOutlet) {
+          this.routerOutlet.deactivate();
+        }
         this.toggleRouterOutlet = false;
       }
 
@@ -501,7 +504,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
-        || this.router.url === RouterLinks.HOME_TAB
+        || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH && !this.appGlobalService.isDiscoverBackEnabled)
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
         || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
@@ -510,6 +513,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
         }
+      } else if ((this.router.url === RouterLinks.SEARCH) && this.appGlobalService.isDiscoverBackEnabled) {
+        this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
           this.location.back();
@@ -772,10 +777,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       } else {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
-          || this.router.url === RouterLinks.HOME_TAB
+          || this.router.url === RouterLinks.HOME_TAB || (this.router.url === RouterLinks.SEARCH_TAB && !this.appGlobalService.isDiscoverBackEnabled)
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url.startsWith(RouterLinks.HOME_TAB)) {
           this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
+        } else if (this.router.url === RouterLinks.SEARCH_TAB && this.appGlobalService.isDiscoverBackEnabled) {
+          this.headerService.sidebarEvent($event);
         } else {
           if (this.location.back) {
             this.location.back();
@@ -969,11 +976,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   async applyJoyfulTheme() {
-    const isJoyfulThemePopupSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
-    if (!isJoyfulThemePopupSeen) {
       await this.preferences.putString('current_selected_theme', AppThemes.JOYFUL).toPromise();
-      this.preferences.putBoolean(PreferenceKey.IS_JOYFUL_THEME_POPUP_DISPLAYED, true).toPromise().then();
-      this.headerService.showStatusBar().then();
-    }
+      this.headerService.showStatusBar();
   }
 }

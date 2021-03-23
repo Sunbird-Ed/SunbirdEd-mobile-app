@@ -123,6 +123,8 @@ const routes: Routes = [
   { path: RouterLinks.GUEST_PROFILE, loadChildren: './profile/guest-profile/guest-profile.module#GuestProfilePageModule' },
   { path: RouterLinks.DISCUSSION, loadChildren: './discussion-forum/discussion-forum.module#DiscussionForumModule' },
   { path: RouterLinks.SEARCH_FILTER, loadChildren: './search-filter/search-filter.module#SearchFilterPageModule' },
+  { path: RouterLinks.GENERIC_REPORT, loadChildren: './manage-learn/generic-reports/generic-reports.module#GenericReportsModule' , canActivate:[MlGuard]},
+  { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: './manage-learn/domain-ecm-listing/domain-ecm-listing.module#DomainEcmListingModule' },
 
 ];
 

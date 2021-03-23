@@ -26,6 +26,7 @@ export const urlConstants = {
     GET_PROFILE: 'v2/user-extension/getProfile',
     GET_STATES: 'v2/entities/listByEntityType/state',
     GET_SUBENTITIES: 'v1/entities/subEntityTypeList/',
+    GET_SUB_ENITIES_FOR_ROLES:"v1/entities/subEntityListBasedOnRoleAndLocation/",
     GET_ENTITY_LIST: 'v1/entities/subEntityList/',
     IMPORT_TEMPLATE: 'v1/userProjects/importFromLibrary/',
     GET_REPORT: 'v1/reports/entity/',
@@ -76,8 +77,9 @@ export const urlConstants = {
     SUBMISSION: 'v1/submissions/make/',
     GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
     GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
-    TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity",
-    OBSERVATION_REPORT_SOLUTION_LIST:"v1/observationSubmissions/solutionList?",
+    TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity/",
+    OBSERVATION_REPORT_SOLUTION_LIST: "v1/observationSubmissions/solutionList?",
+    GENERIC_REPORTS:'v1/reports/fetch',
 
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',

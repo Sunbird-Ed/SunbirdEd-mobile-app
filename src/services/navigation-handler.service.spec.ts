@@ -177,6 +177,28 @@ describe('NavigationService', () => {
         expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NEED_INTERNET_TO_CHANGE');
     });
-});
+  });
+
+  describe('setNavigationUrl', () => {
+    it('should set navigation url', () => {
+      // arrange
+      const previousUrl = 'some-url';
+      // act
+      navigationService.setNavigationUrl(previousUrl);
+      // assert
+      expect(navigationService.previousNavigationUrl).toEqual(previousUrl)
+    })
+  })
+
+  describe('navigateToLastUrl', () => {
+    it('should redirect to navigation url', () => {
+      // arrange
+      navigationService.previousNavigationUrl = 'some-url';
+      // act
+      navigationService.navigateToLastUrl();
+      // assert
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    })
+  })
 
 });

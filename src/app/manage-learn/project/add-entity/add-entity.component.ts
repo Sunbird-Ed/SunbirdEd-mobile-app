@@ -127,7 +127,7 @@ export class AddEntityComponent implements OnInit {
       if (this.networkService.isNetworkAvailable) {
          // this.loader.startLoader();
          const config = {
-            url: urlConstants.API_URLS.GET_SUBENTITIES + stateId,
+            url:urlConstants.API_URLS.GET_SUB_ENITIES_FOR_ROLES+stateId+`?role=${this.profileData.role}`
          };
          this.kendraApiService.get(config).subscribe(
             (data) => {

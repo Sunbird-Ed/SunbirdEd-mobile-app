@@ -1,17 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
-import { AlertController, ModalController, Platform, PopoverController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { ObservationService } from '../observation.service';
-import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
 import { LoaderService, LocalStorageService, UtilsService } from '../../core';
 import { storageKeys } from '../../storageKeys';
 import { EvidenceService } from '../../core/services/evidence.service';
 import { ScroreReportMenusComponent } from '../../shared/components/scrore-report-menus/scrore-report-menus.component';
-import { ObservationReportsComponent } from '../../observation-report/observation-reports/observation-reports.component';
 import { SubmissionActionsComponent } from '../../shared/components/submission-actions/submission-actions.component';
 import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
@@ -24,23 +20,16 @@ import { ViewDetailComponent } from '../../shared/components/view-detail/view-de
   styleUrls: ['./observation-submission.component.scss'],
 })
 export class ObservationSubmissionComponent implements OnInit {
-  private backButtonFunc: Subscription;
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
     actionButtons: [],
   };
-  // programIndex: any;
-  // solutionIndex: any;
-  // entityIndex: any;
   submissionList: any;
   inProgressObservations = [];
   completedObservations = [];
   submissions: any[];
   currentTab = 'all';
-  // height: number;
-  selectedSolution: any;
-  programList: any;
   showEntityActionsheet: boolean;
   showActionsheet: boolean;
   submissionIdArr: any;
@@ -49,14 +38,9 @@ export class ObservationSubmissionComponent implements OnInit {
   programId: any;
   entityId: any;
   entityName: any;
-  programIndex: any;
-  solutionIndex: any;
-  entityIndex: any;
+
   constructor(
-    private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
-    private httpClient: HttpClient,
     private observationService: ObservationService,
     private router: Router,
     private localStorage: LocalStorageService,
@@ -78,24 +62,8 @@ export class ObservationSubmissionComponent implements OnInit {
       this.entityName = params.entityName;
     });
   }
-  // ionViewWillEnter() {
-  //   this.headerConfig = this.headerService.getDefaultPageConfig();
-  //   this.headerConfig.actionButtons = [];
-  //   this.headerConfig.showHeader = true;
-  //   this.headerConfig.showBurgerMenu = false;
-  //   this.headerService.updatePageConfig(this.headerConfig);
-  // }
-
-  // ionViewWillLeave() {
-  //   if (this.backButtonFunc) {
-  //     this.backButtonFunc.unsubscribe();
-  //   }
-  // }
 
   ngOnInit() {
-    // this.programIndex = this.observationService.getProgramIndex();
-    // this.solutionIndex = this.observationService.getSolutionIndex(); //
-    // this.entityIndex = this.observationService.getEntityIndex(); //
     this.getProgramFromStorage();
   }
 
@@ -160,90 +128,9 @@ export class ObservationSubmissionComponent implements OnInit {
           });
       },
       (error) => {
-        // if (isDeleted) {
-        //   this.loader.stopLoader();
-        //   history.go(-1);
-        //   return;
-        // }
-        // if (error.error.status === 400) {
-        //   let event = {
-        //     entityId: this.entityId,
-        //     observationId: this.observationId,
-        //     submission: {
-        //       submissionNumber: 1,
-        //     },
-        //   };
-        //   this.observationService.getAssessmentDetailsForObservation(event).then(
-        //     (res) => {
-        //       this.loader.stopLoader();
-
-        //       this.getProgramFromStorage();
-        //     },
-        //     (err) => {
-        //       this.loader.stopLoader();
-        //     }
-        //   );
-        // }
         console.log(error);
       }
     );
-    // this.localStorage
-    //   .getLocalStorage(storageKeys.observationSubmissionIdArr)
-    //   .then((ids) => {
-    //     this.submissionIdArr = ids;
-    //   })
-    //   .catch((err) => {
-    //     this.submissionIdArr = [];
-    //   })
-    //   .finally(() => {
-    //     this.httpClient.get('assets/dummy/programs.json').subscribe((data: any) => {
-    //       console.log(data);
-    //       this.programList = data.result;
-    //       this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-    //       this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-    //         this.entityIndex
-    //       ].submissions;
-    //       this.applyDownloadedflag();
-    //       this.splitCompletedAndInprogressObservations();
-    //       this.tabChange(this.currentTab ? this.currentTab : 'all');
-    //     });
-    //   });
-
-    /* await this.localStorage
-      .getLocalStorage(storageKeys.observationSubmissionIdArr)
-      .then((ids) => {
-        this.submissionIdArr = ids;
-      })
-      .catch((err) => {
-        this.submissionIdArr = [];
-      });
-
-    stopLoader ? null : noLoader ? null : this.utils.startLoader();
-
-    await this.localStorage
-      .getLocalStorage(storageKeys.programList)
-      .then((data) => {
-        if (data) {
-          this.programList = data;
-          this.selectedSolution = this.programList[this.programIndex].solutions[this.solutionIndex];
-          this.submissionList = this.programList[this.programIndex].solutions[this.solutionIndex].entities[
-            this.entityIndex
-          ].submissions;
-          this.applyDownloadedflag();
-
-          this.splitCompletedAndInprogressObservations();
-          this.recentlyUpdatedEntityFn();
-
-          this.tabChange(this.currentTab ? this.currentTab : "all");
-        } else {
-          this.submissionList = null;
-        }
-        noLoader ? null : this.utils.stopLoader();
-      })
-      .catch((error) => {
-        noLoader ? null : this.utils.stopLoader();
-        this.submissionList = null;
-      }); */
   }
 
   applyDownloadedflag() {
@@ -301,9 +188,6 @@ export class ObservationSubmissionComponent implements OnInit {
 
   getAssessmentDetailsApi(submission) {
     let event = {
-      // programIndex: this.programIndex,
-      // solutionIndex: this.solutionIndex,
-      // entityIndex: this.entityIndex,
       submission: submission,
       entityId: this.entityId,
       observationId: this.observationId,
@@ -323,48 +207,65 @@ export class ObservationSubmissionComponent implements OnInit {
     let submissionId = submission._id;
     // let heading = this.selectedSolution.entities[this.entityIndex].name;
     let heading = this.entityName;
+    // this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
+    //   queryParams: {
+    //     submisssionId: submissionId,
+    //     schoolName: heading,
+    //   },
+    // });
+    // return;
 
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
-        if (successData.assessment.evidences.length > 1) {
-          this.router.navigate([RouterLinks.ECM_LISTING], {
+        debugger
+        if (
+          successData.assessment.evidences.length > 1 ||
+          successData.assessment.evidences[0].sections.length > 1 ||
+          (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
+        ) {
+          // this.router.navigate([RouterLinks.ECM_LISTING], {
+          //   queryParams: {
+          //     submisssionId: submissionId,
+          //     schoolName: heading,
+          //   },
+          // });
+          this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
             queryParams: {
               submisssionId: submissionId,
               schoolName: heading,
             },
           });
-
-          // this.navCtrl.push('EvidenceListPage', {
-          //   _id: submissionId,
-          //   name: heading,
-          //   recentlyUpdatedEntity: this.recentlyUpdatedEntity,
-          // });
         } else {
           if (successData.assessment.evidences[0].startTime) {
             this.utils.setCurrentimageFolderName(successData.assessment.evidences[0].externalId, submissionId);
-            this.router.navigate([RouterLinks.SECTION_LISTING], {
+
+            this.router.navigate([RouterLinks.QUESTIONNAIRE], {
               queryParams: {
                 submisssionId: submissionId,
                 evidenceIndex: 0,
-                schoolName: heading,
+                sectionIndex: 0,
+                schoolName: this.entityName,
               },
             });
-            // this.navCtrl.push('SectionListPage', {
-            //   _id: submissionId,
-            //   name: heading,
-            //   selectedEvidence: 0,
-            //   recentlyUpdatedEntity: this.recentlyUpdatedEntity,
+
+            // this.router.navigate([RouterLinks.SECTION_LISTING], {
+            //   queryParams: {
+            //     submisssionId: submissionId,
+            //     evidenceIndex: 0,
+            //     schoolName: heading,
+            //   },
             // });
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
+            debugger;
           }
         }
       })
       .catch((error) => {});
   }
-  openAction(assessment, aseessmemtData, evidenceIndex) {
+ async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
     const options = {
       _id: assessment._id,
@@ -374,31 +275,52 @@ export class ObservationSubmissionComponent implements OnInit {
       // recentlyUpdatedEntity: this.recentlyUpdatedEntity, //TODO
     };
     console.log(JSON.stringify(options));
-    this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
+    let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
+   debugger
+   if (action) {
+     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+       queryParams: {
+         submisssionId: assessment._id,
+         evidenceIndex: 0,
+         sectionIndex: 0,
+         schoolName: this.entityName,
+       },
+     });
+   }
   }
   async openMenu(event, submission, index) {
-    if (submission.ratingCompletedAt) {
-      let popover = await this.popoverCtrl.create({
-        component: ScroreReportMenusComponent,
-        componentProps: {
-          submission: submission,
-          entityType: submission.entityType,
-        },
-        event: event,
-      });
-      popover.present();
-    } else {
-      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-        queryParams: {
-          submissionId: submission._id,
-          entityType: submission.entityType,
-        },
-      });
-      // this.navCtrl.push(ObservationReportsPage, {
-      //   submissionId: submission._id,
-      //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-      // });
+    if (submission.scoringSystem != 'pointsBasedScoring') {
+        this.router.navigate([RouterLinks.GENERIC_REPORT], {
+          state: {
+            scores: true,
+            observation: true,
+            pdf: false,
+            entityId: submission.entityId,
+            entityType: submission.entityType,
+            observationId: submission.observationId,
+            submissionId: submission._id
+          },
+        });
+      return
     }
+      if (submission.ratingCompletedAt) {
+        let popover = await this.popoverCtrl.create({
+          component: ScroreReportMenusComponent,
+          componentProps: {
+            submission: submission,
+            entityType: submission.entityType,
+          },
+          event: event,
+        });
+        popover.present();
+      } else {
+        this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+          queryParams: {
+            submissionId: submission._id,
+            entityType: submission.entityType,
+          },
+        });
+      }
   }
   //  entity actions
   entityActions(e) {
@@ -406,8 +328,6 @@ export class ObservationSubmissionComponent implements OnInit {
     this.submissions.forEach((submission) => {
       submission.showActionsheet = false;
       if (submission.ratingCompletedAt) {
-        // this.showActionsheet = true;
-        // this.showEntityActionsheet = true;
         noScore = false;
       }
     });
@@ -437,12 +357,6 @@ export class ObservationSubmissionComponent implements OnInit {
   viewEntityReports() {
     this.showEntityActionsheet = false;
     this.showActionsheet = false;
-    // const payload = {
-    //   entityId: this.selectedSolution.entities[this.entityIndex]._id,
-    //   observationId: this.selectedSolution.entities[this.entityIndex].submissions[0].observationId,
-    //   entityType: this.selectedSolution.entities[this.entityIndex].entityType,
-    // };
-    // this.navCtrl.push(ObservationReportsPage, payload);
     this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
       queryParams: {
         entityId: this.entityId,
@@ -453,7 +367,6 @@ export class ObservationSubmissionComponent implements OnInit {
   }
   // Actions on submissions
   async openActionMenu(event, submission, index) {
-    // submission.entityName = this.selectedSolution.entities[this.entityIndex].name;
     submission.entityName = this.entityName;
     let popover = await this.popoverCtrl.create({
       component: SubmissionActionsComponent,
@@ -565,28 +478,6 @@ export class ObservationSubmissionComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
-  }
-
-  refreshLocalObservationList(refreshEvent?, startLoader?) {
-    let event = {
-      programIndex: this.programIndex,
-      solutionIndex: this.solutionIndex,
-      entityIndex: this.entityIndex,
-    };
-    startLoader ? this.loader.startLoader() : null;
-    // TODO:Implement
-    // this.programService
-    //   .refreshObservationList(this.programList, event)
-    //   .then(async (data) => {
-    //     await this.getProgramFromStorage("stopLoader");
-    //     if (refreshEvent) refreshEvent.complete();
-    //     this.selectedSolution.entities[this.entityIndex].submissions.length > 0 ? null : this.navCtrl.pop();
-
-    //     this.pageTop.scrollToTop();
-    //   })
-    //   .catch((error) => {
-    //     this.loader.stopLoader();
-    //   });
   }
 
   //open info menu

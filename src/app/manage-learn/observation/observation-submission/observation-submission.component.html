@@ -30,7 +30,7 @@
     <app-item-list-card [title]="submission?.title" subTitle="{{ submission?.createdAt | date }}">
       <ion-icon
         class="mg-popup-btn-icon"
-        name="more"
+        name="ellipsis-vertical-outline"
         arrow
         *ngIf="submission.status !== 'completed' && submission?.status !== 'ratingPending'"
         (click)="$event.stopPropagation(); openActionMenu($event, submission, i)"

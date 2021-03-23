@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Events } from '@app/util/events';
+import { ModalController } from '@ionic/angular';
+import { HintComponent } from '../hint/hint.component';
 
 @Component({
   selector: 'app-question-heading',
@@ -15,7 +17,8 @@ export class QuestionHeadingComponent implements OnInit {
   showQuestionNumber = false;
   play = false;
 
-  constructor(private events: Events) {
+     private modalCtrl:ModalController
+     constructor(private events: Events, ) {
     this.events.subscribe('speech', data => {
       this.play = false;
     })
@@ -58,6 +61,19 @@ export class QuestionHeadingComponent implements OnInit {
     // this.textToSpeech.stopSpeech();
     // this.play = false;
 
+  }
+
+  async openHint(hint) {
+    // this.hintService.presentHintModal({ hint: hint });
+    let hintModal = await this.modalCtrl.create({
+      component: HintComponent,
+      componentProps: {
+        hint,
+      },
+    });
+    // await hintModal.onDidDismiss(data => {
+    // });
+    hintModal.present();
   }
 
 }

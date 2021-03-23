@@ -55,6 +55,16 @@
   color: #000000 !important;
   font-size: 18px !important;
 }
+
 .text-transform-free{
   text-transform: none !important;
+}
+
+// Discussion Forum
+.df-btn-container{
+  padding: 1rem !important;
+  .sb-left-icon{
+    color: map-get($colors, primary);
+    background-color: map-get($colors, light_gray);
+  }
 }

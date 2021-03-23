@@ -8,11 +8,13 @@
     </div>
 
   </div>
-  <div *ngIf="enableQuestionReadOut">
-    <ion-icon *ngIf="!play"  class="noWrap ion-margin-start" name="volume-off"
+  <div *ngIf="data?.hint">
+    <ion-icon name="bulb" class="help" (click)="openHint(option?.hint)" *ngIf="option?.hint"></ion-icon>
+
+    <!-- <ion-icon *ngIf="!play"  class="noWrap ion-margin-start" name="volume-off"
       (click)="playQuestion(data.question[0],data.options,data.responseType)"></ion-icon>
     <ion-icon *ngIf="play" class="noWrap ion-margin-start" name="volume-up" (click)="pauseQuestion()">
-    </ion-icon>
+    </ion-icon> -->
   </div>
 
 </div>

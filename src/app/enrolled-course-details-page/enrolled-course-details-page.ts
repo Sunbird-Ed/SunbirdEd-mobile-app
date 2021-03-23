@@ -819,8 +819,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
           }
-          if (this.batchDetails.endDate) {
-            this.batchEndDateStatus(this.batchDetails.endDate);
+          if (this.batchDetails.endDate || this.batchDetails.enrollmentEndDate) {
+            this.batchEndDateStatus( this.batchDetails.endDate || this.batchDetails.enrollmentEndDate);
           }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
@@ -854,6 +854,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       })
       .catch((error: any) => {
         if (this.courseCardData.batch) {
+          if (this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate) {
+            this.batchEndDateStatus(this.courseCardData.batch.endDate || this.courseCardData.batch.enrollmentEndDate);
+          }
           this.saveContentContext(this.appGlobalService.getUserId(),
             this.courseCardData.courseId, this.courseCardData.batchId, this.courseCardData.batch.status);
         }
@@ -2331,9 +2334,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async batchEndDateStatus(batchEndDate) {
-    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     this.batchRemaningTimingIntervalRef = setInterval(async () => {
-      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     }, 1000 * 60);
   }
 }
