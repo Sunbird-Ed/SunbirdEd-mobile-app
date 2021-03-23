@@ -17,8 +17,8 @@ export class QuestionHeadingComponent implements OnInit {
   showQuestionNumber = false;
   play = false;
 
-     private modalCtrl:ModalController
-     constructor(private events: Events, ) {
+  
+  constructor(private events: Events, private modalCtrl: ModalController) {
     this.events.subscribe('speech', data => {
       this.play = false;
     })
@@ -64,15 +64,12 @@ export class QuestionHeadingComponent implements OnInit {
   }
 
   async openHint(hint) {
-    // this.hintService.presentHintModal({ hint: hint });
     let hintModal = await this.modalCtrl.create({
       component: HintComponent,
       componentProps: {
         hint,
       },
     });
-    // await hintModal.onDidDismiss(data => {
-    // });
     hintModal.present();
   }
 

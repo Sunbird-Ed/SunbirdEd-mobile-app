@@ -9,8 +9,7 @@
 
   </div>
   <div *ngIf="data?.hint">
-    <ion-icon name="bulb" class="help" (click)="openHint(option?.hint)" *ngIf="option?.hint"></ion-icon>
-
+    <ion-icon name="bulb" class="noWrap ion-margin-start help" (click)="openHint(data?.hint)"></ion-icon>
     <!-- <ion-icon *ngIf="!play"  class="noWrap ion-margin-start" name="volume-off"
       (click)="playQuestion(data.question[0],data.options,data.responseType)"></ion-icon>
     <ion-icon *ngIf="play" class="noWrap ion-margin-start" name="volume-up" (click)="pauseQuestion()">
