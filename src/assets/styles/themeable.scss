@@ -26,6 +26,7 @@ html[data-theme="JOYFUL"]{
   --app-brown:#4F2C0D;
   --app-green:#008840;
   --app-light-green:#BFE1CF; // take it out
+  --app-pink:#EF64AF;
 
   --app-shadow:rgba(0,0,0,0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
@@ -1567,6 +1568,17 @@ html[data-theme="JOYFUL"]{
   .discussion-forum {
     .reply-btn {
       background-color: var(--app-lighter-gray);
+    }
+  }
+  .df-btn-container{
+    .sb-left-icon{
+      color: map-get($colors, primary) !important;
+      background-color: map-get($colors, light_gray) !important;
+    }
+    .df-btn-close{
+      color: map-get($colors, black) !important;
+      background: var(--app-pink) !important;
+      padding: 0.5rem 1rem !important;
     }
   }
 

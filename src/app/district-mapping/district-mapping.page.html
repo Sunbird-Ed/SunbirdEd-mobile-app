@@ -20,12 +20,13 @@
 </ion-content>
 <div class="footer">
   <div class="btn-info" *ngIf="locationFormConfig && locationFormConfig.length">
-    <button class="block-button-clear" [disabled]="formGroup?.invalid" [class.disabled-button]="formGroup?.invalid"
-      (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
+    <button class="block-button-clear"
+            [ngClass]="{'blur-clear-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+            (click)="clearUserLocationSelections()">{{'CLEAR' | translate}}
     </button>
-    <button class="block-button-save" [disabled]="formGroup?.invalid" [class.disabled-button]="formGroup?.invalid"
-      (click)="submit()">{{'BTN_SUBMIT' | translate}}
+    <button class="block-button-save"
+            [ngClass]="{'blur-save-btn': formGroup?.invalid}" [disabled]="formGroup?.invalid"
+            (click)="submit()">{{'BTN_SUBMIT' | translate}}
     </button>
   </div>
-
 </div>

@@ -22,6 +22,7 @@ import {ModalController} from '@ionic/angular';
 import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs';
+import { PillBorder } from '@project-sunbird/common-consumption-v8';
 
 
 @Component({
@@ -72,6 +73,7 @@ export class CategoryListPage implements OnDestroy {
     };
     appName = '';
     categoryDescription = '';
+    PillBorder = PillBorder
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,

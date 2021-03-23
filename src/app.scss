@@ -1653,7 +1653,7 @@ sb-pills-grid{
     .view-all{
       width: 90%;
       height: 2.75rem;
-      background-color: var(--app-white) !important;
+      background-color: transparent !important;
       color: var(--app-primary) !important;
       box-shadow: none !important
     }
@@ -1680,6 +1680,16 @@ sb-pills-grid{
       width: 3.5rem;
       img {
         margin-right: 0 !important;
+      }
+    }
+  }
+
+  .icon-header{
+    .item{
+      height: 5.875em !important;
+      width: 22% !important;
+      .img{
+        width: 70% !important;
       }
     }
   }
@@ -1832,6 +1842,10 @@ sb-library-card-v3 {
   sb-pills-grid{
     .sb-label-grid{
       margin: 0 !important;
+      .item{
+        text-align: center;
+        min-width: 5rem;
+      }
     }
     .sb-label-grid .item:hover{
       background-color: var(--app-primary) !important;
@@ -1843,9 +1857,22 @@ sb-library-card-v3 {
 .sb-switch-new-experience-popup{
   .popover-content {
     width: 90vw !important;
-    height: 37rem !important;
+    height: 28rem !important;
     left: 5% !important;
     border-radius: 16px;
     position: initial
+  }
+}
+
+app-search {
+  .pills-filter{
+    sb-pills-grid{
+      .sb-label-grid{
+        .item{
+          text-align: center;
+          min-width: 5rem;
+        }
+      }
+    }
   }
 }
