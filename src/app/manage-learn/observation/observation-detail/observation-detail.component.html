@@ -5,18 +5,13 @@
       size="small"
       class="button button-small button-solid hydrated ion-activatable ion-focusable m-12 md"
       (click)="addEntity()"
-      >{{'FRMELEMNTS_LBL_ADD_ENTITY' | translate}}</ion-button
+      >{{ 'FRMELEMNTS_LBL_ADD_ENTITY' | translate }}</ion-button
     >
   </div>
   <!-- <div *ngFor="let entity of selectedSolution" (click)="goToObservationSubmission(entity)"> -->
   <div *ngFor="let entity of entities" (click)="entityClickAction(entity)">
     <app-item-list-card [title]="entity?.name">
-      <ion-icon
-        class="mg-popup-btn-icon"
-        name="arrow-round-forward"
-        arrow
-        *ngIf="entity?.submissionsCount"
-      ></ion-icon>
+      <ion-icon class="mg-popup-btn-icon" name="arrow-round-forward" arrow *ngIf="entity?.submissionsCount"></ion-icon>
       <ion-icon
         class="mg-popup-btn-icon delete-icon"
         name="trash"
@@ -26,7 +21,7 @@
       ></ion-icon>
     </app-item-list-card>
   </div>
-  <app-no-data *ngIf="!entities?.length" message="FRMELEMENTS_ADD_ENTITY_TO_CONTINUE"></app-no-data>
+  <app-no-data *ngIf="!entities?.length" [message]="'FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE'"></app-no-data>
 </ion-content>
 //TODO: Add report button observation report
 <!-- <ion-button class="view-more" expand="block">

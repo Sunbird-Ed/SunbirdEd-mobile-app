@@ -38,7 +38,6 @@ export class PieChartComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    debugger;
     this.pieChartLabels = this.data.chart.data.labels;
     this.pieChartData = this.data.chart.data.datasets[0].data;
     this.chartColors = [{ backgroundColor: this.data.chart.data.datasets[0].backgroundColor }];
