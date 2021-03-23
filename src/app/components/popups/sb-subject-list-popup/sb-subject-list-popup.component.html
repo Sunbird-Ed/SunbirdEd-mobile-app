@@ -10,9 +10,9 @@
             [pillBorder]="PillBorder.SEMI_ROUND"
             [pillSize]="PillSize.SMALL"
             (select)="handlePillSelect($event)">
-            <sb-pill-item *ngFor="let pillData of subjectList" [name]="pillData?.value?.facet | titlecase" 
+            <sb-pill-item *ngFor="let pillData of subjectList; let index=index" [name]="pillData?.value?.facet | translateJson | titlecase" 
             [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : theme : pillData?.value?.facet"
-            [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : theme : pillData?.value?.facet) || (pillData?.value?.facet | randomColorMapPipe)"
+            [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : theme : pillData?.value?.facet) || (pillData?.value?.facet | randomColorMapPipe: index)"
             [value]="pillData?.value"></sb-pill-item>
         </sb-pills-grid>
     </div>
