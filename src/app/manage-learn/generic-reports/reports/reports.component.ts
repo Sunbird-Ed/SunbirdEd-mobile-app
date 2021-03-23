@@ -133,7 +133,6 @@ export class ReportsComponent implements OnInit {
         this.loader.stopLoader();
         if (success.result === true && success.reportSections) {
           this.data = success;
-          debugger;
 
           if (this.data.filters) {
             this.filters = this.data.filters;

@@ -46,7 +46,7 @@
   </div> -->
   <!-- INFO: click to improve feature not threre as of now  -->
 
-  <ion-fab vertical="bottom" horizontal="end" ngIf="data?.reportSections" #fab slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" *ngIf="data?.reportSections" #fab slot="fixed">
     <ion-fab-button size="small">
       <ion-icon name="ellipsis-vertical"></ion-icon>
     </ion-fab-button>
