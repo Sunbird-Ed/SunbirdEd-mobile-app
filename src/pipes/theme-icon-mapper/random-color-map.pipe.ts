@@ -13,9 +13,13 @@ export class RandomColorMapPipe implements PipeTransform {
         pillBgColor: secondary
     }));
 
-    transform(key: string): any {
+    transform(key: string, index?: number): any {
         if (!RandomColorMapPipe.cache[key]) {
-            RandomColorMapPipe.cache[key] = this.colors[Math.floor(Math.random() * this.colors.length)];
+            if (!index && index !== 0) {
+                RandomColorMapPipe.cache[key] = this.colors[Math.floor(Math.random() * this.colors.length)];
+            } else {
+                RandomColorMapPipe.cache[key] = this.colors[(index % this.colors.length)];
+            }
         }
 
         return RandomColorMapPipe.cache[key];
