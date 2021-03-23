@@ -1409,5 +1409,6 @@
   "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
   "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library",
-  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice"
+  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
+  "FRMELEMENTS_ADD_ENTITY_TO_CONTINUE":"Add entity to continue"
 }
