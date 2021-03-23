@@ -120,7 +120,7 @@ export class PercentageColumnChartsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.submiisionDateArray = this.chartData.submissionDateArray;
+    this.submiisionDateArray = this.chartData.chart.submissionDateArray;
     this.barChartData = this.chartData.chart.data.datasets;
     this.barChartLabels = this.chartData.chart.data.labels;
     this.barChartOptions = {
@@ -156,20 +156,23 @@ export class PercentageColumnChartsComponent implements OnInit {
           formatter: (value, data) => {
             const d: any = data.chart.data;
             const { datasetIndex, dataIndex } = data;
-            if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
-              // console.log(data.datasetIndex)
-              if (d.originalData[datasetIndex][dataIndex] == 1) {
-                return ['', '', this.submiisionDateArray[data.dataIndex]];
-              }
-              return [
-                `                                              ${d.originalData[datasetIndex][dataIndex]}`,
-                '',
-
-                `                                ${this.submiisionDateArray[data.dataIndex]}`,
-              ];
-            } else {
-              return `${d.originalData[datasetIndex][dataIndex]}`;
+            if (this.submiisionDateArray && !this.submiisionDateArray.length) {
+              return value
             }
+              if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
+                // console.log(data.datasetIndex)
+                if (d.originalData[datasetIndex][dataIndex] == 1) {
+                  return ['', '', this.submiisionDateArray[data.dataIndex]];
+                }
+                return [
+                  `                                              ${d.originalData[datasetIndex][dataIndex]}`,
+                  '',
+
+                  `                                ${this.submiisionDateArray[data.dataIndex]}`,
+                ];
+              } else {
+                return `${d.originalData[datasetIndex][dataIndex]}`;
+              }
           },
         },
       },
