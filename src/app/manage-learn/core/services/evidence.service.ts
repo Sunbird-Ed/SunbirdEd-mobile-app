@@ -98,13 +98,13 @@ export class EvidenceService {
                 },
               },
               {
-                text: selectedECM.canBeNotApplicable
+                text: selectedECM.canBeNotAllowed
                   ? translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE']
                   : translateObject['CANCEL'],
-                role: !selectedECM.canBeNotApplicable ? 'destructive' : '',
-                icon: selectedECM.canBeNotApplicable ? 'alert' : '',
+                role: !selectedECM.canBeNotAllowed ? 'destructive' : '',
+                icon: selectedECM.canBeNotAllowed ? 'alert' : '',
                 handler: () => {
-                  if (selectedECM.canBeNotApplicable) {
+                  if (selectedECM.canBeNotAllowed) {
                     this.openAlert(selectedECM);
                   }
                 },
