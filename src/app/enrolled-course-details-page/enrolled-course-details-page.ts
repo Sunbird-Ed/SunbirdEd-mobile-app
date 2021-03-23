@@ -1,5 +1,6 @@
 import { Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -818,8 +819,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
             clearInterval(this.batchRemaningTimingIntervalRef);
             this.batchRemaningTimingIntervalRef = undefined;
           }
-          if (this.batchDetails.endDate) {
-            this.batchEndDateStatus(this.batchDetails.endDate);
+          if (this.batchDetails.enrollmentEndDate) {
+            this.batchEndDateStatus(this.batchDetails.enrollmentEndDate);
           }
           this.handleUnenrollButton();
           if (data.cert_templates && Object.keys(data.cert_templates).length) {
@@ -2330,9 +2331,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async batchEndDateStatus(batchEndDate) {
-    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+    this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     this.batchRemaningTimingIntervalRef = setInterval(async () => {
-      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(new Date(batchEndDate));
+      this.batchRemaningTime = await this.localCourseService.getTimeRemaining(batchEndDate);
     }, 1000 * 60);
   }
 }

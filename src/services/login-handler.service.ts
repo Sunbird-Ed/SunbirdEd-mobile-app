@@ -1,5 +1,6 @@
 import { Inject, NgZone, Injectable } from '@angular/core';
-import { NavController, Events } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   ApiService,

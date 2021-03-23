@@ -8,7 +8,7 @@
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
       <ion-button icon-only (click)="emitEvent($event, 'back');">
-        <ion-icon class="arrow-icon" ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+        <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
@@ -72,7 +72,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
-        <ion-icon md="md-share" class="ion-float-right"></ion-icon>
+        <ion-icon name="share" class="ion-float-right"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
@@ -80,7 +80,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('groupInfo') >=0"
         (click)="emitEvent($event, 'groupInfo');" style="font-size: 1.8rem;">
-        <ion-icon class="ion-float-end" name="ios-information-circle-outline"></ion-icon>
+        <ion-icon class="ion-float-end" name="information-circle-outline"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.showKebabMenu"
                   (click)="showKebabMenu($event)" style="font-size: 1.8rem; padding: 0 16px;">
@@ -290,12 +290,23 @@
         </div>
       </ion-item>
 
-      <ion-item (click)="switchTheme()">
+      <!-- <ion-item (click)="switchTheme()">
         <span class="sb-menu-icon">
           <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
         </span>
         <span *ngIf="appTheme === 'DEFAULT'" class="sb-menu-item" menuClose>{{'SWITCH_TO_JOYFUL_THEME' | translate}}</span>
         <span *ngIf="appTheme === 'JOYFUL'" class="sb-menu-item" menuClose>{{'SWITCH_TO_CLASSIC_THEME' | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item> -->
+      <ion-item (click)="switchTabs()">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate}}</span>
+        <span *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>

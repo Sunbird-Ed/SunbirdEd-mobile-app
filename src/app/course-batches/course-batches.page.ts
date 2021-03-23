@@ -6,8 +6,9 @@ import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/catego
 import { AppGlobalService } from '@app/services';
 import { ConsentPopoverActionsDelegate, LocalCourseService } from '@app/services/local-course.service';
 import {
-  Events, Platform, PopoverController
+  Platform, PopoverController
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import {
   Batch,

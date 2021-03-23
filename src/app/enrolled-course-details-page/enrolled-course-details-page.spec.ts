@@ -12,7 +12,8 @@ import {
     LocalCourseService, PageId, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
-import { Events, PopoverController, Platform } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';

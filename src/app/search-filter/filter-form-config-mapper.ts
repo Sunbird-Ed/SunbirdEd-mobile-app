@@ -22,7 +22,19 @@ export class FilterFormConfigMapper {
         'primaryCategory'
     ];
 
-    map(facetFilters: { [key: string]: FilterValue[] }, defaults: { [field: string]: any }): FieldConfig<string>[] {
+    private buildDefault(filterValues: FilterValue[], multiple: boolean): string[] | string | undefined {
+        if (multiple) {
+            return filterValues
+                .filter(f => f.apply)
+                .map(f => f.name);
+        }
+        else {
+            const filterValue = filterValues.find(f => f.apply);
+            return filterValue && filterValue.name;
+        }
+    }
+
+    map(facetFilters: { [key: string]: FilterValue[] }): FieldConfig<string>[] {
         return Object.keys(facetFilters).reduce<FieldConfig<string>[]>((acc, key) => {
             switch (key) {
                 case 'board': {
@@ -30,7 +42,7 @@ export class FilterFormConfigMapper {
                         code: 'board',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'board',
-                        default: (defaults && defaults['board']) || null,
+                        default: this.buildDefault(facetFilters['board'], false),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('BOARD'),
                             placeHolder: 'Select Board',
@@ -55,7 +67,7 @@ export class FilterFormConfigMapper {
                         code: 'medium',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'medium',
-                        default: (defaults && defaults['medium']) || null,
+                        default: this.buildDefault(facetFilters['medium'], true),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('MEDIUM'),
                             placeHolder: 'Select Medium',
@@ -75,7 +87,7 @@ export class FilterFormConfigMapper {
                         code: 'gradeLevel',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'gradeLevel',
-                        default: (defaults && defaults['gradeLevel']) || null,
+                        default: this.buildDefault(facetFilters['gradeLevel'], true),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('CLASS'),
                             placeHolder: 'Select Class',
@@ -95,7 +107,7 @@ export class FilterFormConfigMapper {
                         code: 'subject',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'subject',
-                        default: (defaults && defaults['subject']) || null,
+                        default: this.buildDefault(facetFilters['subject'], true),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('SUBJECT'),
                             placeHolder: 'Select Subject',
@@ -115,7 +127,7 @@ export class FilterFormConfigMapper {
                         code: 'publisher',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'publisher',
-                        default: (defaults && defaults['publisher']) || null,
+                        default: this.buildDefault(facetFilters['publisher'], true),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('PUBLISHER'),
                             placeHolder: 'Select publisher',
@@ -135,7 +147,7 @@ export class FilterFormConfigMapper {
                         code: 'mimeType',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'mediaType',
-                        default: (defaults && defaults['mediaType']) || null,
+                        default: this.buildDefault(facetFilters['mimeType'], true),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEDIA_TYPE'),
                             placeHolder: 'Select Media Type',
@@ -155,7 +167,7 @@ export class FilterFormConfigMapper {
                         code: 'primaryCategory',
                         type: FieldConfigInputType.SELECT,
                         fieldName: 'primaryCategory',
-                        default: (defaults && defaults['primaryCategory']) || null,
+                        default: this.buildDefault(facetFilters['primaryCategory'], false),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
                             placeHolder: 'Select Content Type',

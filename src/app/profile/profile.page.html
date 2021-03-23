@@ -16,7 +16,7 @@
     <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
-            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol ion-text-left" item-right
                 (click)="toggleTooltips($event, 'name')">
                 <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
@@ -50,12 +50,12 @@
             <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
                 class="txt-capitalize">
                 + {{roles?.length - 2}} {{'MORE' | translate}}
-                <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+                <ion-icon class="ML10" name="arrow-down"></ion-icon>
             </ion-button>
             <ion-button fill="clear" *ngIf="rolesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessItems()"
                 class="txt-capitalize">
                 {{'SHOW_LESS' | translate }}
-                <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+                <ion-icon class="ML10" name="arrow-up"></ion-icon>
             </ion-button>
         </div>
     </div>
@@ -147,7 +147,7 @@
         <div *ngIf="profile?.phone">
             <div class="phone" (click)="editMobileNumber();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-call"></ion-icon>
+                    <ion-icon name="call"></ion-icon>
                 </span>
                 <span class="value align-middle">+91 {{ profile?.phone }}</span>
             </div>
@@ -155,7 +155,7 @@
         <div *ngIf="!profile?.phone">
             <div class="phone light" (click)="editMobileNumber();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-call"></ion-icon>
+                    <ion-icon name="call"></ion-icon>
                 </span>
                 <span class="value align-middle">{{'ADD_PHONE' | translate}}</span>
             </div>
@@ -163,7 +163,7 @@
         <div *ngIf="profile?.email">
             <div class="email " (click)="editEmail();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-mail"></ion-icon>
+                    <ion-icon name="mail"></ion-icon>
                 </span>
                 <span class="value align-middle">{{ profile?.email }}</span>
             </div>
@@ -171,7 +171,7 @@
         <div *ngIf="!profile?.email">
             <div class="email light" (click)="editEmail();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-mail"></ion-icon>
+                    <ion-icon name="mail"></ion-icon>
                 </span>
                 <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
             </div>
@@ -225,12 +225,12 @@
             <ion-button shape="round" *ngIf="badgesLimit < profile?.badgeAssertions?.length" (click)="showMoreBadges()"
                 class="txt-capitalize custom-round">
                 + {{profile?.badgeAssertions?.length - 2}} {{'MORE' | translate}}
-                <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+                <ion-icon class="ML10" name="arrow-down"></ion-icon>
             </ion-button>
             <ion-button shape="round" *ngIf="badgesLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessBadges()"
                 class="txt-capitalize custom-round">
                 {{'SHOW_LESS' | translate }}
-                <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+                <ion-icon class="ML10" name="arrow-up"></ion-icon>
             </ion-button>
         </div>
     </div>
@@ -238,7 +238,7 @@
         <div class="trainings" *ngIf="mappedTrainingCertificates?.length > 0">
             <div class="bolder heading f16">
                 <span>{{'FRMELEMNTS_LBL_MY_LEARNINGS' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
-                <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="refresh-icon"
+                <ion-icon name="refresh-circle" class="refresh-icon"
                     (click)="getEnrolledCourses(true, true)"></ion-icon>
             </div>
             <div class="content">
@@ -259,7 +259,7 @@
                     <div class="training-2" *ngIf="training?.certificate || training?.issuedCertificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
                             (click)="downloadTrainingCertificate(training)">
-                            <ion-icon class="view-icon" name="md-eye"></ion-icon>
+                            <ion-icon class="view-icon" name="eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
                         </button>
@@ -271,13 +271,13 @@
                         *ngIf="myLearningLimit < mappedTrainingCertificates?.length"
                         (click)="showMoreTrainings('myLearning')">
                         + {{mappedTrainingCertificates?.length - myLearningLimit}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="myLearningLimit >= mappedTrainingCertificates?.length"
                         (click)="showLessTrainings('myLearning')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-up"></ion-icon>
                     </ion-button>
                 </div>
             </div>
@@ -300,7 +300,7 @@
                     <div class="training-2" *ngIf="certificate?.certificate || certificate?.issuedCertificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
                             (click)="downloadTrainingCertificate(certificate)">
-                            <ion-icon class="view-icon" name="md-eye"></ion-icon>
+                            <ion-icon class="view-icon" name="eye"></ion-icon>
                             <span class="sb-btn-footer-text m-t-4">{{ 'CERTIFICATE' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
                         </button>
@@ -317,7 +317,7 @@
                         *ngIf="learnerPassbookLimit >= learnerPassbook?.length"
                         (click)="showLessTrainings('learnerPassbook')">
                         {{'SHOW_LESS' | translate }}
-                        <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+                        <ion-icon class="ML10" name="arrow-up"></ion-icon>
                     </ion-button>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/modul
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { mergeMap, tap } from 'rxjs/operators';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences

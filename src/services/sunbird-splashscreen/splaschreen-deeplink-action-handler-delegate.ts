@@ -8,7 +8,7 @@ import {
 } from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Observable, of } from 'rxjs';
 import {
   PageAssembleService,

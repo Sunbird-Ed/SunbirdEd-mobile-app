@@ -1,12 +1,12 @@
-<ion-content class="ui-container" padding>
+<ion-content class="ui-container ion-padding">
     <div class="ui-content">
         <div class="back-btn-container">
             <img src="assets/imgs/ic_back_black.svg" *ngIf="!hideBackButton && !categoriesProfileData"
                  (click)="handleBackButton(true)"
                  class="top-back-button" alt="back">
         </div>
-        <p text-center class="title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
-        <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
+        <p class="ion-text-center title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
+        <h6 class="gray-color ion-text-center">{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
         <div class="container">
             <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
@@ -23,6 +23,6 @@
 <div *ngIf="categoriesProfileData"> 
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue" (click)="onSubmitAttempt()">
 		<span>{{ 'CONTINUE' | translate }}</span>
-		<img class="arrow-icon" src="assets/imgs/ic_back.svg" name="arrow-round-forward" alt="">
+		<img class="arrow-icon" src="assets/imgs/ic_back.svg" name="arrow-forward" alt="">
 	</button>
 </div>

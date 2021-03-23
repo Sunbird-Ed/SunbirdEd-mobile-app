@@ -3,28 +3,33 @@
         <div style="padding: 16px">
             <h3 class="mt-4"
                 style="font-weight: 600;">{{ 'EXPLORE' | translate: {'%s': (formField.facet | translateJson)} }}</h3>
-            <p>{{'SUBJECT_DESCRIPTION' | translate: {'%s': (formField.facet | translateJson), '%a': appName} }}</p>
+            <p *ngIf="categoryDescription">{{(categoryDescription | translateJson: {'%category': (formField.facet | translateJson), '%appName': appName} ) | translate }}</p>
         </div>
 
         <!-- filter from discover search page-->
         <form [formGroup]="primaryFacetFiltersFormGroup" *ngIf="fromLibrary && primaryFacetFiltersFormGroup">
-            <ion-grid>
+            <ion-grid class="filter-container">
                 <ion-row>
                     <ion-col size="5" *ngFor="let primaryFacetFilter of primaryFacetFilters">
-                        <ion-select style="border-radius: 16px; background-color: #ffffff;" multiple="false"
-                                    class="ion-text-capitalize"
-                                    [interfaceOptions]="primaryFacetFiltersTemplateOptions"
-                                    [formControlName]="primaryFacetFilter.code"
-                                    okText="{{'BTN_SUBMIT' | translate}}"
-                                    cancelText="{{'CANCEL' | translate}}"
-                                    placeholder="{{primaryFacetFilter.translations | translateJson}}">
-                            <ion-select-option
-                                    *ngFor="let facet of ((initialFacetFilters && initialFacetFilters[primaryFacetFilter.code]) || [])"
-                                    [value]="facet"
-                                    class="ion-text-capitalize">
-                                {{facet.name | titlecase }}
-                            </ion-select-option>
-                        </ion-select>
+                        <ion-item class="filter-items">
+                            <ion-label position="stacked" class="hide-label">
+                                {{primaryFacetFilter.translations | translateJson}}
+                            </ion-label>
+                            <ion-select class="ion-text-capitalize"
+                                        [interfaceOptions]="primaryFacetFiltersTemplateOptions"
+                                        [formControlName]="primaryFacetFilter.code"
+                                        okText="{{'BTN_SUBMIT' | translate}}"
+                                        cancelText="{{'CANCEL' | translate}}"
+                                        multiple="true"
+                                        placeholder="{{primaryFacetFilter.translations | translateJson}}">
+                                <ion-select-option
+                                        *ngFor="let facet of ((initialFacetFilters && initialFacetFilters[primaryFacetFilter.code]) || [])"
+                                        [value]="facet"
+                                        class="ion-text-capitalize">
+                                    {{facet.name | titlecase }}
+                                </ion-select-option>
+                            </ion-select>
+                        </ion-item>
                     </ion-col>
 
                     <ion-col size="2">
@@ -38,7 +43,7 @@
         </form>
     </div>
 
-    <div class="px-8" *ngIf="!showSheenAnimation">
+    <div class="p-8 sticky-header-pills" *ngIf="!showSheenAnimation">
         <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
                        [pillsViewType]="'scroll'"
                        [pillBorder]="'round'">

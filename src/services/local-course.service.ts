@@ -14,7 +14,7 @@ import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
 import { PreferenceKey, EventTopics, RouterLinks, AssessmentConstant } from '@app/app/app.constant';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
 import { DatePipe, Location } from '@angular/common';
@@ -353,27 +353,17 @@ export class LocalCourseService {
     return assesmentsStatus;
   }
 
-  async getTimeRemaining(endtime) {
-    const date = new Date().toString();
-    const total = Date.parse(endtime.toString()) - Date.parse(date);
-    const remainigDay = total / ( 1000 * 60 * 60 * 24);
-    const minutes = Math.floor( (total / 1000 / 60) % 60 );
-    const hours = Math.floor( (total / (1000 * 60 * 60)) % 24 );
-    const days = Math.floor( total / ( 1000 * 60 * 60 * 24) );
+  async getTimeRemaining(endDate) {
     const utilityConfigFields = await this.formAndFrameworkUtilService.getFormFields(FormConstants.UTILITY_CONFIG);
-    const batchEndTimerConfig =  utilityConfigFields.find((config) => config.code === 'batchEndTimerConfig');
-    if (remainigDay <= Number(batchEndTimerConfig['config']['batchEndDateTimer'])) {
-      if (remainigDay >= 1) {
-        return days + ' ' + 'day(s)' + ' ' + hours + 'h' + ' ' + minutes + 'm';
-      } else if (remainigDay < 1 && remainigDay > 0) {
-        if (hours >= 1) {
-          return hours + 'h' + ' ' + minutes + 'm';
-        } else {
-           return minutes + 'm';
-        }
-      }
+    const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
+        .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
+    const today = window.dayjs();
+    const enrollmentEndDate = window.dayjs(endDate);
+    if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
+      return undefined;
     }
-    return undefined;
+    const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
+    return duration.format('D [day(s)] H [h] m [m]');
   }
 
 }
