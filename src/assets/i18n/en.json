@@ -1411,5 +1411,6 @@
   "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
-  "FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE":"Add entity to observe"
+  "FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE":"Add entity to observe",
+  "FRMELEMNTS_MSG_ASSESSMENTS_DONE" : "Assessments done"
 }
