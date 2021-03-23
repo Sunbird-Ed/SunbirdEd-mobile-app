@@ -420,6 +420,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
 
       if (!batchDetails && !limitedSharingContentDetails) {
+        if (this.routerOutlet) {
+          this.routerOutlet.deactivate();
+        }
         this.toggleRouterOutlet = false;
       }
 

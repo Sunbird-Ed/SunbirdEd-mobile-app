@@ -46,7 +46,7 @@
     <div class="p-8 sticky-header-pills" *ngIf="!showSheenAnimation">
         <sb-pills-grid *ngIf="sectionGroup?.sections && formField?.aggregate" [pillShape]="'default'"
                        [pillsViewType]="'scroll'"
-                       [pillBorder]="'round'">
+                       [pillBorder]="PillBorder.SEMI_ROUND">
             <sb-pill-item (click)="scrollToSection(sectionGroup.name + '_'+ section.name)"
                           *ngFor="let section of sectionGroup?.sections" [name]="section?.name"></sb-pill-item>
         </sb-pills-grid>

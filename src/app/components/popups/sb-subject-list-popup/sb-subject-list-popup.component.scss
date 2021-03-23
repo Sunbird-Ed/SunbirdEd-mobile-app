@@ -2,6 +2,9 @@
 
 .title-section{
   border-bottom: 1px solid var(--app-primary-header);
+  position: sticky;
+  top: 0;
+  background-color: white;
   .close-icon{
     float: right;
     width: 1.5rem;
