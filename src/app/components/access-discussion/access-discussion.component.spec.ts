@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { AccessDiscussionComponent } from './access-discussion.component';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService, NavigationService } from '@app/services';
 
 describe('GroupDetailsPage', () => {
     let accessDiscussionComponent: AccessDiscussionComponent;
@@ -18,6 +18,9 @@ describe('GroupDetailsPage', () => {
     const mockHeaderService: Partial<AppHeaderService> = {
         hideHeader: jest.fn()
     };
+    const mockNavigationService: Partial<NavigationService> = {
+        setNavigationUrl: jest.fn()
+    };
 
     beforeAll(() => {
         accessDiscussionComponent = new AccessDiscussionComponent(
@@ -25,7 +28,8 @@ describe('GroupDetailsPage', () => {
             mockRouter as Router,
             mockCommonUtilService as CommonUtilService,
             mockDiscussionTelemetryService as DiscussionTelemetryService,
-            mockHeaderService as AppHeaderService
+            mockHeaderService as AppHeaderService,
+            mockNavigationService as NavigationService
         );
     });
 
