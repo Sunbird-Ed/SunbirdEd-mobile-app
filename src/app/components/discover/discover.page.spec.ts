@@ -1,14 +1,14 @@
-import {DiscoverComponent} from './discover.page';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {PopoverController} from '@ionic/angular';
-import {Events} from '@app/util/events';
-import {Router} from '@angular/router';
-import {AppHeaderService} from '../../../services/app-header.service';
-import {ContentAggregatorHandler} from '../../../services/content/content-aggregator-handler.service';
-import {CommonUtilService, FormAndFrameworkUtilService} from '../../../services';
-import {NavigationService} from '../../../services/navigation-handler.service';
-import {mockDiscoverPageData} from '@app/app/components/discover/discover.page.spec.data';
-import {ContentFilterConfig} from '@app/app/app.constant';
+import { DiscoverComponent } from './discover.page';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
+import { Router } from '@angular/router';
+import { AppHeaderService } from '../../../services/app-header.service';
+import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
+import { CommonUtilService, FormAndFrameworkUtilService } from '../../../services';
+import { NavigationService } from '../../../services/navigation-handler.service';
+import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
+import { ContentFilterConfig } from '@app/app/app.constant';
 
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
@@ -60,7 +60,7 @@ describe('DiscoverComponent', () => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
-            const data = jest.fn((fn => fn({name: 'download'})));
+            const data = jest.fn((fn => fn({ name: 'download' })));
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: data
             } as any;
@@ -82,7 +82,7 @@ describe('DiscoverComponent', () => {
             // arrange
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockDiscoverPageData));
-            const data = jest.fn((fn => fn({name: 'notification'})));
+            const data = jest.fn((fn => fn({ name: 'notification' })));
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: data
             } as any;
@@ -117,7 +117,7 @@ describe('DiscoverComponent', () => {
     describe('navigateToDetailPage', () => {
         it('should navigate to detail page with data in item', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
             mockNavService.navigateToDetailPage = jest.fn();
             // act
             discoverComponent.navigateToDetailPage({
@@ -132,7 +132,7 @@ describe('DiscoverComponent', () => {
 
         it('should show offlineToast if data is not available or internet not available', () => {
             // arrange
-            mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
             mockCommonUtilService.presentToastForOffline = jest.fn();
             // act
             discoverComponent.navigateToDetailPage({
@@ -150,7 +150,7 @@ describe('DiscoverComponent', () => {
         mockCommonUtilService.getTranslatedValue = jest.fn();
         mockRouter.navigate = jest.fn();
         // act
-        discoverComponent.navigateToViewMoreContentsPage({meta: {searchCriteria: {}}});
+        discoverComponent.navigateToViewMoreContentsPage({ meta: { searchCriteria: {} } });
         // assert
         expect(mockRouter.navigate).toHaveBeenCalled();
     });
@@ -164,7 +164,7 @@ describe('DiscoverComponent', () => {
             } as any)));
             mockRouter.navigate = jest.fn();
             // act
-            discoverComponent.onViewMorePillList({data: 'sample'}, 'Mathematics');
+            discoverComponent.onViewMorePillList({ data: 'sample' }, 'Mathematics');
             // assert
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
@@ -196,9 +196,15 @@ describe('DiscoverComponent', () => {
             discoverComponent.handlePillSelect({
                 data: [
                     {
-                        value: 'sample_data'
+                        value: {}
                     }
                 ]
+            }, {
+                dataSrc: {
+                    params: {
+                        config: []
+                    }
+                }
             });
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();

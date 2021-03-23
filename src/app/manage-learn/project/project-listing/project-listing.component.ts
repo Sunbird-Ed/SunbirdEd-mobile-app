@@ -58,12 +58,12 @@ export class ProjectListingComponent implements OnInit {
     private unnatiService: UnnatiDataService,
     private loader: LoaderService,
     private translate: TranslateService,
-    private utils: UtilsService) { 
-      this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
-        this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
-        this.selectedFilter = this.filters[0];
-      })
-    }
+    private utils: UtilsService) {
+    this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
+      this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
+      this.selectedFilter = this.filters[0];
+    })
+  }
 
   ngOnInit() {
   }
@@ -86,39 +86,35 @@ export class ProjectListingComponent implements OnInit {
   //   });
   // }
   getDataByFilter(filter) {
-    debugger
     this.projects = [];
     // this.filters.forEach(element => {
     //   element.selected = element.parameter == parameter.parameter ? true : false;
     // });
     // this.selectedFilter = parameter.parameter;
     this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
-    this.selectedFilterIndex = filter ?  filter.data.index : this.selectedFilterIndex;
+    this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
     this.searchText = "";
     this.getProjectList();
   }
   async getProjectList() {
     this.loader.startLoader();
-    this.payload = !this.payload ? await this.utils.getProfileInfo(): this.payload;
-    const selectedFilter = this.selectedFilterIndex === 1? 'assignedToMe':'createdByMe';
-    if (this.payload) {
-      const config = {
-        url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
-        payload: this.payload
-      }
-      this.unnatiService.post(config).subscribe(success => {
-        this.loader.stopLoader();
-        this.projects = this.projects.concat(success.result.data);
-        this.count = success.result.count;
-        this.description = success.result.description;
-      }, error => {
-        this.projects = [];
-        this.loader.stopLoader();
-      })
-    } else {
-      this.loader.stopLoader();
+    const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
+    if (selectedFilter == 'assignedToMe') {
+      this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
     }
-
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
+      payload: selectedFilter == 'assignedToMe' ? this.payload : ''
+    }
+    this.unnatiService.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      this.projects = this.projects.concat(success.result.data);
+      this.count = success.result.count;
+      this.description = success.result.description;
+    }, error => {
+      this.projects = [];
+      this.loader.stopLoader();
+    })
   }
 
 
@@ -136,11 +132,13 @@ export class ProjectListingComponent implements OnInit {
   }
 
   selectedProgram(id, project) {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`],{
+    const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: id,
         programId: project.programId,
-        solutionId: project.solutionId
+        solutionId: project.solutionId,
+        type: selectedFilter
       }
     });
   }

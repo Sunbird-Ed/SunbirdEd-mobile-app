@@ -1182,7 +1182,7 @@
   "FRMELEMNTS_BTN_ENTITY":"Entity",
   "FRMELEMNTS_LBL_PAST": "Past",
   "FRMELEMNTS_LBL_UPCOMING": "Upcoming",
-  "FRMELEMNTS_LBL_PROJECT": "Project",
+  "FRMELEMNTS_LBL_PROJECTS": "Projects",
   "FRMELEMNTS_LBL_PROJECT_DESC": "Text Indicating below cards are a combination of textbooks from all the classes (for teachers)",
   "FRMELEMNTS_LBL_SHARE_TASK": "Share Task",
   "FRMELEMNTS_LBL_SHARE_PROJECT": "Share Project",
@@ -1310,6 +1310,9 @@
   "FRMELEMNTS_LBL_ATTACH": "Attach",
   "FRMELEMNTS_LBL_ADD_TASK": "Add Task",
   "FRMELEMNTS_BTN_DISCARD": "Discard",
+  "FRMELEMNTS_BTN_DISCARD_YES": "Yes",
+  "FRMELEMNTS_LBL_SPECIFY_OTHER":"specify other",
+  "FRMELEMNTS_BTN_CONTINUE_TO_EDIT": "No",
   "FRMELEMNTS_BTN_CONTINUE": "Continue",
   "FRMELEMNTS_MSG_DELETE_CONFIRM": "Are you sure you want to delete ",
   "FRMELEMNTS_LBL_DISCARD_PROJECT": "Discard Project",
@@ -1399,5 +1402,13 @@
   "LETS_GO": "Let's go",
   "SET_PREFERENCE": "Set your preference",
   "FRMELEMNTS_LBL_OPEN_WITH": "Open With",
-  "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With"
+  "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With",
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_POPUP_HEADING": "We've made it easier for you to find content on {{app_name}}",
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need. and adds a splash af joy to your learning experience",
+  "FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
+  "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
+  "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
+  "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library",
+  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
+  "FRMELEMENTS_ADD_ENTITY_TO_CONTINUE":"Add entity to continue"
 }
