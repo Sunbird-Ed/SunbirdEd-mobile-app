@@ -45,6 +45,7 @@ export class ProjectOperationPage implements OnInit {
   projectId;
   selectedEntity;
   template;
+  templateCopy;
   viewProjectAlert;
   private backButtonFunc: Subscription;
   headerConfig = {
@@ -158,6 +159,7 @@ export class ProjectOperationPage implements OnInit {
   getProjectFromLocal(projectId) {
     this.db.query({ _id: projectId }).then(success => {
       this.template = success.docs[0];
+      this.templateCopy = JSON.stringify(this.template);
       if (this.template.entityName) {
         this.selectedEntity = {
           name: this.template.entityName ? this.template.entityName : '',
@@ -261,9 +263,7 @@ export class ProjectOperationPage implements OnInit {
   }
 
   resetEndDate(event) {
-    console.log(event.detail.value, "event.detail.value");
-    console.log(this.template.endDate, "this.template.endDate");
-    if (event.detail && event.detail.value && (event.detail.value != this.template.endDate)) {
+    if (event.detail && event.detail.value && (event.detail.value != this.templateCopy.startDate)) {
       console.log('in if');
       event.detail.value = this.template.endDate;
       this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
