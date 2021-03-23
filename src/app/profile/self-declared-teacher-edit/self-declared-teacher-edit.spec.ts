@@ -5,7 +5,8 @@ import {
     ProfileService
 } from 'sunbird-sdk';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
     AppHeaderService,
     CommonUtilService,

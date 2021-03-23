@@ -2,10 +2,10 @@ import { Injectable, NgZone, Inject } from '@angular/core';
 import {
     ToastController,
     LoadingController,
-    Events,
     PopoverController,
     Platform,
 } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
@@ -552,8 +552,13 @@ export class CommonUtilService {
         const toast = await this.toastController.create({
             message: this.translateMessage(description, appName),
             cssClass: 'permissionSettingToast',
-            showCloseButton: true,
-            closeButtonText: this.translateMessage('SETTINGS'),
+            buttons: [
+                {
+                    text: this.translateMessage('SETTINGS'),
+                    role: 'cancel',
+                    handler: () => {}
+                }
+            ],
             position: 'bottom',
             duration: 3000
         });
@@ -614,9 +619,14 @@ export class CommonUtilService {
         this.toast = await this.toastController.create({
             duration: 3000,
             message: this.translateMessage(msg),
-            showCloseButton: true,
+            buttons: [
+                {
+                    text: 'X',
+                    role: 'cancel',
+                    handler: () => {}
+                }
+            ],
             position: 'top',
-            closeButtonText: 'X',
             cssClass: ['toastHeader', 'offline']
         });
         await this.toast.present();

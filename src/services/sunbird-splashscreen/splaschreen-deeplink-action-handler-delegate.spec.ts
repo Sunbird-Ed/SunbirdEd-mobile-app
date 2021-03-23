@@ -1,7 +1,7 @@
 import { SplaschreenDeeplinkActionHandlerDelegate } from './splaschreen-deeplink-action-handler-delegate';
 import { PreferenceKey } from '../../app/app.constant';
 import { Router } from '@angular/router';
-import { Events } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { of } from 'rxjs';
 import {
   PageAssembleService,

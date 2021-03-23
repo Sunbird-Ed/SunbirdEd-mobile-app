@@ -1,6 +1,7 @@
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Events, PopoverController} from '@ionic/angular';
+import {PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {AppGlobalService, PageId} from '@app/services';
 import {CommonUtilService} from '../../services/common-util.service';
 import {Router} from '@angular/router';

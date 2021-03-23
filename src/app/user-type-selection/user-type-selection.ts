@@ -21,7 +21,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
-import { Events, IonRouterOutlet, Platform } from '@ionic/angular';
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import {
   AuditState, CorrelationData, Profile,

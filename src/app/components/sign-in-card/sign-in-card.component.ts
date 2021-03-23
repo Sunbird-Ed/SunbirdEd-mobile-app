@@ -14,7 +14,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Events, NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import {
   AuthService,
   OAuthSession,

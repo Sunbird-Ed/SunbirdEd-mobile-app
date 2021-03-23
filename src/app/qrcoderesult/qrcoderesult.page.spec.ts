@@ -13,7 +13,8 @@ import {
     ContentEventType
 } from 'sunbird-sdk';
 import {TranslateService} from '@ngx-translate/core';
-import {Events, Platform, NavController} from '@ionic/angular';
+import {Platform, NavController} from '@ionic/angular';
+import {Events} from '@app/util/events';
 import {Router} from '@angular/router';
 import {
     AppGlobalService,

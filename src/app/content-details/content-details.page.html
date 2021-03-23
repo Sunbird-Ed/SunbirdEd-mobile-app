@@ -19,7 +19,7 @@
                 <span class="content-vertical-line"></span>
                 <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
                 <span class="sb-rating-star">
-                  <ion-icon ios="ios-star" md="md-star"></ion-icon>
+                  <ion-icon name="star"></ion-icon>
                 </span>
               </span>
             </div>
@@ -51,7 +51,7 @@
                 <span class="content-vertical-line"></span>
                 <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
                 <span class="sb-rating-star">
-                  <ion-icon ios="ios-star" md="md-star"></ion-icon>
+                  <ion-icon name="star"></ion-icon>
                 </span>
               </span>
             </div>
@@ -68,7 +68,7 @@
         <div class="sb-common-player-group sb-download-title-group" (click)="openConfirmPopUp()"
           *ngIf="content.mimeType === 'application/vnd.ekstep.h5p-archive'">
           <ion-button fill="clear" icon-only class="sb-common-title">
-            <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-common-white-icon"></ion-icon>
+            <ion-icon name="cloud-download" class="sb-common-white-icon"></ion-icon>
           </ion-button>
           <div class="sb-common-footer-text">{{'PLEASE_DOWNLOAD_TO_PLAY' | translate}}</div>
         </div>
@@ -94,7 +94,7 @@
                 <span class="content-vertical-line"></span>
                 <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
                 <span class="sb-rating-star">
-                  <ion-icon ios="ios-star" md="md-star"></ion-icon>
+                  <ion-icon name="star"></ion-icon>
                 </span>
               </span>
             </div>
@@ -275,7 +275,7 @@
           <div *ngIf="showMoreFlag" style="padding-left: 8px; padding-right: 8px;" class="padding-top-10"
             (click)="readLessorReadMore('read-less-clicked')">
             {{ 'READ_LESS' | translate }}
-            <ion-icon name="ios-arrow-up"></ion-icon>
+            <ion-icon name="arrow-up"></ion-icon>
           </div>
           <div *ngIf="!showMoreFlag" style="padding-left: 8px; padding-right: 8px;"
             (click)="readLessorReadMore('read-more-clicked')">

@@ -14,7 +14,8 @@ import {
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
 import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { Events } from '@app/util/events';
 import { NgZone } from '@angular/core';
 import {
     AppGlobalService,
