@@ -72,7 +72,11 @@
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" (ionChange)="reportTypeChange()">
+              <ion-select [(ngModel)]="filter.type" (ionChange)="reportTypeChange()" 
+              [interfaceOptions]="{
+                cssClass: 'select-box',
+                animated: false
+              }">
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
