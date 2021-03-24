@@ -1,10 +1,15 @@
 <ion-content>
-    <div class="form-content">
-        <ion-button class="reset-button" fill="clear" (click)="resetFilter()">
-            <ion-icon name="refresh"></ion-icon>
-            {{'RESET' | translate}}
-        </ion-button>
-        <sb-form [config]="config" (valueChanges)="valueChanged($event)"></sb-form>
+    <div>
+        <div class="filter-header px-16 pt-16">
+            <p>{{'FILTER' | translate}}</p>
+            <ion-button class="reset-button" fill="clear" (click)="resetFilter()">
+                <ion-icon name="refresh"></ion-icon>
+                {{'RESET' | translate}}
+            </ion-button>
+        </div>
+        <div class="p-16">
+            <sb-form [config]="config" (valueChanges)="valueChanged($event)"></sb-form>
+        </div>
     </div>
 </ion-content>
 

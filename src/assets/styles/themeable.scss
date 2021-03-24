@@ -1550,4 +1550,28 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-search-filter{
+    sb-form{
+      sb-multiple-dropdown{
+        .input-label{
+          margin-bottom: 0.5rem;
+          font-weight: bold;
+        }
+        .multi-select-container{
+          border: 1px solid var(--app-primary-light-2);
+          border-radius: 3rem;
+          sb-caret-down{
+            right: 1rem !important;
+          }
+          ul{
+            padding-left: 1rem !important;
+          }
+          .list-border{
+            border: none !important;
+          }
+        }
+      }
+    }
+  }
+
 }
