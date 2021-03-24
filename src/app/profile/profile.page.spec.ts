@@ -550,14 +550,6 @@ describe('Profile.page', () => {
         // act
         profilePage.showMoreTrainings('learnerPassbook');
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.VIEW_MORE_CLICKED,
-            Environment.HOME,
-            PageId.PROFILE, null,
-            undefined,
-            undefined
-        );
     });
 
     it('should set default trainings limit when called upon', () => {
