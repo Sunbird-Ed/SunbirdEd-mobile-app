@@ -157,7 +157,7 @@ export class PercentageColumnChartsComponent implements OnInit {
             const d: any = data.chart.data;
             const { datasetIndex, dataIndex } = data;
             if (this.submiisionDateArray && !this.submiisionDateArray.length) {
-              return value
+              return `${d.originalData[datasetIndex][dataIndex]}`;
             }
               if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
                 // console.log(data.datasetIndex)

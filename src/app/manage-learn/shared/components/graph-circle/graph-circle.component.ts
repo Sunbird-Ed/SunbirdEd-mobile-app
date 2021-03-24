@@ -23,28 +23,7 @@ export class GraphCircleComponent implements OnInit {
   public doughnutChartType: ChartType = 'doughnut';
 
   public chartColors: Array<any>;
-  extraColor = [
-    'rgb(255, 99, 132)',
-    'rgb(54, 162, 235)',
-    'rgb(255, 206, 86)',
-    'rgb(231, 233, 237)',
-    'rgb(75, 192, 192)',
-    'rgb(151, 187, 205)',
-    'rgb(220, 220, 220)',
-    'rgb(247, 70, 74)',
-    'rgb(70, 191, 189)',
-    'rgb(253, 180, 92)',
-    'rgb(148, 159, 177)',
-    'rgb(77, 83, 96)',
-    'rgb(95, 101, 217)',
-    'rgb(170, 95, 217)',
-    'rgb(140, 48, 57)',
-    'rgb(209, 6, 40)',
-    'rgb(68, 128, 51)',
-    'rgb(125, 128, 51)',
-    'rgb(128, 84, 51)',
-    'rgb(179, 139, 11)',
-  ];
+  extraColor;
 
   public chartPlugins = [
     pluginDataLabels,
@@ -65,20 +44,20 @@ export class GraphCircleComponent implements OnInit {
       display: true,
       position: 'bottom',
       labels: {
-        padding: 25,
+        padding: 5,
       },
     },
     layout: {
       padding: {
-        top: 10,
+        top: 1,
       },
     },
     plugins: {
       datalabels: {
         anchor: 'end',
-        align: 'end',
+        align: 'start',
         font: {
-          size: 10,
+          size: 8,
         },
         formatter: (value) => {
           var perc = ((value * 100) / this.total).toFixed(1) + '%';
@@ -92,46 +71,28 @@ export class GraphCircleComponent implements OnInit {
   ngOnInit() {}
 
   plotSimpleBarChart() {
-    // this.chartOption = {
-    //   chart: {
-    //     type: 'variablepie',
-    //     height: '65%',
-    //     marginTop: 30,
-    //   },
-    //   tooltip: { enabled: false },
-    //   legend: {
-    //     align: 'center',
-    //     verticalAlign: this.data.legendPosition || 'bottom',
-    //     layout: 'horizontal',
-    //     x: 50,
-    //     y: 0,
-    //     useHTML: true,
-    //     width: this.data.series[0].data.length > 1 ? 400 : 200,
-    //     itemWidth: this.data.series[0].data.length > 1 ? 200 : 200,
-    //     labelFormatter: function () {
-    //       return '<div style="width:100%;margin-bottom:10px">' + this.name + '</div>';
-    //     },
-    //   },
-    //   plotOptions: {
-    //     variablepie: {
-    //       // innerSize: "60%",
-    //       dataLabels: {
-    //         enabled: true,
-    //         // format: "{point.value}",
-    //         formatter: function () {
-    //           return this.y ? this.point.value : null;
-    //         },
-    //       },
-    //     },
-    //   },
-    //   title: {
-    //     text: '',
-    //     verticalAlign: 'middle', // to put text inside circle
-    //     // y: 10,
-    //   },
-    //   series: this.data.series,
-    // };
-
+    this.extraColor = [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 206, 86)',
+      'rgb(231, 233, 237)',
+      'rgb(75, 192, 192)',
+      'rgb(151, 187, 205)',
+      'rgb(220, 220, 220)',
+      'rgb(247, 70, 74)',
+      'rgb(70, 191, 189)',
+      'rgb(253, 180, 92)',
+      'rgb(148, 159, 177)',
+      'rgb(77, 83, 96)',
+      'rgb(95, 101, 217)',
+      'rgb(170, 95, 217)',
+      'rgb(140, 48, 57)',
+      'rgb(209, 6, 40)',
+      'rgb(68, 128, 51)',
+      'rgb(125, 128, 51)',
+      'rgb(128, 84, 51)',
+      'rgb(179, 139, 11)',
+    ];
     console.log(JSON.stringify(this.chartOption));
 
     this.doughnutChartLabels = this.data.series_new.label;

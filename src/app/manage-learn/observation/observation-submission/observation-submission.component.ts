@@ -263,7 +263,7 @@ export class ObservationSubmissionComponent implements OnInit {
       })
       .catch((error) => {});
   }
- async openAction(assessment, aseessmemtData, evidenceIndex) {
+  async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
     const options = {
       _id: assessment._id,
@@ -274,53 +274,67 @@ export class ObservationSubmissionComponent implements OnInit {
     };
     console.log(JSON.stringify(options));
     let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
-   if (action) {
-     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
-       queryParams: {
-         submisssionId: assessment._id,
-         evidenceIndex: 0,
-         sectionIndex: 0,
-         schoolName: this.entityName,
-       },
-     });
-   }
+    if (action) {
+      this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+        queryParams: {
+          submisssionId: assessment._id,
+          evidenceIndex: 0,
+          sectionIndex: 0,
+          schoolName: this.entityName,
+        },
+      });
+    }
   }
   async openMenu(event, submission, index) {
     if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
-        this.router.navigate([RouterLinks.GENERIC_REPORT], {
-          state: {
-            scores: true,
-            observation: true,
-            pdf: false,
-            entityId: submission.entityId,
-            entityType: submission.entityType,
-            observationId: submission.observationId,
-            submissionId: submission._id
-          },
-        });
-      return
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: submission.entityId,
+          entityType: submission.entityType,
+          observationId: submission.observationId,
+          submissionId: submission._id,
+        },
+      });
+      return;
     }
-      if (submission.ratingCompletedAt) {
-        let popover = await this.popoverCtrl.create({
-          component: ScroreReportMenusComponent,
-          componentProps: {
-            submission: submission,
-            entityType: submission.entityType,
-          },
-          event: event,
-        });
-        popover.present();
-      } else {
-        this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-          queryParams: {
-            submissionId: submission._id,
-            entityType: submission.entityType,
-          },
-        });
-      }
+    if (submission.ratingCompletedAt) {
+      let popover = await this.popoverCtrl.create({
+        component: ScroreReportMenusComponent,
+        componentProps: {
+          submission: submission,
+          entityType: submission.entityType,
+        },
+        event: event,
+      });
+      popover.present();
+    } else {
+      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+        queryParams: {
+          submissionId: submission._id,
+          entityType: submission.entityType,
+        },
+      });
+    }
   }
   //  entity actions
   entityActions(e) {
+    let submission = this.submissions[0];
+    if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: submission.entityId,
+          entityType: submission.entityType,
+          observationId: submission.observationId,
+        },
+      });
+      return;
+    }
     let noScore: boolean = true;
     this.submissions.forEach((submission) => {
       submission.showActionsheet = false;

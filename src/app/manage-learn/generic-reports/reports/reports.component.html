@@ -10,6 +10,10 @@
           placeholder="Submission Filter"
           [(ngModel)]="submissionId"
           (ionChange)="instanceReport($event)"
+          [interfaceOptions]="{
+            cssClass: 'select-box',
+            animated: false
+          }"
         >
           <ion-select-option [value]="s._id" *ngFor="let s of filter.filter.data">{{
             s.name
