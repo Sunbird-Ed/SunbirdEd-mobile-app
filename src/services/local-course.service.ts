@@ -362,6 +362,9 @@ export class LocalCourseService {
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
+    if (today.diff(endDate) > 0) {
+      return undefined;
+    }
     const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
     return duration.format('D [day(s)] H [h] m [m]');
   }
