@@ -138,7 +138,8 @@ private handleBackButton() {
       queryParams: {
         projectId: projectId,
         programId: this.programId,
-        solutionId:  data._id
+        solutionId:  data._id,
+        type: 'assignedToMe'
       }
     });
   }
