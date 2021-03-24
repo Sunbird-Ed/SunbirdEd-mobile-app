@@ -1,5 +1,12 @@
 :host {
+  .sb-textbook-container{
+    width: 100% !important;
+  }
   .sb-card-textbook-container {
     margin-bottom: 40px;
+  }
+  .sb-textbook-title-container{
+    margin-left: 1rem;
+    margin-top: 1rem;
   }
 }

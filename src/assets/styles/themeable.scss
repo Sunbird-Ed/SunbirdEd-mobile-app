@@ -3,6 +3,7 @@ html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
   --app-primary-medium:#007AFF;
+  --app-primary-light-2:#94CCF5;
   --app-primary-light:#C6E7FF;
   --app-primary-background:#F3F7FB;
   --app-primary-header:#FFD954;
@@ -25,7 +26,6 @@ html[data-theme="JOYFUL"]{
   --app-brown:#4F2C0D;
   --app-green:#008840;
   --app-light-green:#BFE1CF; // take it out
-  --app-pink:#EF64AF;
 
   --app-shadow:rgba(0,0,0,0.1);
   --button-style-shadow: 5px 5px 2px 0 var(--app-shadow);
@@ -185,7 +185,6 @@ html[data-theme="JOYFUL"]{
 
   .sb--card{
     box-shadow: var(--block-style-shadow) !important;
-    border-radius: 1rem !important;
   }
 
   .sb--card__title{
@@ -217,6 +216,10 @@ html[data-theme="JOYFUL"]{
 
   sb-library-cards-stack{
     .header{
+      .title{
+        padding-left: 1rem;
+        font-weight: bold !important;
+      }
       i{
         display: none;
       }
@@ -224,30 +227,15 @@ html[data-theme="JOYFUL"]{
     .body{
       box-shadow: none !important;
     }
-    sb-library-card:first-child {
-      .sb--card{
-        border-radius: 1rem 1rem 0 0 !important;
-      }
-    }
-    sb-library-card:last-child {
-      .sb--card{
-        border-radius: 0 0 1rem 1rem !important;
-      }
-    }
-    sb-library-card:first-child:last-child {
-      .sb--card{
-        border-radius: 1rem !important;
-      }
-    }
-    sb-library-card:not(:first-child):not(:last-child){
-      .sb--card{
-        border-radius: 0 !important;
-      }
-    }
     .sbbtn{
-      border-radius: 0 0 16px 16px !important;
-      background-color: var(--app-secondary-background) !important;
-      color: var(--app-gray) !important;
+      border-radius: 3rem !important;
+      background-color: transparent !important;
+      color: var(--app-primary) !important;
+      border: 1px solid var(--app-primary-light-2) !important;
+      margin: 2%;
+      width: 96% !important;
+      padding: 0.75rem !important;
+      box-shadow: none !important;
     }
   }
 
@@ -829,9 +817,6 @@ html[data-theme="JOYFUL"]{
   app-textbook-view-more{
     .sb-card-container{
       box-shadow: none !important;
-      .sb-card-loop{
-        margin-bottom: 8px;
-      }
     }
   }
 

@@ -148,6 +148,7 @@
                 <div *ngFor="let content of result.content; let last = last, let i = index"
                   class="content-list ion-no-padding">
                   <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT"
+                    [layoutConfig]="{layout: 'v3'}"
                     (click)="openContent(result, content, i);" [cardImg]="result?.appIcon || defaultAppIcon"
                     [moreInfoLabel]="'Section'" [section]="content.name">
                   </sb-library-card>
@@ -162,6 +163,7 @@
               <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
                 class="content-list">
                 <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT"
+                  [layoutConfig]="{layout: 'v3'}"
                   (click)="openContent(content, content, i + ((resultlist && resultlist.dialCodeResult) ? resultlist.dialCodeResult.length : 0) )"
                   [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
@@ -197,6 +199,7 @@
       <div class="sc-container">
         <div class="sc-content" *ngFor="let content of searchContentResult; let i = index; let last = last">
           <sb-library-card [content]="content" [type]="'mobile_textbook'" [isSelected]="content.selected"
+            [layoutConfig]="{layout: 'v3'}"
             (click)="openContent(undefined, content, i, undefined, true)" [cardImg]="content?.appIcon || defaultAppIcon">
           </sb-library-card>
         </div>
