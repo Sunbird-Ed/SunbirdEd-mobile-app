@@ -131,7 +131,7 @@ export class EvidenceService {
   async openAlert(selectedECM) {
     let translateObject;
     this.translate
-      .get(['FRMELEMNTS_BTN_CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
+      .get(['CANCEL', 'FRMELEMNTS_LBL_CONFIRM', 'FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'])
       .subscribe((translations) => {
         translateObject = translations;
         console.log(JSON.stringify(translations));
@@ -141,7 +141,7 @@ export class EvidenceService {
       message: translateObject['FRMELEMNTS_LBL_ECM_NOT_APPLICABLE'],
       buttons: [
         {
-          text: translateObject['FRMELEMNTS_BTN_CANCEL'],
+          text: translateObject['CANCEL'],
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');

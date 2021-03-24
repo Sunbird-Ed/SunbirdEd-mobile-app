@@ -79,7 +79,7 @@ export class ProjectOperationPage implements OnInit {
           this.button = 'FRMELEMNTS_BTN_SAVE_EDITS';
           this.showSkip = false;
         } else if (params.isCreate) {
-          this.button = 'FRMELEMNTS_BTN_VIEW_PROJECT';
+          this.button = 'FRMELEMNTS_LBL_VIEW_PROJECT';
           this.showSkip = true;
         }
         this.showLearningResources = true;
@@ -331,7 +331,7 @@ export class ProjectOperationPage implements OnInit {
       this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
     }
     this.template.learningResources = this.selectedResources;
-    this.button == 'FRMELEMNTS_BTN_VIEW_PROJECT' ? this.newProjectCreate() : this.update(this.template);
+    this.button == 'FRMELEMNTS_LBL_VIEW_PROJECT' ? this.newProjectCreate() : this.update(this.template);
   }
 
   newProjectCreate() {
