@@ -1307,6 +1307,7 @@
   "FRMELEMNTS_LBL_TASK_DESCRIPTION": "Task Description (mandatory)",
   "FRMELEMNTS_LBL_ADD_DESCRIPTION_HERE":"Add task description here",
   "FRMELEMNTS_LBL_DESCRIPTION": "Description",
+  "FRMELEMENTS_BTN_EDIT":"Edit",
   "FRMELEMNTS_LBL_ATTACH": "Attach",
   "FRMELEMNTS_LBL_ADD_TASK": "Add Task",
   "FRMELEMNTS_BTN_DISCARD": "Discard",
@@ -1409,5 +1410,7 @@
   "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
   "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library",
-  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice"
+  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
+  "FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE":"Add entity to observe",
+  "FRMELEMNTS_MSG_ASSESSMENTS_DONE" : "Assessments done"
 }

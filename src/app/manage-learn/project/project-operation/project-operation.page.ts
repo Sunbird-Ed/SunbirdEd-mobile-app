@@ -45,6 +45,7 @@ export class ProjectOperationPage implements OnInit {
   projectId;
   selectedEntity;
   template;
+  templateCopy;
   viewProjectAlert;
   private backButtonFunc: Subscription;
   headerConfig = {
@@ -158,6 +159,8 @@ export class ProjectOperationPage implements OnInit {
   getProjectFromLocal(projectId) {
     this.db.query({ _id: projectId }).then(success => {
       this.template = success.docs[0];
+      this.templateCopy = JSON.parse(JSON.stringify(this.template));
+      this.endDateMin = moment(this.template.startDate).format("YYYY-MM-DD");
       if (this.template.entityName) {
         this.selectedEntity = {
           name: this.template.entityName ? this.template.entityName : '',
@@ -248,9 +251,9 @@ export class ProjectOperationPage implements OnInit {
       }
     } else if (type == 'program') {
       // if (this.template.isAPrivateProgram) {
-        this.selectedProgram = '';
-        this.template.programId ? delete this.template.programId : '';
-        this.template.programName ? delete this.template.programName : '';
+      this.selectedProgram = '';
+      this.template.programId ? delete this.template.programId : '';
+      this.template.programName ? delete this.template.programName : '';
       // }
     } else if (type == 'resources') {
       const index = this.selectedResources.indexOf(data, 0);
@@ -261,11 +264,7 @@ export class ProjectOperationPage implements OnInit {
   }
 
   resetEndDate(event) {
-    console.log(event.detail.value, "event.detail.value");
-    console.log(this.template.endDate, "this.template.endDate");
-    if (event.detail && event.detail.value && (event.detail.value != this.template.endDate)) {
-      console.log('in if');
-      event.detail.value = this.template.endDate;
+    if (event.detail && event.detail.value && (event.detail.value != this.templateCopy.startDate)) {
       this.endDateMin = moment(event.detail.value).format("YYYY-MM-DD");
       this.template.endDate = this.template.endDate ? '' : '';
     }

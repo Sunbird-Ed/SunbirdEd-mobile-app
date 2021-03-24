@@ -1,14 +1,14 @@
 <ion-content padding>
   <h2>{{ data?.programName ? data?.programName : data?.solutionName }}</h2>
   <!-- for dropdown type  -->
-  <div *ngFor="let filter of data?.filters">
+  <div *ngFor="let filter of filters">
     <div *ngIf="filter.filter.type == 'dropdown'" class="d-flex flex-ai-center w-100">
       <div>
         <ion-select
           okText="Select"
           cancelText="Dismiss"
           placeholder="Submission Filter"
-          [ngModel]="submissionId"
+          [(ngModel)]="submissionId"
           (ionChange)="instanceReport($event)"
         >
           <ion-select-option [value]="s._id" *ngFor="let s of filter.filter.data">{{
@@ -36,8 +36,8 @@
   <div *ngIf="data && !data?.reportSections" class="_flex-box _justify-content-center">
     {{ 'message.noReportsFound' | translate }}
   </div> -->
-   <div *ngIf="!data?.result" class="_flex-box _justify-content-center">
-    {{data?.message}}
+  <div *ngIf="!data?.result" class="_flex-box _justify-content-center">
+    {{ data?.message }}
   </div>
   <!-- <div class="_flex-box _justify-content-center" *ngIf="data?.reportSections && data?.reportSections.length ">
     <button ion-button round class="viewReportBtn" (click)="goToImpSugg()">

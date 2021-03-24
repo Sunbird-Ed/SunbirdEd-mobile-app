@@ -218,7 +218,6 @@ export class ObservationSubmissionComponent implements OnInit {
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
-        debugger
         if (
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
@@ -259,7 +258,6 @@ export class ObservationSubmissionComponent implements OnInit {
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
-            debugger;
           }
         }
       })
@@ -276,7 +274,6 @@ export class ObservationSubmissionComponent implements OnInit {
     };
     console.log(JSON.stringify(options));
     let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
-   debugger
    if (action) {
      this.router.navigate([RouterLinks.QUESTIONNAIRE], {
        queryParams: {
@@ -289,7 +286,7 @@ export class ObservationSubmissionComponent implements OnInit {
    }
   }
   async openMenu(event, submission, index) {
-    if (submission.scoringSystem != 'pointsBasedScoring') {
+    if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
         this.router.navigate([RouterLinks.GENERIC_REPORT], {
           state: {
             scores: true,
