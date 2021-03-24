@@ -167,8 +167,8 @@ export class CreateProjectPage implements OnInit {
       .get([
         'FRMELEMNTS_LBL_DISCARD_PROJECT',
         'FRMELEMNTS_MSG_DISCARD_PROJECT',
-        'FRMELEMNTS_BTN_DISCARD_YES',
-        'FRMELEMNTS_BTN_CONTINUE_TO_EDIT',
+        'YES',
+        'NO',
       ])
       .subscribe((data) => {
         text = data;
@@ -179,7 +179,7 @@ export class CreateProjectPage implements OnInit {
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
       buttons: [
         {
-          text: text['FRMELEMNTS_BTN_DISCARD_YES'],
+          text: text['YES'],
           role: 'cancel',
           cssClass: 'text-transform-free',
           handler: (blah) => {
@@ -187,7 +187,7 @@ export class CreateProjectPage implements OnInit {
           },
         },
         {
-          text: text['FRMELEMNTS_BTN_CONTINUE_TO_EDIT'],
+          text: text['NO'],
           cssClass: 'text-transform-free',
           handler: () => { },
         },
