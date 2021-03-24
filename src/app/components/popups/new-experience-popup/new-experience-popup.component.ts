@@ -31,7 +31,8 @@ export class NewExperiencePopupComponent implements OnInit {
     }
 
     async closePopover() {
-        this.popoverCtrl.dismiss();
+     this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG, SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
+     this.popoverCtrl.dismiss();
     }
 
     async switchToNewTheme() {

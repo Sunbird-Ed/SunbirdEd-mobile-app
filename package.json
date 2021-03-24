@@ -64,7 +64,7 @@
     "@project-sunbird/discussions-ui-v8": "2.0.25",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-pdf-player-v8": "3.8.0",
-    "@project-sunbird/sunbird-sdk": "3.8.3",
+    "@project-sunbird/sunbird-sdk": "3.8.6",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "chartjs-plugin-stacked100": "^0.7.1",
