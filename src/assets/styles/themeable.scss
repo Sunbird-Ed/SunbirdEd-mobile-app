@@ -1569,6 +1569,11 @@ html[data-theme="JOYFUL"]{
     .reply-btn {
       background-color: var(--app-lighter-gray);
     }
+    .discussion-start-modal{
+      .discard-btn{
+        color: map-get($colors, primary) !important;
+      }
+    }
   }
   .df-btn-container{
     .sb-left-icon{
