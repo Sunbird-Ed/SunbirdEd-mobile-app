@@ -279,7 +279,7 @@ export class CreateProjectPage implements OnInit {
       });
       this.projectForm.value.categories = this.selectedCategories;
       this.parameters ? this.update(this.projectForm.value) :
-        this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMENTS_BTN_EDIT', 'FRMELEMNTS_LBL_CONTINUE');
+        this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'EDIT', 'FRMELEMNTS_LBL_CONTINUE');
     } else {
       this.translate.get(['FRMELEMNTS_MSG_REQUIRED_FIELDS']).subscribe((data) => {
         this.toast.showMessage(data['FRMELEMNTS_MSG_REQUIRED_FIELDS'], 'danger');
