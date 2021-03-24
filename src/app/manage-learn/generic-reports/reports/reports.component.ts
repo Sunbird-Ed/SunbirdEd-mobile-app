@@ -58,7 +58,6 @@ export class ReportsComponent implements OnInit {
       payload: payload,
     };
 
-    
     const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
     this.fileName = timeStamp + '.pdf';
 
@@ -120,6 +119,7 @@ export class ReportsComponent implements OnInit {
     this.dhiti.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
+        this.state.pdf = false;
         console.log(JSON.stringify(success));
         if (success.status === 'success' && success.pdfUrl) {
           this.downloadSubmissionDoc(success.pdfUrl);
@@ -128,6 +128,8 @@ export class ReportsComponent implements OnInit {
         }
       },
       (error) => {
+        this.state.pdf = false;
+
         this.toast.openToast(error.message);
 
         this.loader.stopLoader();
