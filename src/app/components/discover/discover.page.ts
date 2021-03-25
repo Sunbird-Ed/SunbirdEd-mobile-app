@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
@@ -20,6 +20,9 @@ import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
   styleUrls: ['./discover.page.scss'],
 })
 export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter {
+
+  @Output() hideRefresher = new EventEmitter();
+  
 
   appLabel: string;
   headerObservable: Subscription;
@@ -49,7 +52,12 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
-  async fetchDisplayElements() {
+  doRefresh(refresher) {
+    this.hideRefresher.emit(true);
+    this.fetchDisplayElements(refresher);
+  }
+
+  async fetchDisplayElements(refresher?) {
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => contentSearchCriteria,
       from: CachedItemRequestSourceFrom.SERVER
@@ -58,6 +66,8 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.DISCOVER);
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
+    this.hideRefresher.emit(false);
+    refresher.target.complete();
   }
 
   async openSearchPage() {
