@@ -60,6 +60,10 @@ export class UpdateLocalSchoolDataService {
       const validSubmission = assessment.submissions[evidence.externalId];
       if (validSubmission) {
         evidence.notApplicable = validSubmission.notApplicable;
+        if (evidence.notApplicable) {
+          continue;
+        }
+
         for (const section of evidence.sections) {
           for (const question of section.questions) {
             if (question.responseType === 'pageQuestions') {
@@ -68,14 +72,18 @@ export class UpdateLocalSchoolDataService {
                   questions.responseType !== 'matrix'
                     ? validSubmission.answers[questions._id].value
                     : this.constructMatrixValue(validSubmission, questions, evidence.externalId);
-                questions.remarks = validSubmission.answers[questions._id].remarks;
+                questions.remarks = validSubmission.answers[question._id]
+                  ? validSubmission.answers[question._id].remarks
+                  : '';
               }
             } else if (validSubmission.answers && validSubmission.answers[question._id]) {
               question.value =
                 question.responseType !== 'matrix'
                   ? validSubmission.answers[question._id].value
                   : this.constructMatrixValue(validSubmission, question, evidence.externalId);
-              question.remarks = validSubmission.answers[question._id].remarks;
+              question.remarks = validSubmission.answers[question._id]
+                ? validSubmission.answers[question._id].remarks
+                : '';
             }
           }
         }
