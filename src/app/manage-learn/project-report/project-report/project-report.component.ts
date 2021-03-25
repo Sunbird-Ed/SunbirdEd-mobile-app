@@ -118,7 +118,7 @@ export class ProjectReportComponent implements OnInit {
       programId: this.filter.program ? this.filter.program._id : null,
     };
     url = this.utils.queryUrl(url, query);
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     if (payload) {
       const config = {
         url: url,
