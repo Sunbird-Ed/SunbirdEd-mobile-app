@@ -159,6 +159,9 @@ export class PercentageColumnChartsComponent implements OnInit {
 
             // to remove  0 data in  report
             if (d.originalData[datasetIndex][dataIndex] == 0) {
+              if ((data.datasetIndex + 1) % this.barChartData.length == 0 && this.submiisionDateArray.length) {
+                  return ['', '', this.submiisionDateArray[data.dataIndex]];
+              }
               return '';
             }
             // to remove date in instance report
