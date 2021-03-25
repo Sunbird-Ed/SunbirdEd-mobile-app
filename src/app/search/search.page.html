@@ -2,7 +2,7 @@
   <div class="spinner-div" *ngIf="refresh">
       <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
   </div>
-  <ion-refresher #refresher slot="fixed" (ionRefresh)="discoverCmp.doRefresh($event)">
+  <ion-refresher #refresher slot="fixed">
       <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
   <div class="container-focus">
@@ -217,7 +217,7 @@
   </ng-container>
 
   <ng-container *ngIf="!enableSearch">
-    <app-discover [(refresh)]='refresh' (hideRefresher)="hideRefresher($event)"></app-discover>
+    <app-discover></app-discover>
   </ng-container>
 </ion-content>
 
