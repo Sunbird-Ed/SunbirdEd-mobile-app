@@ -1,10 +1,15 @@
 <ion-content>
-  <div class="content-player" *ngIf="!loadPdfPlayer">
+  <div class="content-player" *ngIf="!loadPdfPlayer && !loadEpubPlayer">
     <iframe #preview title="player" id="contentPlayer" src="./content-player/preview.html?isMobile=true"
       style="width:100%;height:100vh;border:none;"></iframe>
   </div>
   <div *ngIf="loadPdfPlayer" style="height:100vh;width:100%;">
-    <sunbird-pdf-player [playerConfig]="config" (playerEvent)="pdfPlayerEvents($event)" (telemetryEvent)="pdfTelemetryEvents($event)"></sunbird-pdf-player>
+    <sunbird-pdf-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
+      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-pdf-player>
+  </div>
+  <div *ngIf="loadEpubPlayer" style="height:100vh;width:100%;">
+    <sunbird-epub-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
+      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-epub-player>
   </div>
 </ion-content>
 
