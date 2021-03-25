@@ -221,13 +221,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = displayItems;
   }
 
-  handlePillSelect(event) {
+  handlePillSelect(event, section) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
     const params = {
       formField: event.data[0].value,
-      fromLibrary: false
+      fromLibrary: false,
+      description: (section && section.description) || ''
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -365,7 +366,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data);
+    this.handlePillSelect(data, section);
   }
 
   mapContentFacteTheme(displayItems) {

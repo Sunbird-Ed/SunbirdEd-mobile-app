@@ -1,5 +1,5 @@
 <ion-content overflow-scroll="true">
-  <div class="sb-textbook-container">
+  <div class="sb-textbook-container p-0 m-0">
     <div class="sb-textbook-items">
       <div class="sb-textbook-title-container">
         <span class="textbook-icon">
@@ -11,8 +11,9 @@
       </div>
       <!-- Card style -->
       <div class="sb-card-container sb-card-textbook-container">
-        <div class="sb-card-loop" *ngFor="let content of contentList; let i = index">
+        <div class="mb-1" *ngFor="let content of contentList; let i = index">
           <sb-library-card [content]="content" [type]="LibraryCardTypes.MOBILE_TEXTBOOK"
+            [layoutConfig]="{layout: 'v3'}"
             (click)="navigateToDetailPage(content, i, content.name)"
             [cardImg]="commonUtilService.getContentImg(content)">
           </sb-library-card>
