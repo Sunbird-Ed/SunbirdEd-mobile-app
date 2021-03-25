@@ -81,7 +81,6 @@ export class ContentAggregatorHandler {
         }
 
         const formRequest: FormRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
             type: 'config',
             subType: pageName,
             action: 'get',
