@@ -156,23 +156,34 @@ export class PercentageColumnChartsComponent implements OnInit {
           formatter: (value, data) => {
             const d: any = data.chart.data;
             const { datasetIndex, dataIndex } = data;
+
+            // to remove  0 data in  report
+            if (d.originalData[datasetIndex][dataIndex] == 0) {
+              if ((data.datasetIndex + 1) % this.barChartData.length == 0 && this.submiisionDateArray.length) {
+                  return ['', '', this.submiisionDateArray[data.dataIndex]];
+              }
+              return '';
+            }
+            // to remove date in instance report
             if (this.submiisionDateArray && !this.submiisionDateArray.length) {
               return `${d.originalData[datasetIndex][dataIndex]}`;
             }
-              if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
-                // console.log(data.datasetIndex)
-                if (d.originalData[datasetIndex][dataIndex] == 1) {
-                  return ['', '', this.submiisionDateArray[data.dataIndex]];
-                }
-                return [
-                  `                                              ${d.originalData[datasetIndex][dataIndex]}`,
-                  '',
 
-                  `                                ${this.submiisionDateArray[data.dataIndex]}`,
-                ];
-              } else {
-                return `${d.originalData[datasetIndex][dataIndex]}`;
+            // for last value
+            if ((data.datasetIndex + 1) % this.barChartData.length == 0) {
+              // console.log(data.datasetIndex)
+              if (d.originalData[datasetIndex][dataIndex] == 1) {
+                return ['', '', this.submiisionDateArray[data.dataIndex]];
               }
+              return [
+                `                                              ${d.originalData[datasetIndex][dataIndex]}`,
+                '',
+
+                `                                ${this.submiisionDateArray[data.dataIndex]}`,
+              ];
+            } else {
+              return `${d.originalData[datasetIndex][dataIndex]}`;
+            }
           },
         },
       },
