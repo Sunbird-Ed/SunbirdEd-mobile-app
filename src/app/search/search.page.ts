@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Platform, PopoverController, IonContent, NavController, IonRefresher } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
@@ -56,6 +56,7 @@ import { CsContentType } from '@project-sunbird/client-services/services/content
 import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../form.constants';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DiscoverComponent } from '../components/discover/discover.page';
 
 declare const cordova;
 @Component({
@@ -84,6 +85,10 @@ declare const cordova;
   ],
 })
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
+  @ViewChild(DiscoverComponent, { static: false }) discoverCmp: IonRefresher;
+
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;
   showLoading: boolean;
@@ -145,6 +150,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   preAppliedFilter: any;
   enableSearch = false;
   searchInfolVisibility = 'show';
+  refresh: boolean = false;
 
   @ViewChild('contentView', { static: false }) contentView: IonContent;
   headerObservable: Subscription;
@@ -259,6 +265,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
+    this.refresher ? this.refresher.disabled = false : null;
+  }
+
+  hideRefresher(hide) {
+    this.refresh = hide;
   }
 
   ngAfterViewInit() {
@@ -316,6 +327,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+    this.refresher.disabled = true;
   }
 
   ngOnDestroy() {
