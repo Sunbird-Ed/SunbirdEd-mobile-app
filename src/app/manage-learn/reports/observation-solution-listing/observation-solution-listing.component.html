@@ -10,7 +10,7 @@
   <div class="scrollable-container">
     <div *ngFor="let solution of solutionList; let solutionIndex = index">
       <app-item-list-card [title]="solution?.name" [subTitle]="solution?.programName"
-        (cardSelect)="goToEntityList(solution)">
+        (cardSelect)="(solution?.entities?.length >1) ? goToEntityList(solution) : goToReports(solution)">
         <ion-icon class="mg-popup-btn-icon" name="arrow-forward" arrow></ion-icon>
       </app-item-list-card>
     </div>

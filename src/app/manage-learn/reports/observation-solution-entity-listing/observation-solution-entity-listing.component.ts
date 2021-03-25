@@ -24,7 +24,7 @@ export class ObservationSolutionEntityListingComponent implements OnInit {
 
   goToReports(entity) {
     // if (!this.solutionDetails.scoringSystem || this.solutionDetails.scoringSystem === 'pointBasedScoring') {
-    if (this.solutionDetails.scoringSystem === 'pointBasedScoring' || !this.solutionDetails.isRubricDriven) {
+    if (this.solutionDetails.scoringSystem === 'pointsBasedScoring' || !this.solutionDetails.isRubricDriven) {
       const queryParams = {
         queryParams: {
           observationId: this.solutionDetails.observationId,
