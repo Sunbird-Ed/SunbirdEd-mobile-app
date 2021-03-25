@@ -38,7 +38,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView, PopoverController } from '@ionic/angular';
+import { IonContent as ContentView, IonRefresher, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
@@ -51,6 +51,8 @@ import { FrameworkCategory } from '@project-sunbird/client-services/models/chann
 })
 export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   private frameworkCategoriesMap: {[code: string]: FrameworkCategory | undefined} = {};
+
+  @ViewChild('refresher', { static: false }) refresher: IonRefresher;
 
   aggregatorResponse = [];
   courseCardType = CourseCardGridTypes;
@@ -78,6 +80,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   PillsMultiRow = PillsMultiRow;
   audienceFilter = [];
   newThemeTimeout: any;
+  refresh: boolean;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -120,6 +123,11 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     this.getUserProfileDetails();
+  }
+
+  doRefresh(refresher?) {
+    this.refresh = true;
+    this.fetchDisplayElements(refresher);
   }
 
   private async getUserProfileDetails() {
@@ -200,7 +208,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     return displayValues;
   }
 
-  private async fetchDisplayElements() {
+  private async fetchDisplayElements(refresher?) {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       userPreferences: {
@@ -214,20 +222,23 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
         return contentSearchCriteria;
-      }, from: CachedItemRequestSourceFrom.SERVER
+      }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
+    this.refresh = false;
+    refresher ? refresher.target.complete() : null;
   }
 
-  handlePillSelect(event) {
+  handlePillSelect(event, section) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
     const params = {
       formField: event.data[0].value,
-      fromLibrary: false
+      fromLibrary: false,
+      description: (section && section.description) || ''
     };
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
@@ -323,6 +334,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.refresher.disabled = true;
   }
 
   ngOnDestroy() {
@@ -342,6 +354,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     // this.newThemeTimeout = setTimeout(() => {
     //   this.appGlobalService.showJoyfulPopup();
     // }, 2000);
+    this.refresher.disabled = false;
   }
 
   viewPreferenceInfo() {
@@ -365,7 +378,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data);
+    this.handlePillSelect(data, section);
   }
 
   mapContentFacteTheme(displayItems) {
