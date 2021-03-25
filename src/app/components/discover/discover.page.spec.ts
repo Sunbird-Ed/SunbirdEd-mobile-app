@@ -9,6 +9,7 @@ import { CommonUtilService, FormAndFrameworkUtilService } from '../../../service
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
 import { ContentFilterConfig } from '@app/app/app.constant';
+import { EventEmitter } from '@angular/core';
 
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
@@ -32,6 +33,7 @@ describe('DiscoverComponent', () => {
         navigateToContent: jest.fn()
     };
     const mockPopoverController: Partial<PopoverController> = {};
+    const hide
 
     beforeAll(() => {
         discoverComponent = new DiscoverComponent(
@@ -236,5 +238,23 @@ describe('DiscoverComponent', () => {
         discoverComponent.ngOnDestroy();
         // assert
         expect(mockEvents.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should call doRefresh and call emit', () => {
+        // arrange
+        const hideRefresher = {
+            emit: jest.fn()
+        };
+        const refresher = {
+            target: {
+                complete: jest.fn()
+            }
+        };
+        jest.spyOn(hideRefresher, 'emit');
+        jest.spyOn(discoverComponent, 'fetchDisplayElements');
+        // act
+        discoverComponent.doRefresh(refresher);;
+        // assert
+        expect(discoverComponent.fetchDisplayElements).toHaveBeenCalled();
     });
 });
