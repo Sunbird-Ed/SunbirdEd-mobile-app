@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import {
+    CachedItemRequestSourceFrom,
     ContentAggregatorResponse, ContentService, CourseService, FormRequest,
     FormService, ProfileService
 } from '@project-sunbird/sunbird-sdk';
@@ -80,6 +81,7 @@ export class ContentAggregatorHandler {
         }
 
         const formRequest: FormRequest = {
+            from: CachedItemRequestSourceFrom.SERVER,
             type: 'config',
             subType: pageName,
             action: 'get',
@@ -96,7 +98,7 @@ export class ContentAggregatorHandler {
 
     private async aggregateContent(request, dataSrc, formRequest): Promise<ContentAggregatorResponse> {
         return this.contentService.buildContentAggregator(this.formService, this.courseService, this.profileService)
-            .aggregate(request, dataSrc, formRequest).toPromise();
+            .aggregate(request, dataSrc, formRequest, undefined, true).toPromise();
     }
 
     public populateIcons(aggregatorResponse) {
