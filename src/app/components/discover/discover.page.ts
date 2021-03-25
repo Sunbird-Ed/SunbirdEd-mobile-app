@@ -60,7 +60,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   async fetchDisplayElements(refresher?) {
     const request: ContentAggregatorRequest = {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => contentSearchCriteria,
-      from: CachedItemRequestSourceFrom.SERVER
+      from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
 
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.DISCOVER);

@@ -222,7 +222,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         contentSearchCriteria.medium = this.getFieldDisplayValues(this.profile.medium, 'medium', true);
         contentSearchCriteria.grade = this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true);
         return contentSearchCriteria;
-      }, from: CachedItemRequestSourceFrom.SERVER
+      }, from: refresher ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE
     };
     let displayItems = await this.contentAggregatorHandler.newAggregate(request, AggregatorPageType.HOME);
     displayItems = this.mapContentFacteTheme(displayItems);
