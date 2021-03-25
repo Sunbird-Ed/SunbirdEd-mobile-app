@@ -26,7 +26,7 @@ export class ObservationSolutionListingComponent implements OnInit {
     private utils: UtilsService,
     private loader: LoaderService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getSolutions();
@@ -71,6 +71,33 @@ export class ObservationSolutionListingComponent implements OnInit {
     this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.OBSERVATION_SOLUTION_ENTITY_LISTING}`], {
       state: solution,
     });
+  }
+
+  goToReports(solution) {
+    if (solution.scoringSystem === 'pointsBasedScoring' || !solution.isRubricDriven) {
+      const queryParams = {
+        queryParams: {
+          observationId: solution.observationId,
+          solutionId: solution.solutionId,
+          programId: solution.programId,
+          entityId: solution.entities[0]._id,
+          entityName: solution.entities[0].name
+        }
+      }
+      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
+
+    } else {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: solution.entities[0]._id,
+          entityType: solution.entityType,
+          observationId: solution.observationId,
+        },
+      });
+    }
   }
 
   loadMore() {

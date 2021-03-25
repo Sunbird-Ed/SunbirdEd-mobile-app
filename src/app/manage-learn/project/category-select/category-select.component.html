@@ -1,35 +1,41 @@
-<div class="custom-popup">
-  <div class="pop-container" *ngIf="catgeoryForm">
-    <h5 style="text-align: center;">{{'FRMELEMNTS_LBL_CATEGORIES' | translate}}</h5>
-    <form [formGroup]="catgeoryForm">
-    <div *ngFor="let data of categoryData">
-      <div *ngIf="data.input == 'select'">
-        <ion-list>
-          <ion-item *ngFor="let category of data.options" (ionChange)="categorySelect($event,category)">
-            <ion-checkbox slot="start" [checked]="category.isChecked" value="{{category.value}}"
-              (ionChange)="categorySelect($event,category)">
-            </ion-checkbox>
-            <ion-label> {{ category?.name || category?.label}}</ion-label>
+<ion-content>
+  <div class="custom-popup">
+    <div class="pop-container" *ngIf="catgeoryForm">
+      <h5 style="text-align: center;">{{'FRMELEMNTS_LBL_CATEGORIES' | translate}}</h5>
+      <form [formGroup]="catgeoryForm">
+        <div *ngFor="let data of categoryData">
+          <div *ngIf="data.input == 'select'">
+            <ion-list>
+              <ion-item *ngFor="let category of data.options" (ionChange)="categorySelect($event,category)">
+                <ion-checkbox slot="start" [checked]="category.isChecked" value="{{category.value}}"
+                  (ionChange)="categorySelect($event,category)">
+                </ion-checkbox>
+                <ion-label> {{ category?.name || category?.label}}</ion-label>
+              </ion-item>
+            </ion-list>
+
+          </div>
+          <ion-item *ngIf="data.input == 'text' && data.show">
+            <ion-input type="text" name="{{data.field}}" placeholder="{{'FRMELEMNTS_LBL_SPECIFY_OTHER' | translate}}"
+              [formControlName]="data.field" value="{{data.value}}"></ion-input>
           </ion-item>
-        </ion-list>
-        
-      </div>
-      <ion-item *ngIf="data.input == 'text' && data.show">
-        <ion-input type="text" name="{{data.field}}" placeholder="{{'FRMELEMNTS_LBL_SPECIFY_OTHER' | translate}}"  [formControlName]="data.field"  value="{{data.value}}"></ion-input>
-      </ion-item>
+        </div>
+      </form>
+
     </div>
-    </form>
-    <ion-row class="bottom-buttons">
-      <ion-col size="6">
-        <ion-button (click)="close()" size="small w-100" >
-          {{'CANCEL' | translate}} 
-        </ion-button>
-      </ion-col>
-      <ion-col size="6">
-        <ion-button (click)="submit()" size="small w-100" >
-          {{'FRMELEMNTS_BTN_SUBMIT' | translate}}
-        </ion-button>
-      </ion-col>
-    </ion-row>
   </div>
-</div>
+</ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="close()" expand="block">
+        {{'CANCEL' | translate}}
+      </ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="submit()" expand="block">
+        {{'FRMELEMNTS_BTN_SUBMIT' | translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
