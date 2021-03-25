@@ -9,6 +9,8 @@ import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { SunbirdPdfPlayerModule } from '@project-sunbird/sunbird-pdf-player-v8';
+import { SunbirdEpubPlayerModule } from '@project-sunbird/sunbird-epub-player-v8';
+
 
 
 
@@ -24,6 +26,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     SunbirdPdfPlayerModule,
+    SunbirdEpubPlayerModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
