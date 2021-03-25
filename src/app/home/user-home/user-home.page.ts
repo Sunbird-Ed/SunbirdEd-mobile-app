@@ -228,7 +228,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.refresh = false;
-    refresher.target.complete();
+    refresher ? refresher.target.complete() : null;
   }
 
   handlePillSelect(event, section) {

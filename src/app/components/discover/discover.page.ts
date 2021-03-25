@@ -67,7 +67,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     displayItems = this.mapContentFacteTheme(displayItems);
     this.displaySections = displayItems;
     this.hideRefresher.emit(false);
-    refresher.target.complete();
+    refresher ? refresher.target.complete() : null;
   }
 
   async openSearchPage() {
