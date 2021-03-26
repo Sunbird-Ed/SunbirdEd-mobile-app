@@ -221,7 +221,8 @@ export class ObservationSubmissionComponent implements OnInit {
         if (
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
-          (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
+          (submission.criteriaLevelReport && submission.isRubricDriven)
+          // (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
         ) {
           // this.router.navigate([RouterLinks.ECM_LISTING], {
           //   queryParams: {
@@ -286,7 +287,8 @@ export class ObservationSubmissionComponent implements OnInit {
     }
   }
   async openMenu(event, submission, index) {
-    if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
           scores: true,
@@ -322,7 +324,8 @@ export class ObservationSubmissionComponent implements OnInit {
   //  entity actions
   entityActions(e) {
     let submission = this.submissions[0];
-    if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    if (submission.criteriaLevelReport && submission.isRubricDriven) {
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
           scores: true,
