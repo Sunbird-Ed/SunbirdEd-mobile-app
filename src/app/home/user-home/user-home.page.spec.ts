@@ -395,4 +395,19 @@ describe('UserHomePage', () => {
             done();
         }, 0);
     });
+
+    describe('doRefresh', () => {
+        it('should call doRefresh method set refresh to true fetchDisplayElements', () => {
+            // arrange
+            const refresher = {
+                target: {
+                    complete: jest.fn()
+                }
+            };
+            // act
+            userHomePage.doRefresh(refresher);
+            // assert
+            expect(userHomePage.refresh).toBe(true);
+        });
+    });
 });

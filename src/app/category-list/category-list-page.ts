@@ -181,7 +181,7 @@ export class CategoryListPage implements OnDestroy {
                     ],
                 } as AggregatorConfigField<'CONTENTS'>]).toPromise()).result);
         (this as any)['filterCriteria'] = temp[0].meta.filterCriteria;
-        this.facetFilters = this.filterCriteria.facetFilters.reduce((acc, f) => {
+        this.facetFilters = (this.filterCriteria.facetFilters || []).reduce((acc, f) => {
             acc[f.name] = f.values;
             return acc;
         }, {});

@@ -1,4 +1,10 @@
 <ion-content #contentView class="search-bg">
+  <div class="spinner-div" *ngIf="refresh">
+      <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
+  </div>
+  <ion-refresher #refresher slot="fixed">
+      <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+  </ion-refresher>
   <div class="container-focus">
     <div class="search-info pt-16 mx-24">
       <div [@labelVisibility]="searchInfolVisibility">
