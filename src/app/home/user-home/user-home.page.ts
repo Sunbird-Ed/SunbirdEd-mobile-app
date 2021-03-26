@@ -49,13 +49,13 @@ import {
 } from '../../app.constant';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView, IonRefresher, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { Subscription } from 'rxjs';
-import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
-import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
+import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
+import {NavigationService} from '@app/services/navigation-handler.service';
+import {IonContent as ContentView, IonRefresher, PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
+import {Subscription} from 'rxjs';
+import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import {FrameworkCategory} from '@project-sunbird/client-services/models/channel';
 
 @Component({
   selector: 'app-user-home',
