@@ -173,26 +173,28 @@ describe('PlayerPage', () => {
         //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
     })
     it('should check if new player is enabled', () => {
-        const config = [
-            {
-              "name": "pdfPlayer",
-              "code": "pdf",
-              "values": [
+        const config = {
+            fields: [
                 {
-                  "isEnabled": true
-                }
-              ]
-            },
-            {
-              "name": "epubPlayer",
-              "code": "epub",
-              "values": [
+                    "name": "pdfPlayer",
+                    "code": "pdf",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
+                },
                 {
-                  "isEnabled": true
+                    "name": "epubPlayer",
+                    "code": "epub",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
                 }
-              ]
-            }
-          ];
+            ]
+        }
           playerPage.checkIsPlayerEnabled(config , 'pdfPlayer');
     })
     describe('ngOninit', () => {

@@ -467,6 +467,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   checkIsPlayerEnabled(config , playerType) {
-    return config.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
   }
 }
