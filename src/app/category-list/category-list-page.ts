@@ -4,14 +4,25 @@ import {
     CommonUtilService,
     CorReleationDataType,
     Environment,
-    FormAndFrameworkUtilService,
+    FormAndFrameworkUtilService, ImpressionType,
     InteractSubtype,
     InteractType,
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
 import {Router} from '@angular/router';
-import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService, ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk';
+import {
+    ContentService,
+    ContentsGroupedByPageSection,
+    CourseService,
+    FilterValue,
+    FormService,
+    ProfileService,
+    ContentData,
+    ContentSearchCriteria,
+    SearchType,
+    CorrelationData
+} from 'sunbird-sdk';
 import {AggregatorConfigField, ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
 import {ContentUtil} from '@app/util/content-util';
 import {RouterLinks} from '@app/app/app.constant';
@@ -73,7 +84,7 @@ export class CategoryListPage implements OnDestroy {
     };
     appName = '';
     categoryDescription = '';
-    PillBorder = PillBorder
+    PillBorder = PillBorder;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -130,6 +141,16 @@ export class CategoryListPage implements OnDestroy {
             searchType: SearchType.SEARCH,
             limit: 100
         });
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({id: this.formField.facet, type: CorReleationDataType.FORM_PAGE});
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED,
+            '',
+            PageId.CATEGORY_RESULTS,
+            Environment.HOME,
+            undefined, undefined, undefined, undefined,
+            corRelationList
+        );
     }
 
     private async fetchAndSortData(searchCriteria) {
@@ -214,10 +235,11 @@ export class CategoryListPage implements OnDestroy {
         const values = {};
         values['sectionName'] = sectionName;
         values['positionClicked'] = index;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-            InteractSubtype.CONTENT_CLICKED,
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SELECT_CONTENT,
+            '',
             Environment.HOME,
-            PageId.LIBRARY,
+            PageId.CATEGORY_RESULTS,
             ContentUtil.getTelemetryObject(item),
             values,
             ContentUtil.generateRollUp(undefined, identifier),
