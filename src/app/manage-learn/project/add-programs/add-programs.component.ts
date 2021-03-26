@@ -71,9 +71,13 @@ export class AddProgramsComponent implements OnInit {
         }, {
           text: text['FRMELEMNTS_BTN_SAVE'],
           handler: (data) => {
-            data.created = true;
-            this.selectedData = data;
-            this.close(this.selectedData);
+            data.name = data.name.trim();
+            if (data.name || data.name != "") {
+              data.created = true;
+              data.isAPrivateProgram = true;
+              this.selectedData = data;
+              this.close(this.selectedData);
+            }
           }
         }
       ]
