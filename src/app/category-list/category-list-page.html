@@ -69,7 +69,6 @@
             <div [id]="sectionGroup.name + '_'+ section.name"
                  *ngIf="section?.contents && section?.contents?.length">
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
-                                        [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
                                         (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"

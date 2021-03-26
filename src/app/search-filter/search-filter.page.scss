@@ -4,13 +4,18 @@
     color: var(--app-primary);
   }
 }
-
-.filter-header{
+​
+.filter-header {
   border-bottom: 1px solid var(--app-primary-header);
-  p{
+  p {
     display: inline-block;
     margin-bottom: 0;
     line-height: 3rem;
     font-size: 1.1rem;
   }
+}
+​
+.cancel-button {
+  --background: #f3f7fb !important;
+  color: #000000 !important;
 }

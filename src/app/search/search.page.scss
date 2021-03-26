@@ -399,3 +399,10 @@
     }
   }
 }
+
+.spinner-div {
+  padding: 40px;
+  background-color: map-get($colors, light_gray);
+  text-align: center;
+  border: none !important;
+}
