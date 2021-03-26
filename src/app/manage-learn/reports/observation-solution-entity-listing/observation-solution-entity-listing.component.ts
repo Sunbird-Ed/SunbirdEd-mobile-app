@@ -24,18 +24,18 @@ export class ObservationSolutionEntityListingComponent implements OnInit {
 
   goToReports(entity) {
     // if (!this.solutionDetails.scoringSystem || this.solutionDetails.scoringSystem === 'pointBasedScoring') {
-    if (this.solutionDetails.scoringSystem === 'pointsBasedScoring' || !this.solutionDetails.isRubricDriven) {
+    // if (this.solutionDetails.scoringSystem === 'pointsBasedScoring' || !this.solutionDetails.isRubricDriven) {
+    if (!this.solutionDetails.criteriaLevelReport || !this.solutionDetails.isRubricDriven) {
       const queryParams = {
         queryParams: {
           observationId: this.solutionDetails.observationId,
           solutionId: this.solutionDetails.solutionId,
           programId: this.solutionDetails.programId,
           entityId: entity._id,
-          entityName: entity.name
-        }
-      }
+          entityName: entity.name,
+        },
+      };
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
-
     } else {
       // this.toast.openToast("coming soon")
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
