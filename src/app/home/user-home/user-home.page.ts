@@ -1,5 +1,17 @@
+import {CorReleationDataType, ImpressionType, PageId} from './../../../services/telemetry-constants';
+import {TelemetryGeneratorService} from './../../../services/telemetry-generator.service';
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, SunbirdQRScanner} from '@app/services';
+import {
+  AppGlobalService,
+  AppHeaderService,
+  CommonUtilService,
+  ContentAggregatorHandler,
+  Environment,
+  ImpressionSubtype,
+  InteractSubtype,
+  InteractType,
+  SunbirdQRScanner
+} from '@app/services';
 import {
   ButtonPosition,
   CourseCardGridTypes,
@@ -15,6 +27,7 @@ import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
   ContentSearchCriteria,
+  CorrelationData,
   Framework,
   FrameworkCategoryCodesGroup,
   FrameworkDetailsRequest,
@@ -36,13 +49,13 @@ import {
 } from '../../app.constant';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {OnTabViewWillEnter} from '@app/app/tabs/on-tab-view-will-enter';
-import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
-import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView, IonRefresher, PopoverController } from '@ionic/angular';
-import { Events } from '@app/util/events';
-import { Subscription } from 'rxjs';
-import { SbSubjectListPopupComponent } from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
-import { FrameworkCategory } from '@project-sunbird/client-services/models/channel';
+import {AggregatorPageType} from '@app/services/content/content-aggregator-namespaces';
+import {NavigationService} from '@app/services/navigation-handler.service';
+import {IonContent as ContentView, IonRefresher, PopoverController} from '@ionic/angular';
+import {Events} from '@app/util/events';
+import {Subscription} from 'rxjs';
+import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject-list-popup/sb-subject-list-popup.component';
+import {FrameworkCategory} from '@project-sunbird/client-services/models/channel';
 
 @Component({
   selector: 'app-user-home',
@@ -95,6 +108,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private events: Events,
     private qrScanner: SunbirdQRScanner,
     private popoverCtrl: PopoverController,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
   }
 
@@ -148,6 +162,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       .then((appName: any) => {
         this.appLabel = appName;
       });
+      // impression telemetry
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.PAGE_LOADED,
+        ImpressionSubtype.LOCATION,
+        PageId.HOME,
+        Environment.HOME
+      );
   }
 
 
@@ -212,10 +233,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     this.displaySections = undefined;
     const request: ContentAggregatorRequest = {
       userPreferences: {
-        'board': this.getFieldDisplayValues(this.profile.board, 'board', true),
-        'medium': this.getFieldDisplayValues(this.profile.medium, 'medium', true),
-        'gradeLevel': this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true),
-        'subject': this.getFieldDisplayValues(this.profile.subject, 'subject', true),
+        board: this.getFieldDisplayValues(this.profile.board, 'board', true),
+        medium: this.getFieldDisplayValues(this.profile.medium, 'medium', true),
+        gradeLevel: this.getFieldDisplayValues(this.profile.grade, 'gradeLevel', true),
+        subject: this.getFieldDisplayValues(this.profile.subject, 'subject', true),
       },
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         contentSearchCriteria.board = this.getFieldDisplayValues(this.profile.board, 'board' , true);
@@ -231,10 +252,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     refresher ? refresher.target.complete() : null;
   }
 
-  handlePillSelect(event, section) {
+  handlePillSelect(event, section, isFromPopover: boolean, ) {
     if (!event || !event.data || !event.data.length) {
       return;
     }
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({id: event.data[0].name, type: isFromPopover ? CorReleationDataType.SUBJECT : CorReleationDataType.CATEGORY});
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      isFromPopover ? InteractType.SELECT_ATTRIBUTE : InteractType.SELECT_CATEGORY,
+      isFromPopover ? '' : event.data[0].name,
+      Environment.HOME,
+      PageId.HOME,
+      undefined, undefined, undefined,
+      isFromPopover ? corRelationList : undefined
+    );
     const params = {
       formField: event.data[0].value,
       fromLibrary: false,
@@ -282,14 +313,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     const values = {};
     values['sectionName'] = sectionName;
     values['positionClicked'] = index;
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.CONTENT_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY,
-    //   ContentUtil.getTelemetryObject(item),
-    //   values,
-    //   ContentUtil.generateRollUp(undefined, identifier),
-    //   corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item, { content: item }); // TODO
       // this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
@@ -312,20 +335,20 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   redirectToActivedownloads() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+      Environment.HOME,
+      PageId.HOME);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   redirectToNotifications() {
-    // this.telemetryGeneratorService.generateInteractTelemetry(
-    //   InteractType.TOUCH,
-    //   InteractSubtype.NOTIFICATION_CLICKED,
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SELECT_BELL,
+      Environment.HOME,
+      PageId.HOME);
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
@@ -365,6 +388,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     if (!event || !event.data) {
       return;
     }
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SELECT_VIEW_ALL,
+        '',
+        Environment.HOME,
+        PageId.HOME
+    );
     const subjectListPopover = await this.popoverCtrl.create({
       component: SbSubjectListPopupComponent,
       componentProps: {
@@ -378,7 +407,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     });
     await subjectListPopover.present();
     const { data } = await subjectListPopover.onDidDismiss();
-    this.handlePillSelect(data, section);
+    this.handlePillSelect(data, section, true);
   }
 
   mapContentFacteTheme(displayItems) {
@@ -387,10 +416,12 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         if (!displayItems[count].data) {
           continue;
         }
-        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type
+           === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'subject')) {
           displayItems[count] = this.mapSubjectTheme(displayItems[count]);
         }
-        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
+        if (displayItems[count].dataSrc && (displayItems[count].dataSrc.type
+           === 'CONTENT_FACETS') && (displayItems[count].dataSrc.facet === 'primaryCategory')) {
           displayItems[count] = this.mapPrimaryCategoryTheme(displayItems[count]);
         }
         if (displayItems[count].dataSrc && displayItems[count].dataSrc.type === 'RECENTLY_VIEWED_CONTENTS') {
@@ -406,7 +437,8 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   mapSubjectTheme(displayItems) {
     displayItems.data.forEach(item => {
-      const subjectMap = item.facet && SubjectMapping[item.facet.toLowerCase()] ? SubjectMapping[item.facet.toLowerCase()] : SubjectMapping['default'];
+      const subjectMap = item.facet && SubjectMapping[item.facet.toLowerCase()]
+       ? SubjectMapping[item.facet.toLowerCase()] : SubjectMapping['default'];
       item.icon = item.icon ? item.icon : subjectMap.icon;
       item.theme = item.theme ? item.theme : subjectMap.theme;
       if (!item.theme) {
@@ -422,9 +454,10 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   mapPrimaryCategoryTheme(displayItems) {
     displayItems.data.forEach(item => {
-      const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping[item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
+      const primaryCaregoryMap = item.facet && PrimaryCaregoryMapping
+      [item.facet.toLowerCase()] ? PrimaryCaregoryMapping[item.facet.toLowerCase()] :
         PrimaryCaregoryMapping['default'];
-        item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
+      item.icon = item.icon ? item.icon : primaryCaregoryMap.icon;
     });
     return displayItems;
   }

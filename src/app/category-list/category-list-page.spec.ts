@@ -241,10 +241,10 @@ describe('CategoryListPage', () => {
             }, 'Mathematics');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
+                InteractSubtype.SELECT_CONTENT,
+                '',
                 Environment.HOME,
-                PageId.LIBRARY,
+                PageId.CATEGORY_RESULTS,
                 telemetryObject,
                 {
                     positionClicked: 1,
@@ -288,10 +288,10 @@ describe('CategoryListPage', () => {
             }, 'Mathematics');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
+                InteractSubtype.SELECT_CONTENT,
+                '',
                 Environment.HOME,
-                PageId.LIBRARY,
+                PageId.CATEGORY_RESULTS,
                 telemetryObject,
                 {
                     positionClicked: 1,
