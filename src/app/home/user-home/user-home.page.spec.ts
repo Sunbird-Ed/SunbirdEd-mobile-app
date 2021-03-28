@@ -276,7 +276,7 @@ describe('UserHomePage', () => {
                         value: 'sample_data'
                     }
                 ]
-            });
+            }, {}, true);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
