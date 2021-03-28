@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks, SwitchableTabsConfig } from '@app/app/app.constant';
-import { GUEST_HOME_SEARCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGGEDIN_HOME_SEARCH_TABS, LOGIN_ADMIN_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { GUEST_HOME_SEARCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs,
+  LOGGEDIN_HOME_SEARCH_TABS, LOGIN_ADMIN_HOME_TABS, LOGIN_ADMIN_LIBRARY_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { PageId } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -182,8 +183,8 @@ export class TabsPage implements OnInit, AfterViewInit {
         [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: LOGGEDIN_HOME_SEARCH_TABS
       },
       'LOGIN_ADMIN': {
-        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: LOGIN_ADMIN_TABS,
-        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: LOGIN_ADMIN_TABS
+        [SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG]: LOGIN_ADMIN_LIBRARY_TABS,
+        [SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG]: LOGIN_ADMIN_HOME_TABS
       }
     };
     const defaultSwitchableTabsConfig = SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG;
