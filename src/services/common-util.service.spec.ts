@@ -20,6 +20,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
+import { TelemetryService } from '@project-sunbird/sunbird-sdk';
 
 declare const FCMPlugin;
 
@@ -30,6 +31,7 @@ describe('CommonUtilService', () => {
     putString: jest.fn(() => of(undefined)),
   };
   const mockProfileService: Partial<ProfileService> = {};
+  const mockTelemetryService: Partial<TelemetryService> = {};
   const mockToastController: Partial<ToastController> = {
     create: jest.fn(() => (Promise.resolve({
       present: jest.fn(() => Promise.resolve({})),
@@ -83,6 +85,7 @@ describe('CommonUtilService', () => {
     commonUtilService = new CommonUtilService(
       mockSharedPreferences as SharedPreferences,
       mockProfileService as ProfileService,
+      mockTelemetryService as TelemetryService,
       mockTranslateService as TranslateService,
       mockLoadingController as LoadingController,
       mockEvents as Events,
