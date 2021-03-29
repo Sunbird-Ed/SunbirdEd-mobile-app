@@ -71,7 +71,7 @@
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
-                                        (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"
+                                        (viewMoreClick)="navigateToViewMorePage(section?.contents, section.name)"
                                         (cardClick)="navigateToDetailPage($event, section.name)">
                 </sb-library-cards-stack>
             </div>

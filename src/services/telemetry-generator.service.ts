@@ -493,4 +493,27 @@ export class TelemetryGeneratorService {
             correlationList
         );
     }
+
+    generateNewExprienceSwitchTelemetry(pageId, subType, corRelationInfo) {
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({
+            type: CorReleationDataType.FIRST_TIME_USER,
+            id: corRelationInfo['isNewUser'] + ''
+        });
+        corRelationList.push({
+            type: CorReleationDataType.USERTYPE,
+            id:  corRelationInfo['userType']
+        });
+        this.generateInteractTelemetry(
+            InteractType.NEW_EXPERIENCE,
+            subType,
+            Environment.HOME,
+            pageId,
+            undefined,
+            undefined,
+            undefined,
+            corRelationList,
+            ID.SWITCH_CLICKED
+          );
+    }
 }
