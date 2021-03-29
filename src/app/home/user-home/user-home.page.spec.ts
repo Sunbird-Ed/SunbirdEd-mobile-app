@@ -1,3 +1,4 @@
+import { FormAndFrameworkUtilService } from './../../../services/formandframeworkutil.service';
 import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {PopoverController} from '@ionic/angular';
@@ -12,10 +13,12 @@ import {
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
 import {ContentAggregatorHandler} from '../../services/content/content-aggregator-handler.service';
-import {ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
+import {FrameworkUtilService, ProfileService, ProfileType} from '@project-sunbird/sunbird-sdk';
 import {SunbirdQRScanner} from '@app/services';
 import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
+import { FrameworkSelectionDelegateService } from '../../profile/framework-selection/framework-selection.page';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -42,10 +45,15 @@ describe('UserHomePage', () => {
     const mockSunbirdQRScanner: Partial<SunbirdQRScanner> = {};
     const mockPopoverController: Partial<PopoverController> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {};
+    const mockTranslateService: Partial<TranslateService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
             mockFrameworkService as FrameWorkService,
+            mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
@@ -57,7 +65,10 @@ describe('UserHomePage', () => {
             mockEvents as Events,
             mockSunbirdQRScanner as SunbirdQRScanner,
             mockPopoverController as PopoverController,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
+            mockTranslateService as TranslateService
         );
     });
 
