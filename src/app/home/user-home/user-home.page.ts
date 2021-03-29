@@ -257,7 +257,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       return;
     }
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({id: event.data[0].name, type: isFromPopover ? CorReleationDataType.SUBJECT : CorReleationDataType.CATEGORY});
+    corRelationList.push({
+      id: event.data[0].name || '',
+      type: isFromPopover ? CorReleationDataType.SUBJECT : CorReleationDataType.CATEGORY});
     this.telemetryGeneratorService.generateInteractTelemetry(
       isFromPopover ? InteractType.SELECT_ATTRIBUTE : InteractType.SELECT_CATEGORY,
       isFromPopover ? '' : event.data[0].name,
@@ -267,6 +269,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       isFromPopover ? corRelationList : undefined
     );
     const params = {
+      code: section.code,
       formField: event.data[0].value,
       fromLibrary: false,
       description: (section && section.description) || ''
@@ -446,7 +449,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         item.theme = {
           iconBgColor: colorTheme.primary,
           pillBgColor: colorTheme.secondary
-        }
+        };
       }
     });
     return displayItems;

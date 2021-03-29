@@ -26,7 +26,7 @@ import {
   ActivePageService, AppGlobalService,
   AppHeaderService, CommonUtilService,
   CorReleationDataType, Environment,
-  ID, InteractSubtype, InteractType, NotificationService, TelemetryGeneratorService, UtilityService
+  ID, InteractSubtype, InteractType, NotificationService, PageId, TelemetryGeneratorService, UtilityService
 } from '../../../services';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 
@@ -227,7 +227,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       );
     }
     this.events.publish(EventTopics.HAMBURGER_MENU_CLICKED);
-   // this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    // this.appTheme = document.querySelector('html').getAttribute('data-theme');
     this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
   }
 
@@ -405,27 +405,41 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   async switchTabs() {
     this.currentSelectedTabs = await this.preference.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+    let subType = InteractSubtype.OPTED_IN;
     if (this.currentSelectedTabs === SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG) {
       this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
         SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG).toPromise();
-      this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
+      subType = InteractSubtype.OPTED_OUT;
     } else if (!this.currentSelectedTabs || this.currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG) {
       this.preference.putString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG,
         SwitchableTabsConfig.HOME_DISCOVER_TABS_CONFIG).toPromise();
-      this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
+      this.events.publish('UPDATE_TABS', { type: 'SWITCH_TABS_USERTYPE' });
+      subType = InteractSubtype.OPTED_IN;
     }
+    const userType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    const isNewUser = await this.preference.getBoolean(PreferenceKey.IS_NEW_USER).toPromise();
+    this.telemetryGeneratorService.generateNewExprienceSwitchTelemetry(
+        subType,
+        PageId.MENU,
+        {
+            userType,
+            isNewUser
+        }
+    );
+    await this.commonUtilService.populateGlobalCData();
     this.menuCtrl.close();
   }
 
   private async checkForAppUpdate() {
-      return new Promise((resolve => {
-          cordova.plugins.InAppUpdateManager.isUpdateAvailable((result: string) => {
-              if (result) {
-                  this.isUpdateAvailable = true;
-                  resolve();
-              }
-          }, () => {});
-      }));
+    return new Promise((resolve => {
+      cordova.plugins.InAppUpdateManager.isUpdateAvailable((result: string) => {
+        if (result) {
+          this.isUpdateAvailable = true;
+          resolve();
+        }
+      }, () => { });
+    }));
   }
 
   async showKebabMenu(event) {

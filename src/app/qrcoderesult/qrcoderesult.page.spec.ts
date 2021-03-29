@@ -553,7 +553,7 @@ describe('QrcoderesultPage', () => {
                 'Content',
                 undefined,
                 undefined,
-                [{id: 'do_123', type: 'Content'}, {id: '1', type: 'CountContent'}]
+                [{id: 'do_123', type: 'Content'}, {id: '1', type: 'ContentCount'}]
             );
         });
     });
