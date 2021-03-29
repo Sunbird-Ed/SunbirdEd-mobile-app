@@ -17,7 +17,7 @@
         <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
           class="search-input" (keyup.enter)="handleSearch()" (ionFocus)="searchOnFocus()"
           (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
-          [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_OR_ENTER_QR_CODE' | translate">
+          [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_HINT' | translate">
         </ion-input>
         <button (click)="handleSearch()" *ngIf="!filterIcon || isFromGroupFlow">
           <img src="assets/imgs/search.svg" alt="search">
