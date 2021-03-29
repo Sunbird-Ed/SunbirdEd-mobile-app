@@ -668,6 +668,7 @@ describe('CommonUtilService', () => {
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
       // act
       commonUtilService.showExitPopUp('library', 'home', false);
       // assert
