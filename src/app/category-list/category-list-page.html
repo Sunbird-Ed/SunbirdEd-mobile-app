@@ -1,6 +1,6 @@
 <ion-content>
     <div class="container-focus">
-        <div class="px-16 pt-16">
+        <div class="px-16 pb-2">
             <h3 class="mt-4"
                 style="font-weight: 600;">{{ 'EXPLORE' | translate: {'%s': (formField.facet | translateJson)} }}</h3>
             <p *ngIf="categoryDescription">{{(categoryDescription | translateJson: {'%category': (formField.facet | translateJson), '%appName': appName} ) | translate }}</p>
@@ -67,7 +67,7 @@
     <div *ngIf="!showSheenAnimation">
         <div *ngFor="let section of sectionGroup?.sections">
             <div [id]="sectionGroup.name + '_'+ section.name"
-                 *ngIf="section?.contents && section?.contents?.length">
+                 *ngIf="section?.contents && section?.contents?.length" class="pt-16">
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
