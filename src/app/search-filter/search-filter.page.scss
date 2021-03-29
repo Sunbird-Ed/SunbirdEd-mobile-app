@@ -1,14 +1,25 @@
-.form-content {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
 .reset-button {
-  align-self: flex-end;
-  color: var(--app-black);
-
+  float: right;
   ion-icon {
     color: var(--app-primary);
   }
+}
+
+.filter-header {
+  border-bottom: 1px solid var(--app-primary-header);
+  p {
+    display: inline-block;
+    margin-bottom: 0;
+    line-height: 3rem;
+    font-size: 1.1rem;
+  }
+}
+
+.cancel-button {
+  --background: #f3f7fb !important;
+  color: #000000 !important;
+}
+
+.search-filter-footer {
+  z-index: -10;
 }

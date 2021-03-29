@@ -1,6 +1,6 @@
 <ion-content>
     <div class="container-focus">
-        <div style="padding: 16px">
+        <div class="px-16 pt-16">
             <h3 class="mt-4"
                 style="font-weight: 600;">{{ 'EXPLORE' | translate: {'%s': (formField.facet | translateJson)} }}</h3>
             <p *ngIf="categoryDescription">{{(categoryDescription | translateJson: {'%category': (formField.facet | translateJson), '%appName': appName} ) | translate }}</p>
@@ -33,10 +33,9 @@
                     </ion-col>
 
                     <ion-col size="2">
-                        <ion-button fill="outline" style="--background: transparent !important;"
-                                    (click)="navigateToFilterFormPage()">
-                            <img src="./assets/imgs/filter.svg" class="tool-icon" alt="filter">
-                        </ion-button>
+                        <button class="filter-button" (click)="navigateToFilterFormPage()">
+                            <img src="./assets/imgs/filter.svg" alt="filter">
+                        </button>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -67,10 +66,9 @@
 
     <div *ngIf="!showSheenAnimation">
         <div *ngFor="let section of sectionGroup?.sections">
-            <div class="sb-textbook-container" [id]="sectionGroup.name + '_'+ section.name"
+            <div [id]="sectionGroup.name + '_'+ section.name"
                  *ngIf="section?.contents && section?.contents?.length">
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
-                                        [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
                                         (viewMoreClick)="navigateToTextbookPage(section?.contents, section.name)"

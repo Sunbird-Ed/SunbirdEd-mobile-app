@@ -1,4 +1,10 @@
 <ion-content>
+  <div class="spinner-div" *ngIf="refresh">
+      <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
+  </div>
+  <ion-refresher #refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+  </ion-refresher>
   <div class="container-focus">
     <div class="user-profile">
       <div class="welcome-text">{{'WELCOME' | translate}}</div>
@@ -77,7 +83,7 @@
           [pillTextElipsis]="section?.theme?.inputs?.pillTextElipsis"
           [pillBoxShadow]="section?.theme?.inputs?.pillBoxShadow"
           (viewMorePillList)="onViewMorePillList($event, section)"
-          (select)="handlePillSelect($event)">
+          (select)="handlePillSelect($event, section, false)">
           <sb-pill-item *ngFor="let pillData of section.data; let index=index" [name]="pillData?.facet | titlecase"
                         [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"
                         [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : section?.theme : pillData?.facet) || (pillData?.facet | randomColorMapPipe: index)"

@@ -158,6 +158,7 @@ export enum PageId {
     RELEVANT_CONTENTS = 'relevant-contents',
     PLAYER = 'player',
     ADMIN_HOME = 'admin-home',
+    CATEGORY_RESULTS = 'category-results'
 }
 
 export enum LogType {
@@ -188,7 +189,8 @@ export enum ImpressionType {
     PAGE_LOADED = 'page-loaded',
     PAGE_REQUEST = 'page-request',
     SET_LANGUAGE = 'set-language',
-    QR_REQUEST = 'qr-request'
+    QR_REQUEST = 'qr-request',
+    POP_UP_CATEGORY = 'pop-up-category'
 }
 
 export enum ImpressionSubtype {
@@ -208,7 +210,9 @@ export enum ImpressionSubtype {
     DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
     GROUP_TUTORIAL = 'my-group-tutorial-popup',
     OFFLINE_MODE = 'offline-mode',
-    AUTO = 'auto'
+    AUTO = 'auto',
+    LOCATION = 'location',
+    HOME = 'home'
 }
 
 export enum InteractType {
@@ -260,7 +264,10 @@ export enum InteractType {
     FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
-    SELECT_CARD = 'select-card'
+    SELECT_CARD = 'select-card',
+    SELECT_SUBJECT = 'select-subject',
+    SELECT_VIEW_ALL = 'select-view-all',
+    SELECT_CONTENT = 'select-content'
 }
 
 export enum InteractSubtype {
@@ -499,7 +506,9 @@ export enum InteractSubtype {
     SYNC_PROGRESS_INITIATE = 'sync-progress-initiated',
     SYNC_PROGRESS_SUCCESS = 'sync-progress-success',
     SYNC_PROGRESS_FAILED = 'sync-progress-failed',
-    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked'
+    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked',
+    SELECT_CONTENT = 'select-content',
+    SELECT_BELL = 'select-bell'
 }
 
 export enum ID {
@@ -610,6 +619,10 @@ export enum CorReleationDataType {
     CONTENT_NAME = 'ContentName',
     CONTENT = 'Content',
     BATCH = 'Batch',
+    NEW_NOTIFICATION = 'new-notification',
+    FORM_PAGE = 'form-page',
+    SUBJECT_LIST = 'subject-list',
+    CATEGORY_NAME = 'category-name'
 }
 
 export enum AuditProps {

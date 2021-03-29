@@ -1207,6 +1207,17 @@ app-resources{
     .title{
       font-size: 18px !important;
       font-weight: bold;
+      padding-left: 1rem;
+    }
+
+    .sbbtn{
+      border-radius: 3rem !important;
+      background-color: transparent !important;
+      color: var(--app-primary) !important;
+      border: 1px solid var(--app-primary-light-2) !important;
+      margin: 2%;
+      width: 96% !important;
+      padding: 0.75rem !important;
     }
   }
 
