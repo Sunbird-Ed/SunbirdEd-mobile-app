@@ -188,7 +188,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (!activeAlert) {
         this.showConfirm();
       }
-      if (this.loadPdfPlayer && this.loadEpubPlayer) {
+      if (this.loadPdfPlayer || this.loadEpubPlayer) {
         this.location.back();
       }
     });
@@ -245,7 +245,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else if (event.edata['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
         this.downloadPdfService.downloadPdf(this.content).then((res) => {
-          this.commonUtilService.showToast('PDF_DOWNLOADED');
+          this.commonUtilService.showToast('CONTENT_DOWNLOADED');
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {
             this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
@@ -287,6 +287,12 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showExit: true,
           showPrint: true
         }
+      }
+      if(!this.config['context'].userData){
+        this.config['context']['userData'] = {
+          firstName: 'anonymous',
+          lastName: ''
+        };
       }
       return this.config;
   }

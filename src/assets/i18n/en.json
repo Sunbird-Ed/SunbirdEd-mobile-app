@@ -106,7 +106,7 @@
   "CANCEL_DOWNLOAD_TITLE": "Cancel Download?",
   "CERTIFICATE_ALREADY_DOWNLOADED": "The certificate is already downloaded, please check your Download folder",
   "CERTIFICATE_DOWNLOADED": "The certificate has been downloaded",
-  "PDF_DOWNLOADED": "Pdf downloaded",
+  "CONTENT_DOWNLOADED": "Content downloaded",
   "DEVICE_NEEDS_PERMISSION": "Permission denied for downloading pdf",
   "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
   "CERTIFIED_TRAINING": "Earn a certificate",
@@ -1401,9 +1401,9 @@
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need. and adds a splash af joy to your learning experience",
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
   "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
-  "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Switch to home",
-  "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to library",
-  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
   "FRMELEMNTS_MSG_ADD_ENTITY_TO_OBSERVE":"Add entity to observe",
-  "FRMELEMNTS_MSG_ASSESSMENTS_DONE" : "Assessments done"
+  "FRMELEMNTS_MSG_ASSESSMENTS_DONE" : "Assessments done",
+  "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Try new {{appName}} experience <Beta>",
+  "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
+  "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice"
 }

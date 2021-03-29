@@ -35,7 +35,7 @@
           (viewMorePillList)="onViewMorePillList($event, section)"
           (select)="handlePillSelect($event, section)">
           <sb-pill-item *ngFor="let pillData of section.data; let index=index" [name]="pillData?.facet | translateJson | titlecase"
-                        [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"
+                        [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : (pillData?.code || pillData?.facet)"
                         [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : section?.theme : pillData?.facet) || (pillData?.facet | randomColorMapPipe: index)"
                         [value]="pillData"></sb-pill-item>
         </sb-pills-grid>
