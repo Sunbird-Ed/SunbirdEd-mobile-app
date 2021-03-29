@@ -298,6 +298,7 @@ export class LanguageSettingsPage {
         };
         this.nativePageTransitions.slide(options);
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+        this.preferences.putBoolean(PreferenceKey.IS_NEW_USER, true).toPromise();
       }
     } else {
       this.generateLanguageFailedInteractEvent();

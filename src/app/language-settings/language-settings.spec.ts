@@ -24,7 +24,9 @@ import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
 describe('LanguageSettingsPage', () => {
     let languageSettingsPage: LanguageSettingsPage;
 
-    const mockPreferences: Partial<SharedPreferences> = {};
+    const mockPreferences: Partial<SharedPreferences> = {
+        putBoolean: jest.fn(() => of(undefined))
+    };
 
     const mockTranslateService: Partial<TranslateService> = {};
 

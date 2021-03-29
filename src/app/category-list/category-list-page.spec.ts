@@ -1,15 +1,15 @@
-import {CategoryListPage} from './category-list-page';
-import {CommonUtilService} from '../../services/common-util.service';
-import {Router} from '@angular/router';
-import {AppHeaderService} from '../../services/app-header.service';
-import {of} from 'rxjs';
-import {NavigationService} from '../../services/navigation-handler.service';
-import {ContentService, CourseService, FormService, ProfileService} from '@project-sunbird/sunbird-sdk';
-import {ScrollToService} from '../../services/scroll-to.service';
-import {Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, TelemetryGeneratorService} from '../../services';
-import {ContentUtil} from '@app/util/content-util';
-import {RouterLinks} from '@app/app/app.constant';
-import {ModalController} from '@ionic/angular';
+import { CategoryListPage } from './category-list-page';
+import { CommonUtilService } from '../../services/common-util.service';
+import { Router } from '@angular/router';
+import { AppHeaderService } from '../../services/app-header.service';
+import { of } from 'rxjs';
+import { NavigationService } from '../../services/navigation-handler.service';
+import { ContentService, CourseService, FormService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { ScrollToService } from '../../services/scroll-to.service';
+import { Environment, FormAndFrameworkUtilService, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../services';
+import { ContentUtil } from '@app/util/content-util';
+import { RouterLinks } from '@app/app/app.constant';
+import { ModalController } from '@ionic/angular';
 
 describe('CategoryListPage', () => {
     let categoryListPage: CategoryListPage;
@@ -17,7 +17,7 @@ describe('CategoryListPage', () => {
         translateMessage: jest.fn()
     };
     const mockProfileService: Partial<ProfileService> = {
-        getActiveSessionProfile: jest.fn(() => of({profileType: 'Student'} as any))
+        getActiveSessionProfile: jest.fn(() => of({ profileType: 'Student' } as any))
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockRouterExtras = {
@@ -71,7 +71,7 @@ describe('CategoryListPage', () => {
         ]
     }));
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockRouterExtras),
+        getCurrentNavigation: jest.fn(() => mockRouterExtras as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockNavService: Partial<NavigationService> = {
@@ -131,7 +131,7 @@ describe('CategoryListPage', () => {
         // });
     });
 
-    describe('navigate to Textbook page', () => {
+    describe('navigate to ViewMore page', () => {
         it('should generate interact telemetry and if network available and navigate to textbook viewmore', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -147,7 +147,7 @@ describe('CategoryListPage', () => {
             });
             mockRouter.navigate = jest.fn();
             // act
-            categoryListPage.navigateToTextbookPage({
+            categoryListPage.navigateToViewMorePage({
                 identifier: 'sample_id',
                 isAvailableLocally: true,
                 contentData: {
@@ -172,7 +172,17 @@ describe('CategoryListPage', () => {
                             pkgVersion: 1
                         }
                     },
-                    subjectName: 'Mathematics'
+                    subjectName: 'Mathematics',
+                    corRelation: [
+                        {
+                            id: 'Mathematics',
+                            type: 'Section',
+                        },
+                        {
+                            id: '',
+                            type: 'RootSection',
+                        },
+                    ]
                 }
             });
         });
@@ -192,7 +202,7 @@ describe('CategoryListPage', () => {
             });
             mockCommonUtilService.presentToastForOffline = jest.fn(() => Promise.resolve());
             // act
-            categoryListPage.navigateToTextbookPage({
+            categoryListPage.navigateToViewMorePage({
                 identifier: 'sample_id',
                 isAvailableLocally: false,
                 contentData: {
@@ -241,20 +251,17 @@ describe('CategoryListPage', () => {
             }, 'Mathematics');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME,
-                PageId.LIBRARY,
+                InteractSubtype.SELECT_CONTENT,
+                '',
+                Environment.SEARCH,
+                PageId.CATEGORY_RESULTS,
                 telemetryObject,
                 {
                     positionClicked: 1,
                     sectionName: 'Mathematics'
                 },
                 rollUp,
-                [{
-                    id: 'Mathematics',
-                    type: 'Section'
-                }]
+                []
             );
             expect(mockNavService.navigateToDetailPage).toHaveBeenCalled();
         });
@@ -288,20 +295,17 @@ describe('CategoryListPage', () => {
             }, 'Mathematics');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH,
-                InteractSubtype.CONTENT_CLICKED,
-                Environment.HOME,
-                PageId.LIBRARY,
+                InteractSubtype.SELECT_CONTENT,
+                '',
+                Environment.SEARCH,
+                PageId.CATEGORY_RESULTS,
                 telemetryObject,
                 {
                     positionClicked: 1,
                     sectionName: 'Mathematics'
                 },
                 rollUp,
-                [{
-                    id: 'Mathematics',
-                    type: 'Section'
-                }]
+                []
             );
             expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalled();
         });
@@ -343,43 +347,6 @@ describe('CategoryListPage', () => {
     //     });
     // });
 
-    it('should get facetValues and set audience filter', () => {
-        // arrange
-        categoryListPage['supportedUserTypesConfig'] = [{
-            code: 'sample'
-        }];
-        mockModalController.create = jest.fn(() => (Promise.resolve(
-            {
-                present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({
-                    data: {
-                        appliedFilterCriteria: {
-                            facetFilters: [
-                                {
-                                    name: 'audience',
-                                    values: [{
-                                        name: 'audience',
-                                        apply: true
-                                    }]
-                                }
-                            ]
-                        }
-
-                    },
-                })),
-            } as any
-        )));
-        mockContentService.buildContentAggregator = jest.fn(() => ({
-            aggregate: data
-        })) as any;
-        // act
-        categoryListPage.navigateToFilterFormPage();
-        // assert
-        setTimeout(() => {
-            expect(mockModalController.create).toHaveBeenCalled();
-            done();
-        });
-    });
 
     it('should call scrollService() to id', () => {
         // arrange

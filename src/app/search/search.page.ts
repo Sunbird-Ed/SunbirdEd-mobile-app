@@ -87,7 +87,7 @@ declare const cordova;
 export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('refresher', { static: false }) refresher: IonRefresher;
-  @ViewChild(DiscoverComponent, { static: false }) discoverCmp: IonRefresher;
+  @ViewChild(DiscoverComponent, { static: false }) discoverCmp: DiscoverComponent;
 
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;

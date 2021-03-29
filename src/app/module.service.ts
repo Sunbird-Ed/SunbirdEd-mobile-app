@@ -118,9 +118,17 @@ export const LOGGEDIN_HOME_SEARCH_TABS = [
     PROFILE_TAB
 ];
 
-export const LOGIN_ADMIN_TABS = [
+export const LOGIN_ADMIN_LIBRARY_TABS = [
     HOME_TAB,
     COURSE_TAB,
+    SCANNER_TAB,
+    DOWNLOADS_TAB,
+    PROFILE_TAB
+];
+
+export const LOGIN_ADMIN_HOME_TABS = [
+    HOME_TAB,
+    SEARCH_TAB,
     SCANNER_TAB,
     DOWNLOADS_TAB,
     PROFILE_TAB

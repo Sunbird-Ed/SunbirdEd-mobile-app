@@ -2,7 +2,7 @@ import {UserHomePage} from './user-home.page';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {PopoverController} from '@ionic/angular';
 import {Events} from '@app/util/events';
-import {AppGlobalService, PageId} from '@app/services';
+import {AppGlobalService, PageId, TelemetryGeneratorService} from '@app/services';
 import {CommonUtilService} from '../../services/common-util.service';
 import {Router} from '@angular/router';
 import {AppHeaderService} from '../../services/app-header.service';
@@ -41,6 +41,7 @@ describe('UserHomePage', () => {
     const mockContentAggregatorHandler: Partial<ContentAggregatorHandler> = {};
     const mockSunbirdQRScanner: Partial<SunbirdQRScanner> = {};
     const mockPopoverController: Partial<PopoverController> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
@@ -55,7 +56,8 @@ describe('UserHomePage', () => {
             mockHeaderService as AppHeaderService,
             mockEvents as Events,
             mockSunbirdQRScanner as SunbirdQRScanner,
-            mockPopoverController as PopoverController
+            mockPopoverController as PopoverController,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -117,6 +119,7 @@ describe('UserHomePage', () => {
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         // act
         userHomePage.ngOnInit();
         // assert
@@ -169,6 +172,7 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         userHomePage.ionViewWillEnter();
         // assert
@@ -217,6 +221,7 @@ describe('UserHomePage', () => {
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         userHomePage.ionViewWillEnter();
         // assert
@@ -271,7 +276,7 @@ describe('UserHomePage', () => {
                         value: 'sample_data'
                     }
                 ]
-            });
+            }, {}, true);
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
@@ -379,6 +384,7 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         mockCommonUtilService.arrayToString = jest.fn(() => 'sample');
         mockContentAggregatorHandler.newAggregate = jest.fn(() => Promise.resolve(mockUserHomeData));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         userHomePage.tabViewWillEnter();
         // assert

@@ -83,7 +83,7 @@
           [pillTextElipsis]="section?.theme?.inputs?.pillTextElipsis"
           [pillBoxShadow]="section?.theme?.inputs?.pillBoxShadow"
           (viewMorePillList)="onViewMorePillList($event, section)"
-          (select)="handlePillSelect($event, section)">
+          (select)="handlePillSelect($event, section, false)">
           <sb-pill-item *ngFor="let pillData of section.data; let index=index" [name]="pillData?.facet | titlecase"
                         [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"
                         [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : section?.theme : pillData?.facet) || (pillData?.facet | randomColorMapPipe: index)"
