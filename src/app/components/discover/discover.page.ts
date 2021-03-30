@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, OnDestroy, OnInit, Output} from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks, ViewMore } from '../../app.constant';
+import {ContentFilterConfig, PreferenceKey, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
 import {
   AppGlobalService,
@@ -18,7 +18,8 @@ import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
   ContentSearchCriteria,
-  CorrelationData
+  CorrelationData,
+  SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
@@ -44,6 +45,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   userType: string;
 
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appVersion: AppVersion,
     private headerService: AppHeaderService,
     private router: Router,
@@ -87,7 +89,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     if (refresher) {
       refresher.target.complete();
     }
-    this.userType = await this.appGlobalService.getGuestUserInfo();
+    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     this.generateImpressionTelemetry();
   }
 
