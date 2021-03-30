@@ -89,7 +89,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     if (refresher) {
       refresher.target.complete();
     }
-    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE);
     this.generateImpressionTelemetry();
   }
 
