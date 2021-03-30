@@ -423,8 +423,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     const userType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     const isNewUser = await this.preference.getBoolean(PreferenceKey.IS_NEW_USER).toPromise();
     this.telemetryGeneratorService.generateNewExprienceSwitchTelemetry(
-        subType,
-        PageId.MENU,
+      PageId.MENU,
+      subType,
         {
             userType,
             isNewUser
