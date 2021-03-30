@@ -67,7 +67,7 @@
     <div *ngIf="!showSheenAnimation">
         <div *ngFor="let section of sectionGroup?.sections">
             <div [id]="sectionGroup.name + '_'+ section.name"
-                 *ngIf="section?.contents && section?.contents?.length" class="pt-16">
+                 *ngIf="section?.contents && section?.contents?.length" class="pb-8">
                 <sb-library-cards-stack [title]="section?.name" [contentList]="section?.contents"
                                         [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
                                         [layoutConfig]="layoutConfiguration"
