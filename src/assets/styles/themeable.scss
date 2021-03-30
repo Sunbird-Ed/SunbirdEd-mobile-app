@@ -1575,4 +1575,10 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-category-list-page{
+    .filter-items{
+      --background: var(--app-white) !important;
+    }
+  }
+
 }
