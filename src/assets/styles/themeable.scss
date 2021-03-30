@@ -717,6 +717,7 @@ html[data-theme="JOYFUL"]{
       }
       .sbchapter__play__btn{
         color: var(--app-primary) !important;
+        margin-left: auto;
       }
     }
 
@@ -1594,6 +1595,12 @@ html[data-theme="JOYFUL"]{
           }
         }
       }
+    }
+  }
+
+  app-category-list-page{
+    .filter-items{
+      --background: var(--app-white) !important;
     }
   }
 
