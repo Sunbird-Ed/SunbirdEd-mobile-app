@@ -42,8 +42,8 @@ export class NewExperiencePopupComponent implements OnInit {
         const userType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
         const isNewUser = await this.preference.getBoolean(PreferenceKey.IS_NEW_USER).toPromise();
         this.telemetryGeneratorService.generateNewExprienceSwitchTelemetry(
-            InteractSubtype.OPTED_IN,
             PageId.NEW_EXPERIENCE_POPUP,
+            InteractSubtype.OPTED_IN,
             {
                 userType,
                 isNewUser
