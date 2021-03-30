@@ -64,15 +64,17 @@ export class TabsPage implements OnInit, AfterViewInit {
     // this.tabs = this.container.getAllTabs();
     this.refreshTabs();
     this.events.subscribe('UPDATE_TABS', async (data) => {
-      this.refreshTabs();
+      this.refreshTabs(data);
     });
   }
 
-  private async refreshTabs() {
+  private async refreshTabs(data?) {
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
     this.tabs = this.container.getAllTabs();
     // this.tabRef.outlet['navCtrl'].navigateRoot('/tabs/' + this.tabs[0].root);
+    if (!data || (data && !data.navigateToCourse)) {
     this.router.navigate(['/tabs/' + this.tabs[0].root]);
+    }
   }
 
   ngAfterViewInit() {
