@@ -567,7 +567,7 @@ private async upgradeAppPopover(requiredVersionCode) {
           }
         };
       } else if (matchedDeeplinkConfig &&
-        matchedDeeplinkConfig.values && matchedDeeplinkConfig.values.includes('manage-learn')) {
+        matchedDeeplinkConfig.pattern && matchedDeeplinkConfig.pattern.includes('manage-learn')) {
           extras = {
             state: {
               data: urlMatchGroup
