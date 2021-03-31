@@ -368,5 +368,10 @@ export class ProjectOperationPage implements OnInit {
       this.loaderService.stopLoader();
     })
   }
+  ionViewWillLeave() {
+    if(this.viewProjectAlert ){
+     this.viewProjectAlert.dismiss();
+    }
+   }
 }
 
