@@ -240,6 +240,7 @@ html[data-theme="JOYFUL"]{
       color: var(--app-primary) !important;
       border: 1px solid var(--app-primary-light-2) !important;
       margin: 2%;
+      margin-bottom: 0;
       width: 96% !important;
       padding: 0.75rem !important;
       box-shadow: none !important;
@@ -716,6 +717,7 @@ html[data-theme="JOYFUL"]{
       }
       .sbchapter__play__btn{
         color: var(--app-primary) !important;
+        margin-left: auto;
       }
     }
 
@@ -1593,6 +1595,12 @@ html[data-theme="JOYFUL"]{
           }
         }
       }
+    }
+  }
+
+  app-category-list-page{
+    .filter-items{
+      --background: var(--app-white) !important;
     }
   }
 

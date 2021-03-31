@@ -30,6 +30,9 @@ interface Theme {
 })
 export class ThemeInputsSelectorPipe implements PipeTransform {
     transform(arg: {component: string, input: string}, theme?: Theme, matcher?: string): any {
+        if (matcher) {
+            matcher = matcher.toLowerCase().trim().replace(/\s/g, "");
+        }
         const {component, input} = arg;
 
         if (!theme) {

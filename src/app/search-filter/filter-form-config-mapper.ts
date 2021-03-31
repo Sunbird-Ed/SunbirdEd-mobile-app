@@ -10,7 +10,6 @@ export class FilterFormConfigMapper {
         private commonUtilService: CommonUtilService,
         private titlecasePipe: TitleCasePipe
     ) {
-        
     }
     private static order = [
         'board',
@@ -19,7 +18,8 @@ export class FilterFormConfigMapper {
         'subject',
         'publisher',
         'mimeType',
-        'primaryCategory'
+        'primaryCategory',
+        'audience'
     ];
 
     private buildDefault(filterValues: FilterValue[], multiple: boolean): string[] | string | undefined {
@@ -27,8 +27,7 @@ export class FilterFormConfigMapper {
             return filterValues
                 .filter(f => f.apply)
                 .map(f => f.name);
-        }
-        else {
+        } else {
             const filterValue = filterValues.find(f => f.apply);
             return filterValue && filterValue.name;
         }
@@ -172,6 +171,26 @@ export class FilterFormConfigMapper {
                             label: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
                             placeHolder: 'Select Content Type',
                             multiple: false,
+                            hidden: false,
+                            disabled: false,
+                            options: facetFilters[key].map((f) => ({
+                                label: this.titlecasePipe.transform(f.name),
+                                value: f.name
+                            }))
+                        }
+                    });
+                    break;
+                }
+                case 'audience': {
+                    acc.push({
+                        code: 'audience',
+                        type: FieldConfigInputType.SELECT,
+                        fieldName: 'audience',
+                        default: this.buildDefault(facetFilters['audience'], true),
+                        templateOptions: {
+                            label: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
+                            placeHolder: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
+                            multiple: true,
                             hidden: false,
                             disabled: false,
                             options: facetFilters[key].map((f) => ({
