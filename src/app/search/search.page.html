@@ -59,7 +59,7 @@
                 <img src="assets/imgs/icon_recent.svg" alt="recent">
               </div>
               <div class="col" (click)="handleSearch()">
-                {{'SEE_ALL_RESULTS_FOR' | translate: {'%s': searchKeywords} }}
+                {{'FRMELEMENTS_LBL_SEARCH_SUB_HEADING' | translate: {'appName': appName, 'searchText': searchKeywords} }}
               </div>
               <div class="col-auto">
                 <img style="width: 14px; height: 14px" src="./assets/imgs/ic_action_search.svg" alt="search">
