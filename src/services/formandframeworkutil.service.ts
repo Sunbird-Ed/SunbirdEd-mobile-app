@@ -357,11 +357,7 @@ export class FormAndFrameworkUtilService {
         let currentConfiguration;
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                res.form.data.fields.forEach((ele, index) => {
-                    if (ele.code === 'pdf') {
-                        currentConfiguration = ele.values[index].isEnabled;
-                    }
-                });
+                currentConfiguration = res.form.data; 
                 this.appGlobalService.setpdfPlayerconfiguration(currentConfiguration);
                 resolve(currentConfiguration);
             }).catch((error: any) => {

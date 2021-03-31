@@ -38,7 +38,7 @@ export class ProgramListingComponent implements OnInit {
 
     async getPrograms() {
         this.loader.startLoader();
-        let payload = await this.utils.getProfileInfo();
+        let payload = await this.utils.getProfileData();
         if (payload) {
             const config = {
                 url: urlConstants.API_URLS.PROGRAM_LISTING + 'page=' + this.page + '&limit=' + this.limit + '&search=',

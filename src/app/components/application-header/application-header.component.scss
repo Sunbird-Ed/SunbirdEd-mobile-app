@@ -29,6 +29,7 @@ ion-icon {
     font-size: 8px;
     font-weight: bold;
     height: 12px;
+    display: inline-flex;
     .square-badge{
         padding: 1px 6px;
         float: left;
@@ -101,4 +102,9 @@ ion-icon {
     height: auto;
     float: left;
     margin-right: 16px;
+}
+
+.beta-info {
+    display: grid;
+    grid-template-columns: auto auto
 }

@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventTopics, PreferenceKey, ProfileConstants, RouterLinks, SwitchableTabsConfig } from '@app/app/app.constant';
-import { GUEST_HOME_SEARCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, LOGGEDIN_HOME_SEARCH_TABS, LOGIN_ADMIN_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { GUEST_HOME_SEARCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs,
+  LOGGEDIN_HOME_SEARCH_TABS, LOGIN_ADMIN_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
 import { PageId } from '@app/services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -63,15 +64,17 @@ export class TabsPage implements OnInit, AfterViewInit {
     // this.tabs = this.container.getAllTabs();
     this.refreshTabs();
     this.events.subscribe('UPDATE_TABS', async (data) => {
-      this.refreshTabs();
+      this.refreshTabs(data);
     });
   }
 
-  private async refreshTabs() {
+  private async refreshTabs(data?) {
     initTabs(this.container, await this.getInitialTabs(await this.appGlobalService.authService.getSession().toPromise()));
     this.tabs = this.container.getAllTabs();
     // this.tabRef.outlet['navCtrl'].navigateRoot('/tabs/' + this.tabs[0].root);
+    if (!data || (data && !data.navigateToCourse)) {
     this.router.navigate(['/tabs/' + this.tabs[0].root]);
+    }
   }
 
   ngAfterViewInit() {

@@ -20,6 +20,7 @@ export class TextbookViewMorePage {
   LibraryCardTypes = LibraryCardTypes;
   contentList: any;
   subjectName: any;
+  corRelationList: any;
   toast: any;
   // header
   private _appHeaderSubscription?: Subscription;
@@ -41,6 +42,7 @@ export class TextbookViewMorePage {
     if (extras) {
       this.contentList = extras.contentList;
       this.subjectName = extras.subjectName;
+      this.corRelationList = extras.corRelation;
     }
   }
 
@@ -84,7 +86,8 @@ export class TextbookViewMorePage {
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
       this.navService.navigateToDetailPage(item , {
-        content: item
+        content: item,
+        corRelation: this.corRelationList
       });
     } else {
       this.commonUtilService.showToast('OFFLINE_WARNING_ETBUI_1', false, 'toastHeader', 3000, 'top');

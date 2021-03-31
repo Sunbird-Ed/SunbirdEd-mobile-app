@@ -218,11 +218,11 @@ export class ObservationSubmissionComponent implements OnInit {
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
       .then((successData) => {
-        debugger
         if (
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
-          (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
+          (submission.criteriaLevelReport && submission.isRubricDriven)
+          // (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
         ) {
           // this.router.navigate([RouterLinks.ECM_LISTING], {
           //   queryParams: {
@@ -259,13 +259,12 @@ export class ObservationSubmissionComponent implements OnInit {
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
-            debugger;
           }
         }
       })
       .catch((error) => {});
   }
- async openAction(assessment, aseessmemtData, evidenceIndex) {
+  async openAction(assessment, aseessmemtData, evidenceIndex) {
     this.utils.setCurrentimageFolderName(aseessmemtData.assessment.evidences[evidenceIndex].externalId, assessment._id);
     const options = {
       _id: assessment._id,
@@ -276,54 +275,69 @@ export class ObservationSubmissionComponent implements OnInit {
     };
     console.log(JSON.stringify(options));
     let action = await this.evdnsServ.openActionSheet(options, 'FRMELEMNTS_LBL_OBSERVATION');
-   debugger
-   if (action) {
-     this.router.navigate([RouterLinks.QUESTIONNAIRE], {
-       queryParams: {
-         submisssionId: assessment._id,
-         evidenceIndex: 0,
-         sectionIndex: 0,
-         schoolName: this.entityName,
-       },
-     });
-   }
+    if (action) {
+      this.router.navigate([RouterLinks.QUESTIONNAIRE], {
+        queryParams: {
+          submisssionId: assessment._id,
+          evidenceIndex: 0,
+          sectionIndex: 0,
+          schoolName: this.entityName,
+        },
+      });
+    }
   }
   async openMenu(event, submission, index) {
-    if (submission.scoringSystem != 'pointsBasedScoring') {
-        this.router.navigate([RouterLinks.GENERIC_REPORT], {
-          state: {
-            scores: true,
-            observation: true,
-            pdf: false,
-            entityId: submission.entityId,
-            entityType: submission.entityType,
-            observationId: submission.observationId,
-            submissionId: submission._id
-          },
-        });
-      return
+    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    if (submission.criteriaLevelReport && submission.isRubricDriven) {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: submission.entityId,
+          entityType: submission.entityType,
+          observationId: submission.observationId,
+          submissionId: submission._id,
+        },
+      });
+      return;
     }
-      if (submission.ratingCompletedAt) {
-        let popover = await this.popoverCtrl.create({
-          component: ScroreReportMenusComponent,
-          componentProps: {
-            submission: submission,
-            entityType: submission.entityType,
-          },
-          event: event,
-        });
-        popover.present();
-      } else {
-        this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-          queryParams: {
-            submissionId: submission._id,
-            entityType: submission.entityType,
-          },
-        });
-      }
+    if (submission.ratingCompletedAt) {
+      let popover = await this.popoverCtrl.create({
+        component: ScroreReportMenusComponent,
+        componentProps: {
+          submission: submission,
+          entityType: submission.entityType,
+        },
+        event: event,
+      });
+      popover.present();
+    } else {
+      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+        queryParams: {
+          submissionId: submission._id,
+          entityType: submission.entityType,
+        },
+      });
+    }
   }
   //  entity actions
   entityActions(e) {
+    let submission = this.submissions[0];
+    // if (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven) {
+    if (submission.criteriaLevelReport && submission.isRubricDriven) {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: submission.entityId,
+          entityType: submission.entityType,
+          observationId: submission.observationId,
+        },
+      });
+      return;
+    }
     let noScore: boolean = true;
     this.submissions.forEach((submission) => {
       submission.showActionsheet = false;

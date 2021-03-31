@@ -32,7 +32,7 @@ export class ProjectReportComponent implements OnInit {
     private reportSrvc: ProjectReportService,
     public modalController: ModalController,
     public unnatiService: UnnatiDataService,
-    private headerService: AppHeaderService,
+    private headerService: AppHeaderService
   ) {
     this.translate
       .get([
@@ -118,7 +118,7 @@ export class ProjectReportComponent implements OnInit {
       programId: this.filter.program ? this.filter.program._id : null,
     };
     url = this.utils.queryUrl(url, query);
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
     if (payload) {
       const config = {
         url: url,
@@ -137,8 +137,8 @@ export class ProjectReportComponent implements OnInit {
             }
           }
           this.reportData = data.result ? data.result.data : {};
-          this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 80);
-          this.reportData.tasks.series_new = this.generateCircleData_new(this.reportData.tasks, 80);
+          this.reportData.tasks.series = this.generateCircleData(this.reportData.tasks, 57);
+          this.reportData.tasks.series_new = this.generateCircleData_new(this.reportData.tasks, 57);
 
           this.reportData.categories.series = this.generateCircleData(this.reportData.categories, 50);
           this.reportData.categories.series_new = this.generateCircleData_new(this.reportData.categories, 50);
@@ -153,19 +153,24 @@ export class ProjectReportComponent implements OnInit {
     let label = [];
     let data = [];
     let color = [];
+    let count =0
     for (const key in obj) {
+
+      debugger
       if (key == 'total' || key == 'series' || obj[key] == 0) {
         continue;
       }
+      
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
       if (key == 'completed') {
-        color.push({color:'green',pos:0});
+        color.push({ color: '#b4e3aa', pos: count });
       }
 
       if (key == 'notStarted') {
-        color.push({color:'#B80000',pos:2});
+        color.push({ color: '#e86d6d', pos: count });
       }
+      count++;
     }
 
     let series = {
@@ -173,7 +178,7 @@ export class ProjectReportComponent implements OnInit {
       data: data,
       color: color,
       radius: radius,
-      total:obj['total']
+      total: obj['total'],
     };
     debugger;
 
@@ -192,11 +197,11 @@ export class ProjectReportComponent implements OnInit {
       x['y'] = obj[key];
       x['z'] = 0;
       if (key == 'completed') {
-        x['color'] = 'green';
+        x['color'] = '#b4e3aa';
       }
 
       if (key == 'notStarted') {
-        x['color'] = '#B80000  ';
+        x['color'] = '#e86d6d  ';
       }
 
       data.push(x);

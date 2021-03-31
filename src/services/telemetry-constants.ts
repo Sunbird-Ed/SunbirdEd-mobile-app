@@ -10,7 +10,8 @@ export enum Environment {
     GROUP = 'group',
     PLAYER = 'player',
     DISCUSSION = 'discussion',
-    FAQ = 'faq'
+    FAQ = 'faq',
+    SEARCH = 'search'
 }
 
 export enum ErrorCode {
@@ -158,6 +159,11 @@ export enum PageId {
     RELEVANT_CONTENTS = 'relevant-contents',
     PLAYER = 'player',
     ADMIN_HOME = 'admin-home',
+    CATEGORY_RESULTS = 'category-results',
+    BOARD_RESULTS = 'board-results',
+    SUBJECT_RESULTS = 'subject-results',
+    NEW_EXPERIENCE_POPUP = 'new-experience-popup',
+    MENU = 'menu'
 }
 
 export enum LogType {
@@ -188,7 +194,8 @@ export enum ImpressionType {
     PAGE_LOADED = 'page-loaded',
     PAGE_REQUEST = 'page-request',
     SET_LANGUAGE = 'set-language',
-    QR_REQUEST = 'qr-request'
+    QR_REQUEST = 'qr-request',
+    POP_UP_CATEGORY = 'pop-up-category'
 }
 
 export enum ImpressionSubtype {
@@ -208,7 +215,9 @@ export enum ImpressionSubtype {
     DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
     GROUP_TUTORIAL = 'my-group-tutorial-popup',
     OFFLINE_MODE = 'offline-mode',
-    AUTO = 'auto'
+    AUTO = 'auto',
+    LOCATION = 'location',
+    HOME = 'home'
 }
 
 export enum InteractType {
@@ -260,7 +269,12 @@ export enum InteractType {
     FAILURE = 'failure',
     SUPPORT = 'support',
     SELECT_BOOK = 'select-book',
-    SELECT_CARD = 'select-card'
+    SELECT_CARD = 'select-card',
+    SELECT_SUBJECT = 'select-subject',
+    SELECT_VIEW_ALL = 'select-view-all',
+    SELECT_CONTENT = 'select-content',
+    SELECT_BOARD = 'select-board',
+    NEW_EXPERIENCE = 'new-experience'
 }
 
 export enum InteractSubtype {
@@ -499,7 +513,11 @@ export enum InteractSubtype {
     SYNC_PROGRESS_INITIATE = 'sync-progress-initiated',
     SYNC_PROGRESS_SUCCESS = 'sync-progress-success',
     SYNC_PROGRESS_FAILED = 'sync-progress-failed',
-    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked'
+    OPEN_WITH_PLAYER_CLICKED = 'open-with-player-clicked',
+    SELECT_CONTENT = 'select-content',
+    SELECT_BELL = 'select-bell',
+    OPTED_IN = 'opted-in',
+    OPTED_OUT = 'opted-out'
 }
 
 export enum ID {
@@ -549,7 +567,8 @@ export enum ID {
     REACTIVATE_GROUP= 'reactivate-group',
     ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines',
     ENABLE_DISCUSSIONS = 'enable-discussions',
-    DISABLE_DISCUSSIONS = 'disable-discussions'
+    DISABLE_DISCUSSIONS = 'disable-discussions',
+    SWITCH_CLICKED = 'switch-clicked'
 }
 
 export enum ActionButtonType {
@@ -596,7 +615,7 @@ export enum CorReleationDataType {
     CHILD_UI = 'ChildUi',
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
-    COUNT_CONTENT = 'CountContent',
+    COUNT_CONTENT = 'ContentCount',
     FROM_PAGE = 'FromPage',
     LANGUAGE = 'Language',
     MODE = 'Mode',
@@ -610,6 +629,13 @@ export enum CorReleationDataType {
     CONTENT_NAME = 'ContentName',
     CONTENT = 'Content',
     BATCH = 'Batch',
+    NEW_NOTIFICATION = 'new-notification',
+    FORM_PAGE = 'form-page',
+    SUBJECT_LIST = 'subject-list',
+    CATEGORY_NAME = 'category-name',
+    CATEGORY_LIST = 'CategoryList',
+    OTHER_BOARDS = 'OtherBoards',
+    ROOT_SECTION = 'RootSection'
 }
 
 export enum AuditProps {

@@ -1,28 +1,41 @@
-import {Component, Inject, OnDestroy} from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
     AppHeaderService,
     CommonUtilService,
     CorReleationDataType,
     Environment,
     FormAndFrameworkUtilService,
+    ImpressionType,
     InteractSubtype,
     InteractType,
     PageId,
     TelemetryGeneratorService
 } from '@app/services';
-import {Router} from '@angular/router';
-import {ContentService, ContentsGroupedByPageSection, CourseService, FilterValue, FormService, ProfileService, ContentData, ContentSearchCriteria, SearchType} from 'sunbird-sdk';
-import {AggregatorConfigField, ContentAggregation} from 'sunbird-sdk/content/handlers/content-aggregator';
-import {ContentUtil} from '@app/util/content-util';
-import {RouterLinks} from '@app/app/app.constant';
-import {NavigationService} from '@app/services/navigation-handler.service';
-import {ScrollToService} from '@app/services/scroll-to.service';
-import {FormConstants} from '@app/app/form.constants';
-import {ModalController} from '@ionic/angular';
-import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import { Router } from '@angular/router';
+import {
+    ContentService,
+    ContentsGroupedByPageSection,
+    CourseService,
+    FilterValue,
+    FormService,
+    ProfileService,
+    ContentData,
+    ContentSearchCriteria,
+    SearchType,
+    CorrelationData
+} from 'sunbird-sdk';
+import { AggregatorConfigField, ContentAggregation } from 'sunbird-sdk/content/handlers/content-aggregator';
+import { ContentUtil } from '@app/util/content-util';
+import { RouterLinks } from '@app/app/app.constant';
+import { NavigationService } from '@app/services/navigation-handler.service';
+import { ScrollToService } from '@app/services/scroll-to.service';
+import { FormConstants } from '@app/app/form.constants';
+import { ModalController } from '@ionic/angular';
+import { SearchFilterPage } from '@app/app/search-filter/search-filter.page';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { PillBorder } from '@project-sunbird/common-consumption-v8';
+import { ObjectUtil } from '@app/util/object.util';
 
 
 @Component({
@@ -30,7 +43,7 @@ import { PillBorder } from '@project-sunbird/common-consumption-v8';
     templateUrl: './category-list-page.html',
     styleUrls: ['./category-list-page.scss'],
 })
-export class CategoryListPage implements OnDestroy {
+export class CategoryListPage implements OnInit, OnDestroy {
 
     sectionGroup?: ContentsGroupedByPageSection;
     formField: {
@@ -60,6 +73,7 @@ export class CategoryListPage implements OnDestroy {
         translations: string
     }[];
     fromLibrary = false;
+    sectionCode = '';
     primaryFacetFiltersFormGroup: FormGroup;
 
     private readonly searchCriteria: ContentSearchCriteria;
@@ -73,7 +87,12 @@ export class CategoryListPage implements OnDestroy {
     };
     appName = '';
     categoryDescription = '';
-    PillBorder = PillBorder
+    PillBorder = PillBorder;
+    private shouldGenerateImpressionTelemetry = true;
+    private corRelationList = [];
+    private pageId: string = PageId.CATEGORY_RESULTS;
+    private fromPage: string = PageId.SEARCH;
+    private env: string = Environment.SEARCH;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -92,6 +111,7 @@ export class CategoryListPage implements OnDestroy {
         const extrasState = this.router.getCurrentNavigation().extras.state;
         if (extrasState) {
             this.formField = extrasState.formField;
+            this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
@@ -112,10 +132,8 @@ export class CategoryListPage implements OnDestroy {
         }
     }
 
-    async ionViewWillEnter() {
+    async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
-        this.appHeaderService.showHeaderWithBackButton();
-
         if (!this.supportedFacets) {
             this.supportedFacets = (await this.formAndFrameworkUtilService
                 .getFormFields(FormConstants.SEARCH_FILTER)).reduce((acc, filterConfig) => {
@@ -130,6 +148,21 @@ export class CategoryListPage implements OnDestroy {
             searchType: SearchType.SEARCH,
             limit: 100
         });
+    }
+
+    async ionViewWillEnter() {
+        this.appHeaderService.showHeaderWithBackButton();
+
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: this.formField.facet, type: CorReleationDataType.FORM_PAGE });
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED,
+            '',
+            PageId.CATEGORY_RESULTS,
+            Environment.HOME,
+            undefined, undefined, undefined, undefined,
+            corRelationList
+        );
     }
 
     private async fetchAndSortData(searchCriteria) {
@@ -160,7 +193,7 @@ export class CategoryListPage implements OnDestroy {
                     ],
                 } as AggregatorConfigField<'CONTENTS'>]).toPromise()).result);
         (this as any)['filterCriteria'] = temp[0].meta.filterCriteria;
-        this.facetFilters = this.filterCriteria.facetFilters.reduce((acc, f) => {
+        this.facetFilters = (this.filterCriteria.facetFilters || []).reduce((acc, f) => {
             acc[f.name] = f.values;
             return acc;
         }, {});
@@ -185,19 +218,93 @@ export class CategoryListPage implements OnDestroy {
 
         this.sectionGroup = (temp[0] as ContentAggregation<'CONTENTS'>).data;
         this.showSheenAnimation = false;
+        this.generateImpressionTelemetry();
     }
 
-    navigateToTextbookPage(items, subject) {
+    private generateImpressionTelemetry() {
+        if (!this.shouldGenerateImpressionTelemetry) {
+            return;
+        }
+        const facet = this.formField.facet;
+        const selectedFacet = facet && ObjectUtil.isJSON(facet) ? JSON.parse(facet)['en'] : facet;
+        switch (this.sectionCode) {
+            case 'popular_categories':
+                this.corRelationList.push({
+                    type: CorReleationDataType.CATEGORY,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.CATEGORY_RESULTS;
+                this.fromPage = PageId.SEARCH;
+                this.env = Environment.SEARCH;
+                break;
+            case 'other_boards':
+                this.corRelationList.push({
+                    type: CorReleationDataType.BOARD,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.BOARD_RESULTS;
+                this.fromPage = PageId.SEARCH;
+                this.env = Environment.SEARCH;
+                break;
+            case 'browse_by_subject':
+                this.corRelationList.push({
+                    type: CorReleationDataType.SUBJECT,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.SUBJECT_RESULTS;
+                this.fromPage = PageId.HOME;
+                this.env = Environment.HOME;
+                break;
+            case 'browse_by_category':
+                this.corRelationList.push({
+                    type: CorReleationDataType.CATEGORY,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.CATEGORY_RESULTS;
+                this.fromPage = PageId.HOME;
+                this.env = Environment.HOME;
+                break;
+        }
+
+        this.corRelationList.push({
+            type: CorReleationDataType.FROM_PAGE,
+            id: this.fromPage
+        });
+        let upDatedCorRelationList = [];
+        if (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) {
+            const categoryResultCount = this.sectionGroup.sections.reduce((acc, curr) => {
+                return acc + curr.count;
+            }, 0);
+            upDatedCorRelationList = this.corRelationList.concat([{
+                type: CorReleationDataType.COUNT_CONTENT,
+                id: categoryResultCount + ''
+            }]);
+        }
+        this.shouldGenerateImpressionTelemetry = false;
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED, '',
+            this.pageId,
+            this.env, undefined, undefined, undefined, undefined,
+            upDatedCorRelationList
+        );
+    }
+
+    navigateToViewMorePage(items, subject) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.VIEW_MORE_CLICKED,
             Environment.HOME,
             PageId.LIBRARY,
             ContentUtil.getTelemetryObject(items));
         if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
+            const corRelationList = [
+                { id: subject || '', type: CorReleationDataType.SECTION },
+                { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION }
+            ];
             this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
                 state: {
                     contentList: items,
-                    subjectName: subject
+                    subjectName: subject,
+                    corRelation: corRelationList
                 }
             });
         } else {
@@ -210,18 +317,22 @@ export class CategoryListPage implements OnDestroy {
         const item = event.data;
         const index = event.index;
         const identifier = item.contentId || item.identifier;
-        const corRelationList = [{ id: sectionName || '', type: CorReleationDataType.SECTION }];
+        const corRelationList = [
+            { id: sectionName || '', type: CorReleationDataType.SECTION },
+            { id: this.sectionCode || '', type: CorReleationDataType.ROOT_SECTION }
+        ];
         const values = {};
         values['sectionName'] = sectionName;
         values['positionClicked'] = index;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-            InteractSubtype.CONTENT_CLICKED,
-            Environment.HOME,
-            PageId.LIBRARY,
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.SELECT_CONTENT,
+            '',
+            this.env,
+            this.pageId,
             ContentUtil.getTelemetryObject(item),
             values,
             ContentUtil.generateRollUp(undefined, identifier),
-            corRelationList);
+            this.corRelationList);
         if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
             this.navService.navigateToDetailPage(item, { content: item, corRelation: corRelationList });
         } else {
@@ -257,7 +368,7 @@ export class CategoryListPage implements OnDestroy {
 
         if (facetFilter) {
             facetFilter.values.forEach(facetFilterValue => {
-                if (toApply.find(apply => facetFilterValue.name === apply.name)){
+                if (toApply.find(apply => facetFilterValue.name === apply.name)) {
                     facetFilterValue.apply = true;
                 } else {
                     facetFilterValue.apply = false;

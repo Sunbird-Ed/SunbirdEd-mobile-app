@@ -314,14 +314,15 @@
         </div>
       </ion-item> -->
       <ion-item (click)="switchTabs()">
-        <span class="sb-menu-icon">
-          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
-        </span>
-        <span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate}}</span>
-        <span *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate}}</span>
-        <div class="new-feature-badge">
-          <div class="square-badge">New</div>
-          <div class="circle-badge"></div>
+        <div class="beta-info">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+          </span>
+          <div><span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate: {'appName': appName} }}</span>
+            <span *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate: {'appName': appName} }}</span>
+              <span class="new-feature-badge" *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" >
+              <div class="square-badge">Beta</div>
+              <div class="circle-badge"></div></span></div>
         </div>
       </ion-item>
 

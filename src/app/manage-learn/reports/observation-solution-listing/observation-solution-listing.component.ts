@@ -73,6 +73,33 @@ export class ObservationSolutionListingComponent implements OnInit {
     });
   }
 
+  goToReports(solution) {
+    // if (solution.scoringSystem === 'pointsBasedScoring' || !solution.isRubricDriven) {
+    if (!solution.criteriaLevelReport || !solution.isRubricDriven) {
+      const queryParams = {
+        queryParams: {
+          observationId: solution.observationId,
+          solutionId: solution.solutionId,
+          programId: solution.programId,
+          entityId: solution.entities[0]._id,
+          entityName: solution.entities[0].name,
+        },
+      };
+      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
+    } else {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          pdf: false,
+          entityId: solution.entities[0]._id,
+          entityType: solution.entityType,
+          observationId: solution.observationId,
+        },
+      });
+    }
+  }
+
   loadMore() {
     this.pageNo++;
     this.getSolutions();

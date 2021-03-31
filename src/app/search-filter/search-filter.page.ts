@@ -17,7 +17,6 @@ import {FieldConfig} from 'common-form-elements';
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
-    
     public config: FieldConfig<any>[];
 
     private formGroup: FormGroup;

@@ -69,7 +69,8 @@
               }
             ],
             "scripts": [
-              "node_modules/@project-sunbird/telemetry-sdk/index.js"
+              "node_modules/@project-sunbird/telemetry-sdk/index.js",
+              "node_modules/epubjs/dist/epub.js"
             ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true

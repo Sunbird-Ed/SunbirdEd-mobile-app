@@ -17,6 +17,7 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { RouterLinks, ShareItemType } from '../app.constant';
+import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 
 
 
@@ -68,7 +69,9 @@ describe('PlayerPage', () => {
             }
         })) as any
     };
-    const mockLocation: Partial<Location> = {};
+    const mockLocation: Partial<Location> = {
+        back: jest.fn()
+    };
     const mockPopoverCtrl: Partial<PopoverController> = {
 
     };
@@ -81,6 +84,7 @@ describe('PlayerPage', () => {
     const mockFileOpener: Partial<FileOpener> = {};
     const mockTransfer: Partial<FileTransfer> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockprintPdfService: Partial<PrintPdfService> = {}
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
@@ -100,7 +104,8 @@ describe('PlayerPage', () => {
             mockDownloadPdfService as DownloadPdfService,
             mockFileOpener as FileOpener,
             mockTransfer as FileTransfer,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockprintPdfService as PrintPdfService
         );
     });
 
@@ -123,14 +128,14 @@ describe('PlayerPage', () => {
             jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
                 return Promise.resolve();
             });
-            mockLocation.back = jest.fn();
+            // mockLocation.back = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
             playerPage.ionViewWillEnter();
             setTimeout(() => {
                 expect(playerPage.loadPdfPlayer).toBeTruthy();
                 expect(mockPlatform.backButton).toBeTruthy();
                 expect(mockAlertCtrl.getTop).toHaveBeenCalled();
-                expect(mockLocation.back).toHaveBeenCalledWith();
+                // expect(mockLocation.back).toHaveBeenCalledWith();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
                 done();
             }, 0);
@@ -138,6 +143,60 @@ describe('PlayerPage', () => {
 
     });
 
+    it('should return new  player config' , () => {
+        playerPage.config = {
+            context: {
+                objectRollup: {
+                    l1: 'li'
+                },
+                dispatcher: {
+                    dispatch: jest.fn()
+                },
+                pdata: {
+                    pid: 'sunbird.app.contentplayer'
+                }
+            },
+            metadata: {
+                identifier: 'identifier',
+                mimeType: 'application/pdf',
+                isAvailableLocally: true,
+                basePath: 'basePath',
+                contentData: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                }
+            }
+          
+        }
+         playerPage.getNewPlayerConfiguration();
+        //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
+    })
+    it('should check if new player is enabled', () => {
+        const config = {
+            fields: [
+                {
+                    "name": "pdfPlayer",
+                    "code": "pdf",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
+                },
+                {
+                    "name": "epubPlayer",
+                    "code": "epub",
+                    "values": [
+                        {
+                            "isEnabled": true
+                        }
+                    ]
+                }
+            ]
+        }
+          playerPage.checkIsPlayerEnabled(config , 'pdfPlayer');
+    })
     describe('ngOninit', () => {
         it('should call getPdfPlayerConfiguration', (done) => {
             const subscribeFn = jest.fn(() => { }) as any;
@@ -168,7 +227,16 @@ describe('PlayerPage', () => {
                     }
 
                 }
+
             };
+            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+                return {
+                    name: 'pdfPlayer'
+                }
+            })
+            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
+                return playerPage.config;
+            })
             jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                 telemetryService: {
                     saveTelemetry(request: string): Observable<boolean> {
@@ -192,8 +260,8 @@ describe('PlayerPage', () => {
                 playerPage.config['context'].dispatcher.dispatch();
             });
             setTimeout(() => {
-                expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
-                expect(playerPage.loadPdfPlayer).toBe(true);
+                // expect(mockFormAndFrameworkUtilService.getPdfPlayerConfiguration).toHaveBeenCalled();
+                expect(playerPage.loadPdfPlayer).toBeFalsy();
                 done();
             }, 0);
         });
@@ -227,6 +295,14 @@ describe('PlayerPage', () => {
                     }
                 }
             };
+            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+                return {
+                    name: 'pdfPlayer'
+                }
+            })
+            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
+                return playerPage.config;
+            });
             playerPage.playerConfig = {};
             playerPage.ngOnInit().then(() => {
                 jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
@@ -245,6 +321,8 @@ describe('PlayerPage', () => {
                 playerPage.config['context'].dispatcher.dispatch({});
             });
         });
+
+       
     });
     describe('pdfPlayerEvents', () => {
         it('should exit the player', (done) => {
@@ -253,10 +331,10 @@ describe('PlayerPage', () => {
                     type: 'EXIT'
                 }
             };
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(playerPage.loadPdfPlayer).toBe(false);
-                expect(mockLocation.back).toHaveBeenCalled();
+                // expect(mockLocation.back).toHaveBeenCalled();
                 done();
             }, 50);
         });
@@ -274,9 +352,9 @@ describe('PlayerPage', () => {
 
             mockCommonUtilService.showToast = jest.fn();
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.resolve());
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
-                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
                 // expect(CommonUtilService.showToast).toHaveBeenCalledWith('PDF_DOWNLOADED');
                 done();
             }, 100);
@@ -297,7 +375,7 @@ describe('PlayerPage', () => {
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
                     reason: 'device-permission-denied'
             }));
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
                 // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
@@ -320,9 +398,9 @@ describe('PlayerPage', () => {
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
                     reason: 'user-permission-denied'
             }));
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
-                expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
+                // expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
                 // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
                 done();
             }, 0);
@@ -343,7 +421,7 @@ describe('PlayerPage', () => {
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
                     reason: 'download-failed'
             }));
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(mockDownloadPdfService.downloadPdf).toHaveBeenCalled();
                 // expect(CommonUtilService.showToast).toHaveBeenCalledWith('DEVICE_NEEDS_PERMISSION');
@@ -360,7 +438,7 @@ describe('PlayerPage', () => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({}))
             } as any)));
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
@@ -374,11 +452,13 @@ describe('PlayerPage', () => {
                 }
             };
             global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => {});
-            playerPage.pdfPlayerEvents(event);
+            playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
                 done();
             }, 50);
         });
     });
+
+    
 });

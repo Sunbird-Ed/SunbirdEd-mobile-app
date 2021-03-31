@@ -49,6 +49,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   corRelationList;
   private isCourse = false;
   loadPdfPlayer = false;
+  loadEpubPlayer = false;
   playerConfig: any;
   private isChildContent: boolean;
   private content: Content;
@@ -96,34 +97,22 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
-    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.playerConfig &&
+    if (this.config['metadata']['mimeType'] === 'application/pdf'  &&  this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer" &&
       this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
       this.loadPdfPlayer = true;
-      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
-      if (this.config['metadata'].isAvailableLocally) {
-        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
-      }
-      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
-      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
-      this.config['metadata'] = this.config['metadata'].contentData;
-      this.config['data'] = {};
-      this.config['config'] = {
-        sideMenu: {
-          showShare: true,
-          showDownload: true,
-          showReplay: false,
-          showExit: true,
-          showPrint: true
-        }
-      };
-      this.config['context'].dispatcher = {
-        dispatch: function (event) {
-          SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
-            (res) => console.log('response after telemetry', res),
-          );
-        }
-      };
+      this.config = this.getNewPlayerConfiguration();
+    } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
+      this.loadEpubPlayer = true;
+      this.config = this.getNewPlayerConfiguration();
     }
+    this.config['context'].dispatcher = {
+      dispatch: function (event) {
+        SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
+          (res) => console.log('response after telemetry', res),
+        );
+      }
+    };
+
     this.pauseSubscription = this.platform.pause.subscribe(() => {
       const iframes = window.document.getElementsByTagName('iframe');
       if (iframes.length > 0) {
@@ -132,7 +121,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
-    if (!this.loadPdfPlayer) {
+    if (!this.loadPdfPlayer && !this.loadEpubPlayer) {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
       this.config['uid'] = this.config['context'].actor.id;
@@ -199,7 +188,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (!activeAlert) {
         this.showConfirm();
       }
-      if (this.loadPdfPlayer) {
+      if (this.loadPdfPlayer || this.loadEpubPlayer) {
         this.location.back();
       }
     });
@@ -235,9 +224,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   }
 
-  async pdfPlayerEvents(event) {
+  async playerEvents(event) {
     if (event.edata['type'] === 'EXIT') {
       this.loadPdfPlayer = false;
+      this.loadEpubPlayer = false;
       this.location.back();
     } else if (event.edata['type'] === 'SHARE') {
       const popover = await this.popoverCtrl.create({
@@ -255,7 +245,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else if (event.edata['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
         this.downloadPdfService.downloadPdf(this.content).then((res) => {
-          this.commonUtilService.showToast('PDF_DOWNLOADED');
+          this.commonUtilService.showToast('CONTENT_DOWNLOADED');
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {
             this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
@@ -277,6 +267,34 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         () => {}
     );
     }
+  }
+
+  getNewPlayerConfiguration() {
+      this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
+      if (this.config['metadata'].isAvailableLocally) {
+      console.log('config', this.config['metadata'].contentData.streamingUrl);
+        this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+      }
+      this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
+      this.config['metadata']['contentData']['isAvailableLocally'] = this.config['metadata'].isAvailableLocally;
+      this.config['metadata'] = this.config['metadata'].contentData;
+      this.config['data'] = {};
+      this.config['config'] = {
+        sideMenu: {
+          showShare: true,
+          showDownload: true,
+          showReplay: false,
+          showExit: true,
+          showPrint: true
+        }
+      }
+      if(!this.config['context'].userData){
+        this.config['context']['userData'] = {
+          firstName: 'anonymous',
+          lastName: ''
+        };
+      }
+      return this.config;
   }
 
   /**
@@ -443,7 +461,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.courseService.updateContentState(updateContentStateRequest).subscribe();
   }
 
-  pdfTelemetryEvents(event) {}
+  playerTelemetryEvents(event) {}
 
   private isJSON(input): boolean {
     try {
@@ -452,5 +470,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } catch (e) {
       return false;
     }
+  }
+
+  checkIsPlayerEnabled(config , playerType) {
+    return config.fields.find(ele =>   ele.name === playerType && ele.values[0].isEnabled)
   }
 }

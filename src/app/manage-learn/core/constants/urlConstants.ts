@@ -26,6 +26,7 @@ export const urlConstants = {
     GET_PROFILE: 'v2/user-extension/getProfile',
     GET_STATES: 'v2/entities/listByEntityType/state',
     GET_SUBENTITIES: 'v1/entities/subEntityTypeList/',
+    GET_SUB_ENITIES_FOR_ROLES:"v1/entities/subEntityListBasedOnRoleAndLocation/",
     GET_ENTITY_LIST: 'v1/entities/subEntityList/',
     IMPORT_TEMPLATE: 'v1/userProjects/importFromLibrary/',
     GET_REPORT: 'v1/reports/entity/',

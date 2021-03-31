@@ -1207,6 +1207,18 @@ app-resources{
     .title{
       font-size: 18px !important;
       font-weight: bold;
+      padding-left: 1rem;
+    }
+
+    .sbbtn{
+      border-radius: 3rem !important;
+      background-color: transparent !important;
+      color: var(--app-primary) !important;
+      border: 1px solid var(--app-primary-light-2) !important;
+      margin: 2%;
+      margin-bottom: 0;
+      width: 96% !important;
+      padding: 0.75rem !important;
     }
   }
 
@@ -1814,7 +1826,7 @@ sb-library-card-v3 {
   .sb--card__title {
     bdi {
       line-height: 1.3;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
   }
 }
@@ -1857,7 +1869,7 @@ sb-library-card-v3 {
 .sb-switch-new-experience-popup{
   .popover-content {
     width: 90vw !important;
-    height: 28rem !important;
+    height: auto !important;
     left: 5% !important;
     border-radius: 16px;
     position: initial

@@ -27,7 +27,7 @@
             <span class="txt-uppercase"> {{'ID' | translate }}: </span>
             <span>{{profile?.userName}}</span>
             <span class="profile-share-icon" (click)="shareUsername()">
-                <ion-icon md="md-share" class="share-icon"></ion-icon>
+                <ion-icon name="share-social" class="share-icon"></ion-icon>
             </span>
         </p>
         <div class="school-recent" *ngIf="organisationName">
@@ -59,7 +59,7 @@
             </ion-button>
         </div>
     </div>
-   <div *ngIf="profile?.persona" class="school-details text-center">
+   <div *ngIf="profile" class="school-details text-center">
     <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
@@ -284,7 +284,7 @@
         </div>
         <div class="trainings" *ngIf="learnerPassbook?.length > 0">
             <div class="bolder heading f16">
-                <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbook?.length}})&lrm;</span>
+                <span>{{'FRMELEMNTS_LBL_LEARNER_PASSBOOK' | translate}} ({{learnerPassbookCount}})&lrm;</span>
             </div>
             <div class="content">
                 <div class="flex-nowrap"
@@ -306,12 +306,12 @@
                         </button>
                     </div>
                 </div>
-                <div class="ion-text-center" *ngIf="learnerPassbook.length > learnerPassbookLimit">
+                <div class="ion-text-center" *ngIf="learnerPassbook.length >= learnerPassbookLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="learnerPassbookLimit < learnerPassbook?.length"
                         (click)="showMoreTrainings('learnerPassbook')">
-                        + {{learnerPassbook?.length - learnerPassbookLimit}} {{'MORE' | translate}}
-                        <ion-icon class="ML10" name="arrow-down"></ion-icon>
+                        + {{learnerPassbookCount - learnerPassbookLimit}} {{'MORE' | translate}}
+                        <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="learnerPassbookLimit >= learnerPassbook?.length"

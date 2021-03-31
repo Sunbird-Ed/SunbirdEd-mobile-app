@@ -8,7 +8,7 @@
     <ion-button class="skip-icon">
       <ion-icon slot="end" name="play-skip-forward"></ion-icon>
     </ion-button>
-    <ion-label class="skip-button"> {{'FRMELEMNTS_LBL_SKIP' | translate}}
+    <ion-label class="skip-button"> {{'SKIP' | translate}}
     </ion-label>
   </ion-buttons>
 
@@ -45,8 +45,8 @@
           <ion-label position="stacked">
             {{'FRMELEMNTS_LBL_TO' | translate}}
           </ion-label>
-          <ion-datetime min="{{endDateMin}}" max="{{endDateMin + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
-            value={{endDateMin}} [(ngModel)]="template.endDate" class="project-date" placeholder={{endDateMin}}>
+          <ion-datetime min="{{endDateMin}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" display-timezone="utc"
+            value={{today}} [(ngModel)]="template.endDate" class="project-date" placeholder={{today}}>
           </ion-datetime>
           <ion-icon name="caret-down" slot="end"></ion-icon>
         </ion-item>
