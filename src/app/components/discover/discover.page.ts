@@ -68,7 +68,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.appGlobalService.getGuestUserInfo();
   }
 
   doRefresh(refresher) {
