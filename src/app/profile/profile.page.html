@@ -59,7 +59,7 @@
             </ion-button>
         </div>
     </div>
-   <div *ngIf="profile?.persona" class="school-details text-center">
+   <div *ngIf="profile" class="school-details text-center">
     <div *ngIf="profile?.persona || profile?.framework" class="preference-info">{{ 'CONTENT_PREFERENCE' | translate }}</div>
     <div class="location-mapping-block">
     <div *ngIf="profile?.persona?.name" class="text-center">
