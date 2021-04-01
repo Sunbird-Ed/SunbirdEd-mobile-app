@@ -36,6 +36,7 @@ describe('PlayerPage', () => {
 
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
+        isUserLoggedIn: jest.fn()
     };
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};

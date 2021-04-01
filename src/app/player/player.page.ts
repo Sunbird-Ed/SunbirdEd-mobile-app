@@ -288,11 +288,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showPrint: true
         }
       }
-      if(!this.config['context'].userData){
+      if(!this.appGlobalService.isUserLoggedIn()){
         this.config['context']['userData'] = {
           firstName: 'anonymous',
           lastName: ''
-        };
+        }
+      } else if(this.appGlobalService.isUserLoggedIn()) {
+          const profile = this.appGlobalService.getCurrentUser();
+          this.config['context']['userData'] = {
+            firstName: profile.handle,
+            lastName: ''
+          }
       }
       return this.config;
   }
