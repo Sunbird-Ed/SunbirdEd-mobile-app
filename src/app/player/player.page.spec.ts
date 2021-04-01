@@ -2,12 +2,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, AlertController, PopoverController } from '@ionic/angular';
 import { Events } from '@app/util/events';
-import { CourseService, SunbirdSdk, TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { CourseService, ProfileService, SunbirdSdk, TelemetryService } from '@project-sunbird/sunbird-sdk';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { DownloadPdfService } from '../../services/download-pdf/download-pdf.service';
 import { PlayerPage } from './player.page';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService, PageId } from '@app/services';
 import { Location } from '@angular/common';
@@ -18,6 +17,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { RouterLinks, ShareItemType } from '../app.constant';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 
 
@@ -36,7 +36,6 @@ describe('PlayerPage', () => {
 
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        isUserLoggedIn: jest.fn()
     };
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
@@ -86,9 +85,11 @@ describe('PlayerPage', () => {
     const mockTransfer: Partial<FileTransfer> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockprintPdfService: Partial<PrintPdfService> = {}
+    const mockprofileService : Partial<ProfileService> = {};
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
+            mockprofileService as ProfileService,
             mockCanvasPlayerService as CanvasPlayerService,
             mockPlatform as Platform,
             mockScreenOrientation as ScreenOrientation,
@@ -144,7 +145,7 @@ describe('PlayerPage', () => {
 
     });
 
-    it('should return new  player config' , () => {
+   it('should return new  player config' , (done) => {
         playerPage.config = {
             context: {
                 objectRollup: {
@@ -170,7 +171,17 @@ describe('PlayerPage', () => {
             }
           
         }
+        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+            serverProfile:{
+                firstName: 'firstName', 
+                lastName: 'lastname'
+            }
+        })) as any;
          playerPage.getNewPlayerConfiguration();
+         setTimeout(() => {
+             expect(mockprofileService.getActiveSessionProfile).toBeCalled();
+             done();
+         } , 0)
         //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
     })
     it('should check if new player is enabled', () => {
@@ -236,7 +247,9 @@ describe('PlayerPage', () => {
                 }
             })
             jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                return playerPage.config;
+                
+                return Promise.resolve(playerPage.config);
+
             })
             jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
                 telemetryService: {
@@ -302,7 +315,7 @@ describe('PlayerPage', () => {
                 }
             })
             jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                return playerPage.config;
+                return Promise.resolve(playerPage.config);
             });
             playerPage.playerConfig = {};
             playerPage.ngOnInit().then(() => {
@@ -333,6 +346,7 @@ describe('PlayerPage', () => {
                 }
             };
             playerPage.playerEvents(event);
+
             setTimeout(() => {
                 expect(playerPage.loadPdfPlayer).toBe(false);
                 // expect(mockLocation.back).toHaveBeenCalled();
