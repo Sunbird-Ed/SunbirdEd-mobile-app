@@ -303,20 +303,44 @@ export class ObservationSubmissionComponent implements OnInit {
       return;
     }
     if (submission.ratingCompletedAt) {
-      let popover = await this.popoverCtrl.create({
-        component: ScroreReportMenusComponent,
-        componentProps: {
-          submission: submission,
-          entityType: submission.entityType,
-        },
-        event: event,
-      });
-      popover.present();
-    } else {
-      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-        queryParams: {
+      /* no need to show menu now directly show the score report */
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          criteriaWise: false,
+          pdf: false,
           submissionId: submission._id,
           entityType: submission.entityType,
+          filter: { questionId: [] },
+        },
+      });
+      // let popover = await this.popoverCtrl.create({
+      //   component: ScroreReportMenusComponent,
+      //   componentProps: {
+      //     submission: submission,
+      //     entityType: submission.entityType,
+      //   },
+      //   event: event,
+      // });
+      // popover.present();
+    } else {
+      // this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+      //   queryParams: {
+      //     submissionId: submission._id,
+      //     entityType: submission.entityType,
+      //   },
+      // });
+
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: false,
+          observation: true,
+          criteriaWise: false,
+          pdf: false,
+          submissionId: submission._id,
+          entityType: submission.entityType,
+          filter: { questionId: [] },
         },
       });
     }
@@ -354,28 +378,56 @@ export class ObservationSubmissionComponent implements OnInit {
 
   // Menu for Entity reports
   async openEntityReportMenu(event) {
-    let popover = await this.popoverCtrl.create({
-      component: ScroreReportMenusComponent,
-      componentProps: {
-        observationId: this.observationId,
-        entityId: this.entityId,
-        entityType: this.submissionList[0].entityType,
-        showEntityActionsheet: 'true',
-        showSubmissionAction: 'false',
+    let submission = this.submissions[0];
+    /* no need to show menu now directly show the score report */
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: {
+        scores: true,
+        observation: true,
+        criteriaWise: false,
+        pdf: false,
+        entityId: submission.entityId,
+        entityType: submission.entityType,
+        observationId: submission.observationId,
+        filter: { questionId: [] },
       },
-      event: event,
     });
-    popover.present();
+    // let popover = await this.popoverCtrl.create({
+    //   component: ScroreReportMenusComponent,
+    //   componentProps: {
+    //     observationId: submission.observationId,
+    //     entityId: submission.entityId,
+    //     entityType: submission.entityType,
+    //     showEntityActionsheet: 'true',
+    //     showSubmissionAction: 'false',
+    //   },
+    //   event: event,
+    // });
+    // popover.present();
   }
 
   viewEntityReports() {
+    let submission = this.submissions[0];
     this.showEntityActionsheet = false;
     this.showActionsheet = false;
-    this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-      queryParams: {
-        entityId: this.entityId,
-        observationId: this.observationId,
-        entityType: this.submissionList[0].entityType,
+    // this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
+    //   queryParams: {
+    //     entityId: submission.entityId,
+    //     observationId: submission.observationId,
+    //     entityType: submission.entityType,
+    //   },
+    // });
+
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: {
+        scores: false,
+        observation: true,
+        criteriaWise: false,
+        pdf: false,
+        entityId: submission.entityId,
+        entityType: submission.entityType,
+        observationId: submission.observationId,
+        filter: { questionId: [] },
       },
     });
   }

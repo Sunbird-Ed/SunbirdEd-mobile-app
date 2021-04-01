@@ -75,29 +75,47 @@ export class ObservationSolutionListingComponent implements OnInit {
 
   goToReports(solution) {
     // if (solution.scoringSystem === 'pointsBasedScoring' || !solution.isRubricDriven) {
-    if (!solution.criteriaLevelReport || !solution.isRubricDriven) {
-      const queryParams = {
-        queryParams: {
-          observationId: solution.observationId,
-          solutionId: solution.solutionId,
-          programId: solution.programId,
-          entityId: solution.entities[0]._id,
-          entityName: solution.entities[0].name,
-        },
-      };
-      this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
-    } else {
-      this.router.navigate([RouterLinks.GENERIC_REPORT], {
-        state: {
-          scores: true,
-          observation: true,
-          pdf: false,
-          entityId: solution.entities[0]._id,
-          entityType: solution.entityType,
-          observationId: solution.observationId,
-        },
-      });
+    // if (!solution.criteriaLevelReport || !solution.isRubricDriven) {
+    //   const queryParams = {
+    //     queryParams: {
+    //       observationId: solution.observationId,
+    //       solutionId: solution.solutionId,
+    //       programId: solution.programId,
+    //       entityId: solution.entities[0]._id,
+    //       entityName: solution.entities[0].name,
+    //     },
+    //   };
+    //   this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);
+    // } else {
+    //   this.router.navigate([RouterLinks.GENERIC_REPORT], {
+    //     state: {
+    //       scores: true,
+    //       observation: true,
+    //       pdf: false,
+    //       entityId: solution.entities[0]._id,
+    //       entityType: solution.entityType,
+    //       observationId: solution.observationId,
+    //     },
+    //   });
+    // }
+    let state = {
+      scores: false,
+      observation: true,
+      pdf: false,
+      entityId: solution.entities[0]._id,
+      entityType: solution.entityType,
+      observationId: solution.observationId,
+    };
+    if (solution.isRubricDriven) {
+      state.scores = true;
     }
+    if (!solution.criteriaLevelReport) {
+      state['filter'] = { questionId: [] };
+      state['criteriaWise'] = false;
+    }
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: state,
+    });
   }
 
   loadMore() {

@@ -4,13 +4,15 @@ import { UtilityService } from '@app/services';
 import { ModalController, NavController, NavParams } from '@ionic/angular';
 
 @Component({
-  selector: 'app-question-list',
-  templateUrl: './question-list.component.html',
-  styleUrls: ['./question-list.component.scss'],
+  selector: 'report-modal-filter',
+  templateUrl: './report.modal.filter.html',
+  styleUrls: ['./report.modal.filter.scss'],
 })
-export class QuestionListComponent implements OnInit {
-  allQuestions;
-  filteredQuestions;
+export class ReportModalFilter implements OnInit {
+  filteredData: any;
+  data: any;
+  // allQuestions;
+  // filteredQuestions;
 
   constructor(
     public navCtrl: NavController,
@@ -22,11 +24,14 @@ export class QuestionListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.allQuestions = this.navParams.get('allQuestions');
-    this.filteredQuestions = this.navParams.get('filteredQuestions');
+    // this.allQuestions = this.navParams.get('allQuestions');
+    // this.filteredQuestions = this.navParams.get('filteredQuestions');
+    this.data = this.navParams.get('data');
+    this.filteredData = this.navParams.get('filteredData');
+    debugger;
   }
 
-  onQuestionClick(externalId) {
+  /*  onQuestionClick(externalId) {
     if (this.filteredQuestions.includes(externalId)) {
       const indexOfQuestion = this.filteredQuestions.indexOf(externalId);
       this.filteredQuestions.splice(indexOfQuestion, 1);
@@ -35,8 +40,27 @@ export class QuestionListComponent implements OnInit {
     }
     console.log(JSON.stringify(this.filteredQuestions));
   }
+   */
+  onQuestionClick(id) {
+    if (this.filteredData.includes(id)) {
+      const indexOfQuestion = this.filteredData.indexOf(id);
+      this.filteredData.splice(indexOfQuestion, 1);
+    } else {
+      this.filteredData.push(id);
+    }
+    console.log(JSON.stringify(this.filteredData));
+  }
 
   applyFilter() {
+    !this.filteredData.length
+      ? this.toast.openToast('Select at least one question')
+      : // : this.viewCntrl.dismiss({
+        this.modalCtrl.dismiss({
+          filter: this.filteredData,
+          action: 'updated',
+        });
+  }
+  /* applyFilter() {
     !this.filteredQuestions.length
       ? this.toast.openToast('Select at least one question')
       : // : this.viewCntrl.dismiss({
@@ -45,7 +69,7 @@ export class QuestionListComponent implements OnInit {
           action: 'updated',
         });
   }
-
+ */
   close() {
     // this.viewCntrl.dismiss({ action: "cancelled" }); TODO:remove after checking,viewCtrl is not available in i3
     this.modalCtrl.dismiss('cancel');

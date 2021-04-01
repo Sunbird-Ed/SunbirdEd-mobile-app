@@ -204,7 +204,7 @@ export class ProjectFullReportComponent implements OnInit {
     return arr;
   }
 
-  downloadUrl() {
+  config() {
     let url = urlConstants.API_URLS.GET_FULL_REPORT;
     if (this.filter.entity) {
       url = url + this.filter.entity._id;
@@ -218,7 +218,7 @@ export class ProjectFullReportComponent implements OnInit {
 
     url = this.utils.queryUrl(url, query);
 
-    return url;
+    return { url: url };
   }
 
   ngOnDestroy() {

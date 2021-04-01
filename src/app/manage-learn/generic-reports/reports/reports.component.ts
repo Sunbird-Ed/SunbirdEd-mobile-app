@@ -4,12 +4,8 @@ import { LoaderService, ToastService } from '../../core';
 import * as _ from 'lodash-es';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
-import { File } from '@ionic-native/file/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { Platform } from '@ionic/angular';
-import { DatePipe } from '@angular/common';
+import { ModalController } from '@ionic/angular';
+import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 
 @Component({
   selector: 'app-reports',
@@ -19,65 +15,60 @@ import { DatePipe } from '@angular/common';
 export class ReportsComponent implements OnInit {
   state: { [k: string]: any };
   data: any;
+  error: { result: boolean; message: string };
   submissionId: any;
   action;
-  appFolderPath: any;
-  fileName: any;
-  isIos: boolean;
   filters: any;
+  segmentValue: string;
+  filteredData: any;
+  modalFilterData: any;
+  reportSections: any;
   constructor(
     private router: Router,
     private toast: ToastService,
     private loader: LoaderService,
     private dhiti: DhitiApiService,
-    private fileTransfer: FileTransfer,
-    private dap: DownloadAndPreviewService,
-    private file: File,
-    private androidPermissions: AndroidPermissions,
-    private platform: Platform,
-    private datepipe: DatePipe
+    private modal: ModalController
   ) {
     console.log(this.router.getCurrentNavigation().extras.state);
     this.state = this.router.getCurrentNavigation().extras.state;
   }
 
   ngOnInit() {
-    // remove null and undefined
-    this.state = _.omitBy(this.state, _.isNil);
+    this.segmentValue = 'questionwise';
     this.getReport();
-    this.isIos = this.platform.is('ios') ? true : false;
-    this.appFolderPath = this.isIos
-      ? cordova.file.documentsDirectory + '/Download/'
-      : cordova.file.externalRootDirectory + '/Download/';
   }
   getReport() {
+    // remove null and undefined
+    this.state = _.omitBy(this.state, _.isNil);
+    this.error = null;
     this.loader.startLoader();
-    let payload = this.state;
     const config = {
       url: urlConstants.API_URLS.GENERIC_REPORTS,
-      payload: payload,
+      payload: this.state,
     };
-
-    const timeStamp = '_' + this.datepipe.transform(new Date(), 'yyyy-MMM-dd-HH-mm-ss a');
-    this.fileName = timeStamp + '.pdf';
 
     this.dhiti.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
         if (success.result === true && success.reportSections) {
           this.data = success;
+          this.reportSections = this.filterBySegment();
 
-          if (this.data.filters) {
+          if (this.data.filters && !this.filters) {
             this.filters = this.data.filters;
           }
         } else {
           this.toast.openToast(success.message);
-          this.data = success;
+          this.error = success;
+          this.reportSections = [];
         }
       },
       (error) => {
         this.toast.openToast(error.message);
         this.loader.stopLoader();
+        this.reportSections = [];
+        this.error = error;
       }
     );
   }
@@ -87,93 +78,58 @@ export class ReportsComponent implements OnInit {
     this.getReport();
   }
 
-  downloadSharePdf(action) {
-    this.action = action;
-    this.androidPermissions
-      .checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
-      .then((status) => {
-        if (status.hasPermission) {
-          this.getObservationReportUrl();
-        } else {
-          this.androidPermissions
-            .requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
-            .then((success) => {
-              if (success.hasPermission) {
-                this.getObservationReportUrl();
-              }
-            })
-            .catch((error) => {});
-        }
-      });
-  }
-
-  getObservationReportUrl() {
-    this.loader.startLoader();
-    let url = urlConstants.API_URLS.GENERIC_REPORTS;
-
+  config() {
+    let payload = Object.assign({}, this.state, { pdf: true }); // will not change state obj
     const config = {
-      url: url,
-      payload: this.state,
+      url: urlConstants.API_URLS.GENERIC_REPORTS,
+      payload: payload,
     };
-    config.payload.pdf = true;
-    this.dhiti.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        this.state.pdf = false;
-        console.log(JSON.stringify(success));
-        if (success.status === 'success' && success.pdfUrl) {
-          this.downloadSubmissionDoc(success.pdfUrl);
-        } else {
-          this.toast.openToast(success.message);
-        }
-      },
-      (error) => {
-        this.state.pdf = false;
 
-        this.toast.openToast(error.message);
-
-        this.loader.stopLoader();
-      }
-    );
+    return config;
   }
 
-  downloadSubmissionDoc(fileRemoteUrl) {
-    // this.loader.startLoader();
-    if (this.isIos) {
-      this.checkForDowloadDirectory(fileRemoteUrl);
-    } else {
-      this.filedownload(fileRemoteUrl);
+  segmentChanged(segment) {
+    segment === 'criteriawise' ? (this.state.criteriaWise = true) : (this.state.criteriaWise = false);
+    this.state.filter = null;
+    this.modalFilterData = null;
+    this.getReport();
+  }
+
+  filterBySegment() {
+    if (this.segmentValue == 'questionwise') {
+      let reportSections = [{ questionArray: this.data.reportSections }];
+      return reportSections;
     }
+
+    return this.data.reportSections;
   }
 
-  checkForDowloadDirectory(fileRemoteUrl) {
-    this.file
-      .checkDir(this.file.documentsDirectory, 'Download')
-      .then((success) => {
-        this.filedownload(fileRemoteUrl);
-      })
-      .catch((err) => {
-        this.file.createDir(cordova.file.documentsDirectory, 'Download', false).then(
-          (success) => {
-            this.filedownload(fileRemoteUrl);
-          },
-          (error) => {}
-        );
-      });
-  }
-
-  filedownload(fileRemoteUrl) {
-    const fileTransfer: FileTransferObject = this.fileTransfer.create();
-    fileTransfer
-      .download(fileRemoteUrl, this.appFolderPath + this.fileName)
-      .then((success) => {
-        this.action === 'share'
-          ? this.dap.shareSubmissionDoc(this.appFolderPath + this.fileName)
-          : this.dap.previewSubmissionDoc(this.appFolderPath + this.fileName);
-        // this.loader.stopLoader();
-      })
-      .catch((error) => {
-        // this.loader.stopLoader();
-      });
+  async openFilter(data, keyToSend) {
+    this.modalFilterData ? null : (this.modalFilterData = data);
+    let filteredData;
+    if (this.state.filter && this.state.filter.length) {
+      filteredData = this.state.filter[keyToSend];
+    } else {
+      filteredData = data.map((d) => d._id);
+    }
+    const modal = await this.modal.create({
+      component: ReportModalFilter,
+      componentProps: {
+        data: this.modalFilterData,
+        filteredData: JSON.parse(JSON.stringify(filteredData)),
+      },
+    });
+    await modal.present();
+    await modal.onDidDismiss().then((response: any) => {
+      if (
+        response.data &&
+        response.data.action === 'updated' &&
+        JSON.stringify(response.data.filter) !== JSON.stringify(filteredData)
+      ) {
+        this.state.filter = {};
+        this.state.filter[keyToSend] = response.data.filter;
+        this.getReport();
+      }
+    });
   }
 }

@@ -1,7 +1,15 @@
 <ion-content class="ion-padding-horizontal">
-  <h2>{{ data?.programName ? data?.programName : data?.solutionName }}</h2>
-  <!-- for dropdown type  -->
+  <h3 class="txt-capitalize">{{ data?.solutionName }}</h3>
+  <h6 class="grade_ellipsis txt-capitalize">{{ data?.entityName }}</h6>
+  <ion-grid *ngIf="data?.totalObservations">
+    <ion-row>
+      <ion-col style="margin-left: 15px">
+        {{ '"FRMELEMNTS_LBL_TOTAL_OBSERVATIONS"' | translate }} : {{ data?.totalObservations }}</ion-col
+      >
+    </ion-row>
+  </ion-grid>
   <div *ngFor="let filter of filters">
+    <!-- for instance filter -->
     <div *ngIf="filter.filter.type == 'dropdown'" class="d-flex flex-ai-center w-100">
       <div>
         <ion-select
@@ -24,24 +32,90 @@
         <ion-icon name="close" class="sb-modal-close" (click)="submissionId = null" *ngIf="submisison"></ion-icon>
       </div>
     </div>
+
+    <!-- for question and criteria filter modal/ only show when report is present -->
+    <div *ngIf="filter.filter.type == 'modal' && !error" class="d-flex flex-jc-flex-end py-10">
+      <ion-button ion-button icon-start (click)="openFilter(filter.filter.data, filter.filter.keyToSend)" margin>
+        <ion-icon name="options"></ion-icon>
+        {{ 'FRMELEMNTS_BTN_FILTER' | translate }}
+      </ion-button>
+    </div>
+
+    <!-- for dropdown type  -->
+    <ion-segment
+      (ionChange)="segmentChanged(segmentValue)"
+      [(ngModel)]="segmentValue"
+      *ngIf="filter.filter.type == 'segment'"
+    >
+      <ion-segment-button value="questionwise">
+        <ion-label> {{ 'FRMELEMNTS_LBL_QUESTION_WISE' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="criteriawise">
+        <ion-label> {{ 'FRMELEMNTS_LBL_CRITERIA_WISE' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <!--  -->
   </div>
-  <div *ngFor="let item of data?.reportSections">
-    <percentage-column-charts
-      [chartData]="item"
-      *ngIf="item.chart.type != 'expansion' && item.chart.type != 'expansion-table'"
-      (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
-    ></percentage-column-charts>
-    <expansion-panel [datas]="item" *ngIf="item.chart.type == 'expansion'"></expansion-panel>
-    <expansion-table [datas]="item" *ngIf="item.chart.type == 'expansion-table'"></expansion-table>
+  <div *ngFor="let section of reportSections">
+    <ion-card-content *ngIf="section?.criteriaName">
+      <h3>{{ section.criteriaName }}</h3>
+    </ion-card-content>
+    <div *ngFor="let element of section?.questionArray; let i = index">
+      <ion-card [ngSwitch]="element?.responseType">
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'text'"></reports-text>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'number'"></reports-text>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'date'"></reports-text>
+        <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'multiselect'"></bar-chart>
+        <matrix-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'matrix'"></matrix-chart>
+        <!-- /for assesssment type -->
+        <div *ngSwitchCase="'criteriaLevelReport'">
+          <percentage-column-charts
+            [chartData]="element"
+            *ngIf="element.chart.type === 'horizontalBar'"
+            (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
+          ></percentage-column-charts>
+          <!-- can remove expansion-panel ,not used anymore  -->
+          <expansion-panel [datas]="element" *ngIf="element.chart.type == 'expansion'"></expansion-panel>
+          <expansion-table [datas]="element" *ngIf="element.chart.type == 'expansion-table'"></expansion-table>
+        </div>
+        <!-- /for assesssment type ends-->
+        <!-- observation report with score  starts-->
+        <div *ngSwitchCase="'scoringReport'">
+          <pie-chart [data]="element" [questionNumber]="i + 1" *ngIf="element.chart.type == 'pie'"></pie-chart>
+          <scatter-chart
+            [data]="element"
+            [questionNumber]="i + 1"
+            *ngIf="element.chart.type == 'scatter'"
+          ></scatter-chart>
+          <bar-chart
+            [data]="element"
+            [questionNumber]="i + 1"
+            *ngIf="element.chart.type === 'bar' || element.chart.type === 'column'"
+          ></bar-chart>
+        </div>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
+      </ion-card>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let e of element.evidences">
+            <attachments [url]="e.url" [extension]="e.extension"></attachments>
+          </ion-col>
+          <ion-col size="12" *ngIf="element.evidence_count > 3">
+            <small class="pull-right text-ios-danger" (click)="allEvidence(i)">{{
+              'FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES' | translate
+            }}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- observation -->
+
+    <!--  -->
   </div>
-  <!-- <div *ngIf="data?.reportSections && !data?.reportSections.length" class="_flex-box _justify-content-center">
-    {{ data?.message ? data.message : ('message.ratingPending' | translate) }}
-  </div>
-  <div *ngIf="data && !data?.reportSections" class="_flex-box _justify-content-center">
-    {{ 'message.noReportsFound' | translate }}
-  </div> -->
-  <div *ngIf="!data?.result" class="_flex-box _justify-content-center">
-    {{ data?.message }}
+  <div *ngIf="error" class="_flex-box _justify-content-center">
+    {{ error?.message }}
   </div>
   <!-- <div class="_flex-box _justify-content-center" *ngIf="data?.reportSections && data?.reportSections.length ">
     <button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
@@ -49,18 +123,8 @@
     </button>
   </div> -->
   <!-- INFO: click to improve feature not threre as of now  -->
-
-  <ion-fab vertical="bottom" horizontal="end" *ngIf="data?.reportSections" #fab slot="fixed">
-    <ion-fab-button size="small">
-      <ion-icon name="ellipsis-vertical"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="start">
-      <ion-fab-button (click)="downloadSharePdf('download')">
-        <ion-icon name="download"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button (click)="downloadSharePdf('share')">
-        <ion-icon name="share"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
+<!-- dont show when error or when showing survey reports -->
+<ion-footer *ngIf="!error && !state.survey">
+  <download-share [extension]="'.pdf'" [interface]="'fab'" [config]="config()"> </download-share>
+</ion-footer>
