@@ -4,6 +4,7 @@ import {
     FrameworkService,
     LocationSearchCriteria,
     LocationSearchResult,
+    Organization,
     ProfileService,
     SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
@@ -118,7 +119,7 @@ export class LocationHandler {
               };
             let schoolDetails = [];
             await this.frameworkService.searchOrganization(orgSearchRequest).toPromise().then((data) => {
-                schoolDetails = data.content.map((org) => {
+                schoolDetails = data.content.map((org: Organization) => {
                     if (org && org.externalId) {
                         return {code: org.externalId, name: (org.orgName || locationValue), type: Location.TYPE_SCHOOL, id: org.externalId};
                     }
