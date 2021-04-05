@@ -36,6 +36,7 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit() {
     this.segmentValue = 'questionwise';
+    this.state['pdf'] = false;
     this.getReport();
   }
   getReport() {

@@ -101,7 +101,6 @@ export class ObservationSolutionListingComponent implements OnInit {
     let state = {
       scores: false,
       observation: true,
-      pdf: false,
       entityId: solution.entities[0]._id,
       entityType: solution.entityType,
       observationId: solution.observationId,
