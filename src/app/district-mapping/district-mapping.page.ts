@@ -29,6 +29,7 @@ import {
 } from 'sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
+import {ProfileType} from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-district-mapping',
@@ -348,7 +349,7 @@ export class DistrictMappingPage implements OnDestroy {
       }
       if (config.code === 'persona') {
         config.default = (this.profile && this.profile.serverProfile
-        && this.profile.serverProfile.userType && (this.profile.serverProfile.userType !== 'OTHER')) ?
+        && this.profile.serverProfile.userType && (this.profile.serverProfile.userType !== ProfileType.OTHER.toUpperCase())) ?
         this.profile.serverProfile.userType : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
