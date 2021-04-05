@@ -291,7 +291,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {
-        firstName:  profile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
+        firstName:  profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
         lastName: ''
       };
       return this.config;
