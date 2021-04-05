@@ -70,6 +70,7 @@ export class ProjectListingComponent implements OnInit {
 
   ionViewWillEnter() {
     this.projects = [];
+    this.page =1;
     this.getProjectList();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
