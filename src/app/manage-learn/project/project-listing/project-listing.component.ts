@@ -70,6 +70,7 @@ export class ProjectListingComponent implements OnInit {
 
   ionViewWillEnter() {
     this.projects = [];
+    this.page = 1;
     this.getProjectList();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -94,6 +95,7 @@ export class ProjectListingComponent implements OnInit {
     this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
     this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
     this.searchText = "";
+    this.page = 1;
     this.getProjectList();
   }
   async getProjectList() {
