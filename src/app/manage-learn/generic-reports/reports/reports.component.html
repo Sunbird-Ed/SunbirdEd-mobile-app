@@ -68,32 +68,17 @@
         <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>
         <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'multiselect'"></bar-chart>
         <matrix-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'matrix'"></matrix-chart>
-        <!-- /for assesssment type -->
-        <div *ngSwitchCase="'criteriaLevelReport'">
-          <percentage-column-charts
-            [chartData]="element"
-            *ngIf="element.chart.type === 'horizontalBar'"
-            (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
-          ></percentage-column-charts>
-          <!-- can remove expansion-panel ,not used anymore  -->
-          <expansion-panel [datas]="element" *ngIf="element.chart.type == 'expansion'"></expansion-panel>
-          <expansion-table [datas]="element" *ngIf="element.chart.type == 'expansion-table'"></expansion-table>
-        </div>
-        <!-- /for assesssment type ends-->
-        <!-- observation report with score  starts-->
-        <div *ngSwitchCase="'scoringReport'">
-          <pie-chart [data]="element" [questionNumber]="i + 1" *ngIf="element.chart.type == 'pie'"></pie-chart>
-          <scatter-chart
-            [data]="element"
-            [questionNumber]="i + 1"
-            *ngIf="element.chart.type == 'scatter'"
-          ></scatter-chart>
-          <bar-chart
-            [data]="element"
-            [questionNumber]="i + 1"
-            *ngIf="element.chart.type === 'bar' || element.chart.type === 'column'"
-          ></bar-chart>
-        </div>
+        <percentage-column-charts
+          [chartData]="element"
+          *ngSwitchCase="'horizontalBar'"
+          (clickOnGraphEventEmit)="clickOnGraphEventEmit($event)"
+        ></percentage-column-charts>
+        <expansion-panel [datas]="element" *ngSwitchCase="'expansion'"></expansion-panel>
+        <expansion-table [datas]="element" *ngSwitchCase="'expansion-table'"></expansion-table>
+        <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'pie'"></pie-chart>
+        <scatter-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'scatter'"></scatter-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'column'"></bar-chart>
+        <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'bar'"></bar-chart>
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
       </ion-card>
       <ion-grid>
