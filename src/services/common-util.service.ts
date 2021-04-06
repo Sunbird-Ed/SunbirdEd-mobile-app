@@ -367,6 +367,7 @@ export class CommonUtilService {
         }
     }
 
+
     async getAppName() {
         return this.appVersion.getAppName();
     }
@@ -470,10 +471,10 @@ export class CommonUtilService {
     private findAllRequiredFields(locationMappingConfig, userType) {
         return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
             if (config.validations && config.validations.find((v) => v.type === 'required')) {
-              acc.push(config.code);
+                acc.push(config.code);
             }
             return acc;
-          }, []);
+        }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -556,7 +557,7 @@ export class CommonUtilService {
                 {
                     text: this.translateMessage('SETTINGS'),
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'bottom',
@@ -623,7 +624,7 @@ export class CommonUtilService {
                 {
                     text: 'X',
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'top',
@@ -720,5 +721,33 @@ export class CommonUtilService {
             return maxAttempt;
         }
     }
-
+    async showPPPForProjectPopUp() {
+        if (!this.alert) {
+            this.alert = await this.popOverCtrl.create({
+                component: SbGenericPopoverComponent,
+                componentProps: {
+                    sbPopoverHeading: this.translateMessage('FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS'),
+                    sbPopoverMainTitle: '',
+                    sbPopoverContent:"I confirm that this Content complies with prescribed guidelines,including the <a href='https://diksha.gov.in/term-of-use.html'> Terms of Use and Content Policy.</a> I have not shared any personal or sensitive information and have made sure that I do not violate others’ privacy rights and third party rights including intellectual property rights",
+                    actionsButtons: [
+                        {
+                            btntext: this.translateMessage('FRMELEMNTS_BTN_DO_NOT_SHARE'),
+                            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                        }, {
+                            btntext: this.translateMessage('FRMELEMNTS_LBL_SHARE'),
+                            btnClass: 'popover-color'
+                        }
+                    ],
+                    icon: null
+                },
+                cssClass: 'sb-popover',
+            });
+            await this.alert.present();
+            const { data } = await this.alert.onDidDismiss();
+            return data;
+        } else {
+            await this.alert.dismiss();
+            this.alert = undefined;
+        }
+    }
 }

@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { KendraApiService } from '../../core/services/kendra-api.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { LoaderService } from "../../core";
 
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UtilsService } from '../../core';
 import { Platform } from '@ionic/angular';
-import { DbService } from '../../core/services/db.service';
-import { HttpClient } from '@angular/common/http';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -58,7 +55,9 @@ export class ProjectListingComponent implements OnInit {
     private unnatiService: UnnatiDataService,
     private loader: LoaderService,
     private translate: TranslateService,
-    private utils: UtilsService) {
+    private utils: UtilsService,
+    private commonUtilService: CommonUtilService,
+  ) {
     this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
       this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
       this.selectedFilter = this.filters[0];
@@ -70,7 +69,7 @@ export class ProjectListingComponent implements OnInit {
 
   ionViewWillEnter() {
     this.projects = [];
-    this.page =1;
+    this.page = 1;
     this.getProjectList();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -157,5 +156,12 @@ export class ProjectListingComponent implements OnInit {
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
       queryParams: {}
     })
+  }
+  doAction(project?, id?) {
+    if (project && !project.hasAcceptedTAndC) {
+      this.commonUtilService.showPPPForProjectPopUp().then(data => {
+        console.log(data, "data 163");
+      })
+    }
   }
 }
