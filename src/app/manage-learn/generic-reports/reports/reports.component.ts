@@ -6,6 +6,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { ModalController } from '@ionic/angular';
 import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-reports',
@@ -131,6 +132,18 @@ export class ReportsComponent implements OnInit {
         this.state.filter[keyToSend] = response.data.filter;
         this.getReport();
       }
+    });
+  }
+
+  allEvidence(element) {
+    this.router.navigate([RouterLinks.ALL_EVIDENCE], {
+      queryParams: {
+        submissionId: this.state.submissionId,
+        observationId: this.state.observationId,
+        entityId: this.state.entityId,
+        questionExternalId: element.order,
+        entityType: this.state.entityType,
+      },
     });
   }
 }
