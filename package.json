@@ -47,7 +47,7 @@
     "@ionic-native/local-notifications": "^5.15.1",
     "@ionic-native/media": "^5.30.0",
     "@ionic-native/native-page-transitions": "^5.23.0",
-    "@ionic-native/network": "^5.15.1",
+    "@ionic-native/network": "5.31.1",
     "@ionic-native/photo-library": "^5.30.0",
     "@ionic-native/photo-viewer": "^5.30.0",
     "@ionic-native/screen-orientation": "^5.15.1",
