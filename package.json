@@ -39,7 +39,7 @@
     "@ionic-native/keyboard": "^5.15.1",
     "@ionic-native/local-notifications": "^5.15.1",
     "@ionic-native/native-page-transitions": "^5.23.0",
-    "@ionic-native/network": "^5.15.1",
+    "@ionic-native/network": "5.31.1",
     "@ionic-native/screen-orientation": "^5.15.1",
     "@ionic-native/social-sharing": "^5.15.1",
     "@ionic-native/status-bar": "^5.15.1",
