@@ -7,7 +7,7 @@ export const menuConstants = {
             ICON: 'create'
         },
         {
-            TITLE: 'FRMELEMNTS_LBL_SHARE_TASK',
+            TITLE: 'FRMELEMNTS_LBL_SHARE',
             VALUE: 'shareTask',
             ICON: 'share'
         }
@@ -28,9 +28,9 @@ export const menuConstants = {
             TITLE: 'FRMELEMNTS_LBL_FILES',
             VALUE: 'fileProject',
             ICON: 'document'
-        },
+        }, 
         {
-            TITLE: 'FRMELEMNTS_LBL_SHARE_PROJECT',
+            TITLE: 'FRMELEMNTS_LBL_SHARE',
             VALUE: 'shareProject',
             ICON: 'share'
         }],
