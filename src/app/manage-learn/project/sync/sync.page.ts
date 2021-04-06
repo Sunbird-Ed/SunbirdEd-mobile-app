@@ -7,6 +7,8 @@ import { SyncService } from '../../core/services/sync.service';
 import { NetworkService } from '../../core/services/network.service';
 import { ToastService } from '../../core';
 import { DbService } from '../../core/services/db.service';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 
 var environment = {
   db: {
@@ -31,6 +33,9 @@ export class SyncPage implements OnInit, OnDestroy {
   progressPercentage = 0;
   attachments = [];
   imageUploadIndex = 0;
+  taskId;
+  fileName;
+  isShare;
   syncCompletedProjects = []
   constructor(
     private routerparam: ActivatedRoute,
@@ -39,7 +44,8 @@ export class SyncPage implements OnInit, OnDestroy {
     private syncServ: SyncService,
     private translate: TranslateService,
     private db: DbService,
-    private network: NetworkService) {
+    private network: NetworkService,
+    private share: SharingFeatureService) {
     this.db.createPouchDB(environment.db.projects);
     this.translate
       .get([
@@ -57,6 +63,9 @@ export class SyncPage implements OnInit, OnDestroy {
         if (params && params.projectId) {
           //Sync only single project
           this.projectId = params.projectId;
+          this.taskId = params.taskId ? params.taskId : '';
+          this.isShare = params.share;
+          this.fileName = params.fileName;
           this.getProjectFromId(params.projectId);
         } else {
           //sync mutiple projects
@@ -128,8 +137,11 @@ export class SyncPage implements OnInit, OnDestroy {
       this.calculateProgressPercentage()
     } else {
       this.syncIndex = 0;
-      this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED'])
-      this.location.back()
+      this.toast.showMessage(this.allStrings['FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED']);
+      if (this.isShare) {
+        this.getPdfUrl(this.fileName, this.taskId);
+      }
+      this.location.back();
     }
   }
 
@@ -246,5 +258,12 @@ export class SyncPage implements OnInit, OnDestroy {
       this.imageUploadIndex++;
       this.cloudUpload(this.attachments[this.imageUploadIndex])
     })
+  }
+
+  getPdfUrl(fileName, taskId?) {
+    const config = {
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + taskId,
+    };
+    this.share.getFileUrl(config, fileName);
   }
 }

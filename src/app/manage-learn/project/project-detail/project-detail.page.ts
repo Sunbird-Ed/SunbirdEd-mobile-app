@@ -23,6 +23,7 @@ import { Location } from '@angular/common';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
+import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 
 // var environment = {
 //   db: {
@@ -75,6 +76,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   sortedTasks;
   programId;
   solutionId;
+
   // header
   private _headerConfig = {
     showHeader: true,
@@ -96,6 +98,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private router: Router,
     private utils: UtilsService,
     private alert: AlertController,
+    private share: SharingFeatureService,
     // private location: Location,
     private syncServ: SyncService,
     private toast: ToastService,
@@ -131,7 +134,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.getProjectTaskStatus();
     });
   }
-
   getProject() {
     this.db.query({ _id: this.projectId }).then(
       (success) => {
@@ -161,66 +163,66 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
     console.log(this.projectType, "projectType");
-      let id = this.projectId ? '/' + this.projectId : '';
-      const config = {
-        url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
-        payload: this.projectType == 'assignedToMe' ? payload : {}
-      }
-      console.log(config, "config");
-      this.unnatiService.post(config).subscribe(success => {
-        this.loader.stopLoader();
-        // this.projectId = success.result._id;
-        // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
-        let data = success.result;
-        let newCategories = []
-        for (const category of data.categories) {
-          if (category._id || category.name) {
-            const obj = {
-              label: category.name || category.label,
-              value: category._id
-            }
-            newCategories.push(obj)
+    let id = this.projectId ? '/' + this.projectId : '';
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
+      payload: this.projectType == 'assignedToMe' ? payload : {}
+    }
+    console.log(config, "config");
+    this.unnatiService.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      // this.projectId = success.result._id;
+      // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
+      let data = success.result;
+      let newCategories = []
+      for (const category of data.categories) {
+        if (category._id || category.name) {
+          const obj = {
+            label: category.name || category.label,
+            value: category._id
           }
+          newCategories.push(obj)
         }
-        data.categories = newCategories.length ? newCategories : data.categories;
-        if (data.tasks) {
+      }
+      data.categories = newCategories.length ? newCategories : data.categories;
+      if (data.tasks) {
 
-          data.tasks.map(t => {
-            if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
-              if (t.submissionDetails.status != t.status) {
-                t.status = t.submissionDetails.status
-                t.isEdit = true;
-                data.isEdit = true
-              }
+        data.tasks.map(t => {
+          if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
+            if (t.submissionDetails.status != t.status) {
+              t.status = t.submissionDetails.status
+              t.isEdit = true;
+              data.isEdit = true
             }
-          })
-
-        }
-        // TODO:till here
-        this.db.create(success.result).then(successData => {
-          this.projectId ? this.getProject() :
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-              queryParams: {
-                projectId: success.result._id,
-                programId: this.programId,
-                solutionId: this.solutionId
-              }, replaceUrl: true
-            });
-        }).catch(error => {
-          if (error.status === 409) {
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-              queryParams: {
-                projectId: success.result._id,
-                programId: this.programId,
-                solutionId: this.solutionId
-              }, replaceUrl: true
-            })
           }
         })
-      }, error => {
 
-        this.loader.stopLoader();
+      }
+      // TODO:till here
+      this.db.create(success.result).then(successData => {
+        this.projectId ? this.getProject() :
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            queryParams: {
+              projectId: success.result._id,
+              programId: this.programId,
+              solutionId: this.solutionId
+            }, replaceUrl: true
+          });
+      }).catch(error => {
+        if (error.status === 409) {
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            queryParams: {
+              projectId: success.result._id,
+              programId: this.programId,
+              solutionId: this.solutionId
+            }, replaceUrl: true
+          })
+        }
       })
+    }, error => {
+
+      this.loader.stopLoader();
+    })
   }
 
   ngOnInit() { }
@@ -233,7 +235,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   initApp() {
     this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
       if (eventName.name === 'more') {
-        this.openPopover(eventName.event, null, false);
+        this.openPopover(eventName.event);
       } else if (eventName.name === 'sync') {
         this.action(eventName.name);
       }
@@ -316,11 +318,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   toggle() {
     this.showDetails = !this.showDetails;
   }
-  async openPopover(ev: any, taskId?, isDelete?) {
+  async openPopover(ev: any, task?) {
     let menu;
-    if (taskId) {
+    if (task && task._id) {
       menu = JSON.parse(JSON.stringify(menuConstants.TASK));
-      if (isDelete) {
+      if (task.isDeletable) {
         let deleteOption = {
           TITLE: 'DELETE',
           VALUE: 'deleteTask',
@@ -339,13 +341,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
     popover.onDidDismiss().then((data) => {
       if (data.data) {
-        this.action(data.data, taskId);
+        this.action(data.data, task);
       }
     });
     return await popover.present();
   }
 
-  action(event, taskId?) {
+  action(event, task?) {
     switch (event) {
       case "sync": {
         this.project.isNew
@@ -354,11 +356,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "editTask": {
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, taskId]);
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, task._id]);
         break;
       }
       case "deleteTask": {
-        this.askPermissionToDelete("task", taskId);
+        this.askPermissionToDelete("task", task._id);
         break;
       }
       case "fileProject": {
@@ -373,9 +375,55 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.askPermissionToDelete("Project");
         break;
       }
+      case "shareTask": {
+        this.project.isEdit ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.getPdfUrl(task.name, task._id);
+        break;
+      }
+      case "shareProject": {
+        this.project.isEdit ? this.openSyncSharePopup("shareProject", this.project.title) : this.getPdfUrl(this.project.title);
+        break;
+      }
     }
   }
 
+  async openSyncSharePopup(type, name, taskId?) {
+    let data;
+    this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      message: data["FRMELEMNTS_LBL_SHARE_MSG"],
+      buttons: [
+        {
+          text: data["FRMELEMNTS_BTN_DNTSYNC"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {
+            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+          },
+        },
+        {
+          text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
+          handler: () => {
+            this.project.isNew
+              ? this.createNewProject()
+              : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+            console.log('sync completed');
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  getPdfUrl(fileName, taskId?) {
+    console.log(taskId, "taskid");
+    const config = {
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + taskId,
+    };
+    console.log(config, "config");
+    this.share.getFileUrl(config, fileName);
+  }
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;

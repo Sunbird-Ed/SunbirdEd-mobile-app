@@ -54,7 +54,7 @@ export const urlConstants = {
     PROFILE_UPDATE: 'v1/user-extension/updateProfileRoles',
     MARK_AS_READ: 'v1/notifications/in-app/markAsRead/',
     GET_PREVIOUS_PROFILE: 'v1/users/search?search=',
-
+    GET_SHARABLE_PDF:'v1/userProjects/share/',
     // survey api
     GET_PROG_SOL_FOR_OBSERVATION: 'v1/observations/getObservation',
     GET_OBSERVATION_ENTITIES: 'v1/observations/entities',
