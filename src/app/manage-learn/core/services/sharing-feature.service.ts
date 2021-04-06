@@ -94,34 +94,29 @@ export class SharingFeatureService {
 
   async getFileUrl(config, name) {
     this.loader.startLoader();
-
-    // let res = await this.unnatiSrvc.get(config).toPromise();
-
-    // if (res.result && !res.result.data && !res.result.data.downloadUrl) {
-    //   this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-    //   this.loader.stopLoader();
-    //   return;
-    // }
-    console.log(name, "name");
+    let res = await this.unnatiSrvc.get(config).toPromise();
+    if (res.result && !res.result.data && !res.result.data.downloadUrl) {
+      this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+      this.loader.stopLoader();
+      return;
+    }
     let fileName = name + '.pdf';
-
     const ft = this.fileTransfer.create();
-    // ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
-
-    ft.download('https://www.tutorialspoint.com/html/html_tutorial.pdf', this.directoryPath() + fileName)
-      .then(
-        (res) => {
-          this.socialSharing.share(null, null, res.nativeURL, null);
-        },
-        (err) => {
-          console.log(err);
-          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-          this.requestPermission();
-        }
-      )
-      .finally(() => {
-        this.loader.stopLoader();
-      });
+    ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
+    .then(
+      (res) => {
+        this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
+        },error =>{
+        })
+      },
+      (err) => {
+        this.requestPermission();
+        this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+      }
+    )
+    .finally(() => {
+      this.loader.stopLoader();
+    });
   }
   directoryPath(): string {
     let dir_name = 'Download/';

@@ -376,17 +376,17 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.project.isEdit ? this.openSyncSharePopup("shareTask", task._id) : this.getPdfUrl(task.name,task._id);
+        this.project.isEdit ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.getPdfUrl(task.name, task._id);
         break;
       }
       case "shareProject": {
-        this.project.isEdit ? this.openSyncSharePopup("shareProject") : this.getPdfUrl(this.project.title);
+        this.project.isEdit ? this.openSyncSharePopup("shareProject", this.project.title) : this.getPdfUrl(this.project.title);
         break;
       }
     }
   }
 
-  async openSyncSharePopup(type, taskId?) {
+  async openSyncSharePopup(type, name, taskId?) {
     let data;
     this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
       data = text;
@@ -398,7 +398,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           text: data["FRMELEMNTS_BTN_DNTSYNC"],
           role: "cancel",
           cssClass: "secondary",
-          handler: (blah) => { 
+          handler: (blah) => {
             this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
           },
         },
@@ -407,7 +407,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: () => {
             this.project.isNew
               ? this.createNewProject()
-              : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true } });
+              : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
             console.log('sync completed');
           },
         },
@@ -417,7 +417,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   getPdfUrl(fileName, taskId?) {
-    console.log(taskId,"taskid");
+    console.log(taskId, "taskid");
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + taskId,
     };

@@ -1,7 +1,7 @@
 <ion-content *ngIf="project">
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
-      <ion-icon name="caret-down-outline" (click)="toggle()"></ion-icon>
+      <ion-icon name="caret-down-outline" color="primary" (click)="toggle()"></ion-icon>
       <ion-label>{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
