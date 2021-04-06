@@ -19,7 +19,10 @@ import {
   ContentAggregatorRequest, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus,
   ContentSearchCriteria, ContentService,
   CorrelationData, Course,
-  CourseBatchesRequest, CourseBatchStatus, CourseEnrollmentType, CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService,
+  CourseBatchesRequest,
+  CourseBatchStatus,
+  CourseEnrollmentType,
+  CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService,
   FrameworkService, NetworkError, PageAssembleCriteria, PageName,
   Profile, ProfileService, SharedPreferences,
   SortOrder, TelemetryObject
@@ -39,7 +42,7 @@ import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import { CorReleationDataType, Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { updateFilterInSearchQuery } from '../../util/filter.util';
+import { applyProfileFilter, updateFilterInSearchQuery } from '../../util/filter.util';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { PageFilterCallback, PageFilterPage } from '../page-filter/page-filter.page';
 
@@ -207,12 +210,12 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.refresher.disabled = false;
     this.isVisible = true;
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download']);
   }
 
   ionViewDidEnter() {
@@ -380,10 +383,10 @@ export class CoursesPage implements OnInit, OnDestroy {
 
     this.getUserId()
       .then(() => {
-       this.getAggregatorResult();
+        this.getAggregatorResult();
       })
       .catch(() => {
-       this.getAggregatorResult();
+        this.getAggregatorResult();
       });
   }
 
@@ -952,6 +955,22 @@ export class CoursesPage implements OnInit, OnDestroy {
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         if (this.filter) {
           contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);
+        }
+        if (this.profile) {
+          if (this.profile.board && this.profile.board.length) {
+            contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
+              contentSearchCriteria.board, 'board');
+          }
+
+          if (this.profile.medium && this.profile.medium.length) {
+            contentSearchCriteria.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
+              contentSearchCriteria.medium, 'medium');
+          }
+
+          if (this.profile.grade && this.profile.grade.length) {
+            contentSearchCriteria.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
+              contentSearchCriteria.grade, 'gradeLevel');
+          }
         }
         // contentSearchCriteria.audience = audience;
         return contentSearchCriteria;
