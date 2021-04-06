@@ -7,7 +7,7 @@ import { ModalController, NavController, NavParams } from '@ionic/angular';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
-import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
+import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 
 @Component({
   selector: 'app-survey-report',
@@ -116,7 +116,7 @@ export class SurveyReportComponent implements OnInit {
 
   async openFilter() {
     const modal = await this.modal.create({
-      component: QuestionListComponent,
+      component: ReportModalFilter,
       componentProps: {
         allQuestions: this.allQuestions,
         filteredQuestions: JSON.parse(JSON.stringify(this.filteredQuestions)),

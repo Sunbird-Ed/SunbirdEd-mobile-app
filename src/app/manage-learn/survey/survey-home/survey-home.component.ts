@@ -43,7 +43,7 @@ export class SurveyHomeComponent implements OnInit {
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
     private routerParam: ActivatedRoute,
-    private toast:ToastService
+    private toast: ToastService
   ) {
     // this.routerParam.queryParams.subscribe((params) => {
     //  this.link=params.surveyId
@@ -144,9 +144,9 @@ export class SurveyHomeComponent implements OnInit {
           return;
         }
         if (data.result.isCreator) {
-          this.toast.openToast(data.message)
-          this.router.navigate([''])
-          return
+          this.toast.openToast(data.message);
+          this.router.navigate(['']);
+          return;
         }
         survey = data.result;
         this.storeRedirect(survey);
@@ -235,16 +235,27 @@ export class SurveyHomeComponent implements OnInit {
   checkReport(survey) {
     if (survey.submissionId) {
       // this.navCtrl.push(SurveyReportPage, { submissionId: survey.submissionId });
-      this.router.navigate([RouterLinks.SURVEY_REPORTS], {
-        queryParams: {
+      // this.router.navigate([RouterLinks.SURVEY_REPORTS], {
+      //   queryParams: {
+      //     submissionId: survey.submissionId,
+      //   },
+      // });
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          survey: true,
           submissionId: survey.submissionId,
         },
       });
       return;
     }
     // this.navCtrl.push(SurveyReportPage, { solutionId: survey.solutionId });
-    this.router.navigate([RouterLinks.SURVEY_REPORTS], {
-      queryParams: {
+    // this.router.navigate([RouterLinks.SURVEY_REPORTS], {
+    //   queryParams: {
+    //     solutionId: survey.solutionId,
+    //   },
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: {
+        survey: true,
         solutionId: survey.solutionId,
       },
     });

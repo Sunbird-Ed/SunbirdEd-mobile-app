@@ -153,14 +153,13 @@ export class ProjectReportComponent implements OnInit {
     let label = [];
     let data = [];
     let color = [];
-    let count =0
+    let count = 0;
     for (const key in obj) {
-
-      debugger
+      debugger;
       if (key == 'total' || key == 'series' || obj[key] == 0) {
         continue;
       }
-      
+
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
       if (key == 'completed') {
@@ -248,7 +247,7 @@ export class ProjectReportComponent implements OnInit {
     return arr;
   }
 
-  downloadUrl() {
+  config() {
     let url = urlConstants.API_URLS.GET_REPORT;
     if (this.filter.entity) {
       url = url + this.filter.entity._id;
@@ -262,7 +261,7 @@ export class ProjectReportComponent implements OnInit {
 
     url = this.utils.queryUrl(url, query);
 
-    return url;
+    return { url: url };
   }
 
   async openFilterModal(type) {

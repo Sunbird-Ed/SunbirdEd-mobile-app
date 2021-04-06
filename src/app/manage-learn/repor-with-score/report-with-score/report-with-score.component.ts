@@ -8,7 +8,7 @@ import { LoaderService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { File } from '@ionic-native/file/ngx';
-import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
+import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { RouterLinks } from '@app/app/app.constant';
@@ -405,7 +405,7 @@ export class ReportWithScoreComponent implements OnInit {
 
   async openFilter() {
     const modal = await this.modal.create({
-      component: QuestionListComponent,
+      component: ReportModalFilter,
       componentProps: {
         allQuestions: this.allQuestions,
         filteredQuestions: JSON.parse(JSON.stringify(this.filteredQuestions)),
