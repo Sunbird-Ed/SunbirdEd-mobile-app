@@ -14,7 +14,6 @@ export class MatrixChartComponent implements OnInit {
   ngOnInit() {}
 
   allEvidenceClick($event) {
-    debugger
     this.allEvidence.emit($event);
   }
 }

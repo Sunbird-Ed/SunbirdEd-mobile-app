@@ -146,7 +146,6 @@ export class ReportsComponent implements OnInit {
   }
 
   allEvidence(element) {
-    debugger
     this.router.navigate([RouterLinks.ALL_EVIDENCE], {
       queryParams: {
         submissionId: this.state.submissionId,
