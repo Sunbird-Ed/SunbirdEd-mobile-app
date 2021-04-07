@@ -67,7 +67,12 @@
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'date'"></reports-text>
         <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>
         <bar-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'multiselect'"></bar-chart>
-        <matrix-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'matrix'"></matrix-chart>
+        <matrix-chart
+          [data]="element"
+          [questionNumber]="i + 1"
+          *ngSwitchCase="'matrix'"
+          (allEvidence)="allEvidence($event)"
+        ></matrix-chart>
         <percentage-column-charts
           [chartData]="element"
           *ngSwitchCase="'horizontalBar'"
