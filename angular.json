@@ -63,7 +63,6 @@
             "styles": [
               "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               "node_modules/@project-sunbird/discussions-ui-v8/assets/styles/global.scss",
-              "node_modules/sb-theme/themes/theme.scss",
               {
                 "input": "src/global.scss"
               }
