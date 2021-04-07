@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'matrix-chart',
@@ -8,8 +8,13 @@ import { Component, Input, OnInit } from '@angular/core';
 export class MatrixChartComponent implements OnInit {
   @Input() data;
   @Input() questionNumber;
-
+  @Output() allEvidence = new EventEmitter();
   constructor() {}
 
   ngOnInit() {}
+
+  allEvidenceClick($event) {
+    debugger
+    this.allEvidence.emit($event);
+  }
 }
