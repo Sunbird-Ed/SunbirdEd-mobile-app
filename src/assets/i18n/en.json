@@ -294,7 +294,7 @@
   "DFLT_TRK_FRMELEMNTS_LBL_ACTIVITY_COURSE_TITLE": "Learning tasks",
   "DFLT_TRK_FRMELEMNTS_LBL_ALREADY_ENROLLED_COURSE": "You have joined this learning task",
   "DFLT_TRK_FRMELEMNTS_LBL_BATCHES_FOR_THIS_COURSE": "Batches for the learning task",
-  "DFLT_TRK_FRMELEMNTS_LBL_COURSES_BNAV": "Learning tasks",
+  "DFLT_TRK_FRMELEMNTS_LBL_COURSES_BNAV": "Learning ftasks",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSES_IN_PROGRESS": "My learning tasks",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSE_ENDED_ON": "Task ended on {{%s}}",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON": "Last updated on {{last_updated_on_date}}",
@@ -1171,5 +1171,6 @@
   "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Try new {{appName}} experience",
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
-  "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\""
+  "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
+  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content"
 }
