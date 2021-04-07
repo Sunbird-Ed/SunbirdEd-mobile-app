@@ -81,24 +81,24 @@ export class LearningResourcesPage implements OnInit {
     });
   }
   getProjectFromLocal(projectId) {
-    this.loader.startLoader();
+    // this.loader.startLoader();
     this.db.query({ _id: projectId }).then(
       (success) => {
-        this.loader.stopLoader();
+        // this.loader.stopLoader();
         this.list = success.docs.length ? success.docs[0] : [];
         if (this.taskId) {
           this.list = this.list.tasks.filter((t) => t._id == this.taskId)[0];
         }
       },
       (error) => {
-        this.loader.stopLoader();
+        // this.loader.stopLoader();
       }
     );
   }
-  openBodh(link) {
-    let identifier = link.split("/").pop();
+  openBodh(id) {
+    // let identifier = link.split("/").pop();
     const req: ContentDetailRequest = {
-      contentId: identifier,
+      contentId: id,
       attachFeedback: false,
       attachContentAccess: false,
       emitUpdateIfAny: false
