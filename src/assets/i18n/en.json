@@ -1409,5 +1409,6 @@
   "FRMELEMNTS_LBL_SWITCH_TO_HOME": "Try new {{appName}} experience",
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
-  "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\""
+  "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
+  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content"
 }
