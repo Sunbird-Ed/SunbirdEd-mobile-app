@@ -264,6 +264,15 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 this.fromPage = PageId.HOME;
                 this.env = Environment.HOME;
                 break;
+            case 'browse_by_audience':
+                this.corRelationList.push({
+                    type: CorReleationDataType.AUDIENCE,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.AUDIENCE_RESULTS;
+                this.fromPage = PageId.SEARCH;
+                this.env = Environment.SEARCH;
+                break;
         }
 
         this.corRelationList.push({
