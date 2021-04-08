@@ -294,7 +294,7 @@
   "DFLT_TRK_FRMELEMNTS_LBL_ACTIVITY_COURSE_TITLE": "Learning tasks",
   "DFLT_TRK_FRMELEMNTS_LBL_ALREADY_ENROLLED_COURSE": "You have joined this learning task",
   "DFLT_TRK_FRMELEMNTS_LBL_BATCHES_FOR_THIS_COURSE": "Batches for the learning task",
-  "DFLT_TRK_FRMELEMNTS_LBL_COURSES_BNAV": "Learning ftasks",
+  "DFLT_TRK_FRMELEMNTS_LBL_COURSES_BNAV": "Learning tasks",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSES_IN_PROGRESS": "My learning tasks",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSE_ENDED_ON": "Task ended on {{%s}}",
   "DFLT_TRK_FRMELEMNTS_LBL_COURSE_LAST_UPDATED_ON": "Last updated on {{last_updated_on_date}}",
