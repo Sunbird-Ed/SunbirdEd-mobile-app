@@ -1,15 +1,19 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
+import {
+  AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService
+} from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
+import {
+  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+  CachedItemRequestSourceFrom, SearchType, InteractType, FormService, FormRequest
+} from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView  } from '@ionic/angular';
+import { IonContent as ContentView } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
@@ -45,6 +49,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -97,13 +102,17 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   getCreateProjectForm() {
     this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
     }, error => {
-      const config = {
-        url: urlConstants.API_URLS.CREATE_PROJECT_FORM
-      }
-      this.unnatiService.get(config).subscribe(data => {
+      const request: FormRequest = {
+        from: CachedItemRequestSourceFrom.SERVER,
+        type: 'user',
+        subType: 'project',
+        action: 'create'
+      };
+
+      this.formService.getForm(request).subscribe(result => {
         this.getTaskForm();
-        if (data.result && data.result.length) {
-          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, data.result).then(resp => {
+        if (result.form.data.fields) {
+          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, result.form.data.fields).then(resp => {
           }, error => {
           })
         }
@@ -119,9 +128,16 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       const config = {
         url: urlConstants.API_URLS.GET_TASK_META_FORM
       }
-      this.unnatiService.get(config).subscribe(data => {
-        if (data.result && data.result.length) {
-          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, data.result).then(resp => {
+      const request: FormRequest = {
+        from: CachedItemRequestSourceFrom.SERVER,
+        type: 'user',
+        subType: 'project',
+        action: 'createTask'
+      };
+
+      this.formService.getForm(request).subscribe(result => {
+        if (result.form.data.fields) {
+          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, result.form.data.fields).then(resp => {
           }, error => {
           })
         }
@@ -236,12 +252,12 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'course':
         this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
 
-        // this.router.navigate([RouterLinks.SEARCH], {
-        //   state: {
-        //     source: PageId.ADMIN_HOME,
-        //     preAppliedFilter: event.data[0].value.search
-        //   }
-        // });
+      // this.router.navigate([RouterLinks.SEARCH], {
+      //   state: {
+      //     source: PageId.ADMIN_HOME,
+      //     preAppliedFilter: event.data[0].value.search
+      //   }
+      // });
     }
   }
 
