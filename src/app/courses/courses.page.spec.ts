@@ -34,7 +34,8 @@ import {CsNetworkError} from '@project-sunbird/client-services/core/http-service
 import { NavigationService } from '../../services/navigation-handler.service';
 import { ContentAggregatorHandler } from '../../services/content/content-aggregator-handler.service';
 import { ProfileHandler } from '../../services/profile-handler';
-import { ProfileService } from '@project-sunbird/sunbird-sdk';
+import { FrameworkUtilService, ProfileService } from '@project-sunbird/sunbird-sdk';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -92,6 +93,14 @@ describe('CoursesPage', () => {
         getAudience: jest.fn(() => Promise.resolve(['Student']))
     };
 
+    const mockFrameworkUtilService: Partial<FrameworkUtilService> = {
+        getFrameworkCategoryTerms: jest.fn(() => of([]))
+    };
+
+    const mockTranslateService: Partial<TranslateService> = {
+        currentLang: 'en'
+    };
+
     beforeAll(() => {
         coursesPage = new CoursesPage(
             mockEventBusService as EventsBusService,
@@ -100,6 +109,7 @@ describe('CoursesPage', () => {
             mockContentService as ContentService,
             mockFrameworkService as FrameWorkService,
             mockProfileService as ProfileService,
+            mockFormAndFrameworkUtilService as FrameworkUtilService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppVersion as AppVersion,
             mockNgZone as NgZone,
@@ -117,7 +127,8 @@ describe('CoursesPage', () => {
             mockSbProgressLoader as SbProgressLoader,
             mockNavService as NavigationService,
             mockContentAggregatorHandler as ContentAggregatorHandler,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockTranslateService as Trans
         );
     });
 

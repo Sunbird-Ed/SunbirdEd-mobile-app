@@ -162,6 +162,7 @@ export enum PageId {
     CATEGORY_RESULTS = 'category-results',
     BOARD_RESULTS = 'board-results',
     SUBJECT_RESULTS = 'subject-results',
+    AUDIENCE_RESULTS = 'audience-results',
     NEW_EXPERIENCE_POPUP = 'new-experience-popup',
     MENU = 'menu'
 }
@@ -247,6 +248,7 @@ export enum InteractType {
     SELECT_QRSCANER = 'select-qrscanner',
     SELECT_CATEGORY = 'select-category',
     SELECT_ATTRIBUTE = 'select-attribute',
+    SELECT_AUDIENCE = 'select-audience',
     SELECT_SUBMIT = 'select-submit',
     SELECT_CANCEL = 'select-cancel',
     SELECT_ADD = 'select-add',
@@ -635,7 +637,9 @@ export enum CorReleationDataType {
     CATEGORY_NAME = 'category-name',
     CATEGORY_LIST = 'CategoryList',
     OTHER_BOARDS = 'OtherBoards',
-    ROOT_SECTION = 'RootSection'
+    ROOT_SECTION = 'RootSection',
+    AUDIENCE_LIST = 'AudienceList',
+    AUDIENCE = 'Audience'
 }
 
 export enum AuditProps {
