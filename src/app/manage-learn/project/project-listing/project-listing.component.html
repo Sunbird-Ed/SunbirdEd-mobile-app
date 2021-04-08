@@ -24,7 +24,7 @@
     <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
   </div>
   <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
-    [id]="project?._id" (cardSelect)="selectedProgram($event, project)"></app-item-list-card>
+    [id]="project?._id" (cardSelect)="doAction($event, project)"></app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
 <ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">

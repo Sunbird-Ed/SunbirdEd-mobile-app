@@ -12,6 +12,7 @@ import { UtilsService } from '../../core';
 import { Platform } from '@ionic/angular';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
+import { SyncService } from '../../core/services/sync.service';
 
 @Component({
   selector: 'app-project-listing',
@@ -57,6 +58,7 @@ export class ProjectListingComponent implements OnInit {
     private translate: TranslateService,
     private utils: UtilsService,
     private commonUtilService: CommonUtilService,
+    private syncService: SyncService
   ) {
     this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
       this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
@@ -152,15 +154,35 @@ export class ProjectListingComponent implements OnInit {
     this.getProjectList();
   }
 
-  createProject() {
+  createProject(data) {
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
-      queryParams: {}
+      queryParams: { hasAcceptedTAndC: data }
     })
   }
-  doAction(project?, id?) {
-    if (project && !project.hasAcceptedTAndC) {
+  doAction(id?, project?) {
+    if (project) {
+      const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
+      if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
+        this.commonUtilService.showPPPForProjectPopUp().then((data: any) => {
+          if (!data.isLeftButtonClicked) {
+            let payload = {
+              _id: id,
+              lastDownloadedAt: project.lastDownloadedAt,
+              hasAcceptedTAndC: !data.isLeftButtonClicked ? true : false
+            }
+            this.syncService.syncApiRequest(payload, false).then(resp => {
+              this.selectedProgram(id, project);
+            })
+          } else {
+            this.selectedProgram(id, project);
+          }
+        })
+      } else {
+        this.selectedProgram(id, project);
+      }
+    } else {
       this.commonUtilService.showPPPForProjectPopUp().then(data => {
-        console.log(data, "data 163");
+        !data.isLeftButtonClicked ? this.createProject(true) : this.createProject(false)
       })
     }
   }

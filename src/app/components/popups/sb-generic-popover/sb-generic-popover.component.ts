@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./sb-generic-popover.component.scss'],
 })
 export class SbGenericPopoverComponent implements OnInit, OnDestroy {
-
+  isChecked;
   @Input() actionsButtons: any;
   @Input() icon: any;
   @Input() metaInfo: any;
@@ -18,6 +18,10 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   @Input() sbPopoverMainTitle: any;
   @Input() selectedContents: any;
   @Input() showHeader = true;
+  @Input() hideCloseIcon = false;
+  @Input() type;
+  @Input() otherAction;
+  @Input() sbPopoverHtmlContent;
   backButtonFunc: Subscription;
 
   constructor(
@@ -46,7 +50,21 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   }
 
   deleteContent(buttonIndex: number = 0) {
-    this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
+    if (this.type == 'privacyPolicy' && Boolean(buttonIndex)) {
+      if (this.isChecked) {
+        this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
+      }
+    } else {
+      this.isChecked = false;
+      this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
+    }
   }
 
+  changeEvent(event) {
+    if (event.detail.checked) {
+      this.isChecked = true;
+    } else {
+      this.isChecked = false;
+    }
+  }
 }

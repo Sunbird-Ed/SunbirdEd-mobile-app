@@ -27,6 +27,7 @@ export class CreateProjectPage implements OnInit {
   tasks = [];
   projectId;
   createProjectAlert;
+  hasAcceptedTAndC;
   project;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
@@ -61,6 +62,8 @@ export class CreateProjectPage implements OnInit {
     private popoverCtrl: PopoverController
   ) {
     route.queryParams.subscribe((parameters) => {
+      console.log(parameters, "parameters 64");
+      this.hasAcceptedTAndC = parameters.hasAcceptedTAndC;  
       if (parameters.projectId) {
         this.parameters = parameters;
         this.showTask = false;
@@ -278,6 +281,8 @@ export class CreateProjectPage implements OnInit {
         }
       });
       this.projectForm.value.categories = this.selectedCategories;
+      this.projectForm.value.hasAcceptedTAndC = this.hasAcceptedTAndC;
+      console.log(this.projectForm.value, "this.projectForm.value === > ", this.hasAcceptedTAndC);
       this.parameters ? this.update(this.projectForm.value) :
         this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'EDIT', 'FRMELEMNTS_LBL_CONTINUE');
     } else {
@@ -371,7 +376,7 @@ export class CreateProjectPage implements OnInit {
           text: texts[button1],
           cssClass: 'secondary',
           handler: () => {
-            this.saveData(this.projectForm.value)
+            this.saveData(this.projectForm.value);
           }
         }
       ]

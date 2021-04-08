@@ -728,7 +728,10 @@ export class CommonUtilService {
                 componentProps: {
                     sbPopoverHeading: this.translateMessage('FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS'),
                     sbPopoverMainTitle: '',
-                    sbPopoverContent:"I confirm that this Content complies with prescribed guidelines,including the <a href='https://diksha.gov.in/term-of-use.html'> Terms of Use and Content Policy.</a> I have not shared any personal or sensitive information and have made sure that I do not violate others’ privacy rights and third party rights including intellectual property rights",
+                    hideCloseIcon:true,
+                    type:'privacyPolicy',
+                    otherAction:'checkbox',
+                    sbPopoverHtmlContent:`I confirm that this Content complies with prescribed guidelines,including the <a href='https://diksha.gov.in/term-of-use.html'> Terms of Use and Content Policy.</a> I have not shared any personal or sensitive information and have made sure that I do not violate others’ privacy rights and third party rights including intellectual property rights </html>`,
                     actionsButtons: [
                         {
                             btntext: this.translateMessage('FRMELEMNTS_BTN_DO_NOT_SHARE'),
