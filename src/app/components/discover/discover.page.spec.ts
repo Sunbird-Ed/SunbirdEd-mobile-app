@@ -9,7 +9,8 @@ import { AppGlobalService, CommonUtilService, FormAndFrameworkUtilService, Telem
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
 import { ContentFilterConfig } from '@app/app/app.constant';
-import { ProfileType } from '@project-sunbird/sunbird-sdk';
+import {ProfileType, SharedPreferences} from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
 
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
@@ -40,9 +41,13 @@ describe('DiscoverComponent', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
        getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
     };
+    const mockSharedPrefernces: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of(ProfileType.TEACHER))
+    };
 
     beforeAll(() => {
         discoverComponent = new DiscoverComponent(
+            mockSharedPrefernces as SharedPreferences,
             mockAppVersion as AppVersion,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -76,6 +81,7 @@ describe('DiscoverComponent', () => {
             } as any;
             mockRouter.navigate = jest.fn();
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            mockSharedPrefernces.getString = jest.fn(() => of(ProfileType.TEACHER));
             // act
             discoverComponent.ngOnInit();
             // assert
@@ -98,6 +104,7 @@ describe('DiscoverComponent', () => {
             } as any;
             mockRouter.navigate = jest.fn();
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            mockSharedPrefernces.getString =jest.fn(() => of(ProfileType.TEACHER));
             // act
             discoverComponent.ngOnInit();
             // assert
