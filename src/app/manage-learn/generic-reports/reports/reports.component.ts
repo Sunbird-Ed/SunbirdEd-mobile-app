@@ -60,6 +60,16 @@ export class ReportsComponent implements OnInit {
           if (this.data.filters && !this.filters) {
             this.filters = this.data.filters;
           }
+
+          if (this.data.filters) {
+            let modalFilter = this.data.filters.filter((filter) => filter.filter.type == 'modal')[0];
+            this.filters = this.filters.map((filter) => {
+              if (filter.filter.type == 'modal') {
+                filter = modalFilter;
+              }
+              return filter;
+            });
+          }
         } else {
           this.toast.openToast(success.message);
           this.error = success;

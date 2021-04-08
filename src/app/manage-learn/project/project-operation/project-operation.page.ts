@@ -18,6 +18,8 @@ import { LoaderService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
+import cloneDeep from 'lodash/cloneDeep';
+
 // var environment = {
 //   db: {
 //     projects: "project.db",
@@ -233,8 +235,8 @@ export class ProjectOperationPage implements OnInit {
     const modal = await this.modalController.create({
       component: LinkLearningResourcesComponent,
       componentProps: {
-        selectedResources: this.selectedResources
-      }
+        selectedResources: cloneDeep(this.selectedResources),
+      },
       // cssClass: 'my-custom-class'
     });
     modal.onDidDismiss().then(data => {
