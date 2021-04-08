@@ -21,7 +21,6 @@ import { localStorageConstants } from '@app/app/manage-learn/core/constants/loca
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-home',
@@ -111,7 +110,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       };
 
       this.formService.getForm(request).subscribe(result => {
-        debugger
         this.getTaskForm();
         if (result.form.data.fields) {
           this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, result.form.data.fields).then(resp => {
@@ -130,15 +128,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       const config = {
         url: urlConstants.API_URLS.GET_TASK_META_FORM
       }
-      // this.unnatiService.get(config).subscribe(data => {
-      //   if (data.result && data.result.length) {
-      //     this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, data.result).then(resp => {
-      //     }, error => {
-      //     })
-      //   }
-      // }, error => {
-      // })
-
       const request: FormRequest = {
         from: CachedItemRequestSourceFrom.SERVER,
         type: 'user',
@@ -147,7 +136,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       };
 
       this.formService.getForm(request).subscribe(result => {
-        debugger
         if (result.form.data.fields) {
           this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, result.form.data.fields).then(resp => {
           }, error => {
