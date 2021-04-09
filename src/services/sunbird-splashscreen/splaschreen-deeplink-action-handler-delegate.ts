@@ -36,7 +36,7 @@ import {
   ContentImport,
   Rollup,
   FetchEnrolledCourseRequest,
-  CourseService
+  CourseService, GetSuggestedFrameworksRequest, Framework, FrameworkDetailsRequest
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
@@ -59,6 +59,7 @@ import { ContentInfo } from '../content/content-info';
 import { ContentPlayerHandler } from '../content/player/content-player-handler';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
+import {UpdateProfileService} from '@app/services/update-profile-service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -105,7 +106,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private location: Location,
     private navService: NavigationService,
     private contentPlayerHandler: ContentPlayerHandler,
-    private formnFrameworkUtilService: FormAndFrameworkUtilService
+    private formnFrameworkUtilService: FormAndFrameworkUtilService,
+    private updateProfileService: UpdateProfileService
   ) {
     this.eventToSetDefaultOnboardingData();
   }
@@ -124,6 +126,35 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (payload && payload.url) {
       this.handleDeeplink(payload.url);
+    } else if (payload && payload.action) {
+      switch (payload.action) {
+        case 'ACTION_SEARCH':
+          this.handleSearch(payload.data);
+          break;
+        case 'ACTION_GOTO':
+          if (payload.data && payload.data.request) {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                params: payload.data.request.params
+              }
+            };
+            this.router.navigate([payload.data.request.route], navigationExtras);
+          } else {
+            this.router.navigate([payload.data.request.route]);
+          }
+          break;
+        case 'ACTION_SETPROFILE':
+          this.updateProfile(payload.data);
+          break;
+        case 'ACTION_PLAY':
+          this.navigateToDetailsPage(payload.data);
+          break;
+        case 'ACTION_DEEPLINK':
+          console.log('------deeplink-----', payload.data);
+          break;
+        default:
+          return of (undefined);
+      }
     }
     return of(undefined);
   }
@@ -936,4 +967,24 @@ private async upgradeAppPopover(requiredVersionCode) {
     }
   }
 
+  private updateProfile(payloadProfileAttribute) {
+    const currentProfile = this.appGlobalServices.getCurrentUser();
+    this.updateProfileService.checkProfileData(payloadProfileAttribute.request, currentProfile);
+  }
+
+  private handleSearch(payload) {
+    const extras: NavigationExtras = {
+      state: {
+        preAppliedFilter: payload.request
+      }
+    };
+    this.router.navigate([RouterLinks.SEARCH], extras);
+  }
+
+  private async navigateToDetailsPage(payload) {
+    if (payload.request.objectId || payload.request.collection) {
+      const content = await this.getContentData(payload.request.objectId || payload.request.collection);
+      await this.navigateContent(payload.objectId, false, content, null, null, null);
+    }
+  }
 }
