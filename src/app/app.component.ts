@@ -843,6 +843,13 @@ export class AppComponent implements OnInit, AfterViewInit {
           () => { }
         );
         break;
+
+      case 'IMPORT':
+        this.utilityService.openFileManager().then((success) => {
+          console.log('-----openFileManager-----', success);
+        }).catch((err) => {
+          console.log('---------error------', err);
+        });
     }
   }
 
