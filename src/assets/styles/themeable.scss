@@ -1537,6 +1537,9 @@ html[data-theme="JOYFUL"]{
         color: map-get($colors, primary) !important;
       }
     }
+    .openbtn{
+      color: map-get($colors, primary) !important;
+    }
   }
   .df-btn-container{
     .sb-left-icon{
