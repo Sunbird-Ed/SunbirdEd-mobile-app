@@ -470,12 +470,12 @@ export class ObservationSubmissionComponent implements OnInit {
             let payload = await this.utils.getProfileInfo();
 
             const config = {
-              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_DELETE + `${submissionId}`,
+              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${submissionId}`,
               payload: payload,
             };
             this.loader.startLoader();
 
-            this.assessmentService.post(config).subscribe(
+            this.assessmentService.delete(config).subscribe(
               (success) => {
                 this.loader.stopLoader();
 
@@ -499,7 +499,7 @@ export class ObservationSubmissionComponent implements OnInit {
     payload.title = data.title;
 
     const config = {
-      url: urlConstants.API_URLS.EDIT_OBSERVATION_NAME + `${data.submissionId}`,
+      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${data.submissionId}`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(

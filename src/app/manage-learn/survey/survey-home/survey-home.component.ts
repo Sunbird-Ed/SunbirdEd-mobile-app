@@ -11,6 +11,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-survey-home',
@@ -42,6 +43,7 @@ export class SurveyHomeComponent implements OnInit {
     private loader: LoaderService,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
+    private kendra: KendraApiService,
     private routerParam: ActivatedRoute,
     private toast: ToastService
   ) {
@@ -80,10 +82,11 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=${this.page}&limit=${this.limit}`,
+      // url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=${this.page}&limit=${this.limit}`,
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}`,
       payload: payload,
     };
-    this.assessmentService.post(config).subscribe(
+    this.kendra.post(config).subscribe(
       (success) => {
         if (success.result && success.result.data) {
           this.count = success.result.count;
@@ -162,6 +165,13 @@ export class SurveyHomeComponent implements OnInit {
       this.surveyProvider.showMsg('surveyCompleted');
       return;
     }
+
+    if (survey.status == 'expired') {
+      // its not added in samiksha but add here as , after expired also if its already downloaded then user am able to submit.(backend is not checking before making submission.)
+      this.surveyProvider.showMsg('surveyExpired');
+      return;
+    }
+
     // surveyId changed to _id
     survey.downloaded
       ? this.redirect(survey.submissionId)

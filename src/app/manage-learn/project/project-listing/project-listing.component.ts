@@ -56,6 +56,7 @@ export class ProjectListingComponent implements OnInit {
     private headerService: AppHeaderService,
     private platform: Platform,
     private unnatiService: UnnatiDataService,
+    private kendra: KendraApiService,
     private loader: LoaderService,
     private translate: TranslateService,
     private utils: UtilsService) {
@@ -104,10 +105,10 @@ export class ProjectListingComponent implements OnInit {
       this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
     }
     const config = {
-      url: urlConstants.API_URLS.GET_PROJECTS + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS+'?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
       payload: selectedFilter == 'assignedToMe' ? this.payload : ''
     }
-    this.unnatiService.post(config).subscribe(success => {
+    this.kendra.post(config).subscribe(success => {
       this.loader.stopLoader();
       this.projects = this.projects.concat(success.result.data);
       this.count = success.result.count;

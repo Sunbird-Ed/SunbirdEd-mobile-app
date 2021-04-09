@@ -178,7 +178,7 @@ export class EvidenceService {
     const constructPayload = this.constructPayload(selectedECM);
     const submissionId = this.entityDetails['assessment'].submissionId;
     // const url = AppConfigs.survey.submission + submissionId;
-    const url = urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION + submissionId;
+    const url = urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + submissionId;
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...constructPayload };
     const config = {

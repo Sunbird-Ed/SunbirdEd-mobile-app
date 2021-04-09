@@ -8,6 +8,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 declare var cordova: any;
 
@@ -30,7 +31,8 @@ export class ImageListingComponent implements OnInit {
     private fileTransfer: FileTransfer,
     private toast: ToastService,
     private translate: TranslateService,
-    private assessmentService: AssessmentApiService
+    private assessmentService: AssessmentApiService,
+    private kendra:KendraApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -214,29 +216,46 @@ export class ImageListingComponent implements OnInit {
 
   async getImageUploadUrls() {
     const submissionId = this.submissionId;
-    const files = {
-      files: [],
-      submissionId: submissionId,
-    };
+    // const files = {
+    //   files: [],
+    //   submissionId: submissionId,
+    // };
+
+    // for (const image of this.uploadImages) {
+    //   files.files.push(image);
+    // }
+
+    const files =[]
     for (const image of this.uploadImages) {
-      files.files.push(image);
+      files.push(image);
     }
 
     let payload = await this.utils.getProfileInfo();
-    payload = { ...payload, ...files };
+    payload.ref = "survey"
+    payload.request = {}
+    payload.request[submissionId] = {
+        files: files,
+    };
+    // payload = { ...payload, ...files };
+    debugger
     const config = {
-      url: urlConstants.API_URLS.GET_SURVEY_IMAGE_UPLOAD_URLS,
+      // url: urlConstants.API_URLS.GET_SURVEY_IMAGE_UPLOAD_URLS,
+      url: urlConstants.API_URLS.PRESIGNED_URLS,
       payload: payload,
     };
 
-    this.assessmentService.post(config).subscribe(
+    this.kendra.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
-        for (let i = 0; i < success.result.length; i++) {
-          this.imageList[i]['url'] = success.result[i].url;
-          this.imageList[i]['sourcePath'] = success.result[i].payload.sourcePath;
-          success.result[i].cloudStorage ? (this.imageList[i]['cloudStorage'] = success.result[i].cloudStorage) : null;
+        if (!success.result || !success.result[submissionId] || !success.result[submissionId].files) {
+          return
         }
+        let array = success.result[submissionId].files
+          for (let i = 0; i < array.length; i++) {
+            this.imageList[i]['url'] = array[i].url;
+            this.imageList[i]['sourcePath'] = array[i].payload.sourcePath;
+            array[i].cloudStorage ? (this.imageList[i]['cloudStorage'] = array[i].cloudStorage) : null;
+          }
         this.checkForLocalFolder();
       },
       (error) => {
@@ -374,7 +393,7 @@ export class ImageListingComponent implements OnInit {
       (this.schoolData.survey
         ? urlConstants.API_URLS.SURVEY_FEEDBACK_MAKE_SUBMISSION
         : this.schoolData.observation
-        ? urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION
+        ? urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE
         : urlConstants.API_URLS.SUBMISSION) +
       submissionId +
       '/';
