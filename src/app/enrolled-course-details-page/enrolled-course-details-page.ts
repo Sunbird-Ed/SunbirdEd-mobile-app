@@ -1975,7 +1975,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.corRelationList
       );
       this.appGlobalService.resetSavedQuizContent();
-      this.loginHandlerService.signIn();
+      this.loginHandlerService.signIn({navigateToCourse: true});
     }
   }
 

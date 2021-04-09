@@ -43,7 +43,7 @@ import { ObjectUtil } from '@app/util/object.util';
     templateUrl: './category-list-page.html',
     styleUrls: ['./category-list-page.scss'],
 })
-export class CategoryListPage implements OnDestroy {
+export class CategoryListPage implements OnInit, OnDestroy {
 
     sectionGroup?: ContentsGroupedByPageSection;
     formField: {
@@ -132,10 +132,8 @@ export class CategoryListPage implements OnDestroy {
         }
     }
 
-    async ionViewWillEnter() {
+    async ngOnInit() {
         this.appName = await this.commonUtilService.getAppName();
-        this.appHeaderService.showHeaderWithBackButton();
-
         if (!this.supportedFacets) {
             this.supportedFacets = (await this.formAndFrameworkUtilService
                 .getFormFields(FormConstants.SEARCH_FILTER)).reduce((acc, filterConfig) => {
@@ -150,6 +148,11 @@ export class CategoryListPage implements OnDestroy {
             searchType: SearchType.SEARCH,
             limit: 100
         });
+    }
+
+    async ionViewWillEnter() {
+        this.appHeaderService.showHeaderWithBackButton();
+
         const corRelationList: Array<CorrelationData> = [];
         corRelationList.push({ id: this.formField.facet, type: CorReleationDataType.FORM_PAGE });
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -260,6 +263,15 @@ export class CategoryListPage implements OnDestroy {
                 this.pageId = PageId.CATEGORY_RESULTS;
                 this.fromPage = PageId.HOME;
                 this.env = Environment.HOME;
+                break;
+            case 'browse_by_audience':
+                this.corRelationList.push({
+                    type: CorReleationDataType.AUDIENCE,
+                    id: selectedFacet
+                });
+                this.pageId = PageId.AUDIENCE_RESULTS;
+                this.fromPage = PageId.SEARCH;
+                this.env = Environment.SEARCH;
                 break;
         }
 

@@ -10,6 +10,7 @@ import {
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
+  EventTopics,
 } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -183,6 +184,10 @@ export class ProfilePage implements OnInit {
       } else {
         this.doRefresh();
       }
+    });
+
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (data) => {
+      this.doRefresh();
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {

@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, OnDestroy, OnInit, Output} from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { ContentFilterConfig, PrimaryCaregoryMapping, RouterLinks, ViewMore } from '../../app.constant';
+import {ContentFilterConfig, PreferenceKey, PrimaryCaregoryMapping, RouterLinks, ViewMore} from '../../app.constant';
 import { NavigationExtras, Router } from '@angular/router';
 import {
   AppGlobalService,
@@ -18,7 +18,8 @@ import {
   CachedItemRequestSourceFrom,
   ContentAggregatorRequest,
   ContentSearchCriteria,
-  CorrelationData
+  CorrelationData,
+  SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
@@ -44,6 +45,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   userType: string;
 
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appVersion: AppVersion,
     private headerService: AppHeaderService,
     private router: Router,
@@ -66,7 +68,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
-    this.appGlobalService.getGuestUserInfo();
   }
 
   doRefresh(refresher) {
@@ -87,7 +88,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
     if (refresher) {
       refresher.target.complete();
     }
-    this.userType = await this.appGlobalService.getGuestUserInfo();
+    this.userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     this.generateImpressionTelemetry();
   }
 
@@ -97,17 +98,22 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
         if (val.dataSrc && val.dataSrc.values) {
           const categories: string[] = val.dataSrc.values.map((category: any) =>
             ObjectUtil.isJSON(category.facet) ? JSON.parse(category.facet)['en'] : category.facet);
-          if (val.code === 'popular_categories') {
-            acc.push({
-              type: CorReleationDataType.CATEGORY_LIST,
-              id: categories.join(',')
-            });
-          } else if (val.code === 'other_boards') {
-            acc.push({
-              type: CorReleationDataType.OTHER_BOARDS,
-              id: categories.join(',')
-            });
+          let categoryType = CorReleationDataType.CATEGORY_LIST;
+          switch (val.code) {
+            case 'popular_categories':
+              categoryType = CorReleationDataType.CATEGORY_LIST;
+              break;
+            case 'other_boards':
+              categoryType = CorReleationDataType.OTHER_BOARDS;
+              break;
+            case 'browse_by_audience':
+              categoryType = CorReleationDataType.AUDIENCE_LIST;
+              break;
           }
+          acc.push({
+            type: categoryType,
+            id: categories.join(',')
+          });
         }
         return acc;
       }, []);
@@ -167,26 +173,34 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       fromLibrary: true,
       description: (section && section.description) || ''
     };
-    if (section.code === 'popular_categories' || section.code === 'other_boards') {
-      const correlationList: Array<CorrelationData> = [];
-      correlationList.push({
-        id: event.data[0].name || '',
-        type: section.code === 'popular_categories' ?
-            CorReleationDataType.CATEGORY : CorReleationDataType.BOARD
-      });
-      let type: string = InteractType.SELECT_CATEGORY;
-      if (section.code === 'popular_categories') {
-        type = InteractType.SELECT_CATEGORY;
-      } else if (section.code === 'other_boards') {
-        type = InteractType.SELECT_BOARD;
-      }
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        type, '',
-        Environment.SEARCH,
-        PageId.SEARCH, undefined, undefined, undefined,
-        correlationList
-      );
+    let corRelationType: string = CorReleationDataType.CATEGORY;
+    let interactType: string = InteractType.SELECT_CATEGORY;
+    switch (section.code) {
+      case 'popular_categories':
+        corRelationType = CorReleationDataType.CATEGORY;
+        interactType = InteractType.SELECT_CATEGORY;
+        break;
+      case 'other_boards':
+        corRelationType = CorReleationDataType.BOARD;
+        interactType = InteractType.SELECT_BOARD;
+        break;
+      case 'browse_by_audience':
+        corRelationType = CorReleationDataType.AUDIENCE;
+        interactType = InteractType.SELECT_AUDIENCE;
+        break;
     }
+    const correlationList: Array<CorrelationData> = [];
+    correlationList.push({
+      id: event.data[0].name || '',
+      type: corRelationType
+    });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      interactType, '',
+      Environment.SEARCH,
+      PageId.SEARCH, undefined, undefined, undefined,
+      correlationList
+    );
 
     this.router.navigate([RouterLinks.CATEGORY_LIST], { state: params });
   }
