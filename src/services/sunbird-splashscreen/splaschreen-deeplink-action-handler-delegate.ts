@@ -150,7 +150,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.navigateToDetailsPage(payload.data);
           break;
         case 'ACTION_DEEPLINK':
-          console.log('------deeplink-----', payload.data);
+          this.handleDeeplink(payload.data.request.url);
           break;
         default:
           return of (undefined);
