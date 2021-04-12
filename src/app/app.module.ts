@@ -66,6 +66,7 @@ import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
+import { SbSearchFilterModule } from '@project-sunbird/search-filter-widget';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -426,7 +427,8 @@ declare const sbutility;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    TermsAndConditionsPageModule
+    TermsAndConditionsPageModule,
+    SbSearchFilterModule.forRoot('mobile')
   ],
   providers: [
     StatusBar,

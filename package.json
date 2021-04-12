@@ -51,14 +51,13 @@
     "@project-sunbird/content-player": "3.7.1",
     "@project-sunbird/discussions-ui-v8": "2.0.26",
     "@project-sunbird/sb-styles": "0.0.7",
-    "@project-sunbird/sunbird-pdf-player-v8": "3.8.0",
     "@project-sunbird/sunbird-epub-player-v8": "3.8.4",
+    "@project-sunbird/sunbird-pdf-player-v8": "3.8.0",
     "@project-sunbird/sunbird-sdk": "3.8.12",
-    "epubjs": "^0.3.88",
     "code-push": "^3.0.1",
     "com.jjdltc.cordova.plugin.zip": "https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "com.telerik.plugins.nativepagetransitions": "^0.6.5",
-    "common-form-elements-v8": "2.0.5",
+    "common-form-elements": "3.9.1",
     "cordova-android": "^9.0.0",
     "cordova-plugin-advanced-http": "^2.5.1",
     "cordova-plugin-android-downloadmanager": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git",
@@ -98,6 +97,7 @@
     "core-js": "^2.6.10",
     "dayjs": "1.9.8",
     "dom-to-image": "^2.6.0",
+    "epubjs": "^0.3.88",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
     "hammerjs": "^2.0.8",
@@ -107,6 +107,7 @@
     "lodash-es": "^4.17.20",
     "ng-recaptcha": "^5.0.0",
     "ngx-chips": "2.0.2",
+    "project-sunbird-search-filter-widget": "^3.9.2",
     "rxjs": "^6.6.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0",
@@ -264,10 +265,10 @@
         "<rootDir>/node_modules/@project-sunbird/common-consumption-v8/*"
       ],
       "common-form-elements": [
-        "<rootDir>/node_modules/common-form-elements-v8"
+        "<rootDir>/node_modules/common-form-elements"
       ],
       "common-form-elements/*": [
-        "<rootDir>/node_modules/common-form-elements-v8/*"
+        "<rootDir>/node_modules/common-form-elements/*"
       ]
     },
     "transformIgnorePatterns": [],

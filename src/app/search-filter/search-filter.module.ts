@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
+import { SbSearchFilterModule } from '@project-sunbird/search-filter-widget';
 
 import { IonicModule } from '@ionic/angular';
-
-import {CommonFormElementsModule} from 'common-form-elements';
 
 const routes: Routes = [];
 
@@ -15,7 +14,7 @@ const routes: Routes = [];
         FormsModule,
         IonicModule,
         RouterModule.forChild(routes),
-        CommonFormElementsModule
+        SbSearchFilterModule
     ],
 })
 export class SearchFilterPageModule {}

@@ -893,7 +893,7 @@ html[data-theme="JOYFUL"]{
         }
       }
       .multi-select-container{
-        sb-caret-down{
+        sb-caret-down, sb-caret-up{
           right: 0 !important;
         }
         ul{
@@ -904,6 +904,8 @@ html[data-theme="JOYFUL"]{
           }
         }
         .list-border{
+          position: relative;
+          padding: 0 !important;
           border: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
         }
