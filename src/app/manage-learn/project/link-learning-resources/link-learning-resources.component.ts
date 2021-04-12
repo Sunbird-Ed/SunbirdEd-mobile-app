@@ -70,60 +70,41 @@ export class LinkLearningResourcesComponent implements OnInit {
   }
 
   getFilters() {
-    this.loaderService.startLoader();
-    const config = {
-      url: urlConstants.API_URLS.GET_LEARNING_RESOURCES_FILTERS,
-    };
-    this.kendraApiService.get(config).subscribe(
-      (data) => {
-        this.loaderService.stopLoader();
-        console.log(data, 'data');
-        if (data.result && data.result.length) {
-          this.filters = data.result;
-          this.setFilter(this.filters[0]);
-        }
+    this.filters = [
+      {
+        name: 'All',
+        icon: '',
+        value: [],
       },
-      (error) => {
-        this.loaderService.stopLoader();
-      }
-    );
+    /*   {
+        name: 'Audios',
+        icon: '',
+        value: ['audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/mp4', 'audio/mpeg', 'audio/ogg'],
+      }, */
+      {
+        name: 'Documents',
+        icon: 'insert_drive_file',
+        value: ['application/pdf', 'application/epub'],
+      },
+      {
+        name: 'video',
+        icon: 'play_circle_outline',
+        value: ['video/mp4', 'video/x-youtube', 'video/webm', 'video/3gpp', 'video/mpeg', 'video/quicktime'],
+      },
+      {
+        name: 'interactive',
+        icon: 'touch_app',
+        value: [
+          'application/vnd.ekstep.ecml-archive',
+          'application/vnd.ekstep.h5p-archive',
+          'application/vnd.ekstep.html-archive',
+          'application/vnd.ekstep.content-archive',
+        ],
+      },
+    ];
+    this.setFilter(this.filters[0]);
   }
 
-  //   getLearningResources(searchText?) {
-  //     console.log(searchText, 'searchText');
-  //     searchText = searchText ? searchText : '';
-  //     this.loaderService.startLoader();
-  //     let type = {
-  //       mimeType: this.selectedFilter.value,
-  //     };
-  //     const config = {
-  //       url:
-  //         urlConstants.API_URLS.LEARNING_RESOURCES_LIST +
-  //         'search=' +
-  //         searchText +
-  //         '&page=' +
-  //         this.page +
-  //         '&limit=' +
-  //         this.limit,
-  //       payload: type,
-  //     };
-  //     this.kendraApiService.post(config).subscribe(
-  //       (data) => {
-  //         this.loaderService.stopLoader();
-  //         if (data.result && data.result.count) {
-  //           this.dataCount = data.result.count;
-  //           console.log(this.selectedResources, ' this.selectedResources ');
-  //           this.selectedResources
-  //             ? this.validateCheckbox(data.result.content)
-  //             : (this.resources = this.resources.concat(data.result.content));
-  //           this.cdr.detectChanges();
-  //         }
-  //       },
-  //       (error) => {
-  //         this.loaderService.stopLoader();
-  //       }
-  //     );
-  //   }
 
   getLearningResources() {
     const contentSearchCriteria = {

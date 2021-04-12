@@ -67,16 +67,8 @@ export class EvidenceService {
                     params.entityDetails
                   );
                   delete params.entityDetails;
-                  // this.appCtrl.getRootNav().push('SectionListPage', params);
-                  // this.router.navigate([RouterLinks.SECTION_LISTING], {
-                  //   queryParams: {
-                  //     submisssionId: this.schoolId,
-                  //     evidenceIndex: this.evidenceIndex,
-                  //     schoolName: params.name,
-                  //   },
-                  // });
+
                   resolve('start');
-                  // return action.dismiss('start');
                 },
               },
               {
@@ -84,17 +76,8 @@ export class EvidenceService {
                 icon: 'eye',
                 handler: () => {
                   delete params.entityDetails;
-                  // this.appCtrl.getRootNav().push('SectionListPage', params);
-                  // this.router.navigate([RouterLinks.SECTION_LISTING], {
-                  //   queryParams: {
-                  //     submisssionId: this.schoolId,
-                  //     evidenceIndex: this.evidenceIndex,
-                  //     schoolName: params.name,
-                  //   },
-                  // });
-                  resolve('view');
 
-                  // return action.dismiss('view');
+                  resolve('view');
                 },
               },
               {
@@ -177,8 +160,7 @@ export class EvidenceService {
     this.loader.startLoader();
     const constructPayload = this.constructPayload(selectedECM);
     const submissionId = this.entityDetails['assessment'].submissionId;
-    // const url = AppConfigs.survey.submission + submissionId;
-    const url = urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION + submissionId;
+    const url = urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + submissionId;
     let payload = await this.utils.getProfileInfo();
     payload = { ...payload, ...constructPayload };
     const config = {

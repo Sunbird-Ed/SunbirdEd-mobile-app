@@ -1,16 +1,13 @@
-import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppHeaderService } from '@app/services';
-import { Platform, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-survey-home',
@@ -31,23 +28,15 @@ export class SurveyHomeComponent implements OnInit {
   submissionArr: any;
   count: any;
   constructor(
-    private httpClient: HttpClient,
-    private location: Location,
     private headerService: AppHeaderService,
-    private platform: Platform,
     private router: Router,
-    // private observationService: ObservationService,
     private localStorage: LocalStorageService,
     private surveyProvider: SurveyProviderService,
     private loader: LoaderService,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService,
-    private routerParam: ActivatedRoute,
+    private kendra: KendraApiService,
     private toast: ToastService
   ) {
-    // this.routerParam.queryParams.subscribe((params) => {
-    //  this.link=params.surveyId
-    // });
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.link = extrasState.data.survey_id;
@@ -80,10 +69,10 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.SURVEY_FEEDBACK.SURVEY_LISTING + `?page=${this.page}&limit=${this.limit}`,
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}`,
       payload: payload,
     };
-    this.assessmentService.post(config).subscribe(
+    this.kendra.post(config).subscribe(
       (success) => {
         if (success.result && success.result.data) {
           this.count = success.result.count;
@@ -97,20 +86,6 @@ export class SurveyHomeComponent implements OnInit {
         console.log(error);
       }
     );
-
-    //   this.surveyProvider.getSurveyListing().then(
-    //     (list) => {
-    //       this.surveyList = list;
-    //       console.log(list);
-    //       this.getSubmissionArr();
-    //       this.loader.stopLoader();
-    //     },
-    //     (err) => {
-    //       this.loader.stopLoader();
-    //       console.log(err);
-    //     }
-    //   );
-    // }
   }
   //check if suvey detail is present in local storage
   getSubmissionArr(): void {
@@ -162,6 +137,13 @@ export class SurveyHomeComponent implements OnInit {
       this.surveyProvider.showMsg('surveyCompleted');
       return;
     }
+
+    if (survey.status == 'expired') {
+      // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
+      this.surveyProvider.showMsg('surveyExpired');
+      return;
+    }
+
     // surveyId changed to _id
     survey.downloaded
       ? this.redirect(survey.submissionId)
@@ -176,13 +158,8 @@ export class SurveyHomeComponent implements OnInit {
         submisssionId: submissionId,
         evidenceIndex: 0,
         sectionIndex: 0,
-        // schoolName: 'sample',
       },
     });
-
-    // this.navCtrl.push(QuestionerPage, navParams).then(() => {
-    //   this.link ? this.viewCtrl.dismiss() : null;
-    // });
   }
 
   storeRedirect(survey): void {
@@ -215,15 +192,12 @@ export class SurveyHomeComponent implements OnInit {
   setStatusColor(status): string {
     switch (status) {
       case 'started':
-        // this.color = "orange";
         return 'orange';
         break;
       case 'completed':
-        // this.color = "lightgreen";
         return 'lightgreen';
         break;
       case 'expired':
-        // this.color = "grey";
         return 'grey';
         break;
 
@@ -234,12 +208,6 @@ export class SurveyHomeComponent implements OnInit {
 
   checkReport(survey) {
     if (survey.submissionId) {
-      // this.navCtrl.push(SurveyReportPage, { submissionId: survey.submissionId });
-      // this.router.navigate([RouterLinks.SURVEY_REPORTS], {
-      //   queryParams: {
-      //     submissionId: survey.submissionId,
-      //   },
-      // });
       this.router.navigate([RouterLinks.GENERIC_REPORT], {
         state: {
           survey: true,
@@ -248,11 +216,7 @@ export class SurveyHomeComponent implements OnInit {
       });
       return;
     }
-    // this.navCtrl.push(SurveyReportPage, { solutionId: survey.solutionId });
-    // this.router.navigate([RouterLinks.SURVEY_REPORTS], {
-    //   queryParams: {
-    //     solutionId: survey.solutionId,
-    //   },
+
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {
         survey: true,
