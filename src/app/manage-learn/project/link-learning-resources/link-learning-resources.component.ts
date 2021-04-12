@@ -70,23 +70,57 @@ export class LinkLearningResourcesComponent implements OnInit {
   }
 
   getFilters() {
-    this.loaderService.startLoader();
-    const config = {
-      url: urlConstants.API_URLS.GET_LEARNING_RESOURCES_FILTERS,
-    };
-    this.kendraApiService.get(config).subscribe(
-      (data) => {
-        this.loaderService.stopLoader();
-        console.log(data, 'data');
-        if (data.result && data.result.length) {
-          this.filters = data.result;
-          this.setFilter(this.filters[0]);
-        }
+    // this.loaderService.startLoader();
+    // const config = {
+    //   url: urlConstants.API_URLS.GET_LEARNING_RESOURCES_FILTERS,
+    // };
+    // this.kendraApiService.get(config).subscribe(
+    //   (data) => {
+    //     this.loaderService.stopLoader();
+    //     console.log(data, 'data');
+    //     if (data.result && data.result.length) {
+    //       this.filters = data.result;
+    //       this.setFilter(this.filters[0]);
+    //     }
+    //   },
+    //   (error) => {
+    //     this.loaderService.stopLoader();
+    //   }
+    // );
+
+    this.filters = [
+      {
+        name: 'All',
+        icon: '',
+        value: [],
       },
-      (error) => {
-        this.loaderService.stopLoader();
-      }
-    );
+    /*   {
+        name: 'Audios',
+        icon: '',
+        value: ['audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/mp4', 'audio/mpeg', 'audio/ogg'],
+      }, */
+      {
+        name: 'Documents',
+        icon: 'insert_drive_file',
+        value: ['application/pdf', 'application/epub'],
+      },
+      {
+        name: 'video',
+        icon: 'play_circle_outline',
+        value: ['video/mp4', 'video/x-youtube', 'video/webm', 'video/3gpp', 'video/mpeg', 'video/quicktime'],
+      },
+      {
+        name: 'interactive',
+        icon: 'touch_app',
+        value: [
+          'application/vnd.ekstep.ecml-archive',
+          'application/vnd.ekstep.h5p-archive',
+          'application/vnd.ekstep.html-archive',
+          'application/vnd.ekstep.content-archive',
+        ],
+      },
+    ];
+    this.setFilter(this.filters[0]);
   }
 
   //   getLearningResources(searchText?) {

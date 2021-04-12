@@ -39,7 +39,7 @@ export const urlConstants = {
     GET_LEARNING_RESOURCES: 'v1/learningResources/list',
     LEARNING_RESOURCES_LIST: 'v1/learning-resources/list?',
     GET_DYNAMIC_LINKS: 'v1/static-links/list',
-    GET_LEARNING_RESOURCES_FILTERS: 'v1/learning-resources/filters',
+    GET_LEARNING_RESOURCES_FILTERS: 'v1/learning-resources/filters', /* deprecated */
     PROFILE_INFO: 'v1/users/getProfile',
     SYNC_PROJECT: 'v1/userProjects/sync/',
     CREATE_PROJECT_DOC: 'v1/userProjects/create',
