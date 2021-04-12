@@ -81,12 +81,6 @@ export class ProjectListingComponent implements OnInit {
     this.handleBackButton();
   }
 
-  // getProjectList() {
-  //   this.http.get('assets/dummy/projectList.json').subscribe((data: any) => {
-  //     console.log(data);
-  //     this.projects = data.result.data;
-  //   });
-  // }
   getDataByFilter(filter) {
     this.projects = [];
     // this.filters.forEach(element => {

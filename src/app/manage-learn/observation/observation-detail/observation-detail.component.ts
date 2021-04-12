@@ -156,23 +156,6 @@ export class ObservationDetailComponent implements OnInit {
         solutionId: this.solutionId,
       },
     });
-    // if (type == 'state') {
-    //   entityListModal = await this.modalCtrl.create({
-    //     component: StateModalComponent,
-    //     componentProps: {
-    //       data: this.observationId,
-    //       solutionId: this.solutionId,
-    //     },
-    //   });
-    // } else {
-    //   entityListModal = await this.modalCtrl.create({
-    //     component: EntityfilterComponent,
-    //     componentProps: {
-    //       data: this.observationId,
-    //       solutionId: this.solutionId,
-    //     },
-    //   });
-    // }
     await entityListModal.present();
 
     await entityListModal.onDidDismiss().then(async (entityList) => {

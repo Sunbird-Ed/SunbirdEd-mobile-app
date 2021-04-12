@@ -70,24 +70,6 @@ export class LinkLearningResourcesComponent implements OnInit {
   }
 
   getFilters() {
-    // this.loaderService.startLoader();
-    // const config = {
-    //   url: urlConstants.API_URLS.GET_LEARNING_RESOURCES_FILTERS,
-    // };
-    // this.kendraApiService.get(config).subscribe(
-    //   (data) => {
-    //     this.loaderService.stopLoader();
-    //     console.log(data, 'data');
-    //     if (data.result && data.result.length) {
-    //       this.filters = data.result;
-    //       this.setFilter(this.filters[0]);
-    //     }
-    //   },
-    //   (error) => {
-    //     this.loaderService.stopLoader();
-    //   }
-    // );
-
     this.filters = [
       {
         name: 'All',
@@ -123,41 +105,6 @@ export class LinkLearningResourcesComponent implements OnInit {
     this.setFilter(this.filters[0]);
   }
 
-  //   getLearningResources(searchText?) {
-  //     console.log(searchText, 'searchText');
-  //     searchText = searchText ? searchText : '';
-  //     this.loaderService.startLoader();
-  //     let type = {
-  //       mimeType: this.selectedFilter.value,
-  //     };
-  //     const config = {
-  //       url:
-  //         urlConstants.API_URLS.LEARNING_RESOURCES_LIST +
-  //         'search=' +
-  //         searchText +
-  //         '&page=' +
-  //         this.page +
-  //         '&limit=' +
-  //         this.limit,
-  //       payload: type,
-  //     };
-  //     this.kendraApiService.post(config).subscribe(
-  //       (data) => {
-  //         this.loaderService.stopLoader();
-  //         if (data.result && data.result.count) {
-  //           this.dataCount = data.result.count;
-  //           console.log(this.selectedResources, ' this.selectedResources ');
-  //           this.selectedResources
-  //             ? this.validateCheckbox(data.result.content)
-  //             : (this.resources = this.resources.concat(data.result.content));
-  //           this.cdr.detectChanges();
-  //         }
-  //       },
-  //       (error) => {
-  //         this.loaderService.stopLoader();
-  //       }
-  //     );
-  //   }
 
   getLearningResources() {
     const contentSearchCriteria = {
