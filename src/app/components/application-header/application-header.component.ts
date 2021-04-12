@@ -133,6 +133,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    this.preference.getString('data-mode').subscribe((val)=>{
+      this.isDarkMode=val==AppMode.DARKMODE?true:false
+    });
     this.checkForAppUpdate().then();
   }
 
