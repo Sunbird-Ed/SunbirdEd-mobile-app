@@ -188,19 +188,19 @@
         </div>
       </ion-item>
       <ion-item (click)="switchMode()">
-        <div class="beta-info">
-          <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
-          </span>
-          <div><span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
-            <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
-            <div class="new-feature-badge">
-              <div class="square-badge">New</div>
-              <div class="circle-badge"></div>
-            </div>
-            </div>
-        </div>
-      </ion-item>
+        <span class="sb-menu-icon dark-mode-icon">
+          <img src="./assets/imgs/darkmode.svg" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
+          <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
+          <div class="onoffswitch">
+              <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
+              <label class="onoffswitch-label" for="myonoffswitch">
+                  <div class="onoffswitch-inner"></div>
+                  <div class="onoffswitch-switch"></div>
+              </label>
+          </div>
+    </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
@@ -340,19 +340,19 @@
         </div>
       </ion-item>
       <ion-item (click)="switchMode()">
-        <div class="beta-info">
-          <span class="sb-menu-icon">
-            <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
-          </span>
-          <div><span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
-            <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
-            <div class="new-feature-badge">
-              <div class="square-badge">New</div>
-              <div class="circle-badge"></div>
-            </div>
-            </div>
-        </div>
-      </ion-item>
+        <span class="sb-menu-icon dark-mode-icon">
+          <img src="./assets/imgs/darkmode.svg" class="tool-icon sb-menu-item-switch" alt="help">
+        </span>
+        <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
+          <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
+          <div class="onoffswitch">
+              <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
+              <label class="onoffswitch-label" for="myonoffswitch">
+                  <div class="onoffswitch-inner"></div>
+                  <div class="onoffswitch-switch"></div>
+              </label>
+          </div>
+    </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
