@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { PopoverController } from '@ionic/angular';
 import { PrivacyPolicyAndTCComponent } from '../privacy-policy-and-tc/privacy-policy-and-tc.component';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-project-listing',

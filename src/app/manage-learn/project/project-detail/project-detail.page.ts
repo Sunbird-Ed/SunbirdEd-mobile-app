@@ -117,7 +117,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     params.queryParams.subscribe((parameters) => {
-      console.log(parameters, "parameters");
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -162,13 +161,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    console.log(this.projectType, "projectType");
     let id = this.projectId ? '/' + this.projectId : '';
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
       payload: this.projectType == 'assignedToMe' ? payload : {}
     }
-    console.log(config, "config");
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
       // this.projectId = success.result._id;
@@ -624,7 +621,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {

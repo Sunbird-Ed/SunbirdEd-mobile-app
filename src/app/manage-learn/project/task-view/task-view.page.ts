@@ -92,7 +92,6 @@ export class TaskViewPage implements OnInit {
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         // this.copyOfProject = { ...this.project };
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
-          console.log(item._id, this.parameters.taskId, item)
           return item._id == this.parameters.taskId;
         });
         task > -1 ? (this.task = this.project.tasks[task]) : this.toast.showMessage("FRMELEMNTS_MSG_NO_TASK_FOUND", "danger");
@@ -197,7 +196,6 @@ export class TaskViewPage implements OnInit {
   }
 
   openBodh(link) {
-    console.log(link, "link");
     // TODO: add service
     // this.networkService.isNetworkAvailable
     //   ? this.openResourceSrvc.openBodh(link)
@@ -334,7 +332,6 @@ export class TaskViewPage implements OnInit {
         {
           text: "Save",
           handler: (data) => {
-            console.log(data);
             if (data.field == "" && what != "assignName") {
               this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
               return;
