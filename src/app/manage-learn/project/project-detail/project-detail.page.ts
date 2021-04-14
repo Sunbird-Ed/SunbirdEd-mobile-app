@@ -200,6 +200,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
       // TODO:till here
       this.db.create(success.result).then(successData => {
+        debugger
         this.projectId ? this.getProject() :
           this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
             queryParams: {
@@ -376,11 +377,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.project.isEdit ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.getPdfUrl(task.name, task._id);
+        this.openSyncSharePopup("shareTask", task.name, task._id);
         break;
       }
       case "shareProject": {
-        this.project.isEdit ? this.openSyncSharePopup("shareProject", this.project.title) : this.getPdfUrl(this.project.title);
+        this.openSyncSharePopup("shareProject", this.project.title)
         break;
       }
     }
@@ -405,23 +406,24 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         {
           text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
           handler: () => {
-            this.project.isNew
-              ? this.createNewProject()
-              : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
-            console.log('sync completed');
+            if (this.project.isEdit || this.project.isNew) {
+              this.project.isNew
+                ? this.createNewProject()
+                : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+            } else {
+              type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
+            }
           },
         },
       ],
     });
-    await alert.present();
+    await alert.present(); 
   }
 
   getPdfUrl(fileName, taskId?) {
-    console.log(taskId, "taskid");
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + taskId,
     };
-    console.log(config, "config");
     this.share.getFileUrl(config, fileName);
   }
   // task and project delete permission.

@@ -1,7 +1,7 @@
 <ion-header class="sb-popover-header" *ngIf="showHeader">
   <ion-toolbar class="sb-popover-toolbar">
     <ion-title class="sb-popover-title">{{sbPopoverHeading}}
-      <ion-icon name="close" class="sb-modal-close" (click)="closePopover()" *ngIf="!hideCloseIcon"></ion-icon>
+      <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -23,13 +23,6 @@
       <div class="sb-popover-content" *ngIf="sbPopoverContent">
         {{sbPopoverContent}}
       </div>
-      <div *ngIf="sbPopoverHtmlContent" class="content-alignment">
-        <span *ngIf="otherAction == 'checkbox'">
-          <ion-checkbox (ionChange)="changeEvent($event)"> </ion-checkbox>
-        </span>
-        <span [innerHTML]="sbPopoverHtmlContent" class="cr-policy-checkbox-label">
-        </span>
-      </div>
     </div>
   </div>
 </ion-content>
@@ -40,4 +33,4 @@
       *ngFor="let btn of actionsButtons,let btn_index=index" (click)="deleteContent(btn_index)">
       {{btn.btntext }}</button>
   </div>
-</ion-footer>
+</ion-footer> 
