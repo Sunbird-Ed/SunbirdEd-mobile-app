@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectDetailPage } from './project-detail/project-detail.page';
@@ -22,6 +21,7 @@ import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { PrivacyPolicyAndTCComponent } from './privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
@@ -64,12 +64,15 @@ const routes: Routes = [
     path: `${RouterLinks.ATTACHMENTS}/:id`,
     component: AttachmentListPage
   }
-
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
-  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CategorySelectComponent],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
+    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, 
+    LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
+    CategorySelectComponent, PrivacyPolicyAndTCComponent],
+  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
+    AddProgramsComponent, CategorySelectComponent, PrivacyPolicyAndTCComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -77,7 +80,7 @@ const routes: Routes = [
     IonicModule,
     CoreModule,
     SharedModule,
-    TranslateModule.forChild(),
+    TranslateModule.forChild(), 
     RouterModule.forChild(routes),
     CommonConsumptionModule,
     PipesModule

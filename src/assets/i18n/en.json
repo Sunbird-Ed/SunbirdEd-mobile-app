@@ -1407,5 +1407,10 @@
   "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a sharable file.",
   "FRMELEMNTS_BTN_DNTSYNC":"Dont Sync",
   "FRMELEMNTS_BTN_SYNCANDSHARE":"Sync & Share",
-  "FRMELEMNTS_MSG_FILE_NOT_SHARED":"File not shared !"
+  "FRMELEMNTS_MSG_FILE_NOT_SHARED":"File not shared !",
+  "FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS":"Share Project Details",
+  "FRMELEMNTS_BTN_DO_NOT_SHARE":"Do not share",
+  "FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY":"I confirm that this Content complies with prescribed guidelines,including the",
+  "FRMELEMNTS_LBL_TCANDCP": "Terms of Use and Content Policy.",
+  "FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC" : "I have not shared any personal or sensitive information and have made sure that I do not violate others’ privacy rights and third party rights including intellectual property rights "
 }

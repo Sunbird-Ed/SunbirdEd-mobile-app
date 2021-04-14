@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { KendraApiService } from '../../core/services/kendra-api.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService } from "../../core";
-
-import { urlConstants } from '../../core/constants/urlConstants';
-import { UtilsService } from '../../core';
-import { Platform } from '@ionic/angular';
+import { LoaderService, UtilsService } from "../../core";
 import { DbService } from '../../core/services/db.service';
-import { HttpClient } from '@angular/common/http';
+import { urlConstants } from '../../core/constants/urlConstants';
+import { Platform } from '@ionic/angular';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
+import { SyncService } from '../../core/services/sync.service';
+import { PopoverController } from '@ionic/angular';
+import { PrivacyPolicyAndTCComponent } from '../privacy-policy-and-tc/privacy-policy-and-tc.component';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-project-listing',
@@ -59,7 +59,13 @@ export class ProjectListingComponent implements OnInit {
     private kendra: KendraApiService,
     private loader: LoaderService,
     private translate: TranslateService,
-    private utils: UtilsService) {
+    private utils: UtilsService,
+    private commonUtilService: CommonUtilService,
+    private syncService: SyncService,
+    private db: DbService,
+    private popOverCtrl: PopoverController
+
+  ) {
     this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
       this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
       this.selectedFilter = this.filters[0];
@@ -71,7 +77,7 @@ export class ProjectListingComponent implements OnInit {
 
   ionViewWillEnter() {
     this.projects = [];
-    this.page =1;
+    this.page = 1;
     this.getProjectList();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -83,6 +89,7 @@ export class ProjectListingComponent implements OnInit {
 
   getDataByFilter(filter) {
     this.projects = [];
+    this.page = 1;
     // this.filters.forEach(element => {
     //   element.selected = element.parameter == parameter.parameter ? true : false;
     // });
@@ -148,9 +155,65 @@ export class ProjectListingComponent implements OnInit {
     this.getProjectList();
   }
 
-  createProject() {
+  createProject(data) {
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
-      queryParams: {}
+      queryParams: { hasAcceptedTAndC: data }
     })
+  }
+  doAction(id?, project?) {
+    if (project) {
+      const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
+      if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
+        this.showPPPForProjectPopUp().then((data: any) => {
+          this.checkProjectInLocal(id, data);
+        })
+      } else {
+        this.selectedProgram(id, project);
+      }
+    } else {
+      this.showPPPForProjectPopUp().then(data => {
+        this.createProject(data);
+      })
+    }
+  }
+
+  checkProjectInLocal(id, status) {
+    this.db.query({ _id: id }).then(
+      (success) => {
+        if (success.docs.length) {
+          let project = success.docs.length ? success.docs[0] : {};
+          project.hasAcceptedTAndC = true;
+          this.db.update(project)
+            .then((success) => {
+              let payload = {
+                _id: id,
+                lastDownloadedAt: project.lastDownloadedAt,
+                hasAcceptedTAndC: status ? true : false
+              }
+              this.syncService.syncApiRequest(payload, false).then(resp => {
+                this.selectedProgram(id, project);
+              })
+            })
+        }
+      },
+      (error) => {
+      }
+    );
+  }
+  async showPPPForProjectPopUp() {
+    const alert = await this.popOverCtrl.create({
+      component: PrivacyPolicyAndTCComponent,
+      componentProps: {
+        message: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY',
+        message1: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC',
+        linkLabel: 'FRMELEMNTS_LBL_TCANDCP',
+        header: 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS',
+        link: 'https://diksha.gov.in/term-of-use.html'
+      },
+      cssClass: 'sb-popover',
+    });
+    await alert.present();
+    const { data } = await alert.onDidDismiss();
+    return data;
   }
 }
