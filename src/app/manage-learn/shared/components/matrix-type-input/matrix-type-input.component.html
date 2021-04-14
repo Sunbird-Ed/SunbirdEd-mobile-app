@@ -8,8 +8,8 @@
   </ion-col>
   <div class="_tip _flex-box "> {{data?.tip}}</div>
   <div class="_flex-box alignBtn">
-    <ion-button (click)="addInstances()">{{'FRMELEMENTS_BTN_ADD'|
-      translate}} {{data.instanceIdentifier}}</ion-button>
+    <button class="btn-block px-10 sb-bg-color-primary" (click)="addInstances()">{{'FRMELEMENTS_BTN_ADD'|
+      translate}} {{data.instanceIdentifier}}</button>
   </div>
   <ion-list class="ion-margin-top ion-text-wrap" *ngIf="data?.value?.length">
     <ion-item text-capitalize class="_flex-box" *ngFor="let instance of data?.value; let i = index">

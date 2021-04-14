@@ -1,6 +1,6 @@
 <ion-content class="ion-padding">
   <div *ngIf="reports && reports.length">
-    <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()" [interface]="'fab'">
+    <download-share [name]="fileName()" [extension]="'.pdf'" [config]="config()" [interface]="'fab'">
     </download-share>
 
     <div style="width: 75%; min-height: 25px">

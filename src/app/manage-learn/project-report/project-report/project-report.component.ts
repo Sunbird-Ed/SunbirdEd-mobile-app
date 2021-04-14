@@ -78,31 +78,20 @@ export class ProjectReportComponent implements OnInit {
   ngOnInit() {}
 
   loadFilterType() {
-    //TODO:remove
-    // this.httpClient.get('assets/dummy/reportTypes.json').subscribe(
-    //   (res: any) => {
-    //     if (res.result) {
-    //       this.filterType = res.result;
-    //     }
-    //   },
-    //   (err) => {
-    //     this.filterType = [];
-    //   }
-    // );
-    //TODO:Till here
-    const config = {
-      url: urlConstants.API_URLS.GET_REPORT_TYPES,
-    };
-    this.unnatiService.get(config).subscribe(
-      (res) => {
-        if (res.result) {
-          this.filterType = res.result;
-        }
+    this.filterType = [
+      {
+        label: 'Weekly',
+        value: 0,
       },
-      (err) => {
-        this.filterType = [];
-      }
-    );
+      {
+        label: 'Monthly',
+        value: 1,
+      },
+      {
+        label: 'Quarterly',
+        value: 2,
+      },
+    ];
   }
 
   async getReports(preFilter?) {
@@ -153,14 +142,13 @@ export class ProjectReportComponent implements OnInit {
     let label = [];
     let data = [];
     let color = [];
-    let count =0
+    let count = 0;
     for (const key in obj) {
-
-      debugger
+      debugger;
       if (key == 'total' || key == 'series' || obj[key] == 0) {
         continue;
       }
-      
+
       label.push(this.utils.cameltoNormalCase(key));
       data.push(obj[key]);
       if (key == 'completed') {
@@ -248,7 +236,7 @@ export class ProjectReportComponent implements OnInit {
     return arr;
   }
 
-  downloadUrl() {
+  config() {
     let url = urlConstants.API_URLS.GET_REPORT;
     if (this.filter.entity) {
       url = url + this.filter.entity._id;
@@ -262,7 +250,7 @@ export class ProjectReportComponent implements OnInit {
 
     url = this.utils.queryUrl(url, query);
 
-    return url;
+    return { url: url };
   }
 
   async openFilterModal(type) {

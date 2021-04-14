@@ -22,6 +22,7 @@ import { CategorySelectComponent } from './category-select/category-select.compo
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { PrivacyPolicyAndTCComponent } from './privacy-policy-and-tc/privacy-policy-and-tc.component';
+import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -81,7 +82,8 @@ const routes: Routes = [
     SharedModule,
     TranslateModule.forChild(), 
     RouterModule.forChild(routes),
-    CommonConsumptionModule
+    CommonConsumptionModule,
+    PipesModule
   ]
 })
 export class ProjectModule { }

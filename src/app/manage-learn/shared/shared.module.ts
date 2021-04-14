@@ -47,7 +47,7 @@ import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.component';
 import { AttachmentComponent } from './components/attachment/attachment.component';
-import { QuestionListComponent } from './components/question-list/question-list.component';
+import { ReportModalFilter } from './components/report-modal-filter/report.modal.filter';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
 import { DownloadShareComponent } from './components/download-share/download-share.component';
 import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
@@ -95,7 +95,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     ScatterChartComponent,
     MatrixChartComponent,
     AttachmentComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
@@ -144,7 +144,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     BarChartComponent,
     ScatterChartComponent,
     MatrixChartComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
@@ -184,7 +184,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     PopoverComponent,
     CreateTaskComponent,
     ScroreReportMenusComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     FilterModalComponent,
