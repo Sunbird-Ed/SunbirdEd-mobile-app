@@ -197,7 +197,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       }
       // TODO:till here
       this.db.create(success.result).then(successData => {
-        debugger
         this.projectId ? this.getProject() :
           this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
             queryParams: {

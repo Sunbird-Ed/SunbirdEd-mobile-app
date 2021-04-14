@@ -25,7 +25,6 @@ export class PrivacyPolicyAndTCComponent implements OnInit {
     this.popOverCtrl.dismiss(this.isChecked);
   }
   changeEvent(event) {
-    debugger
     if (event.detail.checked) {
       this.isChecked = true;
     } else {
