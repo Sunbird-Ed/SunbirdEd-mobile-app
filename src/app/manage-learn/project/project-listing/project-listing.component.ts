@@ -13,7 +13,6 @@ import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
 import { PopoverController ,ToastController} from '@ionic/angular';
-import { PrivacyPolicyAndTCComponent } from '../privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
 
