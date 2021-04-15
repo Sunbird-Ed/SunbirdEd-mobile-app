@@ -20,3 +20,4 @@ export * from './progress-bar/progress-bar.component';
 export * from './no-data/no-data.component';
 export * from './chart/chart.component';
 export * from './create-task-form/create-task-form.component';
+export * from './privacy-policy-and-tc/privacy-policy-and-tc.component';

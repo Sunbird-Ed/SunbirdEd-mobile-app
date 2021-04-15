@@ -26,7 +26,8 @@ import {
   ProgressBarComponent,
   NoDataComponent,
   ChartComponent,
-  CreateTaskFormComponent
+  CreateTaskFormComponent,
+  PrivacyPolicyAndTCComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -65,6 +66,8 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
+import { GenericPopUpService } from './TC-generic.popupService';
+
 
 @NgModule({
   declarations: [
@@ -113,6 +116,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
+    PrivacyPolicyAndTCComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -162,6 +166,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
+    PrivacyPolicyAndTCComponent
   ],
   providers: [
     Camera,
@@ -178,6 +183,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,
+    GenericPopUpService
   ],
   entryComponents: [
     EntityfilterComponent,
@@ -195,6 +201,8 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     SurveyMsgComponent,
     CreateTaskFormComponent,
     RemarksModalComponent,
+    PrivacyPolicyAndTCComponent
   ],
+  
 })
 export class SharedModule {}

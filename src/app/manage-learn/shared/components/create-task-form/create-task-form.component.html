@@ -22,8 +22,9 @@
       {{'FRMELEMNTS_LBL_END_DATE' | translate}}
     </ion-label>
     <ion-icon name="calendar" slot="start"></ion-icon>
-    <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds"  displayFormat="DD/MM/YYYY" display-timezone="utc"
-    value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date" placeholder={{today}}>
+    <ion-datetime min="{{currentYear-2}}" max="{{currentYear + 5}}" class="no-rght-brdr-rds" displayFormat="DD/MM/YYYY"
+      display-timezone="utc" value={{newTask.endDate}} [(ngModel)]="newTask.endDate" class="project-date"
+      placeholder={{today}}>
     </ion-datetime>
   </ion-item>
   <ion-item>
@@ -49,7 +50,7 @@
         </div>
       </ion-col>
       <ion-col size="6">
-        <a class="attach-label" (click)="openAction()">{{'FRMELEMNTS_LBL_ATTACH' | translate}}</a>
+        <a class="attach-label" (click)="doAction()">{{'FRMELEMNTS_LBL_ATTACH' | translate}}</a>
       </ion-col>
     </ion-row>
   </div>
