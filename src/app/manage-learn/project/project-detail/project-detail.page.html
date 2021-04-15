@@ -2,7 +2,7 @@
   <ion-card class="project-box" *ngIf="showDetails">
     <ion-card-header class="custom-filed">
       <ion-icon name="caret-down-outline" color="primary" (click)="toggle()"></ion-icon>
-      <ion-label>{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
+      <ion-label *ngIf="!viewOnlyMode">{{'FRMELEMNTS_LBL_PROGRAM_NAME' | translate}} :
       </ion-label>{{project?.programName}}
     </ion-card-header>
     <ion-card-content>
@@ -26,7 +26,7 @@
         <ion-label position="fixed"> {{'FRMELEMNTS_LBL_END_DATE' | translate}} : </ion-label>
         {{project?.endDate | date : 'dd/MM/yyyy' }}
       </div>
-      <ion-row class="custom-filed" *ngIf="project?.status">
+      <ion-row class="custom-filed" *ngIf="project?.status && !viewOnlyMode">
         <ion-col size="5">
           <ion-label position="stacked"> {{'FRMELEMNTS_LBL_PROJECT_STATUS' | translate}} </ion-label>
         </ion-col>
@@ -90,7 +90,7 @@
                 </h5>
               </div>
             </ion-col>
-            <ion-col size="1">
+            <ion-col size="1" *ngIf="!viewOnlyMode">
               <ion-icon name="ellipsis-vertical-outline" color="primary" (click)="openPopover($event,task)">
               </ion-icon>
             </ion-col>
@@ -115,16 +115,22 @@
       </div>
     </div>
   </div>
-  <ion-fab horizontal="center" class="add-task-btn" *ngIf="taskCount < 2">
+  <ion-fab horizontal="center" class="add-task-btn" *ngIf="taskCount < 2 && !viewOnlyMode">
     <ion-fab-button (click)="addTask()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
-  <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" class="add-task-btn" *ngIf="taskCount > 1 && !viewOnlyMode" slot="fixed">
     <ion-fab-button (click)="addTask()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     {{'FRMELEMNTS_LBL_NEW_TASK' | translate}}
   </ion-fab>
 </ion-content>
+
+<ion-footer *ngIf="project && viewOnlyMode">
+  <ion-button expand="block" (click)="importProject()" [disabled]="project.projectId.length">
+    {{'FRMELEMNTS_BTN_IMPORT_PROJECT' | translate}}
+  </ion-button>
+</ion-footer>

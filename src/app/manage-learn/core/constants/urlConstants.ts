@@ -9,7 +9,7 @@ export const urlConstants = {
   API_URLS: {
     PROGRAM_LISTING: 'v1/users/programs?',
 
-    GET_PROJECTS: 'v1/userProjects/getProject?page=',
+    GET_PROJECTS: 'v2/userProjects/getProject?page=',
     SOLUTIONS_LISTING: 'v1/users/solutions/',
     GET_PROJECT: 'v2/userProjects/details',
 
@@ -80,6 +80,7 @@ export const urlConstants = {
     TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity/",
     OBSERVATION_REPORT_SOLUTION_LIST: "v1/observationSubmissions/solutionList?",
     GENERIC_REPORTS:'v1/reports/fetch',
+    PROJECT_TEMPLATE_DETAILS:'v1/project/templates/details/',
 
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',

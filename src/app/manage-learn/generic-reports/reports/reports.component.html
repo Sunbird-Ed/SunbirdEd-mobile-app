@@ -1,4 +1,4 @@
-<ion-content class="ion-padding-horizontal">
+<ion-content >
   <h3 class="txt-capitalize">{{ data?.solutionName }}</h3>
   <h6 class="grade_ellipsis txt-capitalize">{{ data?.entityName }}</h6>
   <ion-grid *ngIf="data?.totalObservations">
@@ -107,11 +107,11 @@
   <div *ngIf="error" class="_flex-box _justify-content-center">
     {{ error?.message }}
   </div>
-  <!-- <div class="_flex-box _justify-content-center" *ngIf="data?.reportSections && data?.reportSections.length ">
-    <button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
-      {{'buttons.clickHereToImprove' | translate}}
-    </button>
-  </div> -->
+  <div class="_flex-box _justify-content-center" *ngIf="data?.improvementProjectSuggestions && data?.improvementProjectSuggestions.length ">
+    <ion-button ion-button round class="viewReportBtn" (click)="goToImpSugg()">
+      {{'FRMELEMNTS_CLICK_TO_IMPROVE' | translate}}
+    </ion-button>
+  </div>
   <!-- INFO: click to improve feature not threre as of now  -->
 </ion-content>
 <!-- dont show when error or when showing survey reports -->

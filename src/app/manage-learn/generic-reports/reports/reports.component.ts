@@ -156,4 +156,13 @@ export class ReportsComponent implements OnInit {
       },
     });
   }
+
+  goToImpSugg() {
+     const state  = {
+       data: this.data.improvementProjectSuggestions
+     };
+    this.router.navigate([RouterLinks.IMP_SUGGESTIONS], {
+      state: state,
+    });
+  }
 }
