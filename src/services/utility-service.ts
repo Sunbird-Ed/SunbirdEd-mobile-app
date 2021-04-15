@@ -256,4 +256,14 @@ export class UtilityService {
             });
         });
     }
+
+    openFileManager(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            sbutility.openFileManager((res) => {
+                resolve(res);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
 }
