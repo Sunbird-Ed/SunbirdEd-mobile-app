@@ -14,15 +14,21 @@ export class PrivacyPolicyAndTCComponent implements OnInit {
   @Input() message;
   @Input() message1;
   @Input() linkLabel;
+  @Input() isPrivacyPolicy;
   isChecked = false;
+  isClicked = false;
   constructor(
     private popOverCtrl: PopoverController,
-    private utilityService :UtilityService
+    private utilityService: UtilityService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
   closePopover() {
-    this.popOverCtrl.dismiss(this.isChecked);
+    let data = {
+      isChecked: this.isChecked,
+      isClicked: true
+    }
+    this.popOverCtrl.dismiss(data);
   }
   changeEvent(event) {
     if (event.detail.checked) {
@@ -36,7 +42,7 @@ export class PrivacyPolicyAndTCComponent implements OnInit {
     const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
     const options
-        = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
     (window as any).cordova.InAppBrowser.open(url, '_blank', options);
-}
+  }
 }

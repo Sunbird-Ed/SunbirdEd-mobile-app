@@ -9,8 +9,9 @@ import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { KendraApiService } from './kendra-api.service';
 import { urlConstants } from '../constants/urlConstants';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,7 +32,7 @@ export class UtilsService {
     private commonUtilService: CommonUtilService,
     private kendra: KendraApiService,
     private aleryCtrl: AlertController,
-    private router: Router
+    private router: Router,
   ) {}
 
   generateFileName(name: string[] = []) {
@@ -519,5 +520,4 @@ export class UtilsService {
       });
     });
   }
-
 }

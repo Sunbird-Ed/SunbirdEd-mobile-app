@@ -15,6 +15,7 @@ import { SyncService } from '../../core/services/sync.service';
 import { PopoverController ,ToastController} from '@ionic/angular';
 import { PrivacyPolicyAndTCComponent } from '../privacy-policy-and-tc/privacy-policy-and-tc.component';
 import { KendraApiService } from '../../core/services/kendra-api.service';
+import { GenericPopUpService } from '../../shared';
 
 @Component({
   selector: 'app-project-listing',
@@ -67,8 +68,8 @@ export class ProjectListingComponent implements OnInit {
     private syncService: SyncService,
     private db: DbService,
     private popOverCtrl: PopoverController,
-    private toastController: ToastController
-
+    private toastController: ToastController,
+    private popupService: GenericPopUpService
 
   ) {
     this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
@@ -183,34 +184,21 @@ export class ProjectListingComponent implements OnInit {
       this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
     }
     const config = {
-      url:
-        urlConstants.API_URLS.GET_TARGETED_SOLUTIONS +
-        '?type=improvementProject&page=' +
-        this.page +
-        '&limit=' +
-        this.limit +
-        '&search=' +
-        this.searchText +
-        '&filter=' +
-        selectedFilter,
-      payload: selectedFilter == 'assignedToMe' ? this.payload : '',
-    };
-    this.kendra.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        this.projects = this.projects.concat(success.result.data);
-        this.projects.map((p) => {
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + '?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
+      payload: selectedFilter == 'assignedToMe' ? this.payload : ''
+    }
+    this.kendra.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      this.projects = this.projects.concat(success.result.data);
+         this.projects.map((p) => {
           if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
         });
-
-        this.count = success.result.count;
-        this.description = success.result.description;
-      },
-      (error) => {
-        this.projects = [];
-        this.loader.stopLoader();
-      }
-    );
+      this.count = success.result.count;
+      this.description = success.result.description;
+    }, error => {
+      this.projects = [];
+      this.loader.stopLoader();
+    })
   }
 
   ionViewWillLeave() {
@@ -226,11 +214,11 @@ export class ProjectListingComponent implements OnInit {
     });
   }
 
-  selectedProgram(id, project) {
+  selectedProgram(project) {
     const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
-        projectId: id,
+        projectId: project._id,
         programId: project.programId,
         solutionId: project.solutionId,
         type: selectedFilter,
@@ -333,61 +321,52 @@ export class ProjectListingComponent implements OnInit {
     }
   }
 
- 
   doAction(id?, project?) {
     if (project) {
       const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
       if (!project.hasAcceptedTAndC && selectedFilter == 'createdByMe') {
-        this.showPPPForProjectPopUp().then((data: any) => {
-          this.checkProjectInLocal(id, data);
+        this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+          data.isClicked ? this.checkProjectInLocal(id, data.isChecked, project) : '';
         })
       } else {
-        this.selectedProgram(id, project);
+        this.selectedProgram(project);
       }
     } else {
-      this.showPPPForProjectPopUp().then(data => {
-        this.createProject(data);
+      this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
+        data.isClicked ? this.createProject(data.isChecked) : '';
       })
     }
   }
 
-  checkProjectInLocal(id, status) {
+  checkProjectInLocal(id, status, selectedProject) {
     this.db.query({ _id: id }).then(
       (success) => {
         if (success.docs.length) {
           let project = success.docs.length ? success.docs[0] : {};
-          project.hasAcceptedTAndC = true;
+          project.hasAcceptedTAndC = status;
           this.db.update(project)
             .then((success) => {
-              let payload = {
-                _id: id,
-                lastDownloadedAt: project.lastDownloadedAt,
-                hasAcceptedTAndC: status ? true : false
-              }
-              this.syncService.syncApiRequest(payload, false).then(resp => {
-                this.selectedProgram(id, project);
-              })
+              this.updateInserver(project);
             })
+        } else {
+          selectedProject.hasAcceptedTAndC = status;
+          this.updateInserver(selectedProject);
         }
       },
       (error) => {
+        debugger
       }
     );
   }
-  async showPPPForProjectPopUp() {
-    const alert = await this.popOverCtrl.create({
-      component: PrivacyPolicyAndTCComponent,
-      componentProps: {
-        message: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY',
-        message1: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC',
-        linkLabel: 'FRMELEMNTS_LBL_TCANDCP',
-        header: 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS',
-        link: 'https://diksha.gov.in/term-of-use.html'
-      },
-      cssClass: 'sb-popover',
-    });
-    await alert.present();
-    const { data } = await alert.onDidDismiss();
-    return data;
+  updateInserver(project) {
+    let payload = {
+      _id: project._id,
+      lastDownloadedAt: project.lastDownloadedAt,
+      hasAcceptedTAndC: project.hasAcceptedTAndC
+    }
+    debugger
+    this.syncService.syncApiRequest(payload, false).then(resp => {
+      this.selectedProgram(project);
+    })
   }
 }
