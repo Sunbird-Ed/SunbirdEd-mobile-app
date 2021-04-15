@@ -224,7 +224,6 @@ export class SyncPage implements OnInit, OnDestroy {
   getImageUploadUrls() {
     const project = { ...this.allProjects[this.syncIndex] };
     this.syncServ.getImageUploadUrls(project).then(imageInfo => {
-      console.log(imageInfo);
       for (let i = 0; i < this.attachments.length; i++) {
         this.attachments[i].uploadUrl = imageInfo[i].url;
         this.attachments[i].cloudStorage = imageInfo[i].cloudStorage;

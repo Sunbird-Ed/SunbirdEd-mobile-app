@@ -16,7 +16,7 @@
 
   <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
     subTitle="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING' | translate}}" class="create_header"
-    (cardSelect)="createProject()">
+    (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
   <h5 class="projects-labels"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
@@ -24,7 +24,7 @@
     <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
   </div>
   <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
-    [id]="project?._id" (cardSelect)="selectedProgram($event, project)">
+    [id]="project?._id" (cardSelect)="doAction($event, project)">
 
     <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc" (click)="$event.stopPropagation(); downloaded(project)">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"  ></ion-icon>
