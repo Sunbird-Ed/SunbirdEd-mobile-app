@@ -9,7 +9,7 @@ import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { KendraApiService } from './kendra-api.service';
 import { urlConstants } from '../constants/urlConstants';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -33,7 +33,6 @@ export class UtilsService {
     private kendra: KendraApiService,
     private aleryCtrl: AlertController,
     private router: Router,
-    private popOverCtrl: PopoverController
   ) {}
 
   generateFileName(name: string[] = []) {

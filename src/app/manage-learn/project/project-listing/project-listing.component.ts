@@ -5,7 +5,7 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, UtilsService, ApiUtilsService } from "../../core";
+import { LoaderService, UtilsService } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { Platform } from '@ionic/angular';
