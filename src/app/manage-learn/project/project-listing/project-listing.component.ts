@@ -180,7 +180,6 @@ export class ProjectListingComponent implements OnInit {
   checkProjectInLocal(id, status, selectedProject) {
     this.db.query({ _id: id }).then(
       (success) => {
-        debugger
         if (success.docs.length) {
           let project = success.docs.length ? success.docs[0] : {};
           project.hasAcceptedTAndC = status;
