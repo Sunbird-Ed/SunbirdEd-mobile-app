@@ -45,6 +45,7 @@ import {
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
+import { SBTagModule } from 'sb-tag-manager';
 
 declare const cordova;
 
@@ -161,6 +162,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.checkForTheme();
       this.onTraceIdUpdate();
       await this.applyJoyfulTheme();
+      window['SBTagManager'] = SBTagModule.instance;
+      window['SBTagManager'].init();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
