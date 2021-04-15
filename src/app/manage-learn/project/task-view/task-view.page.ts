@@ -10,6 +10,7 @@ import { NetworkService } from "../../core/services/network.service";
 import { AppHeaderService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
+import { GenericPopUpService } from '../../shared';
 
 
 var environment = {
@@ -26,7 +27,7 @@ var environment = {
 })
 export class TaskViewPage implements OnInit {
   parameters;
-  @ViewChild("dateTime",  {static: false}) sTime;
+  @ViewChild("dateTime", { static: false }) sTime;
   editField;
   task;
   project;
@@ -58,6 +59,8 @@ export class TaskViewPage implements OnInit {
     private location: Location,
     private networkService: NetworkService,
     private headerService: AppHeaderService,
+    private popupService: GenericPopUpService,
+
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
@@ -296,6 +299,14 @@ export class TaskViewPage implements OnInit {
     this.attachmentService.selectImage().then((data) => {
       data.data ? this.attachments.push(data.data) : "";
     });
+  }
+
+  doAction() {
+    this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      if (data.isClicked) {
+        data.isChecked ? this.markTaskAsCompleted() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+      }
+    })
   }
 
   async edit(what, placeholder = "", subtask?, subTaskIndex?) {
