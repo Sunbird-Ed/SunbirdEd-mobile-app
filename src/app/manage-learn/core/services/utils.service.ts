@@ -11,7 +11,6 @@ import { KendraApiService } from './kendra-api.service';
 import { urlConstants } from '../constants/urlConstants';
 import { AlertController, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { PrivacyPolicyAndTCComponent } from '../../shared/components/privacy-policy-and-tc/privacy-policy-and-tc.component';
 
 @Injectable({
   providedIn: 'root'
@@ -521,21 +520,5 @@ export class UtilsService {
         }
       });
     });
-  }
-  async showPPPForProjectPopUp() {
-    const alert = await this.popOverCtrl.create({
-      component: PrivacyPolicyAndTCComponent,
-      componentProps: {
-        message: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY',
-        message1: 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC',
-        linkLabel: 'FRMELEMNTS_LBL_TCANDCP',
-        header: 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS',
-        link: 'https://diksha.gov.in/term-of-use.html'
-      },
-      cssClass: 'sb-popover',
-    });
-    await alert.present();
-    const { data } = await alert.onDidDismiss();
-    return data;
   }
 }
