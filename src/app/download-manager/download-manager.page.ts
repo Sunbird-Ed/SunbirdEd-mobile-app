@@ -35,6 +35,7 @@ import {
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 import { ContentUtil } from '@app/util/content-util';
+import { DbService } from '../manage-learn/core/services/db.service';
 
 @Component({
   selector: 'app-download-manager',
@@ -68,6 +69,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private db: DbService
   ) { }
 
   async ngOnInit() {
@@ -147,6 +149,22 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           value.contentData.appIcon = ContentUtil.getAppIcon(value.contentData.appIcon,
             value.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
         });
+        const query = {
+            selector: {
+           downloaded: true,
+          },
+        };  
+        let projectData: any = await this.db.customQuery(query);
+        if (projectData.docs) {
+              projectData.docs.map(doc => {
+                doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
+                doc.type = 'project'
+                doc.identifier=doc._id;
+                data.push(doc)
+                
+            })
+        }
+
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
@@ -164,8 +182,16 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async deleteContents(emitedContents: EmitedContents) {
+    const projectContent = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
+    emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
+    
+    if (!emitedContents.selectedContents.length) {
+      this.deleteProjects(projectContent)
+      return
+    }
+    this.deleteProjects(projectContent)
     const contentDeleteRequest: ContentDeleteRequest = {
-      contentDeleteList: emitedContents.selectedContents
+      contentDeleteList: emitedContents.selectedContents,
     };
     if (emitedContents.selectedContents.length > 1) {
       await this.deleteAllContents(emitedContents);
@@ -361,6 +387,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       this.downloadsTab.unSelectAllContents();
     }
   }
+
+  deleteProjects(contents){}
 
 
 }

@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService } from "../../core";
+import { LoaderService } from '../../core';
 
 import { urlConstants } from '../../core/constants/urlConstants';
 import { UtilsService } from '../../core';
-import { Platform } from '@ionic/angular';
+import { Platform, PopoverController, ToastController } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { HttpClient } from '@angular/common/http';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
+;
 
 @Component({
   selector: 'app-project-listing',
@@ -31,7 +32,7 @@ export class ProjectListingComponent implements OnInit {
   headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
-    actionButtons: []
+    actionButtons: [],
   };
   projects = [];
   // filters = [{
@@ -49,6 +50,9 @@ export class ProjectListingComponent implements OnInit {
   selectedFilter;
   layout = LibraryFiltersLayout.ROUND;
   payload;
+  networkFlag: any;
+  private _networkSubscription?: Subscription;
+  private _toast: any;
 
   constructor(
     private router: Router,
@@ -59,20 +63,89 @@ export class ProjectListingComponent implements OnInit {
     private kendra: KendraApiService,
     private loader: LoaderService,
     private translate: TranslateService,
-    private utils: UtilsService) {
-    this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
+    private utils: UtilsService,
+    private db: DbService,
+    private commonUtilService: CommonUtilService,
+    private toastController: ToastController
+  ) {
+    this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe((translations) => {
       this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
       this.selectedFilter = this.filters[0];
-    })
+    });
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  async getDownloadedProjects(fields?: any[]): Promise<[]> {
+    let isAprivateProgramQuery;
+    this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
+    let query = {
+      selector: {
+        downloaded: true,
+        isAPrivateProgram: isAprivateProgramQuery,
+      },
+    };
+
+    fields ? (query['fields'] = fields) : null;
+
+    try {
+      let data: any = await this.db.customQuery(query);
+      return data.docs;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private initNetworkDetection() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    if (!this.networkFlag) {
+      this.getOfflineProjects();
+    } else {
+      this.getProjectList();
+    }
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.clearFields();
+      if (this.networkFlag !== available) {
+        if (this._toast) {
+          await this._toast.dismiss();
+          this._toast = undefined;
+        }
+        if (!available) {
+          this.clearFields();
+          this.getOfflineProjects();
+        } else {
+          this.getProjectList();
+        }
+      }
+      this.networkFlag = available;
+    });
+  }
+
+  clearFields() {
+    this.searchText = '';
+    this.page = 1;
+    this.count = 0;
+  }
+
+  async getOfflineProjects() {
+    this.projects = await this.getDownloadedProjects();
+  }
+
+  private async presentPopupForOffline(text=this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED')) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'bottom',
+      duration: 2000,
+      color: 'danger',
+    });
+    toast.present();
   }
 
   ionViewWillEnter() {
     this.projects = [];
-    this.page =1;
-    this.getProjectList();
+    this.page = 1;
+    // this.getProjectList();
+    this.initNetworkDetection();
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = true;
@@ -89,30 +162,52 @@ export class ProjectListingComponent implements OnInit {
     // this.selectedFilter = parameter.parameter;
     this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
     this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
-    this.searchText = "";
-    this.getProjectList();
+    this.searchText = '';
+    // this.getProjectList();
+    if (!this.networkFlag) {
+      this.getOfflineProjects();
+    } else {
+      this.getProjectList();
+    }
   }
   async getProjectList() {
+    let offilineIdsArr = await this.getDownloadedProjects(['_id']);
+
     this.loader.startLoader();
     const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
     if (selectedFilter == 'assignedToMe') {
       this.payload = !this.payload ? await this.utils.getProfileInfo() : this.payload;
     }
     const config = {
-      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS+'?type=improvementProject&page=' + this.page + '&limit=' + this.limit + '&search=' + this.searchText + '&filter=' + selectedFilter,
-      payload: selectedFilter == 'assignedToMe' ? this.payload : ''
-    }
-    this.kendra.post(config).subscribe(success => {
-      this.loader.stopLoader();
-      this.projects = this.projects.concat(success.result.data);
-      this.count = success.result.count;
-      this.description = success.result.description;
-    }, error => {
-      this.projects = [];
-      this.loader.stopLoader();
-    })
-  }
+      url:
+        urlConstants.API_URLS.GET_TARGETED_SOLUTIONS +
+        '?type=improvementProject&page=' +
+        this.page +
+        '&limit=' +
+        this.limit +
+        '&search=' +
+        this.searchText +
+        '&filter=' +
+        selectedFilter,
+      payload: selectedFilter == 'assignedToMe' ? this.payload : '',
+    };
+    this.kendra.post(config).subscribe(
+      (success) => {
+        this.loader.stopLoader();
+        this.projects = this.projects.concat(success.result.data);
+        this.projects.map((p) => {
+          if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+        });
 
+        this.count = success.result.count;
+        this.description = success.result.description;
+      },
+      (error) => {
+        this.projects = [];
+        this.loader.stopLoader();
+      }
+    );
+  }
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
@@ -134,8 +229,8 @@ export class ProjectListingComponent implements OnInit {
         projectId: id,
         programId: project.programId,
         solutionId: project.solutionId,
-        type: selectedFilter
-      }
+        type: selectedFilter,
+      },
     });
   }
 
@@ -143,14 +238,33 @@ export class ProjectListingComponent implements OnInit {
     this.page = this.page + 1;
     this.getProjectList();
   }
-  onSearch(e) {
+  async onSearch(e) {
+    if (!this.networkFlag) {
+      this.presentPopupForOffline();
+      return;
+    }
     this.projects = [];
+    this.page = 1;
     this.getProjectList();
   }
 
-  createProject() {
+  async createProject() {
+    if (!this.networkFlag) {
+      this.presentPopupForOffline();
+      return;
+    }
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
-      queryParams: {}
-    })
+      queryParams: {},
+    });
+  }
+
+  ngOnDestroy() {
+    if (this._networkSubscription) {
+      this._networkSubscription.unsubscribe();
+      if (this._toast) {
+        this._toast.dismiss();
+        this._toast = undefined;
+      }
+    }
   }
 }

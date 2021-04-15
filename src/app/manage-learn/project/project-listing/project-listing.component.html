@@ -23,8 +23,18 @@
   <div>
     <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
   </div>
-  <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
-    [id]="project?._id" (cardSelect)="selectedProgram($event, project)"></app-item-list-card>
+  <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
+    [id]="project?._id" (cardSelect)="selectedProgram($event, project)">
+
+    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc">
+      <ion-icon class="mg-popup-btn-icon" name="arrow-down"  ></ion-icon>
+      <span>Download</span>
+    </div>
+    <div arrow  *ngIf="project?.downloaded" class="d-flex flex-dc">
+      <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark" ></ion-icon>
+      <span>Downloaded</span>
+    </div>
+  </app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
 <ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">
