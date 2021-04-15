@@ -216,6 +216,7 @@ export class SyncPage implements OnInit, OnDestroy {
     })
     delete payload.createdAt;
     delete payload.updatedAt;
+    delete payload.downloaded
     payload.tasks = filteredTasks;
     return this.syncServ.removeKeys(payload, ['isNew', 'isEdit'])
   }

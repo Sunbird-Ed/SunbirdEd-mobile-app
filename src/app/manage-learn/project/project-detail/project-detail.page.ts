@@ -174,7 +174,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       // this.projectId = success.result._id;
       // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
       let data = success.result;
-      success.result.downloaded = true;
       let newCategories = []
       for (const category of data.categories) {
         if (category._id || category.name) {

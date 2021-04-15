@@ -156,6 +156,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         };  
         let projectData: any = await this.db.customQuery(query);
         if (projectData.docs) {
+          projectData.docs.sort(function (a, b) {
+              return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
+            });
               projectData.docs.map(doc => {
                 doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
                 doc.type = 'project'
@@ -182,14 +185,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async deleteContents(emitedContents: EmitedContents) {
-    const projectContent = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
+    const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
     emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
     
     if (!emitedContents.selectedContents.length) {
-      this.deleteProjects(projectContent)
+      this.deleteProjects(projectContents)
       return
     }
-    this.deleteProjects(projectContent)
+    this.deleteProjects(projectContents)
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents,
     };
@@ -388,7 +391,20 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     }
   }
 
-  deleteProjects(contents){}
+  deleteProjects(contents) {
+    
+    contents.forEach(async(element) => {
+      let project = await this.db.getById(element.contentId)
+      project.downloaded = false
+      await this.db.delete(project._id,project._rev)
+      this.events.publish('savedResources:update', {
+        update: true,
+      });
+       this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
+      
+
+    });
+  }
 
 
 }

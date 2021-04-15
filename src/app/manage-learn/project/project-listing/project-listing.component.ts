@@ -131,7 +131,7 @@ export class ProjectListingComponent implements OnInit {
     this.projects = await this.getDownloadedProjects();
   }
 
-  private async presentPopupForOffline(text=this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED')) {
+  private async presentPopupForOffline(text = this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED')) {
     const toast = await this.toastController.create({
       message: text,
       position: 'bottom',
@@ -256,6 +256,67 @@ export class ProjectListingComponent implements OnInit {
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
       queryParams: {},
     });
+  }
+
+ async downloaded(project) {
+   let projectData
+   try {
+    projectData= await this.db.getById(project._id);
+     
+   } catch (error) {
+     projectData=null
+   }
+   if (projectData) {
+     projectData.downloaded = true
+     await this.db.update(projectData)
+     project.downloaded=true
+    //  this.initNetworkDetection()
+     return
+   }
+
+
+   this.loader.startLoader();
+    let payload = this.selectedFilterIndex == 1 ? await this.utils.getProfileInfo() : '';
+    let id = project._id ? '/' + project._id : '';
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + project.solutionId,
+      payload: this.selectedFilterIndex == 1 ? payload : {},
+    };
+    console.log(config, "config");
+    this.unnatiService.post(config).subscribe(async(success) => {
+      this.loader.stopLoader();
+      let data = success.result;
+      success.result.downloaded = true;
+      let newCategories = []
+      for (const category of data.categories) {
+        if (category._id || category.name) {
+          const obj = {
+            label: category.name || category.label,
+            value: category._id
+          }
+          newCategories.push(obj)
+        }
+      }
+      data.categories = newCategories.length ? newCategories : data.categories;
+      if (data.tasks) {
+
+        data.tasks.map(t => {
+          if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
+            if (t.submissionDetails.status != t.status) {
+              t.status = t.submissionDetails.status
+              t.isEdit = true;
+              data.isEdit = true
+            }
+          }
+        })
+
+      }
+      await this.db.create(success.result)
+      // this.initNetworkDetection()
+           project.downloaded = true;
+
+      })
+
   }
 
   ngOnDestroy() {

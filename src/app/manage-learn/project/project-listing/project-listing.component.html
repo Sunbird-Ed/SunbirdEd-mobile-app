@@ -26,7 +26,7 @@
   <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
     [id]="project?._id" (cardSelect)="selectedProgram($event, project)">
 
-    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc">
+    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc" (click)="$event.stopPropagation(); downloaded(project)">
       <ion-icon class="mg-popup-btn-icon" name="arrow-down"  ></ion-icon>
       <span>Download</span>
     </div>

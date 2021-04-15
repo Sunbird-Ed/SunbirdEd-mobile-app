@@ -54,7 +54,7 @@ export class DownloadsTabComponent implements OnInit {
     });
   }
 
-  async showDeletePopup(identifier?) {
+  async showDeletePopup(identifier?,type?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.DELETE_CLICKED,
@@ -64,6 +64,7 @@ export class DownloadsTabComponent implements OnInit {
         contentId: identifier,
         isChildContent: false
       };
+      type=='project' ? contentDelete['type']=type:null
       this.selectedContents = [contentDelete];
     }
     this.telemetryGeneratorService.generatePageViewTelemetry(
@@ -220,6 +221,7 @@ export class DownloadsTabComponent implements OnInit {
           contentId: element.identifier,
           isChildContent: false
         };
+        element['type']=='project'?contentDelete['type']=element['type']:null
         this.selectedContentsInfo.totalSize += element.sizeOnDevice;
         this.selectedContents.push(contentDelete);
       }
