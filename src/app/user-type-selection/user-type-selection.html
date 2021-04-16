@@ -21,7 +21,7 @@
 </ion-content>
 
 <div *ngIf="categoriesProfileData"> 
-	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue" (click)="onSubmitAttempt()">
+	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue" [disabled]="!isUserTypeSelected" [class.disabled-button]="!isUserTypeSelected" (click)="onSubmitAttempt()">
 		<span>{{ 'CONTINUE' | translate }}</span>
 		<img class="arrow-icon" src="assets/imgs/ic_back.svg" name="arrow-round-forward" alt="">
 	</button>
