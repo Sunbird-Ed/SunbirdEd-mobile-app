@@ -421,7 +421,7 @@ export class ProfilePage implements OnInit {
   async getEnrolledCourses(refresher?, refreshCourseList?) {
     const loader = await this.commonUtilService.getLoader();
     if (refreshCourseList) {
-      loader.present();
+      await loader.present();
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.REFRESH_CLICKED,
@@ -435,15 +435,15 @@ export class ProfilePage implements OnInit {
     };
     this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then((res: Course[]) => {
-        if (res.length) {
-          this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
-        }
-        refreshCourseList ? loader.dismiss() : false;
-      })
-      .catch((error: any) => {
-        console.error('error while loading enrolled courses', error);
-      });
+      .then(async (res: Course[]) => {
+      if (res.length) {
+        this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
+      }
+      refreshCourseList ? await loader.dismiss() : false;
+    })
+      .catch ((error: any) => {
+      console.error('error while loading enrolled courses', error);
+    });
   }
 
   mapTrainingsToCertificates(trainings: Course[]) {
@@ -465,10 +465,10 @@ export class ProfilePage implements OnInit {
         label: 'COMPLETED'
       };
       if(course.status === 0 || course.status === 1) {
-        oneCert.style = "ongoing-status-text";
+        oneCert.style = 'ongoing-status-text';
         oneCert.label = 'ONGOING';
         if(course.batch && course.batch.status === 2) {
-          oneCert.style = "ongoing-status-text";
+          oneCert.style = 'ongoing-status-text';
           oneCert.label = 'BATCH_EXPIRED';
         }
       }
