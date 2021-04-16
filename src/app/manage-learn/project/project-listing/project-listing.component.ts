@@ -117,6 +117,7 @@ export class ProjectListingComponent implements OnInit {
           this.clearFields();
           this.getOfflineProjects();
         } else {
+          this.projects=[]
           this.getProjectList();
         }
       }
