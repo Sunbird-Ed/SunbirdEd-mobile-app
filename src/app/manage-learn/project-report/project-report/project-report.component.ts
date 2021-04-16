@@ -155,7 +155,6 @@ export class ProjectReportComponent implements OnInit {
     let color = [];
     let count = 0;
     for (const key in obj) {
-      debugger;
       if (key == 'total' || key == 'series' || obj[key] == 0) {
         continue;
       }
@@ -179,7 +178,6 @@ export class ProjectReportComponent implements OnInit {
       radius: radius,
       total: obj['total'],
     };
-    debugger;
 
     return series;
   }

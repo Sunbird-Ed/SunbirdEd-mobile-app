@@ -28,7 +28,6 @@ export class ReportModalFilter implements OnInit {
     // this.filteredQuestions = this.navParams.get('filteredQuestions');
     this.data = this.navParams.get('data');
     this.filteredData = this.navParams.get('filteredData');
-    debugger;
   }
 
   /*  onQuestionClick(externalId) {

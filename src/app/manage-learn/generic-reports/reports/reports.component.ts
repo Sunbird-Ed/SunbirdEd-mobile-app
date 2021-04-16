@@ -159,7 +159,11 @@ export class ReportsComponent implements OnInit {
 
   goToImpSugg() {
      const state  = {
-       data: this.data.improvementProjectSuggestions
+       data: this.data.improvementProjectSuggestions,
+       solutionName: this.data.solutionName,
+       solutionId: this.data.solutionId,
+       observationId: this.state.observationId,
+       entityId: this.state.entityId,
      };
     this.router.navigate([RouterLinks.IMP_SUGGESTIONS], {
       state: state,

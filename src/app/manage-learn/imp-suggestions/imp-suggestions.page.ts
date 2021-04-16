@@ -10,25 +10,39 @@ import { RouterLinks } from '@app/app/app.constant';
 export class ImpSuggestionsPage implements OnInit {
 
   criterias;
+  solutionName: string;
+  observationId: string;
+  entityId: string;
+  item;
+  solutionId: string;
 
   constructor(private router: Router) {
     this.criterias = this.router.getCurrentNavigation().extras.state.data;
-    console.log(this.criterias)
+    this.solutionName = this.router.getCurrentNavigation().extras.state.solutionName;
+    this.observationId = this.router.getCurrentNavigation().extras.state.observationId;
+    this.entityId = this.router.getCurrentNavigation().extras.state.entityId;
+    this.solutionId = this.router.getCurrentNavigation().extras.state.solutionId;
   }
 
   ngOnInit() {
   }
 
-  goToTemplateDetails(id) {
+  goToTemplateDetails(criteria, project) {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
-        // projectId: id,
-        // programId: project.programId,
-        // solutionId: project.solutionId,
-        // type: selectedFilter
         viewOnlyMode: true,
-        templateId: id
-      }
+        templateId: project.externalId
+      },
+      state: {
+        "referenceFrom": "observation",
+        "submissions": {
+          "observationId": this.observationId,
+          "entityId": this.entityId,
+          "criteriaId": criteria.criteriaId,
+          "score": criteria.level,
+          "solutionId": this.solutionId
+        }
+      },
     });
   }
 

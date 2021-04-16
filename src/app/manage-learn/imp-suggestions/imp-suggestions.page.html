@@ -1,17 +1,18 @@
 
 <ion-content>
+  <h3 class="ion-padding-horizontal ion-text-capitalize">{{solutionName}}</h3>
   <div *ngIf="criterias?.length">
     <!-- <ion-item-divider color="light">
       <h4 class="bold" text-wrap>{{criteriaImp.criteriaName}}</h4>
     </ion-item-divider> -->
-    <div *ngFor="let Ip of criterias;let i=index">
-      <ion-card *ngIf="Ip.criteriaName">
+    <div *ngFor="let criteria of criterias;let i=index">
+      <ion-card *ngIf="criteria.criteriaName">
         <ion-item class="ion-text-wrap">
           <div class="flex-box" (click)="item=i" style="width: 100%;">
             <!-- <ion-icon name="play" class="logoIcon"></ion-icon> -->
-            <div style="flex: 1">{{Ip.criteriaName}}</div>
+            <div style="flex: 1">{{criteria.criteriaName}}</div>
             <div class="flex-box justify-content-center">
-              <p class="ion-padding-end" style="margin-bottom: 0;">{{Ip.label}}</p>
+              <p class="ion-padding-end" style="margin-bottom: 0;">{{criteria.label}}</p>
               <ion-icon name="caret-down"></ion-icon>
             </div>
           </div>
@@ -21,12 +22,12 @@
       <div style="margin: 0 22px" class="panel" *ngIf="item===i">
         <ion-item-group>
           <ion-item-divider>
-            <ion-label *ngIf="Ip.improvementProjects.length">{{'FRMELEMNTS_SUGGESTED_PROJECTS'|translate}}</ion-label>
-            <ion-label *ngIf="!Ip.improvementProjects.length">{{'FRMELEMNTS_NO_SUGGESTIONS'|translate}}</ion-label>
+            <ion-label *ngIf="criteria.improvementProjects.length">{{'FRMELEMNTS_SUGGESTED_PROJECTS'|translate}}</ion-label>
+            <ion-label *ngIf="!criteria.improvementProjects.length">{{'FRMELEMNTS_NO_SUGGESTIONS'|translate}}</ion-label>
           </ion-item-divider>
 
-          <ion-item *ngFor="let project of Ip?.improvementProjects">
-            <ion-label (click)="goToTemplateDetails(project?.externalId)" class="ion-text-wrap">
+          <ion-item *ngFor="let project of criteria?.improvementProjects">
+            <ion-label (click)="goToTemplateDetails(criteria, project)" class="ion-text-wrap">
               <p>{{project?.name}}</p>
               <small>{{project?.goal}}</small>
             </ion-label>

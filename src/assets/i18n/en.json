@@ -1410,5 +1410,7 @@
   "FRMELEMNTS_CLICK_":"File not shared !",
   "FRMELEMNTS_CLICK_TO_IMPROVE":"Click to improve",
   "FRMELEMNTS_SUGGESTED_PROJECTS":"Suggested Projects",
-  "FRMELEMNTS_NO_SUGGESTIONS":"No Projects"
+  "FRMELEMNTS_NO_SUGGESTIONS":"No Projects",
+  "FRMELEMNTS_BTN_PROJECT_IMPORTED":"Project Imported",
+  "FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE":"Do you want to import the project to your Workspace?"
 }
