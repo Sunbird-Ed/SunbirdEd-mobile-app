@@ -8,6 +8,7 @@ export const urlConstants = {
   },
   API_URLS: {
     PROGRAM_LISTING: 'v1/users/programs?',
+    GET_PROJECTS: 'v2/userProjects/getProject?page=',
     GET_TARGETED_SOLUTIONS: 'v1/solutions/targetedSolutions',
     SOLUTIONS_LISTING: 'v1/users/solutions/',
     GET_PROJECT: 'v2/userProjects/details',
@@ -69,10 +70,10 @@ export const urlConstants = {
     SUBMISSION: 'v1/submissions/make/',
     GET_SURVEY_IMAGE_UPLOAD_URLS: 'v1/files/getImageUploadUrl/',
     GET_SUBMISSION_PDF: 'v1/observationSubmissions/pdfFileUrl/',
-    TARGETTED_ENTITY_TYPES: 'v1/users/targetedEntity/',
-    OBSERVATION_REPORT_SOLUTION_LIST: 'v1/observationSubmissions/solutionList?',
-    GENERIC_REPORTS: 'v1/reports/fetch',
-
+    TARGETTED_ENTITY_TYPES: "v1/users/targetedEntity/",
+    OBSERVATION_REPORT_SOLUTION_LIST: "v1/observationSubmissions/solutionList?",
+    GENERIC_REPORTS:'v1/reports/fetch',
+    PROJECT_TEMPLATE_DETAILS:'v1/project/templates/details/',
     OBSERVATION_REPORTS: {
       INSTANCE_REPORT: '/observations/instance',
       ENTITY_REPORT: '/observations/entity',

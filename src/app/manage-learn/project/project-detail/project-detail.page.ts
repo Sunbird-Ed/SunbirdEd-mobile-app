@@ -25,14 +25,6 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
 
-// var environment = {
-//   db: {
-//     projects: "project.db",
-//     categories: "categories.db",
-//   },
-//   deepLinkAppsUrl: ''
-// };
-
 @Component({
   selector: "app-project-detail",
   templateUrl: "./project-detail.page.html",
@@ -88,6 +80,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   locationChangeTriggered: boolean = false;
   allStrings;
   private _appHeaderSubscription?: Subscription;
+  viewOnlyMode: boolean = false;
+  templateId;
+  templateDetailsPayload;
 
   constructor(
     public params: ActivatedRoute,
@@ -114,6 +109,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private location: Location,
     private ref: ChangeDetectorRef,
     private navigateService: NavigationService,
+    private alertController: AlertController,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     params.queryParams.subscribe((parameters) => {
@@ -121,10 +117,20 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
       this.projectType = parameters.type ? parameters.type : '';
-      this.getProject();
+      this.viewOnlyMode = parameters.viewOnlyMode;
+      this.templateId = parameters.templateId;
+      this.viewOnlyMode ? this.getTemplateDetails() : this.getProject();
+      this.templateDetailsPayload =  this.router.getCurrentNavigation().extras.state;
     });
     this.translate
-      .get(["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG", "FRMELEMNTS_MSG_NO_ENTITY_MAPPED", "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"])
+      .get([
+        "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG",
+        "FRMELEMNTS_MSG_NO_ENTITY_MAPPED",
+        "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS",
+        "FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE",
+        "YES",
+        "NO"
+      ])
       .subscribe((texts) => {
         this.allStrings = texts;
       });
@@ -133,39 +139,76 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.getProjectTaskStatus();
     });
   }
+
+  getTemplateDetails() {
+    this.loader.startLoader();
+    const config = {
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.templateId,
+      // payload:  {}
+    }
+    
+    this.unnatiService.get(config).subscribe(success => {
+      this.loader.stopLoader();
+      // let data = success.result;
+      this.project = success.result;
+      this._headerConfig.actionButtons = []
+      this.headerService.updatePageConfig(this._headerConfig);
+      this.sortTasks();
+
+      // this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+      // this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+      // this.headerService.updatePageConfig(this._headerConfig);
+      // this.project.categories.forEach((category: any) => {
+      //   category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+      // });
+      // this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+    }, error => {
+      this.loader.stopLoader();
+
+    })
+  }
+
   getProject() {
-    this.db.query({ _id: this.projectId }).then(
-      (success) => {
-        if (success.docs.length) {
-          this.categories = [];
-          this.project = success.docs.length ? success.docs[0] : {};
-          this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
-          this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-          this.headerService.updatePageConfig(this._headerConfig);
-          this.project.categories.forEach((category: any) => {
-            category.label ? this.categories.push(category.label) : this.categories.push(category.name);
-          });
-          this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
-          this.getProjectTaskStatus();
-        } else {
+    if (this.projectId) {
+      this.db.query({ _id: this.projectId }).then(
+        (success) => {
+          if (success.docs.length) {
+            this.categories = [];
+            this.project = success.docs.length ? success.docs[0] : {};
+            this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+            !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
+            this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+            this.headerService.updatePageConfig(this._headerConfig);
+            this.project.categories.forEach((category: any) => {
+              category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+            });
+            this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+            this.getProjectTaskStatus();
+          } else {
+            this.getProjectsApi();
+          }
+
+        },
+        (error) => {
           this.getProjectsApi();
         }
+      );
+    } else {
+      this.getProjectsApi();
+    }
 
-      },
-      (error) => {
-        this.getProjectsApi();
-      }
-    );
   }
 
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    let id = this.projectId ? '/' + this.projectId : '';
+    console.log(this.projectType, "projectType");
+    const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
     const config = {
-      url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
+      url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: this.projectType == 'assignedToMe' ? payload : {}
     }
+    this.templateDetailsPayload ? config.payload = this.templateDetailsPayload: null;
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
       // this.projectId = success.result._id;
@@ -223,6 +266,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() { }
+
   ionViewWillEnter() {
     this.initApp();
     // this.getProject();
@@ -242,7 +286,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = ['more'];
+    // this._headerConfig.actionButtons = ['more'];
     this._headerConfig.showBurgerMenu = false;
     this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this._headerConfig);
@@ -725,6 +769,49 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     } else {
       this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
     }
+  }
+
+  importProject() {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      queryParams: {
+        templateId: this.templateId
+      },
+      state: this.templateDetailsPayload,
+      replaceUrl: true
+    });
+  }
+
+  async importProjectConfirm() {
+    const alert = await this.alertController.create({
+      subHeader: this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE'],
+      buttons: [
+        {
+          text: this.allStrings['YES'],
+          role: 'cancel',
+          cssClass: 'primary',
+          handler: (blah) => {
+            this.importProject();
+          }
+        }, {
+          text: this.allStrings['NO'],
+          role: 'cancel',
+          cssClass: "cancelBtn",
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  goToProjectDetails() {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      queryParams: {
+        projectId: this.project.projectId,
+      },
+      replaceUrl: true
+    });
   }
 
 }

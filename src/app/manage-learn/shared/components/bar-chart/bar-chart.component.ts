@@ -37,7 +37,6 @@ export class BarChartComponent implements OnInit {
         {
           ticks: {
             callback: function (value: any, index, values) {
-              // debugger;
               // // return createSubstrArr(value, 5) || value;
               let strArr = value.split(' ');
               let tempString = '';
