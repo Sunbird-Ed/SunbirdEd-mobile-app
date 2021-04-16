@@ -173,6 +173,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.db.query({ _id: this.projectId }).then(
         (success) => {
           if (success.docs.length) {
+
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
@@ -286,7 +287,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
-    // this._headerConfig.actionButtons = ['more'];
+    this._headerConfig.actionButtons = [];
     this._headerConfig.showBurgerMenu = false;
     this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this._headerConfig);
