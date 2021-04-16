@@ -113,7 +113,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
     params.queryParams.subscribe((parameters) => {
-      console.log(parameters, "parameters");
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
@@ -210,7 +209,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       payload: this.projectType == 'assignedToMe' ? payload : {}
     }
     this.templateDetailsPayload ? config.payload = this.templateDetailsPayload: null;
-    console.log(config, "config");
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
       // this.projectId = success.result._id;
@@ -419,11 +417,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.project.isEdit ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.getPdfUrl(task.name, task._id);
+        this.openSyncSharePopup("shareTask", task.name, task._id);
         break;
       }
       case "shareProject": {
-        this.project.isEdit ? this.openSyncSharePopup("shareProject", this.project.title) : this.getPdfUrl(this.project.title);
+        this.openSyncSharePopup("shareProject", this.project.title)
         break;
       }
     }
@@ -448,23 +446,24 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         {
           text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
           handler: () => {
-            this.project.isNew
-              ? this.createNewProject()
-              : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
-            console.log('sync completed');
+            if (this.project.isEdit || this.project.isNew) {
+              this.project.isNew
+                ? this.createNewProject()
+                : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+            } else {
+              type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
+            }
           },
         },
       ],
     });
-    await alert.present();
+    await alert.present(); 
   }
 
   getPdfUrl(fileName, taskId?) {
-    console.log(taskId, "taskid");
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + taskId,
     };
-    console.log(config, "config");
     this.share.getFileUrl(config, fileName);
   }
   // task and project delete permission.
@@ -665,7 +664,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {

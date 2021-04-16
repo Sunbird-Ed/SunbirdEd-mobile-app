@@ -127,6 +127,30 @@ export class ApiService {
     )
   }
 
+  delete(requestParam: RequestParams): Observable<any> {
+    
+    return this.checkTokenValidation().pipe(
+      mergeMap(session => {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'x-auth-token': session ? session.access_token : '',
+            'x-authenticated-user-token': session ? session.access_token : '',
+            'X-App-Id': this.apiUtils.appName,
+            'X-App-Ver': this.apiUtils.appVersion,
+          }),
+          body: requestParam.payload
+        };
+        return this.http.delete(this.baseUrl + requestParam.url, httpOptions).pipe(
+          tap(data => {
+            return data
+          }, error => {
+            catchError(this.handleError(error))
+          }),
+        );
+      })
+    )
+  }
+
 
 
   private handleError(result) {

@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class UtilsService {
+  private alert?: any;
   imagePath: string;
   public assessmentBaseUrl: string;
   public projectsBaseUrl: string;
@@ -31,9 +32,8 @@ export class UtilsService {
     private commonUtilService: CommonUtilService,
     private kendra: KendraApiService,
     private aleryCtrl: AlertController,
-    private router: Router
-  ) {
-  }
+    private router: Router,
+  ) {}
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -520,5 +520,4 @@ export class UtilsService {
       });
     });
   }
-
 }
