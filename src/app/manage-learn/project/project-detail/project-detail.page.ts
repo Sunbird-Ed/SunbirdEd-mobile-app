@@ -497,6 +497,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       return item._id == id;
     });
     this.project.tasks[index].isDeleted = true;
+    this.project.tasks[index].isEdit = true;
     this.update("taskDelete");
   }
   deleteProject() {
