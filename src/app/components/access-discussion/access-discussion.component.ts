@@ -51,7 +51,6 @@ export class AccessDiscussionComponent implements OnInit {
       undefined,
       undefined,
       undefined,
-      undefined,
       undefined
     );
     this.headerService.hideHeader();
