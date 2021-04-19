@@ -101,6 +101,7 @@
     "core-js": "^2.6.10",
     "dayjs": "1.9.8",
     "dom-to-image": "^2.6.0",
+    "epubjs": "^0.3.88",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
     "hammerjs": "^2.0.8",
@@ -116,6 +117,7 @@
     "sb-cordova-plugin-sync": "git+https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0",
     "sb-cordova-plugin-utility": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.8.0",
     "sb-svg2pdf": "0.0.10",
+    "sb-tag-manager": "^3.9.15",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.9.1"

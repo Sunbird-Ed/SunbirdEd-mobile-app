@@ -65,6 +65,7 @@ import { AccessDiscussionComponent } from './access-discussion/access-discussion
 import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-theme-popup.component';
 import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
+import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
 
 @NgModule({
   declarations: [
@@ -122,7 +123,8 @@ import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-exp
     JoyfulThemePopupComponent,
     ShowVendorAppsComponent,
     JoyfulThemePopupComponent,
-    NewExperiencePopupComponent
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent
   ],
   imports: [
     CommonModule,
@@ -178,7 +180,8 @@ import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-exp
     DiscoverComponent,
     JoyfulThemePopupComponent,
     ShowVendorAppsComponent,
-    NewExperiencePopupComponent
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -233,7 +236,8 @@ import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-exp
     JoyfulThemePopupComponent,
     AccessDiscussionComponent,
     ShowVendorAppsComponent,
-    NewExperiencePopupComponent
+    NewExperiencePopupComponent,
+    YearOfBirthPopupComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard]
 })
