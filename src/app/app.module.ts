@@ -4,7 +4,6 @@ import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, Provid
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // ionic cordova dependencies/plugins
-import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -24,6 +23,7 @@ import { CsContentType } from '@project-sunbird/client-services/services/content
 import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
+import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { DirectivesModule } from '../directives/directives.module';
 import {
   ActivePageService, AndroidPermissionsService, AppGlobalService,
