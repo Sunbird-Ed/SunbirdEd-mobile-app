@@ -188,6 +188,17 @@
         </div>
       </ion-item>
 
+      <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
+        <div class="new-feature-badge">
+          <div class="square-badge">New</div>
+          <div class="circle-badge"></div>
+        </div>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
@@ -314,11 +325,23 @@
         </div>
       </ion-item> -->
       <ion-item (click)="switchTabs()">
+        <div class="beta-info">
+          <span class="sb-menu-icon">
+            <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+          </span>
+          <div><span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate: {'appName': appName} }}</span>
+            <span *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate: {'appName': appName} }}</span>
+              <span class="new-feature-badge" *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" >
+              <div class="square-badge">Beta</div>
+              <div class="circle-badge"></div></span></div>
+        </div>
+      </ion-item>
+
+      <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/ic_switch.svg" class="tool-icon sb-menu-item-switch" alt="help">
+          <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
         </span>
-        <span *ngIf="currentSelectedTabs === 'HOME_DISCOVER_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_LIBRARY' | translate}}</span>
-        <span *ngIf="!currentSelectedTabs || currentSelectedTabs === 'RESOURCE_COURSE_TABS_CONFIG'" class="sb-menu-item" menuClose>{{'FRMELEMNTS_LBL_SWITCH_TO_HOME' | translate}}</span>
+        <span class="sb-menu-item" menuClose>{{'IMPORT_CONTENT' | translate}}</span>
         <div class="new-feature-badge">
           <div class="square-badge">New</div>
           <div class="circle-badge"></div>

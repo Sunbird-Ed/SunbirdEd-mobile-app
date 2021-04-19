@@ -201,7 +201,7 @@ export class CourseBatchesPage implements OnInit, ConsentPopoverActionsDelegate 
         undefined,
         this.objRollup,
         this.corRelationList);
-      this.loginHandlerService.signIn();
+      this.loginHandlerService.signIn({navigateToCourse: true});
     }
   }
 

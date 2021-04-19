@@ -266,6 +266,7 @@ describe('AppComponent', () => {
         it('should subscribe and set header config', (done) => {
             // arrange
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             const mockConfig = {
                 showHeader: true,
                 showBurgerMenu: true,
@@ -290,6 +291,7 @@ describe('AppComponent', () => {
         it('should generate interact telemetry internet-connected in network availability is true', (done) => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.networkAvailability$ = of(true);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
@@ -313,6 +315,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
@@ -335,6 +338,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.addListener = jest.fn(() => 'some_trace_id');
             // act
@@ -361,6 +365,7 @@ describe('AppComponent', () => {
             });
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             mockEventsBusService.events = jest.fn(() => EMPTY);
             mockNotificationSrc.setupLocalNotification = jest.fn();

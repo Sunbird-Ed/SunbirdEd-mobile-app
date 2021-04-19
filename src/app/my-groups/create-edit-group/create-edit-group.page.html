@@ -1,6 +1,7 @@
 <ion-content>
   <form [formGroup]="createGroupForm">
-    <p class="cr-title">{{'CREATE_GROUP' | translate}}</p>
+    <p class="cr-title" *ngIf="!groupDetails">{{'CREATE_GROUP' | translate}}</p>
+    <p class="cr-title" *ngIf="groupDetails">{{'EDIT_GROUP' | translate}}</p>
     <ion-item class="input-item" 
     [ngClass]="{'cr-input-primary': !((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required) ,
       'cr-input-error': ((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)}">
