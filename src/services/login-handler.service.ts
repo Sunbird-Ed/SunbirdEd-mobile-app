@@ -152,13 +152,13 @@ export class LoginHandlerService {
                   if (selectedUserType === ProfileType.ADMIN) {
                     return selectedUserType;
                   } else if (
-                    (success.userType === ProfileType.OTHER.toUpperCase()) ||
-                    (!success.userType)
+                    (success.profileUserType.type === ProfileType.OTHER.toUpperCase()) ||
+                    (!success.profileUserType.type)
                   ) {
                     return ProfileType.NONE;
                   }
 
-                  return success.userType.toLowerCase();
+                  return success.profileUserType.type.toLowerCase();
                 })();
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
