@@ -85,7 +85,7 @@ export class TncUpdateHandlerService {
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
         || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase()
-            || userDetails.serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
+            || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       } else {
         this.checkDistrictMapping(profile, locationMappingConfig, userDetails);

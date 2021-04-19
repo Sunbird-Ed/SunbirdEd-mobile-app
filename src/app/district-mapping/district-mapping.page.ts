@@ -198,9 +198,11 @@ export class DistrictMappingPage implements OnDestroy {
         locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
-        ...((this.formGroup.value.children['persona']['subPersona'] ?
-          { userSubType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        profileUserType: {
+          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
+          ...((this.formGroup.value.children['persona']['subPersona'] ?
+            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        }
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
@@ -358,8 +360,9 @@ export class DistrictMappingPage implements OnDestroy {
       }
       if (config.code === 'persona') {
         config.default = (this.profile && this.profile.serverProfile
-        && this.profile.serverProfile.userType && (this.profile.serverProfile.userType !== ProfileType.OTHER.toUpperCase())) ?
-        this.profile.serverProfile.userType : selectedUserType;
+        && this.profile.serverProfile.profileUserType.type
+        && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
+        this.profile.serverProfile.profileUserType.type : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
@@ -386,7 +389,7 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.userSubType;
+                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
                 }
                 break;
               }
@@ -452,7 +455,7 @@ export class DistrictMappingPage implements OnDestroy {
       await this.loader.dismiss();
       const subPersonaFormControl = this.formGroup.get('children.persona.subPersona');
       if (subPersonaFormControl && !subPersonaFormControl.value) {
-        subPersonaFormControl.patchValue(this.profile.serverProfile.userSubType || null);
+        subPersonaFormControl.patchValue(this.profile.serverProfile.profileUserType.subType || null);
       }
       if (!this.stateChangeSubscription) {
         this.stateChangeSubscription = concat(
