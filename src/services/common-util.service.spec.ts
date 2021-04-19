@@ -20,6 +20,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService, ComingSoonMessageService } from '.';
+import { TelemetryService } from '@project-sunbird/sunbird-sdk';
 
 declare const FCMPlugin;
 
@@ -30,6 +31,9 @@ describe('CommonUtilService', () => {
     putString: jest.fn(() => of(undefined)),
   };
   const mockProfileService: Partial<ProfileService> = {};
+  const mockTelemetryService: Partial<TelemetryService> = {
+    populateGlobalCorRelationData: jest.fn()
+  };
   const mockToastController: Partial<ToastController> = {
     create: jest.fn(() => (Promise.resolve({
       present: jest.fn(() => Promise.resolve({})),
@@ -83,6 +87,7 @@ describe('CommonUtilService', () => {
     commonUtilService = new CommonUtilService(
       mockSharedPreferences as SharedPreferences,
       mockProfileService as ProfileService,
+      mockTelemetryService as TelemetryService,
       mockTranslateService as TranslateService,
       mockLoadingController as LoadingController,
       mockEvents as Events,
@@ -624,6 +629,7 @@ describe('CommonUtilService', () => {
         dismiss: jest.fn(() => Promise.resolve({}))
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
       // act
       commonUtilService.showExitPopUp('permission', 'home', false);
       // assert
@@ -639,6 +645,7 @@ describe('CommonUtilService', () => {
       commonUtilService = new CommonUtilService(
         mockSharedPreferences as SharedPreferences,
         mockProfileService as ProfileService,
+        mockTelemetryService as TelemetryService,
         mockTranslateService as TranslateService,
         mockLoadingController as LoadingController,
         mockEvents as Events,
@@ -661,6 +668,7 @@ describe('CommonUtilService', () => {
       }) as any);
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+      mockNetwork.onChange = jest.fn(() => of([{ type: 'online' }]));
       // act
       commonUtilService.showExitPopUp('library', 'home', false);
       // assert

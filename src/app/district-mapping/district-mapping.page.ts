@@ -29,6 +29,8 @@ import {
 } from 'sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
+import {ProfileType} from '@project-sunbird/sunbird-sdk';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-district-mapping',
@@ -74,7 +76,8 @@ export class DistrictMappingPage implements OnDestroy {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
     private locationHandler: LocationHandler,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -201,6 +204,7 @@ export class DistrictMappingPage implements OnDestroy {
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
+      const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
@@ -218,6 +222,9 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
               this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
+            if (!this.profile.serverProfile.dob && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup();
+            }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
@@ -230,6 +237,9 @@ export class DistrictMappingPage implements OnDestroy {
           if (this.profile) {
             this.location.back();
           } else {
+            if (!this.profile.serverProfile.dob && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup();
+            }
             this.router.navigate([`/${RouterLinks.TABS}`]);
           }
         });
@@ -347,7 +357,8 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.userType) ?
+        config.default = (this.profile && this.profile.serverProfile
+        && this.profile.serverProfile.userType && (this.profile.serverProfile.userType !== ProfileType.OTHER.toUpperCase())) ?
         this.profile.serverProfile.userType : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;

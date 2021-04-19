@@ -74,6 +74,7 @@ import { UserTypeSelectionPageModule } from './user-type-selection/user-type-sel
 import { RouteReuseStrategy } from '@angular/router';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
+import {UpdateProfileService} from '@app/services/update-profile-service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -488,6 +489,7 @@ declare const sbutility;
     ProfileHandler,
     LocationHandler,
     DiscussionTelemetryService,
+    UpdateProfileService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

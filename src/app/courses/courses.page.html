@@ -61,6 +61,19 @@
     </ion-item>
   </ion-list>
 
+  <div *ngIf="isCourseListEmpty" class="ion-text-center ion-padding">
+    <div class="sb-nodownloads-container" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
+      <div class="text-center">
+        <img style="width: 30%;" src="./assets/imgs/group.svg" alt="">
+      </div>
+      <div class="text-center">
+        <p class="sub-heading">{{'FRMELEMNTS_LBL_CONTENT_TO_BE_ADDED' | translate }}</p>
+        <ion-button class="explore-more-content" expand="block" fill="outline" (click)="exploreOtherContents()">
+          {{'FRMELEMENTS_LBL_SEE_MORE_COURSES' | translate}} </ion-button>
+      </div>  
+    </div>
+  </div>
+
   <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
     <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
     <ion-text>

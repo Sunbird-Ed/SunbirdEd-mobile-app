@@ -1,5 +1,5 @@
 <ion-list lines="none" *ngIf="!showChapterActions">
-  <ion-item (click)="unenroll()">{{'FRMELEMNTS_LBL_UNENROLL_FROM_COURSE' | categoryKeyTranslate : content}}</ion-item>
+  <ion-item *ngIf="!showUnenrolledButton" (click)="unenroll()">{{'FRMELEMNTS_LBL_UNENROLL_FROM_COURSE' | categoryKeyTranslate : content}}</ion-item>
   <ion-item (click)="syncCourseProgress()">{{'FRMELEMNTS_LBL_SYNC_COURSE_PROGRESS' | translate }}</ion-item>
 </ion-list>
 <ion-list lines="none" *ngIf="showChapterActions">
