@@ -111,7 +111,7 @@ android {
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
-            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${dev_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${dev_mobile_app_secret}\""
@@ -131,7 +131,7 @@ android {
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
-            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${staging_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
@@ -151,7 +151,7 @@ android {
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
-            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
+            buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "5"
             buildConfigField 'String', 'MOBILE_APP_CONSUMER', '"mobile_device"'
             buildConfigField 'String', 'MOBILE_APP_KEY', "\"${production_mobile_app_key}\""
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
