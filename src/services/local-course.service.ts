@@ -358,7 +358,7 @@ export class LocalCourseService {
     const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
         .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
     const today = window.dayjs();
-    const enrollmentEndDate = window.dayjs(endDate);
+    const enrollmentEndDate = (window.dayjs(endDate)).add(1, 'days');
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
