@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from '@app/app/manage-learn/core';
-import { UtilityService } from '@app/services';
+import { CommonUtilService, UtilityService } from '@app/services';
 import { ModalController, NavController, NavParams } from '@ionic/angular';
 
 @Component({
@@ -11,6 +11,7 @@ import { ModalController, NavController, NavParams } from '@ionic/angular';
 export class ReportModalFilter implements OnInit {
   filteredData: any;
   data: any;
+  dataType: any;
   // allQuestions;
   // filteredQuestions;
 
@@ -20,7 +21,9 @@ export class ReportModalFilter implements OnInit {
     // private viewCntrl: ViewController,
     private utils: UtilityService,
     private toast: ToastService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private commonUtilService: CommonUtilService,
+
   ) {}
 
   ngOnInit() {
@@ -28,6 +31,7 @@ export class ReportModalFilter implements OnInit {
     // this.filteredQuestions = this.navParams.get('filteredQuestions');
     this.data = this.navParams.get('data');
     this.filteredData = this.navParams.get('filteredData');
+    this.dataType = this.navParams.get('dataType');
   }
 
   /*  onQuestionClick(externalId) {
@@ -51,8 +55,12 @@ export class ReportModalFilter implements OnInit {
   }
 
   applyFilter() {
+    let msg = this.commonUtilService.translateMessage('FRMELEMENTS_MSG_SELECT_AT_LEAST_ONE_QUESTION');
+    if (this.dataType == 'criteria') {
+      msg = this.commonUtilService.translateMessage('FRMELEMENTS_MSG_SELECT_AT_LEAST_ONE_CRITERIA');
+    }
     !this.filteredData.length
-      ? this.toast.openToast('Select at least one question')
+      ? this.toast.openToast(msg)
       : // : this.viewCntrl.dismiss({
         this.modalCtrl.dismiss({
           filter: this.filteredData,

@@ -124,11 +124,14 @@ export class ReportsComponent implements OnInit {
     } else {
       filteredData = data.map((d) => d._id);
     }
+
+    let dataType= this.state.criteriaWise ?'criteria': 'question'
     const modal = await this.modal.create({
       component: ReportModalFilter,
       componentProps: {
         data: this.modalFilterData,
         filteredData: JSON.parse(JSON.stringify(filteredData)),
+        dataType:dataType 
       },
     });
     await modal.present();
