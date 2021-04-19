@@ -17,6 +17,7 @@ import { LocationHandler } from '@app/services/location-handler';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
   SplashcreenTelemetryActionHandlerDelegate
@@ -160,6 +161,9 @@ export function archiveService() {
 export const discussionService = () => {
   return SunbirdSdk.instance.discussionService;
 };
+export const segmentationService = () => {
+  return SunbirdSdk.instance.segmentationService;
+};
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -258,6 +262,10 @@ export function sdkDriverFactory(): any {
   {
     provide: 'DISCUSSION_SERVICE',
     useFactory: discussionService
+  },
+  {
+    provide: 'SEGMENTATION_SERVICE',
+    useFactory: segmentationService
   }
   ];
 }
@@ -478,6 +486,7 @@ declare const sbutility;
     ProfileHandler,
     LocationHandler,
     DiscussionTelemetryService,
+    SegmentationTagService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

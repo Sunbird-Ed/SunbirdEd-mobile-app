@@ -46,6 +46,8 @@ import {
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+
 declare const cordova;
 
 @Component({
@@ -112,7 +114,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private loginHandlerService: LoginHandlerService
+    private loginHandlerService: LoginHandlerService,
+    private segmentationTagService: SegmentationTagService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -131,6 +134,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.receiveNotification();
       this.utilityService.getDeviceSpec()
         .then((deviceSpec) => {
+          let devSpec = {
+            id: deviceSpec.id,
+            os: deviceSpec.os,
+            make: deviceSpec.make
+          };
+          this.segmentationTagService.pushTag(devSpec, TagPrefixConstants.DEVICE_CONFIG);
           this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
         });
       this.generateNetworkTelemetry();
@@ -434,6 +443,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
+        this.segmentationTagService.getPersistedTags();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
@@ -480,6 +490,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.notificationSrc.handleNotification();
       this.isForeground = true;
+      this.segmentationTagService.getPersistedTags();
     });
 
     this.platform.pause.subscribe(() => {
@@ -487,6 +498,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
       }
       this.isForeground = false;
+      this.segmentationTagService.presistTags();
     });
   }
 
@@ -834,6 +846,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
           this.logoutHandlerService.onLogout();
+          this.segmentationTagService.presistTags();
         }
         break;
 
