@@ -52,6 +52,11 @@
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/discussions-ui-v8/assets",
                 "output": "./assets/discussion-ui"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "output": "/assets/"
               }
             ],
 
@@ -61,6 +66,8 @@
               "vendor": true
             },
             "styles": [
+              "src/assets/styles/quml-styles/quml-carousel.css",
+              "node_modules/katex/dist/katex.min.css",
               "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               "node_modules/@project-sunbird/discussions-ui-v8/assets/styles/global.scss",
               {
@@ -69,7 +76,8 @@
             ],
             "scripts": [
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
-              "node_modules/epubjs/dist/epub.js"
+              "node_modules/epubjs/dist/epub.js",
+              "node_modules/katex/dist/katex.min.js"
             ],
             "es5BrowserSupport": true,
             "preserveSymlinks": true

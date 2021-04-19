@@ -17,6 +17,7 @@ import { LocationHandler } from '@app/services/location-handler';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
   SplashcreenTelemetryActionHandlerDelegate
@@ -39,6 +40,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
 import { DirectivesModule } from '../directives/directives.module';
@@ -481,7 +483,8 @@ declare const sbutility;
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    { provide: QuestionCursor, useClass: QumlPlayerService }
   ],
   bootstrap: [AppComponent],
   schemas: [

@@ -48,12 +48,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
-  loadPdfPlayer = false;
-  loadEpubPlayer = false;
   playerConfig: any;
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
+  playerType: string = 'sunbird-old-player';
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -101,11 +100,16 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.config['metadata']['mimeType'] === 'application/pdf'  &&  this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer" &&
       this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
       this.config = await this.getNewPlayerConfiguration();
-      this.loadPdfPlayer = true;
+      this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
       this.config = await this.getNewPlayerConfiguration();
-      this.loadEpubPlayer = true;
-    }
+      this.playerType = 'sunbird-epub-player'
+    } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
+      this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showDownload = false;
+      this.config['config'].sideMenu.showPrint = false;
+       this.playerType = 'sunbird-quml-player';
+    } 
     this.config['context'].dispatcher = {
       dispatch: function (event) {
         SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
@@ -122,7 +126,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
-    if (!this.loadPdfPlayer && !this.loadEpubPlayer) {
+    if (this.playerType === 'sunbird-old-player') {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
       this.config['uid'] = this.config['context'].actor.id;
@@ -189,7 +193,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (!activeAlert) {
         this.showConfirm();
       }
-      if (this.loadPdfPlayer || this.loadEpubPlayer) {
+      if (this.playerType !== 'sunbird-old-player') {
         this.location.back();
       }
     });
@@ -227,8 +231,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async playerEvents(event) {
     if (event.edata['type'] === 'EXIT') {
-      this.loadPdfPlayer = false;
-      this.loadEpubPlayer = false;
       this.location.back();
     } else if (event.edata['type'] === 'SHARE') {
       const popover = await this.popoverCtrl.create({
@@ -273,7 +275,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async getNewPlayerConfiguration() {
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-      console.log('config', this.config['metadata'].contentData.streamingUrl);
         this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
       this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
