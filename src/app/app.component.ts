@@ -440,6 +440,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
+        this.db.createDb()
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
