@@ -155,6 +155,7 @@ export class DbService {
       this.pdb.get(id).then(success => {
         resolve(success);
       }).catch(error => {
+        reject(error)
       })
     })
   }

@@ -89,6 +89,7 @@ export class ObservationHomeComponent implements OnInit {
     this.getPrograms();
   }
   onSearch(e) {
+    this.page=1
     this.solutionList = [];
     this.getPrograms();
   }

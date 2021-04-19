@@ -38,7 +38,7 @@
       </div>
       <div class="sb-card-actions">
         <button *ngIf="showDeleteButton" class="action-btn float-end delete mr-8"
-          (click)="showDeletePopup(content.identifier)">
+          (click)="showDeletePopup(content.identifier,content.type)">
           {{'DELETE' | translate}}
         </button>
       </div>
