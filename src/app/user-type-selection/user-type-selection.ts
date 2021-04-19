@@ -349,7 +349,9 @@ export class UserTypeSelectionPage implements OnDestroy {
       });
     const request: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
-      userType: this.selectedUserType
+      profileUserType: {
+        type: this.selectedUserType
+      }
     };
     this.profileService.updateServerProfile(request).toPromise()
       .then().catch((e) => console.log('server error for update profile', e));

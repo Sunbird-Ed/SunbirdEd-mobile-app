@@ -332,7 +332,7 @@ export const sunbirdSdkFactory =
           frameworkApiPath: '/api/framework/v1',
           frameworkConfigDirPath: '/data/framework',
           channelConfigDirPath: '/data/channel',
-          searchOrganizationApiPath: '/api/org/v1',
+          searchOrganizationApiPath: '/api/org/v2',
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
