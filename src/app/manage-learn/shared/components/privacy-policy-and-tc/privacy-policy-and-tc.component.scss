@@ -1,6 +1,6 @@
-@import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/_variables.scss";
-@import "src/assets/styles/_custom-mixins.scss";
+@import "../../../../../assets/styles/base/_variables.scss";
+@import "../../../../../assets/styles/_variables.scss";
+@import "../../../../../assets/styles/_custom-mixins.scss";
 
 .cr-terms-checkbox-label{
   padding-left: 5px;
@@ -145,7 +145,7 @@ ion-icon {
       color: $white-color;
     }
     .sb-popover-title {
-      font-size: ($font-size-base);
+      font-size: ($font-size-base) !important;
       font-weight: bold;
       //@extend line-height: 19px;
       text-align: center;

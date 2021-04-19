@@ -26,19 +26,27 @@
         {{filter.name}}
       </ion-button>
     </div>
-    <ion-row *ngFor="let data of resources" class="data-list">
+    <!-- <ion-row *ngFor="let data of resources" class="data-list">
       <ion-col size="2">
         <ion-item lines="none">
           <ion-checkbox slot="start" ([ngModel])="data.isChecked" [checked]="data.isChecked"
             (ionChange)="selectData(data)"></ion-checkbox>
         </ion-item>
       </ion-col>
-      <ion-col size="10" (click)="openResource(data.link)">
+      <ion-col size="10" (ionChange)="selectData(data)">
         <ion-item>
           <ion-label>{{data.name}}</ion-label>
         </ion-item>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
+
+
+    <ion-item lines="none" *ngFor="let data of resources" class="data-list">
+      <ion-checkbox slot="start" ([ngModel])="data.isChecked" [checked]="data.isChecked" (ionChange)="selectData(data)">
+      </ion-checkbox>
+      <ion-label class="resources-label">{{data.name}}</ion-label>
+    </ion-item>
+
     <div class="loadmore-btn" *ngIf="dataCount">
       <ion-button (click)="loadMoreData()" expand="block">
         {{'FRMELEMNTS_BTN_LOAD_MORE' | translate}}</ion-button>
