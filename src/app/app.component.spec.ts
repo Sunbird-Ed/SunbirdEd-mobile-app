@@ -31,6 +31,14 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
+import { SBTagModule } from 'sb-tag-manager';
+jest.mock('sb-tag-manager', () => ({
+    SBTagModule: {
+        instance: {
+            init: jest.fn()
+        }
+    }
+}));
 
 declare const supportfile;
 declare const plugins;

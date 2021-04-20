@@ -56,6 +56,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   ProfileType = ProfileType;
   categoriesProfileData: any;
   supportedUserTypeConfig: Array<any>;
+  isUserTypeSelected = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -197,6 +198,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   selectCard(userType, profileType) {
     this.zone.run(() => {
       this.selectedUserType = profileType;
+      this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
         this.commonUtilService.translateMessage(userType)
@@ -347,7 +349,9 @@ export class UserTypeSelectionPage implements OnDestroy {
       });
     const request: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
-      userType: this.selectedUserType
+      profileUserType: {
+        type: this.selectedUserType
+      }
     };
     this.profileService.updateServerProfile(request).toPromise()
       .then().catch((e) => console.log('server error for update profile', e));
@@ -357,7 +361,11 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.categoriesProfileData.status) {
       if (this.categoriesProfileData.showOnlyMandatoryFields) {
         initTabs(this.container, LOGIN_TEACHER_TABS);
-        if (this.categoriesProfileData.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
+        if (this.categoriesProfileData.hasFilledLocation || isSSOUser) {
+          if (!isSSOUser && !this.profile.serverProfile.dob) {
+            this.appGlobalService.showYearOfBirthPopup();
+          }
           this.router.navigate([RouterLinks.TABS]);
         } else {
           const navigationExtras: NavigationExtras = {

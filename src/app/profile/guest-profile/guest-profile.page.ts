@@ -116,7 +116,6 @@ export class GuestProfilePage implements OnInit {
     if (!this.loader) {
       this.loader = await this.commonUtilService.getLoader();
     }
-
     if (showLoader) {
       await this.loader.present();
     }

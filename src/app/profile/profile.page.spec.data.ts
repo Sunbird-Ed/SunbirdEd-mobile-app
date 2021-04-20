@@ -40,6 +40,9 @@ export const mockProfileData = {
     email: 'xyz@gmail.com',
     recoveryEmail: 'abc@gmail.com',
     recoveryPhone: '987654',
+    profileUserType: {
+        type: 'teacher'
+    },
     declarations: [{
         orgId: 'sample_org_id',
         persona: 'sample_persona',

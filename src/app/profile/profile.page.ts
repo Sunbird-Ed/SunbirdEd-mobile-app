@@ -292,11 +292,12 @@ export class ProfilePage implements OnInit {
                 that.profile = profileData;
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
-                const role: string = (!that.profile.userType ||
-                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                const role: string = (!that.profile.profileUserType.type ||
+                  (that.profile.profileUserType.type
+                    && that.profile.profileUserType.type === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.profileUserType.type;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.profileUserType.subType,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {
@@ -475,10 +476,10 @@ export class ProfilePage implements OnInit {
         label: 'COMPLETED'
       };
       if(course.status === 0 || course.status === 1) {
-        oneCert.style = "ongoing-status-text";
+        oneCert.style = 'ongoing-status-text';
         oneCert.label = 'ONGOING';
         if(course.batch && course.batch.status === 2) {
-          oneCert.style = "ongoing-status-text";
+          oneCert.style = 'ongoing-status-text';
           oneCert.label = 'BATCH_EXPIRED';
         }
       }
