@@ -109,7 +109,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-quml-player';
-    } 
+    } else if(this.config['metadata']['mimeType'] === "video/mp4" && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
+      this.config = await this.getNewPlayerConfiguration();
+       this.playerType = 'sunbird-video-player';
+    }
     this.config['context'].dispatcher = {
       dispatch: function (event) {
         SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
@@ -230,45 +233,47 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   async playerEvents(event) {
-    if (event.edata['type'] === 'EXIT') {
-      this.location.back();
-    } else if (event.edata['type'] === 'SHARE') {
-      const popover = await this.popoverCtrl.create({
-        component: SbSharePopupComponent,
-        componentProps: {
-          content: this.content,
-          corRelationList: this.corRelationList,
-          pageId: PageId.PLAYER_PAGE,
-          shareFromPlayer: true,
-          shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
-        },
-        cssClass: 'sb-popover',
-      });
-      await popover.present();
-    } else if (event.edata['type'] === 'DOWNLOAD') {
-      if (this.content.contentData.downloadUrl) {
-        this.downloadPdfService.downloadPdf(this.content).then((res) => {
-          this.commonUtilService.showToast('CONTENT_DOWNLOADED');
-        }).catch((error) => {
-          if (error.reason === 'device-permission-denied') {
-            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-          } else if (error.reason === 'user-permission-denied') {
-            this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
-          } else if (error.reason === 'download-failed') {
-            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-          }
+    if (event.edata) {
+      if (event.edata['type'] === 'EXIT') {
+        this.location.back();
+      } else if (event.edata['type'] === 'SHARE') {
+        const popover = await this.popoverCtrl.create({
+          component: SbSharePopupComponent,
+          componentProps: {
+            content: this.content,
+            corRelationList: this.corRelationList,
+            pageId: PageId.PLAYER_PAGE,
+            shareFromPlayer: true,
+            shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+          },
+          cssClass: 'sb-popover',
         });
-      } else {
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-      }
-    } else if(event.edata['type'] === 'PRINT') {
+        await popover.present();
+      } else if (event.edata['type'] === 'DOWNLOAD') {
+        if (this.content.contentData.downloadUrl) {
+          this.downloadPdfService.downloadPdf(this.content).then((res) => {
+            this.commonUtilService.showToast('CONTENT_DOWNLOADED');
+          }).catch((error) => {
+            if (error.reason === 'device-permission-denied') {
+              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+            } else if (error.reason === 'user-permission-denied') {
+              this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
+            } else if (error.reason === 'download-failed') {
+              this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+            }
+          });
+        } else {
+          this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        }
+      } else if (event.edata['type'] === 'PRINT') {
         this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
-    }
-    else if (event.edata.type === 'compatibility-error') {
-      cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
-        () => {},
-        () => {}
-    );
+      }
+      else if (event.edata.type === 'compatibility-error') {
+        cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
+          () => {},
+          () => {}
+        );
+      }
     }
   }
 

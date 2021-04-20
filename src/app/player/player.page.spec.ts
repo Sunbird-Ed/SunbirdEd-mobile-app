@@ -356,6 +356,64 @@ describe('PlayerPage', () => {
             });
         });
 
+
+        it('should check mimetype and load video player', (done) => {
+            mockFormAndFrameworkUtilService.getPdfPlayerConfiguration = jest.fn(() => Promise.resolve({}));
+            playerPage.playerConfig = true;
+            const subscribeFn = jest.fn(() => { }) as any;
+            mockPlatform.pause = {
+                subscribe: subscribeFn
+            } as any;
+            playerPage.config = {
+                context: {
+                    dispatcher: {
+                        // dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    },
+                    objectRollup: {
+                        l1: 'li'
+                    }
+                },
+                metadata: {
+                    identifier: 'li',
+                    mimeType: 'video/mp4',
+                    isAvailableLocally: true,
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+            };
+            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+                return {
+                    name: 'videoPlayer'
+                }
+            })
+            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
+                return Promise.resolve(playerPage.config);
+            });
+            playerPage.playerConfig = {};
+            playerPage.ngOnInit().then(() => {
+                jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+                    telemetryService: {
+                        saveTelemetry: jest.fn((request: string) => {
+                            return of(true).pipe(
+                                finalize(() => {
+                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
+                                    done();
+
+                                })
+                            );
+                        })
+                    } as Partial<TelemetryService> as TelemetryService
+                } as Partial<SunbirdSdk> as SunbirdSdk);
+                playerPage.config['context'].dispatcher.dispatch({});
+            });
+        });
+
        
     });
     describe('pdfPlayerEvents', () => {
