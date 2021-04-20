@@ -31,6 +31,14 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
+import { SBTagModule } from 'sb-tag-manager';
+jest.mock('sb-tag-manager', () => ({
+    SBTagModule: {
+        instance: {
+            init: jest.fn()
+        }
+    }
+}));
 
 declare const supportfile;
 declare const plugins;
@@ -266,6 +274,7 @@ describe('AppComponent', () => {
         it('should subscribe and set header config', (done) => {
             // arrange
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             const mockConfig = {
                 showHeader: true,
                 showBurgerMenu: true,
@@ -290,6 +299,7 @@ describe('AppComponent', () => {
         it('should generate interact telemetry internet-connected in network availability is true', (done) => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.networkAvailability$ = of(true);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
@@ -313,6 +323,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
@@ -335,6 +346,7 @@ describe('AppComponent', () => {
             // arrange
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = of(false);
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockPreferences.addListener = jest.fn(() => 'some_trace_id');
             // act
@@ -361,6 +373,7 @@ describe('AppComponent', () => {
             });
             mockHeaderService.headerConfigEmitted$ = EMPTY;
             mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.populateGlobalCData = jest.fn();
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
             mockEventsBusService.events = jest.fn(() => EMPTY);
             mockNotificationSrc.setupLocalNotification = jest.fn();

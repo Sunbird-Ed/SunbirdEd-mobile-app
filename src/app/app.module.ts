@@ -20,8 +20,10 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
+import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { DirectivesModule } from '../directives/directives.module';
 import {
   ActivePageService, AndroidPermissionsService, AppGlobalService,
@@ -74,6 +76,7 @@ import { UserTypeSelectionPageModule } from './user-type-selection/user-type-sel
 import { RouteReuseStrategy } from '@angular/router';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
+import {UpdateProfileService} from '@app/services/update-profile-service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -337,7 +340,7 @@ export const sunbirdSdkFactory =
           frameworkApiPath: '/api/framework/v1',
           frameworkConfigDirPath: '/data/framework',
           channelConfigDirPath: '/data/channel',
-          searchOrganizationApiPath: '/api/org/v1',
+          searchOrganizationApiPath: '/api/org/v2',
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
@@ -488,6 +491,7 @@ declare const sbutility;
     ProfileHandler,
     LocationHandler,
     DiscussionTelemetryService,
+    UpdateProfileService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
@@ -497,6 +501,7 @@ declare const sbutility;
     Chooser,
     PhotoViewer,
     StreamingMedia,
+    { provide: QuestionCursor, useClass: QumlPlayerService }
   ],
   bootstrap: [AppComponent],
   schemas: [

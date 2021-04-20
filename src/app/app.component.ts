@@ -46,6 +46,7 @@ import {
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
+import { SBTagModule } from 'sb-tag-manager';
 
 declare const cordova;
 
@@ -145,6 +146,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
+      await this.commonUtilService.populateGlobalCData();
       await this.getSelectedLanguage();
       await this.getDeviceProfile();
       if (this.appGlobalService.getUserId()) {
@@ -167,6 +169,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.utils.initilizeML();
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
+      window['SBTagManager'] = SBTagModule.instance;
+      window['SBTagManager'].init();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -441,7 +445,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.db.createDb()
-        this.events.publish('UPDATE_TABS');
+        this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
@@ -852,6 +856,13 @@ export class AppComponent implements OnInit, AfterViewInit {
           () => { }
         );
         break;
+
+      case 'IMPORT':
+        this.utilityService.openFileManager().then((success) => {
+          console.log('-----openFileManager-----', success);
+        }).catch((err) => {
+          console.log('---------error------', err);
+        });
     }
   }
 

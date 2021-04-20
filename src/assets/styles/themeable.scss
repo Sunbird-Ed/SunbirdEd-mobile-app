@@ -240,6 +240,7 @@ html[data-theme="JOYFUL"]{
       color: var(--app-primary) !important;
       border: 1px solid var(--app-primary-light-2) !important;
       margin: 2%;
+      margin-bottom: 0;
       width: 96% !important;
       padding: 0.75rem !important;
       box-shadow: none !important;
@@ -716,6 +717,7 @@ html[data-theme="JOYFUL"]{
       }
       .sbchapter__play__btn{
         color: var(--app-primary) !important;
+        margin-left: auto;
       }
     }
 
@@ -1522,9 +1524,7 @@ html[data-theme="JOYFUL"]{
   }
 
   .file-download__action-btns .cancel-btn{
-   color: var(--primary-color) !important;
-   font-size: .9rem !important;
-   padding: .75em 2.5rem !important;
+   padding: 0.73em 2.5em !important;
   }
 
   ion-picker {
@@ -1558,6 +1558,9 @@ html[data-theme="JOYFUL"]{
       .discard-btn{
         color: map-get($colors, primary) !important;
       }
+    }
+    .openbtn{
+      color: map-get($colors, primary) !important;
     }
   }
   .df-btn-container{
@@ -1593,6 +1596,12 @@ html[data-theme="JOYFUL"]{
           }
         }
       }
+    }
+  }
+
+  app-category-list-page{
+    .filter-items{
+      --background: var(--app-white) !important;
     }
   }
 

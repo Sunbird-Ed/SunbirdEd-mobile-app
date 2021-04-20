@@ -232,6 +232,7 @@ export class PreferenceKey {
     public static readonly DO_NOT_SHOW_PROFILE_NAME_CONFIRMATION_POPUP = 'do_not_show_pnc_popup';
     public static readonly IS_JOYFUL_THEME_POPUP_DISPLAYED = 'is_joyful_theme_popup_displayed';
     public static readonly SELECTED_SWITCHABLE_TABS_CONFIG = 'selected_switchable_tabs_config';
+    public static readonly IS_NEW_USER = 'is_new_user';
 }
 
 export enum SwitchableTabsConfig {

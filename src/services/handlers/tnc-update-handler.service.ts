@@ -84,7 +84,8 @@ export class TncUpdateHandlerService {
     }
     if ((userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
         !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length)
-        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase())) {
+        || (userDetails.profileType === ProfileType.NONE || userDetails.profileType === ProfileType.OTHER.toUpperCase()
+            || userDetails.serverProfile.profileUserType.type === ProfileType.OTHER.toUpperCase())) {
         this.preRequirementToBmcNavigation(profile.userId, locationMappingConfig);
       } else {
         this.checkDistrictMapping(profile, locationMappingConfig, userDetails);
@@ -116,11 +117,14 @@ export class TncUpdateHandlerService {
         };
         if (userprofile && userprofile.grade && userprofile.medium && userprofile.syllabus &&
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
-          (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase())) {
+          (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()
+              || serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
-        } else if (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()) {
+        } else if (userprofile.profileType === ProfileType.NONE ||
+            userprofile.profileType === ProfileType.OTHER.toUpperCase()
+            || serverProfile.userType === ProfileType.OTHER.toUpperCase()) {
           categoriesProfileData['status'] = true;
           categoriesProfileData['isUserLocationAvalable'] =
           this.commonUtilService.isUserLocationAvalable(userprofile, locationMappingConfig);
@@ -147,11 +151,14 @@ export class TncUpdateHandlerService {
 
   private checkDistrictMapping(profile, locationMappingConfig, userDetails) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
-      .then((custodianOrgId: string) => {
+      .then(async (custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
           this.navigateToDistrictMapping();
         } else {
+          if (!(await this.isSSOUser(userDetails)) && !userDetails.serverProfile.dob) {
+            this.appGlobalService.showYearOfBirthPopup();
+          }
           this.externalIdVerificationService.showExternalIdVerificationPopup();
         }
       })

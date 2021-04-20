@@ -11,11 +11,11 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
-    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria
+    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
 } from 'sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
-    appLanguages, Location as loc, MaxAttempt
+    appLanguages, Location as loc, MaxAttempt, SwitchableTabsConfig
 } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -55,6 +55,7 @@ export class CommonUtilService {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
         private events: Events,
@@ -721,4 +722,15 @@ export class CommonUtilService {
             return maxAttempt;
         }
     }
+
+    public async populateGlobalCData() {
+        const currentSelectedTabs = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+        const correlationData: CorrelationData = {
+        type : 'Tabs',
+        id: (!currentSelectedTabs || currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG )?
+        'Library-Course' : 'Home-Discover'
+        };
+        this.telemetryService.populateGlobalCorRelationData([correlationData]);
+      }
+
 }
