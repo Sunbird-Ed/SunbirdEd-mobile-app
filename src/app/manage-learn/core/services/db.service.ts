@@ -22,7 +22,6 @@ export class DbService {
       location: 'default',
     });
     const dbInfo = await db.info()
-    debugger
     let oldData;
     if (dbInfo.doc_count) {
      oldData = await db.find({
