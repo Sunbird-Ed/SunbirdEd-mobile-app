@@ -1,27 +1,52 @@
 import { Injectable } from '@angular/core';
+import { AppGlobalService } from '@app/services';
 import PouchDB from 'pouchdb';
 import cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import PouchDBFind from 'pouchdb-find';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DbService {
-
   pdb: any;
 
-  constructor() {
+  constructor(private appGlobalService: AppGlobalService) {
     this.createDb();
   }
 
-  createDb() {
+  async createDb() {
     PouchDB.plugin(cordovaSqlitePlugin);
     PouchDB.plugin(PouchDBFind);
-    this.pdb = new PouchDB('projects',
-      {
-        adapter: 'cordova-sqlite',
-        location: 'default',
+    const db = await new PouchDB('projects', {
+      adapter: 'cordova-sqlite',
+      location: 'default',
+    });
+    const dbInfo = await db.info()
+    let oldData;
+    if (dbInfo.doc_count) {
+     oldData = await db.find({
+        selector: {_id:{$ne:null}},
       });
+
+      await db.destroy()
+
+     oldData.docs= oldData.docs.map(d => {
+       delete d._rev
+       return d
+      })
+    }
+    this.appGlobalService.getActiveProfileUid().then((userId) => {
+      let dbName= userId + 'projects';
+      // let dbName=  'projects';
+       this.pdb = new PouchDB(dbName, {
+         adapter: 'cordova-sqlite',
+         location: 'default',
+       });
+    }).then(res => {
+      if (oldData && oldData.docs && oldData.docs.length) {
+        this.bulkCreate(oldData.docs)
+      }
+    })
   }
 
   createPouchDB(dbName: string) {
