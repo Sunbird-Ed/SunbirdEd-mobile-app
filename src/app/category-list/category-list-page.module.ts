@@ -9,10 +9,9 @@ import {CategoryListPage} from './category-list-page';
 import {CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import {TranslateModule} from '@ngx-translate/core';
 import {ComponentsModule} from '@app/app/components/components.module';
-import {CommonFormElementsModule} from 'common-form-elements';
+import {CommonFormElementsModule, SbSearchFilterModule} from 'common-form-elements';
 import {PipesModule} from '@app/pipes/pipes.module';
 import {SearchFilterPage} from '@app/app/search-filter/search-filter.page';
-import {SbSearchFilterModule} from 'project-sunbird-search-filter-widget';
 
 const routes: Routes = [
     {

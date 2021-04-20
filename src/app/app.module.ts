@@ -66,7 +66,7 @@ import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
-import { SbSearchFilterModule } from '@project-sunbird/search-filter-widget';
+import { SbSearchFilterModule } from 'common-form-elements';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {

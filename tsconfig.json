@@ -29,9 +29,7 @@
       "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v8"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"],
-      "@project-sunbird/search-filter-widget": ["../node_modules/project-sunbird-search-filter-widget"],
-      "@project-sunbird/search-filter-widget/*": ["../node_modules/project-sunbird-search-filter-widget/*"]
+      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"]
     }
   },
   "include": [

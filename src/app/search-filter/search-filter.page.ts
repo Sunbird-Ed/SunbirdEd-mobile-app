@@ -5,7 +5,7 @@ import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
 import {CommonUtilService} from '@app/services';
-import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from '@project-sunbird/search-filter-widget';
+import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',

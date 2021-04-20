@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
-import { IFacetFilterFieldTemplateConfig } from '@project-sunbird/search-filter-widget';
+import { IFacetFilterFieldTemplateConfig } from 'common-form-elements';
 
 interface FilterFormConfigWithDefaults {
     config: IFacetFilterFieldTemplateConfig[];
