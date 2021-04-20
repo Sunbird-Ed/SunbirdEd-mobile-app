@@ -120,7 +120,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.viewOnlyMode = parameters.viewOnlyMode;
       this.templateId = parameters.templateId;
       this.viewOnlyMode ? this.getTemplateDetails() : this.getProject();
-      this.templateDetailsPayload =  this.router.getCurrentNavigation().extras.state;
+      this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
     });
     this.translate
       .get([
@@ -146,7 +146,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.templateId,
       // payload:  {}
     }
-    
+
     this.unnatiService.get(config).subscribe(success => {
       this.loader.stopLoader();
       // let data = success.result;
@@ -209,7 +209,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       url: urlConstants.API_URLS.GET_PROJECT + url,
       payload: this.projectType == 'assignedToMe' ? payload : {}
     }
-    this.templateDetailsPayload ? config.payload = this.templateDetailsPayload: null;
+    this.templateDetailsPayload ? config.payload = this.templateDetailsPayload : null;
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
       // this.projectId = success.result._id;
@@ -458,12 +458,14 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
       ],
     });
-    await alert.present(); 
+    await alert.present();
   }
 
   getPdfUrl(fileName, taskId?) {
+   let task_id = taskId ? taskId : '';
+
     const config = {
-      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + taskId,
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
     };
     this.share.getFileUrl(config, fileName);
   }

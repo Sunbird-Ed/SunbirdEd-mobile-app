@@ -1408,7 +1408,7 @@
   "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a sharable file.",
   "FRMELEMNTS_BTN_DNTSYNC":"Dont Sync",
   "FRMELEMNTS_BTN_SYNCANDSHARE":"Sync & Share",
-  "FRMELEMNTS_CLICK_":"File not shared !",
+  "FRMELEMNTS_MSG_FILE_NOT_SHARED":"File not shared !",
   "FRMELEMNTS_CLICK_TO_IMPROVE":"Click to improve",
   "FRMELEMNTS_SUGGESTED_PROJECTS":"Suggested Projects",
   "FRMELEMNTS_NO_SUGGESTIONS":"No Projects",

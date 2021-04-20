@@ -261,8 +261,9 @@ export class SyncPage implements OnInit, OnDestroy {
   }
 
   getPdfUrl(fileName, taskId?) {
+   let task_id = taskId ? taskId : '';
     const config = {
-      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + taskId,
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + task_id,
     };
     this.share.getFileUrl(config, fileName);
   }
