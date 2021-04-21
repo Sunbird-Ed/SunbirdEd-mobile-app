@@ -305,13 +305,9 @@ export class FaqHelpPage implements OnInit {
     for (let i = 0; i < faqData.faqs.length; i++) {
       if (faqData.faqs[i].topic.includes('{{APP_NAME}}')) {
         faqData.faqs[i].topic = faqData.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
-      } else {
-        faqData.faqs[i].topic = faqData.faqs[i].topic;
       }
       if (faqData.faqs[i].description.includes('{{APP_NAME}}')) {
         faqData.faqs[i].description = faqData.faqs[i].description.replace('{{APP_NAME}}', this.appName);
-      } else {
-        faqData.faqs[i].description = faqData.faqs[i].description;
       }
     }
 
