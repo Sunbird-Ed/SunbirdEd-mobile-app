@@ -1799,10 +1799,16 @@ app-faq-help {
     }
     .listView-compt__item{
       background-color: var(--app-white);
-      margin: 0.75rem;
+      margin: 0.75rem 0.25rem;
       padding: 0.75rem !important;
       border-radius: 3rem;
       box-shadow: var(--button-style-shadow);
     }
+  }
+}
+
+sb-faq{
+  .panel-title{
+    color: var(--app-gray);
   }
 }
