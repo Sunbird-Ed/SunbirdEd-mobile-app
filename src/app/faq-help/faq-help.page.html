@@ -17,7 +17,7 @@
         [title]="faqData?.constants?.selectCategoryTitle" 
         [listData]="faqData?.categories"
         [btnText]="faqData?.constants?.reportIssueMsg" 
-        [btnImg]="'../../assets/faq/resources/images/Report.png'"
+        [btnImg]="'../../assets/faq/resources/images/Report_blue.png'"
         [showRightArrow]="true"
         (itemClick)="onCategorySelect($event)" 
         (btnClick)="enableFaqReport($event)">
@@ -49,7 +49,7 @@
 
   <div *ngIf="selectedFaqCategory" class="send-email" (click)="navigateToReportIssue()">
     <button class="report-button">
-      <img src="../../assets/faq/resources/images/Report.png" alt="navigate to report issue.">
+      <img src="../../assets/faq/resources/images/Report_blue.png" alt="navigate to report issue.">
       <span class="report-text">{{ faqData?.constants?.reportIssueMsg }}</span>
     </button>
   </div>

@@ -230,6 +230,18 @@ describe('FaqHelpPage', () => {
     });
 
     describe('logInteractEvent', () => {
+        it('should not generate any interact event when there is no data', () => {
+            // arrange
+            const postMessage = jest.fn((_, __) => false);
+            parent.postMessage = postMessage;
+            const onCLickEvent = {
+            }
+            // act
+            faqHelpPage.logInteractEvent(onCLickEvent);
+            // assert
+            expect(postMessage).not.toBeCalled();
+        });
+
         it('should generate an interact event when faq, response is collected', () => {
             // arrange
             const postMessage = jest.fn((_, __) => false);
@@ -280,6 +292,101 @@ describe('FaqHelpPage', () => {
                 expect(faqHelpPage.loading).toBeUndefined();
                 done();
             }, 10);
+        });
+    });
+
+    describe('handleBackButton', () => {
+        it('should navigate to previous history screen', () => {
+            // arrange
+            faqHelpPage.selectedFaqCategory = null;
+            // act
+            faqHelpPage.handleBackButton();
+            // assert
+            expect(mockLocation.back).toHaveBeenCalled()
+        });
+
+        it('should not navigate to previous history screen', () => {
+            // arrange
+            faqHelpPage.selectedFaqCategory = {} as any;
+            // act
+            faqHelpPage.handleBackButton();
+            // assert
+            expect(mockLocation.back).not.toHaveBeenCalled()
+        });
+    });
+
+    describe('replaceFaqText', () => {
+        it('should seggregate the faq data for APP_NAME based on selected faq category', () => {
+            // arrange
+            const selectedFaqCategoryData = {
+                faqs: [
+                    {
+                        topic: 'some_topic',
+                        description: 'some_description'
+                    },
+                    {
+                        topic: 'some_topic {{APP_NAME}}',
+                        description: 'some_description {{APP_NAME}}'
+                    }
+                ]
+            }
+            const resultFaqCategoryData = {
+                faqs: [
+                    {
+                        topic: 'some_topic',
+                        description: 'some_description'
+                    },
+                    {
+                        topic: 'some_topic appName',
+                        description: 'some_description appName'
+                    }
+                ],
+                constants: {}
+            }
+            faqHelpPage.appName = 'appName';
+            faqHelpPage.constants = {};
+            // act
+            faqHelpPage.replaceFaqText(selectedFaqCategoryData);
+            // assert
+            expect(faqHelpPage.selectedFaqCategory).toEqual(resultFaqCategoryData);
+        });
+    });
+
+    describe('onCategorySelect', () => {
+        it('should terminate the flow if the category data is empty', () => {
+            // arrange
+            const faqCategoryEvent = {}
+            faqHelpPage.replaceFaqText = jest.fn();
+            // act
+            faqHelpPage.onCategorySelect(faqCategoryEvent);
+            // assert
+            expect(faqHelpPage.replaceFaqText).not.toHaveBeenCalled()
+        });
+
+        it('should filter the faq data and show up the corresponding videos and faqs', (done) => {
+            // arrange
+            const faqCategoryEvent = {
+                data: {}
+            };
+            faqHelpPage.replaceFaqText = jest.fn();
+            // act
+            faqHelpPage.onCategorySelect(faqCategoryEvent);
+            // assert
+            setTimeout(() => {
+                expect(faqHelpPage.replaceFaqText).toHaveBeenCalled()
+                done();
+            }, 0);
+        });
+    });
+
+    describe('enableFaqReport', () => {
+        it('should navigate to faq report page', () => {
+            // arrange
+            faqHelpPage.navigateToReportIssue = jest.fn();
+            // act
+            faqHelpPage.enableFaqReport({});
+            // assert
+            expect(faqHelpPage.navigateToReportIssue).toHaveBeenCalled()
         });
     });
 });

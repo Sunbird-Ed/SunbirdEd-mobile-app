@@ -293,7 +293,7 @@ export class FaqHelpPage implements OnInit {
 
   onCategorySelect(event) {
     this.selectedFaqCategory = undefined;
-    if (!event && !event.data) {
+    if (!event || !event.data) {
       return;
     }
     setTimeout(() => {
