@@ -48,17 +48,30 @@ export class FaqHelpPage implements OnInit {
   @ViewChild('f', { static: false }) iframe: ElementRef;
   backButtonFunc: Subscription;
   headerObservable: any;
-  shownGroup: any;
-  isNoClicked: boolean;
-  isYesClicked: boolean;
-  isSubmitted: boolean;
-  data: any;
+  faqData: {
+    categories: {
+      name: string,
+      videos?: any[],
+      faqs?: {
+        topic: string,
+        description: string
+      }[],
+    }[],
+    constants: any
+  }
   constants: any;
-  faqs: any;
   jsonURL: any;
-  textValue: any;
   value: any;
   corRelation: Array<CorrelationData> = [];
+  selectedFaqCategory: {
+    name: string,
+    videos?: any[],
+    faqs?: {
+      topic: string,
+      description: string
+    }[],
+    constants?: any
+  } | undefined;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
@@ -130,7 +143,7 @@ export class FaqHelpPage implements OnInit {
   private async getDataFromUrl() {
     const faqRequest: GetFaqRequest = { language: '', faqUrl: '' };
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
-      id: 'faqURL'
+      id: 'appFaqURL'
     };
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
@@ -147,22 +160,9 @@ export class FaqHelpPage implements OnInit {
 
     this.faqService.getFaqDetails(faqRequest).subscribe(data => {
       this.zone.run(() => {
-        this.data = data;
-        this.constants = this.data.constants;
-        this.faqs = this.data.faqs;
+        this.faqData = data as any;
+        this.constants = this.faqData.constants;
         // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < this.data.faqs.length; i++) {
-          if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
-            this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
-          } else {
-            this.data.faqs[i].topic = this.data.faqs[i].topic;
-          }
-          if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
-            this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
-          } else {
-            this.data.faqs[i].description = this.data.faqs[i].description;
-          }
-        }
         this.loading.dismiss();
       });
     });
@@ -227,6 +227,10 @@ export class FaqHelpPage implements OnInit {
   }
 
   handleBackButton() {
+    if (this.selectedFaqCategory) {
+      this.selectedFaqCategory = undefined;
+      return;
+    }
     this.location.back();
   }
 
@@ -248,72 +252,25 @@ export class FaqHelpPage implements OnInit {
   }
 
   // toggle the card
-  toggleGroup(group) {
-    const telemetryObject = new TelemetryObject((group + 1).toString(), 'faq', '');
+  toggleGroup(event) {
+    if (!event || !event.data) {
+      return;
+    }
+    const telemetryObject = new TelemetryObject((event.data.position+1).toString(), 'faq', '');
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.HELP_SECTION_CLICKED,
+      event.data.action,
       Environment.USER,
       PageId.FAQ,
       telemetryObject,
       undefined);
+  }
 
-    this.isNoClicked = false;
-    this.isYesClicked = false;
-    this.isSubmitted = false;
-
-    let isCollapsed = true;
-    if (this.isGroupShown(group)) {
-      isCollapsed = false;
-      this.shownGroup = null;
-    } else {
-      isCollapsed = false;
-      this.shownGroup = group;
+  logInteractEvent(event) {
+    if (!event || !event.data) {
+      return;
     }
-  }
-
-  // to check whether the card is toggled or not
-  isGroupShown(group) {
-    return this.shownGroup === group;
-  }
-
-  noClicked(i) {
-    this.value = {};
-    if (!this.isNoClicked) {
-      this.isNoClicked = true;
-    }
-    this.value.action = 'no-clicked';
-    this.value.position = i;
-    this.value.value = {};
-    this.value.value.topic = this.data.faqs[i].topic;
-    this.value.value.description = this.data.faqs[i].description;
+    this.value = event.data;
     window.parent.postMessage(this.value, '*');
-
-  }
-
-  yesClicked(i) {
-    this.value = {};
-    if (!this.isYesClicked) {
-      this.isYesClicked = true;
-    }
-
-    this.value.action = 'yes-clicked';
-    this.value.position = i;
-    this.value.value = {};
-    this.value.value.topic = this.data.faqs[i].topic;
-    this.value.value.description = this.data.faqs[i].description;
-    window.parent.postMessage(this.value, '*');
-  }
-
-  submitClicked(textValue, i) {
-    this.isSubmitted = true;
-    this.value.action = 'no-clicked';
-    this.value.position = i;
-    this.value.value = {};
-    this.value.value.topic = this.data.faqs[i].topic;
-    this.value.value.description = this.data.faqs[i].description;
-    this.value.value.knowMoreText = textValue;
-    window.parent.postMessage(this.value, '*');
-    this.textValue = '';
   }
 
   async navigateToReportIssue() {
@@ -328,10 +285,46 @@ export class FaqHelpPage implements OnInit {
     this.appGlobalService.formConfig = formConfig;
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
-        data: this.data,
+        data: this.faqData,
         corRelation: this.corRelation
       }
     });
+  }
+
+  onCategorySelect(event) {
+    this.selectedFaqCategory = undefined;
+    if (!event && !event.data) {
+      return;
+    }
+    setTimeout(() => {
+      this.replaceFaqText(event.data);
+    }, 0);
+  }
+
+  replaceFaqText(faqData) {
+    for (let i = 0; i < faqData.faqs.length; i++) {
+      if (faqData.faqs[i].topic.includes('{{APP_NAME}}')) {
+        faqData.faqs[i].topic = faqData.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
+      } else {
+        faqData.faqs[i].topic = faqData.faqs[i].topic;
+      }
+      if (faqData.faqs[i].description.includes('{{APP_NAME}}')) {
+        faqData.faqs[i].description = faqData.faqs[i].description.replace('{{APP_NAME}}', this.appName);
+      } else {
+        faqData.faqs[i].description = faqData.faqs[i].description;
+      }
+    }
+
+    this.selectedFaqCategory = faqData;
+    this.selectedFaqCategory.constants = this.constants;
+  }
+
+  enableFaqReport(event) {
+    this.navigateToReportIssue();
+  }
+
+  onVideoSelect(event) {
+    console.log(event);
   }
 
 }
