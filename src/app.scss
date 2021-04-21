@@ -1755,6 +1755,16 @@ sb-library-card-v3 {
   }
 }
 
+.year-of-birth-popup{
+  .popover-content {
+    width: 80vw !important;
+    height: 26vh !important;
+    left: 5% !important;
+    border-radius: 16px;
+    position: initial
+  }
+}
+
 app-search {
   .pills-filter{
     sb-pills-grid{

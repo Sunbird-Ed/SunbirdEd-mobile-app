@@ -20,6 +20,7 @@ import { FormLocationFactory } from '../../services/form-location-factory/form-l
 import { LocationHandler } from '../../services/location-handler';
 import { ProfileHandler } from '../../services/profile-handler';
 import { AuditState, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { TncUpdateHandlerService } from '../../services/handlers/tnc-update-handler.service';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;
@@ -87,6 +88,7 @@ describe('DistrictMappingPage', () => {
             extras: { state: {} }
         };
     }) as any;
+    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {};
 
     beforeAll(() => {
         //  window.history.state.source({query: 'google'}, 'MOCK');
@@ -106,7 +108,8 @@ describe('DistrictMappingPage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormLocationFactory as FormLocationFactory,
             mockLocationHandler as LocationHandler,
-            mockProfileHandler as ProfileHandler
+            mockProfileHandler as ProfileHandler,
+            mockTncUpdateHandlerService as TncUpdateHandlerService
         );
     });
 
@@ -277,6 +280,7 @@ describe('DistrictMappingPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockTncUpdateHandlerService.isSSOUser = jest.fn(() => Promise.resolve(true));
             districtMappingPage.formGroup = {
                 value: {
                     children: {
@@ -321,6 +325,7 @@ describe('DistrictMappingPage', () => {
                 expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
                 expect(mockCommonUtilService.isDeviceLocationAvailable).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+                expect(mockTncUpdateHandlerService.isSSOUser).toHaveBeenCalled();
                 done();
             }, 0);
         });

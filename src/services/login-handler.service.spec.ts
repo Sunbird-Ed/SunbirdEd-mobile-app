@@ -259,7 +259,9 @@ describe('LoginHandlerService', () => {
                 handle: 'sample_name',
                 profileType: ProfileType.TEACHER,
                 source: ProfileSource.SERVER,
-                userType: 'Teacher',
+                profileUserType: {
+                    type: 'OTHER'
+                },
                 serverProfile: {
                     uid: 'sample_id',
                     handle: 'sample_name',
