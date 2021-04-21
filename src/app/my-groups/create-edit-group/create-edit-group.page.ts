@@ -146,10 +146,11 @@ export class CreateEditGroupPage {
 
   private async createGroup(formVal) {
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
+      InteractType.SELECT_CREATE_GROUP,
       InteractSubtype.CREATE_GROUP_CLICKED,
       Environment.GROUP, PageId.CREATE_GROUP,
-      undefined, undefined, undefined, this.corRelationList
+      undefined, undefined, undefined, this.corRelationList,
+      ID.CREATE_GROUP
     );
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
