@@ -7,7 +7,11 @@
             </ion-button>
         </div>
         <div class="p-16">
-            <sb-form [config]="config" (valueChanges)="valueChanged($event)"></sb-form>
+            <sb-search-facet-filter [baseSearchFilter]="baseSearchFilter"
+                                    [searchResultFacets]="searchResultFacets"
+                                    [filterFormTemplateConfig]="filterFormTemplateConfig"
+                                    (searchFilterChange)="valueChanged($event)"
+                                    #sbSearchFilterComponent></sb-search-facet-filter>
         </div>
     </div>
 </ion-content>

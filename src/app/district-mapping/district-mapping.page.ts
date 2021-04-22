@@ -18,7 +18,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
-import { FieldConfig } from 'common-form-elements-v8';
+import { FieldConfig } from 'common-form-elements';
 import { concat, defer, of, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
 import {
