@@ -1777,3 +1777,38 @@ app-search {
     }
   }
 }
+
+app-faq-help {
+  sb-list{
+    .listView-compt{
+      padding: 0.5rem;
+      section.mt-24{
+        text-align: center;
+        button{
+          width: 60vw;
+          height: 2.5rem !important;
+          margin: 0 !important;
+          background-color: var(--app-white) !important;
+          color: var(--app-primary) !important;
+          border: none !important;
+        }
+      }
+    }
+    .listView-compt__title{
+      padding-left: 0.5rem;
+    }
+    .listView-compt__item{
+      background-color: var(--app-white);
+      margin: 0.75rem 0.25rem;
+      padding: 0.75rem !important;
+      border-radius: 3rem;
+      box-shadow: var(--button-style-shadow);
+    }
+  }
+}
+
+sb-faq{
+  .panel-title{
+    color: var(--app-gray);
+  }
+}
