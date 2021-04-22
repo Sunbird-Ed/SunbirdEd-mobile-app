@@ -1,5 +1,5 @@
 import {
-    PageId, Environment, ImpressionType, InteractType, InteractSubtype, CorReleationDataType
+    PageId, Environment, ImpressionType, InteractType, InteractSubtype, CorReleationDataType, ID
 } from '../../../services/telemetry-constants';
 import { AddActivityToGroupPage } from './add-activity-to-group.page';
 import { Router } from '@angular/router';
@@ -159,9 +159,9 @@ describe('AddActivityToGroupPage', () => {
 
             // assert
             setTimeout(() => {
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.SELECT_CATEGORY,
                     InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
-                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList, ID.SELECT_CATEGORY);
                 expect(mockRouter.navigate).toHaveBeenCalledWith(
                     [RouterLinks.SEARCH],
                     {
@@ -197,9 +197,9 @@ describe('AddActivityToGroupPage', () => {
 
             // assert
             setTimeout(() => {
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.SELECT_CATEGORY,
                     InteractSubtype.ACTIVITY_TYPE_CLICKED, Environment.GROUP, PageId.ADD_ACTIVITY_TO_GROUP,
-                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addActivityToGroupPage.corRelationList, ID.SELECT_CATEGORY);
                 expect(mockRouter.navigate).toHaveBeenCalledWith(
                     [RouterLinks.SEARCH],
                     {
