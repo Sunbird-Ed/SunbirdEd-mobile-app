@@ -846,7 +846,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           this.logoutHandlerService.onLogout();
           this.localStorage.deleteAllStorage();
-          this.db.dropDb();
         }
         break;
 
