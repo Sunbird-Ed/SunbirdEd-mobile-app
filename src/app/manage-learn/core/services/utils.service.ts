@@ -510,6 +510,12 @@ export class UtilsService {
                 for (const location of profileData['userLocations']) {
                   obj[location.type] = location.id
                 }
+                for (const org of profileData['organisations']) {
+                  if (org.isSchool) {
+                    obj['school'] = org.externalId;
+                  }
+                }
+                
                 obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null;
                 resolve(obj)
               });
