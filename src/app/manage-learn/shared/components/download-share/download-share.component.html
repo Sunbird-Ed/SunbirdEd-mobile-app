@@ -1,6 +1,6 @@
 <div *ngIf="interface == 'simple'">
   <ion-icon
-    name="md-more"
+    name="ellipsis-vertical-outline"
     color="primary"
     (click)="openPopupMenu($event)"
     *ngIf="!showOptions"
@@ -15,8 +15,10 @@
 
 <!-- Fab button round UI ,pass interface= fab-->
 <div *ngIf="interface == 'fab'">
-  <ion-fab vertical="top" horizontal="end">
-    <ion-fab-button size="small"> <ion-icon name="ellipsis-vertical-outline"></ion-icon> </ion-fab-button>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+    </ion-fab-button>
     <ion-fab-list side="start">
       <ion-fab-button color="medium" (click)="download('share')">
         <ion-icon name="share"></ion-icon>

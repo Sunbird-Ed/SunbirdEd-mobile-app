@@ -25,6 +25,21 @@ export class ToastService {
 
     toast.present();
   }
+  async openToastWithClose(msg) {
+   const toast = await this.toastCtrl.create({
+     message: msg,
+     position: 'bottom',
+     buttons: [
+       {
+         text: 'Ok',
+         role: 'cancel',
+         handler: () => {
+         },
+       },
+     ],
+   });
+   await toast.present();
+  }
 
   async showMessage(msg, color = 'success', icon?) {
     let text;

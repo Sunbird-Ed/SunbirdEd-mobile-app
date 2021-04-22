@@ -5,11 +5,12 @@ import { Events } from '@app/util/events';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../../services/app-header.service';
 import { ContentAggregatorHandler } from '../../../services/content/content-aggregator-handler.service';
-import { CommonUtilService, FormAndFrameworkUtilService } from '../../../services';
+import { AppGlobalService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService } from '../../../services';
 import { NavigationService } from '../../../services/navigation-handler.service';
 import { mockDiscoverPageData } from '@app/app/components/discover/discover.page.spec.data';
 import { ContentFilterConfig } from '@app/app/app.constant';
-import { EventEmitter } from '@angular/core';
+import {ProfileType, SharedPreferences} from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
 
 describe('DiscoverComponent', () => {
     let discoverComponent: DiscoverComponent;
@@ -33,10 +34,20 @@ describe('DiscoverComponent', () => {
         navigateToContent: jest.fn()
     };
     const mockPopoverController: Partial<PopoverController> = {};
-    const hide
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateImpressionTelemetry: jest.fn(),
+        generateInteractTelemetry: jest.fn()
+    };
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+       getGuestUserInfo: jest.fn(() => Promise.resolve(ProfileType.TEACHER))
+    };
+    const mockSharedPrefernces: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of(ProfileType.TEACHER))
+    };
 
     beforeAll(() => {
         discoverComponent = new DiscoverComponent(
+            mockSharedPrefernces as SharedPreferences,
             mockAppVersion as AppVersion,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
@@ -45,7 +56,9 @@ describe('DiscoverComponent', () => {
             mockContentAggregatorHandler as ContentAggregatorHandler,
             mockNavService as NavigationService,
             mockCommonUtilService as CommonUtilService,
-            mockPopoverController as PopoverController
+            mockPopoverController as PopoverController,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppGlobalService as AppGlobalService
         );
     });
 
@@ -68,6 +81,7 @@ describe('DiscoverComponent', () => {
             } as any;
             mockRouter.navigate = jest.fn();
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            mockSharedPrefernces.getString = jest.fn(() => of(ProfileType.TEACHER));
             // act
             discoverComponent.ngOnInit();
             // assert
@@ -90,6 +104,7 @@ describe('DiscoverComponent', () => {
             } as any;
             mockRouter.navigate = jest.fn();
             mockHeaderService.showHeaderWithHomeButton = jest.fn();
+            mockSharedPrefernces.getString =jest.fn(() => of(ProfileType.TEACHER));
             // act
             discoverComponent.ngOnInit();
             // assert
@@ -186,7 +201,7 @@ describe('DiscoverComponent', () => {
             // arrange
             mockRouter.navigate = jest.fn();
             // act
-            discoverComponent.handlePillSelect(undefined);
+            discoverComponent.handlePillSelect(undefined, undefined);
             // assert
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });

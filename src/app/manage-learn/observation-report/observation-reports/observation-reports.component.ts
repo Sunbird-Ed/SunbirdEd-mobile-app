@@ -12,7 +12,7 @@ import { AssessmentApiService } from '../../core/services/assessment-api.service
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { DownloadAndPreviewService } from '../../core/services/download-and-preview.service';
 import { CriteriaListComponent } from '../../shared/components/criteria-list/criteria-list.component';
-import { QuestionListComponent } from '../../shared/components/question-list/question-list.component';
+import { ReportModalFilter } from '../../shared/components/report-modal-filter/report.modal.filter';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '@app/services';
 
@@ -320,7 +320,7 @@ export class ObservationReportsComponent implements OnInit {
   }
   async openFilter() {
     const modal = await this.modal.create({
-      component: QuestionListComponent,
+      component: ReportModalFilter,
       componentProps: {
         allQuestions: this.allQuestions,
         filteredQuestions: JSON.parse(JSON.stringify(this.filteredQuestions)),

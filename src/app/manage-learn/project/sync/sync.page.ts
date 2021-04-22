@@ -216,6 +216,7 @@ export class SyncPage implements OnInit, OnDestroy {
     })
     delete payload.createdAt;
     delete payload.updatedAt;
+    delete payload.downloaded
     payload.tasks = filteredTasks;
     return this.syncServ.removeKeys(payload, ['isNew', 'isEdit'])
   }
@@ -223,7 +224,6 @@ export class SyncPage implements OnInit, OnDestroy {
   getImageUploadUrls() {
     const project = { ...this.allProjects[this.syncIndex] };
     this.syncServ.getImageUploadUrls(project).then(imageInfo => {
-      console.log(imageInfo);
       for (let i = 0; i < this.attachments.length; i++) {
         this.attachments[i].uploadUrl = imageInfo[i].url;
         this.attachments[i].cloudStorage = imageInfo[i].cloudStorage;
@@ -261,8 +261,9 @@ export class SyncPage implements OnInit, OnDestroy {
   }
 
   getPdfUrl(fileName, taskId?) {
+   let task_id = taskId ? taskId : '';
     const config = {
-      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + taskId,
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.projectId + '?tasks=' + task_id,
     };
     this.share.getFileUrl(config, fileName);
   }

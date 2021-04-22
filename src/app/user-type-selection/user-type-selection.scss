@@ -84,6 +84,10 @@
     box-sizing: border-box;
   }
 
+  .disabled-button {
+    opacity: 0.8;
+  }
+
   .card-container {
     display: flex;
     flex-direction: column;

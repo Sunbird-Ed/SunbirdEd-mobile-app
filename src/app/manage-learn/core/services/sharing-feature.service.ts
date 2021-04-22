@@ -10,6 +10,8 @@ import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { NetworkService } from './network.service';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,6 +33,7 @@ export class SharingFeatureService {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
+    public network :NetworkService
   ) {
     console.log('Hello SharingFeaturesProvider Provider');
   }
@@ -93,30 +96,35 @@ export class SharingFeatureService {
 
 
   async getFileUrl(config, name) {
-    this.loader.startLoader();
-    let res = await this.unnatiSrvc.get(config).toPromise();
-    if (res.result && !res.result.data && !res.result.data.downloadUrl) {
-      this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-      this.loader.stopLoader();
-      return;
-    }
-    let fileName = name + '.pdf';
-    const ft = this.fileTransfer.create();
-    ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
-    .then(
-      (res) => {
-        this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
-        },error =>{
-        })
-      },
-      (err) => {
-        this.requestPermission();
+    if(this.network.isNetworkAvailable){
+      this.loader.startLoader();
+      let res = await this.unnatiSrvc.get(config).toPromise();
+      if (res.result && !res.result.data && !res.result.data.downloadUrl) {
         this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+        this.loader.stopLoader();
+        return;
       }
-    )
-    .finally(() => {
-      this.loader.stopLoader();
-    });
+      let fileName = name + '.pdf';
+      const ft = this.fileTransfer.create();
+      ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
+      .then(
+        (res) => {
+          this.socialSharing.share(null, null, res.nativeURL, null).then(data =>{
+          },error =>{
+          })
+        },
+        (err) => {
+          this.requestPermission();
+          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+        }
+      )
+      .finally(() => {
+        this.loader.stopLoader();
+      });
+    }else{
+      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
+    }
+   
   }
   directoryPath(): string {
     let dir_name = 'Download/';

@@ -8,7 +8,7 @@ import { Events } from '@app/util/events';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
+import { EventTopics, ProfileConstants, RouterLinks, ShareItemType } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import {
@@ -20,7 +20,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk
+  ErrorType, SunbirdSdk, ProfileService
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -48,17 +48,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private navigateBackToTrackableCollection: boolean;
   corRelationList;
   private isCourse = false;
-  loadPdfPlayer = false;
-  loadEpubPlayer = false;
   playerConfig: any;
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
+  playerType: string = 'sunbird-old-player';
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -99,12 +99,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
     if (this.config['metadata']['mimeType'] === 'application/pdf'  &&  this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer" &&
       this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
-      this.loadPdfPlayer = true;
-      this.config = this.getNewPlayerConfiguration();
+      this.config = await this.getNewPlayerConfiguration();
+      this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
-      this.loadEpubPlayer = true;
-      this.config = this.getNewPlayerConfiguration();
-    }
+      this.config = await this.getNewPlayerConfiguration();
+      this.playerType = 'sunbird-epub-player'
+    } else if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset" && this.checkIsPlayerEnabled(this.playerConfig , 'qumlPlayer').name === "qumlPlayer"){
+      this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showDownload = false;
+      this.config['config'].sideMenu.showPrint = false;
+       this.playerType = 'sunbird-quml-player';
+    } 
     this.config['context'].dispatcher = {
       dispatch: function (event) {
         SunbirdSdk.instance.telemetryService.saveTelemetry(JSON.stringify(event)).subscribe(
@@ -121,7 +126,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
   async ionViewWillEnter() {
-    if (!this.loadPdfPlayer && !this.loadEpubPlayer) {
+    if (this.playerType === 'sunbird-old-player') {
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.statusBar.hide();
       this.config['uid'] = this.config['context'].actor.id;
@@ -188,7 +193,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       if (!activeAlert) {
         this.showConfirm();
       }
-      if (this.loadPdfPlayer && this.loadEpubPlayer) {
+      if (this.playerType !== 'sunbird-old-player') {
         this.location.back();
       }
     });
@@ -226,8 +231,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async playerEvents(event) {
     if (event.edata['type'] === 'EXIT') {
-      this.loadPdfPlayer = false;
-      this.loadEpubPlayer = false;
       this.location.back();
     } else if (event.edata['type'] === 'SHARE') {
       const popover = await this.popoverCtrl.create({
@@ -245,7 +248,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     } else if (event.edata['type'] === 'DOWNLOAD') {
       if (this.content.contentData.downloadUrl) {
         this.downloadPdfService.downloadPdf(this.content).then((res) => {
-          this.commonUtilService.showToast('PDF_DOWNLOADED');
+          this.commonUtilService.showToast('CONTENT_DOWNLOADED');
         }).catch((error) => {
           if (error.reason === 'device-permission-denied') {
             this.commonUtilService.showToast('DEVICE_NEEDS_PERMISSION');
@@ -269,10 +272,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     }
   }
 
-  getNewPlayerConfiguration() {
+  async getNewPlayerConfiguration() {
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
-      console.log('config', this.config['metadata'].contentData.streamingUrl);
         this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
       }
       this.config['metadata']['contentData']['basePath'] = '/_app_file_' + this.config['metadata'].basePath;
@@ -288,6 +290,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showPrint: true
         }
       }
+      const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      this.config['context'].userData = {
+        firstName:  profile && profile.serverProfile && profile.serverProfile.firstName ? profile.serverProfile.firstName : profile.handle,
+        lastName: ''
+      };
       return this.config;
   }
 

@@ -29,6 +29,8 @@ import {
 } from 'sunbird-sdk';
 import { LocationConfig, PreferenceKey, ProfileConstants, RegexPatterns, RouterLinks } from '../../app/app.constant';
 import { FormConstants } from '../form.constants';
+import {ProfileType} from '@project-sunbird/sunbird-sdk';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-district-mapping',
@@ -74,7 +76,8 @@ export class DistrictMappingPage implements OnDestroy {
     public telemetryGeneratorService: TelemetryGeneratorService,
     private formLocationFactory: FormLocationFactory,
     private locationHandler: LocationHandler,
-    private profileHandler: ProfileHandler
+    private profileHandler: ProfileHandler,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
   }
@@ -195,12 +198,15 @@ export class DistrictMappingPage implements OnDestroy {
         locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
-        ...((this.formGroup.value['persona'] ? { userType: this.formGroup.value['persona'] } : {})),
-        ...((this.formGroup.value.children['persona']['subPersona'] ?
-          { userSubType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        profileUserType: {
+          ...((this.formGroup.value['persona'] ? { type: this.formGroup.value['persona'] } : {})),
+          ...((this.formGroup.value.children['persona']['subPersona'] ?
+            { subType: this.formGroup.value.children['persona']['subPersona'] } : {}))
+        }
       };
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
+      const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
@@ -218,6 +224,9 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
               this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
+            if (!this.profile.serverProfile.dob && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup();
+            }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
@@ -230,6 +239,9 @@ export class DistrictMappingPage implements OnDestroy {
           if (this.profile) {
             this.location.back();
           } else {
+            if (!this.profile.serverProfile.dob && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup();
+            }
             this.router.navigate([`/${RouterLinks.TABS}`]);
           }
         });
@@ -347,8 +359,10 @@ export class DistrictMappingPage implements OnDestroy {
         config.validations = [];
       }
       if (config.code === 'persona') {
-        config.default = (this.profile && this.profile.serverProfile && this.profile.serverProfile.userType) ?
-        this.profile.serverProfile.userType : selectedUserType;
+        config.default = (this.profile && this.profile.serverProfile
+        && this.profile.serverProfile.profileUserType.type
+        && (this.profile.serverProfile.profileUserType.type !== ProfileType.OTHER.toUpperCase())) ?
+        this.profile.serverProfile.profileUserType.type : selectedUserType;
         if (this.source === PageId.PROFILE) {
           config.templateOptions.hidden = false;
         }
@@ -375,7 +389,7 @@ export class DistrictMappingPage implements OnDestroy {
             switch (personaConfig.templateOptions['dataSrc']['marker']) {
               case 'SUBPERSONA_LIST': {
                 if (this.profile.serverProfile) {
-                  personaConfig.default = this.profile.serverProfile.userSubType;
+                  personaConfig.default = this.profile.serverProfile.profileUserType.subType;
                 }
                 break;
               }
@@ -441,7 +455,7 @@ export class DistrictMappingPage implements OnDestroy {
       await this.loader.dismiss();
       const subPersonaFormControl = this.formGroup.get('children.persona.subPersona');
       if (subPersonaFormControl && !subPersonaFormControl.value) {
-        subPersonaFormControl.patchValue(this.profile.serverProfile.userSubType || null);
+        subPersonaFormControl.patchValue(this.profile.serverProfile.profileUserType.subType || null);
       }
       if (!this.stateChangeSubscription) {
         this.stateChangeSubscription = concat(

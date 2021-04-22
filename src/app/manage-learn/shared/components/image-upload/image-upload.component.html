@@ -3,13 +3,13 @@
 
   <div *ngIf="datas?.file" class="_cards _flex-box _justify-content-center _flex-direction-column ion-padding" >
 
-    <div class="textAdj" (click)="openActionSheet()">
+    <div class="textAdj" (click)="doAction()">
       <div class=" _flex-box _justify-content-center _flex-direction-column">
         <ion-icon name="add" class="_iconAdj"></ion-icon>
       </div>
       <div>{{'FRMELEMENTS_LBL_FILES'|translate}}</div>
     </div>
-    <div class="_overlay" (click)="openActionSheet()"></div>
+    <div class="_overlay" (click)="doAction()"></div>
   </div>
 
   <div class="_cards _flex-box  _justify-content-center" *ngFor="let image of imageList; let i = index">

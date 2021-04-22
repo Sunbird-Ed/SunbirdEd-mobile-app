@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AttachmentService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ModalController } from '@ionic/angular';
+import { GenericPopUpService } from '../../TC-generic.popupService';
 
 @Component({
   selector: 'app-create-task-form',
@@ -15,7 +16,8 @@ export class CreateTaskFormComponent implements OnInit {
     private modalCtrl: ModalController,
     private utils: UtilsService,
     private attachmentService: AttachmentService,
-    private toast: ToastService
+    private toast: ToastService,
+    private popupService: GenericPopUpService
   ) { }
 
   ngOnInit() {
@@ -31,6 +33,14 @@ export class CreateTaskFormComponent implements OnInit {
     this.attachmentService.selectImage().then(data => {
       !this.newTask.attachments ? this.newTask.attachments = [] : '';
       data.data ? this.newTask.attachments.push(data.data) : ''
+    })
+  }
+
+  doAction() {
+    this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      if (data.isClicked) {
+        data.isChecked ? this.openAction() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+      }
     })
   }
 

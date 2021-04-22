@@ -11,11 +11,11 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import {
     SharedPreferences, ProfileService, Profile, ProfileType,
-    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria
+    CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria, TelemetryService
 } from 'sunbird-sdk';
 import {
     PreferenceKey, ProfileConstants, RouterLinks,
-    appLanguages, Location as loc, MaxAttempt
+    appLanguages, Location as loc, MaxAttempt, SwitchableTabsConfig
 } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -55,6 +55,7 @@ export class CommonUtilService {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+        @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
         private events: Events,
@@ -367,6 +368,7 @@ export class CommonUtilService {
         }
     }
 
+
     async getAppName() {
         return this.appVersion.getAppName();
     }
@@ -470,10 +472,10 @@ export class CommonUtilService {
     private findAllRequiredFields(locationMappingConfig, userType) {
         return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
             if (config.validations && config.validations.find((v) => v.type === 'required')) {
-              acc.push(config.code);
+                acc.push(config.code);
             }
             return acc;
-          }, []);
+        }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -556,7 +558,7 @@ export class CommonUtilService {
                 {
                     text: this.translateMessage('SETTINGS'),
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'bottom',
@@ -623,7 +625,7 @@ export class CommonUtilService {
                 {
                     text: 'X',
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'top',
@@ -720,5 +722,15 @@ export class CommonUtilService {
             return maxAttempt;
         }
     }
+
+    public async populateGlobalCData() {
+        const currentSelectedTabs = await this.preferences.getString(PreferenceKey.SELECTED_SWITCHABLE_TABS_CONFIG).toPromise();
+        const correlationData: CorrelationData = {
+        type : 'Tabs',
+        id: (!currentSelectedTabs || currentSelectedTabs === SwitchableTabsConfig.RESOURCE_COURSE_TABS_CONFIG )?
+        'Library-Course' : 'Home-Discover'
+        };
+        this.telemetryService.populateGlobalCorRelationData([correlationData]);
+      }
 
 }

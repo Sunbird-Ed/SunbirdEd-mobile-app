@@ -26,7 +26,8 @@ import {
   ProgressBarComponent,
   NoDataComponent,
   ChartComponent,
-  CreateTaskFormComponent
+  CreateTaskFormComponent,
+  PrivacyPolicyAndTCComponent
   
 } from './components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -47,7 +48,7 @@ import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { MatrixChartComponent } from './components/matrix-chart/matrix-chart.component';
 import { AttachmentComponent } from './components/attachment/attachment.component';
-import { QuestionListComponent } from './components/question-list/question-list.component';
+import { ReportModalFilter } from './components/report-modal-filter/report.modal.filter';
 import { CriteriaListComponent } from './components/criteria-list/criteria-list.component';
 import { DownloadShareComponent } from './components/download-share/download-share.component';
 import { GraphCircleComponent } from './components/graph-circle/graph-circle.component';
@@ -65,6 +66,8 @@ import { RemarksModalComponent } from '../questionnaire/remarks-modal/remarks-mo
 import { PercentageColumnChartsComponent } from './components/percentage-column-charts/percentage-column-charts.component';
 import { ExpansionPanelComponent } from './components/expansion-panel/expansion-panel.component';
 import { ExpansionTableComponent } from './components/expansion-table/expansion-table.component';
+import { GenericPopUpService } from './TC-generic.popupService';
+
 
 @NgModule({
   declarations: [
@@ -95,7 +98,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     ScatterChartComponent,
     MatrixChartComponent,
     AttachmentComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
@@ -113,6 +116,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
+    PrivacyPolicyAndTCComponent
   ],
 
   imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, TranslateModule, ChartsModule],
@@ -144,7 +148,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     BarChartComponent,
     ScatterChartComponent,
     MatrixChartComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     GraphCircleComponent,
@@ -162,6 +166,7 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     PercentageColumnChartsComponent,
     ExpansionPanelComponent,
     ExpansionTableComponent,
+    PrivacyPolicyAndTCComponent
   ],
   providers: [
     Camera,
@@ -178,13 +183,14 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     ReactiveFormsModule,
     ThemeService,
     SurveyProviderService,
+    GenericPopUpService
   ],
   entryComponents: [
     EntityfilterComponent,
     PopoverComponent,
     CreateTaskComponent,
     ScroreReportMenusComponent,
-    QuestionListComponent,
+    ReportModalFilter,
     CriteriaListComponent,
     DownloadShareComponent,
     FilterModalComponent,
@@ -195,6 +201,8 @@ import { ExpansionTableComponent } from './components/expansion-table/expansion-
     SurveyMsgComponent,
     CreateTaskFormComponent,
     RemarksModalComponent,
+    PrivacyPolicyAndTCComponent
   ],
+  
 })
 export class SharedModule {}

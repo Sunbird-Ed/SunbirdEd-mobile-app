@@ -10,7 +10,7 @@
                 <ion-checkbox slot="start" [checked]="category.isChecked" value="{{category.value}}"
                   (ionChange)="categorySelect($event,category)">
                 </ion-checkbox>
-                <ion-label> {{ category?.name || category?.label}}</ion-label>
+                <ion-label> {{(category?.labelTranslations?category?.labelTranslations: category?.name || category?.label)| translateJson}}</ion-label>
               </ion-item>
             </ion-list>
 

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
   selector: 'app-observation-home',
@@ -28,6 +29,7 @@ export class ObservationHomeComponent implements OnInit {
     private router: Router,
     private utils: UtilsService,
     private assessmentService: AssessmentApiService,
+    private kendra: KendraApiService,
     private loader: LoaderService
   ) {}
 
@@ -41,11 +43,11 @@ export class ObservationHomeComponent implements OnInit {
       this.loader.startLoader();
       const config = {
         url:
-          urlConstants.API_URLS.GET_PROG_SOL_FOR_OBSERVATION +
-          `?page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
+          urlConstants.API_URLS.GET_TARGETED_SOLUTIONS +
+          `?type=observation&page=${this.page}&limit=${this.limit}&search=${this.searchText}`,
         payload: payload,
       };
-      this.assessmentService.post(config).subscribe(
+      this.kendra.post(config).subscribe(
         (success) => {
           this.loader.stopLoader();
           console.log(success);
@@ -87,6 +89,7 @@ export class ObservationHomeComponent implements OnInit {
     this.getPrograms();
   }
   onSearch(e) {
+    this.page=1
     this.solutionList = [];
     this.getPrograms();
   }

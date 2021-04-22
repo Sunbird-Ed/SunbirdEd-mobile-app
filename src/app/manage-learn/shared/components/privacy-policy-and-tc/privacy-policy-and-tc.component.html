@@ -1,0 +1,39 @@
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title class="sb-popover-title">{{header| translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<div id="main-content">
+  <div class="consent-popover-info">
+    <div class="flex-container">
+      <div class="footer">
+        <div class="cr-input-primary" lines="none">
+          <span>
+            <ion-checkbox class="cr-terms-checkbox" (ionChange)="changeEvent($event)"></ion-checkbox>
+          </span>
+          <span>
+            <p class="cr-terms-checkbox-label">
+              <span>{{message | translate}} </span>
+              <span (click)="openTermsOfUse()" class="terms-info"> {{linkLabel | translate }}</span>
+              <span> {{message1 | translate}}</span>
+
+            </p>
+          </span>
+        </div>
+        <div class="btn-info" *ngIf="isPrivacyPolicy">
+          <button [disabled]="isChecked" [ngClass]="!isChecked ?  'save-changes' : 'save-changes-not-agree'"
+            (click)="closePopover()">{{'FRMELEMNTS_BTN_DONOT_SHARE' | translate}}</button>
+          <button (click)="closePopover()" [disabled]="!isChecked"
+            [ngClass]="!isChecked ?  'save-changes-not-agree' : 'save-changes'">{{'SHARE' | translate}}</button>
+        </div>
+        <div class="btn-info" *ngIf="!isPrivacyPolicy">
+          <button [disabled]="isChecked" [ngClass]="!isChecked ?  'save-changes' : 'save-changes-not-agree'"
+            (click)="closePopover()">{{'FRMELEMNTS_BTN_DO_NOT_UPLOAD' | translate}}</button>
+          <button (click)="closePopover()" [disabled]="!isChecked"
+            [ngClass]="!isChecked ?  'save-changes-not-agree' : 'save-changes'">{{'FRMELEMNTS_BTN_UPLOAD' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

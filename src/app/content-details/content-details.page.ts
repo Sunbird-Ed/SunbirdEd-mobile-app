@@ -1302,7 +1302,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
-      this.loginHandlerService.signIn();
+      this.loginHandlerService.signIn({navigateToCourse: true});
     }
     this.isLoginPromptOpen = false;
   }

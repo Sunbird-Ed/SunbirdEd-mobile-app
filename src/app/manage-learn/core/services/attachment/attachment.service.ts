@@ -60,13 +60,13 @@ export class AttachmentService {
             return false;
           },
         },
-        // {
-        //   text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
-        //   handler: () => {
-        //     this.openFile();
-        //     return false;
-        //   },
-        // },
+        {
+          text: this.texts["FRMELEMNTS_MSG_USE_FILE"],
+          handler: () => {
+            this.openFile();
+            return false;
+          },
+        },
         {
           text: this.texts["CANCEL"],
           role: "cancel",

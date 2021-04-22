@@ -4,11 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectDetailPage } from './project-detail/project-detail.page';
-import { ProjectListingComponent } from './project-listing/project-listing.component';
+import { ProjectListingComponent } from '../project/project-listing/project-listing.component';
 import { LearningResourcesPage } from './learning-resources/learning-resources.page';
 import { ProjectEditPage } from './project-edit/project-edit.page';
 import { ProjectOperationPage } from './project-operation/project-operation.page';
@@ -22,6 +21,7 @@ import { CreateProjectPage } from './create-project/create-project.page';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { AttachmentListPage } from './attachment-list/attachment-list.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -63,12 +63,15 @@ const routes: Routes = [
     path: `${RouterLinks.ATTACHMENTS}/:id`,
     component: AttachmentListPage
   }
-
 ];
 
 @NgModule({
-  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, CategorySelectComponent],
-  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CategorySelectComponent],
+  declarations: [ProjectDetailPage, ProjectListingComponent, ProjectEditPage, 
+    ProjectOperationPage, LearningResourcesPage, SyncPage, TaskViewPage, AttachmentListPage, 
+    LinkLearningResourcesComponent, AddEntityComponent, AddProgramsComponent, CreateProjectPage, 
+    CategorySelectComponent],
+  entryComponents: [LinkLearningResourcesComponent, AddEntityComponent, 
+    AddProgramsComponent, CategorySelectComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -76,9 +79,10 @@ const routes: Routes = [
     IonicModule,
     CoreModule,
     SharedModule,
-    TranslateModule.forChild(),
+    TranslateModule.forChild(), 
     RouterModule.forChild(routes),
-    CommonConsumptionModule
+    CommonConsumptionModule,
+    PipesModule
   ]
 })
 export class ProjectModule { }

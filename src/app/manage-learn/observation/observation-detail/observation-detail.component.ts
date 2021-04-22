@@ -156,23 +156,6 @@ export class ObservationDetailComponent implements OnInit {
         solutionId: this.solutionId,
       },
     });
-    // if (type == 'state') {
-    //   entityListModal = await this.modalCtrl.create({
-    //     component: StateModalComponent,
-    //     componentProps: {
-    //       data: this.observationId,
-    //       solutionId: this.solutionId,
-    //     },
-    //   });
-    // } else {
-    //   entityListModal = await this.modalCtrl.create({
-    //     component: EntityfilterComponent,
-    //     componentProps: {
-    //       data: this.observationId,
-    //       solutionId: this.solutionId,
-    //     },
-    //   });
-    // }
     await entityListModal.present();
 
     await entityListModal.onDidDismiss().then(async (entityList) => {
@@ -191,7 +174,7 @@ export class ObservationDetailComponent implements OnInit {
         });
 
         const config = {
-          url: urlConstants.API_URLS.MAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
+          url: urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES + `${this.observationId}`,
           payload: payload,
         };
         this.assessmentService.post(config).subscribe(
@@ -239,10 +222,10 @@ export class ObservationDetailComponent implements OnInit {
     payload.data = [entityId];
 
     const config = {
-      url: urlConstants.API_URLS.UNMAP_ENTITY_TO_OBSERVATION + `${this.observationId}`,
+      url: urlConstants.API_URLS.OBSERVATION_UPDATE_ENTITES + `${this.observationId}`,
       payload: payload,
     };
-    this.assessmentService.post(config).subscribe(
+    this.assessmentService.delete(config).subscribe(
       (success) => {
         let okMessage;
         this.translate.get('FRMELEMNTS_LBL_OK').subscribe((translations) => {

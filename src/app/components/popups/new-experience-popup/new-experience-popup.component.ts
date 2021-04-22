@@ -3,6 +3,7 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { AppThemes, PreferenceKey, SwitchableTabsConfig } from '@app/app/app.constant';
 import { SharedPreferences } from 'sunbird-sdk';
 import { Events } from '@app/util/events';
+import { TelemetryGeneratorService, PageId, InteractSubtype, CommonUtilService } from '@app/services';
 
 
 @Component({
@@ -19,6 +20,8 @@ export class NewExperiencePopupComponent implements OnInit {
         private popoverCtrl: PopoverController,
         private navParams: NavParams,
         private events: Events,
+        private telemetryGeneratorService: TelemetryGeneratorService,
+        private commonUtilService: CommonUtilService
     ) {
     }
 
@@ -36,7 +39,19 @@ export class NewExperiencePopupComponent implements OnInit {
     }
 
     async switchToNewTheme() {
+        const userType = await this.preference.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+        const isNewUser = await this.preference.getBoolean(PreferenceKey.IS_NEW_USER).toPromise();
+        this.telemetryGeneratorService.generateNewExprienceSwitchTelemetry(
+            PageId.NEW_EXPERIENCE_POPUP,
+            InteractSubtype.OPTED_IN,
+            {
+                userType,
+                isNewUser
+            }
+        );
         await this.switchToHomeTabs();
+        this.preference.putBoolean(PreferenceKey.IS_NEW_USER, false);
+        this.commonUtilService.populateGlobalCData();
         this.popoverCtrl.dismiss();
     }
 

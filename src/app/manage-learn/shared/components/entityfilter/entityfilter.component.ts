@@ -165,7 +165,6 @@ export class EntityfilterComponent implements OnInit {
     this.assessmentService.post(config).subscribe(
       (success) => {
         this.loading = false;
-        debugger
         this.selectableList = !event ? [] : this.selectableList;
         for (let i = 0; i < success.result[0].data.length; i++) {
           success.result[0].data[i].isSelected = success.result[0].data[i].selected;

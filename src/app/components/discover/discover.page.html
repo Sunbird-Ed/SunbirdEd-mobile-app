@@ -14,7 +14,7 @@
 <div class="form-api-components" *ngIf="displaySections">
   <ng-container *ngFor="let section of displaySections">
     <div class="heading-label" *ngIf="section?.title && section?.theme?.component !== 'sb-course-cards-hlist'">
-      <span>{{section?.title | translateJson | titlecase}}</span>
+      <span>{{section?.title | translateJson}}</span>
       <hr>
     </div>
 
@@ -35,7 +35,7 @@
           (viewMorePillList)="onViewMorePillList($event, section)"
           (select)="handlePillSelect($event, section)">
           <sb-pill-item *ngFor="let pillData of section.data; let index=index" [name]="pillData?.facet | translateJson | titlecase"
-                        [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : pillData?.facet"
+                        [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : section?.theme : (pillData?.code || pillData?.facet)"
                         [theme]="({ component: 'sb-pill-item', input: 'theme' } | themeInputsSelector : section?.theme : pillData?.facet) || (pillData?.facet | randomColorMapPipe: index)"
                         [value]="pillData"></sb-pill-item>
         </sb-pills-grid>

@@ -107,7 +107,6 @@ export class AddEntityComponent implements OnInit {
       this.getEntities(this.childEntity);
    }
    getSubEntities(stateId) {
-
       // to select entityType if already provided
       if (this.entityType) {
          let selist = [];
@@ -117,7 +116,7 @@ export class AddEntityComponent implements OnInit {
          };
          selist.push(entity);
          this.subEntities = selist.reverse();
-         this.selectedEntity = this.subEntities[0];
+         // this.selectedEntity = this.subEntities[0];
          this.childEntity = this.subEntities[0].value;
          this.getEntities(this.subEntities[0].value);
 
@@ -142,7 +141,7 @@ export class AddEntityComponent implements OnInit {
                      selist.push(entity);
                   });
                   this.subEntities = selist.reverse();
-                  this.selectedEntity = this.subEntities[0];
+                  // this.selectedEntity = this.subEntities[0];
                   this.childEntity = this.subEntities[0].value;
                   this.getEntities(this.subEntities[0].value);
                }
@@ -173,5 +172,4 @@ export class AddEntityComponent implements OnInit {
          this.modalCtrl.dismiss(this.selectedEntity);
       }
    }
-
 }

@@ -152,11 +152,11 @@ export class SyncService {
     console.log(payload)
     return new Promise((resolve, reject) => {
       const config = {
-        url: urlConstants.API_URLS.GET_IMAGE_UPLOAD_URLS,
-        payload: payload
-      }
-      this.unnatiServ.post(config).subscribe(success => {
-        resolve(success.result[projects._id].images)
+        url: urlConstants.API_URLS.PRESIGNED_URLS,
+        payload: payload,
+      };
+      this.kendra.post(config).subscribe(success => {
+        resolve(success.result[projects._id].files)
         console.log(success);
       }, error => {
         reject(error);
@@ -166,14 +166,14 @@ export class SyncService {
   }
 
   createImageUrlPayload(project) {
-    const payload = {};
+    const payload = { request: {}, ref: 'improvementProject' };
     const completeImgObj = this.getAllAttachmentOfProject(project);
     const payloadImages = [];
     for (const image of completeImgObj) {
       payloadImages.push(image.name);
     }
-    payload[project._id] = {
-      images: payloadImages
+    payload.request[project._id] = {
+      files: payloadImages
     }
     return payload
   }
