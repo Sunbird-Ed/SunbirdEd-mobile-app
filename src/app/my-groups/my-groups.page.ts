@@ -173,7 +173,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   createClassroom() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CREATE_GROUP_CLICKED);
+    this.generateInteractTelemetry(InteractType.SELECT_CREATE_GROUP, InteractSubtype.CREATE_GROUP_CLICKED, undefined, ID.SELECT_CREATE_GROUP);
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
@@ -215,8 +215,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
 
   navigateToGroupdetailsPage(event) {
     const telemetryObject = new TelemetryObject(event.data.id, ObjectType.GROUP, undefined);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP, telemetryObject);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SELECT_GROUP,
+      InteractSubtype.GROUP_CLICKED, Environment.GROUP, PageId.MY_GROUP, telemetryObject, undefined, undefined, undefined,
+      ID.SELECT_GROUP);
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: event.data.id

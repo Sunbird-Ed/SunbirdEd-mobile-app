@@ -1,13 +1,11 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
-import {FormGroup} from '@angular/forms';
-import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType} from 'sunbird-sdk';
+import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
 import {CommonUtilService} from '@app/services';
-import {Subscription} from 'rxjs';
-import {FieldConfig} from 'common-form-elements';
+import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',
@@ -17,14 +15,17 @@ import {FieldConfig} from 'common-form-elements';
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
-    public config: FieldConfig<any>[];
+    @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
 
-    private formGroup: FormGroup;
-    private formValueSubscription: Subscription;
+    public baseSearchFilter?: { [key: string]: string[] | string | undefined };
+    public filterFormTemplateConfig?: IFacetFilterFieldTemplateConfig[];
+    public searchResultFacets: ContentSearchFilter[];
+    
     private appliedFilterCriteria: ContentSearchCriteria;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
+        private activatedRoute: ActivatedRoute,
         private router: Router,
         private location: Location,
         private modalController: ModalController,
@@ -34,12 +35,19 @@ export class SearchFilterPage implements OnInit {
     }
 
     ngOnInit() {
-        this.resetFilter();
+        this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+        if (!this.filterFormTemplateConfig) {
+            const {config, defaults} = this.buildConfig(this.appliedFilterCriteria);
+            this.filterFormTemplateConfig = config;
+            this.baseSearchFilter = defaults;
+        }
+        this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
     }
 
     resetFilter() {
-        this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
-        this.config = this.buildConfig(this.appliedFilterCriteria);
+        if (this.searchFilterComponent) {
+            this.searchFilterComponent.resetFilter();
+        }
     }
 
     applyFilter() {
@@ -49,7 +57,9 @@ export class SearchFilterPage implements OnInit {
     }
 
     cancel() {
-        this.modalController.dismiss();
+        this.router.navigate([], { relativeTo: this.activatedRoute }).then(() => {
+            this.modalController.dismiss();
+        });
     }
 
     private async refreshForm(formValue) {
@@ -65,7 +75,7 @@ export class SearchFilterPage implements OnInit {
             const selection = formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
-                f.apply = (selection && (selection.indexOf(f.name) === -1)) ? false : true;
+                f.apply = (!(selection && (selection.indexOf(f.name) === -1)));
             });
 
         });
@@ -76,7 +86,7 @@ export class SearchFilterPage implements OnInit {
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
             this.appliedFilterCriteria = contentSearchResult.filterCriteria;
-            this.config = this.buildConfig(contentSearchResult.filterCriteria, formValue);
+            this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
             // todo show error toast
             console.error(e);
@@ -85,7 +95,7 @@ export class SearchFilterPage implements OnInit {
         }
     }
 
-    private buildConfig(filterCriteria: ContentSearchCriteria, defaults?: {[field: string]: any}) {
+    private buildConfig(filterCriteria: ContentSearchCriteria) {
         return this.filterFormConfigMapper.map(
             filterCriteria.facetFilters.reduce((acc, f) => {
                 acc[f.name] = f.values;

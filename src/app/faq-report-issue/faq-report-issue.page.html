@@ -1,16 +1,23 @@
 <ion-content>
-  <div *ngIf="data" class="help-header-send-email">
-    <h4> {{data?.constants?.reportIssue}}</h4>
+  <div *ngIf="data" class="container-focus pl-16 pr-16 pb-16">
+    <h4 class="m-0"> {{data?.constants?.reportIssue}}</h4>
     <p>{{data?.constants?.explainMsg}}</p>
   </div>
   <div class="send-email-form align-left">
-    <sb-form [config]='formConfig' (valueChanges)="valueChanged($event)"
-    (statusChanges)="statusChanged($event)" (dataLoadStatus)="dataLoadStatus($event)">
+    <div class="report-info">{{data?.constants?.tellMoreMsg}}</div>
+    <sb-form [config]='formConfig'
+             [platform]="'mobile'"
+             (valueChanges)="valueChanged($event)"
+             (statusChanges)="statusChanged($event)"
+             (dataLoadStatus)="dataLoadStatus($event)">
     </sb-form>
+    <div class="report-submit-info">
+      {{data?.constants?.tellMoreMsg}}
+    </div>
 
     <div class="initiate-email-info">
       <div class="initiate-email-info-button">
-        <button id="initiate-email" (click)="submit()" [style.background-color]="btnColor" class="submit-button">
+        <button id="initiate-email" (click)="submit()" class="submit-button" [ngClass]="{'':isFormValid, 'invalid-btn':!isFormValid }" >
           {{'BTN_SUBMIT' | translate}}
         </button>
       </div>
