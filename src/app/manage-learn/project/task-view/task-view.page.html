@@ -94,7 +94,7 @@
     </ion-card>
   </div>
 
-  <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="markTaskAsCompleted()"
+  <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="doAction()"
     class="_capitalize" *ngIf="!task?.learningResources?.length">
     {{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}
   </ion-button>
