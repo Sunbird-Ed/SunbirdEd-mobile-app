@@ -315,6 +315,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const queryParamFilters = {};
     const urlAttributeList = [];
     request.query = url.searchParams.get(matchedDeeplinkConfig.params.key) || '';
+    if (url.searchParams.has('se_mediums')) {
+      url.searchParams.set('medium', url.searchParams.get('se_mediums'));
+    }
+    if (url.searchParams.has('se_boards')) {
+      url.searchParams.set('board', url.searchParams.get('se_boards'));
+    }
+    if (url.searchParams.has('se_gradeLevels')) {
+      url.searchParams.set('gradeLevel', url.searchParams.get('se_gradeLevels'));
+    }
     url.searchParams.forEach((value, key) => {
       urlAttributeList.push(key);
     });
