@@ -1274,6 +1274,7 @@
   "FRMELEMENTS_MSG_ENABLE_TO_GET_GOOGLE_URLS": "Unable to get google urls",
   "FRMELEMENTS_MSG_SOMETHING_WENT_WRONG ": "Something went Wrong , Please Try after sometime.",
   "FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING ": "Please wait while submitting",
+  "FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED": "Duplicate submission not allowed ! Reports will be generated based on original submission",
   "FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING": "Error while downloading ",
   "FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED": "Successfully Downloaded",
   "FRMELEMNTS_BTN_SUBMIT_FORM": "Submit the form",
