@@ -388,7 +388,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             ? this.createNewProject()
             : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
         } else {
-          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
+          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SYNC', 'danger');
         }
         break;
       }
@@ -413,11 +413,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
+        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE', 'danger');
         break;
       }
       case "shareProject": {
-        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareProject", this.project.title) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE', 'danger');
+        this.network.isNetworkAvailable
+          ? this.openSyncSharePopup('shareProject', this.project.title)
+          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE', 'danger');
         break;
       }
     }

@@ -232,7 +232,7 @@ export class ProjectListingComponent implements OnInit {
   }
   async onSearch(e) {
     if (!this.networkFlag) {
-      this.presentPopupForOffline();
+      this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_SEARCH'));
       return;
     }
     this.projects = [];
@@ -242,7 +242,7 @@ export class ProjectListingComponent implements OnInit {
 
   async createProject(data) {
     if (!this.networkFlag) {
-      this.presentPopupForOffline();
+      this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT'));
       return;
     }
     this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
