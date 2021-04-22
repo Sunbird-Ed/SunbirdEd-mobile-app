@@ -41,7 +41,7 @@ export class ImageListingComponent implements OnInit {
     });
 
       this.translate
-      .get(["FRMELEMENTS_MSG_SOMETHING_WENT_WRONG"])
+      .get(["FRMELEMENTS_MSG_SOMETHING_WENT_WRONG",'FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED'])
       .subscribe((texts) => {
         this.allStrings = texts;
       });
@@ -320,7 +320,11 @@ export class ImageListingComponent implements OnInit {
         if (this.schoolData.observation) {
           // this.observetionProvider.markObservationAsCompleted(submissionId);//TODO:Not storing in local now
         }
-        this.toast.openToast(response.message);
+        if (response && response.result && response.result.allowed==false) {
+          this.toast.openToastWithClose(this.allStrings['FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED']);
+        } else {
+          this.toast.openToast(response.message);
+        }
         this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
         this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
         const options = {
