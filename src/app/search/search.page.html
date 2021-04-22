@@ -183,7 +183,7 @@
     </ion-list>
 
     <div *ngIf="searchContentResult && searchContentResult.length">
-      <div class="pills-filter">
+      <div class="pills-filter sticky-position">
         <sb-pills-grid *ngIf="primaryCategoryFilters && primaryCategoryFilters.length" (select)="handleFilterSelect($event)"
           [pillsViewType]="PillsViewType.SCROLL"
           [pillBorder]="PillBorder.ROUND">
