@@ -1,52 +1,56 @@
 <ion-content scroll-y="true" class="contentPadding">
-  <div class="help-header">
-    <h4>{{data?.constants?.help }}</h4>
-    <p>{{data?.constants?.faqMsg}}</p>
+  <div class="container-focus pl-16 pr-16 pb-16">
+    <h4 class="m-0">{{faqData?.constants?.help }}</h4>
+    <p>{{faqData?.constants?.faqMsg}}</p>
   </div>
-  <div class="info-msg">
-    <p> {{ data?.constants?.resolveMsg}}</p>
+  <div class="info-msg" *ngIf="!selectedFaqCategory">
+    <p> {{faqData?.constants?.resolveMsg}}</p>
   </div>
 
-  <div class="panel panel-default" *ngFor="let faq of faqs; let i = index">
-    <div data-toggle="collapse" (click)="toggleGroup(i)">
-      <div class="panel-heading">
-        <div [ngClass]="{'panel-title': !isGroupShown(i), 'panel-title-blue': isGroupShown(i)}">{{ faq?.topic}}
-          <img class="btn-arrow" src="../../assets/faq/resources/images/Arrow.png" *ngIf="!isGroupShown(i)"
-            alt="group shown">
-          <img class="btn-arrow" src="../../assets/faq/resources/images/UpArrow.png" *ngIf="isGroupShown(i)"
-            alt="group not shown">
-        </div>
-      </div>
-    </div>
-    <div id="collapse' + key + '" class="panel-collapse collapse" *ngIf="isGroupShown(i)">
-      <div class="panel-body">
-        <p class="panelText" [innerHtml]="faq.description"></p>
-      </div>
-      <div class="panel-interact" *ngIf="!isNoClicked && !isYesClicked">
-        <p class="panelText">{{data?.constants?.helpMsg}} </p>
-        <button type="button" class="btn" id="btn-no" (click)="noClicked(i)">{{data?.constants?.noMsg}}</button>
-        <button type="button" class="yesBtn" id="btn-yes" (click)="yesClicked(i)">{{data?.constants?.yesMsg}}</button>
-      </div>
-      <div class="panel-interact" *ngIf="isYesClicked || isSubmitted">
-        <p class="yes-clicked"> {{data?.constants?.thanksMsg}}</p>
-      </div>
-      <div class="panel-info" *ngIf="!isSubmitted && isNoClicked">
-        <h6>{{data?.constants?.sorryMsg}}</h6>
-        <p>{{data?.constants?.knowMoreMsg}}</p>
-        <form action="#" id="know-more-form" class="know-more-form" *ngIf="!isSubmitted">
-          <textarea type="text" name="moreInfo" placeholder="{{constants?.typeHere}}" class="input-text"
-            maxlength="1000" [(ngModel)]="textValue"></textarea>
-          <input type="submit" value="{{constants?.submitButton}}" class="submit-button"
-            (click)="submitClicked(textValue,i)">
-        </form>
-        <p class="no-clicked" hidden="true" *ngIf="isSubmitted"> {{data?.constants?.thanksMsg}} </p>
-      </div>
-    </div>
+  <div class="selected-category-name" *ngIf="selectedFaqCategory">
+    <strong> {{ selectedFaqCategory?.name }}</strong>
   </div>
-  <div class="send-email" (click)="navigateToReportIssue()">
+
+  <section>
+    <div *ngIf="!selectedFaqCategory">
+      <sb-list 
+        [title]="faqData?.constants?.selectCategoryTitle" 
+        [listData]="faqData?.categories"
+        [btnText]="faqData?.constants?.reportIssueMsg" 
+        [btnImg]="'../../assets/faq/resources/images/Report_blue.png'"
+        [showRightArrow]="true"
+        (itemClick)="onCategorySelect($event)" 
+        (btnClick)="enableFaqReport($event)">
+      </sb-list>
+    </div>
+
+    <div *ngIf="selectedFaqCategory">
+
+      <div *ngIf="selectedFaqCategory?.videos?.length">
+        <sb-carousel 
+          [title]="faqData?.constants?.videoTitle" 
+          [listData]="selectedFaqCategory?.videos"
+          (itemClick)="onVideoSelect($event)">
+        </sb-carousel>
+      </div>
+
+      <div *ngIf="selectedFaqCategory?.faqs?.length">
+        <p class="faq-sub-title">{{faqData?.constants?.faqTitle}}</p>
+        <sb-faq 
+          [data]="selectedFaqCategory" 
+          (toggleGroupEvent)="toggleGroup($event)"
+          (yesClickedEvent)="logInteractEvent($event)" 
+          (noClickedEvent)="logInteractEvent($event)"
+          (submitClickedEvent)="logInteractEvent($event)">
+        </sb-faq>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="selectedFaqCategory" class="send-email" (click)="navigateToReportIssue()">
     <button class="report-button">
-      <img src="../../assets/faq/resources/images/Report.png" alt="navigate to report issue.">
-      <span class="report-text">{{ data?.constants?.reportIssueMsg }}</span>
+      <img src="../../assets/faq/resources/images/Report_blue.png" alt="navigate to report issue.">
+      <span class="report-text">{{ faqData?.constants?.reportIssueMsg }}</span>
     </button>
   </div>
 
