@@ -20,7 +20,7 @@ import {
   UpdateContentStateTarget,
   UpdateContentStateRequest,
   TelemetryErrorCode,
-  ErrorType, SunbirdSdk, ProfileService
+  ErrorType, SunbirdSdk, ProfileService, ContentService
 } from 'sunbird-sdk';
 import { Environment, FormAndFrameworkUtilService, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -52,13 +52,15 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private isChildContent: boolean;
   private content: Content;
   public objRollup: Rollup;
-  playerType: string = 'sunbird-old-player';
+  nextContentToBePlayed: Content;
+  playerType: string = 'sunbird-old-player';  
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -97,8 +99,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
   async ngOnInit() {
     this.playerConfig = await this.formAndFrameworkUtilService.getPdfPlayerConfiguration();
-    if (this.config['metadata']['mimeType'] === 'application/pdf'  &&  this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer" &&
-      this.config['context']['objectRollup']['l1'] === this.config['metadata']['identifier']) {
+    if(this.config['metadata'].hierarchyInfo) {
+      await this.getNextContent(this.config['metadata'].hierarchyInfo , this.config['metadata'].identifier)
+    }
+    if (this.config['metadata']['mimeType'] === 'application/pdf' && this.checkIsPlayerEnabled(this.playerConfig , 'pdfPlayer').name === "pdfPlayer") {
       this.config = await this.getNewPlayerConfiguration();
       this.playerType = 'sunbird-pdf-player'
     } else if (this.config['metadata']['mimeType'] === "application/epub" && this.checkIsPlayerEnabled(this.playerConfig , 'epubPlayer').name === "epubPlayer"){ 
@@ -110,6 +114,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-quml-player';
     } else if(this.config['metadata']['mimeType'] === "video/mp4" && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
+      this.config['config'].sideMenu.showPrint = false;
       this.config = await this.getNewPlayerConfiguration();
        this.playerType = 'sunbird-video-player';
     }
@@ -267,8 +272,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         }
       } else if (event.edata['type'] === 'PRINT') {
         this.printPdfService.printPdf(this.config['metadata'].streamingUrl);
-      }
-      else if (event.edata.type === 'compatibility-error') {
+      } else if(event.edata.type === 'NEXT_CONTENT_PLAY') {
+           this.playNextContent();
+      } else if (event.edata.type === 'compatibility-error') {
         cordova.plugins.InAppUpdateManager.checkForImmediateUpdate(
           () => {},
           () => {}
@@ -278,6 +284,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   }
 
   async getNewPlayerConfiguration() {
+      const nextContent = this.config['metadata'].hierarchyInfo ? { name: this.nextContentToBePlayed.contentData.name, identifier: this.nextContentToBePlayed.contentData.identifier } : undefined;
       this.config['context']['pdata']['pid'] = 'sunbird.app.contentplayer';
       if (this.config['metadata'].isAvailableLocally) {
         this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
@@ -287,6 +294,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['metadata'] = this.config['metadata'].contentData;
       this.config['data'] = {};
       this.config['config'] = {
+        nextContent,
         sideMenu: {
           showShare: true,
           showDownload: true,
@@ -301,6 +309,24 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         lastName: ''
       };
       return this.config;
+  }
+
+  getNextContent(hierarchyInfo, identifier) {
+    return new Promise((resolve) => {
+      this.contentService.nextContent(hierarchyInfo, identifier).subscribe((res) => {
+        this.nextContentToBePlayed = res;
+        resolve(res);
+      })
+    })
+  }
+
+  playNextContent(){
+    const content = this.nextContentToBePlayed;
+    this.events.publish(EventTopics.NEXT_CONTENT, {
+      content,
+      course: this.course
+    });
+    this.location.back();
   }
 
   /**
