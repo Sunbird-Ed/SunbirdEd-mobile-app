@@ -85,7 +85,10 @@
         </ion-col>
         <ion-col size="6">
           <ion-select [(ngModel)]="subtask.status" class="custom-select"
-            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)">
+            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)" [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }">
             <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
               selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
           </ion-select>
