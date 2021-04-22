@@ -52,7 +52,7 @@ export class FiltersPage implements OnDestroy {
   }
 
   async ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
+    this.headerService.showHeaderWithBackButton([]);
   }
 
   ionViewWillLeave() {

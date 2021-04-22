@@ -40,6 +40,7 @@ export class ContentActionsComponent {
   showChapterActions = false;
   public objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
+  showUnenrolledButton = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -71,6 +72,7 @@ export class ContentActionsComponent {
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
     this.getUserId();
+    this.isCourseCompleted();
   }
 
 
@@ -234,5 +236,14 @@ export class ContentActionsComponent {
       }
     );
     return msg;
+  }
+
+  private isCourseCompleted() {
+    if (this.content && this.content.progress === 100) {
+      if (this.batchDetails && ((this.batchDetails.endDate &&
+        (new Date(this.batchDetails.endDate) >= new Date())) || !this.batchDetails.endDate)) {
+          this.showUnenrolledButton = true;
+      }
+    }
   }
 }
