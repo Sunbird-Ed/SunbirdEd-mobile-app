@@ -1,14 +1,17 @@
-import { TitleCasePipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { CommonUtilService } from '@app/services/common-util.service';
-import {FieldConfig, FieldConfigInputType, FieldConfigValidationType} from 'common-form-elements';
 import { FilterValue } from 'sunbird-sdk';
+import { IFacetFilterFieldTemplateConfig } from 'common-form-elements';
+
+interface FilterFormConfigWithDefaults {
+    config: IFacetFilterFieldTemplateConfig[];
+    defaults: { [key: string]: string[] | string | undefined };
+}
 
 @Injectable()
 export class FilterFormConfigMapper {
     constructor(
         private commonUtilService: CommonUtilService,
-        private titlecasePipe: TitleCasePipe
     ) {
     }
     private static order = [
@@ -22,7 +25,7 @@ export class FilterFormConfigMapper {
         'audience'
     ];
 
-    private buildDefault(filterValues: FilterValue[], multiple: boolean): string[] | string | undefined {
+    private static buildDefault(filterValues: FilterValue[], multiple: boolean): string[] | string | undefined {
         if (multiple) {
             return filterValues
                 .filter(f => f.apply)
@@ -33,184 +36,114 @@ export class FilterFormConfigMapper {
         }
     }
 
-    map(facetFilters: { [key: string]: FilterValue[] }): FieldConfig<string>[] {
-        return Object.keys(facetFilters).reduce<FieldConfig<string>[]>((acc, key) => {
+    map(facetFilters: { [key: string]: FilterValue[] }): FilterFormConfigWithDefaults {
+        const accumulator = (acc, key) => {
+            const { config, defaults } = acc;
             switch (key) {
                 case 'board': {
-                    acc.push({
-                        code: 'board',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'board',
-                        default: this.buildDefault(facetFilters['board'], false),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('BOARD'),
-                            placeHolder: 'Select Board',
-                            multiple: false,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        },
-                        validations: [
-                            {
-                                type: FieldConfigValidationType.REQUIRED
-                            }
-                        ]
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], false);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('BOARD'),
+                        placeholderText: 'Select Board',
+                        multiple: false,
                     });
                     break;
                 }
                 case 'medium': {
-                    acc.push({
-                        code: 'medium',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'medium',
-                        default: this.buildDefault(facetFilters['medium'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('MEDIUM'),
-                            placeHolder: 'Select Medium',
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('MEDIUM'),
+                        placeholderText: 'Select Medium',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'gradeLevel': {
-                    acc.push({
-                        code: 'gradeLevel',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'gradeLevel',
-                        default: this.buildDefault(facetFilters['gradeLevel'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('CLASS'),
-                            placeHolder: 'Select Class',
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('CLASS'),
+                        placeholderText: 'Select Class',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'subject': {
-                    acc.push({
-                        code: 'subject',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'subject',
-                        default: this.buildDefault(facetFilters['subject'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('SUBJECT'),
-                            placeHolder: 'Select Subject',
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('SUBJECT'),
+                        placeholderText: 'Select Class',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'publisher': {
-                    acc.push({
-                        code: 'publisher',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'publisher',
-                        default: this.buildDefault(facetFilters['publisher'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('PUBLISHER'),
-                            placeHolder: 'Select publisher',
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('PUBLISHER'),
+                        placeholderText: 'Select Publisher',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'mimeType': {
-                    acc.push({
-                        code: 'mimeType',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'mediaType',
-                        default: this.buildDefault(facetFilters['mimeType'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEDIA_TYPE'),
-                            placeHolder: 'Select Media Type',
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEDIA_TYPE'),
+                        placeholderText: 'Select Media Type',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'primaryCategory': {
-                    acc.push({
-                        code: 'primaryCategory',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'primaryCategory',
-                        default: this.buildDefault(facetFilters['primaryCategory'], false),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
-                            placeHolder: 'Select Content Type',
-                            multiple: false,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('FRMELEMENTS_LBL_CONTENT_TYPE'),
+                        placeholderText: 'Select Content Type',
+                        multiple: true,
                     });
                     break;
                 }
                 case 'audience': {
-                    acc.push({
-                        code: 'audience',
-                        type: FieldConfigInputType.SELECT,
-                        fieldName: 'audience',
-                        default: this.buildDefault(facetFilters['audience'], true),
-                        templateOptions: {
-                            label: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
-                            placeHolder: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
-                            multiple: true,
-                            hidden: false,
-                            disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
-                            }))
-                        }
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
+                    config.push({
+                        facet: key,
+                        type: 'dropdown',
+                        labelText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
+                        placeholderText: this.commonUtilService.translateMessage('FRMELEMNTS_LBL_MEANT_FOR'),
+                        multiple: true,
                     });
                     break;
                 }
             }
             return acc;
-        }, []).sort((a, b) => {
-            if (
-                FilterFormConfigMapper.order.includes(a.code) &&
-                FilterFormConfigMapper.order.includes(b.code)
-            ) {
-                return FilterFormConfigMapper.order.indexOf(a.code) - FilterFormConfigMapper.order.indexOf(b.code);
-            }
-            return 1;
-        });
+        };
+        const { config, defaults } = Object.keys(facetFilters).reduce<FilterFormConfigWithDefaults>(accumulator, { config: [], defaults: {} });
+
+        return {
+            defaults,
+            config: config.sort((a, b) => {
+                if (
+                    FilterFormConfigMapper.order.includes(a.facet) &&
+                    FilterFormConfigMapper.order.includes(b.facet)
+                ) {
+                    return FilterFormConfigMapper.order.indexOf(a.facet) - FilterFormConfigMapper.order.indexOf(b.facet);
+                }
+                return 1;
+            })
+        };
     }
 }
