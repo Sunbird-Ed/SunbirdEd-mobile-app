@@ -406,3 +406,12 @@
   text-align: center;
   border: none !important;
 }
+
+.sticky-position {
+  position: sticky;
+  z-index: 9;
+  top: 20px;
+  padding-bottom: .25rem;
+  padding-top: 0.25rem;
+  background-color: var(--app-primary-background);
+}
