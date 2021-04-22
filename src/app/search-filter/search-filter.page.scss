@@ -181,6 +181,7 @@
 
         & > div {
           display: block;
+          text-transform: capitalize;
           width: 100%;
         }
 
@@ -381,6 +382,7 @@
 
       span {
         font-size: inherit !important;
+        text-transform: capitalize;
       }
     }
 

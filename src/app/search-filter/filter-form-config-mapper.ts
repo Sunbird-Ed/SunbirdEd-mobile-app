@@ -39,7 +39,6 @@ export class FilterFormConfigMapper {
     map(facetFilters: { [key: string]: FilterValue[] }): FilterFormConfigWithDefaults {
         const accumulator = (acc, key) => {
             const { config, defaults } = acc;
-            debugger;
             switch (key) {
                 case 'board': {
                     defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], false);
