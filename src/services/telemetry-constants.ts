@@ -148,7 +148,7 @@ export enum PageId {
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
     PROFILE_NAME_CONFIRMATION_POPUP = 'profile-name-confirmation-popup',
-    MY_GROUP = 'my-group',
+    MY_GROUP = 'groups-list',
     ADD_MEMBER = 'add-member',
     ACTIVITY_DETAIL = 'activity-detail',
     TEXTBOOK_IMPORT = 'textbookimport',
@@ -276,7 +276,18 @@ export enum InteractType {
     SELECT_VIEW_ALL = 'select-view-all',
     SELECT_CONTENT = 'select-content',
     SELECT_BOARD = 'select-board',
-    NEW_EXPERIENCE = 'new-experience'
+    NEW_EXPERIENCE = 'new-experience',
+    SELECT_CREATE_GROUP = 'select-create-group',
+    CREATE_GROUP = 'create-group',
+    SELECT_GROUP = 'select-group',
+    ADD_MEMBER = 'add-member',
+    VERIFY_USER = 'verify-user',
+    ADD_ACTIVITY = 'add-activity',
+    VIEW_ACTIVITY = 'view-activity',
+    SELECT_ACTIVITY = 'select-activity',
+    UPDATE_GROUP = 'update-group',
+    SELECT_DEACTIVATE = 'select-deactivate',
+    SELECT_DELETE = 'select-delete'
 }
 
 export enum InteractSubtype {
@@ -570,7 +581,18 @@ export enum ID {
     ACCEPT_GROUP_GUIDELINES= 'accept-group-guidelines',
     ENABLE_DISCUSSIONS = 'enable-discussions',
     DISABLE_DISCUSSIONS = 'disable-discussions',
-    SWITCH_CLICKED = 'switch-clicked'
+    SWITCH_CLICKED = 'switch-clicked',
+    SELECT_CREATE_GROUP = 'select-create-group',
+    SELECT_GROUP = 'select-group',
+    ADD_MEMBER = 'add-member',
+    VERIFY_USER = 'verify-user',
+    ADD_ACTIVITY = 'add-activity',
+    SELECT_CATEGORY = 'select-category',
+    VIEW_ACTIVITY = 'view-activity',
+    SELECT_ACTIVITY = 'select-activity',
+    UPDATE_GROUP = 'update-group',
+    SELECT_DEACTIVATE = 'select-deactivate',
+    SELECT_DELETE = 'select-delete'
 }
 
 export enum ActionButtonType {

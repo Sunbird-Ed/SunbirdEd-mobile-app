@@ -5,8 +5,11 @@
   </div>
   <div class="send-email-form align-left">
     <div class="report-info">{{data?.constants?.tellMoreMsg}}</div>
-    <sb-form [config]='formConfig' (valueChanges)="valueChanged($event)"
-    (statusChanges)="statusChanged($event)" (dataLoadStatus)="dataLoadStatus($event)">
+    <sb-form [config]='formConfig'
+             [platform]="'mobile'"
+             (valueChanges)="valueChanged($event)"
+             (statusChanges)="statusChanged($event)"
+             (dataLoadStatus)="dataLoadStatus($event)">
     </sb-form>
     <div class="report-submit-info">
       {{data?.constants?.triggerEmailMsg}}

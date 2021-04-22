@@ -234,11 +234,12 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.VERIFY_USER,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
                     PageId.ADD_MEMBER,
-                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_USER);
                 expect(addMemberToGroupPage.username).toBeUndefined();
                 expect(addMemberToGroupPage.showErrorMsg).toBeTruthy();
                 done();
@@ -260,11 +261,12 @@ describe('AddMemberToGroupPage', () => {
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.VERIFY_USER,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
                     PageId.ADD_MEMBER,
-                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_USER);
                 expect(addMemberToGroupPage.username).toBe('sample-user-name');
                 expect(addMemberToGroupPage.showLoader).toBe(false);
                 done();
@@ -342,12 +344,13 @@ describe('AddMemberToGroupPage', () => {
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.VERIFY_USER,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
                     PageId.ADD_MEMBER,
-                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_USER);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.INITIATED,
                     '',
@@ -376,12 +379,13 @@ describe('AddMemberToGroupPage', () => {
             setTimeout(() => {
                 expect(addMemberToGroupPage.username).not.toBeUndefined();
                 expect(mockProfileService.checkServerProfileExists).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.VERIFY_USER,
                     InteractSubtype.VERIFY_CLICKED,
                     Environment.GROUP,
                     PageId.ADD_MEMBER,
-                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList);
+                    undefined, undefined, undefined, addMemberToGroupPage.corRelationList,
+                    ID.VERIFY_USER);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
                     InteractType.INITIATED,
                     '',
