@@ -1322,7 +1322,8 @@
   "FRMELEMNTS_MSG_SELECT_IMAGE_SOURCE": "Select Image source",
   "FRMELEMNTS_MSG_OFFLINE": "You are offline!",
   "FRMELEMNTS_MSG_OFFLINE_SYNC": "You are working offline, please go online to sync your project",
-  "FRMELEMNTS_MSG_OFFLINE_SHARE": "You are working offline, please go online to sync and share your project",
+  "FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT": "You are working offline, please go online to sync and share your project",
+  "FRMELEMNTS_MSG_OFFLINE_SHARE_TASK": "You are working offline, please go online to sync and share your task",
   "FRMELEMNTS_MSG_OFFLINE_SEARCH": "You are working offline, please go online to search" ,
   "FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT": "You are working offline , please go online to create project",
   "FRMELEMNTS_MSG_REQUIRED_FIELDS": "Please enter all required fields.",
@@ -1436,5 +1437,6 @@
   "FRMELEMNTS_BTN_UPLOAD":"Upload",
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
   "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
-  "IMPORT_CONTENT": "Import Content"
+  "IMPORT_CONTENT": "Import Content",
+  "FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE":"Dear User, your details will not be shared as you are working offline"
 }

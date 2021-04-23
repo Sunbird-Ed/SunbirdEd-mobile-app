@@ -5,14 +5,14 @@ import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService, UtilsService } from "../../core";
+import { LoaderService, UtilsService, ToastService } from "../../core";
 import { DbService } from '../../core/services/db.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { Platform } from '@ionic/angular';
 import { LibraryFiltersLayout } from '@project-sunbird/common-consumption-v8';
 import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../core/services/sync.service';
-import { PopoverController ,ToastController} from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { GenericPopUpService } from '../../shared';
 
@@ -68,7 +68,8 @@ export class ProjectListingComponent implements OnInit {
     private db: DbService,
     private popOverCtrl: PopoverController,
     private toastController: ToastController,
-    private popupService: GenericPopUpService
+    private popupService: GenericPopUpService,
+    private toastService: ToastService
 
   ) {
     this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
@@ -77,7 +78,7 @@ export class ProjectListingComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   async getDownloadedProjects(fields?: any[]): Promise<[]> {
     let isAprivateProgramQuery;
@@ -117,7 +118,7 @@ export class ProjectListingComponent implements OnInit {
           this.clearFields();
           this.getOfflineProjects();
         } else {
-          this.projects=[]
+          this.projects = []
           this.getProjectList();
         }
       }
@@ -138,7 +139,7 @@ export class ProjectListingComponent implements OnInit {
   private async presentPopupForOffline(text = this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED')) {
     const toast = await this.toastController.create({
       message: text,
-      position: 'bottom',
+      position: 'top',
       duration: 2000,
       color: 'danger',
     });
@@ -190,9 +191,9 @@ export class ProjectListingComponent implements OnInit {
     this.kendra.post(config).subscribe(success => {
       this.loader.stopLoader();
       this.projects = this.projects.concat(success.result.data);
-         this.projects.map((p) => {
-          if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
-        });
+      this.projects.map((p) => {
+        if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
+      });
       this.count = success.result.count;
       this.description = success.result.description;
     }, error => {
@@ -250,24 +251,24 @@ export class ProjectListingComponent implements OnInit {
     });
   }
 
- async downloaded(project) {
-   let projectData
-   try {
-    projectData= await this.db.getById(project._id);
-     
-   } catch (error) {
-     projectData=null
-   }
-   if (projectData) {
-     projectData.downloaded = true
-     await this.db.update(projectData)
-     project.downloaded=true
-    //  this.initNetworkDetection()
-     return
-   }
+  async downloaded(project) {
+    let projectData
+    try {
+      projectData = await this.db.getById(project._id);
+
+    } catch (error) {
+      projectData = null
+    }
+    if (projectData) {
+      projectData.downloaded = true
+      await this.db.update(projectData)
+      project.downloaded = true
+      //  this.initNetworkDetection()
+      return
+    }
 
 
-   this.loader.startLoader();
+    this.loader.startLoader();
     let payload = this.selectedFilterIndex == 1 ? await this.utils.getProfileInfo() : '';
     let id = project._id ? '/' + project._id : '';
     const config = {
@@ -275,7 +276,7 @@ export class ProjectListingComponent implements OnInit {
       payload: this.selectedFilterIndex == 1 ? payload : {},
     };
     console.log(config, "config");
-    this.unnatiService.post(config).subscribe(async(success) => {
+    this.unnatiService.post(config).subscribe(async (success) => {
       this.loader.stopLoader();
       let data = success.result;
       success.result.downloaded = true;
@@ -305,9 +306,9 @@ export class ProjectListingComponent implements OnInit {
       }
       await this.db.create(success.result)
       // this.initNetworkDetection()
-           project.downloaded = true;
+      project.downloaded = true;
 
-      })
+    })
 
   }
 
@@ -346,27 +347,29 @@ export class ProjectListingComponent implements OnInit {
           project.hasAcceptedTAndC = status;
           this.db.update(project)
             .then((success) => {
-              this.updateInserver(project);
+              project.hasAcceptedTAndC ? this.updateInserver(project) : this.selectedProgram(project);
             })
         } else {
           selectedProject.hasAcceptedTAndC = status;
-          this.updateInserver(selectedProject);
+          selectedProject.hasAcceptedTAndC ? this.updateInserver(selectedProject) : this.selectedProgram(selectedProject);
         }
       },
       (error) => {
-        debugger
       }
     );
   }
   updateInserver(project) {
-    let payload = {
-      _id: project._id,
-      lastDownloadedAt: project.lastDownloadedAt,
-      hasAcceptedTAndC: project.hasAcceptedTAndC
+    if (this.networkFlag) {
+      let payload = {
+        _id: project._id,
+        lastDownloadedAt: project.lastDownloadedAt,
+        hasAcceptedTAndC: project.hasAcceptedTAndC
+      }
+      this.syncService.syncApiRequest(payload, false).then(resp => {
+        this.selectedProgram(project);
+      })
+    } else {
+      this.toastService.showMessage('FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE', 'danger');
     }
-    debugger
-    this.syncService.syncApiRequest(payload, false).then(resp => {
-      this.selectedProgram(project);
-    })
   }
 }

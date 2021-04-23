@@ -413,13 +413,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         break;
       }
       case "shareTask": {
-        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE', 'danger');
+        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_TASK', 'danger');
         break;
       }
       case "shareProject": {
         this.network.isNetworkAvailable
           ? this.openSyncSharePopup('shareProject', this.project.title)
-          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE', 'danger');
+          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
         break;
       }
     }
