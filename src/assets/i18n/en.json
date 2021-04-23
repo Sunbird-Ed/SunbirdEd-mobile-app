@@ -1438,5 +1438,7 @@
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
   "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
   "IMPORT_CONTENT": "Import Content",
-  "FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE":"Dear User, your details will not be shared as you are working offline"
+  "FRMELEMNTS_MSG_PROJECT_PRIVACY_POLICY_TC_OFFLINE":"Dear User, your details will not be shared as you are working offline",
+  "FRMELEMNTS_BTN_VIEW_ALL_RESPONSES": "View All Responses"
+
 }
