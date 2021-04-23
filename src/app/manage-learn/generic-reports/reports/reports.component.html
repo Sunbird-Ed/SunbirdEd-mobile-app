@@ -62,7 +62,7 @@
     </ion-card-content>
     <div *ngFor="let element of section?.questionArray; let i = index">
       <ion-card [ngSwitch]="element?.responseType">
-        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'text'"></reports-text>
+        <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'text'" [isFeedBackSurvey]="state?.survey" [solutionId]="state?.solutionId"></reports-text>
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'number'"></reports-text>
         <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'date'"></reports-text>
         <pie-chart [data]="element" [questionNumber]="i + 1" *ngSwitchCase="'radio'"></pie-chart>

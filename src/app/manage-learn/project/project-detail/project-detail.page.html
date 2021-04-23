@@ -130,11 +130,11 @@
 </ion-content>
 
 <ion-footer *ngIf="project && viewOnlyMode">
-  <ion-button expand="block" (click)="importProjectConfirm()" *ngIf="!project.projectId.length">
+  <ion-button expand="block" (click)="importProjectConfirm()" *ngIf="!project.projectId || !project.projectId.length">
     {{'FRMELEMNTS_BTN_IMPORT_PROJECT' | translate}}
   </ion-button>
   <!-- goToProjectDetails -->
-  <ion-button expand="block" (click)="goToProjectDetails()" *ngIf="project.projectId.length">
+  <ion-button expand="block" (click)="goToProjectDetails()" *ngIf="project.projectId && project.projectId.length">
     {{'FRMELEMNTS_BTN_PROJECT_IMPORTED' | translate}}
   </ion-button>
 </ion-footer>
