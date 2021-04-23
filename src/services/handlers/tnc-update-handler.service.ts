@@ -156,8 +156,8 @@ export class TncUpdateHandlerService {
         if (isCustodianOrgId && !this.commonUtilService.isUserLocationAvalable(userDetails, locationMappingConfig)) {
           this.navigateToDistrictMapping();
         } else {
-          if (!(await this.isSSOUser(userDetails)) && !userDetails.serverProfile.dob) {
-            this.appGlobalService.showYearOfBirthPopup();
+          if (!(await this.isSSOUser(userDetails))) {
+            this.appGlobalService.showYearOfBirthPopup(userDetails.serverProfile);
           }
           this.externalIdVerificationService.showExternalIdVerificationPopup();
         }
