@@ -472,8 +472,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
                 .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
                   if (this.hasFilledLocation || isSSOUser) {
-                    if (!isSSOUser && !updatedProfile.dob) {
-                      this.appGlobalService.showYearOfBirthPopup();
+                    if (!isSSOUser) {
+                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
                     }
                     this.router.navigate([RouterLinks.TABS]);
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
@@ -489,8 +489,8 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
-                if (!isSSOUser && !this.profile.serverProfile.dob) {
-                  this.appGlobalService.showYearOfBirthPopup();
+                if (!isSSOUser) {
+                  this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
                 }
                 this.router.navigate([RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
