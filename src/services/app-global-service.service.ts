@@ -914,15 +914,17 @@ export class AppGlobalService implements OnDestroy {
         return userId;
     }
 
-    async showYearOfBirthPopup() {
-        const newThemePopover = await this.popoverCtrl.create({
-            component: YearOfBirthPopupComponent,
-            componentProps: {   },
-            backdropDismiss: false,
-            showBackdrop: true,
-            cssClass: 'year-of-birth-popup'
-        });
-        newThemePopover.present();
+    async showYearOfBirthPopup(userProfile) {
+        if (userProfile && !userProfile.managedBy && !userProfile.dob) {
+            const newThemePopover = await this.popoverCtrl.create({
+                component: YearOfBirthPopupComponent,
+                componentProps: {   },
+                backdropDismiss: false,
+                showBackdrop: true,
+                cssClass: 'year-of-birth-popup'
+            });
+            newThemePopover.present();
+        }
     }
 
 }

@@ -363,8 +363,8 @@ export class UserTypeSelectionPage implements OnDestroy {
         initTabs(this.container, LOGIN_TEACHER_TABS);
         const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         if (this.categoriesProfileData.hasFilledLocation || isSSOUser) {
-          if (!isSSOUser && !this.profile.serverProfile.dob) {
-            this.appGlobalService.showYearOfBirthPopup();
+          if (!isSSOUser) {
+            this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
           }
           this.router.navigate([RouterLinks.TABS]);
         } else {

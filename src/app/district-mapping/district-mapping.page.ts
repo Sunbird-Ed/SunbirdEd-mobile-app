@@ -224,8 +224,8 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
               this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
-            if (!this.profile.serverProfile.dob && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup();
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
@@ -239,8 +239,8 @@ export class DistrictMappingPage implements OnDestroy {
           if (this.profile) {
             this.location.back();
           } else {
-            if (!this.profile.serverProfile.dob && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup();
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             this.router.navigate([`/${RouterLinks.TABS}`]);
           }
