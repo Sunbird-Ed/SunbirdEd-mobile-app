@@ -20,6 +20,7 @@ import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
 import { SharingFeatureService } from '../../core/services/sharing-feature.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: "app-project-detail",
@@ -100,6 +101,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private navigateService: NavigationService,
     private alertController: AlertController,
     private network: NetworkService,
+    private location: Location,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
 
@@ -120,7 +122,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS",
         "FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE",
         "YES",
-        "NO"
+        "NO",
+        "FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS"
       ])
       .subscribe((texts) => {
         this.allStrings = texts;
@@ -203,6 +206,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.templateDetailsPayload ? config.payload = this.templateDetailsPayload : null;
     this.unnatiService.post(config).subscribe(success => {
       this.loader.stopLoader();
+      if (this.templateId) {
+        this.toast.openToast(this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS'])
+      }
       // this.projectId = success.result._id;
       // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
       let data = success.result;
@@ -271,6 +277,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.openPopover(eventName.event);
       } else if (eventName.name === 'sync') {
         this.action(eventName.name);
+      } else if (eventName.name === 'back') {
+        if (this.templateId && !this.viewOnlyMode) {
+          setTimeout(() => {
+            this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+          }, 0)
+          this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+        } else {
+          this.location.back
+        }
       }
     });
     let data;
@@ -785,6 +800,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async importProjectConfirm() {
     const alert = await this.alertController.create({
       subHeader: this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE'],
+      backdropDismiss: false,
       buttons: [
         {
           text: this.allStrings['YES'],
