@@ -1436,5 +1436,7 @@
   "FRMELEMNTS_BTN_UPLOAD":"Upload",
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
   "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
-  "IMPORT_CONTENT": "Import Content"
+  "IMPORT_CONTENT": "Import Content",
+  "FRMELEMNTS_BTN_VIEW_ALL_RESPONSES": "View All Responses"
+
 }
