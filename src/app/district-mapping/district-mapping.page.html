@@ -11,9 +11,12 @@
   </div>
 
   <div class="px-16">
-    <sb-form *ngIf="locationFormConfig && locationFormConfig.length" [config]="locationFormConfig"
-      (initialize)="onFormInitialize($event)" (valueChanges)="onFormValueChange($event)"
-      (dataLoadStatus)="onDataLoadStatusChange($event)">
+    <sb-form *ngIf="locationFormConfig && locationFormConfig.length"
+             [platform]="'mobile'"
+             [config]="locationFormConfig"
+             (initialize)="onFormInitialize($event)"
+             (valueChanges)="onFormValueChange($event)"
+             (dataLoadStatus)="onDataLoadStatusChange($event)">
     </sb-form>
   </div>
 

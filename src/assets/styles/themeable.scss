@@ -900,7 +900,7 @@ html[data-theme="JOYFUL"]{
         }
       }
       .multi-select-container{
-        sb-caret-down{
+        sb-caret-down, sb-caret-up{
           right: 0 !important;
         }
         ul{
@@ -911,6 +911,8 @@ html[data-theme="JOYFUL"]{
           }
         }
         .list-border{
+          position: relative;
+          padding: 0 !important;
           border: none !important;
           border-bottom: 0.5px solid var(--app-gray) !important;
         }
@@ -1021,11 +1023,15 @@ html[data-theme="JOYFUL"]{
       .report-button{
         border-radius: 20px !important;
         box-shadow: var(--button-style-shadow) !important;
+        background-color: var(--app-white) !important;
+        color: var(--app-primary) !important;
+        border: none !important;
+        min-width: 60vw !important;
       }
     }
   }
 
-  app-user-home, app-search, app-category-list-page {
+  app-user-home, app-search, app-category-list-page, app-faq-help, app-faq-report-issue {
     ion-content:first-child {
       --offset-top: calc(-36px) !important;
 
@@ -1038,11 +1044,14 @@ html[data-theme="JOYFUL"]{
   // faq-report-issue page
   app-faq-report-issue{
     .initiate-email-info-button{
-      background-color: transparent !important;
+      background-color: var(--app-white) !important;
       .submit-button{
         border-radius: 20px !important;
         background-color: var(--app-primary) !important;
         box-shadow: var(--button-style-shadow) !important;
+      }
+      .invalid-btn{
+        opacity: 0.7;
       }
     }
   }

@@ -18,7 +18,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Location as SbLocation } from '@project-sunbird/client-services/models/location';
-import { FieldConfig } from 'common-form-elements-v8';
+import { FieldConfig } from 'common-form-elements';
 import { concat, defer, of, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged, filter, mergeMap, pairwise, take, tap } from 'rxjs/operators';
 import {
@@ -224,8 +224,8 @@ export class DistrictMappingPage implements OnDestroy {
               this.location.back();
               this.events.publish('UPDATE_TABS', {type: 'SWITCH_TABS_USERTYPE'});
           } else {
-            if (!this.profile.serverProfile.dob && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup();
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
@@ -239,8 +239,8 @@ export class DistrictMappingPage implements OnDestroy {
           if (this.profile) {
             this.location.back();
           } else {
-            if (!this.profile.serverProfile.dob && !isSSOUser) {
-              this.appGlobalService.showYearOfBirthPopup();
+            if (this.profile && !isSSOUser) {
+              this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
             }
             this.router.navigate([`/${RouterLinks.TABS}`]);
           }

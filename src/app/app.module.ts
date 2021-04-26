@@ -77,6 +77,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import {UpdateProfileService} from '@app/services/update-profile-service';
+import { SbSearchFilterModule } from 'common-form-elements';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -439,7 +440,8 @@ declare const sbutility;
     PageFilterOptionsPageModule,
     TermsAndConditionsPageModule,
     IonicStorageModule.forRoot(),
-    CoreModule
+    CoreModule,
+    SbSearchFilterModule.forRoot('mobile')
   ],
   providers: [
     StatusBar,

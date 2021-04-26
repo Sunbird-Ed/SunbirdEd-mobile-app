@@ -67,11 +67,11 @@ describe('GroupHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                    InteractType.SELECT_ACTIVITY,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, [], ID.SELECT_ACTIVITY);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -136,11 +136,11 @@ describe('GroupHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                    InteractType.SELECT_ACTIVITY,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, [], ID.SELECT_ACTIVITY);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -196,11 +196,11 @@ describe('GroupHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                    InteractType.SELECT_ACTIVITY,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, [], ID.SELECT_ACTIVITY);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
@@ -252,11 +252,11 @@ describe('GroupHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
-                    InteractType.TOUCH,
+                    InteractType.SELECT_ACTIVITY,
                     InteractSubtype.ADD_TO_GROUP_CLICKED,
                     Environment.GROUP,
                     'some_page_id',
-                    undefined, undefined, undefined, []);
+                    undefined, undefined, undefined, [], ID.SELECT_ACTIVITY);
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,

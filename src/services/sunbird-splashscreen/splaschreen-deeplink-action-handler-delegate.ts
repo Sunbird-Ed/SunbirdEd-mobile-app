@@ -239,7 +239,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private validateDeeplinkPriority(matchedDeeplinkConfig, config) {
     return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
       (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-        && config.priority && matchedDeeplinkConfig.priority > config.priority);
+        && config.priority && matchedDeeplinkConfig.priority > config.priority)
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
@@ -653,7 +653,7 @@ private async upgradeAppPopover(requiredVersionCode) {
             };
             const navExtras = {
               state: {
-                content,
+                content: content,
               }
             };
             const telemetryObject = {

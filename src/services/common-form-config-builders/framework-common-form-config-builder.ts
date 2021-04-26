@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {FieldConfigOption, FieldConfigOptionsBuilder} from 'common-form-elements-v8';
+import {FieldConfigOption, FieldConfigOptionsBuilder} from 'common-form-elements';
 import {defer, EMPTY, of} from 'rxjs';
 import {catchError, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
