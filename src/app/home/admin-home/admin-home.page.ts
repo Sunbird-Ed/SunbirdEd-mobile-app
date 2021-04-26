@@ -76,7 +76,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    this.getCreateProjectForm();
     this.db.createDb();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
       if (res && res.selectedLanguage) {
@@ -90,6 +89,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async ionViewWillEnter() {
+    this.getCreateProjectForm();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
