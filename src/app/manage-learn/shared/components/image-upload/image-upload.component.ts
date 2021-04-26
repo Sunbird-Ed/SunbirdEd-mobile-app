@@ -274,7 +274,6 @@ export class ImageUploadComponent implements OnInit {
     // }).catch(error => {
 
     // })
-    debugger
     let newName = this.createFileName(currentName);
     this.file
       .copyFile(namePath, currentName, this.appFolderPath, newName)
