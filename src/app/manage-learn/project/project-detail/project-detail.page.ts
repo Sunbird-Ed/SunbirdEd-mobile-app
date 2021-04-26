@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -80,6 +80,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   viewOnlyMode: boolean = false;
   templateId;
   templateDetailsPayload;
+  importProjectClicked: boolean = false;
+  fromImportProject: boolean = false;
 
   constructor(
     public params: ActivatedRoute,
@@ -102,6 +104,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private network: NetworkService,
     private location: Location,
+    private zone: NgZone,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
 
@@ -114,6 +117,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.templateId = parameters.templateId;
       this.viewOnlyMode ? this.getTemplateDetails() : this.getProject();
       this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
+      this.fromImportProject = (parameters.fromImportPage && parameters.fromImportPage == 'true') ? true : false;
     });
     this.translate
       .get([
@@ -148,6 +152,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this._headerConfig.actionButtons = []
       this.headerService.updatePageConfig(this._headerConfig);
       this.sortTasks();
+      this.programId = (success.result && success.result.programInformation) ? success.result.programInformation.programId : null;
 
       // this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
       // this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
@@ -243,7 +248,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             queryParams: {
               projectId: success.result._id,
               programId: this.programId,
-              solutionId: this.solutionId
+              solutionId: this.solutionId,
+              fromImportPage: this.importProjectClicked
             }, replaceUrl: true
           });
       }).catch(error => {
@@ -252,7 +258,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
             queryParams: {
               projectId: success.result._id,
               programId: this.programId,
-              solutionId: this.solutionId
+              solutionId: this.solutionId,
+              fromImportPage: this.importProjectClicked
             }, replaceUrl: true
           })
         }
@@ -272,22 +279,25 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   initApp() {
-    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      if (eventName.name === 'more') {
-        this.openPopover(eventName.event);
-      } else if (eventName.name === 'sync') {
-        this.action(eventName.name);
-      } else if (eventName.name === 'back') {
-        if (this.templateId && !this.viewOnlyMode) {
-          setTimeout(() => {
-            this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
-          }, 0)
-          this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
-        } else {
-          this.location.back
+    this.zone.run(() => {
+      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+        if (eventName.name === 'more') {
+          this.openPopover(eventName.event);
+        } else if (eventName.name === 'sync') {
+          this.action(eventName.name);
+        } else if (eventName.name === 'back') {
+          if (this.fromImportProject) {
+            setTimeout(() => {
+              this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+            }, 0)
+            this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+          } else {
+            this.location.back();
+          }
         }
-      }
-    });
+      });
+    })
+
     let data;
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
@@ -788,13 +798,15 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   importProject() {
-    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-      queryParams: {
-        templateId: this.templateId
-      },
-      state: this.templateDetailsPayload,
-      replaceUrl: true
-    });
+    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+    //   queryParams: {
+    //     templateId: this.templateId,
+    //     fromImportPage: this.importProjectClicked
+    //   },
+    //   state: this.templateDetailsPayload,
+    //   replaceUrl: true
+    // });
+    this.getProjectsApi();
   }
 
   async importProjectConfirm() {
@@ -804,9 +816,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       buttons: [
         {
           text: this.allStrings['YES'],
-          role: 'cancel',
           cssClass: 'primary',
           handler: (blah) => {
+            this.importProjectClicked = true
             this.importProject();
           }
         }, {
