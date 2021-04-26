@@ -15,5 +15,9 @@
       <quml-player [QumlPlayerConfig]="config" (playerEvent)="playerEvents($event)" 
       (telemetryEvent)="playerTelemetryEvents($event)"></quml-player>
   </div>
+  <div *ngIf="playerType === 'sunbird-video-player'"  style="height:100vh;width:100%;">
+    <sunbird-video-player [playerConfig]="config" (playerEvent)="playerEvents($event)"
+      (telemetryEvent)="playerTelemetryEvents($event)"></sunbird-video-player>
+  </div>
 </ion-content>
 
