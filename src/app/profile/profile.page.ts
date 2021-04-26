@@ -485,10 +485,10 @@ export class ProfilePage implements OnInit {
         label: 'COMPLETED'
       };
       if(course.status === 0 || course.status === 1) {
-        oneCert.style = "ongoing-status-text";
+        oneCert.style = 'ongoing-status-text';
         oneCert.label = 'ONGOING';
         if(course.batch && course.batch.status === 2) {
-          oneCert.style = "ongoing-status-text";
+          oneCert.style = 'ongoing-status-text';
           oneCert.label = 'BATCH_EXPIRED';
         }
       }

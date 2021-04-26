@@ -56,6 +56,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   ProfileType = ProfileType;
   categoriesProfileData: any;
   supportedUserTypeConfig: Array<any>;
+  isUserTypeSelected = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -197,6 +198,7 @@ export class UserTypeSelectionPage implements OnDestroy {
   selectCard(userType, profileType) {
     this.zone.run(() => {
       this.selectedUserType = profileType;
+      this.isUserTypeSelected = true;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
         this.commonUtilService.translateMessage(userType)

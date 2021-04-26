@@ -15,6 +15,10 @@ export class DiscussionTelemetryService {
 
     private _contextCdata: Array<CorrelationData>;
     logTelemetryEvent(event) {
+        let cData = this.contextCdata;
+        if (event && event.context && event.context.cdata) {
+            cData = event.context.cdata.concat(this.contextCdata);
+        }
         switch (event.eid) {
         case 'IMPRESSION':
             this.telemetryService.generateImpressionTelemetry(
@@ -26,7 +30,7 @@ export class DiscussionTelemetryService {
                 undefined,
                 undefined,
                 undefined,
-                this.contextCdata);
+                cData);
             break;
         case 'INTERACT':
             this.telemetryService.generateInteractTelemetry(
@@ -37,7 +41,7 @@ export class DiscussionTelemetryService {
                 undefined,
                 undefined,
                 undefined,
-                this.contextCdata
+                cData
             );
             break;
         }
