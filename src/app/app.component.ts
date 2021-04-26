@@ -124,6 +124,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.platform.ready().then(async () => {
+      this.isForeground = true;
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
