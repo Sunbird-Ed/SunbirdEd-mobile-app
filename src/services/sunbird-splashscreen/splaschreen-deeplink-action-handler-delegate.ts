@@ -132,7 +132,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.handleSearch(payload.data);
           break;
         case 'ACTION_GOTO':
-          if (payload.data && payload.data.request) {
+          if (payload.data && payload.data.request.params) {
             const navigationExtras: NavigationExtras = {
               state: {
                 params: payload.data.request.params
