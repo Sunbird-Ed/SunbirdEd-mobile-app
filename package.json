@@ -53,7 +53,7 @@
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-epub-player-v8": "3.8.4",
     "@project-sunbird/sunbird-pdf-player-v8": "3.9.0",
-    "@project-sunbird/sunbird-quml-player-v8": "3.9.14",
+    "@project-sunbird/sunbird-quml-player-v8":"3.9.17",
     "@project-sunbird/sunbird-sdk": "3.9.2",
     "@project-sunbird/sunbird-video-player-v8": "3.9.2",
     "code-push": "^3.0.1",
