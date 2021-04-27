@@ -367,7 +367,7 @@
   "DOWNLOAD_PATH": "File is stored in the Internal storage > Download folder",
   "EDIT": "Edit",
   "EDIT_EMAIL_POPUP_TITLE": "Edit Email Address",
-  "EDIT_GROUP": "Edit Group",
+  "EDIT_GROUP": "Update Group",
   "EDIT_PERSONAL_DETAILS": "Edit personal details",
   "EDIT_PHONE_POPUP_TITLE": "Edit Mobile Number",
   "EDIT_PROFILE": "Edit profile",
@@ -784,7 +784,7 @@
   "RESUME": "RESUME",
   "RETRY": "Retry",
   "RETRY_ACTION": "Try again",
-  "ROLE_SELECTOR_QUERY": "You are interested in content meant for",
+  "ROLE_SELECTOR_QUERY": "Discover content as a",
   "SAVE": "Save",
   "SAVED_ON": "Saved on",
   "SAVE_FILE_ON_DEVICE": "Save file on device",
@@ -1116,7 +1116,7 @@
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access course details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access course details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
-  "DOWNLOAD_CSV": "Download .CSV",
+  "DOWNLOAD_CSV": "Download as CSV",
   "BROWES_RELEVANT_CONTENT": "Browse {{app_name}} Library to find relevant content based on your preferences (Board, Medium, Class)",
   "FRMELEMNTS_LBL_MEANT_FOR": "Meant For",
   "SUBJECT_DESCRIPTION": "Explore {{%s}} from all the boards and mediums on {{%a}}",
@@ -1161,7 +1161,7 @@
   "JOYFUL_LEARNING_TEXT": "For joyful learning, we have redesigned our platform making it easier for you to find content",
   "JOYFUL_WARNING_TEXT": "If you want to change the theme, go to your menu and switch theme",
   "LETS_GO": "Let's go",
-  "SET_PREFERENCE": "Set your preference",
+  "SET_PREFERENCE": "Choose content preferences",
   "FRMELEMNTS_LBL_OPEN_WITH": "Open With",
   "FRMELEMNTS_LBL_OPEN_CONTENT_WITH": "Open Content With",
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_POPUP_HEADING": "We've made it easier for you to find content on {{app_name}}",
@@ -1172,5 +1172,6 @@
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
-  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content"
+  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
+  "IMPORT_CONTENT": "Import Content"
 }

@@ -482,11 +482,11 @@ describe('GroupDetailsPage', () => {
                 corRelation: groupDetailsPage.corRelationList
             });
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
+            InteractType.ADD_MEMBER,
             InteractSubtype.ADD_MEMBER_CLICKED,
             Environment.GROUP,
             PageId.GROUP_DETAIL,
-            undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+            undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_MEMBER);
     });
 
     it('should unsubscribe registerBackButton', () => {
@@ -573,11 +573,11 @@ describe('GroupDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.UPDATE_GROUP,
                     InteractSubtype.EDIT_GROUP_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.UPDATE_GROUP);
                 expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
                     [`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
                     {
@@ -636,11 +636,11 @@ describe('GroupDetailsPage', () => {
                 expect(mockGroupService.deleteById).toHaveBeenCalled();
                 expect(mockLocation.back).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.SELECT_DELETE,
                     InteractSubtype.DELETE_GROUP_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.SELECT_DELETE);
                 done();
             }, 0);
         });
@@ -683,12 +683,12 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'REMOVE');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'DELETE_GROUP_DESC',
                     { group_name: groupDetailsPage.groupDetails.name });
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.DELETE_GROUP_CLICKED,
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                        InteractType.SELECT_DELETE,
+                        InteractSubtype.DELETE_GROUP_CLICKED,
+                        Environment.GROUP,
+                        PageId.GROUP_DETAIL,
+                        undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.SELECT_DELETE);
                 done();
             }, 0);
         });
@@ -743,11 +743,11 @@ describe('GroupDetailsPage', () => {
                 expect(mockGroupService.deleteById).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.SELECT_DELETE,
                     InteractSubtype.DELETE_GROUP_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.SELECT_DELETE);
                 done();
             }, 0);
         });
@@ -2436,11 +2436,11 @@ describe('GroupDetailsPage', () => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
                 expect(mockNavigationService.navigateTo)
                     .toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
@@ -2495,11 +2495,11 @@ describe('GroupDetailsPage', () => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
                 done();
             });
@@ -2536,11 +2536,11 @@ describe('GroupDetailsPage', () => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
                 expect(mockNavigationService.navigateTo).toHaveBeenCalledWith(
                     [`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}/${RouterLinks.ADD_ACTIVITY_TO_GROUP}`],
@@ -2583,11 +2583,11 @@ describe('GroupDetailsPage', () => {
                 // assert
                 expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
+                    InteractType.ADD_ACTIVITY,
                     InteractSubtype.ADD_ACTIVITY_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
-                    undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
+                    undefined, undefined, undefined, groupDetailsPage.corRelationList, ID.ADD_ACTIVITY);
                 expect(mockGroupService.getSupportedActivities).toHaveBeenCalled();
                 done();
             });

@@ -459,7 +459,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.disableSubmitButton = true;
         this.events.publish('loggedInProfile:update', req.framework);
-
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
         if (this.showOnlyMandatoryFields) {
           const reqObj: ServerProfileDetailsRequest = {
             userId: this.profile.uid,
@@ -471,7 +471,10 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then(async () => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+                  if (this.hasFilledLocation || isSSOUser) {
+                    if (!isSSOUser) {
+                      this.appGlobalService.showYearOfBirthPopup(updatedProfile);
+                    }
                     this.router.navigate([RouterLinks.TABS]);
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
@@ -486,6 +489,9 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             }).catch(() => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
+                if (!isSSOUser) {
+                  this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+                }
                 this.router.navigate([RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {

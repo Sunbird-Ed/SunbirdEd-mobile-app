@@ -18,6 +18,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ProfileHandler } from '@app/services/profile-handler';
 import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { QumlPlayerService } from '@app/services/quml-player/quml-player.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {
   SplashcreenTelemetryActionHandlerDelegate
@@ -40,6 +41,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CsContentType } from '@project-sunbird/client-services/services/content';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
 // app dependencies like directive, sdk, services etc
 import { SunbirdSdk } from 'sunbird-sdk';
 import { DirectivesModule } from '../directives/directives.module';
@@ -67,6 +69,8 @@ import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
+import { UpdateProfileService } from '@app/services/update-profile-service';
+import { SbSearchFilterModule } from 'common-form-elements';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -337,7 +341,7 @@ export const sunbirdSdkFactory =
           frameworkApiPath: '/api/framework/v1',
           frameworkConfigDirPath: '/data/framework',
           channelConfigDirPath: '/data/channel',
-          searchOrganizationApiPath: '/api/org/v1',
+          searchOrganizationApiPath: '/api/org/v2',
           systemSettingsDefaultChannelIdKey: 'custodianOrgId'
         },
         profileServiceConfig: {
@@ -434,7 +438,8 @@ declare const sbutility;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    TermsAndConditionsPageModule
+    TermsAndConditionsPageModule,
+    SbSearchFilterModule.forRoot('mobile')
   ],
   providers: [
     StatusBar,
@@ -487,10 +492,12 @@ declare const sbutility;
     LocationHandler,
     DiscussionTelemetryService,
     SegmentationTagService,
+    UpdateProfileService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    { provide: QuestionCursor, useClass: QumlPlayerService }
   ],
   bootstrap: [AppComponent],
   schemas: [

@@ -28,11 +28,10 @@
       "@app/*": ["*"],
       "sunbird-sdk": ["../node_modules/@project-sunbird/sunbird-sdk"],
       "sunbird-sdk/*": ["../node_modules/@project-sunbird/sunbird-sdk/*"],
+      "@project-sunbird/sunbird-player-sdk-v8": ["../node_modules/@project-sunbird/sunbird-video-player-v8/node_modules/@project-sunbird/sunbird-player-sdk-v8"],
+      "@project-sunbird/sunbird-player-sdk-v8/*": ["../node_modules/@project-sunbird/sunbird-video-player-v8/node_modules/@project-sunbird/sunbird-player-sdk-v8/*"],
       "@project-sunbird/common-consumption": ["../node_modules/@project-sunbird/common-consumption-v8"],
-      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"],
-      "common-form-elements": ["../node_modules/common-form-elements-v8"],
-      "common-form-elements/*": ["../node_modules/common-form-elements-v8/*"]
-
+      "@project-sunbird/common-consumption/*": ["../node_modules/@project-sunbird/common-consumption-v8/*"]
     }
   },
   "include": [

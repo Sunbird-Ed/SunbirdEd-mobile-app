@@ -36,11 +36,11 @@ export class GroupHandlerService {
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
+      InteractType.SELECT_ACTIVITY,
       InteractSubtype.ADD_TO_GROUP_CLICKED,
       Environment.GROUP,
       pageId,
-      undefined, undefined, undefined, corRelationList);
+      undefined, undefined, undefined, corRelationList, ID.SELECT_ACTIVITY);
 
     const loader = await this.commonUtilService.getLoader();
     await loader.present();

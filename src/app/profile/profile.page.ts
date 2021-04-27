@@ -62,7 +62,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'common-form-elements-v8';
+import { FieldConfig } from 'common-form-elements';
 import { CertificateDownloadAsPdfService } from 'sb-svg2pdf';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { ContentUtil } from '@app/util/content-util';
@@ -302,11 +302,12 @@ export class ProfilePage implements OnInit {
                 // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
-                const role: string = (!that.profile.userType ||
-                  (that.profile.userType && that.profile.userType === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.userType;
+                const role: string = (!that.profile.profileUserType.type ||
+                  (that.profile.profileUserType.type
+                    && that.profile.profileUserType.type === ProfileType.OTHER.toUpperCase())) ? '' : that.profile.profileUserType.type;
                 that.profile['persona'] =  await that.profileHandler.getPersonaConfig(role.toLowerCase());
                 that.userLocation = that.commonUtilService.getUserLocation(that.profile);
-                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.userSubType,
+                that.profile['subPersona'] = await that.profileHandler.getSubPersona(that.profile.profileUserType.subType,
                       role.toLowerCase(), this.userLocation);
                 that.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                   .then((activeProfile) => {

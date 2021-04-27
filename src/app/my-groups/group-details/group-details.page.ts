@@ -158,7 +158,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   navigateToAddUserPage() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_MEMBER_CLICKED)
+    this.generateInteractTelemetry(InteractType.ADD_MEMBER, InteractSubtype.ADD_MEMBER_CLICKED, ID.ADD_MEMBER)
     this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], {
       groupId: this.groupId,
       memberList: this.memberList,
@@ -298,7 +298,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.EDIT_GROUP_CLICKED);
+        this.generateInteractTelemetry( InteractType.UPDATE_GROUP, InteractSubtype.EDIT_GROUP_CLICKED, ID.UPDATE_GROUP);
         this.navService.navigateTo([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`],
           {
             groupDetails: this.groupDetails,
@@ -369,7 +369,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeactivateGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DEACTIVATE_GROUP_CLICKED);
+    this.generateInteractTelemetry( InteractType.SELECT_DEACTIVATE, InteractSubtype.DEACTIVATE_GROUP_CLICKED, ID.SELECT_DEACTIVATE);
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
@@ -465,7 +465,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   }
 
   private async showDeleteGroupPopup() {
-    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.DELETE_GROUP_CLICKED);  
+    this.generateInteractTelemetry( InteractType.SELECT_DELETE, InteractSubtype.DELETE_GROUP_CLICKED, ID.SELECT_DELETE);  
 
     const deleteConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
@@ -848,7 +848,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
       this.commonUtilService.presentToastForOffline('YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET');
       return;
     }
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ADD_ACTIVITY_CLICKED);  
+    this.generateInteractTelemetry(InteractType.ADD_ACTIVITY, InteractSubtype.ADD_ACTIVITY_CLICKED, ID.ADD_ACTIVITY);  
     try {
       const supportedActivityResponse: Form<GroupSupportedActivitiesFormField>
         = await this.groupService.getSupportedActivities().toPromise();

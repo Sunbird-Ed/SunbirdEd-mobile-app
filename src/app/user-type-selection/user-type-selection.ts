@@ -349,7 +349,9 @@ export class UserTypeSelectionPage implements OnDestroy {
       });
     const request: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
-      userType: this.selectedUserType
+      profileUserType: {
+        type: this.selectedUserType
+      }
     };
     this.profileService.updateServerProfile(request).toPromise()
       .then().catch((e) => console.log('server error for update profile', e));
@@ -359,7 +361,11 @@ export class UserTypeSelectionPage implements OnDestroy {
     if (this.categoriesProfileData.status) {
       if (this.categoriesProfileData.showOnlyMandatoryFields) {
         initTabs(this.container, LOGIN_TEACHER_TABS);
-        if (this.categoriesProfileData.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
+        const isSSOUser = await this.tncUpdateHandlerService.isSSOUser(this.profile);
+        if (this.categoriesProfileData.hasFilledLocation || isSSOUser) {
+          if (!isSSOUser) {
+            this.appGlobalService.showYearOfBirthPopup(this.profile.serverProfile);
+          }
           this.router.navigate([RouterLinks.TABS]);
         } else {
           const navigationExtras: NavigationExtras = {

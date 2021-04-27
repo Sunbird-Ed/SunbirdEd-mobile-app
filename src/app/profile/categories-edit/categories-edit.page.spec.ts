@@ -61,7 +61,7 @@ describe('CategoryEditPage', () => {
                 profile: {
                     serverProfile: {
                         userType: 'teacher',
-                        firstName: 'sample-user'
+                        firstName: 'sample-user',
                     }
                 }
             }
@@ -425,11 +425,13 @@ describe('CategoryEditPage', () => {
                 name: 'Class 1'
             }];
             categoryEditPage.isBoardAvailable = true;
+            mockAppGlobalService.showYearOfBirthPopup = jest.fn();
             mockProfileService.updateServerProfile = jest.fn(() => of({}));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
             mockCommonUtilService.showToast = jest.fn();
             mockEvents.publish = jest.fn(() => []);
             categoryEditPage.showOnlyMandatoryFields = true;
+            mockTncUpdateHandler.isSSOUser = jest.fn(() => Promise.resolve(false));
             mockProfileService.getServerProfilesDetails = jest.fn(() => of({
                 userId: 'user-id',
                 firstName: 'sample-user-name'
@@ -459,6 +461,8 @@ describe('CategoryEditPage', () => {
                 expect(categoryEditPage.hasFilledLocation).toBeTruthy();
                 expect(mockRouter.navigate).toHaveBeenCalled();
                 expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+                expect(mockTncUpdateHandler.isSSOUser).toHaveBeenCalled();
+                expect(mockAppGlobalService.showYearOfBirthPopup).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -558,6 +562,12 @@ describe('CategoryEditPage', () => {
                 code: 'math',
                 name: 'math'
             }];
+            categoryEditPage.profile = {
+                serverProfile: {
+                    dob: null
+                }
+            };
+            mockAppGlobalService.showYearOfBirthPopup = jest.fn();
             categoryEditPage.isBoardAvailable = false;
             mockProfileService.updateServerProfile = jest.fn(() => of({}));
             mockCommonUtilService.translateMessage = jest.fn(() => 'Profile updated successfully');
@@ -589,6 +599,7 @@ describe('CategoryEditPage', () => {
                 expect(categoryEditPage.hasFilledLocation).toBeTruthy();
                 expect(mockRouter.navigate).toHaveBeenCalled();
                 expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
+                expect(mockAppGlobalService.showYearOfBirthPopup).toHaveBeenCalled();
                 done();
             }, 0);
         });

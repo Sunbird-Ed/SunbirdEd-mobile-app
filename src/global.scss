@@ -57,6 +57,9 @@
 }
 
 // Discussion Forum
+.discussion-forum{
+  background-color: map-get($colors, light_gray_8c);
+}
 .discuss-left-panel{
   z-index: 3 !important;
 }
@@ -67,3 +70,8 @@
     background-color: map-get($colors, light_gray);
   }
 }
+
+.video-js {
+  padding-top: 50% !important; 
+}
+
