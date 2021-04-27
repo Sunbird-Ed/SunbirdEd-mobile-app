@@ -1,7 +1,7 @@
 import { FaqHelpPage } from './faq-help.page';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, ResolveEnd } from '@angular/router';
@@ -70,6 +70,7 @@ describe('FaqHelpPage', () => {
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn(fn => fn())
     };
+    const modalCtrl: Partial<ModalController> = {};
 
     window['supportfile'] = {
         removeFile: jest.fn()
@@ -97,7 +98,8 @@ describe('FaqHelpPage', () => {
             mockTranslateService as any,
             mockHttpClient as any,
             mockRouter as any,
-            mockNgZone as any
+            mockNgZone as any,
+            modalCtrl as any
         );
     });
 
