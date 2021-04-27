@@ -24,7 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { VideoConfig, FaqSampleData } from './faq-help-data';
+import { VideoConfig } from './faq-help-data';
 import { ContentViewerComponent } from './../components/content-viewer/content-viewer.component';
 
 @Component({
