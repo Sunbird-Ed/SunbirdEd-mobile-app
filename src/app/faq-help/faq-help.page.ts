@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, Inject, ViewChild, ElementRef, OnInit, NgZone } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService, } from '@app/services/app-global-service.service';
@@ -24,6 +24,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { VideoConfig } from './faq-help-data';
+import { ContentViewerComponent } from './../components/content-viewer/content-viewer.component';
 
 @Component({
   selector: 'app-faq-help',
@@ -88,7 +90,8 @@ export class FaqHelpPage implements OnInit {
     private translate: TranslateService,
     private http: HttpClient,
     private router: Router,
-    private zone: NgZone
+    private zone: NgZone,
+    private modalCtrl: ModalController,
   ) {
     this.getNavParam();
   }
@@ -319,8 +322,23 @@ export class FaqHelpPage implements OnInit {
     this.navigateToReportIssue();
   }
 
-  onVideoSelect(event) {
-    console.log(event);
+  async onVideoSelect(event) {
+    if (!event || !event.data) {
+      return;
+    }
+
+    const video = VideoConfig;
+    video.metadata.appIcon = event.data.thumbnail;
+    video.metadata.name = event.data.name;
+    video.metadata.artifactUrl = event.data.url;
+
+      const playerModal = await this.modalCtrl.create({
+        component: ContentViewerComponent,
+        componentProps: {
+          playerConfig: video
+        }
+      });
+      await playerModal.present();
   }
 
 }
