@@ -66,6 +66,9 @@ import {JoyfulThemePopupComponent} from './popups/joyful-theme-popup/joyful-them
 import { ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {NewExperiencePopupComponent} from './popups/new-experience-popup/new-experience-popup.component';
 import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-birth-popup.component';
+import { ContentViewerComponent } from './content-viewer/content-viewer.component';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 @NgModule({
   declarations: [
@@ -124,7 +127,8 @@ import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-bi
     ShowVendorAppsComponent,
     JoyfulThemePopupComponent,
     NewExperiencePopupComponent,
-    YearOfBirthPopupComponent
+    YearOfBirthPopupComponent,
+    ContentViewerComponent
   ],
   imports: [
     CommonModule,
@@ -135,6 +139,7 @@ import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-bi
     PipesModule,
     CommonConsumptionModule,
     IonicRatingModule,
+    SunbirdVideoPlayerModule,
     TranslateModule.forChild(),
   ],
   entryComponents: [
@@ -181,7 +186,8 @@ import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-bi
     JoyfulThemePopupComponent,
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
-    YearOfBirthPopupComponent
+    YearOfBirthPopupComponent,
+    ContentViewerComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -237,8 +243,9 @@ import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-bi
     AccessDiscussionComponent,
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
-    YearOfBirthPopupComponent
+    YearOfBirthPopupComponent,
+    ContentViewerComponent
   ],
-  providers: [FileSizePipe, FilterPipe, Keyboard]
+  providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
 })
 export class ComponentsModule { }

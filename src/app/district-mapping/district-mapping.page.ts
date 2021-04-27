@@ -195,7 +195,7 @@ export class DistrictMappingPage implements OnDestroy {
       const name = this.formGroup.value['name'].replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '').trim();
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
-        locationCodes,
+        profileLocation: locationCodes,
         ...((name ? { firstName: name } : {})),
         lastName: '',
         profileUserType: {
