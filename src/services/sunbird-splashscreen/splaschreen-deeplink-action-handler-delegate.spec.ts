@@ -356,7 +356,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
             mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
             // act
-            splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_DEEPLINK', data: {request: {url: 'https://staging.sunbirded.org/learn/course/do_21312548637480550413399?contentId=asdsd'}}});
+            splaschreenDeeplinkActionHandlerDelegate.onAction({
+                action: 'ACTION_DEEPLINK',
+                data: {request: {url: 'https://staging.sunbirded.org/learn/course/do_21312548637480550413399?contentId=asdsd'}}
+            });
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalled();
@@ -364,6 +367,45 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 expect(mockSbProgressLoader.show).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should check for onboardingCompleted set to false and set profile data to the app', (done) => {
+            // arrange
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
+            mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
+            mockSharedPreferences.getString = jest.fn(() => of('false'));
+            mockFrameworkService.searchOrganization = jest.fn(() => of({
+                count: 10,
+                content: [{
+                    id: 'sample_id'
+                }]
+            }));
+            mockFrameworkService.getChannelDetails = jest.fn(() => of({
+                defaultFramework: ''
+            }));
+            mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{
+                    code: 'sample_code'
+                }]
+            ));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
+            mockProfileService.updateProfile = jest.fn(() => of({}));
+            mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
+            mockRouter.navigate = jest.fn();
+            mockLocation.replaceState = jest.fn();
+            mockRouter.serializeUrl = jest.fn(() => 'sample_serialize_url');
+            mockRouter.createUrlTree = jest.fn();
+            // act
+            splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.sunbirded.org/profile'});
+            // assert
+            setTimeout(() => {
+                expect(mockFormnFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalled();
                 done();
             }, 0);
         });

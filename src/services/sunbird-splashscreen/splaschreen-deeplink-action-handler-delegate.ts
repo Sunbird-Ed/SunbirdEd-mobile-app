@@ -600,10 +600,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       }
       this.setTabsRoot();
       // TODO: Needs to check route exists or not before navigating
-      this.router.navigate([route], extras)
-        .catch(e => {
-          console.error('splash-screen:handleNavigation', e);
-        });
+      this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
   }
