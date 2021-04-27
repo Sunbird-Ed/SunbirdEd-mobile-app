@@ -1812,3 +1812,12 @@ sb-faq{
     color: var(--app-gray);
   }
 }
+
+sb-carousel{
+  .carousel_title {
+    padding-left: 1rem;
+  }
+  .carousel-card{
+    margin: 0.5rem !important;
+  }
+}
