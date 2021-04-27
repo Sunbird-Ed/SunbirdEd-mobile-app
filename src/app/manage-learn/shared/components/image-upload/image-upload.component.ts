@@ -260,10 +260,11 @@ export class ImageUploadComponent implements OnInit {
     }
   }
 
-  createFileName() {
+  createFileName(filename) {
     let d = new Date(),
       n = d.getTime(),
-      newFileName = n + ".jpg";
+      extension= filename.split('.').pop(),
+      newFileName = n + "." + extension;
     return newFileName;
   }
 
@@ -273,11 +274,12 @@ export class ImageUploadComponent implements OnInit {
     // }).catch(error => {
 
     // })
+    let newName = this.createFileName(currentName);
     this.file
-      .copyFile(namePath, currentName, this.appFolderPath, currentName)
+      .copyFile(namePath, currentName, this.appFolderPath, newName)
       .then(
         (success) => {
-          this.pushToFileList(currentName);
+          this.pushToFileList(newName);
         },
         (error) => { }
       );
@@ -339,6 +341,8 @@ export class ImageUploadComponent implements OnInit {
       for (const image of imageData) {
         this.checkForLocalFolder(image);
       }
+    }).catch(err => {
+      console.log(err)
     });
   }
 
