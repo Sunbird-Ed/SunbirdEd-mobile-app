@@ -1,5 +1,5 @@
 import {SplaschreenDeeplinkActionHandlerDelegate} from './splaschreen-deeplink-action-handler-delegate';
-import {RouterLinks} from '../../app/app.constant';
+import {MimeType, RouterLinks} from '../../app/app.constant';
 import {Router} from '@angular/router';
 import {Events} from '@app/util/events';
 import {of} from 'rxjs';
@@ -32,6 +32,7 @@ import {FormAndFrameworkUtilService} from '../formandframeworkutil.service';
 import {mockDeeplinkConfig} from './splashscreen-deeplink-action-handler-delegate.spec.data';
 import {UpdateProfileService} from '../update-profile-service';
 import {mockContentData} from '../../app/content-details/content-details.page.spec.data';
+import {jest} from '@jest/globals';
 
 
 describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
@@ -386,6 +387,11 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                     id: 'sample_id'
                 }]
             }));
+            mockProfileService.updateProfile = jest.fn(() => of({
+                uid: 'sample_uid',
+                handle: 'sample_handle',
+                board: ['cbse']
+            }));
             mockFrameworkService.getChannelDetails = jest.fn(() => of({
                 defaultFramework: ''
             }));
@@ -393,21 +399,140 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                     code: 'sample_code'
                 }]
             ));
-            mockProfileService.getActiveSessionProfile = jest.fn(() => of({}));
-            mockProfileService.updateProfile = jest.fn(() => of({}));
-            mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             mockRouter.navigate = jest.fn();
             mockLocation.replaceState = jest.fn();
             mockRouter.serializeUrl = jest.fn(() => 'sample_serialize_url');
             mockRouter.createUrlTree = jest.fn();
+            mockTelemetryService.updateCampaignParameters = jest.fn();
+            mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+            mockPageAssembleService.setPageAssembleChannel = jest.fn();
             // act
-            splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.sunbirded.org/profile'});
+            splaschreenDeeplinkActionHandlerDelegate.onAction({
+                url: 'https://staging.sunbirded.org/profile?cha' +
+                    'nnel=01283607456185548825093'
+            });
             // assert
             setTimeout(() => {
                 expect(mockFormnFrameworkUtilService.getFormFields).toHaveBeenCalled();
                 expect(mockSharedPreferences.getString).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                expect(mockLocation.replaceState).toHaveBeenCalled();
+                expect(mockRouter.serializeUrl).toHaveBeenCalled();
+                expect(mockRouter.createUrlTree).toHaveBeenCalled();
+                expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalled();
+                expect(mockPageAssembleService.setPageAssembleChannel).toHaveBeenCalled();
                 done();
             }, 0);
+        });
+
+        it('should navigate to content-details page if link has quiz content', (done) => {
+            // arrange
+            mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
+            mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
+            mockSbProgressLoader.show = jest.fn();
+            mockTelemetryService.updateCampaignParameters = jest.fn();
+            mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
+            mockSharedPreferences.getString = jest.fn(() => of('true'));
+            mockContentService.getContentDetails = jest.fn(() => of({
+                contentData: {
+                    status: 'Unlisted'
+                },
+                mimeType: MimeType.COLLECTION
+            }));
+            mockAppGlobalService.resetSavedQuizContent = jest.fn();
+            mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockRouter.navigate = jest.fn();
+            // act
+            splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.ntp.net.in/play/collection/do_21271706502665830417247?contentId=do_21271701994615603217195'});
+            // assert
+            setTimeout(() => {
+                expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalled();
+                expect(mockFormnFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                expect(mockSbProgressLoader.show).toHaveBeenCalled();
+                expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalled();
+                expect(mockSharedPreferences.getString).toHaveBeenCalled();
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        describe('navigation content', () => {
+            it('should navigate to collection if content id matches mimeType', (done) => {
+                // arrange
+                mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
+                mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
+                mockSbProgressLoader.show = jest.fn();
+                mockTelemetryService.updateCampaignParameters = jest.fn();
+                mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
+                mockSharedPreferences.getString = jest.fn(() => of('true'));
+                mockContentService.getContentDetails = jest.fn(() => of({
+                    mimeType: MimeType.COLLECTION,
+                    isAvailableLocally: true
+                }));
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                mockRouter.navigate = jest.fn();
+                mockContentService.getChildContents = jest.fn(() => of());
+                mockNavigationService.navigateToCollection = jest.fn();
+                // act
+                splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.ntp.net.in/play/' +
+                        'collection/do_21271706502665830417247?contentId=do_21271701994615603217195'});
+                // assert
+                setTimeout(() => {
+                    expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalled();
+                    expect(mockFormnFrameworkUtilService.getFormFields).toHaveBeenCalled();
+                    expect(mockSbProgressLoader.show).toHaveBeenCalled();
+                    expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
+                    expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalled();
+                    expect(mockSharedPreferences.getString).toHaveBeenCalled();
+                    expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                    done();
+                }, 0);
+            });
+
+            it('should import collection if content is not available locally', (done) => {
+                // arrange
+                mockQRScannerResultHandler.parseDialCode = jest.fn(() => Promise.resolve(undefined));
+                mockFormnFrameworkUtilService.getFormFields = jest.fn(() => Promise.resolve(mockDeeplinkConfig));
+                mockSbProgressLoader.show = jest.fn();
+                mockTelemetryService.updateCampaignParameters = jest.fn();
+                mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
+                mockSharedPreferences.getString = jest.fn(() => of('true'));
+                mockContentService.getContentDetails = jest.fn(() => of({
+                    mimeType: MimeType.COLLECTION,
+                    isAvailableLocally: false
+                }));
+                mockAppGlobalService.resetSavedQuizContent = jest.fn();
+                mockTelemetryGeneratorService.generateAppLaunchTelemetry = jest.fn();
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                mockRouter.navigate = jest.fn();
+                mockContentService.importContent = jest.fn(() => of());
+                mockContentService.getContentHeirarchy = jest.fn(() => of({
+                    identifier: 'do_123',
+                }));
+                mockStorageService.getStorageDestinationDirectoryPath = jest.fn(() => 'file://');
+                mockNavigationService.navigateToCollection = jest.fn();
+                // act
+                splaschreenDeeplinkActionHandlerDelegate.onAction({
+                    url: 'https://staging.ntp.net.in/play/' +
+                        'collection/do_21271706502665830417247?contentId=do_21271701994615603217195'
+                });
+                // assert
+                setTimeout(() => {
+                    expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                    expect(mockContentService.importContent).toHaveBeenCalled();
+                    expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
+                    done();
+                }, 0);
+            });
+
         });
     });
 });
