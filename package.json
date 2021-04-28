@@ -183,7 +183,7 @@
     "babel-polyfill": "^6.26.0",
     "fs-extra": "^8.1.0",
     "jest": "^25.4.0",
-    "@project-sunbird/sb-themes": "0.0.3",
+    "@project-sunbird/sb-themes": "0.0.4",
     "sonarqube-scanner": "^2.5.0",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
