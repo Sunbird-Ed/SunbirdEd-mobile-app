@@ -65,6 +65,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   sortedTasks;
   programId;
   solutionId;
+  private backButtonFunc: Subscription;
 
   // header
   private _headerConfig = {
@@ -276,6 +277,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.initApp();
     // this.getProject();
     this.getDateFilters();
+    this.handleBackButton();
   }
 
   initApp() {
@@ -318,6 +320,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -838,8 +843,24 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: this.project.projectId,
+        fromImportPage: true,
+        programId: this.programId
       },
       replaceUrl: true
+    });
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      if (this.fromImportProject) {
+        setTimeout(() => {
+          this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+        }, 0)
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+      } else {
+        this.location.back();
+      }
+      this.backButtonFunc.unsubscribe();
     });
   }
 
