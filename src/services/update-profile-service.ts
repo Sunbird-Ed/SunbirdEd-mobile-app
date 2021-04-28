@@ -37,7 +37,7 @@ export class UpdateProfileService {
     ) {
     }
 
-    setCurrentProfile(index, data) {
+    private setCurrentProfile(index, data) {
         if (!this.profile.medium || !this.profile.medium.length) {
             this.profile.medium = [];
         }
@@ -169,7 +169,7 @@ export class UpdateProfileService {
         }
     }
 
-    setGrade(reset, grades) {
+    private setGrade(reset, grades) {
         if (reset) {
             this.profile.grade = [];
             this.profile.gradeValue = {};
@@ -185,7 +185,7 @@ export class UpdateProfileService {
         });
     }
 
-    setMedium(reset, mediums) {
+    private setMedium(reset, mediums) {
         if (reset) {
             this.profile.medium = [];
         }
@@ -200,7 +200,7 @@ export class UpdateProfileService {
         });
     }
 
-    editProfile() {
+    private editProfile() {
         const req: Profile = {
             board: this.profile.board,
             grade: this.profile.grade,
@@ -241,7 +241,7 @@ export class UpdateProfileService {
             });
     }
 
-    findCode(categoryList: Array<any>, data, categoryType) {
+    private findCode(categoryList: Array<any>, data, categoryType) {
         if (find(categoryList, (category) => category.name === data)) {
             return find(categoryList, (category) => category.name === data).code;
         } else {
