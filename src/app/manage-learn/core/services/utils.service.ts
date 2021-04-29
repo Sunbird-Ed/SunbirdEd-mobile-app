@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class UtilsService {
+  private alert?: any;
   imagePath: string;
   public assessmentBaseUrl: string;
   public projectsBaseUrl: string;
@@ -31,9 +32,8 @@ export class UtilsService {
     private commonUtilService: CommonUtilService,
     private kendra: KendraApiService,
     private aleryCtrl: AlertController,
-    private router: Router
-  ) {
-  }
+    private router: Router,
+  ) {}
 
   generateFileName(name: string[] = []) {
     const d = new Date();
@@ -510,6 +510,12 @@ export class UtilsService {
                 for (const location of profileData['userLocations']) {
                   obj[location.type] = location.id
                 }
+                for (const org of profileData['organisations']) {
+                  if (org.isSchool) {
+                    obj['school'] = org.externalId;
+                  }
+                }
+                
                 obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null;
                 resolve(obj)
               });
@@ -520,5 +526,4 @@ export class UtilsService {
       });
     });
   }
-
 }

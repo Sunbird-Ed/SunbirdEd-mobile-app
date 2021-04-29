@@ -62,4 +62,16 @@ export class FormConstants {
         component: 'app',
     };
 
+    public static  PROJECT_CREATE_META: FormRequest = {
+        type: 'user',
+        subType: 'project',
+        action: 'create'
+    };
+
+    public static  TASK_CREATE_META: FormRequest = {
+        type: 'user',
+        subType: 'project',
+        action: 'createTask'
+    };
+
 }

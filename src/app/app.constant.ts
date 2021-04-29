@@ -592,6 +592,7 @@ export class RouterLinks {
     public static readonly IMAGE_LISTING = 'image-listing';
     public static readonly ALL_EVIDENCE = 'all-evidence';
     public static readonly DOMAIN_ECM_LISTING = 'domain-ecm-listing';
+    public static readonly IMP_SUGGESTIONS = 'imp-suggestions';
 
     // Observation routes
     public static readonly OBSERVATION_DETAILS = 'observation-details';

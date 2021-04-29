@@ -444,6 +444,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
+        this.db.createDb()
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
@@ -776,6 +777,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.MY_GROUPS) !== -1)
+        || (routeUrl.indexOf(`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
         return;
@@ -845,7 +847,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           this.logoutHandlerService.onLogout();
           this.localStorage.deleteAllStorage();
-          this.db.dropDb();
         }
         break;
 

@@ -18,5 +18,17 @@
       </div>
       <reports-text [data]="element" [questionNumber]="i + 1" *ngSwitchDefault></reports-text>
     </ion-card>
+     <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let e of element.evidences">
+            <attachments [url]="e.url" [extension]="e.extension"></attachments>
+          </ion-col>
+          <ion-col size="12" *ngIf="element.evidence_count > 3">
+            <small class="pull-right text-ios-danger" (click)="allEvidenceClick(element)">{{
+              'FRMELEMNTS_LBL_VIEW_ALL_EVIDNECES' | translate
+            }}</small>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
   </div>
 </div>

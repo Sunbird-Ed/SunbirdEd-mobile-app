@@ -368,6 +368,7 @@ export class CommonUtilService {
         }
     }
 
+
     async getAppName() {
         return this.appVersion.getAppName();
     }
@@ -471,10 +472,10 @@ export class CommonUtilService {
     private findAllRequiredFields(locationMappingConfig, userType) {
         return locationMappingConfig.find((m) => m.code === 'persona').children[userType].reduce((acc, config) => {
             if (config.validations && config.validations.find((v) => v.type === 'required')) {
-              acc.push(config.code);
+                acc.push(config.code);
             }
             return acc;
-          }, []);
+        }, []);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
@@ -557,7 +558,7 @@ export class CommonUtilService {
                 {
                     text: this.translateMessage('SETTINGS'),
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'bottom',
@@ -624,7 +625,7 @@ export class CommonUtilService {
                 {
                     text: 'X',
                     role: 'cancel',
-                    handler: () => {}
+                    handler: () => { }
                 }
             ],
             position: 'top',

@@ -1,15 +1,19 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
-  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService } from '@app/services';
+import {
+  AppGlobalService, AppHeaderService, CommonUtilService, ContentAggregatorHandler, Environment,
+  FormAndFrameworkUtilService, InteractSubtype, PageId, SunbirdQRScanner, TelemetryGeneratorService
+} from '@app/services';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption-v8';
 import { NavigationExtras, Router } from '@angular/router';
 import { ContentFilterConfig, EventTopics, ProfileConstants, RouterLinks, ViewMore } from '../../app.constant';
-import { FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
-    Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
-    CachedItemRequestSourceFrom, SearchType, InteractType } from '@project-sunbird/sunbird-sdk';
+import {
+  FrameworkService, FrameworkDetailsRequest, FrameworkCategoryCodesGroup, Framework,
+  Profile, ProfileService, ContentAggregatorRequest, ContentSearchCriteria,
+  CachedItemRequestSourceFrom, SearchType, InteractType, FormService, FormRequest
+} from '@project-sunbird/sunbird-sdk';
 import { AggregatorPageType } from '@app/services/content/content-aggregator-namespaces';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { IonContent as ContentView  } from '@ionic/angular';
+import { IonContent as ContentView } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Subscription } from 'rxjs';
 import { DbService, LocalStorageService } from '@app/app/manage-learn/core';
@@ -17,6 +21,8 @@ import { localStorageConstants } from '@app/app/manage-learn/core/constants/loca
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-admin-home',
@@ -45,6 +51,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -57,7 +64,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private qrScanner: SunbirdQRScanner,
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
-    private db: DbService
+    private db: DbService,
+
   ) {
   }
 
@@ -71,7 +79,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    this.getCreateProjectForm();
     this.db.createDb();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
       if (res && res.selectedLanguage) {
@@ -85,6 +92,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async ionViewWillEnter() {
+    this.getCreateProjectForm();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
@@ -96,37 +104,22 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   getCreateProjectForm() {
     this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
-    }, error => {
-      const config = {
-        url: urlConstants.API_URLS.CREATE_PROJECT_FORM
+    }, async error => {
+      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.PROJECT_CREATE_META);
+      if(createProjectMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
       }
-      this.unnatiService.get(config).subscribe(data => {
-        this.getTaskForm();
-        if (data.result && data.result.length) {
-          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, data.result).then(resp => {
-          }, error => {
-          })
-        }
-      }, error => {
-        this.getTaskForm();
-      })
+      this.getTaskForm();
     })
   }
 
   getTaskForm() {
     this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(resp => {
-    }, error => {
-      const config = {
-        url: urlConstants.API_URLS.GET_TASK_META_FORM
+    },async error => {
+      const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.TASK_CREATE_META);
+      if(createTaskMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta)
       }
-      this.unnatiService.get(config).subscribe(data => {
-        if (data.result && data.result.length) {
-          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, data.result).then(resp => {
-          }, error => {
-          })
-        }
-      }, error => {
-      })
     })
   }
 
@@ -236,12 +229,12 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       case 'course':
         this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
 
-        // this.router.navigate([RouterLinks.SEARCH], {
-        //   state: {
-        //     source: PageId.ADMIN_HOME,
-        //     preAppliedFilter: event.data[0].value.search
-        //   }
-        // });
+      // this.router.navigate([RouterLinks.SEARCH], {
+      //   state: {
+      //     source: PageId.ADMIN_HOME,
+      //     preAppliedFilter: event.data[0].value.search
+      //   }
+      // });
     }
   }
 

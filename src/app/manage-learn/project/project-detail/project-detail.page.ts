@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, AlertController, Platform, ModalController } from '@ionic/angular';
 import * as _ from 'underscore';
@@ -7,30 +7,20 @@ import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
 import { AppHeaderService } from '@app/services';
-import { NetworkService } from '../../core/services/network.service';
 import { menuConstants } from '../../core/constants/menuConstants';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { Subscription } from 'rxjs';
 import { DbService } from '../../core/services/db.service';
-import { LoaderService, ToastService } from '../../core';
+import { LoaderService, ToastService, NetworkService } from '../../core';
 import { SyncService } from '../../core/services/sync.service';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
-import { HttpClient } from '@angular/common/http';
-import { KendraApiService } from '../../core/services/kendra-api.service';
-import { Location } from '@angular/common';
 import { ContentDetailRequest, Content, ContentService } from 'sunbird-sdk';
 import { NavigationService } from '@app/services/navigation-handler.service';
 import { CreateTaskFormComponent } from '../../shared';
-
-// var environment = {
-//   db: {
-//     projects: "project.db",
-//     categories: "categories.db",
-//   },
-//   deepLinkAppsUrl: ''
-// };
+import { SharingFeatureService } from '../../core/services/sharing-feature.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: "app-project-detail",
@@ -75,6 +65,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   sortedTasks;
   programId;
   solutionId;
+  private backButtonFunc: Subscription;
+
   // header
   private _headerConfig = {
     showHeader: true,
@@ -86,6 +78,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   locationChangeTriggered: boolean = false;
   allStrings;
   private _appHeaderSubscription?: Subscription;
+  viewOnlyMode: boolean = false;
+  templateId;
+  templateDetailsPayload;
+  importProjectClicked: boolean = false;
+  fromImportProject: boolean = false;
 
   constructor(
     public params: ActivatedRoute,
@@ -96,33 +93,43 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private router: Router,
     private utils: UtilsService,
     private alert: AlertController,
-    // private location: Location,
+    private share: SharingFeatureService,
     private syncServ: SyncService,
     private toast: ToastService,
     private translate: TranslateService,
-    private networkService: NetworkService,
-    // private openResourceSrvc: OpenResourcesService,
     private modal: ModalController,
     private unnatiService: UnnatiDataService,
-    // private iab: InAppBrowser,
     private platform: Platform,
-    private http: HttpClient,
-    private kendraService: KendraApiService,
-    private location: Location,
     private ref: ChangeDetectorRef,
     private navigateService: NavigationService,
+    private alertController: AlertController,
+    private network: NetworkService,
+    private location: Location,
+    private zone: NgZone,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
+
     params.queryParams.subscribe((parameters) => {
-      console.log(parameters, "parameters");
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
       this.programId = parameters.programId;
       this.projectType = parameters.type ? parameters.type : '';
-      this.getProject();
+      this.viewOnlyMode = parameters.viewOnlyMode;
+      this.templateId = parameters.templateId;
+      this.viewOnlyMode ? this.getTemplateDetails() : this.getProject();
+      this.templateDetailsPayload = this.router.getCurrentNavigation().extras.state;
+      this.fromImportProject = (parameters.fromImportPage && parameters.fromImportPage == 'true') ? true : false;
     });
     this.translate
-      .get(["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG", "FRMELEMNTS_MSG_NO_ENTITY_MAPPED", "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"])
+      .get([
+        "FRMELEMNTS_MSG_SOMETHING_WENT_WRONG",
+        "FRMELEMNTS_MSG_NO_ENTITY_MAPPED",
+        "FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS",
+        "FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE",
+        "YES",
+        "NO",
+        "FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS"
+      ])
       .subscribe((texts) => {
         this.allStrings = texts;
       });
@@ -132,118 +139,173 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
   }
 
+  getTemplateDetails() {
+    this.loader.startLoader();
+    const config = {
+      url: urlConstants.API_URLS.PROJECT_TEMPLATE_DETAILS + this.templateId,
+      // payload:  {}
+    }
+
+    this.unnatiService.get(config).subscribe(success => {
+      this.loader.stopLoader();
+      // let data = success.result;
+      this.project = success.result;
+      this._headerConfig.actionButtons = []
+      this.headerService.updatePageConfig(this._headerConfig);
+      this.sortTasks();
+      this.programId = (success.result && success.result.programInformation) ? success.result.programInformation.programId : null;
+
+      // this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+      // this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+      // this.headerService.updatePageConfig(this._headerConfig);
+      // this.project.categories.forEach((category: any) => {
+      //   category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+      // });
+      // this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+    }, error => {
+      this.loader.stopLoader();
+
+    })
+  }
+
   getProject() {
-    this.db.query({ _id: this.projectId }).then(
-      (success) => {
-        if (success.docs.length) {
-          this.categories = [];
-          this.project = success.docs.length ? success.docs[0] : {};
-          this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
-          this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-          this.headerService.updatePageConfig(this._headerConfig);
-          this.project.categories.forEach((category: any) => {
-            category.label ? this.categories.push(category.label) : this.categories.push(category.name);
-          });
-          this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
-          this.getProjectTaskStatus();
-        } else {
+    if (this.projectId) {
+      this.db.query({ _id: this.projectId }).then(
+        (success) => {
+          if (success.docs.length) {
+
+            this.categories = [];
+            this.project = success.docs.length ? success.docs[0] : {};
+            this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
+            !this.viewOnlyMode ? this._headerConfig.actionButtons.push('more') : null;
+            this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+            this.headerService.updatePageConfig(this._headerConfig);
+            this.project.categories.forEach((category: any) => {
+              category.label ? this.categories.push(category.label) : this.categories.push(category.name);
+            });
+            this.project.tasks && this.project.tasks.length ? this.sortTasks() : "";
+            this.getProjectTaskStatus();
+          } else {
+            this.getProjectsApi();
+          }
+
+        },
+        (error) => {
           this.getProjectsApi();
         }
+      );
+    } else {
+      this.getProjectsApi();
+    }
 
-      },
-      (error) => {
-        this.getProjectsApi();
-      }
-    );
   }
 
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
     console.log(this.projectType, "projectType");
-      let id = this.projectId ? '/' + this.projectId : '';
-      const config = {
-        url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + this.solutionId,
-        payload: this.projectType == 'assignedToMe' ? payload : {}
+    const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
+    const config = {
+      url: urlConstants.API_URLS.GET_PROJECT + url,
+      payload: this.projectType == 'assignedToMe' ? payload : {}
+    }
+    this.templateDetailsPayload ? config.payload = this.templateDetailsPayload : null;
+    this.unnatiService.post(config).subscribe(success => {
+      this.loader.stopLoader();
+      if (this.templateId) {
+        this.toast.openToast(this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_SUCCESS'])
       }
-      console.log(config, "config");
-      this.unnatiService.post(config).subscribe(success => {
-        this.loader.stopLoader();
-        // this.projectId = success.result._id;
-        // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
-        let data = success.result;
-        let newCategories = []
-        for (const category of data.categories) {
-          if (category._id || category.name) {
-            const obj = {
-              label: category.name || category.label,
-              value: category._id
-            }
-            newCategories.push(obj)
+      // this.projectId = success.result._id;
+      // TODO:remove after adding subtasks to observation and assement type tasks, logic will be changed
+      let data = success.result;
+      let newCategories = []
+      for (const category of data.categories) {
+        if (category._id || category.name) {
+          const obj = {
+            label: category.name || category.label,
+            value: category._id
           }
+          newCategories.push(obj)
         }
-        data.categories = newCategories.length ? newCategories : data.categories;
-        if (data.tasks) {
+      }
+      data.categories = newCategories.length ? newCategories : data.categories;
+      if (data.tasks) {
 
-          data.tasks.map(t => {
-            if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
-              if (t.submissionDetails.status != t.status) {
-                t.status = t.submissionDetails.status
-                t.isEdit = true;
-                data.isEdit = true
-              }
+        data.tasks.map(t => {
+          if ((t.type == 'observation' || t.type == 'assessment') && t.submissionDetails && t.submissionDetails.status) {
+            if (t.submissionDetails.status != t.status) {
+              t.status = t.submissionDetails.status
+              t.isEdit = true;
+              data.isEdit = true
             }
-          })
-
-        }
-        // TODO:till here
-        this.db.create(success.result).then(successData => {
-          this.projectId ? this.getProject() :
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-              queryParams: {
-                projectId: success.result._id,
-                programId: this.programId,
-                solutionId: this.solutionId
-              }, replaceUrl: true
-            });
-        }).catch(error => {
-          if (error.status === 409) {
-            this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
-              queryParams: {
-                projectId: success.result._id,
-                programId: this.programId,
-                solutionId: this.solutionId
-              }, replaceUrl: true
-            })
           }
         })
-      }, error => {
 
-        this.loader.stopLoader();
+      }
+      // TODO:till here
+      this.db.create(success.result).then(successData => {
+        this.projectId ? this.getProject() :
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            queryParams: {
+              projectId: success.result._id,
+              programId: this.programId,
+              solutionId: this.solutionId,
+              fromImportPage: this.importProjectClicked
+            }, replaceUrl: true
+          });
+      }).catch(error => {
+        if (error.status === 409) {
+          this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+            queryParams: {
+              projectId: success.result._id,
+              programId: this.programId,
+              solutionId: this.solutionId,
+              fromImportPage: this.importProjectClicked
+            }, replaceUrl: true
+          })
+        }
       })
+    }, error => {
+
+      this.loader.stopLoader();
+    })
   }
 
   ngOnInit() { }
+
   ionViewWillEnter() {
     this.initApp();
     // this.getProject();
     this.getDateFilters();
+    this.handleBackButton();
   }
 
   initApp() {
-    this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      if (eventName.name === 'more') {
-        this.openPopover(eventName.event, null, false);
-      } else if (eventName.name === 'sync') {
-        this.action(eventName.name);
-      }
-    });
+    this.zone.run(() => {
+      this._appHeaderSubscription = this.headerService.headerEventEmitted$.subscribe(eventName => {
+        if (eventName.name === 'more') {
+          this.openPopover(eventName.event);
+        } else if (eventName.name === 'sync') {
+          this.action(eventName.name);
+        } else if (eventName.name === 'back') {
+          if (this.fromImportProject) {
+            setTimeout(() => {
+              this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+            }, 0)
+            this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+          } else {
+            this.location.back();
+          }
+        }
+      });
+    })
+
     let data;
     this.translate.get(["FRMELEMNTS_LBL_PROJECT_VIEW"]).subscribe((text) => {
       data = text;
     });
     this._headerConfig = this.headerService.getDefaultPageConfig();
-    this._headerConfig.actionButtons = ['more'];
+    this._headerConfig.actionButtons = [];
     this._headerConfig.showBurgerMenu = false;
     this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_PROJECT_VIEW"];
     this.headerService.updatePageConfig(this._headerConfig);
@@ -258,6 +320,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -316,11 +381,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   toggle() {
     this.showDetails = !this.showDetails;
   }
-  async openPopover(ev: any, taskId?, isDelete?) {
+  async openPopover(ev: any, task?) {
     let menu;
-    if (taskId) {
+    if (task && task._id) {
       menu = JSON.parse(JSON.stringify(menuConstants.TASK));
-      if (isDelete) {
+      if (task.isDeletable) {
         let deleteOption = {
           TITLE: 'DELETE',
           VALUE: 'deleteTask',
@@ -339,26 +404,30 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     });
     popover.onDidDismiss().then((data) => {
       if (data.data) {
-        this.action(data.data, taskId);
+        this.action(data.data, task);
       }
     });
     return await popover.present();
   }
 
-  action(event, taskId?) {
+  action(event, task?) {
     switch (event) {
       case "sync": {
-        this.project.isNew
-          ? this.createNewProject()
-          : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        if (this.network.isNetworkAvailable) {
+          this.project.isNew
+            ? this.createNewProject()
+            : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
+        } else {
+          this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SYNC', 'danger');
+        }
         break;
       }
       case "editTask": {
-        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, taskId]);
+        this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.TASK_VIEW}`, this.project._id, task._id]);
         break;
       }
       case "deleteTask": {
-        this.askPermissionToDelete("task", taskId);
+        this.askPermissionToDelete("task", task._id);
         break;
       }
       case "fileProject": {
@@ -373,9 +442,60 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.askPermissionToDelete("Project");
         break;
       }
+      case "shareTask": {
+        this.network.isNetworkAvailable ? this.openSyncSharePopup("shareTask", task.name, task._id) : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_TASK', 'danger');
+        break;
+      }
+      case "shareProject": {
+        this.network.isNetworkAvailable
+          ? this.openSyncSharePopup('shareProject', this.project.title)
+          : this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+        break;
+      }
     }
   }
 
+  async openSyncSharePopup(type, name, taskId?) {
+    let data;
+    this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
+      data = text;
+    });
+    const alert = await this.alert.create({
+      message: data["FRMELEMNTS_LBL_SHARE_MSG"],
+      buttons: [
+        {
+          text: data["FRMELEMNTS_BTN_DNTSYNC"],
+          role: "cancel",
+          cssClass: "secondary",
+          handler: (blah) => {
+            this.toast.showMessage("FRMELEMNTS_MSG_FILE_NOT_SHARED", "danger");
+          },
+        },
+        {
+          text: data["FRMELEMNTS_BTN_SYNCANDSHARE"],
+          handler: () => {
+            if (this.project.isEdit || this.project.isNew) {
+              this.project.isNew
+                ? this.createNewProject()
+                : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
+            } else {
+              type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  getPdfUrl(fileName, taskId?) {
+    let task_id = taskId ? taskId : '';
+
+    const config = {
+      url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
+    };
+    this.share.getFileUrl(config, fileName);
+  }
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
@@ -407,6 +527,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       return item._id == id;
     });
     this.project.tasks[index].isDeleted = true;
+    this.project.tasks[index].isEdit = true;
     this.update("taskDelete");
   }
   deleteProject() {
@@ -574,7 +695,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {
@@ -680,6 +800,68 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     } else {
       this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_NO_ENTITY_MAPPED"], "danger");
     }
+  }
+
+  importProject() {
+    // this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+    //   queryParams: {
+    //     templateId: this.templateId,
+    //     fromImportPage: this.importProjectClicked
+    //   },
+    //   state: this.templateDetailsPayload,
+    //   replaceUrl: true
+    // });
+    this.getProjectsApi();
+  }
+
+  async importProjectConfirm() {
+    const alert = await this.alertController.create({
+      subHeader: this.allStrings['FRMELEMNTS_LBL_IMPORT_PROJECT_MESSAGE'],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: this.allStrings['YES'],
+          cssClass: 'primary',
+          handler: (blah) => {
+            this.importProjectClicked = true
+            this.importProject();
+          }
+        }, {
+          text: this.allStrings['NO'],
+          role: 'cancel',
+          cssClass: "cancelBtn",
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  goToProjectDetails() {
+    this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+      queryParams: {
+        projectId: this.project.projectId,
+        fromImportPage: true,
+        programId: this.programId
+      },
+      replaceUrl: true
+    });
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      if (this.fromImportProject) {
+        setTimeout(() => {
+          this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+        }, 0)
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+      } else {
+        this.location.back();
+      }
+      this.backButtonFunc.unsubscribe();
+    });
   }
 
 }

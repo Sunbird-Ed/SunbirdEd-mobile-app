@@ -8,6 +8,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 
 declare var cordova: any;
 
@@ -30,7 +31,8 @@ export class ImageListingComponent implements OnInit {
     private fileTransfer: FileTransfer,
     private toast: ToastService,
     private translate: TranslateService,
-    private assessmentService: AssessmentApiService
+    private assessmentService: AssessmentApiService,
+    private kendra:KendraApiService
   ) {
     this.routerParam.queryParams.subscribe((params) => {
       this.submissionId = params.submissionId;
@@ -39,7 +41,7 @@ export class ImageListingComponent implements OnInit {
     });
 
       this.translate
-      .get(["FRMELEMENTS_MSG_SOMETHING_WENT_WRONG"])
+      .get(["FRMELEMENTS_MSG_SOMETHING_WENT_WRONG",'FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED'])
       .subscribe((texts) => {
         this.allStrings = texts;
       });
@@ -82,22 +84,6 @@ export class ImageListingComponent implements OnInit {
   submissionId;
 
   ionViewDidLoad() {
-    //TODO move to ngOnint
-    // this.submissionId = this.navParams.get("_id");
-    // this.schoolName = this.navParams.get("name");
-    // this.selectedEvidenceIndex = this.navParams.get("selectedEvidence");
-    // this.localStorage
-    //   .getLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId))
-    //   .then((data) => {
-    //     this.schoolData = data;
-    //     this.currentEvidence = this.schoolData["assessment"]["evidences"][this.selectedEvidenceIndex];
-    //     this.imageLocalCopyId = "images_" + this.currentEvidence.externalId + "_" + this.submissionId;
-    //     this.evidenceSections = this.currentEvidence["sections"];
-    //     this.selectedEvidenceName = this.currentEvidence["name"];
-    //     this.getAllImages();
-    //   })
-    //   .catch((error) => {
-    //   });
   }
 
   getAllImages() {
@@ -160,9 +146,6 @@ export class ImageListingComponent implements OnInit {
             _id: this.submissionId,
             name: this.schoolName,
           };
-          // this.navCtrl.remove(2, 1);
-          // this.navCtrl.pop();
-          // TODO:Check
           window.history.go(-2);
         }
       },
@@ -170,38 +153,6 @@ export class ImageListingComponent implements OnInit {
         this.loader.stopLoader();
       }
     );
-
-    // this.apiService.httpGet(
-    //   url + submissionId + '?evidenceId=' + this.currentEvidence.externalId,
-    //   (success) => {
-    //     this.loader.stopLoader();
-    //     if (success.result.allowed) {
-    //       if (this.uploadImages.length) {
-    //         this.createImageFromName(this.uploadImages);
-    //       } else {
-    //         this.submitEvidence();
-    //       }
-    //     } else {
-    //       this.translate.get('toastMessage.submissionCompleted').subscribe((translations) => {
-    //         this.toast.openToast(translations);
-    //       });
-    //       this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
-    //       this.localStorage.setLocalStorage(
-    //         this.utils.getAssessmentLocalStorageKey(this.submissionId),
-    //         this.schoolData
-    //       );
-    //       const options = {
-    //         _id: this.submissionId,
-    //         name: this.schoolName,
-    //       };
-    //       this.navCtrl.remove(2, 1);
-    //       this.navCtrl.pop();
-    //     }
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
   }
 
   createImageFromName(imageList) {
@@ -214,29 +165,34 @@ export class ImageListingComponent implements OnInit {
 
   async getImageUploadUrls() {
     const submissionId = this.submissionId;
-    const files = {
-      files: [],
-      submissionId: submissionId,
-    };
+    const files =[]
     for (const image of this.uploadImages) {
-      files.files.push(image);
+      files.push(image);
     }
 
     let payload = await this.utils.getProfileInfo();
-    payload = { ...payload, ...files };
+    payload.ref = "survey"
+    payload.request = {}
+    payload.request[submissionId] = {
+        files: files,
+    };
     const config = {
-      url: urlConstants.API_URLS.GET_SURVEY_IMAGE_UPLOAD_URLS,
+      url: urlConstants.API_URLS.PRESIGNED_URLS,
       payload: payload,
     };
 
-    this.assessmentService.post(config).subscribe(
+    this.kendra.post(config).subscribe(
       (success) => {
         this.loader.stopLoader();
-        for (let i = 0; i < success.result.length; i++) {
-          this.imageList[i]['url'] = success.result[i].url;
-          this.imageList[i]['sourcePath'] = success.result[i].payload.sourcePath;
-          success.result[i].cloudStorage ? (this.imageList[i]['cloudStorage'] = success.result[i].cloudStorage) : null;
+        if (!success.result || !success.result[submissionId] || !success.result[submissionId].files) {
+          return
         }
+        let array = success.result[submissionId].files
+          for (let i = 0; i < array.length; i++) {
+            this.imageList[i]['url'] = array[i].url;
+            this.imageList[i]['sourcePath'] = array[i].payload.sourcePath;
+            array[i].cloudStorage ? (this.imageList[i]['cloudStorage'] = array[i].cloudStorage) : null;
+          }
         this.checkForLocalFolder();
       },
       (error) => {
@@ -246,26 +202,6 @@ export class ImageListingComponent implements OnInit {
         });
       }
     );
-
-    // this.apiService.httpPost(
-    //   AppConfigs.survey.getImageUploadUr,
-    //   files,
-    //   (success) => {
-    //     this.loader.stopLoader();
-    //     for (let i = 0; i < success.result.length; i++) {
-    //       this.imageList[i]["url"] = success.result[i].url;
-    //       this.imageList[i]["sourcePath"] = success.result[i].payload.sourcePath;
-    //       success.result[i].cloudStorage ? (this.imageList[i]["cloudStorage"] = success.result[i].cloudStorage) : null;
-    //     }
-    //     this.checkForLocalFolder();
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //     this.translate.get("toastMessage.enableToGetGoogleUrls").subscribe((translations) => {
-    //       this.toast.openToast(translations);
-    //     });
-    //   }
-    // );
   }
 
   checkForLocalFolder() {
@@ -333,7 +269,6 @@ export class ImageListingComponent implements OnInit {
               errorObject.text = `${this.page}: Cloud image upload failed.URL:  ${this.imageList[this.uploadIndex].url}.
             Details: ${JSON.stringify(err)}`;
               // this.slack.pushException(errorObject);//TODO:implement
-              // this.navCtrl.pop();
               history.go(-1);
             } else {
               this.cloudImageUpload();
@@ -361,12 +296,6 @@ export class ImageListingComponent implements OnInit {
   }
   async submitEvidence() {
     this.loader.startLoader(this.allStrings['FRMELEMENTS_MSG_PLEASE_WAIT_WHILE_SUBMITTING']);
-    //TODO:Remove
-    // setTimeout(() => {
-    //   this.loader.stopLoader();
-    //   history.go(-4);
-    // }, 1500);
-    //TODO:till here
     console.log('submitting');
     const constructPayload = this.constructPayload();
     const submissionId = this.submissionId;
@@ -374,7 +303,7 @@ export class ImageListingComponent implements OnInit {
       (this.schoolData.survey
         ? urlConstants.API_URLS.SURVEY_FEEDBACK_MAKE_SUBMISSION
         : this.schoolData.observation
-        ? urlConstants.API_URLS.OBSERVATION_MAKE_SUBMISSION
+        ? urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE
         : urlConstants.API_URLS.SUBMISSION) +
       submissionId +
       '/';
@@ -391,7 +320,11 @@ export class ImageListingComponent implements OnInit {
         if (this.schoolData.observation) {
           // this.observetionProvider.markObservationAsCompleted(submissionId);//TODO:Not storing in local now
         }
-        this.toast.openToast(response.message);
+        if (response && response.result && response.result.allowed==false) {
+          this.toast.openToastWithClose(this.allStrings['FRMELEMENTS_MSG_SUBMISSION_NOT_ALLOWED']);
+        } else {
+          this.toast.openToast(response.message);
+        }
         this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
         this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
         const options = {
@@ -399,12 +332,6 @@ export class ImageListingComponent implements OnInit {
           name: this.schoolName,
         };
         this.loader.stopLoader();
-        // this.schoolData.observation ? this.events.publish('updateSubmissionStatus') : null;
-        // TODO:Check if required above line
-        // this.programService.refreshObservationList().then(() => {
-        //   this.navCtrl.remove(this.navCtrl.getActive().index - 1, 1);
-        //   this.navCtrl.pop();
-        // });
         history.go(-2);
       },
       (error) => {
@@ -412,31 +339,6 @@ export class ImageListingComponent implements OnInit {
       }
     );
 
-    // this.apiService.httpPost(
-    //   url,
-    //   payload,
-    //   (response) => {
-    //     if (this.schoolData.observation) {
-    //       this.observetionProvider.markObservationAsCompleted(submissionId);
-    //     }
-    //     this.utils.openToast(response.message);
-    //     this.schoolData['assessment']['evidences'][this.selectedEvidenceIndex].isSubmitted = true;
-    //     this.localStorage.setLocalStorage(this.utils.getAssessmentLocalStorageKey(this.submissionId), this.schoolData);
-    //     const options = {
-    //       _id: this.submissionId,
-    //       name: this.schoolName,
-    //     };
-    //     this.utils.stopLoader();
-    //     this.schoolData.observation ? this.events.publish('updateSubmissionStatus') : null;
-    //     this.programService.refreshObservationList().then(() => {
-    //       this.navCtrl.remove(this.navCtrl.getActive().index - 1, 1);
-    //       this.navCtrl.pop();
-    //     });
-    //   },
-    //   (error) => {
-    //     this.loader.stopLoader();
-    //   }
-    // );
   }
 
   constructPayload(): any {

@@ -13,6 +13,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { FILE_EXTENSION_HEADERS, LocalStorageService, ToastService, UtilsService } from '@app/app/manage-learn/core';
 import { ActionSheetController, AlertController, Platform } from '@ionic/angular';
+import { GenericPopUpService } from '../../TC-generic.popupService';
 
 @Component({
   selector: 'app-image-upload',
@@ -79,7 +80,8 @@ export class ImageUploadComponent implements OnInit {
     private diagnostic: Diagnostic,
     private media: Media,
     private alertCtrl: AlertController,
-    private toast: ToastService
+    private toast: ToastService,
+    private popupService: GenericPopUpService
   ) {
     this.text = "Hello World";
     this.isIos = this.platform.is("ios") ? true : false;
@@ -116,6 +118,13 @@ export class ImageUploadComponent implements OnInit {
       : cordova.file.externalDataDirectory + "images";
   }
 
+  doAction() {
+    this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      if (data.isClicked) {
+        data.isChecked ? this.openActionSheet() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+      }
+    })
+  }
   async openActionSheet() {
     let translateObject;
     this.translate
@@ -148,13 +157,13 @@ export class ImageUploadComponent implements OnInit {
             this.openLocalLibrary();
           },
         },
-        // {
-        //   text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
-        //   icon: "document",
-        //   handler: () => {
-        //     this.isIos ? this.filePickerForIOS() : this.openFilePicker();
-        //   },
-        // },
+        {
+          text: translateObject["FRMELEMENTS_LBL_UPLOAD_FILE"],
+          icon: "document",
+          handler: () => {
+            this.isIos ? this.filePickerForIOS() : this.openFilePicker();
+          },
+        },
         {
           text: translateObject["CANCEL"],
           role: "cancel",
@@ -251,10 +260,11 @@ export class ImageUploadComponent implements OnInit {
     }
   }
 
-  createFileName() {
+  createFileName(filename) {
     let d = new Date(),
       n = d.getTime(),
-      newFileName = n + ".jpg";
+      extension= filename.split('.').pop(),
+      newFileName = n + "." + extension;
     return newFileName;
   }
 
@@ -264,11 +274,12 @@ export class ImageUploadComponent implements OnInit {
     // }).catch(error => {
 
     // })
+    let newName = this.createFileName(currentName);
     this.file
-      .copyFile(namePath, currentName, this.appFolderPath, currentName)
+      .copyFile(namePath, currentName, this.appFolderPath, newName)
       .then(
         (success) => {
-          this.pushToFileList(currentName);
+          this.pushToFileList(newName);
         },
         (error) => { }
       );
@@ -330,6 +341,8 @@ export class ImageUploadComponent implements OnInit {
       for (const image of imageData) {
         this.checkForLocalFolder(image);
       }
+    }).catch(err => {
+      console.log(err)
     });
   }
 

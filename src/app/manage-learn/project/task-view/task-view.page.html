@@ -85,7 +85,10 @@
         </ion-col>
         <ion-col size="6">
           <ion-select [(ngModel)]="subtask.status" class="custom-select"
-            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)">
+            placeholder="{{'FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER' | translate}}" (ionChange)="selectedStatus($event)" [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }">
             <ion-select-option *ngFor="let status of statuses" value="{{status.title}}"
               selected="status.title === subtask.status">{{status.title | camelToTitle}}</ion-select-option>
           </ion-select>
@@ -94,7 +97,7 @@
     </ion-card>
   </div>
 
-  <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="markTaskAsCompleted()"
+  <ion-button [disabled]="!enableMarkButton" expand="block" shape="round" (click)="doAction()"
     class="_capitalize" *ngIf="!task?.learningResources?.length">
     {{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}
   </ion-button>
@@ -107,7 +110,7 @@
     </ion-col>
     <ion-col size="7">
       <ion-button class="roundedButton" [disabled]="!enableMarkButton" expand="block" shape="round"
-        (click)="markTaskAsCompleted()">
+        (click)="doAction()">
         {{'FRMELEMNTS_LBL_ADD_ATTACHMENTS' | translate}}
       </ion-button>
     </ion-col>

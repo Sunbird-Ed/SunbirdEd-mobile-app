@@ -10,6 +10,7 @@ import { NetworkService } from "../../core/services/network.service";
 import { AppHeaderService } from "@app/services";
 import { DbService } from "../../core/services/db.service";
 import { AttachmentService, ToastService } from "../../core";
+import { GenericPopUpService } from '../../shared';
 
 
 var environment = {
@@ -26,7 +27,7 @@ var environment = {
 })
 export class TaskViewPage implements OnInit {
   parameters;
-  @ViewChild("dateTime",  {static: false}) sTime;
+  @ViewChild("dateTime", { static: false }) sTime;
   editField;
   task;
   project;
@@ -58,6 +59,8 @@ export class TaskViewPage implements OnInit {
     private location: Location,
     private networkService: NetworkService,
     private headerService: AppHeaderService,
+    private popupService: GenericPopUpService,
+
     // private openResourceSrvc: OpenResourcesService
   ) {
     this.saveChanges = _.debounce(this.saveChanges, 800);
@@ -92,7 +95,6 @@ export class TaskViewPage implements OnInit {
         this.projectCopy = JSON.parse(JSON.stringify(this.project));
         // this.copyOfProject = { ...this.project };
         let task = _.findIndex(this.projectCopy.tasks, (item) => {
-          console.log(item._id, this.parameters.taskId, item)
           return item._id == this.parameters.taskId;
         });
         task > -1 ? (this.task = this.project.tasks[task]) : this.toast.showMessage("FRMELEMNTS_MSG_NO_TASK_FOUND", "danger");
@@ -197,7 +199,6 @@ export class TaskViewPage implements OnInit {
   }
 
   openBodh(link) {
-    console.log(link, "link");
     // TODO: add service
     // this.networkService.isNetworkAvailable
     //   ? this.openResourceSrvc.openBodh(link)
@@ -300,6 +301,14 @@ export class TaskViewPage implements OnInit {
     });
   }
 
+  doAction() {
+    this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_TEXT', 'FRMELEMNTS_LBL_EVIDENCES_CONTENT_POLICY_LABEL', 'FRMELEMNTS_LBL_UPLOAD_EVIDENCES', 'https://diksha.gov.in/term-of-use.html', 'contentPolicy').then((data: any) => {
+      if (data.isClicked) {
+        data.isChecked ? this.markTaskAsCompleted() : this.toast.showMessage('FRMELEMNTS_MSG_EVIDENCES_CONTENT_POLICY_REJECT', 'danger');
+      }
+    })
+  }
+
   async edit(what, placeholder = "", subtask?, subTaskIndex?) {
     let name;
     // what == "task" || what == "assignName" ? (name = "Edit Task") : (name = "Edit Subtask");
@@ -334,7 +343,6 @@ export class TaskViewPage implements OnInit {
         {
           text: "Save",
           handler: (data) => {
-            console.log(data);
             if (data.field == "" && what != "assignName") {
               this.toast.showMessage("FRMELEMNTS_MSG_REQUIRED_FIELDS", "danger");
               return;

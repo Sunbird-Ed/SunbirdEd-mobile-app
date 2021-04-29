@@ -5,7 +5,7 @@ import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { RequestParams } from '../interfaces/request-params';
 import { ToastService } from './toast/toast.service';
-import { AuthService } from 'sunbird-sdk';
+import { AuthService, DeviceInfo } from 'sunbird-sdk';
 import * as jwt_decode from "jwt-decode";
 import * as moment from 'moment';
 import { ApiUtilsService } from './api-utils.service';
@@ -21,6 +21,7 @@ export class ApiService {
     public toast: ToastService,
     public modalController: ModalController,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
     public apiUtils: ApiUtilsService
   ) { }
 
@@ -47,11 +48,12 @@ export class ApiService {
       mergeMap(session => {
         const httpOptions = {
           headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token : "",
-            'x-authenticated-user-token': session ? session.access_token : "",
+            'x-auth-token': session ? session.access_token : '',
+            'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion
-          })
+            'X-App-Ver': this.apiUtils.appVersion,
+            'deviceId': this.deviceInfo.getDeviceID(),
+          }),
         };
         return this.http.get(this.baseUrl + requestParam.url, httpOptions).pipe(
           tap(data => {
@@ -110,13 +112,39 @@ export class ApiService {
       mergeMap(session => {
         const httpOptions = {
           headers: new HttpHeaders({
-            'x-auth-token': session ? session.access_token : "",
-            'x-authenticated-user-token': session ? session.access_token : "",
+            'x-auth-token': session ? session.access_token : '',
+            'x-authenticated-user-token': session ? session.access_token : '',
             'X-App-Id': this.apiUtils.appName,
-            'X-App-Ver': this.apiUtils.appVersion
-          })
+            'X-App-Ver': this.apiUtils.appVersion,
+            'deviceId': this.deviceInfo.getDeviceID(),
+          }),
         };
         return this.http.post(this.baseUrl + requestParam.url, requestParam.payload, httpOptions).pipe(
+          tap(data => {
+            return data
+          }, error => {
+            catchError(this.handleError(error))
+          }),
+        );
+      })
+    )
+  }
+
+  delete(requestParam: RequestParams): Observable<any> {
+    
+    return this.checkTokenValidation().pipe(
+      mergeMap(session => {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'x-auth-token': session ? session.access_token : '',
+            'x-authenticated-user-token': session ? session.access_token : '',
+            'X-App-Id': this.apiUtils.appName,
+            'X-App-Ver': this.apiUtils.appVersion,
+            'deviceId': this.deviceInfo.getDeviceID()
+          }),
+          body: requestParam.payload,
+        };
+        return this.http.delete(this.baseUrl + requestParam.url, httpOptions).pipe(
           tap(data => {
             return data
           }, error => {

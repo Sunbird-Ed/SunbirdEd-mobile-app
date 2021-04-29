@@ -203,17 +203,8 @@ export class ObservationSubmissionComponent implements OnInit {
 
   goToEcm(submission) {
     // TODO: Remove
-    // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.SECTION_LISTING}`]);
     let submissionId = submission._id;
-    // let heading = this.selectedSolution.entities[this.entityIndex].name;
     let heading = this.entityName;
-    // this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
-    //   queryParams: {
-    //     submisssionId: submissionId,
-    //     schoolName: heading,
-    //   },
-    // });
-    // return;
 
     this.localStorage
       .getLocalStorage(this.utils.getAssessmentLocalStorageKey(submissionId))
@@ -222,14 +213,7 @@ export class ObservationSubmissionComponent implements OnInit {
           successData.assessment.evidences.length > 1 ||
           successData.assessment.evidences[0].sections.length > 1 ||
           (submission.criteriaLevelReport && submission.isRubricDriven)
-          // (submission.scoringSystem != 'pointsBasedScoring' && submission.isRubricDriven)
         ) {
-          // this.router.navigate([RouterLinks.ECM_LISTING], {
-          //   queryParams: {
-          //     submisssionId: submissionId,
-          //     schoolName: heading,
-          //   },
-          // });
           this.router.navigate([RouterLinks.DOMAIN_ECM_LISTING], {
             queryParams: {
               submisssionId: submissionId,
@@ -248,14 +232,6 @@ export class ObservationSubmissionComponent implements OnInit {
                 schoolName: this.entityName,
               },
             });
-
-            // this.router.navigate([RouterLinks.SECTION_LISTING], {
-            //   queryParams: {
-            //     submisssionId: submissionId,
-            //     evidenceIndex: 0,
-            //     schoolName: heading,
-            //   },
-            // });
           } else {
             const assessment = { _id: submissionId, name: heading };
             this.openAction(assessment, successData, 0);
@@ -293,7 +269,6 @@ export class ObservationSubmissionComponent implements OnInit {
         state: {
           scores: true,
           observation: true,
-          pdf: false,
           entityId: submission.entityId,
           entityType: submission.entityType,
           observationId: submission.observationId,
@@ -303,20 +278,26 @@ export class ObservationSubmissionComponent implements OnInit {
       return;
     }
     if (submission.ratingCompletedAt) {
-      let popover = await this.popoverCtrl.create({
-        component: ScroreReportMenusComponent,
-        componentProps: {
-          submission: submission,
-          entityType: submission.entityType,
-        },
-        event: event,
-      });
-      popover.present();
-    } else {
-      this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-        queryParams: {
+      /* no need to show menu now directly show the score report */
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: true,
+          observation: true,
+          criteriaWise: false,
           submissionId: submission._id,
           entityType: submission.entityType,
+          filter: { questionId: [] },
+        },
+      });
+    } else {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          scores: false,
+          observation: true,
+          criteriaWise: false,
+          submissionId: submission._id,
+          entityType: submission.entityType,
+          filter: { questionId: [] },
         },
       });
     }
@@ -330,7 +311,6 @@ export class ObservationSubmissionComponent implements OnInit {
         state: {
           scores: true,
           observation: true,
-          pdf: false,
           entityId: submission.entityId,
           entityType: submission.entityType,
           observationId: submission.observationId,
@@ -354,28 +334,35 @@ export class ObservationSubmissionComponent implements OnInit {
 
   // Menu for Entity reports
   async openEntityReportMenu(event) {
-    let popover = await this.popoverCtrl.create({
-      component: ScroreReportMenusComponent,
-      componentProps: {
-        observationId: this.observationId,
-        entityId: this.entityId,
-        entityType: this.submissionList[0].entityType,
-        showEntityActionsheet: 'true',
-        showSubmissionAction: 'false',
+    let submission = this.submissions[0];
+    /* no need to show menu now directly show the score report */
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: {
+        scores: true,
+        observation: true,
+        criteriaWise: false,
+        entityId: submission.entityId,
+        entityType: submission.entityType,
+        observationId: submission.observationId,
+        filter: { questionId: [] },
       },
-      event: event,
     });
-    popover.present();
   }
 
   viewEntityReports() {
+    let submission = this.submissions[0];
     this.showEntityActionsheet = false;
     this.showActionsheet = false;
-    this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
-      queryParams: {
-        entityId: this.entityId,
-        observationId: this.observationId,
-        entityType: this.submissionList[0].entityType,
+
+    this.router.navigate([RouterLinks.GENERIC_REPORT], {
+      state: {
+        scores: false,
+        observation: true,
+        criteriaWise: false,
+        entityId: submission.entityId,
+        entityType: submission.entityType,
+        observationId: submission.observationId,
+        filter: { questionId: [] },
       },
     });
   }
@@ -424,12 +411,12 @@ export class ObservationSubmissionComponent implements OnInit {
             let payload = await this.utils.getProfileInfo();
 
             const config = {
-              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_DELETE + `${submissionId}`,
+              url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${submissionId}`,
               payload: payload,
             };
             this.loader.startLoader();
 
-            this.assessmentService.post(config).subscribe(
+            this.assessmentService.delete(config).subscribe(
               (success) => {
                 this.loader.stopLoader();
 
@@ -453,7 +440,7 @@ export class ObservationSubmissionComponent implements OnInit {
     payload.title = data.title;
 
     const config = {
-      url: urlConstants.API_URLS.EDIT_OBSERVATION_NAME + `${data.submissionId}`,
+      url: urlConstants.API_URLS.OBSERVATION_SUBMISSION_UPDATE + `${data.submissionId}`,
       payload: payload,
     };
     this.assessmentService.post(config).subscribe(

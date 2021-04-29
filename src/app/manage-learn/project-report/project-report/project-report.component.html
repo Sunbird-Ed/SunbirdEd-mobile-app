@@ -31,16 +31,22 @@
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" 
-              [interfaceOptions]="{
-                cssClass: 'select-box',
-                animated: false
-              }">
+              <ion-select
+                [(ngModel)]="filter.type"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"></download-share>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
           </div>
         </div>
 
@@ -76,16 +82,23 @@
           </div>
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" (ionChange)="reportTypeChange()" 
-              [interfaceOptions]="{
-                cssClass: 'select-box',
-                animated: false
-              }">
+              <ion-select
+                [(ngModel)]="filter.type"
+                (ionChange)="reportTypeChange()"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"></download-share>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
           </div>
         </div>
 
@@ -116,16 +129,22 @@
 
           <div class="filter-download-container">
             <div *ngIf="filterType">
-              <ion-select [(ngModel)]="filter.type" 
-              [interfaceOptions]="{
-                cssClass: 'select-box',
-                animated: false
-              }">
+              <ion-select
+                [(ngModel)]="filter.type"
+                [interfaceOptions]="{
+                  cssClass: 'select-box',
+                  animated: false
+                }"
+              >
                 <ion-select-option [value]="t.value" *ngFor="let t of filterType">{{ t.label }}</ion-select-option>
               </ion-select>
             </div>
-            <download-share [name]="fileName()" [extension]="'.pdf'" [downloadUrl]="downloadUrl()"
-              [interface]="'simple'"></download-share>
+            <download-share
+              [name]="fileName()"
+              [extension]="'.pdf'"
+              [config]="config()"
+              [interface]="'simple'"
+            ></download-share>
           </div>
         </div>
         <div class="task-overview-body">

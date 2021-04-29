@@ -9,6 +9,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { AlertController, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { DhitiApiService } from '@app/app/manage-learn/core/services/dhiti-api.service';
 
 @Component({
   selector: 'download-share',
@@ -18,9 +19,10 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 export class DownloadShareComponent implements OnInit {
   @Input() interface;
   @Input() showOptions;
-  @Input() name;
+  @Input() name = ['filter'];
   @Input() extension: string;
-  @Input() downloadUrl: any;
+  // @Input() downloadUrl: any;
+  @Input() config: any;
   texts: any;
   constructor(
     public popoverController: PopoverController,
@@ -37,13 +39,16 @@ export class DownloadShareComponent implements OnInit {
     private translate: TranslateService,
     private androidPermissions: AndroidPermissions,
     public fileOpener: FileOpener,
+    public dhiti: DhitiApiService
   ) {
-    this.translate.get(['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING', 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED']).subscribe((data) => {
-      this.texts = data;
-    });
+    this.translate
+      .get(['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING', 'FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED'])
+      .subscribe((data) => {
+        this.texts = data;
+      });
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
   async openPopupMenu(ev) {
     const popover = await this.popoverController.create({
       component: DownloadShareComponent,
@@ -52,7 +57,8 @@ export class DownloadShareComponent implements OnInit {
         interface: 'simple',
         name: this.name,
         extension: this.extension,
-        downloadUrl: this.downloadUrl,
+        // downloadUrl: this.downloadUrl,
+        config: this.config,
       },
       event: ev,
       translucent: true,
@@ -60,24 +66,56 @@ export class DownloadShareComponent implements OnInit {
     return await popover.present();
   }
 
-  async download(share?) {
+  callApi() {
     this.loader.startLoader();
+    if (this.config.payload) {
+      return new Promise(async (resolve, reject) => {
+        let res = await this.dhiti.post(this.config).toPromise();
 
-    let config = { url: this.downloadUrl };
-
-    let res = await this.unnatiSrvc.get(config).toPromise();
-
-    if (res.result && !res.result.data && !res.result.data.downloadUrl) {
-      this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
-      this.loader.stopLoader();
-      return;
+        this.loader.stopLoader();
+        if (res.status != 'success' && !res.pdfUrl) {
+          this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+          reject();
+        }
+        resolve(res.pdfUrl);
+      });
     }
+    return new Promise(async (resolve, reject) => {
+      // let config = { url: this.downloadUrl };
+
+      let res = await this.unnatiSrvc.get(this.config).toPromise();
+
+      this.loader.stopLoader();
+      if (res.result && !res.result.data && !res.result.data.downloadUrl) {
+        this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+        reject();
+      }
+      resolve(res.result.data.downloadUrl);
+    });
+  }
+
+  async download(share?) {
+    // this.loader.startLoader();
+
+    // let config = { url: this.downloadUrl };
+
+    // let res = await this.unnatiSrvc.get(config).toPromise();
+
+    // if (res.result && !res.result.data && !res.result.data.downloadUrl) {
+    //   this.toast.showMessage(this.texts['FRMELEMENTS_MSG_ERROR_WHILE_DOWNLOADING'], 'danger');
+    //   this.loader.stopLoader();
+    //   return;
+    // }
 
     let fileName = this.utils.generateFileName(this.name);
     fileName = fileName + this.extension;
+    let url: any = await this.callApi();
+    if (!url) {
+      return;
+    }
 
     const ft = this.fileTransfer.create();
-    ft.download(res.result.data.downloadUrl, this.directoryPath() + fileName)
+    ft.download(url, this.directoryPath() + fileName)
       .then(
         (res) => {
           // this.toast.showMessage(this.texts['FRMELEMENTS_MSG_SUCCESSFULLY DOWNLOADED'])
@@ -117,8 +155,11 @@ export class DownloadShareComponent implements OnInit {
     }
   }
   openFile(res) {
-    this.fileOpener.open(res.nativeURL, 'application/pdf')
-      .then(() => { console.log('File is opened'); })
-      .catch(e => console.log('Error opening file', e));
+    this.fileOpener
+      .open(res.nativeURL, 'application/pdf')
+      .then(() => {
+        console.log('File is opened');
+      })
+      .catch((e) => console.log('Error opening file', e));
   }
 }

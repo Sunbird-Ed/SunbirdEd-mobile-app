@@ -27,6 +27,7 @@ export class CreateProjectPage implements OnInit {
   tasks = [];
   projectId;
   createProjectAlert;
+  hasAcceptedTAndC;
   project;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
@@ -61,6 +62,7 @@ export class CreateProjectPage implements OnInit {
     private popoverCtrl: PopoverController
   ) {
     route.queryParams.subscribe((parameters) => {
+      this.hasAcceptedTAndC = parameters.hasAcceptedTAndC;  
       if (parameters.projectId) {
         this.parameters = parameters;
         this.showTask = false;
@@ -116,7 +118,6 @@ export class CreateProjectPage implements OnInit {
           });
           this.selectedCategories = this.project.categories;
         }
-        console.log(this.selectedCategories, ' this.selectedCategories', this.project.categories);
       },
       (error) => { }
     );
@@ -130,7 +131,6 @@ export class CreateProjectPage implements OnInit {
           taskData,
         };
         this.projectFormData.push(taskForm);
-        console.log(this.projectFormData, 'this.projectFormData');
         this.prepareForm();
       });
     });
@@ -258,7 +258,6 @@ export class CreateProjectPage implements OnInit {
       },
     });
     modal.onWillDismiss().then(({ data }) => {
-      console.log(data);
       data ? this.selectCategories(data) : null;
     });
     return await modal.present();
@@ -278,6 +277,7 @@ export class CreateProjectPage implements OnInit {
         }
       });
       this.projectForm.value.categories = this.selectedCategories;
+      this.projectForm.value.hasAcceptedTAndC = this.hasAcceptedTAndC;
       this.parameters ? this.update(this.projectForm.value) :
         this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'EDIT', 'FRMELEMNTS_LBL_CONTINUE');
     } else {
@@ -301,7 +301,6 @@ export class CreateProjectPage implements OnInit {
     });
     await popover.present();
     popover.onWillDismiss().then(({ data }) => {
-      console.log(data, "task created");
       if (data) {
         this.saveTask(data);
       }
@@ -371,7 +370,7 @@ export class CreateProjectPage implements OnInit {
           text: texts[button1],
           cssClass: 'secondary',
           handler: () => {
-            this.saveData(this.projectForm.value)
+            this.saveData(this.projectForm.value);
           }
         }
       ]

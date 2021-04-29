@@ -1,5 +1,5 @@
 <ion-content class="main-container">
-  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}" [subTitle]="description"> </app-common-header>
+  <app-common-header title="{{ 'FRMELEMNTS_LBL_PROJECTS' | translate }}"  subTitle="{{ 'FRMELEMNTS_LBL_PROJECT_DESC' | translate }}"> </app-common-header>
   <ion-searchbar debounce="2000" placeholder="Search your projects here" [(ngModel)]="searchText"
     (ionChange)="onSearch($event)" search-icon="search">
   </ion-searchbar>
@@ -16,15 +16,25 @@
 
   <app-item-list-card title="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT' | translate}}"
     subTitle="{{'FRMELEMNTS_LBL_CREATE_NEW_PROJECT_SUBHEADING' | translate}}" class="create_header"
-    (cardSelect)="createProject()">
+    (cardSelect)="doAction()">
     <ion-icon class="mg-popup-btn-icon" name="ios-arrow-round-forward" arrow></ion-icon>
   </app-item-list-card>
   <h5 class="projects-labels"> {{'FRMELEMNTS_LBL_EXPLORE_PROJECTS' | translate}}</h5>
   <div>
     <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
   </div>
-  <app-item-list-card *ngFor="let project of projects" [title]="project?.name" [subTitle]="project?.programName"
-    [id]="project?._id" (cardSelect)="selectedProgram($event, project)"></app-item-list-card>
+  <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
+    [id]="project?._id" (cardSelect)="doAction($event, project)">
+
+    <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc" (click)="$event.stopPropagation(); downloaded(project)">
+      <ion-icon class="mg-popup-btn-icon" name="arrow-down"  ></ion-icon>
+      <span>{{'FRMELEMNTS_LBL_DOWNLOAD' | translate}}</span>
+    </div>
+    <div arrow  *ngIf="project?.downloaded" class="d-flex flex-dc">
+      <ion-icon class="mg-popup-btn-icon" style="color:green" name="checkmark" ></ion-icon>
+      <span>{{'FRMELEMNTS_LBL_DOWNLOADED' | translate}}</span>
+    </div>
+  </app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
 <ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">

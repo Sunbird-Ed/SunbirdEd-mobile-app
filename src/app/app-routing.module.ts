@@ -125,6 +125,10 @@ const routes: Routes = [
   { path: RouterLinks.SEARCH_FILTER, loadChildren: './search-filter/search-filter.module#SearchFilterPageModule' },
   { path: RouterLinks.GENERIC_REPORT, loadChildren: './manage-learn/generic-reports/generic-reports.module#GenericReportsModule' , canActivate:[MlGuard]},
   { path: RouterLinks.DOMAIN_ECM_LISTING, loadChildren: './manage-learn/domain-ecm-listing/domain-ecm-listing.module#DomainEcmListingModule' },
+  {
+    path: RouterLinks.IMP_SUGGESTIONS,
+    loadChildren:  './manage-learn/imp-suggestions/imp-suggestions.module#ImpSuggestionsPageModule'
+  },
 
 ];
 

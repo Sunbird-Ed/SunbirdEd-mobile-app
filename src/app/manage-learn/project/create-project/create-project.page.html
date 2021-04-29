@@ -11,8 +11,8 @@
       <div *ngFor="let data of projectFormData">
         <div *ngIf="!data.taskData">
           <ion-item *ngIf="data.input != 'select'">
-            <ion-label class="font-bold"> {{data.label}} <sup *ngIf="data.validation.required" data>*</sup> </ion-label>
-            <ion-label position="floating" class="label-hint"> {{data.hint}} </ion-label>
+            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup *ngIf="data.validation.required" data>*</sup> </ion-label>
+            <ion-label position="floating" class="label-hint"> {{(data.hintTranslations? data.hintTranslations: data.hint)  | translateJson}} </ion-label>
             <ion-input type="text" required="{{data.validation.required}}" *ngIf="data.input == 'text'"
               [formControlName]="data.field" name="{{data.field}}" (ionInput)="onKeyPress($event,data)"> </ion-input>
             <ion-textarea type="text" required="{{data.validation.required}}" *ngIf="data.input == 'textarea'"
@@ -20,8 +20,8 @@
             </ion-textarea>
           </ion-item>
           <div *ngIf="data.input == 'select'" style="margin: 15px 10px;">
-            <ion-label class="font-bold"> {{data.label}} <sup>*</sup> </ion-label>
-            <p class="label-hint"> {{data.hint}} </p>
+            <ion-label class="font-bold"> {{(data?.labelTranslations?data?.labelTranslations:data.label) | translateJson}} <sup>*</sup> </ion-label>
+            <p class="label-hint"> {{(data.hintTranslations? data?.hintTranslations: data.hint)  | translateJson}} </p>
             <ion-item (click)="openCategoryModal(data)" *ngIf="!selectedCategories?.length">
               <ion-icon name="pricetag-outline" slot="start" style="margin: 0px 15px 0 -15px;"></ion-icon>
               <div> {{'FRMELEMNTS_LBL_SELECT_CATEGORIES' | translate}} </div>
@@ -32,7 +32,7 @@
                 <ion-label>{{'FRMELEMNTS_LBL_SELECT_CATEGORIES' | translate}}</ion-label>
               </ion-chip>
               <ion-chip *ngFor="let category of selectedCategories">
-                <ion-label *ngIf="category.label != 'Others'">{{category?.name || category?.label}}</ion-label>
+                <ion-label *ngIf="category.label != 'Others'">{{(category?.labelTranslations?category?.labelTranslations: category?.name || category?.label)| translateJson}}</ion-label>
                 <ion-label *ngIf="category.label == 'Others'">{{category.value}}</ion-label>
                 <ion-icon name="close-circle" (click)="confirmToDelete(category,'category')"></ion-icon>
               </ion-chip>
