@@ -833,7 +833,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * confirming popUp content
    */
   async openConfirmPopUp() {
-    if (!(this.content.contentData.downloadUrl)) {
+    if (this.cardData.mimeType === 'application/vnd.sunbird.questionset' || !(this.content.contentData.downloadUrl)) {
       this.commonUtilService.showToast('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
       return;
     }

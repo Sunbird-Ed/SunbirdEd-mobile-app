@@ -132,7 +132,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.handleSearch(payload.data);
           break;
         case 'ACTION_GOTO':
-          if (payload.data && payload.data.request) {
+          if (payload.data && payload.data.request.params) {
             const navigationExtras: NavigationExtras = {
               state: {
                 params: payload.data.request.params
@@ -609,10 +609,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       }
       this.setTabsRoot();
       // TODO: Needs to check route exists or not before navigating
-      this.router.navigate([route], extras)
-        .catch(e => {
-          console.error('splash-screen:handleNavigation', e);
-        });
+      this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
   }

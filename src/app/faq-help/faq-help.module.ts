@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { FaqHelpPage } from './faq-help.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     CommonConsumptionModule,
+    ComponentsModule,
     RouterModule.forChild(routes)
   ],
   declarations: [FaqHelpPage]
