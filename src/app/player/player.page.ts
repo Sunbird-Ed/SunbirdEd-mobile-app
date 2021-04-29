@@ -114,8 +114,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-quml-player';
     } else if(this.config['metadata']['mimeType'] === "video/mp4" && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
-      this.config['config'].sideMenu.showPrint = false;
       this.config = await this.getNewPlayerConfiguration();
+      this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
     }
     this.config['context'].dispatcher = {
@@ -302,6 +302,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           showExit: true,
           showPrint: true
         }
+      }
+
+      if(this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset"){
+       const questionSet = await this.contentService.getQuestionSetRead(this.content.identifier, {fields:'instructions'}).toPromise();
+       this.config['metadata']['instructions'] = questionSet && questionSet.questionset.instructions ? questionSet.questionset.instructions : undefined;
       }
       const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.config['context'].userData = {

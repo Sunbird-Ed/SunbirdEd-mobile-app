@@ -206,6 +206,57 @@ describe('PlayerPage', () => {
          } , 0)
         //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
     })
+
+    it('should call the get question read api for instructions', (done) =>{
+        playerPage.config = {
+            context: {
+                objectRollup: {
+                    l1: 'li'
+                },
+                dispatcher: {
+                    dispatch: jest.fn()
+                },
+                pdata: {
+                    pid: 'sunbird.app.contentplayer'
+                }
+            },
+            metadata: {
+                identifier: 'identifier',
+                isAvailableLocally: true,
+                basePath: 'basePath',
+                instructions: 'int',
+                contentData: {
+                    mimeType: 'application/vnd.sunbird.questionset',
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                }
+            }
+        }
+
+        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+            serverProfile:{
+                firstName: 'firstName', 
+                lastName: 'lastname'
+            }
+        })) as any;
+
+        mockContentService.getQuestionSetRead = jest.fn(() => of(
+            {
+                questionset: {
+                    instructions:{
+                        default: 'sample instructions'
+                    }
+                }
+            }
+        )) as any;
+        playerPage.getNewPlayerConfiguration();
+        setTimeout(() =>{
+        expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
+         done()
+        } , 0)
+    });
+
     it('should check if new player is enabled', () => {
         const config = {
             fields: [
