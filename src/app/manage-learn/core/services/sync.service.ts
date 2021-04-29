@@ -113,17 +113,17 @@ export class SyncService {
 
   createNewProject(showLoader: boolean = false): Promise<any> {
     showLoader ? this.loader.startLoader() : null;
-    const config = {
-      url: urlConstants.API_URLS.CREATE_PROJECT_DOC
-    }
+    // const config = {
+    //   url: urlConstants.API_URLS.CREATE_PROJECT_DOC
+    // }
     return new Promise((resolve, reject) => {
-      this.unnatiServ.get(config).subscribe(success => {
-        showLoader ? this.loader.stopLoader() : null;
-        resolve(success)
-      }, error => {
-        showLoader ? this.loader.stopLoader() : null;
-        reject(error);
-      })
+      // this.unnatiServ.get(config).subscribe(success => {
+      //   showLoader ? this.loader.stopLoader() : null;
+        resolve([])
+      // }, error => {
+      //   showLoader ? this.loader.stopLoader() : null;
+      //   reject(error);
+      // })
     })
   }
 
