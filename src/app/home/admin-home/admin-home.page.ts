@@ -21,6 +21,8 @@ import { localStorageConstants } from '@app/app/manage-learn/core/constants/loca
 import { UnnatiDataService } from '@app/app/manage-learn/core/services/unnati-data.service';
 import { urlConstants } from '@app/app/manage-learn/core/constants/urlConstants';
 import { OnTabViewWillEnter } from '@app/app/tabs/on-tab-view-will-enter';
+import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { FormConstants } from '@app/app/form.constants';
 
 @Component({
   selector: 'app-admin-home',
@@ -62,7 +64,8 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private qrScanner: SunbirdQRScanner,
     private storage: LocalStorageService,
     private unnatiService: UnnatiDataService,
-    private db: DbService
+    private db: DbService,
+
   ) {
   }
 
@@ -101,48 +104,22 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   getCreateProjectForm() {
     this.storage.getLocalStorage(localStorageConstants.PROJECT_META_FORM).then(resp => {
-    }, error => {
-      const request: FormRequest = {
-        from: CachedItemRequestSourceFrom.SERVER,
-        type: 'user',
-        subType: 'project',
-        action: 'create'
-      };
-
-      this.formService.getForm(request).subscribe(result => {
-        this.getTaskForm();
-        if (result.form.data.fields) {
-          this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, result.form.data.fields).then(resp => {
-          }, error => {
-          })
-        }
-      }, error => {
-        this.getTaskForm();
-      })
+    }, async error => {
+      const createProjectMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.PROJECT_CREATE_META);
+      if(createProjectMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.PROJECT_META_FORM, createProjectMeta);
+      }
+      this.getTaskForm();
     })
   }
 
   getTaskForm() {
     this.storage.getLocalStorage(localStorageConstants.TASK_META_FORM).then(resp => {
-    }, error => {
-      const config = {
-        url: urlConstants.API_URLS.GET_TASK_META_FORM
+    },async error => {
+      const createTaskMeta: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.TASK_CREATE_META);
+      if(createTaskMeta.length){
+        this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, createTaskMeta)
       }
-      const request: FormRequest = {
-        from: CachedItemRequestSourceFrom.SERVER,
-        type: 'user',
-        subType: 'project',
-        action: 'createTask'
-      };
-
-      this.formService.getForm(request).subscribe(result => {
-        if (result.form.data.fields) {
-          this.storage.setLocalStorage(localStorageConstants.TASK_META_FORM, result.form.data.fields).then(resp => {
-          }, error => {
-          })
-        }
-      }, error => {
-      })
     })
   }
 
