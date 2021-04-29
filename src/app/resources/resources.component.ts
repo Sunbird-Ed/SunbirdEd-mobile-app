@@ -472,6 +472,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
+      userPreferences: {
+        board: this.getGroupByPageReq.board,
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade,
+        subject: this.profile.subject,
+      },
       applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
         gradeLevel: this.getGroupByPageReq.grade
