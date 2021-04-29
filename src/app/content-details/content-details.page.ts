@@ -84,6 +84,7 @@ import { AddActivityToGroup } from '../my-groups/group.interface';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import {ShowVendorAppsComponent} from '@app/app/components/show-vendor-apps/show-vendor-apps.component';
 import {FormConstants} from '@app/app/form.constants';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 declare const window;
 @Component({
@@ -1316,6 +1317,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = content.contentId || content.identifier;
       this.telemetryObject = ContentUtil.getTelemetryObject(content);
       this.promptToLogin();
+      window['segmentation'].SBTagService.pushTag(this.identifier, TagPrefixConstants.CONTENT_ID);
     }
   }
 

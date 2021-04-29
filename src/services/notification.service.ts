@@ -52,33 +52,41 @@ export class NotificationService {
       this._notificationPaylod = payload;
     }
 
-    setupLocalNotification(language?: string): any {
+    setupLocalNotification(language?: string, payLoad?: any): any {
         if (language) {
             this.selectedLanguage = language;
             this.localNotifications.cancelAll();
         }
-        this.formnFrameworkUtilService.getNotificationFormConfig().then(fields => {
-            if (fields && fields.length) {
-                this.configData = (fields.find(field => field.code === 'localNotification')).config;
-                this.configData.forEach(element => {
-                    this.localNotifications.getScheduledIds().then((ids) => {
-                        if (ids.length) {
-                            if (!element.isEnabled && ids.findIndex(ele => ele === element.id) !== -1) {
-                                this.localNotifications.cancel(element.id).then(resp => {
-                                    console.log('Local Notification Disabled for:' + element.id, resp);
-                                });
-                            } else if (element.isEnabled && ids.findIndex(ele => ele === element.id) === -1) {
-                                this.setLocalNotification(element);
-                            }
-                        } else {
-                            if (element.isEnabled) {
-                                this.setLocalNotification(element);
-                            }
+        if (payLoad) {
+            this.setTrigerConfig(payLoad);
+        } else {
+            this.formnFrameworkUtilService.getNotificationFormConfig().then(fields => {
+            this.setTrigerConfig(fields);
+            });
+        }
+    }
+
+    setTrigerConfig(fields) {
+        if (fields && fields.length) {
+            this.configData = (fields.find(field => field.code === 'localNotification')).config;
+            this.configData.forEach(element => {
+                this.localNotifications.getScheduledIds().then((ids) => {
+                    if (ids.length) {
+                        if (!element.isEnabled && ids.findIndex(ele => ele === element.id) !== -1) {
+                            this.localNotifications.cancel(element.id).then(resp => {
+                                console.log('Local Notification Disabled for:' + element.id, resp);
+                            });
+                        } else if (element.isEnabled && ids.findIndex(ele => ele === element.id) === -1) {
+                            this.setLocalNotification(element);
                         }
-                    });
+                    } else {
+                        if (element.isEnabled) {
+                            this.setLocalNotification(element);
+                        }
+                    }
                 });
-            }
-        });
+            });
+        }
     }
 
     private triggerConfig(triggerConfig) {
@@ -114,17 +122,21 @@ export class NotificationService {
     }
 
     private setLocalNotification(triggerConfig) {
-        const trigger = this.triggerConfig(triggerConfig);
-        const title = JSON.parse(triggerConfig.title);
-        const message = JSON.parse(triggerConfig.msg);
-        this.localNotifications.schedule({
-            id: triggerConfig.id,
-            title: title[this.selectedLanguage] || title['en'],
-            text:  message[this.selectedLanguage] || message['en'],
-            icon: 'res://icon',
-            smallIcon: 'res://n_icon',
-            trigger
-        });
+        try {
+            const trigger = this.triggerConfig(triggerConfig);
+            const title = JSON.parse(triggerConfig.title);
+            const message = JSON.parse(triggerConfig.msg);
+            this.localNotifications.schedule({
+                id: triggerConfig.id,
+                title: title[this.selectedLanguage] || title['en'],
+                text:  message[this.selectedLanguage] || message['en'],
+                icon: 'res://icon',
+                smallIcon: 'res://n_icon',
+                trigger
+            });
+        } catch (e) {
+            console.log('Error', e);
+        }
     }
 
     private async getAppName() {

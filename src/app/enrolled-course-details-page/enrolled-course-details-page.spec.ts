@@ -136,6 +136,15 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockDiscussionTelemetryService: Partial<DiscussionTelemetryService> = {
     };
+
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
     
 
     beforeAll(() => {
