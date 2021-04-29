@@ -260,81 +260,13 @@ describe("AboutUsComponent", () => {
             }, 0);
         });
 
-        // it('should share content or profile for SocialSharing cath part', (done) => {
-        //     // arrange
-        //     jest.spyOn(aboutUsComponent, 'generateInteractTelemetry').mockImplementation(() => {
-        //         return;
-        //     });
-        //     mockProfileService.getAllProfiles = jest.fn(() => of([{
-        //         uid: 'sample-uid',
-        //         handle: 'sample-name'
-        //     }]));
-        //     mockContentService.getContents = jest.fn(() => of([{
-        //         contentId: 'sample-content-id',
-        //         identifier: 'do_123'
-        //     }]));
-        //     const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
-        //     mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-        //         present: jest.fn(),
-        //         dismiss: jest.fn()
-        //     }));
-        //     (window as any).supportfile = {
-        //         shareSunbirdConfigurations: jest.fn((a, b, result, error) => result({}))
-        //     };
-        //     mockSharedPreferences.putString = jest.fn(() => of(undefined));
-        //     mockSharedPreferences.getString = jest.fn(() => of('http://sample-path'));
-        //     mockSocialSharing.share = jest.fn(() => Promise.resolve({}));
-        //     // act
-        //     aboutUsComponent.shareInformation();
-        //     // assert
-        //     setTimeout(() => {
-        //         expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
-        //         expect(mockContentService.getContents).toHaveBeenCalled();
-        //         expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        //         expect(mockSharedPreferences.putString).toHaveBeenCalled();
-        //         expect(mockSharedPreferences.getString).toHaveBeenCalledWith(KEY_SUNBIRD_CONFIG_FILE_PATH);
-        //         expect(mockSocialSharing.share).toHaveBeenCalled();
-        //         done();
-        //     }, 0);
-        // });
-
-        // it('should share content or profile for shareSunbirdConfigurations cath part', (done) => {
-        //     // arrange
-        //     jest.spyOn(aboutUsComponent, 'generateInteractTelemetry').mockImplementation(() => {
-        //         return;
-        //     });
-        //     mockProfileService.getAllProfiles = jest.fn(() => of([{
-        //         uid: 'sample-uid',
-        //         handle: 'sample-name'
-        //     }]));
-        //     mockContentService.getContents = jest.fn(() => of([{
-        //         contentId: 'sample-content-id',
-        //         identifier: 'do_123'
-        //     }]));
-        //     const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
-        //     mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
-        //         present: jest.fn(),
-        //         dismiss: jest.fn()
-        //     }));
-        //     (window as any).supportfile = {
-        //         shareSunbirdConfigurations: jest.fn((a, b, result, error) => error({}))
-        //     };
-        //     // act
-        //     aboutUsComponent.shareInformation();
-        //     // assert
-        //     setTimeout(() => {
-        //         expect(mockProfileService.getAllProfiles).toHaveBeenCalled();
-        //         expect(mockContentService.getContents).toHaveBeenCalled();
-        //         expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
-        //         done();
-        //     }, 0);
-        // });
+        
     });
 
     describe('ngOnit', () => {
-      it('should....', () => {
+      it('should....', (done) => {
         //arrange
-        mockDeviceInfo.getDeviceID = jest.fn(() => of('sample-id'));
+        mockDeviceInfo.getDeviceID = jest.fn(() => ('sample-id'));
         mockAppVersion.getAppName = jest.fn(() =>
         Promise.resolve('sample-app-name')
         );
@@ -349,6 +281,7 @@ describe("AboutUsComponent", () => {
         setTimeout(() =>{
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(aboutUsComponent.deviceId).toEqual('sample-id');
+            done();
         },0);
       })
     });
@@ -368,28 +301,12 @@ describe("AboutUsComponent", () => {
         });
     });
 
-    // describe('ionViewDidLeave', () => {
-    //     it('should..reject', () => {
-    //         //arrange
-    //         const error = 'sample-error';
-    //         (window as any).supportfile = {
-    //             removeFile: jest.fn( () => {} )
-    //         };
-    //         console.error = jest.fn();
-
-    //         //act
-    //         aboutUsComponent.ionViewDidLeave();
-
-    //         //assert
-    //         // expect(console.error).toHaveBeenCalledWith('error', error);
-    //         expect(console.error).toHaveBeenCalled();
-    //     });
-    // });
+    
 
     describe('ionViewWillEnter', () => {
-        it('should...', () => {
+        it('should ', () => {
             //arrange
-            mockAppHeaderService.getDefaultPageConfig = jest.fn(() => of({
+            mockAppHeaderService.getDefaultPageConfig = jest.fn(() => ({
                 showHeader: false,
                 showBurgerMenu: false,
                 showKebabMenu: true,
