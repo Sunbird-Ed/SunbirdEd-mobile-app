@@ -1,10 +1,10 @@
 import {  Component, Inject, Input, OnInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
 import { NavigationService } from '@app/services/navigation-handler.service';
-import { DiscussionService } from '@project-sunbird/sunbird-sdk';
+import { DiscussionService, InteractType } from '@project-sunbird/sunbird-sdk';
 
 @Component({
     selector: "accessDiscussion",
@@ -23,7 +23,8 @@ export class AccessDiscussionComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private discussionTelemetryService: DiscussionTelemetryService,
     private headerService: AppHeaderService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private telemetryGeneratorService: TelemetryGeneratorService
 ) {}
 
   ngOnInit() {
@@ -42,6 +43,16 @@ export class AccessDiscussionComponent implements OnInit {
   }
 
   async openDiscussionForum() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH, 
+      InteractSubtype.FORUM_ICON_CLICKED,
+      Environment.DISCUSSION,
+      PageId.GROUP_DETAIL,
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    );
     this.headerService.hideHeader();
     this.discussionTelemetryService.contextCdata = [
       {

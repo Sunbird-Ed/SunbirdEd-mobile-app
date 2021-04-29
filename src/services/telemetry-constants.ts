@@ -530,7 +530,9 @@ export enum InteractSubtype {
     SELECT_CONTENT = 'select-content',
     SELECT_BELL = 'select-bell',
     OPTED_IN = 'opted-in',
-    OPTED_OUT = 'opted-out'
+    OPTED_OUT = 'opted-out',
+    GROUP_KEBAB_MENU_CLICKED = 'group-kebab-menu-clicked',
+    FORUM_ICON_CLICKED = 'forum-icon-clicked'
 }
 
 export enum ID {

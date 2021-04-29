@@ -48,6 +48,7 @@ export class CreateProjectPage implements OnInit {
     private location: Location,
     private modal: ModalController,
     private alert: AlertController,
+    private alertPopup: AlertController,
     private translate: TranslateService,
     private fb: FormBuilder,
     private headerService: AppHeaderService,
@@ -103,8 +104,10 @@ export class CreateProjectPage implements OnInit {
 
   private handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
+      this.confirmToClose();
+      if (this.alert) {
+        this.alert.dismiss();
+      }
     });
   }
 
@@ -173,7 +176,7 @@ export class CreateProjectPage implements OnInit {
       .subscribe((data) => {
         text = data;
       });
-    const alert = await this.alert.create({
+    const alertPopup = await this.alertPopup.create({
       cssClass: 'my-custom-class',
       header: text['FRMELEMNTS_LBL_DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DISCARD_PROJECT'],
@@ -184,6 +187,7 @@ export class CreateProjectPage implements OnInit {
           cssClass: 'text-transform-free',
           handler: (blah) => {
             this.location.back();
+            this.backButtonFunc.unsubscribe();
           },
         },
         {
@@ -193,7 +197,7 @@ export class CreateProjectPage implements OnInit {
         },
       ],
     });
-    await alert.present();
+    await alertPopup.present();
   }
 
   async confirmToDelete(data, type) {
@@ -203,7 +207,7 @@ export class CreateProjectPage implements OnInit {
       .subscribe((data) => {
         text = data;
       });
-    const alert = await this.alert.create({
+    const deleteAlert = await this.alert.create({
       cssClass: 'my-custom-class',
       // header: text['LABELS.DISCARD_PROJECT'],
       message: text['FRMELEMNTS_MSG_DELETE_CONFIRM'] + type + ' ?',
@@ -227,7 +231,7 @@ export class CreateProjectPage implements OnInit {
         },
       ],
     });
-    await alert.present();
+    await deleteAlert.present();
   }
 
   // event trigger from category list page
@@ -376,5 +380,10 @@ export class CreateProjectPage implements OnInit {
       ]
     });
     await this.createProjectAlert.present();
+  }
+  ionViewWillLeave() {
+    if (this.alert) {
+      this.alert.dismiss();
+    }
   }
 }

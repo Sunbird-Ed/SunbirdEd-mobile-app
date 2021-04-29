@@ -160,14 +160,24 @@ export class FaqHelpPage implements OnInit {
     } else {
       faqRequest.language = 'en';
     }
+    this.fetchFaqData(faqRequest);
+  }
 
+  private fetchFaqData(faqRequest, retry=true) {
     this.faqService.getFaqDetails(faqRequest).subscribe(data => {
       this.zone.run(() => {
         this.faqData = data as any;
         this.constants = this.faqData.constants;
-        // tslint:disable-next-line:prefer-for-of
         this.loading.dismiss();
       });
+    }, error => {
+      console.error(error);
+      faqRequest.language = 'en';
+      if (retry) {
+        this.fetchFaqData(faqRequest, false);
+        return;
+      }
+      this.loading.dismiss();
     });
   }
 

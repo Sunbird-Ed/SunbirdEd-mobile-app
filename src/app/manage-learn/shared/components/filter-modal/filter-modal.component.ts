@@ -57,7 +57,7 @@ export class FilterModalComponent implements OnInit {
   async searchProgramByEntity(searchText: any) {
     //TODO
     this.loader.startLoader();
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     const config = {
       url:
@@ -78,7 +78,7 @@ export class FilterModalComponent implements OnInit {
   }
   async serachEntity(searchText: any) {
     // TODO
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     this.loader.startLoader();
     const config = {

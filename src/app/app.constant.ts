@@ -664,6 +664,10 @@ export class AppThemes {
     public static readonly DEFAULT = 'DEFAULT';
     public static readonly JOYFUL = 'JOYFUL';
 }
+export class AppMode {
+    public static readonly DEFAULT = 'DEFAULT';
+    public static readonly DARKMODE = 'DARKMODE';
+}
 
 export class StatusBarTheme {
     public static readonly SET_DEFAULT = '#BB000000';
