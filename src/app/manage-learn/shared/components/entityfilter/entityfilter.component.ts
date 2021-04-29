@@ -57,30 +57,6 @@ export class EntityfilterComponent implements OnInit {
     //   .getLocalStorage('profileRole')
   }
 
-  async getAllStatesApi() {
-    this.payload = await this.utils.getProfileInfo();
-    const config = {
-      url: urlConstants.API_URLS.ENTITY_LIST_BASED_ON_ENTITY_TYPE + 'state',
-      payload: this.payload,
-    };
-    this.loader.startLoader();
-    this.kendra.post(config).subscribe(
-      (success) => {
-        this.loader.stopLoader();
-        this.allStates = success.result;
-        if (this.allStates && this.allStates.length) {
-          this.selectedState = this.allStates.filter((s: any) => s.locationId == this.payload.state)[0];
-          this.selectedState = this.selectedState._id;
-          this.search();
-        }
-      },
-      (error) => {
-        this.loader.stopLoader();
-        this.allStates = [];
-      }
-    );
-  }
-
   async getTargettedEntityType() {
     this.payload = await this.utils.getProfileInfo();
     const config = {
@@ -219,7 +195,6 @@ export class EntityfilterComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getAllStatesApi();
     this.getTargettedEntityType();
   }
 }
