@@ -1614,4 +1614,16 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  sunbird-pdf-player .sunbird-pdf-palyer-container {
+    .sb-pdf-main-header{
+      .player-zoom-btns {
+        button{
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          color: var(--sbt-language-dropdown-bg) !important;
+        }
+      }
+    }
+  }
+
 }
