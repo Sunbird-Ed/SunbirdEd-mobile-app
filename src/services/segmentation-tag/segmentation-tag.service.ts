@@ -1,101 +1,119 @@
 import { Inject, Injectable } from "@angular/core";
-import { SBTagModule } from 'sb-tag-manager';
-import { AuthService, OAuthSession, SegmentationService } from 'sunbird-sdk';
-
-interface SBTagManager {
-    SBTagService: SBTagService;
-    isInitialised: boolean;
-    _container: any;
-    _isInitialised: boolean;
-
-    init(): void;
-}
-
-interface SBTagService {
-    __tagList: Object;
-    __tagObj: any;
-    __tagSnapShot: any;
-
-    // appendTag
-    // calculateTags: ƒ ()
-    getAllTags(): any;
-
-    // getTagAttributeValues: ƒ ()
-    // getTagAttributes: ƒ ()
-    getTags(prefix: string): any;
-    // propertiesToArray: ƒ (t)
-    // propertiesToArrayKeyValues: ƒ (t,e)
-    pushTag(tagContent: any, prefix): any;
-    removeAllTags(): void;
-    removeTag(prefix: string): void;
-}
-
+import { ProfileConstants } from "@app/app/app.constant";
+import { SBTagService, SBActionCriteriaService } from 'sb-tag-manager';
+import { AuthService, Profile, ProfileService, SegmentationService } from 'sunbird-sdk';
+import { AppGlobalService } from "../app-global-service.service";
+import { NotificationService } from '@app/services/notification.service';
+import * as _ from "dayjs/locale/*";
+import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
-    static readonly USER_ATRIBUTE = 'UA_';
+    static readonly USER_ATRIBUTE = 'USERFRAMEWORK_';
+    static readonly USER_LOCATION = 'USERLOCATION_';
+    static readonly CONTENT_ID = 'CONTENT_';
+    static readonly USER_LANG = 'USERLANG_';
+}
+
+export class CommandFunctions {
+    static readonly LOCAL_NOTIFICATION = 'LOCAL_NOTIF';
 }
 
 @Injectable()
 export class SegmentationTagService {
 
-    private sbTagManager: SBTagManager;
+    private exeCommands = [];
+
+    private comdList = [];
 
     constructor(
         @Inject('SEGMENTATION_SERVICE') private segmentationService: SegmentationService,
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('AUTH_SERVICE') private authService: AuthService,
+        private notificationSrc: NotificationService,
+        private appGlobalService: AppGlobalService,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+
     ) {
-        this.sbTagManager = SBTagModule.instance;
-        this.sbTagManager.init();
-        console.log('tagManager initialisation success', this.sbTagManager.isInitialised);
     }
 
-    presistTags(str?, str2?) {
-        if(str) {
-            this.segmentationService.putTags(str, str2)
-                .subscribe(response => console.log(response));
-        }
-        this.authService.getSession().toPromise().then((session: OAuthSession) => {
-            if (session && session.userToken) {
+    persistSegmentation() {
+        this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+        .then((userProfile: Profile) => {
+            if (userProfile && userProfile.uid) {
                 console.log(this);
-                let tagsObj = {
-                    __tagList: this.sbTagManager.SBTagService.__tagList,
-                    __tagObj: this.sbTagManager.SBTagService.__tagObj,
-                    __tagSnapShot: this.sbTagManager.SBTagService.__tagSnapShot
 
-                };
-                this.segmentationService.putTags(JSON.stringify(tagsObj), session.userToken)
-                .subscribe(response => console.log(response));
-            }
-        });
-    }
-
-    getPersistedTags() {
-        this.authService.getSession().toPromise().then((session: OAuthSession) => {
-            if (session && session.userToken) {
-                console.log(session.userToken);
-                let tagsObj = {
-                    __tagList: this.sbTagManager.SBTagService.__tagList,
-                    __tagObj: this.sbTagManager.SBTagService.__tagObj,
-                    __tagSnapShot: this.sbTagManager.SBTagService.__tagSnapShot
-                };
-                this.segmentationService.getTags(session.userToken)
+                this.segmentationService.saveTags(JSON.stringify(window['segmentation'].SBTagService), userProfile.uid)
                 .subscribe(response => {
-                    let object = JSON.parse(response);
-                    console.log(object);
-                    this.sbTagManager.SBTagService.__tagList = object.__tagList;
-                    this.sbTagManager.SBTagService.__tagObj = object.__tagObj;
-                    this.sbTagManager.SBTagService.__tagSnapShot = object.__tagSnapShot;
+                    console.log(response);
+                    response ? window['segmentation'].SBTagService.removeAllTags() : null;
+                });
+                this.segmentationService.saveCommandList(JSON.stringify(this.exeCommands), userProfile.uid).subscribe(response => {
+                    console.log(response);
+                    response ? this.exeCommands = [] : null;
                 });
             }
         });
     }
 
-    pushTag( tagContent: any, prefix: string ): void {
-        this.sbTagManager.SBTagService.pushTag(tagContent, prefix);
+    getPersistedSegmentaion() {
+        this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+        .then((userProfile: Profile) => {
+            if (userProfile && userProfile.uid) {
+                console.log(userProfile.uid);
+                this.segmentationService.getTags(userProfile.uid)
+                .subscribe(response => {
+                    if (response) {
+                        window['segmentation'].SBTagService.restoreTags(response);
+                    }
+                });
+
+                this.segmentationService.getCommand(userProfile.uid)
+                .subscribe(cmdList => {
+                    if (cmdList) {
+                        this.exeCommands = JSON.parse(cmdList);
+                    }
+                    this.getSegmentCommand();
+                });
+            }
+        });
     }
 
-    getAllTags(): any {
-        return this.sbTagManager.SBTagService.getAllTags();
+    getSegmentCommand() {
+        // FormConfig for Segment
+        this.formAndFrameworkUtilService.getSegmentationCommands()
+        .then(cmdList => {
+            if(cmdList && cmdList.length) {
+                this.comdList = cmdList;
+                this.evalCriteria();
+            }
+        });
     }
 
+    evalCriteria() {
+        const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
+            window['segmentation'].SBTagService.__tagList, 
+            this.comdList
+        );
+        this.executeCommand(validCommand);
+    }
+
+    executeCommand(validCmdList) {
+        /*
+        ** check if command already exist in command list
+        ** check if command already executed, then do nothing
+        ** if new command then execute command and store it in executedCommandList
+        */
+        validCmdList.forEach(cmdCriteria => {
+            if (!this.exeCommands.find(ele => ele.commandId === cmdCriteria.commandId)) {
+                switch(cmdCriteria.controlFunction) {
+                    case CommandFunctions.LOCAL_NOTIFICATION:
+                        this.notificationSrc.setupLocalNotification( null, cmdCriteria.controlFunctionPayload);
+                        this.exeCommands.push(cmdCriteria);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
 }

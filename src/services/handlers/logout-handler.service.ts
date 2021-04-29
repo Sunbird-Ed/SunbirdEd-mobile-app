@@ -11,6 +11,7 @@ import {
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { ContainerService } from '../container.services';
+import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
@@ -28,7 +29,8 @@ export class LogoutHandlerService {
     private appGlobalService: AppGlobalService,
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router
+    private router: Router,
+    private segmentationTagService: SegmentationTagService
   ) {
   }
 
@@ -36,6 +38,8 @@ export class LogoutHandlerService {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       return this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
+
+    this.segmentationTagService.persistSegmentation();
 
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.LOGOUT_INITIATE, '');
@@ -63,6 +67,7 @@ export class LogoutHandlerService {
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
+        this.segmentationTagService.getPersistedSegmentaion();
       })
     ).subscribe();
   }

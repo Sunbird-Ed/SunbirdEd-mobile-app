@@ -43,6 +43,7 @@ import { isObject } from 'util';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { NavigationService } from '../../services/navigation-handler.service';
 import { CsContentType, CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
+import { SegmentationTagService } from '../../services/segmentation-tag/segmentation-tag.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -119,6 +120,15 @@ describe('collectionDetailEtbPage', () => {
         navigateToCollection: jest.fn()
     };
 
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
+    
     beforeEach(() => {
         const div = document.createElement('div');
         document.body.appendChild(div);

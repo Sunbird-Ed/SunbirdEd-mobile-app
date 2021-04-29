@@ -69,7 +69,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
 import { ProfileHandler } from '@app/services/profile-handler';
-import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile',
@@ -162,8 +162,7 @@ export class ProfilePage implements OnInit {
     private toastController: ToastController,
     private translate: TranslateService,
     private certificateDownloadAsPdfService: CertificateDownloadAsPdfService,
-    private profileHandler: ProfileHandler,
-    private segmentationTagService: SegmentationTagService
+    private profileHandler: ProfileHandler
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -293,12 +292,12 @@ export class ProfilePage implements OnInit {
                 that.resetProfile();
                 that.profile = profileData;
                 // ******* Segmentation
-                this.segmentationTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE);
-                let orgRawTag = [];
-                profileData['organisations'][0].locations.forEach(element => {
-                  orgRawTag.push(element.name);
+                window['segmentation'].SBTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+                let userLocation = [];
+                profileData['userLocations'].forEach(element => {
+                  userLocation.push({ name: element.name, code: element.code });
                 });
-                this.segmentationTagService.pushTag(orgRawTag, TagPrefixConstants.USER_ATRIBUTE);
+                window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
                 // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();

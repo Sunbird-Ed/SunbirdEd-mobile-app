@@ -31,14 +31,7 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
-import { SBTagModule } from 'sb-tag-manager';
-jest.mock('sb-tag-manager', () => ({
-    SBTagModule: {
-        instance: {
-            init: jest.fn()
-        }
-    }
-}));
+import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 
 declare const supportfile;
 declare const plugins;
@@ -57,6 +50,7 @@ describe('AppComponent', () => {
             checkForImmediateUpdate: jest.fn()
         }
     };
+
     const mockActivePageService: Partial<ActivePageService> = {
         computePageId: jest.fn(() => 'sample-page-id')
     };
@@ -157,6 +151,10 @@ describe('AppComponent', () => {
     };
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        getPersistedSegmentaion: jest.fn(),
+        persistSegmentation: jest.fn()
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -192,30 +190,21 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockSegmentationTagService as SegmentationTagService,
         );
     });
 
     beforeEach(() => {
         jest.clearAllMocks();
+        global.window.segmentation = null;
     });
 
     it('should be create a instance of appComponent', () => {
         expect(appComponent).toBeTruthy();
+        console.log('Window', window);
+        
     });
-
-    // describe('constructor', () => {
-    //     it('should call on platform ready', (done) => {
-    //         spyOn(supportfile, 'makeEntryInSunbirdSupportFile').and.callFake((a, b) => {
-    //             setTimeout(() => {
-    //                 setTimeout(() => {
-    //                     a();
-    //                     done();
-    //                 }, 0);
-    //             });
-    //         });
-    //     });
-    // });
 
     describe('ngOnInit', () => {
         beforeEach(() => {

@@ -123,6 +123,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.platform.ready().then(async () => {
+      window['segmentation'] = SBTagModule.instance;
+      if (!window['segmentation'].isInitialised) {
+        window['segmentation'].init();
+      }
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
@@ -140,7 +144,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             os: deviceSpec.os,
             make: deviceSpec.make
           };
-          this.segmentationTagService.pushTag(devSpec, TagPrefixConstants.DEVICE_CONFIG);
+          console.log(window['segmentation'].SBTagService.pushTag);
+          console.log(devSpec);
+          window['segmentation'].SBTagService.pushTag(devSpec, TagPrefixConstants.DEVICE_CONFIG, true);
           this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
         });
       this.generateNetworkTelemetry();
@@ -171,8 +177,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       await this.checkForTheme();
       this.onTraceIdUpdate();
       await this.applyJoyfulTheme();
-      window['SBTagManager'] = SBTagModule.instance;
-      window['SBTagManager'].init();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -203,6 +207,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
+    this.segmentationTagService.getPersistedSegmentaion();
   }
 
   // TODO: make this as private
@@ -446,7 +451,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
-        this.segmentationTagService.getPersistedTags();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
@@ -493,7 +497,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.notificationSrc.handleNotification();
       this.isForeground = true;
-      this.segmentationTagService.getPersistedTags();
+      this.segmentationTagService.getPersistedSegmentaion();
+      console.log('Resumed');
     });
 
     this.platform.pause.subscribe(() => {
@@ -501,7 +506,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
       }
       this.isForeground = false;
-      this.segmentationTagService.presistTags();
+      console.log('Paused');
+      
+      this.segmentationTagService.persistSegmentation();
     });
   }
 
@@ -849,7 +856,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
           this.logoutHandlerService.onLogout();
-          this.segmentationTagService.presistTags();
         }
         break;
 
