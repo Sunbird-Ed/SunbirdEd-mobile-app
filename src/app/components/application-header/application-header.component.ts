@@ -20,7 +20,7 @@ import {
 } from 'sunbird-sdk';
 import {
   AppThemes, EventTopics, GenericAppConfig, PreferenceKey,
-  ProfileConstants, RouterLinks, SwitchableTabsConfig
+  ProfileConstants, RouterLinks, SwitchableTabsConfig,AppMode
 } from '../../../app/app.constant';
 import {
   ActivePageService, AppGlobalService,
@@ -60,10 +60,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   managedProfileList$: Observable<ServerProfile[]> = EMPTY;
   userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
   appTheme = AppThemes.DEFAULT;
-  accessibleTheme="accessible";
   unreadNotificationsCount = 0;
   isUpdateAvailable = false;
   currentSelectedTabs: string;
+  isDarkMode:boolean;
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -133,6 +133,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.setAppLogo();
     });
     this.appTheme = document.querySelector('html').getAttribute('data-theme');
+    this.preference.getString('data-mode').subscribe((val)=>{
+      this.isDarkMode=val==AppMode.DARKMODE?true:false
+    });
     this.checkForAppUpdate().then();
   }
 
@@ -401,6 +404,23 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.appTheme = AppThemes.DEFAULT;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
       document.querySelector('html').setAttribute('device-accessable-theme', '');
+      this.appHeaderService.hideStatusBar();
+    }
+    this.menuCtrl.close();
+  }
+  async switchMode(){
+    if (document.querySelector('html').getAttribute('data-mode') === AppMode.DEFAULT) {
+      this.isDarkMode=true
+      this.appTheme = AppMode.DARKMODE;
+      document.querySelector('html').setAttribute('data-mode', AppMode.DARKMODE);
+      await this.preference.putString('data-mode', AppMode.DARKMODE).toPromise();
+      this.appHeaderService.showStatusBar().then();
+    } else {
+      document.querySelector('html').setAttribute('data-mode', AppMode.DARKMODE);
+      this.isDarkMode=false
+      this.appTheme = AppMode.DEFAULT;
+      document.querySelector('html').setAttribute('data-mode', AppMode.DEFAULT);
+      await this.preference.putString('data-mode', AppMode.DEFAULT).toPromise();
       this.appHeaderService.hideStatusBar();
     }
     this.menuCtrl.close();

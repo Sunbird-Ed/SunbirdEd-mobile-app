@@ -516,7 +516,7 @@ export class UtilsService {
                   }
                 }
                 
-                obj['role'] = profileData['userSubType'] ? profileData['userSubType'].toUpperCase() : null;
+                obj['role'] = profileData['profileUserType'] && profileData['profileUserType']['subType'] ? profileData['profileUserType']['subType'].toUpperCase() : null;
                 resolve(obj)
               });
             }).catch(err => {

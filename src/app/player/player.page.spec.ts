@@ -87,10 +87,10 @@ describe('PlayerPage', () => {
     const mockFileOpener: Partial<FileOpener> = {};
     const mockTransfer: Partial<FileTransfer> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
-    const mockprintPdfService: Partial<PrintPdfService> = {}
-    const mockprofileService : Partial<ProfileService> = {};
-    const mockContentService : Partial<ContentService> = {};
-    
+    const mockprintPdfService: Partial<PrintPdfService> = {};
+    const mockContentService: Partial<ContentService> = {};
+
+    const mockprofileService: Partial<ProfileService> = {};
     beforeAll(() => {
         playerPage = new PlayerPage(
             mockCourseService as CourseService,
@@ -167,7 +167,48 @@ describe('PlayerPage', () => {
 
     });
 
-   it('should return new  player config' , (done) => {
+    it('should return new  player config', (done) => {
+        playerPage.config = {
+            context: {
+                objectRollup: {
+                    l1: 'li'
+                },
+                dispatcher: {
+                    dispatch: jest.fn()
+                },
+                pdata: {
+                    pid: 'sunbird.app.contentplayer'
+                },
+                actor: {id: 'sample'}
+            },
+            metadata: {
+                identifier: 'identifier',
+                mimeType: 'application/pdf',
+                isAvailableLocally: true,
+                basePath: 'basePath',
+                contentData: {
+                    isAvailableLocally: true,
+                    basePath: 'basePath',
+                    streamingUrl: 'streamingurl'
+                }
+            }
+
+        }
+        mockprofileService.getActiveSessionProfile = jest.fn(() => of({
+            serverProfile: {
+                firstName: 'firstName',
+                lastName: 'lastname'
+            }
+        })) as any;
+        playerPage.getNewPlayerConfiguration();
+        setTimeout(() => {
+            expect(mockprofileService.getActiveSessionProfile).toBeCalled();
+            done();
+        }, 0)
+        //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
+    })
+
+    it('should call the get question read api for instructions', (done) =>{
         playerPage.config = {
             context: {
                 objectRollup: {
@@ -182,30 +223,41 @@ describe('PlayerPage', () => {
             },
             metadata: {
                 identifier: 'identifier',
-                mimeType: 'application/pdf',
                 isAvailableLocally: true,
                 basePath: 'basePath',
+                instructions: 'int',
                 contentData: {
+                    mimeType: 'application/vnd.sunbird.questionset',
                     isAvailableLocally: true,
                     basePath: 'basePath',
                     streamingUrl: 'streamingurl'
                 }
             }
-          
         }
+
         mockprofileService.getActiveSessionProfile = jest.fn(() => of({
             serverProfile:{
                 firstName: 'firstName', 
                 lastName: 'lastname'
             }
         })) as any;
-         playerPage.getNewPlayerConfiguration();
-         setTimeout(() => {
-             expect(mockprofileService.getActiveSessionProfile).toBeCalled();
-             done();
-         } , 0)
-        //  expect(playerPage.getNewPlayerConfiguration()).toHaveBeenCalled();
-    })
+
+        mockContentService.getQuestionSetRead = jest.fn(() => of(
+            {
+                questionset: {
+                    instructions:{
+                        default: 'sample instructions'
+                    }
+                }
+            }
+        )) as any;
+        playerPage.getNewPlayerConfiguration();
+        setTimeout(() =>{
+        expect(mockContentService.getQuestionSetRead).toHaveBeenCalled();
+         done()
+        } , 0)
+    });
+
     it('should check if new player is enabled', () => {
         const config = {
             fields: [
@@ -229,7 +281,7 @@ describe('PlayerPage', () => {
                 }
             ]
         }
-          playerPage.checkIsPlayerEnabled(config , 'pdfPlayer');
+        playerPage.checkIsPlayerEnabled(config, 'pdfPlayer');
     })
     it('should return a content', (done)=> {
        mockContentService.nextContent = jest.fn(()=> of({
@@ -302,13 +354,13 @@ describe('PlayerPage', () => {
                 }
 
             };
-            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+            jest.spyOn(playerPage, 'checkIsPlayerEnabled').mockImplementation(() => {
                 return {
                     name: 'pdfPlayer'
                 }
             })
-            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
-                
+            jest.spyOn(playerPage, 'getNewPlayerConfiguration').mockImplementation(() => {
+
                 return Promise.resolve(playerPage.config);
 
             })
@@ -376,12 +428,12 @@ describe('PlayerPage', () => {
                     }
                 }
             };
-            jest.spyOn(playerPage , 'checkIsPlayerEnabled').mockImplementation(() => {
+            jest.spyOn(playerPage, 'checkIsPlayerEnabled').mockImplementation(() => {
                 return {
                     name: 'pdfPlayer'
                 }
             })
-            jest.spyOn(playerPage , 'getNewPlayerConfiguration').mockImplementation(() => {
+            jest.spyOn(playerPage, 'getNewPlayerConfiguration').mockImplementation(() => {
                 return Promise.resolve(playerPage.config);
             });
             jest.spyOn(playerPage , 'getNextContent').mockImplementation(() => {
@@ -554,7 +606,7 @@ describe('PlayerPage', () => {
             });
         });
 
-       
+
     });
     describe('pdfPlayerEvents', () => {
         it('should exit the player', (done) => {
@@ -606,7 +658,7 @@ describe('PlayerPage', () => {
             };
             mockCommonUtilService.showToast = jest.fn();
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
-                    reason: 'device-permission-denied'
+                reason: 'device-permission-denied'
             }));
             playerPage.playerEvents(event);
             setTimeout(() => {
@@ -629,7 +681,7 @@ describe('PlayerPage', () => {
             };
             mockCommonUtilService.showToast = jest.fn();
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
-                    reason: 'user-permission-denied'
+                reason: 'user-permission-denied'
             }));
             playerPage.playerEvents(event);
             setTimeout(() => {
@@ -652,7 +704,7 @@ describe('PlayerPage', () => {
             };
             mockCommonUtilService.showToast = jest.fn();
             mockDownloadPdfService.downloadPdf = jest.fn(() => Promise.reject({
-                    reason: 'download-failed'
+                reason: 'download-failed'
             }));
             playerPage.playerEvents(event);
             setTimeout(() => {
@@ -665,7 +717,7 @@ describe('PlayerPage', () => {
         it('should handle the share event', (done) => {
             const event = {
                 edata: {
-                        type: 'SHARE'
+                    type: 'SHARE'
                 }
             };
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
@@ -675,7 +727,7 @@ describe('PlayerPage', () => {
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 done();
-            },50);
+            }, 50);
 
         });
         it('should handle the content compatibility error', (done) => {
@@ -684,7 +736,7 @@ describe('PlayerPage', () => {
                     type: 'compatibility-error'
                 }
             };
-            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => {});
+            global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate = jest.fn(() => { });
             playerPage.playerEvents(event);
             setTimeout(() => {
                 expect(global.window.cordova.plugins.InAppUpdateManager.checkForImmediateUpdate).toHaveBeenCalled();
@@ -693,5 +745,5 @@ describe('PlayerPage', () => {
         });
     });
 
-    
+
 });

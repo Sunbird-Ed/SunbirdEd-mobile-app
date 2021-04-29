@@ -329,6 +329,21 @@
           </div>
         </ion-item>
 
+        <ion-item (click)="switchMode()">
+          <span class="sb-menu-icon dark-mode-icon">
+            <img src="./assets/imgs/darkmode.svg" class="tool-icon sb-menu-item-switch" alt="darkmode">
+          </span>
+          <span *ngIf="!isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DARK_MODE' | translate}}</span>
+            <span *ngIf="isDarkMode" class="sb-menu-item" menuClose>{{'SWITCH_TO_DEFAULT' | translate}}</span>
+            <div class="onoffswitch">
+                <input type="checkbox" (click)="switchMode()" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" [(ngModel)]="isDarkMode">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <div class="onoffswitch-inner"></div>
+                    <div class="onoffswitch-switch"></div>
+                </label>
+            </div>
+      </ion-item>
+
         <ion-item (click)="emitSideMenuItemEvent($event, 'IMPORT')">
           <span class="sb-menu-icon">
             <img src="./assets/imgs/ic_import.png" class="tool-icon" alt="import">
