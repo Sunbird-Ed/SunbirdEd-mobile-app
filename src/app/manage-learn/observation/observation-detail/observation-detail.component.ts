@@ -7,7 +7,6 @@ import { EntityfilterComponent } from '../../shared/components/entityfilter/enti
 import { LoaderService, LocalStorageService, ToastService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { AssessmentApiService } from '../../core/services/assessment-api.service';
-import { StateModalComponent } from '../../shared/components/state-modal/state-modal.component';
 import { DhitiApiService } from '../../core/services/dhiti-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ObservationService } from '../observation.service';
