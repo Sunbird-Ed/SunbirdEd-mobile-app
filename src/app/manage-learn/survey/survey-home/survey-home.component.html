@@ -20,7 +20,7 @@
         <span
           class="dot"
           [style.background-color]="setStatusColor(item?.status)"
-          *ngIf="setStatusColor(item?.status)"
+          *ngIf="setStatusColor(item?.status) && isReport==false"
           color
         ></span>
         <ion-icon
@@ -30,14 +30,14 @@
           *ngIf="item?.status != 'completed' && item.submissionId"
         ></ion-icon>
         <!-- *ngIf="item?.status == 'completed' || !item.submissionId" -->
-        <ion-button
+        <!-- <ion-button
           report
           round
-          *ngIf="item?.status == 'completed' || item.isCreator"
+          *ngIf="(item?.status == 'completed' || item.isCreator) && isReport==true"
           (click)="$event.stopPropagation(); checkReport(item)"
         >
           {{ 'FRMELEMNTS_LBL_REPORTS' | translate }}
-        </ion-button>
+        </ion-button> -->
       </app-item-list-card>
     </div>
   </ion-content>

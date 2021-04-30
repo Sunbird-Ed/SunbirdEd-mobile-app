@@ -7,7 +7,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-survey-home',
@@ -27,6 +27,7 @@ export class SurveyHomeComponent implements OnInit {
   surveyList: any;
   submissionArr: any;
   count: any;
+  isReport: boolean = false;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -35,7 +36,8 @@ export class SurveyHomeComponent implements OnInit {
     private loader: LoaderService,
     private utils: UtilsService,
     private kendra: KendraApiService,
-    private toast: ToastService
+    private toast: ToastService,
+    private route: ActivatedRoute
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -48,6 +50,14 @@ export class SurveyHomeComponent implements OnInit {
   ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
+    this.route.queryParams.subscribe((params) => {
+      if (params && params.report) {
+        this.isReport = true;
+      } else {
+        this.isReport = false;
+      }
+    });
+
     this.surveyList = [];
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
 
@@ -133,21 +143,26 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   onSurveyClick(survey) {
-    if (survey.status == 'completed') {
-      this.surveyProvider.showMsg('surveyCompleted');
-      return;
-    }
+    if (this.isReport == false) {
 
-    if (survey.status == 'expired') {
-      // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
-      this.surveyProvider.showMsg('surveyExpired');
-      return;
-    }
+      // if (survey.status == "completed") {
+      //   // this.surveyProvider.showMsg('surveyCompleted');    
+      //   return;
+      // }
+
+      // if (survey.status == "expired") {
+      //   // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
+      //   this.surveyProvider.showMsg("surveyExpired");
+      //   return;
+      // }
 
     // surveyId changed to _id
     survey.downloaded
       ? this.redirect(survey.submissionId)
       : this.getSurveyById(survey._id, survey.solutionId, survey.isCreator);
+    } else {
+      this.checkReport(survey);
+  }
   }
 
   redirect(submissionId: any): void {
@@ -207,15 +222,15 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   checkReport(survey) {
-    if (survey.submissionId) {
-      this.router.navigate([RouterLinks.GENERIC_REPORT], {
-        state: {
-          survey: true,
-          submissionId: survey.submissionId,
-        },
-      });
-      return;
-    }
+    // if (survey.submissionId) {
+    //   this.router.navigate([RouterLinks.GENERIC_REPORT], {
+    //     state: {
+    //       survey: true,
+    //       submissionId: survey.submissionId,
+    //     },
+    //   });
+    //   return;
+    // }
 
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {

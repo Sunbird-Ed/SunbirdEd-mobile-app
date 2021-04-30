@@ -3,7 +3,7 @@ import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink,NavigationExtras} from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -73,6 +73,15 @@ export class ReportsListingComponent implements OnInit {
     this.location.back();
   }
   onReportClick(item) {
+    if (item.link == "survey") {
+      let navigationExtras: NavigationExtras = {
+        queryParams: {
+          report: true,
+        },
+      };
+      this.router.navigate([item.link], navigationExtras);
+    } else {
     this.router.navigate([item.link]);
   }
+ }
 }
