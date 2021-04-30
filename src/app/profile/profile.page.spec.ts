@@ -123,6 +123,15 @@ describe('Profile.page', () => {
         getSubPersona: jest.fn()
     };
 
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
+
     beforeAll(() => {
         profilePage = new ProfilePage(
             mockProfileService as ProfileService,
