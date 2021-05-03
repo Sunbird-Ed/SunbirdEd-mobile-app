@@ -16,6 +16,7 @@ import map from 'lodash/map';
 import {CommonUtilService} from '@app/services/common-util.service';
 import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
 import {Events} from '@app/util/events';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 export class UpdateProfileService {
     profile: Profile;
@@ -34,6 +35,7 @@ export class UpdateProfileService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private events: Events,
         private appGlobalService: AppGlobalService,
+        private sbProgressLoader: SbProgressLoader
     ) {
     }
 
@@ -236,8 +238,10 @@ export class UpdateProfileService {
                 this.appGlobalService.guestUserProfile = res;
                 this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
                     req, 'auto');
+                this.sbProgressLoader.hide({id: 'DEFAULT'});
             })
             .catch(() => {
+                this.sbProgressLoader.hide({id: 'DEFAULT'});
             });
     }
 
