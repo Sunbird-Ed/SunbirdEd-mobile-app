@@ -1054,14 +1054,17 @@ describe('AppComponent', () => {
                 success({});
                 error('');
             });
+            mockNotificationSrc.handleNotification = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
             mockNotificationSrc.setNotificationParams = jest.fn();
-
+            mockCommonUtilService.populateGlobalCData = jest.fn(() => Promise.resolve());
+            mockHeaderService.hideHeader = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
+                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.FCM,
