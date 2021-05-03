@@ -1453,11 +1453,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
+      let isConsentPopUpClosed = false;
+      if (this.isConsentPopUp && !isConsentPopUpClosed && this.popoverCtrl) {
+        isConsentPopUpClosed = true;
+        this.isConsentPopUp = false;
+        this.popoverCtrl.dismiss();
+      }
 
       if (await this.onboardingSkippedBackAction()) {
         return;
       }
-      this.goBack();
+      if (!isConsentPopUpClosed) {
+        this.goBack();
+      }
     });
   }
 
