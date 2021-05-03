@@ -448,7 +448,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -521,7 +520,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -593,7 +591,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -743,6 +740,23 @@ describe('PlayerPage', () => {
             }, 50);
         });
     });
+
+    it('it should get the telemetry events', (done) => {
+        jest.spyOn(SunbirdSdk, 'instance', 'get').mockReturnValue({
+            telemetryService: {
+                saveTelemetry: jest.fn((request: string) => {
+                    return of(true).pipe(
+                        finalize(() => {
+                            done();
+
+                        })
+                    );
+                })
+            } as Partial<TelemetryService> as TelemetryService
+        } as Partial<SunbirdSdk> as SunbirdSdk);
+        playerPage.playerTelemetryEvents({});
+        expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
+    })
 
     
 });
