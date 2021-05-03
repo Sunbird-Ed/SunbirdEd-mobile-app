@@ -1057,6 +1057,7 @@ describe('AppComponent', () => {
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
             mockNotificationSrc.setNotificationParams = jest.fn();
+            mockNotificationSrc.handleNotification = jest.fn();
 
             // act
             appComponent.ngOnInit();
