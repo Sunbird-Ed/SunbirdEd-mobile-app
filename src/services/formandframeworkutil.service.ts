@@ -756,4 +756,15 @@ export class FormAndFrameworkUtilService {
         const formData  = await this.formService.getForm(formRequest).toPromise() as any;
         return  (formData && formData.form && formData.form.data && formData.form.data.fields) || [];
     }
+
+    async getSegmentationCommands() {
+
+        const formRequest: FormRequest = {
+            type: 'config',
+            subType: 'segmentation',
+            action: 'get',
+            component: 'app'
+        };
+        return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
+    }
 }

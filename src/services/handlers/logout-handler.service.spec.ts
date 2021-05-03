@@ -9,6 +9,7 @@ import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '
 import { of, from } from 'rxjs';
 import { InteractSubtype, Environment, PageId } from '../telemetry-constants';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { SegmentationTagService } from '../segmentation-tag/segmentation-tag.service';
 
 describe('LogoutHandlerService', () => {
     let logoutHandlerService: LogoutHandlerService;
@@ -46,6 +47,10 @@ describe('LogoutHandlerService', () => {
     const mockRoute: Partial<Router> = {
         navigate: jest.fn()
     };
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        persistSegmentation: jest.fn(),
+        getPersistedSegmentaion: jest.fn()
+    };
 
     beforeAll(() => {
         logoutHandlerService = new LogoutHandlerService(
@@ -57,7 +62,8 @@ describe('LogoutHandlerService', () => {
             mockAppGlobalService as AppGlobalService,
             mockContainerService as ContainerService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockRoute as Router
+            mockRoute as Router,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 
