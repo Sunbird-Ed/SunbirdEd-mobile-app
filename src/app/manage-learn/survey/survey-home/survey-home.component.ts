@@ -53,8 +53,6 @@ export class SurveyHomeComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params && params.report) {
         this.isReport = true;
-      } else {
-        this.isReport = false;
       }
     });
 
@@ -143,7 +141,7 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   onSurveyClick(survey) {
-    if (this.isReport == false) {
+    if (!this.isReport) {
 
       // if (survey.status == "completed") {
       //   // this.surveyProvider.showMsg('surveyCompleted');    
@@ -160,9 +158,10 @@ export class SurveyHomeComponent implements OnInit {
     survey.downloaded
       ? this.redirect(survey.submissionId)
       : this.getSurveyById(survey._id, survey.solutionId, survey.isCreator);
-    } else {
+      return;
+    } 
       this.checkReport(survey);
-  }
+  
   }
 
   redirect(submissionId: any): void {
@@ -222,15 +221,15 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   checkReport(survey) {
-    // if (survey.submissionId) {
-    //   this.router.navigate([RouterLinks.GENERIC_REPORT], {
-    //     state: {
-    //       survey: true,
-    //       submissionId: survey.submissionId,
-    //     },
-    //   });
-    //   return;
-    // }
+    if (survey.submissionId) {
+      this.router.navigate([RouterLinks.GENERIC_REPORT], {
+        state: {
+          survey: true,
+          submissionId: survey.submissionId,
+        },
+      });
+      return;
+    }
 
     this.router.navigate([RouterLinks.GENERIC_REPORT], {
       state: {

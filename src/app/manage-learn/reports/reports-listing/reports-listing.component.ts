@@ -73,15 +73,15 @@ export class ReportsListingComponent implements OnInit {
     this.location.back();
   }
   onReportClick(item) {
-    if (item.link == "survey") {
-      let navigationExtras: NavigationExtras = {
-        queryParams: {
-          report: true,
-        },
-      };
-      this.router.navigate([item.link], navigationExtras);
-    } else {
-    this.router.navigate([item.link]);
-  }
+    if (item.link != "survey") {
+      this.router.navigate([item.link]);
+      return;
+    }
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        report: true,
+      },
+    };
+    this.router.navigate([item.link], navigationExtras);
  }
 }
