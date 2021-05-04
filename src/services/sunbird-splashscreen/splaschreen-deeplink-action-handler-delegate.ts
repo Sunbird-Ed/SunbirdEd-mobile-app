@@ -127,34 +127,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (payload && payload.url) {
       this.handleDeeplink(payload.url);
     } else if (payload && payload.action) {
-      switch (payload.action) {
-        case 'ACTION_SEARCH':
-          this.handleSearch(payload.data);
-          break;
-        case 'ACTION_GOTO':
-          if (payload.data && payload.data.request.params) {
-            const navigationExtras: NavigationExtras = {
-              state: {
-                params: payload.data.request.params
-              }
-            };
-            this.router.navigate([payload.data.request.route], navigationExtras);
-          } else {
-            this.router.navigate([payload.data.request.route]);
-          }
-          break;
-        case 'ACTION_SETPROFILE':
-          this.updateProfile(payload.data);
-          break;
-        case 'ACTION_PLAY':
-          this.navigateToDetailsPage(payload.data);
-          break;
-        case 'ACTION_DEEPLINK':
-          this.handleDeeplink(payload.data.request.url);
-          break;
-        default:
-          return of (undefined);
-      }
+      this.handleVendorAppAction(payload);
     }
     return of(undefined);
   }
@@ -810,6 +783,7 @@ private async upgradeAppPopover(requiredVersionCode) {
                 content,
                 corRelation: this.getCorrelationList(payloadUrl, corRelationList)
               });
+              this.closeProgressLoader();
               break;
           }
           break;
@@ -824,6 +798,7 @@ private async upgradeAppPopover(requiredVersionCode) {
                   isFromChannelDeeplink,
                   corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                 });
+                this.closeProgressLoader();
               } else {
                 const fetchEnrolledCourseRequest: FetchEnrolledCourseRequest = {
                   userId: await this.appGlobalServices.getActiveProfileUid(),
@@ -845,6 +820,7 @@ private async upgradeAppPopover(requiredVersionCode) {
                     isOnboardingSkipped,
                     corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                   });
+                  this.closeProgressLoader();
                 } else { // not enrolled in batch
                   this.setTabsRoot();
                   this.navService.navigateToTrackableCollection({
@@ -852,6 +828,7 @@ private async upgradeAppPopover(requiredVersionCode) {
                     isFromChannelDeeplink,
                     corRelation: this.getCorrelationList(payloadUrl, corRelationList)
                   });
+                  this.closeProgressLoader();
                 }
               }
               break;
@@ -881,12 +858,14 @@ private async upgradeAppPopover(requiredVersionCode) {
             isFromChannelDeeplink,
             corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
+          this.closeProgressLoader();
           break;
         case 0:
           this.navService.navigateToCollection({
             content,
             corRelation: this.getCorrelationList(payloadUrl, corRelationList)
           });
+          this.closeProgressLoader();
           break;
       }
     }
@@ -973,12 +952,13 @@ private async upgradeAppPopover(requiredVersionCode) {
     }
   }
 
-  private updateProfile(payloadProfileAttribute) {
+  private async updateProfile(payloadProfileAttribute) {
     const currentProfile = this.appGlobalServices.getCurrentUser();
     this.updateProfileService.checkProfileData(payloadProfileAttribute.request, currentProfile);
   }
 
-  private handleSearch(payload) {
+  private async handleSearch(payload) {
+    this.closeProgressLoader();
     const extras: NavigationExtras = {
       state: {
         preAppliedFilter: payload.request
@@ -991,6 +971,40 @@ private async upgradeAppPopover(requiredVersionCode) {
     if (payload.request.objectId || payload.request.collection) {
       const content = await this.getContentData(payload.request.objectId || payload.request.collection);
       await this.navigateContent(payload.objectId, false, content, null, null, null);
+    }
+  }
+
+  private async handleVendorAppAction(payload) {
+    this.progressLoaderId = 'DEFAULT';
+    await this.sbProgressLoader.show();
+    switch (payload.action) {
+      case 'ACTION_SEARCH':
+        await this.handleSearch(payload.data);
+        break;
+      case 'ACTION_GOTO':
+        this.closeProgressLoader();
+        if (payload.data && payload.data.request.params) {
+          const navigationExtras: NavigationExtras = {
+            state: {
+              params: payload.data.request.params
+            }
+          };
+          await this.router.navigate([payload.data.request.route], navigationExtras);
+        } else {
+          await this.router.navigate([payload.data.request.route]);
+        }
+        break;
+      case 'ACTION_SETPROFILE':
+        await this.updateProfile(payload.data);
+        break;
+      case 'ACTION_PLAY':
+        await this.navigateToDetailsPage(payload.data);
+        break;
+      case 'ACTION_DEEPLINK':
+        await this.handleDeeplink(payload.data.request.url);
+        break;
+      default:
+        return of (undefined);
     }
   }
 }
