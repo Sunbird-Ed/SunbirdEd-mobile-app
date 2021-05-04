@@ -275,49 +275,68 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
             }, 0);
         });
 
-        it('should check for payload and action if its search navigate to SearchPage', () => {
+        it('should check for payload and action if its search navigate to SearchPage', (done) => {
             // arrange
             mockRouter.navigate = jest.fn();
+            mockSbProgressLoader.show = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_SEARCH', data: {request: 'sample'}});
             // assert
-            expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH], {state: {preAppliedFilter: 'sample'}});
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SEARCH], {state: {preAppliedFilter: 'sample'}});
+                done();
+            }, 0);
         });
 
         describe('action_GOTO', () => {
-            it('should handle payload and action navigation goTO', () => {
+            it('should handle payload and action navigation goTO', (done) => {
                 // arrange
                 mockRouter.navigate = jest.fn();
+                mockSbProgressLoader.show = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({
                     action: 'ACTION_GOTO',
                     data: {request: {params: 'sample', route: 'sample'}}
                 });
                 // assert
-                expect(mockRouter.navigate).toHaveBeenCalledWith(['sample'], {state: {params: 'sample'}});
+                setTimeout(() => {
+                    expect(mockRouter.navigate).toHaveBeenCalledWith(['sample'], {state: {params: 'sample'}});
+                    done();
+                }, 0);
             });
 
-            it('should handle and navigate if there is no data request', () => {
+            it('should handle and navigate if there is no data request', (done) => {
                 // arrange
                 mockRouter.navigate = jest.fn();
+                mockSbProgressLoader.show = jest.fn();
+                mockSbProgressLoader.hide = jest.fn();
                 // act
                 splaschreenDeeplinkActionHandlerDelegate.onAction({action: 'ACTION_GOTO', data: {request: {route: 'sample'}}});
                 // assert
-                expect(mockRouter.navigate).toHaveBeenCalledWith(['sample']);
+                setTimeout(() => {
+                    expect(mockRouter.navigate).toHaveBeenCalledWith(['sample']);
+                    done();
+                }, 0);
             });
         });
 
-        it('should look for ACTION_SETPROFILE and if matches update profile according to the data', () => {
+        it('should look for ACTION_SETPROFILE and if matches update profile according to the data', (done) => {
             // arrange
             mockUpdateProfileService.checkProfileData = jest.fn();
             mockAppGlobalService.getCurrentUser = jest.fn();
+            mockSbProgressLoader.show = jest.fn();
             // act
             splaschreenDeeplinkActionHandlerDelegate.onAction({
                 action: 'ACTION_SETPROFILE',
                 data: {request: {board: ['CBSE'], medium: ['English'], grade: ['Class 10']}}
             });
             // assert
-            expect(mockUpdateProfileService.checkProfileData).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockUpdateProfileService.checkProfileData).toHaveBeenCalled();
+                done();
+            }, 0);
         });
 
         it('should navigate to details page if ACTION_PLAY is set', (done) => {
@@ -481,8 +500,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
                 mockContentService.getChildContents = jest.fn(() => of());
                 mockNavigationService.navigateToCollection = jest.fn();
                 // act
-                splaschreenDeeplinkActionHandlerDelegate.onAction({url: 'https://staging.ntp.net.in/play/' +
-                        'collection/do_21271706502665830417247?contentId=do_21271701994615603217195'});
+                splaschreenDeeplinkActionHandlerDelegate.onAction({
+                    url: 'https://staging.ntp.net.in/play/' +
+                        'collection/do_21271706502665830417247?contentId=do_21271701994615603217195'
+                });
                 // assert
                 setTimeout(() => {
                     expect(mockQRScannerResultHandler.parseDialCode).toHaveBeenCalled();
