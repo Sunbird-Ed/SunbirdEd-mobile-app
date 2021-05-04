@@ -417,7 +417,8 @@ export class CoursesPage implements OnInit, OnDestroy {
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
         guestUser: this.guestUser,
-        userId: this.userId
+        userId: this.userId,
+        searchWithBackButton: true
       }
     });
   }
