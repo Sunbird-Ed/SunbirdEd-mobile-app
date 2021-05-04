@@ -241,7 +241,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   };
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
-  isConsentPopupVisibled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -789,6 +788,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
 
+    if (this.isAlreadyEnrolled) {
+      await this.checkDataSharingStatus();
+    }
 
     if (Boolean(data.isAvailableLocally)) {
       await this.setChildContents();
@@ -1418,9 +1420,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    if (this.isAlreadyEnrolled) {
-      await this.checkDataSharingStatus();
-    }
   }
 
   ionViewDidEnter() {
@@ -1454,19 +1453,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
-      let isConsentPopUpClosed = false;
-      if (this.isConsentPopupVisibled) {
-        isConsentPopUpClosed = true;
-        this.isConsentPopupVisibled = false;
+      if (this.localCourseService.isConsentPopupVisible()) {
+        this.localCourseService.setConsentPopupVisibility(false);
         await this.popoverCtrl.dismiss();
        }
 
       if (await this.onboardingSkippedBackAction()) {
         return;
       }
-      if (!isConsentPopUpClosed) {
-        this.goBack();
-       }
+      this.goBack();
     });
   }
 
@@ -2171,7 +2166,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (data) {
           this.dataSharingStatus = data.consents[0].status;
           this.lastUpdateOn = data.consents[0].lastUpdatedOn;
-          this.isConsentPopupVisibled = false;
+          this.localCourseService.setConsentPopupVisibility(false);
         }
       })
       .catch(async (e) => {
@@ -2179,7 +2174,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           && this.course.userConsent === UserConsent.YES) {
           if (!this.isConsentPopUp) {
             this.isConsentPopUp = true;
-            this.isConsentPopupVisibled = true;
+            this.localCourseService.setConsentPopupVisibility(true);
             await this.consentService.showConsentPopup(this.courseCardData);
             await this.checkDataSharingStatus();
           }
@@ -2194,11 +2189,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.loader.dismiss();
       this.loader = undefined;
     }
-    this.isConsentPopupVisibled = true;
+    this.localCourseService.setConsentPopupVisibility(true);
   }
 
   onConsentPopoverDismiss() {
-    this.isConsentPopupVisibled = false;
+    this.localCourseService.setConsentPopupVisibility(false);
     this.checkDataSharingStatus();
   }
 

@@ -2574,18 +2574,22 @@ describe('EnrolledCourseDetailsPage', () => {
         // arrange
         const dismissFn = jest.fn(() => Promise.resolve(true));
         enrolledCourseDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
+        mockLocalCourseService.setConsentPopupVisibility = jest.fn();
         // act
         enrolledCourseDetailsPage.onConsentPopoverShow();
         // assert
         expect(enrolledCourseDetailsPage.loader).toBeUndefined();
         expect(dismissFn).toHaveBeenCalled();
+        expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(true);
     });
 
     it('shoule invoked after consentPii popup dismissed', () => {
         jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
             return;
         });
+        mockLocalCourseService.setConsentPopupVisibility = jest.fn();
         enrolledCourseDetailsPage.onConsentPopoverDismiss();
+        expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(false);
     });
 
     it('should fetch consent PII data', () => {
