@@ -125,6 +125,15 @@ describe('ContentDetailsPage', () => {
     const mockCourseService: Partial<CourseService> = {};
     const mockFormFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
 
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
+
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
             mockProfileService as ProfileServiceImpl,

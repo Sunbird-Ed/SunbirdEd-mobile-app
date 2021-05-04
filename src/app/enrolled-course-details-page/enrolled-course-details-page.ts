@@ -72,6 +72,7 @@ import {
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 declare const cordova;
 
@@ -1420,6 +1421,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
     }
+    window['segmentation'].SBTagService.pushTag( this.identifier, TagPrefixConstants.CONTENT_ID);
   }
 
   ionViewDidEnter() {

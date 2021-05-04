@@ -7,6 +7,7 @@ import {TelemetryGeneratorService} from '@app/services/telemetry-generator.servi
 import {Events} from '@app/util/events';
 import {AppGlobalService} from '@app/services/app-global-service.service';
 import {of, throwError} from 'rxjs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('UpdateProfileService', () => {
     let updateProfileService: UpdateProfileService;
@@ -19,6 +20,7 @@ describe('UpdateProfileService', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
     const mockEvents: Partial<Events> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         updateProfileService = new UpdateProfileService(
@@ -29,7 +31,8 @@ describe('UpdateProfileService', () => {
             mockCommonUtilService as CommonUtilService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockEvents as Events,
-            mockAppGlobalService as AppGlobalService
+            mockAppGlobalService as AppGlobalService,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 
@@ -39,7 +42,7 @@ describe('UpdateProfileService', () => {
     });
 
     describe('checkProfileData', () => {
-        it('should set profile data accordingly', () => {
+        it('should set profile data accordingly and getActiveSuggestedFrameworkList', () => {
             // arrange
             const data = {
                 board: ['fm']
@@ -47,7 +50,7 @@ describe('UpdateProfileService', () => {
             const profile = {
                 syllabus: ['framework1']
             };
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{ identifier: 'fm', name: 'fm' }]));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of([{identifier: 'fm', name: 'fm'}]));
             mockTranslateService.currentLang = 'en';
             // act
             updateProfileService.checkProfileData(data, profile);
@@ -59,7 +62,8 @@ describe('UpdateProfileService', () => {
                 }
             );
         });
-        it('should set profile data accordingly', (done) => {
+
+        it('should set profile data accordingly and getFrameworkDetails', (done) => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -68,7 +72,7 @@ describe('UpdateProfileService', () => {
             const profile = {
                 syllabus: ['framework1']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
             mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError('err' as any));
             // act
@@ -80,7 +84,8 @@ describe('UpdateProfileService', () => {
                 done();
             }, 0);
         });
-        it('should set profile data accordingly', (done) => {
+
+        it('should set profile data accordingly and check for boardList data', (done) => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -91,25 +96,25 @@ describe('UpdateProfileService', () => {
             const profile = {
                 syllabus: ['framework']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             const getFrameworkDetailsResp = {
                 categories: [
                     {
                         code: 'board',
                         terms: [
-                            { code: 'boardcode', name: 'framework1' }
+                            {code: 'boardcode', name: 'framework1'}
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            { code: 'medium1code', name: 'medium1' }
+                            {code: 'medium1code', name: 'medium1'}
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            { code: 'grade1code', name: 'grade1' }
+                            {code: 'grade1code', name: 'grade1'}
                         ]
                     }
                 ]
@@ -126,6 +131,7 @@ describe('UpdateProfileService', () => {
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             mockTelemetryGeneratorService.generateProfilePopulatedTelemetry = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             // act
             updateProfileService.checkProfileData(data, profile);
             // assert
@@ -136,7 +142,8 @@ describe('UpdateProfileService', () => {
                 done();
             }, 0);
         });
-        it('should set profile data accordingly', (done) => {
+
+        it('should set profile data accordingly and getFrameworkDetails', (done) => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -148,25 +155,25 @@ describe('UpdateProfileService', () => {
                 syllabus: ['framework1'],
                 board: ['boardcode']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             const getFrameworkDetailsResp = {
                 categories: [
                     {
                         code: 'board',
                         terms: [
-                            { code: 'boardcode', name: 'framework1' }
+                            {code: 'boardcode', name: 'framework1'}
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            { code: 'medium1code', name: 'medium1' }
+                            {code: 'medium1code', name: 'medium1'}
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            { code: 'grade1code', name: 'grade1' }
+                            {code: 'grade1code', name: 'grade1'}
                         ]
                     }
                 ]
@@ -193,7 +200,8 @@ describe('UpdateProfileService', () => {
                 done();
             }, 0);
         });
-        it('should set profile data accordingly', (done) => {
+
+        it('should set profile data accordingly equal to categoryTerms', (done) => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -205,25 +213,25 @@ describe('UpdateProfileService', () => {
                 syllabus: ['framework1'],
                 board: ['boardcode']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             const getFrameworkDetailsResp = {
                 categories: [
                     {
                         code: 'board',
                         terms: [
-                            { code: 'boardcode', name: 'framework1' }
+                            {code: 'boardcode', name: 'framework1'}
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            { code: 'medium1code', name: 'medium1' }
+                            {code: 'medium1code', name: 'medium1'}
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            { code: 'grade1code', name: 'grade1' }
+                            {code: 'grade1code', name: 'grade1'}
                         ]
                     }
                 ]
@@ -250,7 +258,8 @@ describe('UpdateProfileService', () => {
                 done();
             }, 0);
         });
-        it('should set profile data accordingly', (done) => {
+
+        it('should set profile data accordingly and frameworkData', (done) => {
             // arrange
             const data = {
                 board: ['framework1'],
@@ -264,7 +273,7 @@ describe('UpdateProfileService', () => {
                 medium: ['medium1'],
                 grade: ['grade1']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             const getFrameworkDetailsResp = {
                 name: '',
                 identifier: '',
@@ -272,19 +281,19 @@ describe('UpdateProfileService', () => {
                     {
                         code: 'board',
                         terms: [
-                            { code: 'boardcode', name: 'framework1' }
+                            {code: 'boardcode', name: 'framework1'}
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            { code: 'medium1', name: 'medium1' }
+                            {code: 'medium1', name: 'medium1'}
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            { code: 'grade1', name: 'grade1' }
+                            {code: 'grade1', name: 'grade1'}
                         ]
                     }
                 ]
@@ -301,6 +310,7 @@ describe('UpdateProfileService', () => {
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             mockTelemetryGeneratorService.generateProfilePopulatedTelemetry = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             // act
             updateProfileService.checkProfileData(data, profile);
             // assert
@@ -324,25 +334,25 @@ describe('UpdateProfileService', () => {
                 syllabus: ['framework1'],
                 board: ['boardcode', 'b2']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
             const getFrameworkDetailsResp = {
                 categories: [
                     {
                         code: 'board',
                         terms: [
-                            { code: 'boardcode', name: 'framework1' }
+                            {code: 'boardcode', name: 'framework1'}
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            { code: 'medium1code', name: 'medium1' }
+                            {code: 'medium1code', name: 'medium1'}
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            { code: 'grade1code', name: 'grade1' }
+                            {code: 'grade1code', name: 'grade1'}
                         ]
                     }
                 ]
@@ -359,6 +369,7 @@ describe('UpdateProfileService', () => {
             mockAppGlobalService.setOnBoardingCompleted = jest.fn();
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             mockTelemetryGeneratorService.generateProfilePopulatedTelemetry = jest.fn();
+            mockSbProgressLoader.hide = jest.fn();
             // act
             updateProfileService.checkProfileData(data, profile);
             // assert
@@ -369,6 +380,5 @@ describe('UpdateProfileService', () => {
                 done();
             }, 0);
         });
-
     });
 });
