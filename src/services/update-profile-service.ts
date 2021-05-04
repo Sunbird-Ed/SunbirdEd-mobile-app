@@ -6,7 +6,7 @@ import {
     NetworkError,
     Profile, ProfileService
 } from 'sunbird-sdk';
-import {AppGlobalService} from '../services/app-global-service.service';
+import {AppGlobalService} from '@app/services/app-global-service.service';
 import {PageId} from '@app/services/telemetry-constants';
 import {Inject, Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
@@ -32,11 +32,11 @@ export class UpdateProfileService {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
         @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-        private appGlobalService: AppGlobalService,
         private translate: TranslateService,
         public commonUtilService: CommonUtilService,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private events: Events,
+        private appGlobalService: AppGlobalService,
         private sbProgressLoader: SbProgressLoader
     ) {
     }
