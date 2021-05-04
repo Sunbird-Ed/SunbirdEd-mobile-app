@@ -241,6 +241,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   };
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
+  isConsentPopupVisibled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -1454,18 +1455,18 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
       let isConsentPopUpClosed = false;
-      if (this.isConsentPopUp && !isConsentPopUpClosed && this.popoverCtrl) {
+      if (this.isConsentPopupVisibled) {
         isConsentPopUpClosed = true;
-        this.isConsentPopUp = false;
-        this.popoverCtrl.dismiss();
-      }
+        this.isConsentPopupVisibled = false;
+        await this.popoverCtrl.dismiss();
+       }
 
       if (await this.onboardingSkippedBackAction()) {
         return;
       }
       if (!isConsentPopUpClosed) {
         this.goBack();
-      }
+       }
     });
   }
 
@@ -2170,6 +2171,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (data) {
           this.dataSharingStatus = data.consents[0].status;
           this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+          this.isConsentPopupVisibled = false;
         }
       })
       .catch(async (e) => {
@@ -2177,6 +2179,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           && this.course.userConsent === UserConsent.YES) {
           if (!this.isConsentPopUp) {
             this.isConsentPopUp = true;
+            this.isConsentPopupVisibled = true;
             await this.consentService.showConsentPopup(this.courseCardData);
             await this.checkDataSharingStatus();
           }
@@ -2191,9 +2194,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.loader.dismiss();
       this.loader = undefined;
     }
+    this.isConsentPopupVisibled = true;
   }
 
   onConsentPopoverDismiss() {
+    this.isConsentPopupVisibled = false;
     this.checkDataSharingStatus();
   }
 
