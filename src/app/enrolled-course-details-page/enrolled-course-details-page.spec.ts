@@ -74,7 +74,8 @@ describe('EnrolledCourseDetailsPage', () => {
     };
     const mockEvents: Partial<Events> = {};
     const mockFileSizePipe: Partial<FileSizePipe> = {};
-    const mockPopoverCtrl: Partial<PopoverController> = {};
+    const mockPopoverCtrl: Partial<PopoverController> = {
+    };
     const mockCourseUtilService: Partial<CourseUtilService> = {
         showCredits: jest.fn()
     };
@@ -1871,26 +1872,6 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('handleBackButton()', () => {
-        it('should ', () => {
-            // arrange
-            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
-            jest.spyOn(enrolledCourseDetailsPage, 'generateQRSessionEndEvent');
-            jest.spyOn(enrolledCourseDetailsPage, 'goBack');
-            enrolledCourseDetailsPage.shouldGenerateEndTelemetry = true;
-            mockPlatform.backButton = {
-                subscribeWithPriority: jest.fn((x, callback) => callback())
-            };
-            // act
-            enrolledCourseDetailsPage.handleBackButton();
-            // assert
-            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
-            expect(enrolledCourseDetailsPage.generateQRSessionEndEvent).toBeCalled();
-            expect(enrolledCourseDetailsPage.goBack).not.toBeCalled();
-
-        });
-    });
-
     describe('ionViewWillLeave()', () => {
         it('should unsubscribe events', () => {
             // arrange
@@ -2603,18 +2584,22 @@ describe('EnrolledCourseDetailsPage', () => {
         // arrange
         const dismissFn = jest.fn(() => Promise.resolve(true));
         enrolledCourseDetailsPage.loader = { data: '', dismiss: dismissFn } as any;
+        mockLocalCourseService.setConsentPopupVisibility = jest.fn();
         // act
         enrolledCourseDetailsPage.onConsentPopoverShow();
         // assert
         expect(enrolledCourseDetailsPage.loader).toBeUndefined();
         expect(dismissFn).toHaveBeenCalled();
+        expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(true);
     });
 
     it('shoule invoked after consentPii popup dismissed', () => {
         jest.spyOn(enrolledCourseDetailsPage, 'checkDataSharingStatus').mockImplementation(() => {
             return;
         });
+        mockLocalCourseService.setConsentPopupVisibility = jest.fn();
         enrolledCourseDetailsPage.onConsentPopoverDismiss();
+        expect(mockLocalCourseService.setConsentPopupVisibility).toHaveBeenCalledWith(false);
     });
 
     it('should fetch consent PII data', () => {
@@ -2774,6 +2759,29 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.showShareData).toBeFalsy();
                 done();
             }, 0);
+        });
+    });
+
+    describe('handleBackButton()', () => {
+        it('should ', () => {
+            // arrange
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'generateQRSessionEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'goBack');
+            enrolledCourseDetailsPage.shouldGenerateEndTelemetry = true;
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                dismiss: jest.fn(() => Promise.resolve({}))
+            } as any)));
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((x, callback) => callback())
+            };
+            enrolledCourseDetailsPage.isConsentPopUp = true;
+            // act
+            enrolledCourseDetailsPage.handleBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.goBack).not.toBeCalled();
+
         });
     });
 });
