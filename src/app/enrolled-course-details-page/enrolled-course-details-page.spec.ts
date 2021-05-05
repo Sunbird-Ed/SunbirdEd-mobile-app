@@ -142,6 +142,7 @@ describe('EnrolledCourseDetailsPage', () => {
         SBTagService: {
             pushTag: jest.fn(),
             removeAllTags: jest.fn(),
+            getTags: jest.fn(() => undefined),
             restoreTags: jest.fn()
         }
     };

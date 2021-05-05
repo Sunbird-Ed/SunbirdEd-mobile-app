@@ -1572,6 +1572,14 @@ html[data-theme="JOYFUL"]{
     .openbtn{
       color: map-get($colors, primary) !important;
     }
+    .sb-btn-disabled{
+      background-color: map-get($colors, gray_ba) !important;
+    }
+    .sb-btn-outline-primary{
+      background: none !important;
+      border: 1px solid map-get($colors, gray_ba) !important;
+      color: map-get($colors, black) !important;
+    }
   }
   .df-btn-container{
     .sb-left-icon{
@@ -1584,6 +1592,7 @@ html[data-theme="JOYFUL"]{
       padding: 0.5rem 1rem !important;
     }
   }
+  
 
   app-search-filter{
     sb-form{
