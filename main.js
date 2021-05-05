@@ -133,9 +133,13 @@ var formRequestArray = [{
         'type': 'config',
         'subType': 'deeplink',
         'action': 'get'
+    },
+    {
+        "type": "config",
+        "subType": "search",
+        "action": "filter_v2",
+        "component": "app"
     }
-
-
 ];
 
 var state_list_request_body = {
