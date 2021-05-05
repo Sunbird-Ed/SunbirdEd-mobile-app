@@ -307,7 +307,7 @@ export class ProjectListingComponent implements OnInit {
                     }
                 ],
             },
-            fields: ['title', '_id'],
+            fields: ['title', '_id','downloaded'],
         };
         return query
     }
