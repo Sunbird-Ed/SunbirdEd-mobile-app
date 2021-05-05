@@ -212,7 +212,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private validateDeeplinkPriority(matchedDeeplinkConfig, config) {
     return (matchedDeeplinkConfig && !matchedDeeplinkConfig.priority && config.priority) ||
       (matchedDeeplinkConfig && matchedDeeplinkConfig.priority
-        && config.priority && matchedDeeplinkConfig.priority > config.priority)
+        && config.priority && matchedDeeplinkConfig.priority > config.priority);
   }
 
   private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
@@ -327,6 +327,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (url.searchParams.has('se_gradeLevels')) {
       url.searchParams.set('gradeLevel', url.searchParams.get('se_gradeLevels'));
+    }
+    if (url.searchParams.has('se_subjects')) {
+      url.searchParams.set('subject', url.searchParams.get('se_subjects'));
     }
     url.searchParams.forEach((value, key) => {
       urlAttributeList.push(key);

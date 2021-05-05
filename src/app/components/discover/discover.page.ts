@@ -39,7 +39,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   
 
   appLabel: string;
-  headerObservable: Subscription;
   displaySections?: any[];
   courseCardType = CourseCardGridTypes;
   userType: string;
@@ -64,10 +63,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
       this.appLabel = appName;
     });
     this.fetchDisplayElements();
-    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-      this.handleHeaderEvents(eventName);
-    });
-    this.headerService.showHeaderWithHomeButton(['download', 'notification']);
   }
 
   doRefresh(refresher) {
@@ -139,26 +134,6 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
         source: PageId.COURSES
       }
     });
-  }
-
-  handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'download':
-        this.redirectToActivedownloads();
-        break;
-      case 'notification':
-        this.redirectToNotifications();
-        break;
-      default: console.warn('Use Proper Event name');
-    }
-  }
-
-  redirectToActivedownloads() {
-    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
-  }
-
-  redirectToNotifications() {
-    this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
   handlePillSelect(event, section) {
@@ -257,10 +232,7 @@ export class DiscoverComponent implements OnInit, OnDestroy, OnTabViewWillEnter 
   }
 
   clearAllSubscriptions() {
-    if (this.headerObservable) {
-      this.headerObservable.unsubscribe();
-    }
-    this.events.unsubscribe('update_header');
+    // If any
   }
 
   private mapContentFacteTheme(displayItems) {
