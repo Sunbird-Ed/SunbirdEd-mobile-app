@@ -1317,7 +1317,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.identifier = content.contentId || content.identifier;
       this.telemetryObject = ContentUtil.getTelemetryObject(content);
       this.promptToLogin();
-      window['segmentation'].SBTagService.pushTag(this.identifier, TagPrefixConstants.CONTENT_ID);
+      window['segmentation'].SBTagService.pushTag(
+        window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+        TagPrefixConstants.CONTENT_ID,
+        window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+      );
     }
   }
 
