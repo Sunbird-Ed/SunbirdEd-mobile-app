@@ -14,7 +14,7 @@ import { Platform } from '@ionic/angular';
 import { DbService } from '../../core/services/db.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UnnatiDataService } from '../../core/services/unnati-data.service';
-import { LoaderService } from '../../core';
+import { LoaderService, NetworkService, ToastService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
 import { RouterLinks } from '@app/app/app.constant';
 import { SyncService } from '../../core/services/sync.service';
@@ -70,7 +70,9 @@ export class ProjectOperationPage implements OnInit {
     private alertController: AlertController,
     private unnatiDataService: UnnatiDataService,
     private loaderService: LoaderService,
-    private syncServ: SyncService
+    private syncServ: SyncService,
+    private networkService: NetworkService,
+    private toast: ToastService
   ) {
     this.routerparam.params.subscribe(data => {
       this.projectId = data.id;
@@ -182,11 +184,10 @@ export class ProjectOperationPage implements OnInit {
     })
   }
 
-  async openSearchModel(type, url?) {
+  async openSearchModel(type) {
     const modal = await this.modalController.create({
       component: AddProgramsComponent,
       componentProps: {
-        url: url,
         type: type
       }
       // cssClass: 'my-custom-class'
@@ -207,6 +208,26 @@ export class ProjectOperationPage implements OnInit {
     //   this.toast.showMessage('MESSAGES.DISABLED_ADD_ENTITY', 'danger');
     // }
     this.openAddEntityModal();
+  }
+  checkNetwork(type?, url?) {
+    if (this.networkService.isNetworkAvailable) {
+      switch (type) {
+        case 'entity': {
+          this.addEntity();
+          break;
+        }
+        case 'programs': {
+          this.openSearchModel(type);
+          break;
+        }
+        case 'resources': {
+          this.addLearningResources();
+          break;
+        }
+      }
+    } else {
+      this.toast.showMessage('FRMELEMNTS_MSG_PLEASE_GO_ONLINE', 'danger');
+    }
   }
   addLearningResources() {
     this.openAddResourcesModal();
@@ -281,14 +302,13 @@ export class ProjectOperationPage implements OnInit {
     return true
   }
 
-  update(data) {
+  update(newProject?) {
     if (!this.isMandatoryFieldsFilled()) {
       return
     }
-    data.isEdit = true;
-    data.isDeleted = false;
-    this.db.update(data).then(success => {
-      this.createProjectModal(data, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
+    this.template.isDeleted = false;
+    this.db.update(this.template).then(success => {
+      newProject ? this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true) : this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_UPDATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT');
     }).catch(error => {
     })
   }
@@ -333,42 +353,46 @@ export class ProjectOperationPage implements OnInit {
       this.template.isAPrivateProgram = this.selectedProgram.isAPrivateProgram ? true : false;
     }
     this.template.learningResources = this.selectedResources;
-    this.button == 'FRMELEMNTS_LBL_VIEW_PROJECT' ? this.newProjectCreate() : this.update(this.template);
+    if (this.button == 'FRMELEMNTS_LBL_VIEW_PROJECT') {
+      this.newProjectCreate();
+    } else {
+      this.template.isEdit = true; 
+      this.update();
+    }
   }
 
   newProjectCreate() {
-    this.loaderService.startLoader();
-    let id = this.template._id;;
-    this.template.isDeleted = false;
-    delete this.template._id;
-    const payload = this.syncServ.removeKeys(JSON.parse(JSON.stringify(this.template)), ['isNew', 'isEdit']);
-    delete payload._rev;
-    const config = {
-      url: urlConstants.API_URLS.CREATE_PROJECT,
-      payload: payload
-    }
-    this.unnatiDataService.post(config).subscribe(data => {
-      this.template.isNew = false;
-      this.template.isEdit = false;
-      this.db.delete(id, this.template._rev).then(res => {
-        this.template._id = data.result.projectId;
-        this.template.programId = data.result.programId;
-        this.template.lastDownloadedAt = data.result.lastDownloadedAt;
-        delete this.template._rev;
-        this.loaderService.stopLoader();
-        this.db
-          .create(this.template)
-          .then((success) => {
-            this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true);
-          })
-          .catch((error) => {
-          });
-      }).catch((error) => {
-        this.loaderService.stopLoader();
-      });
-    }, error => {
-      this.loaderService.stopLoader();
-    })
+    this.template.isNew = true;
+    this.update(true);
+    // delete this.template._id;
+    // const payload = this.syncServ.removeKeys(JSON.parse(JSON.stringify(this.template)), ['isNew', 'isEdit']);
+    // delete payload._rev;
+    // const config = {
+    //   url: urlConstants.API_URLS.CREATE_PROJECT,
+    //   payload: payload
+    // }
+    // this.unnatiDataService.post(config).subscribe(data => {
+    //   this.template.isNew = false;
+    //   this.template.isEdit = false;
+    //   this.db.delete(id, this.template._rev).then(res => {
+    //     this.template._id = data.result.projectId;
+    //     this.template.programId = data.result.programId;
+    //     this.template.lastDownloadedAt = data.result.lastDownloadedAt;
+    //     delete this.template._rev;
+    //     this.loaderService.stopLoader();
+    //     this.db
+    //       .create(this.template)
+    //       .then((success) => {
+    //         this.createProjectModal(this.template, 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'FRMELEMNTS_LBL_VIEW_PROJECT', true);
+    //       })
+    //       .catch((error) => {
+    //       });
+    //   }).catch((error) => {
+    //     this.loaderService.stopLoader();
+    //   });
+    // }, error => {
+    //   this.loaderService.stopLoader();
+    // })
   }
 }
 

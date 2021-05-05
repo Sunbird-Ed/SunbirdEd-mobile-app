@@ -23,7 +23,7 @@
   <div>
     <h5 *ngIf="selectedFilter" class="projects-labels">{{selectedFilter}} </h5>
   </div>
-  <app-item-list-card *ngFor="let project of projects" [title]="project?.name||project?.title" [subTitle]="project?.programName"
+  <app-item-list-card *ngFor="let project of projects " [title]="project?.name||project?.title" [subTitle]="project?.programName"
     [id]="project?._id" (cardSelect)="doAction($event, project)">
 
     <div arrow *ngIf="!project?.downloaded" class="d-flex flex-dc" (click)="$event.stopPropagation(); downloaded(project)">
@@ -37,6 +37,6 @@
   </app-item-list-card>
   <app-no-data *ngIf="!projects?.length"></app-no-data>
 </ion-content>
-<ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > projects?.length">
+<ion-button class="view-more" expand="block" (click)="loadMore()" *ngIf="projects?.length && count > currentOnlineProjectLength || offlineProjectsCount >  currentOfflineProjectsLength" >
   {{ 'FRMELEMNTS_BTN_VIEW_MORE' | translate }}
 </ion-button>

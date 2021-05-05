@@ -278,6 +278,7 @@ export class CreateProjectPage implements OnInit {
       });
       this.projectForm.value.categories = this.selectedCategories;
       this.projectForm.value.hasAcceptedTAndC = this.hasAcceptedTAndC;
+      this.projectForm.value.downloaded = true;
       this.parameters ? this.update(this.projectForm.value) :
         this.createProjectModal('FRMELEMNTS_LBL_PROJECT_CREATE', 'FRMELEMNTS_MSG_PROJECT_CREATED_SUCCESS', 'EDIT', 'FRMELEMNTS_LBL_CONTINUE');
     } else {

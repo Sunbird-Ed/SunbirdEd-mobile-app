@@ -202,7 +202,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    console.log(this.projectType, "projectType");
     const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
@@ -624,6 +623,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
               }, replaceUrl: true
             }
             );
+
             setTimeout(() => {
               this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
             }, 0);

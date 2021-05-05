@@ -24,9 +24,14 @@ import { GenericPopUpService } from '../../shared';
 export class ProjectListingComponent implements OnInit {
     private backButtonFunc: Subscription;
     page = 1;
+    offlineProjectPage = 1;
     count = 0;
     description;
     limit = 10;
+    offset = 0;
+    currentOfflineProjectsLength = 0;
+    currentOnlineProjectLength = 0;
+
     searchText: string = '';
     headerConfig = {
         showHeader: true,
@@ -49,6 +54,7 @@ export class ProjectListingComponent implements OnInit {
     selectedFilter;
     layout = LibraryFiltersLayout.ROUND;
     payload;
+    offlineProjectsCount = 0;
     networkFlag: any;
     private _networkSubscription?: Subscription;
     private _toast: any;
@@ -70,7 +76,6 @@ export class ProjectListingComponent implements OnInit {
         private toastController: ToastController,
         private popupService: GenericPopUpService,
         private toastService: ToastService
-
     ) {
         this.translate.get(['FRMELEMNTS_LBL_ASSIGNED_TO_ME', 'FRMELEMNTS_LBL_CREATED_BY_ME']).subscribe(translations => {
             this.filters = [translations['FRMELEMNTS_LBL_CREATED_BY_ME'], translations['FRMELEMNTS_LBL_ASSIGNED_TO_ME']];
@@ -79,19 +84,17 @@ export class ProjectListingComponent implements OnInit {
     }
 
     ngOnInit() { }
-
     async getDownloadedProjects(fields?: any[]): Promise<[]> {
         let isAprivateProgramQuery;
         this.selectedFilterIndex === 1 ? (isAprivateProgramQuery = false) : (isAprivateProgramQuery = { $ne: false });
         let query = {
             selector: {
                 downloaded: true,
-                isAPrivateProgram: isAprivateProgramQuery,
+                isAPrivateProgram: isAprivateProgramQuery
             },
+            limit: 10 * this.offlineProjectPage,
         };
-
         fields ? (query['fields'] = fields) : null;
-
         try {
             let data: any = await this.db.customQuery(query);
             return data.docs;
@@ -102,11 +105,8 @@ export class ProjectListingComponent implements OnInit {
 
     private initNetworkDetection() {
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
-        if (!this.networkFlag) {
-            this.getOfflineProjects();
-        } else {
-            this.getProjectList();
-        }
+        this.projects = [];
+        this.getOfflineProjects();
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
             if (this.networkFlag !== available) {
@@ -114,13 +114,9 @@ export class ProjectListingComponent implements OnInit {
                     await this._toast.dismiss();
                     this._toast = undefined;
                 }
-                if (!available) {
-                    this.clearFields();
-                    this.getOfflineProjects();
-                } else {
-                    this.projects = []
-                    this.getProjectList();
-                }
+                this.clearFields();
+                this.projects = [];
+                this.getOfflineProjects();
             }
             this.networkFlag = available;
         });
@@ -133,7 +129,20 @@ export class ProjectListingComponent implements OnInit {
     }
 
     async getOfflineProjects() {
-        this.projects = await this.getDownloadedProjects();
+        this.db.getAllDocs().then(data => {
+            this.offlineProjectsCount = data.total_rows;
+            this.getDownloadedProjects().then(data => {
+                this.projects = data;
+                this.currentOfflineProjectsLength = this.currentOfflineProjectsLength + data.length;
+                this.limit = 10;
+                if (this.offlineProjectsCount <= this.currentOfflineProjectsLength) {
+                    // this.limit = this.limit - (this.currentOfflineProjectsLength % this.limit);
+                    this.currentOnlineProjectLength = 0;
+                    this.getProjectList();
+                }
+            }, error => { });
+        })
+
     }
 
     private async presentPopupForOffline(text = this.commonUtilService.translateMessage('INTERNET_CONNECTIVITY_NEEDED')) {
@@ -162,6 +171,8 @@ export class ProjectListingComponent implements OnInit {
     getDataByFilter(filter) {
         this.projects = [];
         this.page = 1;
+        this.currentOnlineProjectLength = 0;
+        this.currentOfflineProjectsLength = 0;
         // this.filters.forEach(element => {
         //   element.selected = element.parameter == parameter.parameter ? true : false;
         // });
@@ -170,15 +181,22 @@ export class ProjectListingComponent implements OnInit {
         this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
         this.searchText = '';
         // this.getProjectList();
-        if (!this.networkFlag) {
-            this.getOfflineProjects();
-        } else {
-            this.getProjectList();
-        }
+        // if (!this.networkFlag) {
+        this.selectedFilterIndex == 1 ? this.getProjectList() : this.getOfflineProjects()
+        // } else {
+        //     this.getProjectList();
+        // }
+    }
+    getAllDocs() {
+        this.db.getAllDocs().then(data => {
+            this.offlineProjectsCount = data.total_rows;
+        })
     }
     async getProjectList() {
+        if (!this.networkFlag) {
+            return;
+        }
         let offilineIdsArr = await this.getDownloadedProjects(['_id']);
-
         this.loader.startLoader();
         const selectedFilter = this.selectedFilterIndex === 1 ? 'assignedToMe' : 'createdByMe';
         if (selectedFilter == 'assignedToMe') {
@@ -195,6 +213,7 @@ export class ProjectListingComponent implements OnInit {
                 if (offilineIdsArr.find((offProject) => offProject['_id'] == p._id)) p.downloaded = true;
             });
             this.count = success.result.count;
+            this.currentOnlineProjectLength = this.currentOnlineProjectLength + success.result.data.length;
             this.description = success.result.description;
         }, error => {
             this.projects = [];
@@ -228,24 +247,75 @@ export class ProjectListingComponent implements OnInit {
     }
 
     loadMore() {
-        this.page = this.page + 1;
-        this.getProjectList();
-    }
-    async onSearch(e) {
-        if (!this.networkFlag) {
-            this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_SEARCH'));
-            return;
+        if (this.offlineProjectsCount > this.projects.length) {
+            this.offlineProjectPage = this.offlineProjectPage + 1;
+            this.getOfflineProjects();
+        } else {
+            this.page = this.page + 1;
+            this.limit = 10;
+            this.getProjectList();
         }
-        this.projects = [];
-        this.page = 1;
-        this.getProjectList();
     }
 
-    async createProject(data) {
-        if (!this.networkFlag) {
-            this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT'));
-            return;
+
+    onSearch(e) {
+        // if (!this.networkFlag) {
+        //     this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_SEARCH'));
+        //     return;
+        // }
+
+        if (this.searchText) {
+            let query = this.searchOfflineProjects();
+            const searchFilter: any = {
+                title: {
+                    $regex: RegExp(this.searchText, 'i')
+                }
+            };
+            query.selector.$and.push(searchFilter);
+            this.db.customQuery(query).then(success => {
+                this.projects = success['docs'];
+            }, error => {
+            })
+
+            // this.projects.forEach(element => {
+            //     let name = element.title ? element.title : element.name;
+            //     element.isNew && name.toLowerCase().includes(this.searchText.toLowerCase()) ? filteredProjects.push(element) : ''
+            // });
+            // this.projects = filteredProjects;
+
+
+            if (this.projects.length < 10) {
+                this.page = 1;
+                this.currentOnlineProjectLength = 0;
+                this.getProjectList();
+            }
+
+        } else {
+            this.projects = [];
+            this.getOfflineProjects();
         }
+    }
+
+    searchOfflineProjects() {
+        const query = {
+            selector: {
+                $and: [
+                    {
+                        isDeleted: {
+                            $ne: true
+                        }
+                    }
+                ],
+            },
+            fields: ['title', '_id'],
+        };
+        return query
+    }
+    async createProject(data) {
+        // if (!this.networkFlag) {
+        //     this.presentPopupForOffline(this.commonUtilService.translateMessage('FRMELEMNTS_MSG_OFFLINE_CREATE_PROJECT'));
+        //     return;
+        // }
         this.router.navigate([`${RouterLinks.CREATE_PROJECT_PAGE}`], {
             queryParams: { hasAcceptedTAndC: data },
         });
@@ -275,7 +345,6 @@ export class ProjectListingComponent implements OnInit {
             url: urlConstants.API_URLS.GET_PROJECT + id + '?solutionId=' + project.solutionId,
             payload: this.selectedFilterIndex == 1 ? payload : {},
         };
-        console.log(config, "config");
         this.unnatiService.post(config).subscribe(async (success) => {
             this.loader.stopLoader();
             let data = success.result;
@@ -345,7 +414,7 @@ export class ProjectListingComponent implements OnInit {
             }
         } else {
             this.popupService.showPPPForProjectPopUp('FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY', 'FRMELEMNTS_LBL_PROJECT_PRIVACY_POLICY_TC', 'FRMELEMNTS_LBL_TCANDCP', 'FRMELEMNTS_LBL_SHARE_PROJECT_DETAILS', 'https://diksha.gov.in/term-of-use.html', 'privacyPolicy').then((data: any) => {
-               data && data.isClicked ? this.createProject(data.isChecked) : '';
+                data && data.isClicked ? this.createProject(data.isChecked) : '';
             })
         }
     }
