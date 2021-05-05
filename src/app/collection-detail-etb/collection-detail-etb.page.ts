@@ -339,7 +339,11 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
-    window['segmentation'].SBTagService.pushTag(this.identifier, TagPrefixConstants.CONTENT_ID);
+    window['segmentation'].SBTagService.pushTag(
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+      TagPrefixConstants.CONTENT_ID,
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+    );
   }
 
   ngOnInit() {
