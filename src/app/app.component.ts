@@ -122,6 +122,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.platform.ready().then(async () => {
+      this.isForeground = true;
       window['segmentation'] = SBTagModule.instance;
       if (!window['segmentation'].isInitialised) {
         window['segmentation'].init();

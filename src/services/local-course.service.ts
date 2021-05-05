@@ -35,6 +35,7 @@ export interface ConsentPopoverActionsDelegate {
 @Injectable()
 export class LocalCourseService {
   private userId: string;
+  private isConsentPopupDisplayed: boolean;
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -75,10 +76,13 @@ export class LocalCourseService {
               consentPopoverActionsDelegate.onConsentPopoverShow();
             }
             await this.sbProgressLoader.hide({ id: 'login' });
+            this.isConsentPopupDisplayed = true;
             await this.consentService.showConsentPopup(enrollCourse);
+           // this.preferences.putString(PreferenceKey.IS_CONSENT_POPUP_DISPLAY, 'true').toPromise();
 
             if (consentPopoverActionsDelegate) {
               consentPopoverActionsDelegate.onConsentPopoverDismiss();
+              this.isConsentPopupDisplayed = false;
             }
           }
         } else {
@@ -358,7 +362,7 @@ export class LocalCourseService {
     const batchEnrollmentEndDateDisplayThreshold: number = Number(utilityConfigFields
         .find((config) => config.code === 'batchEndTimerConfig')['config']['batchEndDateTimer']);
     const today = window.dayjs();
-    const enrollmentEndDate = window.dayjs(endDate);
+    const enrollmentEndDate = (window.dayjs(endDate)).add(1, 'days');
     if (enrollmentEndDate.diff(today, 'day') > batchEnrollmentEndDateDisplayThreshold) {
       return undefined;
     }
@@ -367,6 +371,14 @@ export class LocalCourseService {
     }
     const duration = window.dayjs.duration(enrollmentEndDate.diff(today));
     return duration.format('D [day(s)] H [h] m [m]');
+  }
+
+  isConsentPopupVisible(): boolean {
+    return this.isConsentPopupDisplayed;
+  }
+
+  setConsentPopupVisibility(status: boolean) {
+    this.isConsentPopupDisplayed = status;
   }
 
 }
