@@ -53,10 +53,10 @@ export class Search {
     ];
 
     public static readonly FACETS = [
-        'board',
-        'gradeLevel',
+        'se_boards',
+        'se_gradeLevels',
         'subject',
-        'medium',
+        'se_mediums',
         'primaryCategory',
         'publisher',
         'mimeType',
