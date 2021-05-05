@@ -32,6 +32,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
+import { ApiUtilsService, LocalStorageService, NetworkService, DbService } from './manage-learn/core';
 
 declare const supportfile;
 declare const plugins;
@@ -149,6 +150,10 @@ describe('AppComponent', () => {
         checkCourseRedirect: jest.fn(() => Promise.resolve())
     };
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
+    const mockApiUtilService: Partial<ApiUtilsService> = {};
+    const mockNetworkService: Partial<NetworkService> = {};
+    const mockDbService: Partial<DbService> = {};
+    const mockLocalStorageService: Partial<LocalStorageService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockSegmentationTagService: Partial<SegmentationTagService> = {
         getPersistedSegmentaion: jest.fn(),
@@ -189,6 +194,10 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
+            mockApiUtilService as ApiUtilsService,
+            mockNetworkService as NetworkService,
+            mockLocalStorageService as LocalStorageService,
+            mockDbService as DbService,
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
         );
@@ -202,19 +211,6 @@ describe('AppComponent', () => {
     it('should be create a instance of appComponent', () => {
         expect(appComponent).toBeTruthy();
     });
-
-    // describe('constructor', () => {
-    //     it('should call on platform ready', (done) => {
-    //         spyOn(supportfile, 'makeEntryInSunbirdSupportFile').and.callFake((a, b) => {
-    //             setTimeout(() => {
-    //                 setTimeout(() => {
-    //                     a();
-    //                     done();
-    //                 }, 0);
-    //             });
-    //         });
-    //     });
-    // });
 
     describe('ngOnInit', () => {
         beforeEach(() => {
@@ -265,6 +261,8 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
+            mockNetworkService.netWorkCheck = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -412,6 +410,8 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockApiUtilService.initilizeML = jest.fn();
+            mockDbService.createDb = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -566,6 +566,7 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
 
         afterEach(() => {
@@ -643,6 +644,7 @@ describe('AppComponent', () => {
             });
         });
     });
+
     describe('getSystemConfig', () => {
         beforeEach(() => {
             // arrange
@@ -691,6 +693,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
 
         afterEach(() => {
@@ -758,6 +761,7 @@ describe('AppComponent', () => {
             }, 0);
         });
     });
+
     describe('checkForCodeUpdates', () => {
         beforeEach(() => {
             // arrange
@@ -807,6 +811,7 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
 
         afterEach(() => {
@@ -842,6 +847,7 @@ describe('AppComponent', () => {
             });
         });
     });
+
     describe('fcmTokenWatcher', () => {
         beforeEach(() => {
             // arrange
@@ -866,6 +872,7 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1038,6 +1045,7 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1140,6 +1148,7 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1385,6 +1394,7 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockApiUtilService.initilizeML = jest.fn();
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1828,6 +1838,7 @@ describe('AppComponent', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            mockLocalStorageService.deleteAllStorage = jest.fn(() => Promise.resolve({}));
             mockLogoutHandlerService.onLogout = jest.fn();
             // act
             appComponent.menuItemAction(menuName);
