@@ -441,6 +441,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         };
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
+        console.log('....................reloadSigninEvents');
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
@@ -448,7 +449,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
-      }, 0);
+      }, 100);
     });
   }
 
@@ -456,6 +457,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Enter all methods which should trigger during OnInit and User Sign-In.
    */
   reloadSigninEvents() {
+    console.log('.......................checkForTncUpdate');
     this.checkForTncUpdate();
   }
 
@@ -639,6 +641,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async checkForTncUpdate() {
     this.appGlobalService.isSignInOnboardingCompleted = false;
+    console.log('................goo to tnc page');
     await this.tncUpdateHandlerService.checkForTncUpdate();
   }
 

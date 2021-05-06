@@ -36,6 +36,7 @@ export class TncUpdateHandlerService {
   ) { }
 
   public async checkForTncUpdate() {
+    console.log('welcome tnc');
     const sessionData = await this.authService.getSession().toPromise();
     if (!sessionData) {
       return;
@@ -49,8 +50,10 @@ export class TncUpdateHandlerService {
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
         if (this.hasProfileTncUpdated(profile)) {
+          console.log('terms and cond..........');
           this.presentTncPage({ profile });
         } else {
+          console.log('checkBmc..........');
           this.checkBmc(profile);
         }
       }).catch(e => {
@@ -77,6 +80,7 @@ export class TncUpdateHandlerService {
   }
 
   private async checkBmc(profile) {
+    console.log('..................preRequirementToBmcNavigation')
     const locationMappingConfig: FieldConfig<any>[] = await this.formAndFrameworkUtilService.getFormFields(FormConstants.LOCATION_MAPPING);
     const userDetails = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
     if (await this.isSSOUser(userDetails)) {
@@ -102,7 +106,7 @@ export class TncUpdateHandlerService {
     const userprofile = await this.profileService.getActiveSessionProfile({
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
-
+    console.log('..................navigateToBmc')
     this.navigateToBmc(serverProfile, userprofile, locationMappingConfig);
   }
 
@@ -119,6 +123,7 @@ export class TncUpdateHandlerService {
           !userprofile.grade.length && !userprofile.medium.length && !userprofile.syllabus.length &&
           (userprofile.profileType === ProfileType.NONE || userprofile.profileType === ProfileType.OTHER.toUpperCase()
               || serverProfile.userType === ProfileType.OTHER.toUpperCase())) {
+          console.log('..................USER_TYPE_SELECTION_LOGGEDIN')
           this.router.navigate([RouterLinks.USER_TYPE_SELECTION_LOGGEDIN], {
             state: { categoriesProfileData }
           });
