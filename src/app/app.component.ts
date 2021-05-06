@@ -441,7 +441,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
-      }, 0);
+      }, 100);
     });
   }
 
