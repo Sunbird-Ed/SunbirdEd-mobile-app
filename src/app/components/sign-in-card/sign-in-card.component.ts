@@ -133,12 +133,10 @@ export class SignInCardComponent {
               } else if (that.source === 'profile') {
                 that.router.navigateByUrl('tabs/profile');
               }
-
-            }, 1000);
-            that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-
-            // note: Navigating back to Resources is though the below event from App-Components.
-            this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+              that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
+              // note: Navigating back to Resources is though the below event from App-Components.
+              this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+            }, 2000);
           });
         })
         .catch(async (err) => {
