@@ -47,30 +47,32 @@ describe("JoyfulThemePopupComponent", () => {
         })
     })
 
-    // describe('switchToJoyfulTheme', () => {
-    //     it('should switch default to joyful theme', (done) => {
-    //         //arrange
-    //         mockPreferences.putString = jest.fn(() => of());
-    //         mockAppHeaderService.showStatusBar = jest.fn(() =>
-    //          Promise.resolve() );
-    //         const appTheme = 'sample-app-theme';
-    //         // var document : Document;
-    //         // document.querySelector() = {
-    //         //     getAttribute : jest.fn(() => ('sample-result'))
-    //         // }
+    describe('switchToJoyfulTheme', () => {
+        it('should switch default to joyful theme', (done) => {
+            //arrange
+            mockPreferences.putString = jest.fn(() => of());
+            mockAppHeaderService.showStatusBar = jest.fn(() =>
+             Promise.resolve() );
+             jest.spyOn(document, 'querySelector').mockImplementation(() => {
+                 return {getAttribute : jest.fn(() => AppThemes.DEFAULT )} as any;
+                
+             });
+            // document.querySelector() = {
+            //     getAttribute : jest.fn(() => ('sample-result'))
+            // }
 
-    //         //act
-    //         joyfulThemePopupComponent.switchToJoyfulTheme()
+            //act
+            joyfulThemePopupComponent.switchToJoyfulTheme()
 
-    //         //assert
-    //         setTimeout(() => {
-    //             // expect(mockPreferences.putString).toHaveBeenCalledWith(
-    //                 // 'current_selected_theme', appTheme);
-    //             expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
-    //             done();
-    //         },0);
-    //     });
-    // });
+            //assert
+            setTimeout(() => {
+                expect(joyfulThemePopupComponent.appTheme).toEqual(AppThemes.JOYFUL);
+                expect(mockPreferences.putString).toHaveBeenCalledWith('current_selected_theme', AppThemes.JOYFUL);
+                expect(mockAppHeaderService.showStatusBar).toHaveBeenCalled();
+                done();
+            },0);
+        });
+    });
 
     describe('closePopover()', () => {
         it('should switch to JoyfulTheme', (done) => {
