@@ -131,6 +131,7 @@ export class SignInCardComponent {
               if (that.source === 'courses') {
                 that.router.navigateByUrl('tabs/courses');
               } else if (that.source === 'profile') {
+                console.log('...............go to profile');
                 that.router.navigateByUrl('tabs/profile');
               }
 
@@ -138,6 +139,7 @@ export class SignInCardComponent {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
             // note: Navigating back to Resources is though the below event from App-Components.
+            console.log('...............publish sign in');
             this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
           });
         })
