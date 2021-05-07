@@ -43,7 +43,7 @@ export const urlConstants = {
     ALL_EVIDENCE:'v1/observations/listAllEvidences',
     SURVEY_FEEDBACK: {
       GET_DETAILS_BY_LINK: 'v1/surveys/getDetailsByLink/' /* + link */,
-      GET_DETAILS_BY_ID: 'v2/surveys/details' /* + surveyId?solutionId=5f5b38ec45365677f64b2843*/,
+      GET_DETAILS_BY_ID: 'v3/surveys/details' /* + surveyId?solutionId=5f5b38ec45365677f64b2843*/,
       MAKE_SUBMISSION: 'v1/surveySubmissions/make/',
       LIST_ALL_EVIDENCES: 'v1/surveys/listAllEvidences',
       GET_ALL_ANSWERS: 'v1/surveys/getAllResponsesOfQuestion/',

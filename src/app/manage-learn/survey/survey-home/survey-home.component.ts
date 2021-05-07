@@ -8,6 +8,7 @@ import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Router,ActivatedRoute } from '@angular/router';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 
 @Component({
   selector: 'app-survey-home',
@@ -37,7 +38,8 @@ export class SurveyHomeComponent implements OnInit {
     private utils: UtilsService,
     private kendra: KendraApiService,
     private toast: ToastService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ulsdp: UpdateLocalSchoolDataService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -77,7 +79,7 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}`,
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}&surveyReportPage=${this.isReport}`,
       payload: payload,
     };
     this.kendra.post(config).subscribe(
@@ -196,6 +198,7 @@ export class SurveyHomeComponent implements OnInit {
       .getDetailsById(surveyId, solutionId)
       .then((res) => {
         const survey = res.result;
+        this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
         this.storeRedirect(survey);
       })
       .catch((err) => {
