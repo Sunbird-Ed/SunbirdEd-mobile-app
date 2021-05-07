@@ -17,6 +17,8 @@ import {FieldConfig} from 'common-form-elements';
 })
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
+    @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
+
     public config: FieldConfig<any>[];
 
     private formGroup: FormGroup;
@@ -34,11 +36,15 @@ export class SearchFilterPage implements OnInit {
     }
 
     ngOnInit() {
-        this.resetFilter();
+        this.resetFilter(false);
     }
 
-    resetFilter() {
-        this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+    resetFilter(isDefaultFilterSelected: boolean) {
+        if (isDefaultFilterSelected) {
+            this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.defaultFilterCriteria));
+        } else {
+            this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
+        }
         this.config = this.buildConfig(this.appliedFilterCriteria);
     }
 
