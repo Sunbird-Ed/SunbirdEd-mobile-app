@@ -8,6 +8,7 @@ import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 import { Router } from '@angular/router';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 
 @Component({
   selector: 'app-survey-home',
@@ -27,6 +28,7 @@ export class SurveyHomeComponent implements OnInit {
   surveyList: any;
   submissionArr: any;
   count: any;
+  isReport: boolean = false;
   constructor(
     private headerService: AppHeaderService,
     private router: Router,
@@ -35,11 +37,13 @@ export class SurveyHomeComponent implements OnInit {
     private loader: LoaderService,
     private utils: UtilsService,
     private kendra: KendraApiService,
-    private toast: ToastService
+    private toast: ToastService,
+    private ulsdp: UpdateLocalSchoolDataService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.link = extrasState.data.survey_id;
+      this.isReport = extrasState.data.report;
     }
   }
 
@@ -48,6 +52,7 @@ export class SurveyHomeComponent implements OnInit {
   ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
+    
     this.surveyList = [];
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
 
@@ -69,7 +74,7 @@ export class SurveyHomeComponent implements OnInit {
 
     let payload = await this.utils.getProfileInfo();
     const config = {
-      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}`,
+      url: urlConstants.API_URLS.GET_TARGETED_SOLUTIONS + `?type=survey&page=${this.page}&limit=${this.limit}&surveyReportPage=${this.isReport}`,
       payload: payload,
     };
     this.kendra.post(config).subscribe(
@@ -133,21 +138,16 @@ export class SurveyHomeComponent implements OnInit {
   }
 
   onSurveyClick(survey) {
-    if (survey.status == 'completed') {
-      this.surveyProvider.showMsg('surveyCompleted');
-      return;
-    }
-
-    if (survey.status == 'expired') {
-      // its not added in samiksha but add here as , after expired also if its already downloaded then user is able to submit.(backend is not checking before making submission.)
-      this.surveyProvider.showMsg('surveyExpired');
-      return;
-    }
-
+    if (!this.isReport) {
+      
     // surveyId changed to _id
     survey.downloaded
       ? this.redirect(survey.submissionId)
       : this.getSurveyById(survey._id, survey.solutionId, survey.isCreator);
+      return;
+    } 
+      this.checkReport(survey);
+  
   }
 
   redirect(submissionId: any): void {
@@ -182,6 +182,7 @@ export class SurveyHomeComponent implements OnInit {
       .getDetailsById(surveyId, solutionId)
       .then((res) => {
         const survey = res.result;
+        this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
         this.storeRedirect(survey);
       })
       .catch((err) => {
