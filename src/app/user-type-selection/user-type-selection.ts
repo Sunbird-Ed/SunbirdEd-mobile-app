@@ -130,7 +130,7 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
       if (this.categoriesProfileData) {
-        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.HOME, false);
+        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
       } else {
         this.backButtonFunc.unsubscribe();
       }
