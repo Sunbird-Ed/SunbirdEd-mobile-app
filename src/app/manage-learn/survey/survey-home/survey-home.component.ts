@@ -7,7 +7,7 @@ import { urlConstants } from '../../core/constants/urlConstants';
 import { storageKeys } from '../../storageKeys';
 import { SurveyProviderService } from '../../core/services/survey-provider.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
-import { Router,ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 
 @Component({
@@ -38,12 +38,12 @@ export class SurveyHomeComponent implements OnInit {
     private utils: UtilsService,
     private kendra: KendraApiService,
     private toast: ToastService,
-    private route: ActivatedRoute,
     private ulsdp: UpdateLocalSchoolDataService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.link = extrasState.data.survey_id;
+      this.isReport = extrasState.data.report;
     }
   }
 
@@ -52,12 +52,7 @@ export class SurveyHomeComponent implements OnInit {
   ionViewDidLoad(): void {}
 
   ionViewWillEnter() {
-    this.route.queryParams.subscribe((params) => {
-      if (params && params.report) {
-        this.isReport = true;
-      }
-    });
-
+    
     this.surveyList = [];
     this.link ? this.deepLinkRedirect() : this.getSurveyListing();
 

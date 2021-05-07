@@ -3,7 +3,7 @@ import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { Router, RouterLink,NavigationExtras} from '@angular/router';
+import { Router} from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -77,11 +77,14 @@ export class ReportsListingComponent implements OnInit {
       this.router.navigate([item.link]);
       return;
     }
-    let navigationExtras: NavigationExtras = {
-      queryParams: {
-        report: true,
+
+    const extras = {
+      state: {
+        data: {
+          report: true,
+        },
       },
     };
-    this.router.navigate([item.link], navigationExtras);
+    this.router.navigate([item.link],extras);
  }
 }
