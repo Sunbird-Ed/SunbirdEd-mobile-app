@@ -16,11 +16,14 @@ import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'com
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
+    @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
+
+    public config: FieldConfig<any>[];
 
     public baseSearchFilter?: { [key: string]: string[] | string | undefined };
     public filterFormTemplateConfig?: IFacetFilterFieldTemplateConfig[];
     public searchResultFacets: ContentSearchFilter[];
-    
+
     private appliedFilterCriteria: ContentSearchCriteria;
 
     constructor(
