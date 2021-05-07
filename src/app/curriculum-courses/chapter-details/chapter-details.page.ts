@@ -337,6 +337,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
     contentContextMap['userId'] = userId;
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
+    contentContextMap['isCertified'] = this.isCertifiedCourse;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }

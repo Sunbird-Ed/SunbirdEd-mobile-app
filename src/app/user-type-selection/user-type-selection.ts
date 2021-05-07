@@ -129,8 +129,11 @@ export class UserTypeSelectionPage implements OnDestroy {
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         PageId.USER_TYPE
       );
-      this.handleBackButton();
-      this.backButtonFunc.unsubscribe();
+      if (this.categoriesProfileData) {
+        this.commonUtilService.showExitPopUp(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      } else {
+        this.backButtonFunc.unsubscribe();
+      }
     });
     this.hideBackButton = false;
   }
@@ -158,7 +161,9 @@ export class UserTypeSelectionPage implements OnDestroy {
         PageId.USER_TYPE
       );
     }
-    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+    if (!this.categoriesProfileData) {
+      this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+    }
   }
 
   handleHeaderEvents($event) {
