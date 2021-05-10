@@ -53,7 +53,8 @@ export const mockProfileData = {
         errorType: 'sample_,error_type',
     }, {
         orgId: 'sample_org_id2'
-    }]
+    }],
+    userLocations: [ 'State', 'District', 'Block', 'Cluster' ]
 };
 
 export const mockFormData =  [

@@ -11,6 +11,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {of, throwError} from 'rxjs';
 import {SbProgressLoader} from '../../../services/sb-progress-loader.service';
 import {Router} from '@angular/router';
+import { SegmentationTagService } from '../../../services/segmentation-tag/segmentation-tag.service';
 
 jest.mock('sunbird-sdk', () => {
     const actual = require.requireActual('sunbird-sdk');
@@ -51,6 +52,9 @@ describe('SignInCardComponent', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockRouter: Partial<Router> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        getPersistedSegmentaion: jest.fn()
+    };
 
     beforeAll(() => {
         signInCardComponent = new SignInCardComponent(
@@ -67,7 +71,8 @@ describe('SignInCardComponent', () => {
             mockEvents as Events,
             mockAppGlobalService as AppGlobalService,
             mockRouter as Router,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockSegmentationTagService as SegmentationTagService
         );
     });
 

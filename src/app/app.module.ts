@@ -4,6 +4,7 @@ import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, Provid
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // ionic cordova dependencies/plugins
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -172,6 +173,10 @@ export function archiveService() {
 export const discussionService = () => {
   return SunbirdSdk.instance.discussionService;
 };
+export const segmentationService = () => {
+  return SunbirdSdk.instance.segmentationService;
+};
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -266,12 +271,13 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
-  },
-  {
+  }, {
     provide: 'DISCUSSION_SERVICE',
     useFactory: discussionService
-  }
-  ];
+  }, {
+    provide: 'SEGMENTATION_SERVICE',
+    useFactory: segmentationService
+  }];
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
@@ -494,6 +500,7 @@ declare const sbutility;
     LocationHandler,
     DiscussionTelemetryService,
     UpdateProfileService,
+    SegmentationTagService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

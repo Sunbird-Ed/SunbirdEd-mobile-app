@@ -10,6 +10,7 @@ import { SurveyProviderService } from '../../core/services/survey-provider.servi
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '@app/services';
 import { Platform } from '@ionic/angular';
+import { UpdateLocalSchoolDataService } from '../../core/services/update-local-school-data.service';
 
 @Component({
   selector: 'app-solution-listing',
@@ -42,7 +43,8 @@ private backButtonFunc: Subscription;
     private surveyProvider: SurveyProviderService,
     private headerService: AppHeaderService,
     private platform: Platform,
-    private toast:ToastService
+    private toast:ToastService,
+    private ulsdp: UpdateLocalSchoolDataService,
   ) {
     activatedRoute.params.subscribe((param) => {
       this.programId = param.id;
@@ -105,6 +107,7 @@ private handleBackButton() {
           return
         }
         const survey = res.result;
+        this.ulsdp.mapSubmissionDataToQuestion(survey,false,true);
         this.storeRedirect(survey);
       })
       .catch((err) => {

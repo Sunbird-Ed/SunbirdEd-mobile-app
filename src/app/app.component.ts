@@ -47,6 +47,7 @@ import {
 import { EventParams } from './components/sign-in-card/event-params.interface';
 import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
+import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 declare const cordova;
 
@@ -118,7 +119,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkServ: NetworkService,
     private localStorage: LocalStorageService,
     private db: DbService,
-    private loginHandlerService: LoginHandlerService
+    private loginHandlerService: LoginHandlerService,
+    private segmentationTagService: SegmentationTagService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -126,6 +128,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.platform.ready().then(async () => {
       this.isForeground = true;
+      window['segmentation'] = SBTagModule.instance;
+      if (!window['segmentation'].isInitialised) {
+        window['segmentation'].init();
+      }
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
@@ -138,6 +144,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.receiveNotification();
       this.utilityService.getDeviceSpec()
         .then((deviceSpec) => {
+          let devSpec = {
+            id: deviceSpec.id,
+            os: deviceSpec.os,
+            make: deviceSpec.make
+          };
+          window['segmentation'].SBTagService.pushTag(devSpec, TagPrefixConstants.DEVICE_CONFIG, true);
           this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
         });
       this.generateNetworkTelemetry();
@@ -170,8 +182,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.utils.initilizeML();
       this.networkServ.netWorkCheck();
       await this.applyJoyfulTheme();
-      window['SBTagManager'] = SBTagModule.instance;
-      window['SBTagManager'].init();
     });
 
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -202,6 +212,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
+    this.segmentationTagService.getPersistedSegmentaion();
   }
 
   // TODO: make this as private
@@ -492,6 +503,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.notificationSrc.handleNotification();
       this.isForeground = true;
+      this.segmentationTagService.getPersistedSegmentaion();
     });
 
     this.platform.pause.subscribe(() => {
@@ -499,6 +511,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
       }
       this.isForeground = false;
+      this.segmentationTagService.persistSegmentation();
     });
   }
 
