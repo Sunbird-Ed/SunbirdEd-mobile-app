@@ -199,6 +199,7 @@ describe('UserTypeSelectionPage', () => {
             jest.advanceTimersByTime(450);
             jest.runAllTimers();
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+            mockCommonUtilService.showExitPopUp = jest.fn();
             mockHeaderService.hideHeader = jest.fn();
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({ handle: 'sample-user' }));
             const subscribeWithPriorityData = jest.fn((_, fn) => fn({
@@ -258,6 +259,7 @@ describe('UserTypeSelectionPage', () => {
                 return;
             });
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('sunbird'));
+            mockCommonUtilService.showExitPopUp = jest.fn();
             mockHeaderService.hideHeader = jest.fn();
             mockAppGlobalService.getCurrentUser = jest.fn(() => ({ handle: 'sample-user' }));
             const subscribeWithPriorityData = jest.fn((_, fn) => fn({
