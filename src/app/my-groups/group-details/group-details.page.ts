@@ -258,6 +258,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
   
 
   async groupMenuClick(event) {
+    this.generateInteractTelemetry( InteractType.TOUCH, InteractSubtype.GROUP_KEBAB_MENU_CLICKED);
     let menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
     if (this.groupDetails.status.toLowerCase() === 'suspended') {
       if (this.groupCreator.userId === this.userId) {

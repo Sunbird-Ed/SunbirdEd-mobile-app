@@ -65,6 +65,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   sortedTasks;
   programId;
   solutionId;
+  private backButtonFunc: Subscription;
 
   // header
   private _headerConfig = {
@@ -172,7 +173,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.db.query({ _id: this.projectId }).then(
         (success) => {
           if (success.docs.length) {
-
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
@@ -275,6 +275,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.initApp();
     // this.getProject();
     this.getDateFilters();
+    this.handleBackButton();
   }
 
   initApp() {
@@ -317,6 +318,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   ionViewWillLeave() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -484,7 +488,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   getPdfUrl(fileName, taskId?) {
     let task_id = taskId ? taskId : '';
-
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
     };
@@ -591,12 +594,32 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.loader.startLoader();
     const projectDetails = JSON.parse(JSON.stringify(this.project));
     this.syncServ
-      .createNewProject()
+      .createNewProject(true, projectDetails)
       .then((success) => {
-        projectDetails._id = success.result._id;
+        projectDetails._id = success.result.projectId;
         projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-        this.doDbActions(projectDetails);
+        projectDetails.isNew = false;
+        projectDetails.isEdit = false;
+        projectDetails.downloaded = this.project.downloaded;
         this.loader.stopLoader();
+        this.db.delete(this.project._id, this.project._rev).then(res => {
+          this.db
+            .create(projectDetails)
+            .then((success) => {
+              this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED', 'success');
+              setTimeout(() => {
+                this.projectId = projectDetails._id;
+                this.isNotSynced = projectDetails ? projectDetails.isNew || projectDetails.isEdit : false;
+                this._headerConfig.actionButtons.pop()
+                this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
+                this.headerService.updatePageConfig(this._headerConfig);
+              }, 0)
+            })
+            .catch((error) => {
+            });
+        }).catch((error) => {
+          this.loader.stopLoader();
+        });
       })
       .catch((error) => {
         this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
@@ -605,7 +628,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   doDbActions(projectDetails) {
-    const _rev = projectDetails._rev;
+    const _rev = this.project._rev;
     delete projectDetails._rev;
     const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
     this.db
@@ -623,7 +646,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
               }, replaceUrl: true
             }
             );
-
             setTimeout(() => {
               this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId } });
             }, 0);
@@ -789,7 +811,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {
@@ -838,8 +859,24 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
       queryParams: {
         projectId: this.project.projectId,
+        fromImportPage: true,
+        programId: this.programId
       },
       replaceUrl: true
+    });
+  }
+
+  private handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      if (this.fromImportProject) {
+        setTimeout(() => {
+          this.router.navigate([`/${RouterLinks.PROGRAM}/${RouterLinks.SOLUTIONS}`, this.programId]);
+        }, 0)
+        this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.HOME}/${RouterLinks.HOME_ADMIN}`]);
+      } else {
+        this.location.back();
+      }
+      this.backButtonFunc.unsubscribe();
     });
   }
 

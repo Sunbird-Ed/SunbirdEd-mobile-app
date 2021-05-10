@@ -56,7 +56,6 @@ import { FilterModalComponent } from './components/filter-modal/filter-modal.com
 import { SubmissionActionsComponent } from './components/submission-actions/submission-actions.component';
 import { ViewDetailComponent } from './components/view-detail/view-detail.component';
 import { ScatterChartComponent } from './components/scatter-chart/scatter-chart.component';
-import { StateModalComponent } from './components/state-modal/state-modal.component';
 import { SearchPipe } from './pipe/search.pipe';
 import { HintComponent } from './components/hint/hint.component';
 import { SurveyMsgComponent } from './components/survey-msg/survey-msg.component';
@@ -106,7 +105,6 @@ import { GenericPopUpService } from './TC-generic.popupService';
     SubmissionActionsComponent,
     ViewDetailComponent,
     NoDataComponent,
-    StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
@@ -156,7 +154,6 @@ import { GenericPopUpService } from './TC-generic.popupService';
     SubmissionActionsComponent,
     ViewDetailComponent,
     NoDataComponent,
-    StateModalComponent,
     SearchPipe,
     SurveyMsgComponent,
     ChartComponent,
@@ -196,7 +193,6 @@ import { GenericPopUpService } from './TC-generic.popupService';
     FilterModalComponent,
     SubmissionActionsComponent,
     ViewDetailComponent,
-    StateModalComponent,
     HintComponent,
     SurveyMsgComponent,
     CreateTaskFormComponent,

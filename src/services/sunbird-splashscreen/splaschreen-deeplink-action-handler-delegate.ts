@@ -132,7 +132,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.handleSearch(payload.data);
           break;
         case 'ACTION_GOTO':
-          if (payload.data && payload.data.request) {
+          if (payload.data && payload.data.request.params) {
             const navigationExtras: NavigationExtras = {
               state: {
                 params: payload.data.request.params
@@ -346,6 +346,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const queryParamFilters = {};
     const urlAttributeList = [];
     request.query = url.searchParams.get(matchedDeeplinkConfig.params.key) || '';
+    if (url.searchParams.has('se_mediums')) {
+      url.searchParams.set('medium', url.searchParams.get('se_mediums'));
+    }
+    if (url.searchParams.has('se_boards')) {
+      url.searchParams.set('board', url.searchParams.get('se_boards'));
+    }
+    if (url.searchParams.has('se_gradeLevels')) {
+      url.searchParams.set('gradeLevel', url.searchParams.get('se_gradeLevels'));
+    }
     url.searchParams.forEach((value, key) => {
       urlAttributeList.push(key);
     });
@@ -598,7 +607,7 @@ private async upgradeAppPopover(requiredVersionCode) {
           }
         };
       } else if (matchedDeeplinkConfig &&
-        matchedDeeplinkConfig.values && matchedDeeplinkConfig.values.includes('manage-learn')) {
+        matchedDeeplinkConfig.pattern && matchedDeeplinkConfig.pattern.includes('manage-learn')) {
           extras = {
             state: {
               data: urlMatchGroup
@@ -607,10 +616,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       }
       this.setTabsRoot();
       // TODO: Needs to check route exists or not before navigating
-      this.router.navigate([route], extras)
-        .catch(e => {
-          console.error('splash-screen:handleNavigation', e);
-        });
+      this.router.navigate([route], extras);
       this.closeProgressLoader();
     }
   }

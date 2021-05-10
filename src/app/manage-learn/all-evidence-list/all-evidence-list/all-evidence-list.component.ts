@@ -97,7 +97,7 @@ export class AllEvidenceListComponent implements OnInit {
     this.audios = this.data.audios;
   }
   async getAllEvidence() {
-    let url = urlConstants.API_URLS.OBSERVATION_REPORTS.ALL_EVIDENCE;
+    let url = urlConstants.API_URLS.ALL_EVIDENCE;
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
     payload = { ...this.payload, ...payload };

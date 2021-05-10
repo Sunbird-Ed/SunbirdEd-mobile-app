@@ -57,6 +57,11 @@
                 "glob": "**/*",
                 "input": "./node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-video-player-v8/lib/assets/",
+                "output": "/assets/"
               }
             ],
 
@@ -68,6 +73,7 @@
             "styles": [
               "src/assets/styles/quml-styles/quml-carousel.css",
               "node_modules/katex/dist/katex.min.css",
+              "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               "node_modules/@project-sunbird/discussions-ui-v8/assets/styles/global.scss",
               {
@@ -103,7 +109,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 }
               ]
             },

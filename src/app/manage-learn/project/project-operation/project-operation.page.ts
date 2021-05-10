@@ -363,6 +363,8 @@ export class ProjectOperationPage implements OnInit {
 
   newProjectCreate() {
     this.template.isNew = true;
+    this.template.downloaded = true;
+
     this.update(true);
     // delete this.template._id;
     // const payload = this.syncServ.removeKeys(JSON.parse(JSON.stringify(this.template)), ['isNew', 'isEdit']);
@@ -394,5 +396,10 @@ export class ProjectOperationPage implements OnInit {
     //   this.loaderService.stopLoader();
     // })
   }
+  ionViewWillLeave() {
+    if(this.viewProjectAlert ){
+     this.viewProjectAlert.dismiss();
+    }
+   }
 }
 

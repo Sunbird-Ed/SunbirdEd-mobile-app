@@ -957,6 +957,12 @@ export class CoursesPage implements OnInit, OnDestroy {
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
       applyFirstAvailableCombination: {},
+      userPreferences: {
+        board: this.profile.board,
+        medium: this.profile.medium,
+        gradeLevel: this.profile.grade,
+        subject: this.profile.subject
+      },
       interceptSearchCriteria: (contentSearchCriteria: ContentSearchCriteria) => {
         if (this.filter) {
           contentSearchCriteria = this.concatFilter(this.filter, contentSearchCriteria);

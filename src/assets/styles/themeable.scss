@@ -1,5 +1,6 @@
 @import "src/assets/styles/_variables.scss";
-@import '../../../node_modules/sb-theme/themes/theme.scss';
+@import '../../../node_modules/@project-sunbird/sb-themes/themes/themes-mobile.scss';
+
 html[data-theme="JOYFUL"]{
 
   --app-primary:#024f9d;
@@ -1611,6 +1612,18 @@ html[data-theme="JOYFUL"]{
   app-category-list-page{
     .filter-items{
       --background: var(--app-white) !important;
+    }
+  }
+
+  sunbird-pdf-player .sunbird-pdf-palyer-container {
+    .sb-pdf-main-header{
+      .player-zoom-btns {
+        button{
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          color: var(--sbt-language-dropdown-bg) !important;
+        }
+      }
     }
   }
 

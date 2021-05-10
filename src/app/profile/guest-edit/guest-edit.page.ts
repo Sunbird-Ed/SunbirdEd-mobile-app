@@ -532,20 +532,13 @@ export class GuestEditPage implements OnInit, OnDestroy {
     this.events.publish('refresh:onboardingcard');
 
     if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
-      if (formVal.profileType === ProfileType.STUDENT) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
-        initTabs(this.container, GUEST_STUDENT_TABS);
-      } else if (formVal.profileType === ProfileType.TEACHER) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
-        initTabs(this.container, GUEST_TEACHER_TABS);
-      } else if (formVal.profileType === ProfileType.ADMIN) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
-        initTabs(this.container, GUEST_TEACHER_TABS);
-        this.loginHandlerService.signIn();
-      } else {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.OTHER).toPromise().then();
-        initTabs(this.container, GUEST_TEACHER_TABS);
-      }
+      if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
+        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, formVal.profileType).toPromise().then();
+        if (formVal.profileType === ProfileType.ADMIN) {
+            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.ADMIN).toPromise().then();
+            this.loginHandlerService.signIn();
+          }
+        }
     }
     this.location.back();
   }

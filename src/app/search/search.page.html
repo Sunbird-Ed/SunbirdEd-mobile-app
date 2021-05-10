@@ -5,7 +5,7 @@
   <ion-refresher #refresher slot="fixed" (ionRefresh)="discoverCmp.doRefresh($event)">
       <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
-  <div class="container-focus">
+  <div class="container-focus sticky-position">
     <div class="search-info pt-16 mx-24">
       <div [@labelVisibility]="searchInfolVisibility">
         <strong class="title">{{'SEARCH_IN_APP' | translate: {'app_name': appName} }}</strong>

@@ -8,7 +8,6 @@ import { ProjectReportService } from './services/project-report.service';
 import { ProgramService } from './services/program.service';
 import { AssessmentApiService } from './services/assessment-api.service';
 import { DhitiApiService } from './services/dhiti-api.service';
-import { DownloadAndPreviewService } from './services/download-and-preview.service';
 import { SharingFeatureService } from './services/sharing-feature.service';
 
 
@@ -19,8 +18,7 @@ import { SharingFeatureService } from './services/sharing-feature.service';
   ],
   providers: [
     UpdateLocalSchoolDataService, LocalStorageService, UpdateTrackerService, EvidenceService,ProjectReportService,
-    ProgramService, AssessmentApiService, DhitiApiService,
-    DownloadAndPreviewService,SharingFeatureService
+    ProgramService, AssessmentApiService, DhitiApiService,SharingFeatureService
   ],
 })
 export class CoreModule {}

@@ -57,7 +57,7 @@ export class FilterModalComponent implements OnInit {
   async searchProgramByEntity(searchText: any) {
     //TODO
     this.loader.startLoader();
-    let payload = await this.utils.getProfileInfo();
+    let payload = await this.utils.getProfileData();
 
     const config = {
       url:
@@ -78,25 +78,25 @@ export class FilterModalComponent implements OnInit {
   }
   async serachEntity(searchText: any) {
     // TODO
-    let payload = await this.utils.getProfileInfo();
+    // let payload = await this.utils.getProfileInfo();
 
-    this.loader.startLoader();
-    const config = {
-      url:
-        urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
-        `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
-      payload: payload,
-    };
-    this.kendraSrvc.get(config).subscribe(
-      (data) => {
-        this.loader.stopLoader();
-        this.dataList = [...this.dataList, ...data.result.data];
-        this.count = data.result.count;
-      },
-      (error) => {
-        this.loader.stopLoader();
-      }
-    );
+    // this.loader.startLoader();
+    // const config = {
+    //   url:
+    //     urlConstants.API_URLS.GET_ENTITIES_BY_TYPE +
+    //     `?entityType=${this.selectedType}&search=${searchText}&page=${this.page}&limit=${this.limit}`,
+    //   payload: payload,
+    // };
+    // this.kendraSrvc.get(config).subscribe(
+    //   (data) => {
+    //     this.loader.stopLoader();
+    //     this.dataList = [...this.dataList, ...data.result.data];
+    //     this.count = data.result.count;
+    //   },
+    //   (error) => {
+    //     this.loader.stopLoader();
+    //   }
+    // );
   }
   getEntityTypes() {
     // const config = {
