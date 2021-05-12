@@ -27,7 +27,7 @@ export class CreateProjectPage implements OnInit {
   tasks = [];
   projectId;
   createProjectAlert;
-  hasAcceptedTAndC;
+  hasAcceptedTAndC: boolean;
   project;
   parameters;
   button = 'FRMELEMENTS_BTN_CREATE_PROJECT';
@@ -63,7 +63,7 @@ export class CreateProjectPage implements OnInit {
     private popoverCtrl: PopoverController
   ) {
     route.queryParams.subscribe((parameters) => {
-      this.hasAcceptedTAndC = parameters.hasAcceptedTAndC;  
+      this.hasAcceptedTAndC = parameters.hasAcceptedTAndC == 'false' ? false : true;
       if (parameters.projectId) {
         this.parameters = parameters;
         this.showTask = false;
