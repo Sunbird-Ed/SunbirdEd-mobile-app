@@ -83,7 +83,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   templateDetailsPayload;
   importProjectClicked: boolean = false;
   fromImportProject: boolean = false;
-
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -474,7 +473,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: () => {
             if (this.project.isEdit || this.project.isNew) {
               this.project.isNew
-                ? this.createNewProject()
+                ? this.createNewProject(true)
                 : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
             } else {
               type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
@@ -590,7 +589,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       })
       .catch((error) => { });
   }
-  createNewProject() {
+  createNewProject(isShare?) {
     this.loader.startLoader();
     const projectDetails = JSON.parse(JSON.stringify(this.project));
     this.syncServ
@@ -601,18 +600,28 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         projectDetails.isNew = false;
         projectDetails.isEdit = false;
         projectDetails.downloaded = this.project.downloaded;
+
         this.loader.stopLoader();
         this.db.delete(this.project._id, this.project._rev).then(res => {
           this.db
             .create(projectDetails)
             .then((success) => {
+              this.projectId = projectDetails._id;
+              this.project = projectDetails;
+              this.project._rev = success.rev;
               this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED', 'success');
               setTimeout(() => {
-                this.projectId = projectDetails._id;
-                this.isNotSynced = projectDetails ? projectDetails.isNew || projectDetails.isEdit : false;
+                isShare ? this.getPdfUrl(this.project.title) : ''
+                // this.getProject();
                 this._headerConfig.actionButtons.pop()
-                this._headerConfig.actionButtons.push(this.isNotSynced ? 'sync-offline' : 'sync-done');
-                this.headerService.updatePageConfig(this._headerConfig);
+                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                  queryParams: {
+                    projectId: projectDetails._id,
+                    programId: this.programId,
+                    solutionId: this.solutionId,
+                    fromImportPage: this.importProjectClicked
+                  }, replaceUrl: true
+                });
               }, 0)
             })
             .catch((error) => {
@@ -879,5 +888,5 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
   }
-
+  
 }
