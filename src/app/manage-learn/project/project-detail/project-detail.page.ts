@@ -83,7 +83,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   templateDetailsPayload;
   importProjectClicked: boolean = false;
   fromImportProject: boolean = false;
-
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -173,7 +172,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.db.query({ _id: this.projectId }).then(
         (success) => {
           if (success.docs.length) {
-
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
@@ -203,7 +201,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    console.log(this.projectType, "projectType");
     const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
@@ -476,7 +473,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: () => {
             if (this.project.isEdit || this.project.isNew) {
               this.project.isNew
-                ? this.createNewProject()
+                ? this.createNewProject(true)
                 : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
             } else {
               type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
@@ -490,7 +487,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   getPdfUrl(fileName, taskId?) {
     let task_id = taskId ? taskId : '';
-
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
     };
@@ -593,16 +589,46 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       })
       .catch((error) => { });
   }
-  createNewProject() {
+  createNewProject(isShare?) {
     this.loader.startLoader();
     const projectDetails = JSON.parse(JSON.stringify(this.project));
     this.syncServ
-      .createNewProject()
+      .createNewProject(true, projectDetails)
       .then((success) => {
-        projectDetails._id = success.result._id;
+        projectDetails._id = success.result.projectId;
         projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-        this.doDbActions(projectDetails);
+        projectDetails.isNew = false;
+        projectDetails.isEdit = false;
+        projectDetails.downloaded = this.project.downloaded;
+
         this.loader.stopLoader();
+        this.db.delete(this.project._id, this.project._rev).then(res => {
+          this.db
+            .create(projectDetails)
+            .then((success) => {
+              this.projectId = projectDetails._id;
+              this.project = projectDetails;
+              this.project._rev = success.rev;
+              this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED', 'success');
+              setTimeout(() => {
+                isShare ? this.getPdfUrl(this.project.title) : ''
+                // this.getProject();
+                this._headerConfig.actionButtons.pop()
+                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                  queryParams: {
+                    projectId: projectDetails._id,
+                    programId: this.programId,
+                    solutionId: this.solutionId,
+                    fromImportPage: this.importProjectClicked
+                  }, replaceUrl: true
+                });
+              }, 0)
+            })
+            .catch((error) => {
+            });
+        }).catch((error) => {
+          this.loader.stopLoader();
+        });
       })
       .catch((error) => {
         this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
@@ -611,7 +637,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   doDbActions(projectDetails) {
-    const _rev = projectDetails._rev;
+    const _rev = this.project._rev;
     delete projectDetails._rev;
     const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
     this.db
@@ -794,7 +820,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {
@@ -863,5 +888,5 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
   }
-
+  
 }
