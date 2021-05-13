@@ -155,7 +155,7 @@ export class AllEvidenceListComponent implements OnInit {
     let url = urlConstants.API_URLS.SURVEY_FEEDBACK.LIST_ALL_EVIDENCES;
     this.loader.startLoader();
     let payload = await this.utils.getProfileInfo();
-    this.payload = { ...payload, ...payload };
+    payload = { ...this.payload, ...payload };
     const config = {
       url: url,
       payload: payload,
