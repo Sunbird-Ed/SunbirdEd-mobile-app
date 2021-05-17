@@ -26,7 +26,7 @@ import {
     LoginHandlerService
 } from '../../../services';
 import { Location } from '@angular/common';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ProfileHandler } from '@app/services/profile-handler';
 
@@ -222,6 +222,33 @@ describe('GuestEditPage', () => {
         });
 
     });
+
+    describe('ngOnDestroy', () => {
+        it('should stop detecting the guest edit page changes on leaving the page', () => {
+            // arrange
+            guestEditPage['formControlSubscriptions'] = {
+                unsubscribe: jest.fn()
+            } as any;
+            // act
+            guestEditPage.ngOnDestroy();
+            // commonUtilService.getLoader
+            expect(guestEditPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
+        });
+    });
+
+    describe('ionViewWillLeave', () => {
+    it('should unsubscribe to the header events', () => {
+        // arrange
+        const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+        guestEditPage['unregisterBackButton'] = mockHeaderEventsSubscription as any;
+        guestEditPage['backButtonFunc'] = null;
+        // act
+        guestEditPage.ionViewWillLeave();
+        // assert
+        expect(guestEditPage['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+      });
+    });
+  
 
     describe('onSubjectChanged', () => {
         it('should return newValue and oldValue for category changed', () => {
