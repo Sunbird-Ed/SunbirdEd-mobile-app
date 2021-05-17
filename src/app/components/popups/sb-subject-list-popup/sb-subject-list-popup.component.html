@@ -9,6 +9,7 @@
             [pillsViewType]="PillsViewType.NONE"
             [pillBorder]="PillBorder.SEMI_ROUND"
             [pillSize]="PillSize.SMALL"
+            [pillTextElipsis]="PillTextElipsis.TWO_LINE"
             (select)="handlePillSelect($event)">
             <sb-pill-item *ngFor="let pillData of subjectList; let index=index" [name]="pillData?.value?.facet | translateJson | titlecase" 
             [icon]="{ component: 'sb-pill-item', input: 'icon' } | themeInputsSelector : theme : pillData?.value?.facet"
