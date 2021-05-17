@@ -1,8 +1,8 @@
 import { TitleCasePipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { CommonUtilService } from '@app/services/common-util.service';
-import {FieldConfig, FieldConfigInputType, FieldConfigValidationType} from 'common-form-elements';
-import { FilterValue } from 'sunbird-sdk';
+import { FieldConfig, FieldConfigInputType, FieldConfigValidationType } from 'common-form-elements';
+import { FilterValue, OrganizationSearchResponse } from 'sunbird-sdk';
 
 @Injectable()
 export class FilterFormConfigMapper {
@@ -16,7 +16,7 @@ export class FilterFormConfigMapper {
         'medium',
         'gradeLevel',
         'subject',
-        'publisher',
+        'channel',
         'mimeType',
         'primaryCategory',
         'audience'
@@ -33,8 +33,18 @@ export class FilterFormConfigMapper {
         }
     }
 
-    map(facetFilters: { [key: string]: FilterValue[] }): FieldConfig<string>[] {
-        return Object.keys(facetFilters).reduce<FieldConfig<string>[]>((acc, key) => {
+    private buildDefaultForChannel(filterValues: FilterValue[],
+                                   organisationResponse: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>
+                                  ): any | string | undefined {
+
+        const filterValue = filterValues.find(f => f.apply);
+        const facetValue = filterValue && filterValue.name;
+        return organisationResponse.content.find((org) => org.rootOrgId === facetValue);
+    }
+
+    map(facetFilters: { [key: string]: FilterValue[] },
+        organisationResponse?: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>): FieldConfig<string>[] {
+        return Object.keys(facetFilters).reduce<FieldConfig<any>[]>((acc, key) => {
             switch (key) {
                 case 'board': {
                     acc.push({
@@ -121,21 +131,21 @@ export class FilterFormConfigMapper {
                     });
                     break;
                 }
-                case 'publisher': {
+                case 'channel': {
                     acc.push({
-                        code: 'publisher',
+                        code: 'channel',
                         type: FieldConfigInputType.SELECT,
-                        fieldName: 'publisher',
-                        default: this.buildDefault(facetFilters['publisher'], true),
+                        fieldName: 'channel',
+                        default: this.buildDefaultForChannel(facetFilters['channel'], organisationResponse),
                         templateOptions: {
                             label: this.commonUtilService.translateMessage('PUBLISHER'),
                             placeHolder: 'Select publisher',
-                            multiple: true,
+                            multiple: false,
                             hidden: false,
                             disabled: false,
-                            options: facetFilters[key].map((f) => ({
-                                label: this.titlecasePipe.transform(f.name),
-                                value: f.name
+                            options: organisationResponse.content.map((f) => ({
+                                label: this.titlecasePipe.transform(f.orgName),
+                                value: f
                             }))
                         }
                     });
