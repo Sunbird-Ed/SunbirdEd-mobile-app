@@ -393,13 +393,11 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     if (document.querySelector('html').getAttribute('data-theme') === AppThemes.DEFAULT) {
       this.appTheme = AppThemes.JOYFUL;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
-      document.querySelector('html').setAttribute('device-accessable-theme', 'accessible');
       this.appHeaderService.showStatusBar().then();
     } else {
       document.querySelector('html').setAttribute('data-theme', AppThemes.DEFAULT);
       this.appTheme = AppThemes.DEFAULT;
       await this.preference.putString('current_selected_theme', this.appTheme).toPromise();
-      document.querySelector('html').setAttribute('device-accessable-theme', '');
       this.appHeaderService.hideStatusBar();
     }
     this.menuCtrl.close();
