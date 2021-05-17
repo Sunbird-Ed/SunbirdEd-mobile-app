@@ -1,11 +1,9 @@
 import { SearchFilterPage } from './search-filter.page';
-import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { ContentService, ContentSearchCriteria, ContentSearchResult, SearchType } from 'sunbird-sdk';
+import { ContentService, FrameworkService } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
-import { Location, TitleCasePipe } from '@angular/common';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -14,20 +12,18 @@ describe('SearchFilterPage', () => {
             state: undefined
         }
     };
-    const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockRouterExtras),
-    };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockContentService: Partial<ContentService> = {};
+    const mockFrameworkService: Partial<FrameworkService> = {
+        searchOrganization: jest.fn(() => of([]))
+    };
     const mockFilterFormConfigMapper: Partial<FilterFormConfigMapper> = {};
-    const mockLocation: Partial<Location> = {};
     const mockModalController: Partial<ModalController> = {};
 
     beforeAll(() => {
         searchFilterPage = new SearchFilterPage(
             mockContentService as ContentService,
-            mockRouter as Router,
-            mockLocation as Location,
+            mockFrameworkService as FrameworkService,
             mockModalController as ModalController,
             mockCommonUtilService as CommonUtilService,
             mockFilterFormConfigMapper as FilterFormConfigMapper
@@ -43,22 +39,31 @@ describe('SearchFilterPage', () => {
         expect(searchFilterPage).toBeTruthy();
     });
 
-    it('should reset filter', () => {
+    it('should reset filter', (done) => {
         // arrange
-        const filterCriteria = { facetFilters: [{ name: 'sample-name' }, { values: 'sample-value' }] };
+        const filterCriteria = { facetFilters: [{ name: 'channel',  values: ['sample-value'] }] };
         JSON.parse = jest.fn().mockImplementationOnce(() => {
             return filterCriteria;
         });
+        const dismissFn = jest.fn(() => Promise.resolve());
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: presentFn,
+            dismiss: dismissFn,
+        }));
+        mockFrameworkService.searchOrganization = jest.fn(() => of([]));
         mockFilterFormConfigMapper.map = jest.fn(() => []);
         // act
-        searchFilterPage.resetFilter();
-        // assert
-        expect(mockFilterFormConfigMapper.map).toHaveBeenCalled();
+        searchFilterPage.resetFilter(false).then(() => {
+            // assert
+            expect(mockFilterFormConfigMapper.map).toHaveBeenCalled();
+            done();
+        });
     });
 
     it('should dismiss modalController', () => {
         // arrange
-        mockModalController.dismiss = jest.fn(() => {}) as any;
+        mockModalController.dismiss = jest.fn(() => { }) as any;
         // act
         searchFilterPage.applyFilter();
         // assert
@@ -67,7 +72,7 @@ describe('SearchFilterPage', () => {
 
     it('should cacel modalController', () => {
         // arrange
-        mockModalController.dismiss = jest.fn(() => {}) as any;
+        mockModalController.dismiss = jest.fn(() => { }) as any;
         // act
         searchFilterPage.cancel();
         // assert

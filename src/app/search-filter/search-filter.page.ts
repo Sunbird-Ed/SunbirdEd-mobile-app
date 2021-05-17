@@ -1,13 +1,20 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Location, TitleCasePipe} from '@angular/common';
-import {ModalController} from '@ionic/angular';
-import {FormGroup} from '@angular/forms';
-import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType} from 'sunbird-sdk';
-import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService} from '@app/services';
-import {Subscription} from 'rxjs';
-import {FieldConfig} from 'common-form-elements';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
+import { ModalController } from '@ionic/angular';
+import {
+    ContentService,
+    ContentSearchCriteria,
+    ContentSearchResult,
+    SearchType,
+    FrameworkService,
+    OrganizationSearchResponse,
+    OrganizationSearchCriteria
+} from 'sunbird-sdk';
+import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
+import { CommonUtilService } from '@app/services';
+import { Observable } from 'rxjs';
+import { FieldConfig } from 'common-form-elements';
+import { FieldConfigInputType } from '../components/common-forms/field-config';
 
 @Component({
     selector: 'app-search-filter.page',
@@ -19,16 +26,26 @@ export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
 
-    public config: FieldConfig<any>[];
-
-    private formGroup: FormGroup;
-    private formValueSubscription: Subscription;
+    public config: FieldConfig<any>[] = [{
+        code: 'channel',
+        type: FieldConfigInputType.SELECT,
+        fieldName: 'channel',
+        default: '',
+        templateOptions: {
+            label: 'Dummy',
+            placeHolder: 'Select dummy',
+            multiple: false,
+            hidden: true,
+            disabled: true,
+            options: []
+        }
+    }];
     private appliedFilterCriteria: ContentSearchCriteria;
+    private organisationResponse: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
-        private router: Router,
-        private location: Location,
+        @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
         private modalController: ModalController,
         private commonUtilService: CommonUtilService,
         private filterFormConfigMapper: FilterFormConfigMapper
@@ -39,13 +56,14 @@ export class SearchFilterPage implements OnInit {
         this.resetFilter(false);
     }
 
-    resetFilter(isDefaultFilterSelected: boolean) {
-        if (isDefaultFilterSelected) {
-            this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.defaultFilterCriteria));
-        } else {
-            this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
-        }
+    async resetFilter(isDefaultFilterSelected: boolean) {
+        this.appliedFilterCriteria = JSON.parse(JSON.stringify(isDefaultFilterSelected
+            ? this.defaultFilterCriteria : this.initialFilterCriteria));
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        this.organisationResponse = await this.getOrganizationList().toPromise();
         this.config = this.buildConfig(this.appliedFilterCriteria);
+        await loader.dismiss();
     }
 
     applyFilter() {
@@ -68,7 +86,7 @@ export class SearchFilterPage implements OnInit {
         };
 
         searchCriteria.facetFilters.forEach((facetFilter) => {
-            const selection = formValue[facetFilter.name];
+            const selection = facetFilter.name === 'channel' ? [formValue[facetFilter.name].rootOrgId] : formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
                 f.apply = (selection && (selection.indexOf(f.name) === -1)) ? false : true;
@@ -82,6 +100,7 @@ export class SearchFilterPage implements OnInit {
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
             this.appliedFilterCriteria = contentSearchResult.filterCriteria;
+            this.organisationResponse = await this.getOrganizationList().toPromise();
             this.config = this.buildConfig(contentSearchResult.filterCriteria, formValue);
         } catch (e) {
             // todo show error toast
@@ -91,13 +110,13 @@ export class SearchFilterPage implements OnInit {
         }
     }
 
-    private buildConfig(filterCriteria: ContentSearchCriteria, defaults?: {[field: string]: any}) {
+    private buildConfig(filterCriteria: ContentSearchCriteria, defaults?: { [field: string]: any }) {
         return this.filterFormConfigMapper.map(
             filterCriteria.facetFilters.reduce((acc, f) => {
                 acc[f.name] = f.values;
                 return acc;
-            }, {})
-        );
+            }, {}),
+            this.organisationResponse);
     }
 
     valueChanged(event) {
@@ -105,5 +124,23 @@ export class SearchFilterPage implements OnInit {
             return;
         }
         this.refreshForm(event);
+    }
+
+    private getOrganizationList():
+        Observable<OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>> {
+        const channelList = this.appliedFilterCriteria.facetFilters
+            .find((facetFilter) => facetFilter.name === 'channel').values
+            .reduce((acc, facet) => {
+                acc.push(facet.name);
+                return acc;
+            }, []);
+        const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string; rootOrgId: string; }> = {
+            filters: {
+                isRootOrg: true
+            },
+            fields: ['orgName', 'rootOrgId']
+        };
+        searchOrganizationReq.filters['rootOrgId'] = channelList;
+        return this.frameworkService.searchOrganization(searchOrganizationReq);
     }
 }
