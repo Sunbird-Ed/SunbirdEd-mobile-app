@@ -300,7 +300,7 @@ describe('UserHomePage', () => {
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'Learning Resources');
             mockAppGlobalService.getUserId = jest.fn(() => '0987');
             // act
-            userHomePage.navigateToViewMoreContentsPage({dataSrc: {type: 'TRACKABLE_COLLECTIONS'}}, {contents: ['']});
+            userHomePage.navigateToViewMoreContentsPage({title: '{\"en\":\"My Learning\"}', dataSrc: {type: 'TRACKABLE_COLLECTIONS'}}, {contents: ['']});
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
@@ -310,7 +310,7 @@ describe('UserHomePage', () => {
             mockRouter.navigate = jest.fn();
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'Recently viewed');
             // act
-            userHomePage.navigateToViewMoreContentsPage({dataSrc: {type: 'RECENTLY_VIEWED_CONTENTS'}}, {contents: ['']});
+            userHomePage.navigateToViewMoreContentsPage({title: '{\"en\":\"My Learning\"}', dataSrc: {type: 'RECENTLY_VIEWED_CONTENTS'}}, {contents: ['']});
             // assert
             expect(mockRouter.navigate).toHaveBeenCalled();
         });
