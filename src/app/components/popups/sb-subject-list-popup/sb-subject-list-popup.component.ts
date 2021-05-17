@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PopoverController} from '@ionic/angular';
-import {PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize} from '@project-sunbird/common-consumption';
+import {PillShape, PillsViewType, PillBorder, ShowMoreViewType, PillsMultiRow, PillSize, PillTextElipsis} from '@project-sunbird/common-consumption';
 import {CorReleationDataType, Environment, ImpressionType, InteractType, PageId, TelemetryGeneratorService} from '@app/services';
 import {CorrelationData} from 'sunbird-sdk';
 
@@ -18,6 +18,7 @@ export class SbSubjectListPopupComponent implements OnInit {
     PillsViewType = PillsViewType;
     PillBorder = PillBorder;
     PillsMultiRow = PillsMultiRow;
+    PillTextElipsis = PillTextElipsis;
     ShowMoreViewType = ShowMoreViewType;
     PillSize = PillSize;
 
