@@ -155,6 +155,15 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
   ngOnInit() {
     this.subContentIds = [];
     this.getSubContentIds(this.chapter);
+    if (this.chapter.children && this.chapter.children.length) {
+      this.chapter.children.map((content) => {
+        if (content.contentData && content.contentData.displayScore){
+          content['displayScore'] = content.contentData.displayScore;
+        } else {
+          content['displayScore'] = false;
+        }
+      });
+    }
     if (this.chapter.hierarchyInfo) {
       this.objRollup = ContentUtil.generateRollUp(this.chapter.hierarchyInfo, this.identifier);
     }
