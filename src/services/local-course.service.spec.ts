@@ -22,6 +22,7 @@ import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { CategoryKeyTranslator } from '@app/pipes/category-key-translator/category-key-translator-pipe';
 import { UserConsent } from '@project-sunbird/client-services/models';
 import { ConsentService } from './consent-service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 describe('LocalCourseService', () => {
   let localCourseService: LocalCourseService;
@@ -50,6 +51,8 @@ describe('LocalCourseService', () => {
     transform: jest.fn(() => 'sample-message')
   };
 
+  const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
   beforeAll(() => {
     localCourseService = new LocalCourseService(
       mockCourseService as CourseService,
@@ -65,7 +68,8 @@ describe('LocalCourseService', () => {
       mockSbProgressLoader as SbProgressLoader,
       new DatePipe('en'),
       mockCategoryKeyTranslator as CategoryKeyTranslator,
-      mockConsentService as ConsentService
+      mockConsentService as ConsentService,
+      mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
     );
   });
 
@@ -116,6 +120,7 @@ describe('LocalCourseService', () => {
         present: presentFn,
         dismiss: dismissFn,
       }));
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
       mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
@@ -153,6 +158,8 @@ describe('LocalCourseService', () => {
         dismiss: dismissFn,
       }));
       mockCommonUtilService.showToast = jest.fn();
+      mockAppGlobalService.getCurrentUser = jest.fn(() => ({serverProfile: {isMinor: false}}));
+      mockConsentService.showConsentPopup = jest.fn(() => Promise.resolve());
       // act
       await localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
