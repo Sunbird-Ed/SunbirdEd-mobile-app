@@ -877,6 +877,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         }).catch((err) => {
           console.log('---------error------', err);
         });
+        break;
+      case 'LOGIN':
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+        } else {
+          this.loginHandlerService.signIn();
+        }
     }
   }
 
