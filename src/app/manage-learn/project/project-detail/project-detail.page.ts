@@ -83,6 +83,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   templateDetailsPayload;
   importProjectClicked: boolean = false;
   fromImportProject: boolean = false;
+  shareTaskId;
   constructor(
     public params: ActivatedRoute,
     public popoverController: PopoverController,
@@ -457,6 +458,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
       data = text;
     });
+    this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_SHARE_MSG"],
       buttons: [
@@ -595,40 +597,45 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.syncServ
       .createNewProject(true, projectDetails)
       .then((success) => {
-        projectDetails._id = success.result.projectId;
-        projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-        projectDetails.isNew = false;
-        projectDetails.isEdit = false;
-        projectDetails.downloaded = this.project.downloaded;
-
+        const { _id, _rev } = this.project;
+        this.project._id = success.result.projectId;
+        this.project.programId = success.result.programId;
+        this.project.lastDownloadedAt = success.result.lastDownloadedAt;
+        this.projectId = this.project._id;
+        this.project.isNew = false;
+        delete this.project._rev;
         this.loader.stopLoader();
-        this.db.delete(this.project._id, this.project._rev).then(res => {
-          this.db
-            .create(projectDetails)
-            .then((success) => {
-              this.projectId = projectDetails._id;
-              this.project = projectDetails;
-              this.project._rev = success.rev;
-              this.toast.showMessage('FRMELEMNTS_MSG_SUCCESSFULLY_SYNCED', 'success');
-              setTimeout(() => {
-                isShare ? this.getPdfUrl(this.project.title) : ''
-                // this.getProject();
-                this._headerConfig.actionButtons.pop()
+        this.db
+          .create(this.project)
+          .then((success) => {
+            debugger
+            this.project._rev = success.rev;
+            this.db
+              .delete(_id, _rev)
+              .then(res => {
+                debugger
+                setTimeout(() => {
+                  debugger
+                  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], {
+                    queryParams: {
+                      projectId: this.projectId, share: isShare ? true : false, taskId: this.shareTaskId
+                    }
+                  })
+                }, 0)
                 this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
                   queryParams: {
-                    projectId: projectDetails._id,
+                    projectId: this.project._id,
                     programId: this.programId,
                     solutionId: this.solutionId,
                     fromImportPage: this.importProjectClicked
                   }, replaceUrl: true
                 });
-              }, 0)
-            })
-            .catch((error) => {
-            });
-        }).catch((error) => {
-          this.loader.stopLoader();
-        });
+              })
+              .catch(deleteError => {
+              })
+          })
+          .catch(error => {
+          })
       })
       .catch((error) => {
         this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
@@ -888,5 +895,4 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
   }
-  
 }

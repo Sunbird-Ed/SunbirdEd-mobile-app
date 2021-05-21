@@ -92,7 +92,6 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   }
 
   async ionViewWillEnter() {
-    this.getCreateProjectForm();
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     });
@@ -129,6 +128,7 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.profile = profile;
         this.getFrameworkDetails();
         this.fetchDisplayElements();
+        this.getCreateProjectForm();
       });
     this.guestUser = !this.appGlobalService.isUserLoggedIn();
     this.appLabel = await this.commonUtilService.getAppName();

@@ -116,6 +116,7 @@ export class SyncService {
     // const project = JSON.parse(JSON.stringify(project));
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._rev;
+    delete payload._id;
     const config = {
       url: urlConstants.API_URLS.CREATE_PROJECT,
       payload: payload

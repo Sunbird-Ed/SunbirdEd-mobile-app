@@ -38,16 +38,6 @@ export class ProjectListingComponent implements OnInit {
         actionButtons: [],
     };
     projects = [];
-    // filters = [{
-    //   name: 'FRMELEMNTS_LBL_ASSIGNED_TO_ME',
-    //   parameter: 'assignedToMe',
-    //   selected: true
-    // },
-    // {
-    //   name: 'FRMELEMNTS_LBL_CREATED_BY_ME',
-    //   parameter: 'createdByMe',
-    //   selected: false
-    // }];
     filters = [];
     selectedFilterIndex = 0;
     selectedFilter;
@@ -124,19 +114,11 @@ export class ProjectListingComponent implements OnInit {
     private initNetworkDetection() {
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.projects = [];
-        !this.networkFlag ? this.getDownloadedProjectsList() : this.getcreatedProjects();
         this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
             this.clearFields();
-            if (this.networkFlag !== available) {
-                if (this._toast) {
-                    await this._toast.dismiss();
-                    this._toast = undefined;
-                }
-                this.clearFields();
-                this.projects = [];
-                !this.networkFlag ? this.getDownloadedProjectsList() : this.getcreatedProjects();
-            }
             this.networkFlag = available;
+            this.projects = [];
+            this.fetchProjectList()
         });
     }
 
@@ -151,7 +133,7 @@ export class ProjectListingComponent implements OnInit {
         this.count = 0;
     }
 
-    async getcreatedProjects() {
+    async getCreatedProjects() {
         this.getOfflineCreatedProjects().then(offlineProjects => {
             this.projects = offlineProjects;
             this.currentOnlineProjectLength = 0;
@@ -173,8 +155,9 @@ export class ProjectListingComponent implements OnInit {
         this.clearFields();
         this.projects = [];
         this.page = 1;
-        // this.getProjectList();
+        this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
         this.initNetworkDetection();
+        this.fetchProjectList();
         this.headerConfig = this.headerService.getDefaultPageConfig();
         this.headerConfig.actionButtons = [];
         this.headerConfig.showHeader = true;
@@ -191,7 +174,15 @@ export class ProjectListingComponent implements OnInit {
         this.selectedFilter = filter ? filter.data.text : this.selectedFilter;
         this.selectedFilterIndex = filter ? filter.data.index : this.selectedFilterIndex;
         this.searchText = '';
-        this.selectedFilterIndex == 1 ? this.getProjectList() : this.getcreatedProjects()
+        this.fetchProjectList();
+    }
+
+    fetchProjectList() {
+        if (this.networkFlag) {
+            this.selectedFilterIndex == 1 ? this.getProjectList() : this.getCreatedProjects()
+        } else {
+            this.getDownloadedProjectsList();
+        }
     }
 
     async getProjectList() {
@@ -411,7 +402,7 @@ export class ProjectListingComponent implements OnInit {
                                     .then((success) => {
                                         this.selectedProgram(project);
                                     })
-                                    return;
+                                return;
                             }
                             if (this.networkFlag) {
                                 this.checkProjectInLocal(id, data.isChecked, project);
