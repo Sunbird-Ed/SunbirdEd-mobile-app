@@ -754,6 +754,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (!this.didViewLoad) {
         this.generateImpressionEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
+        if (this.course.createdBy === this.userId) {
+          this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
+        }
       }
       this.didViewLoad = true;
 

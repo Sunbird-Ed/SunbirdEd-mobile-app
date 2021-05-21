@@ -163,10 +163,16 @@ export class LocalCourseService {
     if (batchDetails && courseDetail) {
       this.userId = await this.appGlobalService.getActiveProfileUid();
 
-      if (JSON.parse(courseDetail).createdBy !== this.userId && isLoggedInUser) {
-        this.enrollBatchAfterlogin(JSON.parse(batchDetails), JSON.parse(courseDetail));
+      const batch = JSON.parse(batchDetails);
+      const course = JSON.parse(courseDetail);
+      if (course.createdBy !== this.userId && isLoggedInUser) {
+        this.enrollBatchAfterlogin(batch, course);
       } else {
-        this.events.publish('return_course');
+        this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+          batchId: batch.id,
+          courseId: batch.courseId
+        });
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
       }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
     }
