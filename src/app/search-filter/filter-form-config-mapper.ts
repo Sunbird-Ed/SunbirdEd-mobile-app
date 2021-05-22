@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { FilterValue, OrganizationSearchResponse } from 'sunbird-sdk';
+import { FilterValue } from 'sunbird-sdk';
 import { IFacetFilterFieldTemplateConfig } from 'common-form-elements';
 
 interface FilterFormConfigWithDefaults {
@@ -19,7 +19,7 @@ export class FilterFormConfigMapper {
         'medium',
         'gradeLevel',
         'subject',
-        'channel',
+        'publisher',
         'mimeType',
         'primaryCategory',
         'audience'
@@ -36,17 +36,7 @@ export class FilterFormConfigMapper {
         }
     }
 
-    private static buildDefaultForChannel(filterValues: FilterValue[],
-                                          organisationResponse: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>
-    ): any | string | undefined {
-
-        const filterValue = filterValues.find(f => f.apply);
-        const facetValue = filterValue && filterValue.name;
-        return organisationResponse.content.find((org) => org.rootOrgId === facetValue);
-    }
-
-    map(facetFilters: { [key: string]: FilterValue[] },
-        organisationResponse: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>): FilterFormConfigWithDefaults {
+    map(facetFilters: { [key: string]: FilterValue[] }): FilterFormConfigWithDefaults {
         const accumulator = (acc, key) => {
             const { config, defaults } = acc;
             switch (key) {
@@ -94,8 +84,8 @@ export class FilterFormConfigMapper {
                     });
                     break;
                 }
-                case 'channel': {
-                    defaults[key] = FilterFormConfigMapper.buildDefaultForChannel(facetFilters[key], organisationResponse);
+                case 'publisher': {
+                    defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
                     config.push({
                         facet: key,
                         type: 'dropdown',

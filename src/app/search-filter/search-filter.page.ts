@@ -1,12 +1,11 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
-import { ModalController } from '@ionic/angular';
-import { ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter, OrganizationSearchCriteria, FrameworkService, OrganizationSearchResponse } from 'sunbird-sdk';
-import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
-import { CommonUtilService } from '@app/services';
-import { FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent } from 'common-form-elements';
-import { Observable } from 'rxjs';
+import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Location, TitleCasePipe} from '@angular/common';
+import {ModalController} from '@ionic/angular';
+import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
+import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
+import {CommonUtilService} from '@app/services';
+import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',
@@ -26,13 +25,12 @@ export class SearchFilterPage implements OnInit {
     public searchResultFacets: ContentSearchFilter[];
 
     private appliedFilterCriteria: ContentSearchCriteria;
-    private organisationResponse: OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
-        @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
+        private location: Location,
         private modalController: ModalController,
         private commonUtilService: CommonUtilService,
         private filterFormConfigMapper: FilterFormConfigMapper
@@ -42,7 +40,7 @@ export class SearchFilterPage implements OnInit {
     ngOnInit() {
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
         if (!this.filterFormTemplateConfig) {
-            const { config, defaults } = this.buildConfig(this.appliedFilterCriteria);
+            const {config, defaults} = this.buildConfig(this.appliedFilterCriteria);
             this.filterFormTemplateConfig = config;
             this.baseSearchFilter = defaults;
         }
@@ -77,7 +75,7 @@ export class SearchFilterPage implements OnInit {
         };
 
         searchCriteria.facetFilters.forEach((facetFilter) => {
-            const selection = facetFilter.name === 'channel' ? [formValue[facetFilter.name].rootOrgId] : formValue[facetFilter.name];
+            const selection = formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
                 f.apply = (!(selection && (selection.indexOf(f.name) === -1)));
@@ -105,8 +103,8 @@ export class SearchFilterPage implements OnInit {
             filterCriteria.facetFilters.reduce((acc, f) => {
                 acc[f.name] = f.values;
                 return acc;
-            }, {}),
-            this.organisationResponse);
+            }, {})
+        );
     }
 
     valueChanged(event) {
@@ -114,23 +112,5 @@ export class SearchFilterPage implements OnInit {
             return;
         }
         this.refreshForm(event);
-    }
-
-    private getOrganizationList():
-        Observable<OrganizationSearchResponse<{ orgName: string; rootOrgId: string; }>> {
-        const channelList = this.appliedFilterCriteria.facetFilters
-            .find((facetFilter) => facetFilter.name === 'channel').values
-            .reduce((acc, facet) => {
-                acc.push(facet.name);
-                return acc;
-            }, []);
-        const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string; rootOrgId: string; }> = {
-            filters: {
-                isRootOrg: true
-            },
-            fields: ['orgName', 'rootOrgId']
-        };
-        searchOrganizationReq.filters['rootOrgId'] = channelList;
-        return this.frameworkService.searchOrganization(searchOrganizationReq);
     }
 }
