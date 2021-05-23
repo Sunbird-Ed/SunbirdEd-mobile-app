@@ -15,9 +15,10 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Observable, of, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { EventTopics, RouterLinks, ShareItemType } from '../app.constant';
+import { EventTopics, ExploreConstants, RouterLinks, ShareItemType } from '../app.constant';
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { IterableDiffers } from '@angular/core';
 
 
 
@@ -620,6 +621,49 @@ describe('PlayerPage', () => {
                 done();
             }, 50);
         });
+
+        it('should call show confirm, when player is qunl' , () =>{
+            const event = {
+                edata: {
+                    type: 'EXIT'
+                }
+            };
+
+            playerPage.config = {
+                context: {
+                    dispatcher: {
+                        // dispatch: jest.fn()
+                    },
+                    pdata: {
+                        pid: 'sunbird.app.contentplayer'
+                    },
+                    objectRollup: {
+                        l1: 'li'
+                    }
+                },
+                config: {
+                    sideMenu: {
+                        showDownload: false,
+                        showPrint: false,
+                        showReplay: false,
+                        showExit: true,
+                        showShare: true
+                     }
+                },
+                metadata: {
+                    identifier: 'li',
+                    mimeType: 'application/vnd.sunbird.questionset',
+                    isAvailableLocally: true,
+                    contentData: {
+                        isAvailableLocally: true,
+                        basePath: 'basePath',
+                        streamingUrl: 'streamingurl'
+                    }
+                }
+            };
+            
+            playerPage.playerEvents(event);
+        })
         it('should call the download service to download the pdf', (done) => {
             playerPage['content'] = {
                 contentData: {
