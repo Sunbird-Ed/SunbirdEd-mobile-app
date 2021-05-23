@@ -38,6 +38,7 @@ export class ObservationSubmissionComponent implements OnInit {
   programId: any;
   entityId: any;
   entityName: any;
+  disableObserveAgain: boolean = false;
 
   constructor(
     private headerService: AppHeaderService,
@@ -60,6 +61,7 @@ export class ObservationSubmissionComponent implements OnInit {
       this.programId = params.programId;
       this.entityId = params.entityId;
       this.entityName = params.entityName;
+      this.disableObserveAgain = params.disableObserveAgain;
     });
   }
 
