@@ -1410,5 +1410,7 @@
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
-  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content"
+  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
+  "FRMELEMENTS_LBL_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
+
 }
