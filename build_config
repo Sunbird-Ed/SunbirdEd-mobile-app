@@ -35,7 +35,7 @@ cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#relea
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git#release-3.1.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
-cordova-plugin=cordova-sqlite-storage
+cordova-plugin=cordova-sqlite-storage@6.0.0
 cordova-pligin=cordova-plugin-camera@4.1.0
 cordova-plugin=cordova-plugin-telerik-imagepicker@2.3.3
 cordova-plugin=cordova-plugin-photo-library

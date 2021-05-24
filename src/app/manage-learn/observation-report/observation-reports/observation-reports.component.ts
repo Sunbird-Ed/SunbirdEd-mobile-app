@@ -89,18 +89,28 @@ export class ObservationReportsComponent implements OnInit {
 
   ngOnInit() {
     this.selectedTab = 'questionwise';
+    this.routerParam.queryParams.subscribe((params) => {
+      this.submissionId = params.submissionId;
+      this.observationId = params.observationId;
+      this.solutionId = params.solutionId;
+      this.entityId = params.entityId;
+      this.entityType = params.entityType;
+      this.from = params.from;
+      this.immediateChildEntityType = params.immediateChildEntityType;
+      this.reportType = params.reportType;
+      this.payload = {
+        entityId: this.entityId,
+        submissionId: this.submissionId,
+        observationId: this.observationId,
+        entityType: this.entityType,
+      };
+      this.getObservationReports();
+    });
 
-    this.payload = {
-      entityId: this.entityId,
-      submissionId: this.submissionId,
-      observationId: this.observationId,
-      entityType: this.entityType,
-    };
     this.isIos = this.platform.is('ios') ? true : false;
     this.appFolderPath = this.isIos
       ? cordova.file.documentsDirectory + '/Download/'
       : cordova.file.externalRootDirectory + '/Download/';
-    this.getObservationReports();
   }
   ionViewDidLoad() {
     //TODO:moved to contructor

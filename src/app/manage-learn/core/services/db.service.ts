@@ -11,7 +11,7 @@ export class DbService {
   pdb: any;
 
   constructor() {
-    this.createDb();
+    // this.createDb();
   }
 
   createDb() {

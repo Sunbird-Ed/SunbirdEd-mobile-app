@@ -83,6 +83,7 @@ export class ObservationSolutionListingComponent implements OnInit {
           programId: solution.programId,
           entityId: solution.entities[0]._id,
           entityName: solution.entities[0].name,
+          disableObserveAgain: !solution.allowMultipleAssessemts
         },
       };
       this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_SUBMISSION}`], queryParams);

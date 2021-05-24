@@ -152,4 +152,5 @@
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
+    <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
 </widget>

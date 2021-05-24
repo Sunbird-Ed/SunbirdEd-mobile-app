@@ -114,7 +114,7 @@
     "cordova-plugin-secure-storage-echo": "^5.1.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-streaming-media": "^2.3.0",
-    "cordova-sqlite-storage": "^5.1.0",
+    "cordova-sqlite-storage": "^6.0.0",
     "cordova-plugin-telerik-imagepicker": "2.3.3",
     "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.8.0",
     "cordova-plugin-webview-checker": "^1.0.1",
