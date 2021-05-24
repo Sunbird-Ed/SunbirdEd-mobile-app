@@ -22,7 +22,7 @@ export class CommandFunctions {
 export class SegmentationTagService {
 
     private _localNotificationId: number;
-    private exeCommands = [];
+    public exeCommands = [];
 
     private comdList = [];
 
