@@ -243,9 +243,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async playerEvents(event) {
     if (event.edata) {
       if (event.edata['type'] === 'EXIT') {
-        console.log('1', event);
         if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-        console.log('2', this.config);
           this.showConfirm()
         } else {
           this.location.back();

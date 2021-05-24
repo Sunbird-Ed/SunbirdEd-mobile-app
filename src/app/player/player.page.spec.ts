@@ -129,6 +129,7 @@ describe('PlayerPage', () => {
 
     describe('ionviewWillEnter', () => {
         it('should initialize the backbutton', (done) => {
+            playerPage.playerType = 'sunbird-old-player';
             playerPage.previewElement = {
                 nativeElement: {
                     src: '12346'
@@ -167,6 +168,46 @@ describe('PlayerPage', () => {
         });
 
     });
+
+    it('should initialize back button when mimetype is questionset', (done) =>{
+        playerPage.previewElement = {
+            nativeElement: {
+                src: '12346'
+            }
+        }
+        playerPage.config = {
+            context: {
+                actor: {
+                    id: '123456'
+                }
+            },
+            metadata: {
+              basePath: 'basePath',
+              mimeType: 'application/vnd.sunbird.questionset'
+            }
+        }
+        // playerPage.loadPdfPlayer = true;
+        mockStatusBar.hide = jest.fn();
+        mockPlatform.backButton = {
+            subscribeWithPriority: jest.fn((_, fn) => fn()),
+        } as any;
+        mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+        jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        // mockLocation.back = jest.fn();
+        mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+        playerPage.ionViewWillEnter();
+        setTimeout(() => {
+            // expect(playerPage.loadPdfPlayer).toBeTruthy();
+            expect(mockPlatform.backButton).toBeTruthy();
+            expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(playerPage.showConfirm).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
 
     it('should return new  player config', (done) => {
         playerPage.config = {
