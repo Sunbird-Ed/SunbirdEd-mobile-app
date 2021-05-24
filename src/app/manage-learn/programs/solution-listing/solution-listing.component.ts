@@ -154,6 +154,7 @@ private handleBackButton() {
         solutionId: data._id,
         observationId: observationId,
         solutionName: data.name,
+        disableObserveAgain: !data.allowMultipleAssessment
       },
     });
   }
