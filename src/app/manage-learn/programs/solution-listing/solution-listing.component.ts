@@ -144,6 +144,7 @@ private handleBackButton() {
     });
   }
   redirectObservaiton(data) {
+    debugger
     let observationId = '';
     if (data.observationId) {
       observationId = data.observationId;
@@ -154,7 +155,6 @@ private handleBackButton() {
         solutionId: data._id,
         observationId: observationId,
         solutionName: data.name,
-        disableObserveAgain: !data.allowMultipleAssessment
       },
     });
   }
