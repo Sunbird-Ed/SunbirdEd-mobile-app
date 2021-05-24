@@ -352,7 +352,7 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
         const req: FormRequest = {
             type: 'config',
-            subType: 'pdfPlayer',
+            subType: 'pdfPlayer_v2',
             action: 'get',
         };
         let currentConfiguration;
