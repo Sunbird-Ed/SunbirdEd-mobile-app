@@ -1,10 +1,11 @@
-import { AuthService, Profile, ProfileService, SegmentationService } from '@project-sunbird/sunbird-sdk';
+import { AuthService, Profile, ProfileService, SegmentationService, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
 import { AppGlobalService } from '../app-global-service.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { SegmentationTagService } from './segmentation-tag.service';
 import { NotificationService } from '@app/services/notification.service';
 import { cmdList, validCmdList } from './segmentation-tag.service.spec.data';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 describe('SegmentationTagService ', () => {
     let segmentationTagService: SegmentationTagService;
@@ -26,6 +27,12 @@ describe('SegmentationTagService ', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
         getSegmentationCommands: jest.fn(() => Promise.resolve(cmdList))
     };
+    const mockSharedPreferences: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of('key_value'))
+    };
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {
+        onAction: jest.fn()
+    };
 
     global.window.segmentation = {
         init: jest.fn(),
@@ -44,9 +51,11 @@ describe('SegmentationTagService ', () => {
             mockSegmentationService as SegmentationService,
             mockProfileService as ProfileService,
             mockAuthService as AuthService,
+            mockSharedPreferences as SharedPreferences,
             mockNotificationSrc as NotificationService,
             mockAppGlobalService as AppGlobalService,
-            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
         );
     });
 
