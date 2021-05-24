@@ -448,7 +448,6 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
               this.closeIframe();
             }
             if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
-                // await alert.dismiss()
                 this.location.back();
             }
           }

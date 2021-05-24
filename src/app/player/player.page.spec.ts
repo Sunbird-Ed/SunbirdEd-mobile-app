@@ -26,7 +26,9 @@ declare const cordova;
 
 describe('PlayerPage', () => {
     let playerPage: PlayerPage;
-    const mockAlertCtrl: Partial<AlertController> = {};
+    const mockAlertCtrl: Partial<AlertController> = {
+        
+    };
     const mockCourseService: Partial<CourseService> = {};
     const mockCanvasPlayerService: Partial<CanvasPlayerService> = {
         handleAction: jest.fn()
@@ -44,6 +46,7 @@ describe('PlayerPage', () => {
     const mockStatusBar: Partial<StatusBar> = {};
     const mockEvents: Partial<Events> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
+        translateMessage: jest.fn()
     };
     const mockRoute: Partial<ActivatedRoute> = {};
     const mockRouter: Partial<Router> = {
@@ -127,6 +130,54 @@ describe('PlayerPage', () => {
         expect(playerPage).toBeTruthy();
     });
 
+    describe('showConfirm' , () => {
+        
+        it('should be called when player type is not sunbird old player', (done) =>{
+            playerPage.playerType = 'sunbird-pdf-player';
+            mockAlertCtrl.create = jest.fn(() => Promise.resolve({
+                present: jest.fn()
+            })) as any;
+            playerPage.showConfirm();
+            setTimeout(() =>{
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
+            done()
+            }, 0)
+        })
+
+        it('should be called when player type is  sunbird old player', (done) =>{
+            playerPage.playerType = 'sunbird-old-player';
+            mockAlertCtrl.create = jest.fn(() => Promise.resolve({
+                present: jest.fn()
+            })) as any;
+            playerPage.previewElement= {
+                nativeElement: {
+                    contentWindow: {
+                        EkstepRendererAPI : {
+                            getCurrentStageId: jest.fn()
+                        },
+                        TelemetryService:{
+                           interact: jest.fn()
+                        },
+                        Renderer : {
+                            running: true
+                        }
+                    }
+                }
+            }
+            playerPage.showConfirm();
+            setTimeout(() =>{
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(1, 'CONFIRM');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'CONTENT_PLAYER_EXIT_PERMISSION');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'CANCEL');
+            expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(4, 'OKAY');
+            done()
+            }, 0)
+        })
+    })
+
     describe('ionviewWillEnter', () => {
         it('should initialize the backbutton', (done) => {
             playerPage.playerType = 'sunbird-old-player';
@@ -169,7 +220,7 @@ describe('PlayerPage', () => {
 
     });
 
-    it('should initialize back button when mimetype is questionset', (done) =>{
+    it('should initialize back button when mimetype is questionset', (done) => {
         playerPage.previewElement = {
             nativeElement: {
                 src: '12346'
@@ -186,7 +237,7 @@ describe('PlayerPage', () => {
               mimeType: 'application/vnd.sunbird.questionset'
             }
         }
-        // playerPage.loadPdfPlayer = true;
+        playerPage.playerType = 'sunbird-quml-player'
         mockStatusBar.hide = jest.fn();
         mockPlatform.backButton = {
             subscribeWithPriority: jest.fn((_, fn) => fn()),
@@ -204,6 +255,46 @@ describe('PlayerPage', () => {
             expect(mockAlertCtrl.getTop).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
             expect(playerPage.showConfirm).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should initialize back button when mimetype is not questionset', (done) => {
+        playerPage.previewElement = {
+            nativeElement: {
+                src: '12346'
+            }
+        }
+        playerPage.config = {
+            context: {
+                actor: {
+                    id: '123456'
+                }
+            },
+            metadata: {
+              basePath: 'basePath',
+              mimeType: 'application'
+            }
+        }
+        playerPage.playerType = 'sunbird-pdf-player'
+        // playerPage.loadPdfPlayer = true;
+        mockStatusBar.hide = jest.fn();
+        mockPlatform.backButton = {
+            subscribeWithPriority: jest.fn((_, fn) => fn()),
+        } as any;
+        mockAlertCtrl.getTop = jest.fn(() => Promise.resolve(undefined));
+        jest.spyOn(playerPage, 'showConfirm').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        // mockLocation.back = jest.fn();
+        mockEvents.subscribe = jest.fn((_, fn) => fn({ showConfirmBox: true }));
+        playerPage.ionViewWillEnter();
+        setTimeout(() => {
+            // expect(playerPage.loadPdfPlayer).toBeTruthy();
+            expect(mockPlatform.backButton).toBeTruthy();
+            expect(mockAlertCtrl.getTop).toHaveBeenCalled();
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(mockLocation.back).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -644,8 +735,6 @@ describe('PlayerPage', () => {
                 playerPage.config['context'].dispatcher.dispatch({});
             });
         });
-
-
     });
     describe('pdfPlayerEvents', () => {
         it('should exit the player', (done) => {
@@ -654,11 +743,15 @@ describe('PlayerPage', () => {
                     type: 'EXIT'
                 }
             };
+            playerPage.config = {
+                metadata: {
+                    mimeType: 'pdf-player'
+                }
+            }
             playerPage.playerEvents(event);
 
             setTimeout(() => {
-                // expect(playerPage.loadPdfPlayer).toBe(false);
-                // expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockLocation.back).toHaveBeenCalled();
                 done();
             }, 50);
         });
