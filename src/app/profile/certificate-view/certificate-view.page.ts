@@ -1,14 +1,14 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicationHeaderKebabMenuComponent } from '@app/app/components/application-header/application-header-kebab-menu.component';
-import { AppGlobalService, AppHeaderService } from '@app/services';
+import { AppGlobalService, AppHeaderService, Environment, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { CourseCertificate } from '@project-sunbird/client-services/models';
 import { tap } from 'rxjs/operators';
 import { CertificateDownloadService } from 'sb-svg2pdf';
-import { CourseService } from 'sunbird-sdk';
+import { CourseService, InteractType } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-certificate-view',
@@ -50,7 +50,8 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private fileOpener: FileOpener,
     private toastController: ToastController,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
   }
 
@@ -172,6 +173,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
           const baseFileName = `${this.pageData.certificate.name}_${this.pageData.courseId}_${this.activeUserId}`;
           switch (option.label) {
             case 'PDF': {
+              this.generateDownloadTypeTelemetry('pdf');
               return {
                 fileName: baseFileName + '.pdf',
                 mimeType: 'application/pdf',
@@ -182,6 +184,7 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
               };
             }
             case 'PNG': {
+              this.generateDownloadTypeTelemetry('png');
               return {
                 fileName: baseFileName + '.png',
                 mimeType: 'image/png',
@@ -209,7 +212,25 @@ export class CertificateViewPage implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  private generateDownloadTypeTelemetry(type: string) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      type, '',
+      Environment.USER,
+      PageId.CERTIFICATE_VIEW,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      InteractSubtype.DOWNLOAD_CLICKED
+    );
+  }
+
   async showCertificateMenu(event) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH, InteractSubtype.DOWNLOAD_CLICKED,
+      Environment.USER,
+      PageId.CERTIFICATE_VIEW
+    );
     const certificatePopover = await this.popoverCtrl.create({
       component: ApplicationHeaderKebabMenuComponent,
       event,

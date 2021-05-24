@@ -314,6 +314,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         };
         break;
     }
+
+    const values = new Map();
+    values['SectionName'] = JSON.parse(section.title)['en'];
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.VIEWALL_CLICKED,
+      Environment.HOME,
+      PageId.HOME, undefined,
+      values);
     const params: NavigationExtras = {
       state
     };

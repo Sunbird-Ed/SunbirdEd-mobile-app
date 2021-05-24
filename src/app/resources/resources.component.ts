@@ -74,6 +74,7 @@ import {
   FrameworkSelectionActionsDelegate, FrameworkSelectionDelegateService
 } from '../profile/framework-selection/framework-selection.page';
 import { PageFilterCallback } from './../page-filter/page-filter.page';
+import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 
 @Component({
   selector: 'app-resources',
@@ -84,7 +85,7 @@ import { PageFilterCallback } from './../page-filter/page-filter.page';
       state('true', style({
         left: '{{left_indent}}',
       }), { params: { left_indent: 0 } }), // default parameters values required
-
+      
       transition('* => active', [
         style({ width: 5, opacity: 0 }),
         group([
@@ -117,7 +118,7 @@ import { PageFilterCallback } from './../page-filter/page-filter.page';
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, FrameworkSelectionActionsDelegate, OnTabViewWillEnter {
   @ViewChild('libraryRefresher', { static: false }) refresher: IonRefresher;
 
   pageLoadedSuccess = false;
@@ -472,6 +473,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     }];
     const audience: string[] = await this.profileHandler.getAudience(this.profile.profileType);
     const request: ContentAggregatorRequest = {
+      userPreferences: {
+        board: this.getGroupByPageReq.board,
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade,
+        subject: this.profile.subject,
+      },
       applyFirstAvailableCombination: {
         medium: this.getGroupByPageReq.medium,
         gradeLevel: this.getGroupByPageReq.grade
@@ -658,7 +665,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
         primaryCategories,
-        source: PageId.LIBRARY
+        source: PageId.LIBRARY,
+        searchWithBackButton: true
       }
     });
   }
@@ -1220,5 +1228,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
       corRelation
     };
     router.navigate([`/${RouterLinks.RESOURCES}/${RouterLinks.RELEVANT_CONTENTS}`], { state: params });
+  }
+
+  tabViewWillEnter() {
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
   }
 }

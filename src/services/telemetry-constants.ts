@@ -164,7 +164,8 @@ export enum PageId {
     SUBJECT_RESULTS = 'subject-results',
     AUDIENCE_RESULTS = 'audience-results',
     NEW_EXPERIENCE_POPUP = 'new-experience-popup',
-    MENU = 'menu'
+    MENU = 'menu',
+    CERTIFICATE_VIEW = 'certificate-view',
 }
 
 export enum LogType {
@@ -287,7 +288,8 @@ export enum InteractType {
     SELECT_ACTIVITY = 'select-activity',
     UPDATE_GROUP = 'update-group',
     SELECT_DEACTIVATE = 'select-deactivate',
-    SELECT_DELETE = 'select-delete'
+    SELECT_DELETE = 'select-delete',
+    DOWNLOAD_CLICKED = 'download-clicked'
 }
 
 export enum InteractSubtype {
@@ -411,7 +413,7 @@ export enum InteractSubtype {
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
     DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
-    DOWNLOAD_CLICKED = 'download-from-device-button-clicked',
+    DOWNLOAD_CLICKED = 'download-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
     HELP_SECTION_CLICKED = 'help-section-clicked',
@@ -530,7 +532,9 @@ export enum InteractSubtype {
     SELECT_CONTENT = 'select-content',
     SELECT_BELL = 'select-bell',
     OPTED_IN = 'opted-in',
-    OPTED_OUT = 'opted-out'
+    OPTED_OUT = 'opted-out',
+    GROUP_KEBAB_MENU_CLICKED = 'group-kebab-menu-clicked',
+    FORUM_ICON_CLICKED = 'forum-icon-clicked'
 }
 
 export enum ID {
