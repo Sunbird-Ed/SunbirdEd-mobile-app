@@ -110,4 +110,23 @@ describe('SegmentationTagService ', () => {
             }, 100);
         });
     });
+
+    describe('handleLocalNotificationTap', () => {
+        it('handle actionable local notification', () => {
+            // arrange
+            segmentationTagService.localNotificationId = 14;
+            segmentationTagService.exeCommands = [{
+                controlFunctionPayload: [{
+                    config: [{
+                        id: 14
+                    }]
+                }]
+            }];
+            // act
+            segmentationTagService.handleLocalNotificationTap();
+            // assert
+            expect(mockSplaschreenDeeplinkActionHandlerDelegate.onAction).toBeCalled();
+            expect(segmentationTagService.localNotificationId).toBe(null);
+        });
+    });
 });
