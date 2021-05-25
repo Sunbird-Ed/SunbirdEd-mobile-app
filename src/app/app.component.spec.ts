@@ -31,14 +31,7 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
-import { SBTagModule } from 'sb-tag-manager';
-jest.mock('sb-tag-manager', () => ({
-    SBTagModule: {
-        instance: {
-            init: jest.fn()
-        }
-    }
-}));
+import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
 
 declare const supportfile;
 declare const plugins;
@@ -157,6 +150,10 @@ describe('AppComponent', () => {
     };
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockSegmentationTagService: Partial<SegmentationTagService> = {
+        getPersistedSegmentaion: jest.fn(),
+        persistSegmentation: jest.fn()
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -192,12 +189,14 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService,
             mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockSegmentationTagService as SegmentationTagService,
         );
     });
 
     beforeEach(() => {
         jest.clearAllMocks();
+        global.window.segmentation = null;
     });
 
     it('should be create a instance of appComponent', () => {
@@ -1062,14 +1061,17 @@ describe('AppComponent', () => {
                 success({});
                 error('');
             });
+            mockNotificationSrc.handleNotification = jest.fn();
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             mockNotificationServices.addNotification = jest.fn(() => of(mockData as any));
             mockNotificationSrc.setNotificationParams = jest.fn();
-
+            mockCommonUtilService.populateGlobalCData = jest.fn(() => Promise.resolve());
+            mockHeaderService.hideHeader = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
+                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
                     InteractType.FCM,

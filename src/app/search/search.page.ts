@@ -57,6 +57,7 @@ import { ProfileHandler } from '@app/services/profile-handler';
 import { FormConstants } from '../form.constants';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DiscoverComponent } from '../components/discover/discover.page';
+import { OnTabViewWillEnter } from './../tabs/on-tab-view-will-enter';
 
 declare const cordova;
 @Component({
@@ -84,7 +85,7 @@ declare const cordova;
     ])
   ],
 })
-export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
+export class SearchPage implements OnInit, AfterViewInit, OnDestroy, OnTabViewWillEnter {
 
   @ViewChild('refresher', { static: false }) refresher: IonRefresher;
   @ViewChild(DiscoverComponent, { static: false }) discoverCmp: DiscoverComponent;
@@ -160,6 +161,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   SelectMode = SelectMode;
   appPrimaryColor: string;
   selectedPrimaryCategoryFilter: any;
+  searchWithBackButton = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -200,6 +202,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.primaryCategories = extras.primaryCategories;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
+      this.searchWithBackButton = extras.searchWithBackButton;
       if (this.source === PageId.GROUP_DETAIL) {
         this.isFromGroupFlow = true;
         this.searchOnFocus();
@@ -236,16 +239,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.dialCode) {
       this.enableSearch = true;
     }
-    this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton();
-    });
-    this.events.subscribe('update_back_header', () => {
-      this.headerService.showHeaderWithBackButton();
-    });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    if(!this.isFromGroupFlow){
+    if(this.isFromGroupFlow || this.searchWithBackButton){
+      this.headerService.showHeaderWithBackButton();
+    } else {
       this.headerService.showHeaderWithHomeButton();
     }
     this.handleDeviceBackButton();
@@ -327,12 +326,18 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
     this.refresher.disabled = true;
   }
 
   ngOnDestroy() {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
+    }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
     }
   }
 
@@ -1757,13 +1762,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        if(this.isFromGroupFlow){
+        if (this.isFromGroupFlow) {
           this.location.back()
-        }  else {
+        } else if(this.enableSearch) {
           this.enableSearch = false;
           this.searchInfolVisibility = 'show';
           this.headerService.showHeaderWithHomeButton();
           this.appGlobalService.isDiscoverBackEnabled = false; 
+        } else {
+          this.location.back()
         }
         break;
       default: console.warn('Use Proper Event name');
@@ -1806,6 +1813,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.selectedPrimaryCategoryFilter = primaryCategoryFilterValue;
       primaryCategoryFilterValue.apply = true;
       this.applyFilter();
+    }
+  }
+
+  tabViewWillEnter() {
+    if(this.isFromGroupFlow || this.searchWithBackButton){
+      this.headerService.showHeaderWithBackButton();
+    } else {
+      this.headerService.showHeaderWithHomeButton();
     }
   }
 

@@ -72,6 +72,7 @@ import {
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { DiscussionTelemetryService } from '@app/services/discussion/discussion-telemetry.service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 declare const cordova;
 
@@ -788,6 +789,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     await this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
 
+    if (this.isAlreadyEnrolled) {
+      await this.checkDataSharingStatus();
+    }
 
     if (Boolean(data.isAvailableLocally)) {
       await this.setChildContents();
@@ -1420,6 +1424,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     if (this.isAlreadyEnrolled) {
       await this.checkDataSharingStatus();
     }
+    window['segmentation'].SBTagService.pushTag(
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+      TagPrefixConstants.CONTENT_ID,
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+    );
   }
 
   ionViewDidEnter() {
@@ -1453,6 +1462,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
+      if (this.localCourseService.isConsentPopupVisible()) {
+        this.localCourseService.setConsentPopupVisibility(false);
+        await this.popoverCtrl.dismiss();
+       }
 
       if (await this.onboardingSkippedBackAction()) {
         return;
@@ -2162,6 +2175,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         if (data) {
           this.dataSharingStatus = data.consents[0].status;
           this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+          this.localCourseService.setConsentPopupVisibility(false);
         }
       })
       .catch(async (e) => {
@@ -2169,6 +2183,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
           && this.course.userConsent === UserConsent.YES) {
           if (!this.isConsentPopUp) {
             this.isConsentPopUp = true;
+            this.localCourseService.setConsentPopupVisibility(true);
             await this.consentService.showConsentPopup(this.courseCardData);
             await this.checkDataSharingStatus();
           }
@@ -2183,9 +2198,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       this.loader.dismiss();
       this.loader = undefined;
     }
+    this.localCourseService.setConsentPopupVisibility(true);
   }
 
   onConsentPopoverDismiss() {
+    this.localCourseService.setConsentPopupVisibility(false);
     this.checkDataSharingStatus();
   }
 

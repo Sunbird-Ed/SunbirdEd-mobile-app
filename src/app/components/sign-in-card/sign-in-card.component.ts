@@ -31,6 +31,7 @@ import {
 } from 'sunbird-sdk';
 import { Context as SbProgressLoaderContext, SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { EventParams } from './event-params.interface';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -60,7 +61,8 @@ export class SignInCardComponent {
     private events: Events,
     private appGlobalService: AppGlobalService,
     private router: Router,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private segmentationTagService: SegmentationTagService
   ) {
 
     this.appVersion.getAppName()
@@ -133,12 +135,11 @@ export class SignInCardComponent {
               } else if (that.source === 'profile') {
                 that.router.navigateByUrl('tabs/profile');
               }
-
-            }, 1000);
-            that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-
-            // note: Navigating back to Resources is though the below event from App-Components.
-            this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+              that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
+              // note: Navigating back to Resources is though the below event from App-Components.
+              this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
+              this.segmentationTagService.getPersistedSegmentaion();
+            }, 2000);
           });
         })
         .catch(async (err) => {

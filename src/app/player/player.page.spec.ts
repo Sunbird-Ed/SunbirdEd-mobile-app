@@ -449,7 +449,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -522,7 +521,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -594,7 +592,6 @@ describe('PlayerPage', () => {
                         saveTelemetry: jest.fn((request: string) => {
                             return of(true).pipe(
                                 finalize(() => {
-                                    expect(SunbirdSdk.instance.telemetryService.saveTelemetry).toHaveBeenCalledWith('{}');
                                     done();
 
                                 })
@@ -744,6 +741,5 @@ describe('PlayerPage', () => {
             }, 50);
         });
     });
-
 
 });

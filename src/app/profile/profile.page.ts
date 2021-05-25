@@ -69,6 +69,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { CsPrimaryCategory } from '@project-sunbird/client-services/services/content';
 import { FormConstants } from '../form.constants';
 import { ProfileHandler } from '@app/services/profile-handler';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-profile',
@@ -290,6 +291,14 @@ export class ProfilePage implements OnInit {
               that.zone.run(async () => {
                 that.resetProfile();
                 that.profile = profileData;
+                // ******* Segmentation
+                window['segmentation'].SBTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE, true);
+                let userLocation = [];
+                profileData['userLocations'].forEach(element => {
+                  userLocation.push({ name: element.name, code: element.code });
+                });
+                window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
+                // *******
                 that.frameworkService.setActiveChannelId(profileData.rootOrg.hashTagId).toPromise();
                 that.isDefaultChannelProfile = await that.profileService.isDefaultChannelProfile().toPromise();
                 const role: string = (!that.profile.profileUserType.type ||
@@ -540,20 +549,19 @@ export class ProfilePage implements OnInit {
     issuedCertificate?: CourseCertificate,
     status: number
   }) {
+    const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
+
+    const values = new Map();
+    values['courseId'] = course.courseId;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+      Environment.USER,
+      PageId.PROFILE,
+      telemetryObject,
+      values);
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
-
-        const values = new Map();
-        values['courseId'] = course.courseId;
-
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-          Environment.USER, // env
-          PageId.PROFILE, // page name
-          telemetryObject,
-          values);
-
         if (course.issuedCertificate) {
           const request = { courseId: course.courseId, certificate: course.issuedCertificate };
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {

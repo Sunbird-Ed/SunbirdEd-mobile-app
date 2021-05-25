@@ -37,9 +37,9 @@ export const VideoConfig = {
     "gradeLevel": [
       ""
     ],
-    "appIcon": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31309320735055872011111/artifact/nishtha_icon.thumb.jpg",
+    "appIcon": "",
     "primaryCategory": "",
-    "artifactUrl": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/assets/do_31309320735055872011111/engagement-with-language-.mp4",
+    "artifactUrl": "",
     "contentType": "",
     "identifier": "",
     "audience": [
@@ -55,7 +55,7 @@ export const VideoConfig = {
     "name": "",
     "status": "Live",
     "code": "",
-    "streamingUrl": "https://ntpprodmedia-inct.streaming.media.azure.net/67a523f9-9590-4b5e-b161-bf6753a5e9d6/engagement-with-language-.ism/manifest(format=m3u8-aapl-v3)",
+    "streamingUrl": "",
     "medium": [
       ""
     ],

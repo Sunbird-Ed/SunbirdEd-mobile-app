@@ -62,6 +62,7 @@ import { CorReleationDataType, Environment, ErrorType, ImpressionType, InteractS
 import { CollectionChildComponent, ConfirmAlertComponent } from '../components';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { TextbookTocService } from './textbook-toc-service';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-collection-detail-etb',
@@ -338,6 +339,11 @@ export class CollectionDetailEtbPage implements OnInit {
       this.isDepthChild = false;
     }
     this.identifier = this.cardData.contentId || this.cardData.identifier;
+    window['segmentation'].SBTagService.pushTag(
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? this.identifier : [this.identifier],
+      TagPrefixConstants.CONTENT_ID,
+      window['segmentation'].SBTagService.getTags(TagPrefixConstants.CONTENT_ID) ? false : true
+    );
   }
 
   ngOnInit() {
