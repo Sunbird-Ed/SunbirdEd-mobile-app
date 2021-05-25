@@ -93,4 +93,8 @@ export class ObservationHomeComponent implements OnInit {
     this.solutionList = [];
     this.getPrograms();
   }
+
+  ionViewWillLeave() {
+    this.utils.closeProfileAlert();
+  }
 }
