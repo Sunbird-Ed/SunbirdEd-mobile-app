@@ -547,7 +547,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL,
         corRelationList: this.corRelationList,
-        objRollup: this.telemetryObject
+        objRollup: this.telemetryObject,
+        showUnenrollButton: this.showUnenrollButton
       },
     });
     await this.leaveTrainigPopover.present();
