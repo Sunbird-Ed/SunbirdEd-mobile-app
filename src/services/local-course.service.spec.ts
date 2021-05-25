@@ -446,7 +446,7 @@ describe('LocalCourseService', () => {
       setTimeout(() => {
         expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
         expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
-        expect(mockEvents.publish).toHaveBeenCalledWith(expect.any(String));
+        expect(mockEvents.publish).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.BATCH_DETAIL_KEY, expect.any(String));
         done();
       }, 0);
