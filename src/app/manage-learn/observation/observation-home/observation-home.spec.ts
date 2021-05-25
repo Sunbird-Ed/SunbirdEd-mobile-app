@@ -2,17 +2,17 @@ import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { AppHeaderService } from '../../../../services';
 import { LoaderService, UtilsService } from '../../core';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { Location } from '@angular/common';
 import { ObservationHomeComponent } from './observation-home.component';
 import { of, throwError } from 'rxjs';
+import { KendraApiService } from '../../core/services/kendra-api.service';
 describe('ObservationHomeComponent', () => {
   let observationHomeComponent: ObservationHomeComponent;
   const mockLocation: Partial<Location> = {};
   const mockHeaderService: Partial<AppHeaderService> = {};
   const mockPlatform: Partial<Platform> = {};
   const mockUtils: Partial<UtilsService> = {};
-  const mockAssessmentApiService: Partial<AssessmentApiService> = {};
+  const mockKendraService: Partial<KendraApiService> = {};
   const mockloader: Partial<LoaderService> = {};
   const mockRouter: Partial<Router> = {
     getCurrentNavigation: jest.fn(() => ({
@@ -37,7 +37,7 @@ describe('ObservationHomeComponent', () => {
       mockHeaderService as AppHeaderService,
       mockRouter as Router,
       mockUtils as UtilsService,
-      mockAssessmentApiService as AssessmentApiService,
+      mockKendraService as KendraApiService,
       mockloader as LoaderService
     );
   });
@@ -54,7 +54,7 @@ describe('ObservationHomeComponent', () => {
     it('should return observationList/programsList by invoked ngOnIt', (done) => {
       // arrange
       mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockAssessmentApiService.post = jest.fn(() =>
+      mockKendraService.post = jest.fn(() =>
         of({
           result: {
             data: [
@@ -78,7 +78,7 @@ describe('ObservationHomeComponent', () => {
       // assert
       setTimeout(() => {
         expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockAssessmentApiService.post).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
         expect(observationHomeComponent.solutionList.length).toBe(1);
         done();
       }, 0);
@@ -86,11 +86,9 @@ describe('ObservationHomeComponent', () => {
     it('should show no data if data is not present', (done) => {
       // arrange
       mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockAssessmentApiService.post = jest.fn(() =>
+      mockKendraService.post = jest.fn(() =>
         of({
-          result: {
-            
-          },
+          result: {},
         })
       );
       mockloader.startLoader = jest.fn(() => Promise.resolve());
@@ -101,7 +99,7 @@ describe('ObservationHomeComponent', () => {
       // assert
       setTimeout(() => {
         expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockAssessmentApiService.post).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
         expect(observationHomeComponent.solutionList.length).toBe(0);
         done();
       }, 0);
@@ -110,7 +108,7 @@ describe('ObservationHomeComponent', () => {
     it('show no data message if no api response', (done) => {
       // arrange
       mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-      mockAssessmentApiService.post = jest.fn(() => throwError({}));
+      mockKendraService.post = jest.fn(() => throwError({}));
       mockloader.startLoader = jest.fn(() => Promise.resolve());
       mockloader.stopLoader = jest.fn(() => Promise.resolve());
 
@@ -119,7 +117,7 @@ describe('ObservationHomeComponent', () => {
       // assert
       setTimeout(() => {
         expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-        expect(mockAssessmentApiService.post).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
         expect(observationHomeComponent.solutionList.length).toBe(0);
         done();
       }, 0);

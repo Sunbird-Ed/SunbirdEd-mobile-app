@@ -212,22 +212,28 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   onPillClick(event) {
     switch (event.data[0].value.code) {
       case 'program':
-        this.router.navigate([RouterLinks.PROGRAM], {})
-        break
+        this.router.navigate([RouterLinks.PROGRAM], {});
+        this.generateTelemetry('PROGRAM_TILE_CLICKED');
+        break;
       case 'project':
-        this.router.navigate([RouterLinks.PROJECT], {})
-        break
+        this.router.navigate([RouterLinks.PROJECT], {});
+        this.generateTelemetry('PROJECT_TILE_CLICKED');
+        break;
       case 'observation':
-        this.router.navigate([RouterLinks.OBSERVATION], {})
-        break
+        this.router.navigate([RouterLinks.OBSERVATION], {});
+        this.generateTelemetry('OBSERVATION_TILE_CLICKED');
+        break;
       case 'survey':
-        this.router.navigate([RouterLinks.SURVEY], {})
-        break
+        this.router.navigate([RouterLinks.SURVEY], {});
+        this.generateTelemetry('SURVEY_TILE_CLICKED');
+        break;
       case 'report':
-        this.router.navigate([RouterLinks.REPORTS], {})
-        break
+        this.router.navigate([RouterLinks.REPORTS], {});
+        this.generateTelemetry('REPORTS_TILE_CLICKED');
+        break;
       case 'course':
         this.router.navigate([`/${RouterLinks.TABS}/${RouterLinks.COURSES}`]);
+        this.generateTelemetry('COURSE_TILE_CLICKED');
 
       // this.router.navigate([RouterLinks.SEARCH], {
       //   state: {
@@ -236,6 +242,18 @@ export class AdminHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       //   }
       // });
     }
+
+    
+  }
+
+  generateTelemetry(interactiveSubtype) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      // InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
+      InteractSubtype[interactiveSubtype],
+      Environment.HOME,
+      PageId.ADMIN_HOME
+    );
   }
 
   navigateToViewMoreContentsPage(section) {
