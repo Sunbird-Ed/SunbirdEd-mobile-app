@@ -89,7 +89,7 @@ export class LoginNavigationHandlerService {
             });
     }
 
-    public refreshProfileData() {
+    private refreshProfileData() {
         const that = this;
 
         return new Promise<any>((resolve, reject) => {
@@ -153,7 +153,7 @@ export class LoginNavigationHandlerService {
         });
     }
 
-    public refreshTenantData(slug: string, title: string) {
+    private refreshTenantData(slug: string, title: string) {
         return new Promise((resolve, reject) => {
             this.profileService.getTenantInfo({slug: ''}).toPromise()
                 .then(async (res) => {
@@ -171,7 +171,7 @@ export class LoginNavigationHandlerService {
         });
     }
 
-    public generateIgnoreTelemetryContext(): SbProgressLoaderContext {
+    private generateIgnoreTelemetryContext(): SbProgressLoaderContext {
         return {
             id: 'login',
             ignoreTelemetry: {
@@ -183,7 +183,7 @@ export class LoginNavigationHandlerService {
         };
     }
 
-    public generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
+    private generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
         const valuesMap = new Map();
         valuesMap['UID'] = uid;
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -213,7 +213,7 @@ export class LoginNavigationHandlerService {
         });
     }
 
-    public getDefaultProfileRequest() {
+    private getDefaultProfileRequest() {
         const profile = this.appGlobalService.getCurrentUser();
         const profileRequest: Profile = {
             uid: profile.uid,
