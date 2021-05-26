@@ -26,7 +26,7 @@ export class FormConstants {
     public static  SEARCH_FILTER: FormRequest = {
         type: 'config',
         subType: 'search',
-        action: 'filter_v3',
+        action: 'filter_v2',
         component: 'app'
     };
 
