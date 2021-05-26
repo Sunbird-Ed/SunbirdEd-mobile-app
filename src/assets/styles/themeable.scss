@@ -1525,6 +1525,13 @@ html[data-theme="JOYFUL"]{
     }
     ion-item-sliding{
       box-shadow: var(--block-style-shadow) !important;
+      sb-notification-card{
+        .sb-notification-list{
+          box-shadow: none !important;
+          margin-bottom: 0 !important;
+          border: none !important;
+        }
+      }
     }
     .oval-wrapper{
       h4{
