@@ -2759,7 +2759,11 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.disableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req)
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(
+                    {
+                        cid: ['some_cid']
+                    }
+                )
                 done()
             });
         })
@@ -2776,7 +2780,11 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.disableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req);
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(
+                    {
+                        cid: ['some_cid']
+                    }
+                );
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
                 done()
             });
