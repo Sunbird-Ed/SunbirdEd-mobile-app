@@ -28,6 +28,7 @@ import {
 import { ContentFilterConfig, PreferenceKey, SystemSettingsIds, PrimaryCategory, FormConstant } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -351,7 +352,7 @@ export class FormAndFrameworkUtilService {
         reject: (reason?: any) => void) {
         const req: FormRequest = {
             type: 'config',
-            subType: 'pdfPlayer',
+            subType: 'pdfPlayer_v2',
             action: 'get',
         };
         let currentConfiguration;
@@ -767,4 +768,24 @@ export class FormAndFrameworkUtilService {
         };
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
     }
+
+    public  getOrganizationList(channelFacetFilter):
+    Observable<{ orgName: string; rootOrgId: string; }[]> {
+    const channelList = channelFacetFilter.values
+        .reduce((acc, facet) => {
+            acc.push(facet.name);
+            return acc;
+        }, []);
+    const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string; rootOrgId: string; }> = {
+        filters: {
+            isRootOrg: true
+        },
+        fields: ['orgName', 'rootOrgId']
+    };
+    searchOrganizationReq.filters['rootOrgId'] = channelList;
+    return this.frameworkService.searchOrganization(searchOrganizationReq).pipe(
+        map((res) => res.content)
+    );
+}
+
 }
