@@ -269,8 +269,6 @@
       "cordova-plugin-inappupdatemanager": {},
       "cordova-plugin-sunbirdsplash": {},
       "cordova-plugin-googleplus": {
-        "REVERSED_CLIENT_ID": "org.sunbird.app.staging",
-        "WEB_APPLICATION_CLIENT_ID": "525350998139-cjr1m4a2p1i296p588vff7qau924et79.apps.googleusercontent.com",
         "PLAY_SERVICES_VERSION": "15.0.1"
       }
     },

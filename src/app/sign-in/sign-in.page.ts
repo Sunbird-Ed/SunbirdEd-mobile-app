@@ -138,7 +138,7 @@ export class SignInPage implements OnInit {
                     }
                 });
         }).catch((result) => {
-            console.log('error in google sign in', result);
+            this.userData = result;
         });
     }
 
