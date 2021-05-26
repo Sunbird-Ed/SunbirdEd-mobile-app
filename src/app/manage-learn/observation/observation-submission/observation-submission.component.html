@@ -55,7 +55,7 @@
   <app-no-data *ngIf="!submissions?.length"></app-no-data>
 </ion-content>
 
-<ion-footer no-shadow>
+<ion-footer no-shadow *ngIf="!disableObserveAgain">
   <ion-toolbar position="bottom">
     <ion-row>
       <ion-col>

@@ -10,8 +10,8 @@ import PouchDBFind from 'pouchdb-find';
 export class DbService {
   pdb: any;
 
-  constructor(private appGlobalService: AppGlobalService) {
-    this.createDb();
+  constructor() {
+    // this.createDb();
   }
 
   async createDb() {
