@@ -212,7 +212,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
-    private loginHandlerService: LoginHandlerService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private sbProgressLoader: SbProgressLoader,
@@ -1303,7 +1302,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
-      this.loginHandlerService.signIn({navigateToCourse: true});
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
     this.isLoginPromptOpen = false;
   }

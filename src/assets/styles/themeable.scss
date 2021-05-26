@@ -186,7 +186,7 @@ html[data-theme="JOYFUL"]{
     background-color: var(--app-white) !important;
   }
 
-  .sb-btn-outline-secondary{  
+  .sb-btn-outline-secondary{
     background-color: var(--app-white) !important;
     color: var(--app-primary) !important;
   }
@@ -551,7 +551,7 @@ html[data-theme="JOYFUL"]{
       margin-top: 55px;
       .profile-avatar{
         background-color: var(--app-white);
-      }  
+      }
     }
     .roles-container{
       .roles{
@@ -1011,7 +1011,7 @@ html[data-theme="JOYFUL"]{
       .yesBtn{
         color: var(--app-green) !important;
       }
-      
+
       .panel-collapse{
         background-color: var(--app-secondary-background) !important;
         border-radius: 0 0 16px 16px;
@@ -1211,7 +1211,7 @@ html[data-theme="JOYFUL"]{
     .mu-selected-user{
       border-radius: 16px;
     }
-    
+
     sb-member-card{
       .sb-members-list-item{
         border-radius: 16px;
@@ -1433,7 +1433,7 @@ html[data-theme="JOYFUL"]{
       }
     }
   }
-  
+
   app-toast-navigation{
     div{
       color: var(--app-gray);
@@ -1636,4 +1636,18 @@ html[data-theme="JOYFUL"]{
     }
   }
 
+  app-sign-in {
+    .sign-in-button {
+      margin: 1rem;
+      background-color: var(--app-white) !important;
+      width: 70%;
+      height: 3rem;
+      color: var(--app-gray) !important;
+      border-radius: 0.25rem !important;
+      position: relative;
+    }
+  }
+  ion-toolbar {
+    border-bottom-left-radius: 0 !important;
+  }
 }

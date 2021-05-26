@@ -152,4 +152,10 @@
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
+    <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
+        <variable name="REVERSED_CLIENT_ID" value="org.sunbird.app.staging" />
+        <variable name="WEB_APPLICATION_CLIENT_ID" value="525350998139-cjr1m4a2p1i296p588vff7qau924et79.apps.googleusercontent.com" />
+        <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
+    </plugin>
+    <engine name="android" spec="^9.0.0" />
 </widget>

@@ -293,8 +293,11 @@ export class UserTypeSelectionPage implements OnDestroy {
       if (isUserTypeChanged) {
         this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() :
+        if (this.selectedUserType === ProfileType.ADMIN) {
+          this.router.navigate([RouterLinks.SIGN_IN]);
+        } else {
           this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
+        }
       }
     } else {
       this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
@@ -341,8 +344,11 @@ export class UserTypeSelectionPage implements OnDestroy {
         } else if (this.categoriesProfileData) {
           this.navigateToTabsAsLogInUser();
         } else {
-          this.selectedUserType === ProfileType.ADMIN ? this.loginHandlerService.signIn() : this.navigateToProfileSettingsPage(params);
-          // this.navigateToProfileSettingsPage(params);
+          if (this.selectedUserType === ProfileType.ADMIN) {
+            this.router.navigate([RouterLinks.SIGN_IN]);
+          } else {
+            this.navigateToProfileSettingsPage(params);
+          }
         }
       }).catch(error => {
         console.error('Error=', error);

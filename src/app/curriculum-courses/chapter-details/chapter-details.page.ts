@@ -699,7 +699,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy, ConsentPopoverActi
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
       this.appGlobalService.resetSavedQuizContent();
-      this.loginHandlerService.signIn({navigateToCourse: true});
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 

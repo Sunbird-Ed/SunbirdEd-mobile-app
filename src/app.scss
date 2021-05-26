@@ -311,7 +311,7 @@ ul.rating .ion-md-star-outline:before {
   }
   @include rtl() {
     right: 0 !important;
-  } 
+  }
   top: unset !important;
   bottom: 0 !important;
   transform-origin: bottom -100% !important;
@@ -1192,7 +1192,7 @@ app-resources{
         padding-top: 8px !important;
         padding-bottom: 8px !important;
       }
-      .rounded{ 
+      .rounded{
         padding-top: 18px !important;
         padding-bottom: 18px !important;
         border-radius: 18px !important;
@@ -1749,7 +1749,7 @@ app-user-home{
         background-color: var(--app-primary-header);
       }
     }
-  } 
+  }
 }
 
 .subject-list-popup{

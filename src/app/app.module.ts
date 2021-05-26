@@ -10,6 +10,7 @@ import { Device } from '@ionic-native/device/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
+import {GooglePlus} from '@ionic-native/google-plus/ngx';
 // ionic cordova dependencies/plugins
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
@@ -79,6 +80,7 @@ import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-a
 import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import { SbSearchFilterModule } from 'common-form-elements';
+import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -501,6 +503,8 @@ declare const sbutility;
     DiscussionTelemetryService,
     UpdateProfileService,
     SegmentationTagService,
+    LoginNavigationHandlerService,
+    GooglePlus,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
