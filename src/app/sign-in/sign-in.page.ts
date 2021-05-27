@@ -53,7 +53,7 @@ export class SignInPage implements OnInit {
         this.loginHandlerService.signIn(this.skipNavigation);
     }
 
-    async loginWithStateSystem(skipNavigation = this.skipNavigation) {
+    async loginWithStateSystem() {
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewStateSessionProviderConfig: WebviewStateSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -72,7 +72,7 @@ export class SignInPage implements OnInit {
             webviewStateSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewStateSession, skipNavigation);
+        await this.loginNavigationHandlerService.setSession(webViewStateSession, this.skipNavigation);
     }
 
     async signInWithGoogle() {
@@ -83,13 +83,14 @@ export class SignInPage implements OnInit {
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
             await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation);
         }).catch(async (result) => {
+            // TODO handle the catch part
             this.userData = result;
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
             await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation);
         });
     }
 
-    async register(skipNavigation = this.skipNavigation) {
+    async register() {
         const webviewSessionProviderConfigLoader = await this.commonUtilService.getLoader();
         let webviewRegisterSessionProviderConfig: WebviewRegisterSessionProviderConfig;
         let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
@@ -108,7 +109,7 @@ export class SignInPage implements OnInit {
             webviewRegisterSessionProviderConfig,
             webviewMigrateSessionProviderConfig
         );
-        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, skipNavigation);
+        await this.loginNavigationHandlerService.setSession(webViewRegisterSession, this.skipNavigation);
     }
 
 }
