@@ -12,7 +12,7 @@
         <progress-bar [progress]="percentage" [total]="questionCount" [showTracker]="true"
           [completed]="completedQuestionCount" class="_full-width" *ngIf="completedQuestionCount!=questionCount">
         </progress-bar>
-        <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMENTS_LBL_SUBMIT'| translate}}
+        <ion-button  round small *ngIf="showSubmit &&completedQuestionCount==questionCount" (click)="next('completed')">{{'FRMELEMNTS_LBL_SUBMIT'| translate}}
           <ion-icon name="chevron-up-circle" style="padding: 0 9px;"></ion-icon></ion-button>
       </ion-col>
       <ion-col>
