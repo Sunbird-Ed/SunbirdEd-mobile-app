@@ -144,6 +144,7 @@ private handleBackButton() {
     });
   }
   redirectObservaiton(data) {
+    debugger
     let observationId = '';
     if (data.observationId) {
       observationId = data.observationId;

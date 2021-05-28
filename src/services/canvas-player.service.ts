@@ -71,6 +71,13 @@ export class CanvasPlayerService {
                     const content = params[0];
                     return this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise()
                         .then(async (context: string) => {
+                            if (!context) {
+                                return {
+                                    isLastAttempt: false,
+                                    limitExceeded: false,
+                                    isCloseButtonClicked: false
+                                };
+                            }
                             const courseContext = JSON.parse(context);
                             let maxAttempt: MaxAttempt;
                             if (courseContext.courseId && courseContext.batchId && courseContext.leafNodeIds) {

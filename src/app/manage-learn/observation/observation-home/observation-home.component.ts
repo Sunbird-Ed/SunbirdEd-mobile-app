@@ -4,7 +4,6 @@ import { AppHeaderService } from '@app/services';
 import { Router } from '@angular/router';
 import { LoaderService, UtilsService } from '../../core';
 import { urlConstants } from '../../core/constants/urlConstants';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { KendraApiService } from '../../core/services/kendra-api.service';
 
 @Component({
@@ -28,7 +27,6 @@ export class ObservationHomeComponent implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     private utils: UtilsService,
-    private assessmentService: AssessmentApiService,
     private kendra: KendraApiService,
     private loader: LoaderService
   ) {}
@@ -92,5 +90,9 @@ export class ObservationHomeComponent implements OnInit {
     this.page=1
     this.solutionList = [];
     this.getPrograms();
+  }
+
+  ionViewWillLeave() {
+    this.utils.closeProfileAlert();
   }
 }

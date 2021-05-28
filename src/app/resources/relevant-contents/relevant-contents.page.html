@@ -45,7 +45,7 @@
         <strong>{{'FRMELEMNTS_LBL_NO_MATCHING_CONTENT' | translate}}</strong>
 
         <p class="mb-0">{{'FRMELEMNTS_LBL_CONTENT_TO_BE_ADDED' | translate}}</p>
-        <p>{{'FRMELEMNTS_LBL_CLICK_HELP' | translate}}</p>
+        <p [innerHTML]="'FRMELEMNTS_LBL_CLICK_HELP' | translate"></p>
     </div>
 
     <div *ngIf="similarContentList?.length || relevantContentList?.length">
