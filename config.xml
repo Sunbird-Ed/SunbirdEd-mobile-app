@@ -36,6 +36,7 @@
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
+            <application android:requestLegacyExternalStorage="true" />
         </edit-config>
         <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
         <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
@@ -152,4 +153,5 @@
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
+    <engine name="android" spec="^9.0.0" />
 </widget>
