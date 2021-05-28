@@ -94,6 +94,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private fromPage: string = PageId.SEARCH;
     private env: string = Environment.SEARCH;
     private initialFilterCriteria: ContentSearchCriteria;
+    private organnizationList: { orgName: string; rootOrgId: string; }[];
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -205,6 +206,11 @@ export class CategoryListPage implements OnInit, OnDestroy {
 
         if (!this.initialFacetFilters) {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
+        }
+
+        const channelFacet = this.filterCriteria.facetFilters.find((facetFilter) => facetFilter.name === 'channel');
+        if (channelFacet) {
+            this.organnizationList = await this.formAndFrameworkUtilService.getOrganizationList(channelFacet).toPromise();
         }
 
         if (this.primaryFacetFiltersFormGroup) {
@@ -366,7 +372,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             component: SearchFilterPage,
             componentProps: {
                 initialFilterCriteria: this.filterCriteria,
-                defaultFilterCriteria: this.initialFilterCriteria
+                defaultFilterCriteria: this.initialFilterCriteria,
+                organizationList: this.organnizationList
             }
         });
         await openFiltersPage.present();

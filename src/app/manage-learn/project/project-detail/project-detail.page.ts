@@ -681,6 +681,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
               observationId: data.observationId,
               entityId: data.entityId,
               entityName: data.entityName,
+              disableObserveAgain: true
             },
           });
           // this.router.navigate([`/${RouterLinks.OBSERVATION}/${RouterLinks.OBSERVATION_DETAILS}`], {
@@ -786,11 +787,24 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           // this.iab.create(link, "_system");
           this.router.navigate([RouterLinks.OBSERVATION_REPORTS], {
             queryParams: {
-              entityId: data.entityId,
+              // entityId: data.entityId,
               entityType: entityType,
-              observationId: data.observationId,
+              // observationId: data.observationId,
+              submissionId: data._id
             },
           });
+
+          // this.router.navigate([RouterLinks.GENERIC_REPORT], {
+          //   state: {
+          //     scores: true,
+          //     observation: true,
+          //     pdf: false,
+          //     entityId: data.entityId,
+          //     entityType: data.entityType,
+          //     observationId: data.observationId,
+          //     submissionId: data._id,
+          //   },
+          // });
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
