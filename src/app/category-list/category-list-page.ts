@@ -209,7 +209,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
         }
 
         const channelFacet = this.filterCriteria.facetFilters.find((facetFilter) => facetFilter.name === 'channel');
-        this.organnizationList = await this.formAndFrameworkUtilService.getOrganizationList(channelFacet).toPromise();
+        if (channelFacet) {
+            this.organnizationList = await this.formAndFrameworkUtilService.getOrganizationList(channelFacet).toPromise();
+        }
 
         if (this.primaryFacetFiltersFormGroup) {
             this.primaryFacetFiltersFormGroup.patchValue(
