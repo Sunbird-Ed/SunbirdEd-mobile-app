@@ -294,7 +294,7 @@ export class ProfilePage implements OnInit {
                 // ******* Segmentation
                 window['segmentation'].SBTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE, true);
                 let userLocation = [];
-                profileData['userLocations'].forEach(element => {
+                (profileData['userLocations'] || []).forEach(element => {
                   userLocation.push({ name: element.name, code: element.code });
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
