@@ -45,7 +45,7 @@ import {
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
-import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
+import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
@@ -120,7 +120,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private localStorage: LocalStorageService,
     private db: DbService,
     private loginHandlerService: LoginHandlerService,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private mlloader:LoaderService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -536,6 +537,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
+          this.mlloader.stopLoader()
           this.location.back();
         }
       }
