@@ -36,6 +36,7 @@
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
+            <application android:requestLegacyExternalStorage="true" />
         </edit-config>
         <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
         <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
