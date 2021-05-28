@@ -49,7 +49,7 @@ export class SearchFilterPage implements OnInit {
 
     resetFilter() {
         if (this.searchFilterComponent) {
-            this.searchFilterComponent.resetFilter();
+            this.searchFilterComponent.resetFilter(true);
         }
     }
 
@@ -78,7 +78,11 @@ export class SearchFilterPage implements OnInit {
             const selection = formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
-                f.apply = (!(selection && (selection.indexOf(f.name) === -1)));
+                if (!selection || selection.indexOf(f.name) === -1) {
+                    f.apply = false;
+                } else {
+                    f.apply = true;
+                }
             });
 
         });
