@@ -78,11 +78,7 @@ export class SearchFilterPage implements OnInit {
             const selection = formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
-                if (!selection || selection.indexOf(f.name) === -1) {
-                    f.apply = false;
-                } else {
-                    f.apply = true;
-                }
+                f.apply = !(!selection || selection.indexOf(f.name) === -1);
             });
 
         });
