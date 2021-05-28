@@ -948,7 +948,9 @@ export class GroupDetailsPage implements OnInit, OnDestroy, ViewMoreActivityActi
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.generateInteractTelemetry( InteractType.INITIATED, '', ID.DISABLE_DISCUSSIONS);
-    this.discussionService.removeForum(this.forumDetails).toPromise()
+    const removeForumReq = {...this.forumDetails}
+    removeForumReq.cid = [removeForumReq.cid];
+    this.discussionService.removeForum(removeForumReq).toPromise()
     .then(async res => {
       this.generateInteractTelemetry( InteractType.SUCCESS, '', ID.DISABLE_DISCUSSIONS);
       await loader.dismiss();
