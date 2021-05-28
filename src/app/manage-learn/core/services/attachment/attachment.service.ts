@@ -101,7 +101,9 @@ export class AttachmentService {
       })
       .catch((err) => {
         console.log(err);
-        this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+        if(err !== "No Image Selected") {
+          this.presentToast(this.texts["FRMELEMNTS_MSG_ERROR_WHILE_STORING_FILE"]);
+        }
       });
   }
 
