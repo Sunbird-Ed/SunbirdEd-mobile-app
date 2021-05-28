@@ -43,7 +43,8 @@ describe('AppComponent', () => {
             local: {
                 launchDetails: {
                     action: 'click'
-                }
+                },
+                on: jest.fn()
             }
         },
         InAppUpdateManager: {
