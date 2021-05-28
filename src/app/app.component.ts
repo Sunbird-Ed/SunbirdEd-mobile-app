@@ -196,15 +196,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
+    })
+    cordova.plugins.notification.local.on("click", (notification) => {
+      var objects = notification.data;
+      // My data is now available in objects.heading, objects.subheading and so on.
+      this.segmentationTagService.localNotificationId = notification.id;
+      this.segmentationTagService.handleLocalNotificationTap();
     });
 
     if (cordova.plugins.notification && cordova.plugins.notification.local &&
       cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
-      const localNotificationId = cordova.plugins.notification.local.launchDetails.id;
-      corRelationList.push({ id: localNotificationId ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
+
+      corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.LOCAL,
+        InteractType.LOCAL,   
         this.activePageService.computePageId(this.router.url),
         undefined,
         corRelationList
@@ -678,6 +685,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    window['segmentation'].SBTagService.pushTag([selectedLanguage], TagPrefixConstants.USER_LANG, true);
     if (selectedLanguage) {
       await this.translate.use(selectedLanguage);
     }
