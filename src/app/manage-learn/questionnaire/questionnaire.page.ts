@@ -313,23 +313,23 @@ export class QuestionnairePage implements OnInit, OnDestroy {
     ) {
       let translateObject;
       this.translate
-        .get(['actionSheet.confirm', 'actionSheet.yes', 'actionSheet.no', 'actionSheet.slowInternet'])
+        .get(['CONFIRM', 'YES', 'NO', 'FRMELEMENTS_LBL_SLOW_INTERNET'])
         .subscribe((translations) => {
           translateObject = translations;
         });
       let alert = await this.alertCtrl.create({
-        header: translateObject['actionSheet.confirm'],
-        message: translateObject['actionSheet.slowInternet'],
+        header: translateObject['CONFIRM'],
+        message: translateObject['FRMELEMENTS_LBL_SLOW_INTERNET'],
         buttons: [
           {
-            text: translateObject['actionSheet.no'],
+            text: translateObject['NO'],
             role: 'cancel',
             handler: () => {
               //console.log('Cancel clicked');
             },
           },
           {
-            text: translateObject['actionSheet.yes'],
+            text: translateObject['YES'],
             handler: () => {
               this.goToImageListing();
             },
