@@ -290,6 +290,9 @@
 
   .training-2 {
     width: 20%;
+    .sb-btn-tile {
+      margin: 0.5rem 0 !important;
+    }
   }
 
   .batch-detail {
@@ -422,12 +425,14 @@
     border-radius: 1rem;
     background-color: aliceblue;
     border-color: aliceblue;
+    padding-top: 12px;
   }
   .location-mapping-block {
     border-style: double;
     border-radius: 1rem;
     background-color: aliceblue;
     border-color: aliceblue;
+    padding-top: 12px;
   }
 
 }

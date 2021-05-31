@@ -5,7 +5,7 @@ import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
 import {CommonUtilService} from '@app/services';
-import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
+import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
     selector: 'app-search-filter.page',
@@ -16,11 +16,14 @@ import {IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'com
 export class SearchFilterPage implements OnInit {
     @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
+    @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
+
+    public config: FieldConfig<any>[];
 
     public baseSearchFilter?: { [key: string]: string[] | string | undefined };
     public filterFormTemplateConfig?: IFacetFilterFieldTemplateConfig[];
     public searchResultFacets: ContentSearchFilter[];
-    
+
     private appliedFilterCriteria: ContentSearchCriteria;
 
     constructor(
@@ -46,7 +49,7 @@ export class SearchFilterPage implements OnInit {
 
     resetFilter() {
         if (this.searchFilterComponent) {
-            this.searchFilterComponent.resetFilter();
+            this.searchFilterComponent.resetFilter(true);
         }
     }
 
@@ -75,7 +78,7 @@ export class SearchFilterPage implements OnInit {
             const selection = formValue[facetFilter.name];
 
             facetFilter.values.forEach(f => {
-                f.apply = (!(selection && (selection.indexOf(f.name) === -1)));
+                f.apply = !(!selection || selection.indexOf(f.name) === -1);
             });
 
         });

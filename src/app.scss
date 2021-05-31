@@ -1705,6 +1705,31 @@ sb-pills-grid{
       }
     }
   }
+
+  .sb-label-grid.show-ellipsis--two .item label {
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+  
+    @supports (-webkit-line-clamp: 2) {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: initial !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+    }
+  }
+
+  .sb-label-grid.icon-header .item{
+    position: relative !important;
+    .img{
+      position: absolute !important;
+      top: -1.5em !important;
+      margin-top: 0 !important;
+      width: 60% !important;
+    }
+  }
 }
 
 app-user-home{
@@ -1797,6 +1822,9 @@ sb-form{
       }
     }
   }
+  .label-html {
+    padding-left: 16px;
+}
 }
 
 .container-focus{
@@ -1941,4 +1969,8 @@ sb-carousel{
   .carousel-card{
     margin: 0.5rem !important;
   }
+}
+
+.popover-ratings rating ion-icon{
+  color: #444242;
 }
