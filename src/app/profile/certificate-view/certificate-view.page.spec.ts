@@ -1,6 +1,6 @@
 import {CourseService} from '@project-sunbird/sunbird-sdk';
 import {CertificateDownloadService} from 'sb-svg2pdf';
-import {AppGlobalService, AppHeaderService, CommonUtilService} from '@app/services';
+import {AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService} from '@app/services';
 import {Router} from '@angular/router';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {PopoverController, ToastController} from '@ionic/angular';
@@ -62,7 +62,9 @@ describe('CertificateViewPage', () => {
         }))
     };
     const mockPopoverController: Partial<PopoverController> = {};
-
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn(),
+    };
     let certificateViewPage: CertificateViewPage;
 
     beforeAll(() => {
@@ -75,7 +77,8 @@ describe('CertificateViewPage', () => {
             mockRouter as Router,
             mockFileOpener as FileOpener,
             mockToastController as ToastController,
-            mockPopoverController as PopoverController
+            mockPopoverController as PopoverController,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 

@@ -620,9 +620,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, Fra
   ionViewDidEnter() {
     this.refresher.disabled = false;
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    this.coachTimeout = setTimeout(() => {
-      this.appGlobalService.showNewTabsSwitchPopup();
-    }, 2000);
+    // this.coachTimeout = setTimeout(() => {
+    //   this.appGlobalService.showNewTabsSwitchPopup();
+    // }, 2000);
   }
 
   subscribeSdkEvent() {

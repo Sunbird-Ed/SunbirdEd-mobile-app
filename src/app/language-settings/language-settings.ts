@@ -17,6 +17,7 @@ import { Events } from '@app/util/events';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuditState, CorrelationData, SharedPreferences } from 'sunbird-sdk';
+import { TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 export interface ILanguages {
   label: string;
@@ -264,6 +265,7 @@ export class LanguageSettingsPage {
 
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
+        window['segmentation'].SBTagService.pushTag([this.selectedLanguage.code], TagPrefixConstants.USER_LANG, true);
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
         this.translateService.use(this.language);

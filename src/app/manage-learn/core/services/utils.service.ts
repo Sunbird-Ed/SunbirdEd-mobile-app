@@ -24,6 +24,7 @@ export class UtilsService {
   organisationName;
   orgDetails;
   requiredFields;
+  profileAlert;
   constructor(
     private utility: UtilityService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -419,7 +420,7 @@ export class UtilsService {
           // } else {
           //   resolve(true);
           // }
-        } 
+        }
         else {
           // this.openProfileUpdateAlert();
           resolve(false)
@@ -432,7 +433,7 @@ export class UtilsService {
   }
 
   async openProfileUpdateAlert() {
-    const alert = await this.aleryCtrl.create({
+    this.profileAlert = await this.aleryCtrl.create({
       header: 'Alert',
       message: `Please update   ${(this.requiredFields && this.requiredFields.length) ? this.requiredFields + ' in' : ""}   your profile to access the feature.`,
       buttons: [{
@@ -444,7 +445,11 @@ export class UtilsService {
       }],
       backdropDismiss: false
     });
-    await alert.present();
+    await this.profileAlert.present();
+  }
+
+  async closeProfileAlert() {
+    this.profileAlert ? await this.profileAlert.dismiss() : null;
   }
 
   async getProfileInfo(): Promise<any> {

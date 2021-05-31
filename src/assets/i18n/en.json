@@ -953,7 +953,7 @@
   "SWITCH_TO_CLASSIC_THEME": "Switch to classic theme",
   "SWITCH_TO_JOYFUL_THEME": "Switch to joyful theme",
   "SWITCH_TO_DARK_MODE": "Switch to dark mode",
-  "SWITCH_TO_DEFAULT":"Switch to dafault",
+  "SWITCH_TO_DEFAULT":"Switch to default",
   "SWITCH_USER": "Change user",
   "SYLLABUS": "Syllabus",
   "SYNCING_NOW": "Syncing Now",
@@ -1262,7 +1262,6 @@
   "FRMELEMNTS_LBL_IMPROVEMENT_REPORTS": "Improvement Reports",
   "FRMELEMNTS_LBL_SURVEY_DESC": "Provide information and feedback through quick and easy surveys",
   "FRMELEMNTS_LBL_REPORTS_DESC": "Make sense of data to enable your decision-making based on your programs with ease",
-  "FRMELEMNTS_LBL_SUBMIT": "Submit",
   "FRMELEMNTS_BTN_SUBMIT": "Submit",
   "FRMELEMNTS_LBL_CONTINUE": "Continue",
   "FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER": "Select Status",
@@ -1422,7 +1421,7 @@
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need and adds a splash of joy to your learning experience",
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
   "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
-  "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a sharable file.",
+  "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a shareable file.",
   "FRMELEMNTS_BTN_DNTSYNC":"Dont Sync",
   "FRMELEMNTS_BTN_SYNCANDSHARE":"Sync & Share",
   "FRMELEMNTS_MSG_FILE_NOT_SHARED":"File not shared !",
@@ -1454,5 +1453,7 @@
   "FRMELEMNTS_LBL_SWITCH_TO_LIBRARY": "Switch to classic {{appName}} experience",
   "FRMELEMENTS_VENDOR_APP_DESCRIPTION": "{{appName}} supports the following 3rd party reader apps. Please install any of these apps of your choice",
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
-  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content"
+  "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
+  "FRMELEMNTS_MSG_ENROLLMENT_ERROR": "You can’t enroll to a course created by self",
+  "FRMELEMENTS_LBL_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?"
 }

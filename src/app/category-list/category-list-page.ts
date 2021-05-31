@@ -93,6 +93,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private pageId: string = PageId.CATEGORY_RESULTS;
     private fromPage: string = PageId.SEARCH;
     private env: string = Environment.SEARCH;
+    private initialFilterCriteria: ContentSearchCriteria;
+    private organnizationList: { orgName: string; rootOrgId: string; }[];
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -147,7 +149,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
             limit: 100
-        });
+        }, true);
     }
 
     async ionViewWillEnter() {
@@ -165,7 +167,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    private async fetchAndSortData(searchCriteria) {
+    private async fetchAndSortData(searchCriteria, isInitialCall: boolean) {
         this.showSheenAnimation = true;
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
@@ -198,8 +200,17 @@ export class CategoryListPage implements OnInit, OnDestroy {
             return acc;
         }, {});
 
+        if (isInitialCall) {
+            this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+        }
+
         if (!this.initialFacetFilters) {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
+        }
+
+        const channelFacet = this.filterCriteria.facetFilters.find((facetFilter) => facetFilter.name === 'channel');
+        if (channelFacet) {
+            this.organnizationList = await this.formAndFrameworkUtilService.getOrganizationList(channelFacet).toPromise();
         }
 
         if (this.primaryFacetFiltersFormGroup) {
@@ -361,6 +372,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
             component: SearchFilterPage,
             componentProps: {
                 initialFilterCriteria: this.filterCriteria,
+                defaultFilterCriteria: this.initialFilterCriteria,
+                organizationList: this.organnizationList
             }
         });
         await openFiltersPage.present();
@@ -402,7 +415,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             }
         });
-        await this.fetchAndSortData(tempSearchCriteria);
+        await this.fetchAndSortData(tempSearchCriteria, false);
     }
 
     ngOnDestroy() {

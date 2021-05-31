@@ -13,6 +13,9 @@ export class LoaderService {
   constructor(private loadingController: LoadingController) {}
 
   async startLoader(message?) {
+    if (this.loaderCounter < 0) {
+      this.loaderCounter=0
+    }
     this.loaderCounter = this.loaderCounter + 1;
 
     if (this.loaderCounter === 1) {
