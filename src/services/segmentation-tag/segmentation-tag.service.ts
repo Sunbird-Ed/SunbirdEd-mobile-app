@@ -6,6 +6,7 @@ import { NotificationService } from '@app/services/notification.service';
 import * as _ from "dayjs/locale/*";
 import { FormAndFrameworkUtilService } from "../formandframeworkutil.service";
 import { SplaschreenDeeplinkActionHandlerDelegate } from "../sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate";
+import { Events } from "@app/util/events";
 export class TagPrefixConstants {
     static readonly DEVICE_CONFIG = 'DEVCONFIG_';
     static readonly USER_ATRIBUTE = 'USERFRAMEWORK_';
@@ -16,6 +17,7 @@ export class TagPrefixConstants {
 
 export class CommandFunctions {
     static readonly LOCAL_NOTIFICATION = 'LOCAL_NOTIF';
+    static readonly BANNER = 'BANNER_CONFIG';
 }
 
 @Injectable()
@@ -105,9 +107,10 @@ export class SegmentationTagService {
             this.comdList
         );
         this.executeCommand(validCommand);
+        this.evalExecutedCommands();
     }
 
-    async executeCommand(validCmdList) {
+    async executeCommand(validCmdList, revert?) {
         /*
         ** check if command already exist in command list
         ** check if command already executed, then do nothing
@@ -116,10 +119,21 @@ export class SegmentationTagService {
         const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
         validCmdList.forEach(cmdCriteria => {
             if (!this.exeCommands.find(ele => ele.commandId === cmdCriteria.commandId)) {
-                switch(cmdCriteria.controlFunction) {
+                switch (cmdCriteria.controlFunction) {
                     case CommandFunctions.LOCAL_NOTIFICATION:
                         this.notificationSrc.setupLocalNotification(selectedLanguage, cmdCriteria.controlFunctionPayload);
                         this.exeCommands.push(cmdCriteria);
+                        break;
+                    case CommandFunctions.BANNER:
+                        if (revert) {
+                            this.preferences.putBoolean('display_banner', false).toPromise().then();
+                        } else {
+                            if (cmdCriteria.controlFunctionPayload && cmdCriteria.controlFunctionPayload.showBanner) {
+                                this.preferences.putBoolean('display_banner', cmdCriteria.controlFunctionPayload.showBanner)
+                                .toPromise().then();
+                                this.exeCommands.push(cmdCriteria);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -138,5 +152,17 @@ export class SegmentationTagService {
             this.splaschreenDeeplinkActionHandlerDelegate.onAction(payloadData[0]);
             this.localNotificationId = null;
         }
+    }
+
+    evalExecutedCommands() {
+        const validCommand = window['segmentation'].SBActionCriteriaService.evaluateCriteria(
+            window['segmentation'].SBTagService.__tagList,
+            this.exeCommands
+        );
+        const invalidcomd = this.exeCommands.filter(exeCmd => !validCommand.some(validCmd => validCmd.commandId === exeCmd.commandId));
+        for (let i = (invalidcomd.length - 1); i >= 0; i--) {
+            this.exeCommands.splice(this.exeCommands.indexOf(invalidcomd[i]), 1);
+        }
+        this.executeCommand(invalidcomd, true);
     }
 }
