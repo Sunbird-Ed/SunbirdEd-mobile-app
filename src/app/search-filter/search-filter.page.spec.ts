@@ -6,6 +6,8 @@ import { CommonUtilService } from '@app/services';
 import { FilterFormConfigMapper } from '@app/app/search-filter/filter-form-config-mapper';
 import { Location } from '@angular/common';
 import {of} from 'rxjs';
+import { FormAndFrameworkUtilService } from '../../services';
+import { FilterCriteriaData } from './search-filter.page.spec.data';
 
 describe('SearchFilterPage', () => {
     let searchFilterPage: SearchFilterPage;
@@ -29,6 +31,14 @@ describe('SearchFilterPage', () => {
     const mockContentService: Partial<ContentService> = {};
     const mockLocation: Partial<Location> = {};
     const mockModalController: Partial<ModalController> = {};
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        changeChannelIdToName: jest.fn(()=>Promise.resolve(FilterCriteriaData)),
+        changeChannelNameToId: jest.fn(()=>Promise.resolve(FilterCriteriaData))
+    };
+
+    JSON.parse = jest.fn().mockImplementationOnce(() => {
+        return FilterCriteriaData;
+    });
 
     beforeAll(() => {
         searchFilterPage = new SearchFilterPage(
@@ -38,7 +48,8 @@ describe('SearchFilterPage', () => {
             mockLocation as Location,
             mockModalController as ModalController,
             mockCommonUtilService as CommonUtilService,
-            new FilterFormConfigMapper(mockCommonUtilService)
+            new FilterFormConfigMapper(mockCommonUtilService),
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService
         );
     });
 
@@ -54,61 +65,32 @@ describe('SearchFilterPage', () => {
     describe('when loaded', () => {
         it('should initialise page with appropriate configurations', () => {
             // arrange
-            searchFilterPage['initialFilterCriteria'] = {
-                facetFilters: [
-                    {
-                        name: 'board',
-                        values: [ { name: 'sample_board_1', apply: true }, { name: 'sample_board_2', apply: false } ]
-                    },
-                    {
-                        name: 'medium',
-                        values: [ { name: 'sample_medium_1', apply: true }, { name: 'sample_medium_2', apply: false } ]
-                    },
-                    {
-                        name: 'gradeLevel',
-                        values: [ { name: 'sample_gradeLevel_1', apply: true }, { name: 'sample_gradeLevel_2', apply: false } ]
-                    },
-                    {
-                        name: 'subject',
-                        values: [ { name: 'sample_subject_1', apply: true }, { name: 'sample_subject_2', apply: false } ]
-                    },
-                    {
-                        name: 'mimeType',
-                        values: [ { name: 'sample_mimeType_1', apply: true }, { name: 'sample_mimeType_2', apply: false } ]
-                    },
-                    {
-                        name: 'primaryCategory',
-                        values: [ { name: 'sample_primaryCategory_1', apply: true }, { name: 'sample_primaryCategory_2', apply: false } ]
-                    },
-                    {
-                        name: 'audience',
-                        values: [ { name: 'sample_audience_1', apply: true }, { name: 'sample_audience_2', apply: false } ]
-                    }
-                ]
-            };
+            searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
             
             // act
             searchFilterPage.ngOnInit();
             
             // assert
-            expect(searchFilterPage.baseSearchFilter).toEqual({
-                board: 'sample_board_1',
-                medium: ['sample_medium_1'],
-                gradeLevel: ['sample_gradeLevel_1'],
-                subject: ['sample_subject_1'],
-                mimeType: ['sample_mimeType_1'],
-                primaryCategory: ['sample_primaryCategory_1'],
-                audience: ['sample_audience_1'],
-            });
-            expect(searchFilterPage.filterFormTemplateConfig).toEqual([
-                expect.objectContaining({ facet: 'board' }),
-                expect.objectContaining({ facet: 'medium' }),
-                expect.objectContaining({ facet: 'gradeLevel' }),
-                expect.objectContaining({ facet: 'subject' }),
-                expect.objectContaining({ facet: 'mimeType' }),
-                expect.objectContaining({ facet: 'primaryCategory' }),
-                expect.objectContaining({ facet: 'audience' }),
-            ]);
+            setTimeout(() => {
+                expect(searchFilterPage.baseSearchFilter).toEqual({
+                    board: 'sample_board_1',
+                    medium: ['sample_medium_1'],
+                    gradeLevel: ['sample_gradeLevel_1'],
+                    subject: ['sample_subject_1'],
+                    mimeType: ['sample_mimeType_1'],
+                    primaryCategory: ['sample_primaryCategory_1'],
+                    audience: ['sample_audience_1'],
+                });
+                expect(searchFilterPage.filterFormTemplateConfig).toEqual([
+                    expect.objectContaining({ facet: 'board' }),
+                    expect.objectContaining({ facet: 'medium' }),
+                    expect.objectContaining({ facet: 'gradeLevel' }),
+                    expect.objectContaining({ facet: 'subject' }),
+                    expect.objectContaining({ facet: 'mimeType' }),
+                    expect.objectContaining({ facet: 'primaryCategory' }),
+                    expect.objectContaining({ facet: 'audience' }),
+                ]);
+            }, 0);
         });
     });
 
@@ -131,42 +113,22 @@ describe('SearchFilterPage', () => {
         it('should dismiss current modal return selections', () => {
             // arrange
             mockModalController.dismiss = jest.fn(() => {}) as any;
-            searchFilterPage['initialFilterCriteria'] = {
-                facetFilters: [
-                    {
-                        name: 'board',
-                        values: [ { name: 'sample_board_1', apply: true }, { name: 'sample_board_2', apply: false } ]
-                    },
-                    {
-                        name: 'medium',
-                        values: [ { name: 'sample_medium_1', apply: true }, { name: 'sample_medium_2', apply: false } ]
-                    }
-                ]
-            };
+            searchFilterPage['initialFilterCriteria'] = FilterCriteriaData;
 
             // act
             searchFilterPage.ngOnInit();
             searchFilterPage.applyFilter();
             // assert
-            expect(mockModalController.dismiss).toHaveBeenCalledWith(expect.objectContaining({
-                appliedFilterCriteria: {
-                    facetFilters: [
-                        {
-                            name: 'board',
-                            values: [ { name: 'sample_board_1', apply: true }, { name: 'sample_board_2', apply: false } ]
-                        },
-                        {
-                            name: 'medium',
-                            values: [ { name: 'sample_medium_1', apply: true }, { name: 'sample_medium_2', apply: false } ]
-                        }
-                    ]
-                }
-            }));
+            setTimeout(() => {
+                expect(mockModalController.dismiss).toHaveBeenCalledWith(expect.objectContaining({
+                    appliedFilterCriteria: FilterCriteriaData
+                }));
+            }, 0);
         });
     });
 
     describe('when form is cancelled', () => {
-        it('should dismiss current modal', (done) => {
+        it('should dismiss current modal', () => {
             // arrange
             mockModalController.dismiss = jest.fn(() => {}) as any;
             // act
@@ -174,26 +136,14 @@ describe('SearchFilterPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockModalController.dismiss).toHaveBeenCalled();
-                done();
             });
         });
     });
 
     describe('when a selection is made', () => {
-        it('should refresh form with new facets from search results', (done) => {
+        it('should refresh form with new facets from search results', () => {
             // arrange
-            const sampleFilterCriteria = {
-                facetFilters: [
-                    {
-                        name: 'board',
-                        values: [ { name: 'sample_board_1', apply: true }, { name: 'sample_board_2', apply: false } ]
-                    },
-                    {
-                        name: 'medium',
-                        values: [ { name: 'sample_medium_1', apply: true }, { name: 'sample_medium_2', apply: false } ]
-                    }
-                ]
-            };
+            const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
             mockContentService.searchContent = jest.fn(() => of({filterCriteria: sampleFilterCriteria}));
 
@@ -208,7 +158,6 @@ describe('SearchFilterPage', () => {
 
             setTimeout(() => {
                 expect(mockContentService.searchContent).toHaveBeenCalled();
-                done();
             });
         });
     });
