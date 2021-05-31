@@ -87,3 +87,10 @@
         color: map-get($colors, vivid_red);
     }
 }
+.dashboard-icon{
+    position: absolute;
+    top: 54px;
+    right: 30px;
+    z-index: 9;
+    font-size: 24px;
+}

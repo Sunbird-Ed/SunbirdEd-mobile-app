@@ -7,6 +7,7 @@ import { Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
+import { CommonUtilService } from '@app/services';
 
 @Component({
     selector: 'activity-dashboard',
@@ -24,6 +25,7 @@ export class ActivityDashboardPage {
     aggData: any;
     dashletData: any;
     activity: any;
+    lastUpdatedOn: any;
 
     constructor(
         @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -32,12 +34,15 @@ export class ActivityDashboardPage {
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private location: Location,
+        private commonUtilService: CommonUtilService
     ) {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
             this.hierarchyData = extras.hierarchyData;
             this.aggData = extras.aggData;
             this.activity = extras.activity;
+            this.lastUpdatedOn = extras.lastUpdatedOn;
+            console.log('lastUpdatedOn', this.lastUpdatedOn)
         }
     }
 
