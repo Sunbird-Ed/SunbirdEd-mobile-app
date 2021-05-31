@@ -4,7 +4,7 @@ import {Location, TitleCasePipe} from '@angular/common';
 import {ModalController} from '@ionic/angular';
 import {ContentService, ContentSearchCriteria, ContentSearchResult, SearchType, ContentSearchFilter} from 'sunbird-sdk';
 import {FilterFormConfigMapper} from '@app/app/search-filter/filter-form-config-mapper';
-import {CommonUtilService} from '@app/services';
+import {CommonUtilService, FormAndFrameworkUtilService} from '@app/services';
 import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterComponent} from 'common-form-elements';
 
 @Component({
@@ -14,7 +14,7 @@ import {FieldConfig, IFacetFilterFieldTemplateConfig, SbSearchFacetFilterCompone
     providers: [FilterFormConfigMapper, TitleCasePipe]
 })
 export class SearchFilterPage implements OnInit {
-    @Input('initialFilterCriteria') readonly initialFilterCriteria: ContentSearchCriteria;
+    @Input('initialFilterCriteria') initialFilterCriteria: ContentSearchCriteria;
     @ViewChild('sbSearchFilterComponent', { static: false }) searchFilterComponent?: SbSearchFacetFilterComponent;
     @Input('defaultFilterCriteria') readonly defaultFilterCriteria: ContentSearchCriteria;
 
@@ -33,11 +33,17 @@ export class SearchFilterPage implements OnInit {
         private location: Location,
         private modalController: ModalController,
         private commonUtilService: CommonUtilService,
-        private filterFormConfigMapper: FilterFormConfigMapper
+        private filterFormConfigMapper: FilterFormConfigMapper,
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) {
     }
 
     ngOnInit() {
+        this.initilizeSearchFilter();
+    }
+
+    private async initilizeSearchFilter(){
+        this.initialFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(this.initialFilterCriteria);
         this.appliedFilterCriteria = JSON.parse(JSON.stringify(this.initialFilterCriteria));
         if (!this.filterFormTemplateConfig) {
             const {config, defaults} = this.buildConfig(this.appliedFilterCriteria);
@@ -67,7 +73,7 @@ export class SearchFilterPage implements OnInit {
 
     private async refreshForm(formValue) {
         const searchCriteria: ContentSearchCriteria = {
-            ...JSON.parse(JSON.stringify(this.appliedFilterCriteria)),
+            ...JSON.parse(JSON.stringify(this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria))),
             limit: 0,
             mode: 'hard',
             searchType: SearchType.FILTER,
@@ -88,7 +94,7 @@ export class SearchFilterPage implements OnInit {
 
         try {
             const contentSearchResult: ContentSearchResult = await this.contentService.searchContent(searchCriteria).toPromise();
-            this.appliedFilterCriteria = contentSearchResult.filterCriteria;
+            this.appliedFilterCriteria = await this.formAndFrameworkUtilService.changeChannelIdToName(contentSearchResult.filterCriteria);
             this.searchResultFacets = this.appliedFilterCriteria.facetFilters || [];
         } catch (e) {
             // todo show error toast

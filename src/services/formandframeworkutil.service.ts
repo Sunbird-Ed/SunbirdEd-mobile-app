@@ -769,23 +769,58 @@ export class FormAndFrameworkUtilService {
         return (await this.formService.getForm(formRequest).toPromise() as any).form.data.fields;
     }
 
-    public  getOrganizationList(channelFacetFilter):
-    Observable<{ orgName: string; rootOrgId: string; }[]> {
-    const channelList = channelFacetFilter.values
-        .reduce((acc, facet) => {
-            acc.push(facet.name);
-            return acc;
-        }, []);
-    const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string; rootOrgId: string; }> = {
-        filters: {
-            isRootOrg: true
-        },
-        fields: ['orgName', 'rootOrgId']
-    };
-    searchOrganizationReq.filters['rootOrgId'] = channelList;
-    return this.frameworkService.searchOrganization(searchOrganizationReq).pipe(
-        map((res) => res.content)
-    );
-}
+    public getOrganizationList(channelFacetFilter): Observable<{ orgName: string; rootOrgId: string; }[]> {
+        const channelList = channelFacetFilter.values
+            .reduce((acc, facet) => {
+                acc.push(facet.name);
+                return acc;
+            }, []);
+        const searchOrganizationReq: OrganizationSearchCriteria<{ orgName: string; rootOrgId: string; }> = {
+            filters: {
+                isRootOrg: true
+            },
+            fields: ['orgName', 'rootOrgId']
+        };
+        searchOrganizationReq.filters['rootOrgId'] = channelList;
+        return this.frameworkService.searchOrganization(searchOrganizationReq).pipe(
+            map((res) => res.content)
+        );
+    }
+
+    async changeChannelIdToName(filterCriteria) {
+        filterCriteria.facetFilters = filterCriteria.facetFilters.map(async filter => {
+            if (filter.name === 'channel') {
+                let organizationList;
+                try {
+                    organizationList = await this.getOrganizationList(filter).toPromise();
+                } catch (e) {
+                    console.error(e);
+                    return filter;
+                }
+                filter.values = filter.values.map(val => {
+                    const channelData = organizationList.find(channel => channel.rootOrgId === val.name);
+                    return {
+                        ...val,
+                        name: channelData && channelData.orgName ? channelData.orgName : val.name,
+                        rootOrgId: channelData && channelData.rootOrgId ? channelData.rootOrgId : val.name
+                    }
+                })
+            }
+            return filter;
+        });
+
+        return filterCriteria;
+    }
+
+    async changeChannelNameToId(filterCriteria) {
+        filterCriteria.facetFilters = filterCriteria.facetFilters.map(filter => {
+            if (filter.name === 'channel') {
+                filter.values = filter.values.map(val => val.name = val.rootOrgId || val.name);
+            }
+            return filter;
+        });
+
+        return filterCriteria;
+    }
 
 }
