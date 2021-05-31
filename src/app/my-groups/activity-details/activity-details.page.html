@@ -1,6 +1,7 @@
 <ion-content>
   <div class="ad-container">
     <div class="ad-card-container">
+      <button (click)="openDashboard()">activity dashboard</button>
       <sb-course-card *ngIf="isTrackable" [section]="null"
         [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
       </sb-course-card>

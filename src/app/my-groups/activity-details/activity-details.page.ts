@@ -95,10 +95,12 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
     this.courseList = [];
     try {
       this.courseData = await this.collectionService.fetchCollectionData(this.activity.identifier);
+      console.log('this.courseData', this.courseData);
       this.getNestedCourses(this.courseData.children);
       if (this.courseList.length) {
         this.showCourseDropdownSection = true;
       }
+      console.log('this.courselist', this.courseList)
     } catch (err) {
       console.log('fetchCollectionData err', err);
     }
@@ -162,6 +164,7 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
           });
         }
         this.filteredMemberList = new Array(...this.memberList);
+        console.log('this.filteredMemberList', this.filteredMemberList);
         this.isActivityLoading = false;
       }
     } catch (e) {
@@ -368,6 +371,20 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         console.log('Error opening file', e);
         this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
       });
+  }
+
+  openDashboard() {
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}/${RouterLinks.ACTIVITY_DASHBOARD}`],
+    {
+      state: {
+        aggData: {
+          members: this.memberList,
+          activity: this.activityDetail
+        },
+        hierarchyData: this.courseData,
+        activity: this.activity
+      }
+    });
   }
 
 }
