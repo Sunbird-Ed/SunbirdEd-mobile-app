@@ -40,7 +40,10 @@ describe('ActivityTocPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         selectedActivityCourseId: ''
     };
-    const mockGroupService: Partial<GroupService> = {};
+    const mockGroupService: Partial<GroupService> = {
+        activityService: {
+        }as any
+    };
 
     beforeAll(() => {
         activityDashboardPage = new ActivityDashboardPage(
@@ -95,11 +98,58 @@ describe('ActivityTocPage', () => {
         expect(mockPlatform.backButton).not.toBeUndefined();
     });
 
+    describe('ionViewWillEnter', () => {
+        beforeEach(() => {
+            mockHeaderService.showHeaderWithBackButton = jest.fn();
+            mockHeaderService.headerEventEmitted$ = of({
+                subscribe: jest.fn(() => { })
+            });
+            jest.spyOn(activityDashboardPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(activityDashboardPage, 'handleDeviceBackButton').mockImplementation();
+            activityDashboardPage.hierarchyData = {
+                children: [
+                    {
+                        name: "some-name"
+                    }
+                ]
+            }
+            activityDashboardPage.aggData = {
+                members: [
+                    {
+                        name: "some-name"
+                    }
+                ]
+            }
+            const resp = {
+                columns: [
+                    {title: "Title 1", data: "title1"}
+                ]
+            }
+            mockGroupService.activityService.getDataForDashlets = jest.fn(() => of(resp))
+        });
+        it('should handle device header and back-button for b.userId', (done) => {
+            // assert
+            mockAppGlobalService.selectedActivityCourseId = '';
+            // act
+            activityDashboardPage.ionViewWillEnter();
+            // assert
+            setTimeout(() => {
+                expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+                // expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                //     ImpressionType.VIEW, '', PageId.ACTIVITY_TOC, Environment.GROUP,
+                //     undefined, undefined, undefined, undefined, activityTocPage.corRelationList);
+                done();
+            }, 0);
+        });
+    });
+
     // describe('ionViewWillLeave', () => {
     //     it('should unsubscribe all header service', () => {
     //         activityDashboardPage.unregisterBackButton = {
     //             unsubscribe: jest.fn()
     //         } as any;
+    //         activityDashboardPage.headerObservable = of({})
     //         // act
     //         activityDashboardPage.ionViewWillLeave();
     //         // assert
@@ -108,6 +158,7 @@ describe('ActivityTocPage', () => {
 
     //     it('should not unsubscribe all header service', () => {
     //         activityDashboardPage.unregisterBackButton = undefined;
+    //         activityDashboardPage.headerObservable = of({})
     //         // act
     //         activityDashboardPage.ionViewWillLeave();
     //         // assert
