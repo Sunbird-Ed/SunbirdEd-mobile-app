@@ -348,7 +348,7 @@
   }
   .card-text{
     height: 18px;
-    width: 63px;
+    width: auto;
     color: map-get($colors, granite_gray);
     font-family: "Noto Sans", sans-serif;
     font-size: 13px !important;
@@ -358,6 +358,7 @@
   .card-button{
       background-color: transparent !important;
       outline: none;
+      padding: 0px 16px;
   }
   .padding-bottom-6{
     padding-bottom: 6px;

@@ -67,6 +67,7 @@ export class SurveyHomeComponent implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+    this.utils.closeProfileAlert();
   }
 
   async getSurveyListing() {

@@ -218,6 +218,7 @@ export class ProjectListingComponent implements OnInit {
         if (this.backButtonFunc) {
             this.backButtonFunc.unsubscribe();
         }
+         this.utils.closeProfileAlert();
     }
 
     public handleBackButton() {

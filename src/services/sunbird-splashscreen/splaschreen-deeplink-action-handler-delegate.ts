@@ -984,9 +984,11 @@ private async upgradeAppPopover(requiredVersionCode) {
     }
   }
 
-  private async handleVendorAppAction(payload) {
+   async handleVendorAppAction(payload, banner?) {
     this.progressLoaderId = 'DEFAULT';
-    await this.sbProgressLoader.show();
+    if (banner) {
+      await this.sbProgressLoader.show();
+    }
     switch (payload.action) {
       case 'ACTION_SEARCH':
         await this.handleSearch(payload.data);

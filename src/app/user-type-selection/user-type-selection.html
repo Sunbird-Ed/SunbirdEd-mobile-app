@@ -5,8 +5,10 @@
                  (click)="handleBackButton(true)"
                  class="top-back-button" alt="back">
         </div>
-        <p class="ion-text-center title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
-        <h6 class="gray-color ion-text-center">{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
+        <div class="app-text-heading-welcome">
+            <p class="ion-text-center title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</p>
+            <h6 class="gray-color ion-text-center">{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
+        </div>
 
         <div class="container">
             <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">

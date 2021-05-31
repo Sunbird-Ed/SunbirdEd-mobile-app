@@ -2,7 +2,6 @@ import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { AppHeaderService } from '../../../../services';
 import { LoaderService, UtilsService } from '../../core';
-import { AssessmentApiService } from '../../core/services/assessment-api.service';
 import { Location } from '@angular/common';
 import { ObservationHomeComponent } from './observation-home.component';
 import { of, throwError } from 'rxjs';
@@ -13,8 +12,7 @@ describe('ObservationHomeComponent', () => {
   const mockHeaderService: Partial<AppHeaderService> = {};
   const mockPlatform: Partial<Platform> = {};
   const mockUtils: Partial<UtilsService> = {};
-  const mockAssessmentApiService: Partial<AssessmentApiService> = {};
-  const mockKendraApiService: Partial<KendraApiService> = {};
+  const mockKendraService: Partial<KendraApiService> = {};
   const mockloader: Partial<LoaderService> = {};
   const mockRouter: Partial<Router> = {
     getCurrentNavigation: jest.fn(() => ({
@@ -39,8 +37,7 @@ describe('ObservationHomeComponent', () => {
       mockHeaderService as AppHeaderService,
       mockRouter as Router,
       mockUtils as UtilsService,
-      mockAssessmentApiService as AssessmentApiService,
-      mockKendraApiService as KendraApiService,
+      mockKendraService as KendraApiService,
       mockloader as LoaderService
     );
   });
@@ -53,80 +50,79 @@ describe('ObservationHomeComponent', () => {
     expect(observationHomeComponent).toBeTruthy();
   });
 
-  // describe('ngOnInit', () => {
-  //   it('should return observationList/programsList by invoked ngOnIt', (done) => {
-  //     // arrange
-  //     mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-  //     mockAssessmentApiService.post = jest.fn(() =>
-  //       of({
-  //         result: {
-  //           data: [
-  //             {
-  //               _id: '60110e692d0bbd2f0c3229c3',
-  //               name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-  //               description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
-  //               programId: '600ab53cc7de076e6f993724',
-  //               solutionId: '600ac0d1c7de076e6f9943b9',
-  //               programName: 'AP-TEST-PROGRAM-3.6.5',
-  //             },
-  //           ],
-  //         },
-  //       })
-  //     );
-  //     mockloader.startLoader = jest.fn(() => Promise.resolve());
-  //     mockloader.stopLoader = jest.fn(() => Promise.resolve());
+  describe('ngOnInit', () => {
+    it('should return observationList/programsList by invoked ngOnIt', (done) => {
+      // arrange
+      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
+      mockKendraService.post = jest.fn(() =>
+        of({
+          result: {
+            data: [
+              {
+                _id: '60110e692d0bbd2f0c3229c3',
+                name: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                description: 'AP-TEST-PROGRAM-3.6.5-OBS-1-DEO',
+                programId: '600ab53cc7de076e6f993724',
+                solutionId: '600ac0d1c7de076e6f9943b9',
+                programName: 'AP-TEST-PROGRAM-3.6.5',
+              },
+            ],
+          },
+        })
+      );
+      mockloader.startLoader = jest.fn(() => Promise.resolve());
+      mockloader.stopLoader = jest.fn(() => Promise.resolve());
 
-  //     // act
-  //     observationHomeComponent.ngOnInit();
-  //     // assert
-  //     setTimeout(() => {
-  //       expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-  //       expect(mockAssessmentApiService.post).toHaveBeenCalled();
-  //       expect(observationHomeComponent.solutionList.length).toBe(1);
-  //       done();
-  //     }, 0);
-  //   });
-  //   it('should show no data if data is not present', (done) => {
-  //     // arrange
-  //     mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-  //     mockAssessmentApiService.post = jest.fn(() =>
-  //       of({
-  //         result: {
-  //         },
-  //       })
-  //     );
-  //     mockloader.startLoader = jest.fn(() => Promise.resolve());
-  //     mockloader.stopLoader = jest.fn(() => Promise.resolve());
+      // act
+      observationHomeComponent.ngOnInit();
+      // assert
+      setTimeout(() => {
+        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
+        expect(observationHomeComponent.solutionList.length).toBe(1);
+        done();
+      }, 0);
+    });
+    it('should show no data if data is not present', (done) => {
+      // arrange
+      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
+      mockKendraService.post = jest.fn(() =>
+        of({
+          result: {},
+        })
+      );
+      mockloader.startLoader = jest.fn(() => Promise.resolve());
+      mockloader.stopLoader = jest.fn(() => Promise.resolve());
 
-  //     // act
-  //     observationHomeComponent.ngOnInit();
-  //     // assert
-  //     setTimeout(() => {
-  //       expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-  //       expect(mockAssessmentApiService.post).toHaveBeenCalled();
-  //       expect(observationHomeComponent.solutionList.length).toBe(0);
-  //       done();
-  //     }, 0);
-  //   });
+      // act
+      observationHomeComponent.ngOnInit();
+      // assert
+      setTimeout(() => {
+        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
+        expect(observationHomeComponent.solutionList.length).toBe(0);
+        done();
+      }, 0);
+    });
 
-  //   it('show no data message if no api response', (done) => {
-  //     // arrange
-  //     mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
-  //     mockAssessmentApiService.post = jest.fn(() => throwError({}));
-  //     mockloader.startLoader = jest.fn(() => Promise.resolve());
-  //     mockloader.stopLoader = jest.fn(() => Promise.resolve());
+    it('show no data message if no api response', (done) => {
+      // arrange
+      mockUtils.getProfileInfo = jest.fn(() => Promise.resolve({ data: 'data' }));
+      mockKendraService.post = jest.fn(() => throwError({}));
+      mockloader.startLoader = jest.fn(() => Promise.resolve());
+      mockloader.stopLoader = jest.fn(() => Promise.resolve());
 
-  //     // act
-  //     observationHomeComponent.ngOnInit();
-  //     // assert
-  //     setTimeout(() => {
-  //       expect(mockUtils.getProfileInfo).toHaveBeenCalled();
-  //       expect(mockAssessmentApiService.post).toHaveBeenCalled();
-  //       expect(observationHomeComponent.solutionList.length).toBe(0);
-  //       done();
-  //     }, 0);
-  //   });
-  // });
+      // act
+      observationHomeComponent.ngOnInit();
+      // assert
+      setTimeout(() => {
+        expect(mockUtils.getProfileInfo).toHaveBeenCalled();
+        expect(mockKendraService.post).toHaveBeenCalled();
+        expect(observationHomeComponent.solutionList.length).toBe(0);
+        done();
+      }, 0);
+    });
+  });
 
   // describe('observationDetails ', () => {
   //   it('navigate to observation entity page', () => {

@@ -93,7 +93,7 @@
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 										<accessDiscussion [fetchForumIdReq]="fetchForumIdReq" [createUserReq]="createUserReq" (forumData)="assignForumData($event)"> </accessDiscussion>
-										<div *ngIf="showUnenrollButton" class="PR16 pull-right">
+										<div *ngIf="showUnenrollButton || course?.progress >= 100" class="PR16 pull-right">
 											<img class="menu-icon" (click)="showOverflowMenu($event)"
 												 src="assets/imgs/menu.svg" alt="menu-icon">
 										</div>

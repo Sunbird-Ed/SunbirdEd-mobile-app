@@ -11,7 +11,7 @@ export class DbService {
   pdb: any;
 
   constructor(private appGlobalService: AppGlobalService) {
-    this.createDb();
+    // this.createDb();
   }
 
   async createDb() {

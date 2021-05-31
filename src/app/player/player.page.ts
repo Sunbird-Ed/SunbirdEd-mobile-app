@@ -53,7 +53,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   private content: Content;
   public objRollup: Rollup;
   nextContentToBePlayed: Content;
-  playerType: string = 'sunbird-old-player';  
+  playerType;  
 
 
   @ViewChild('preview', { static: false }) previewElement: ElementRef;
@@ -117,6 +117,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = await this.getNewPlayerConfiguration();
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
+    } else {
+        this.playerType = 'sunbird-old-player';
     }
     this.config['context'].dispatcher = {
       dispatch: function (event) {
@@ -198,12 +200,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
 
     this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
-      if (!activeAlert) {
-        this.showConfirm();
-      }
-      if (this.playerType !== 'sunbird-old-player') {
+      if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] !== "application/vnd.sunbird.questionset") {
         this.location.back();
-      }
+      } else if (!activeAlert && this.playerType !== 'sunbird-old-player' && this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+        this.showConfirm();
+      } else if (!activeAlert && this.playerType === 'sunbird-old-player' ) {
+        this.showConfirm();
+      } 
     });
 
     this.events.subscribe('endGenieCanvas', (res) => {
@@ -215,7 +218,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     });
   }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.statusBar.show();
     this.screenOrientation.unlock();
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
@@ -240,7 +243,11 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   async playerEvents(event) {
     if (event.edata) {
       if (event.edata['type'] === 'EXIT') {
-        this.location.back();
+        if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+          this.showConfirm()
+        } else {
+          this.location.back();
+        }
       } else if (event.edata['type'] === 'SHARE') {
         const popover = await this.popoverCtrl.create({
           component: SbSharePopupComponent,
@@ -409,11 +416,14 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
    * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
    */
   async showConfirm() {
-    const type = (this.previewElement.nativeElement.contentWindow['Renderer']
-      && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
-    const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
-    this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-      'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    let type, stageId;
+    if (this.playerType === 'sunbird-old-player') {
+      type = (this.previewElement.nativeElement.contentWindow['Renderer']
+        && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
+      stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
+      this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+        'TOUCH', 'DEVICE_BACK_BTN', 'EXIT', { type, stageId });
+    }
 
     const alert = await this.alertCtrl.create({
       header: this.commonUtilService.translateMessage('CONFIRM'),
@@ -429,13 +439,17 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         },
         {
           text: this.commonUtilService.translateMessage('OKAY'),
-          handler: () => {
-            this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
-              'END', 'ALERT_OK', 'EXIT', { type, stageId });
-            this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
-            this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
-
-            this.closeIframe();
+          handler: async() => {
+            if (this.playerType === 'sunbird-old-player') {
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interact(
+                'END', 'ALERT_OK', 'EXIT', { type, stageId });
+              this.previewElement.nativeElement.contentWindow['TelemetryService'].interrupt('OTHER', stageId);
+              this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].dispatchEvent('renderer:telemetry:end');
+              this.closeIframe();
+            }
+            if (this.config['metadata']['mimeType'] === "application/vnd.sunbird.questionset") {
+                this.location.back();
+            }
           }
         }
       ],
