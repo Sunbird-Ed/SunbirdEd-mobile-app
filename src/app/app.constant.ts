@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
+    public static readonly BANNER = 'banner';
 }
 
 export class ShareUrl {
