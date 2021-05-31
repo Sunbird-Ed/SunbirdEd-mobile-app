@@ -8,7 +8,7 @@ import {CommonUtilService} from '../../services/common-util.service';
 import {Router} from '@angular/router';
 import {AppHeaderService} from '../../services/app-header.service';
 import {
-    FrameWorkService
+    FrameWorkService, SharedPreferences,
 } from 'sunbird-sdk';
 import {of} from 'rxjs';
 import {NavigationService} from '../../services/navigation-handler.service';
@@ -19,6 +19,9 @@ import {mockUserHomeData} from '@app/app/home/user-home/user-home-spec.data';
 import {EventTopics} from '@app/app/app.constant';
 import { FrameworkSelectionDelegateService } from '../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
+import {
+    SplaschreenDeeplinkActionHandlerDelegate
+} from '../../../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 describe('UserHomePage', () => {
     let userHomePage: UserHomePage;
@@ -49,12 +52,15 @@ describe('UserHomePage', () => {
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockFrameworkSelectionDelegateService: Partial<FrameworkSelectionDelegateService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
+    const mockSharedPreferences: Partial<SharedPreferences> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
 
     beforeAll(() => {
         userHomePage = new UserHomePage(
             mockFrameworkService as FrameWorkService,
             mockFrameworkUtilService as FrameworkUtilService,
             mockProfileService as ProfileService,
+            mockSharedPreferences as SharedPreferences,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router,
             mockAppGlobalService as AppGlobalService,
@@ -68,7 +74,8 @@ describe('UserHomePage', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockFrameworkSelectionDelegateService as FrameworkSelectionDelegateService,
-            mockTranslateService as TranslateService
+            mockTranslateService as TranslateService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
         );
     });
 
@@ -131,6 +138,7 @@ describe('UserHomePage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
         mockAppVersion.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockSharedPreferences.getBoolean = jest.fn(() => of(true));
         // act
         userHomePage.ngOnInit();
         // assert
@@ -140,6 +148,7 @@ describe('UserHomePage', () => {
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockSunbirdQRScanner.startScanner).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+            expect(mockSharedPreferences.getBoolean).toHaveBeenCalledWith('display_banner');
             done();
         }, 0);
     });
