@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { statuses } from '@app/app/manage-learn/core/constants/statuses.constant';
 import { UtilsService } from '@app/app/manage-learn/core/services/utils.service';
 import * as moment from "moment";
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService , CommonUtilService} from '@app/services';
 import { menuConstants } from '../../core/constants/menuConstants';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { Subscription } from 'rxjs';
@@ -83,6 +83,8 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   templateDetailsPayload;
   importProjectClicked: boolean = false;
   fromImportProject: boolean = false;
+  networkFlag: boolean;
+  private _networkSubscription: Subscription;
 
   constructor(
     public params: ActivatedRoute,
@@ -106,9 +108,13 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     private network: NetworkService,
     private location: Location,
     private zone: NgZone,
+    private commonUtilService: CommonUtilService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService
   ) {
-
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.networkFlag = available;
+    })
     params.queryParams.subscribe((parameters) => {
       this.projectId = parameters.projectId;
       this.solutionId = parameters.solutionId;
@@ -314,6 +320,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this._appHeaderSubscription) {
       this._appHeaderSubscription.unsubscribe();
+    }
+    if(this._networkSubscription){
+      this._networkSubscription.unsubscribe();
     }
   }
 
@@ -549,6 +558,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
   //open openBodh
   openBodh(link) {
+    if(!this.networkFlag){
+      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+      return
+    }
     this.loader.startLoader();
     let identifier = link.split("/").pop();
     const req: ContentDetailRequest = {
