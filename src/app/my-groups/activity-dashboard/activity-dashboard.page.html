@@ -1,11 +1,11 @@
-<ion-content class="activity-toc-container ion-no-padding"></ion-content>
+<ion-content class="activity-dashboard-container">
 <!-- <sb-course-card [section]="null"
     [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
 </sb-course-card>   -->
-<div *ngIf="lastUpdatedOn > 0" class="ad-timestamp"
-    [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (lastUpdatedOn | dateAgo: 'month' : 'M/d/yy') }">
-  </div>
-<div *ngIf="dashletData">
-    <dashboard-component [dashletData]="dashletData"></dashboard-component>
-</div>
-<ion-content class="activity-toc-container ion-no-padding">
+    <div *ngIf="lastUpdatedOn > 0" class="ad-timestamp"
+        [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (lastUpdatedOn | dateAgo: 'month' : 'M/d/yy') }">
+    </div>
+    <div *ngIf="dashletData">
+        <dashboard-component [dashletData]="dashletData"></dashboard-component>
+    </div>
+</ion-content>

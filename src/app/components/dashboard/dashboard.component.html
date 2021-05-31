@@ -1,10 +1,10 @@
-<div>
+<div class="dashlet-table-container">
     <sb-dashlet [type]="'table'" [data]="DashletRowData" [config]="columnConfig" #lib>
         <ng-template sbTemplateRef="header" let-config>
             <div>
                 <span (click)="lib?.instance?.exportAs('csv')" class="float-end">
                     <img src="assets/imgs/ic_download_selected_joyful.svg" alt="">
-                    <span>{{'DOWNLOAD_CSV' | translate}}</span>
+                    <span class="ad-dw">{{'DOWNLOAD_CSV' | translate}}</span>
                 </span>
             </div>
           </ng-template>
