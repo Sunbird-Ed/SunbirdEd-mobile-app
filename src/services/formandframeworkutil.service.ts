@@ -788,15 +788,22 @@ export class FormAndFrameworkUtilService {
     }
 
     async changeChannelIdToName(filterCriteria) {
-        filterCriteria.facetFilters = filterCriteria.facetFilters.map(async filter => {
+        const channelFacet = filterCriteria.facetFilters.find((facetFilter) => facetFilter.name === 'channel');
+
+        if (!channelFacet) {
+            return filterCriteria;
+        }
+
+        let organizationList;
+        try {
+            organizationList = await this.getOrganizationList(channelFacet).toPromise();
+        } catch (e) {
+            console.error(e);
+            return filterCriteria;
+        }
+
+        filterCriteria.facetFilters = filterCriteria.facetFilters.map(filter => {
             if (filter.name === 'channel') {
-                let organizationList;
-                try {
-                    organizationList = await this.getOrganizationList(filter).toPromise();
-                } catch (e) {
-                    console.error(e);
-                    return filter;
-                }
                 filter.values = filter.values.map(val => {
                     const channelData = organizationList.find(channel => channel.rootOrgId === val.name);
                     return {
