@@ -113,8 +113,9 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config['config'].sideMenu.showDownload = false;
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-quml-player';
-    } else if(this.config['metadata']['mimeType'] === "video/mp4" && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
+    } else if(["video/mp4", "video/webm"].includes(this.config['metadata']['mimeType']) && this.checkIsPlayerEnabled(this.playerConfig , 'videoPlayer').name === "videoPlayer"){
       this.config = await this.getNewPlayerConfiguration();
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
       this.config['config'].sideMenu.showPrint = false;
        this.playerType = 'sunbird-video-player';
     } else {
