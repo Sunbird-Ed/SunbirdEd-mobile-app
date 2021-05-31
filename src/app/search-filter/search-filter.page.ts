@@ -61,7 +61,7 @@ export class SearchFilterPage implements OnInit {
 
     applyFilter() {
         this.modalController.dismiss({
-            appliedFilterCriteria: this.appliedFilterCriteria
+            appliedFilterCriteria: this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria)
         });
     }
 
@@ -73,7 +73,7 @@ export class SearchFilterPage implements OnInit {
 
     private async refreshForm(formValue) {
         const searchCriteria: ContentSearchCriteria = {
-            ...JSON.parse(JSON.stringify(this.formAndFrameworkUtilService.changeChannelNameToId(this.appliedFilterCriteria))),
+            ...JSON.parse(JSON.stringify(this.appliedFilterCriteria)),
             limit: 0,
             mode: 'hard',
             searchType: SearchType.FILTER,
@@ -88,6 +88,8 @@ export class SearchFilterPage implements OnInit {
             });
 
         });
+
+        this.formAndFrameworkUtilService.changeChannelNameToId(searchCriteria);
 
         const loader = await this.commonUtilService.getLoader();
         await loader.present();

@@ -128,7 +128,7 @@ describe('SearchFilterPage', () => {
     });
 
     describe('when form is cancelled', () => {
-        it('should dismiss current modal', (done) => {
+        it('should dismiss current modal', () => {
             // arrange
             mockModalController.dismiss = jest.fn(() => {}) as any;
             // act
@@ -136,13 +136,12 @@ describe('SearchFilterPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockModalController.dismiss).toHaveBeenCalled();
-                done();
             });
         });
     });
 
     describe('when a selection is made', () => {
-        it('should refresh form with new facets from search results', (done) => {
+        it('should refresh form with new facets from search results', () => {
             // arrange
             const sampleFilterCriteria = FilterCriteriaData;
             searchFilterPage['initialFilterCriteria'] = sampleFilterCriteria;
@@ -159,7 +158,6 @@ describe('SearchFilterPage', () => {
 
             setTimeout(() => {
                 expect(mockContentService.searchContent).toHaveBeenCalled();
-                done();
             });
         });
     });

@@ -804,14 +804,18 @@ export class FormAndFrameworkUtilService {
 
         filterCriteria.facetFilters = filterCriteria.facetFilters.map(filter => {
             if (filter.name === 'channel') {
-                filter.values = filter.values.map(val => {
-                    const channelData = organizationList.find(channel => channel.rootOrgId === val.name);
-                    return {
-                        ...val,
-                        name: channelData && channelData.orgName ? channelData.orgName : val.name,
-                        rootOrgId: channelData && channelData.rootOrgId ? channelData.rootOrgId : val.name
+                const filterValues = []
+                for (let i = 0; i < filter.values.length; i++) {
+                    const channelData = organizationList.find(channel => channel.rootOrgId === filter.values[i].name);
+                    if (channelData) {
+                        filterValues.push({
+                            ...filter.values[i],
+                            name: channelData && channelData.orgName ? channelData.orgName : filter.values[i].name,
+                            rootOrgId: channelData && channelData.rootOrgId ? channelData.rootOrgId : filter.values[i].name
+                        })
                     }
-                })
+                }
+                filter.values = filterValues;
             }
             return filter;
         });
@@ -819,10 +823,13 @@ export class FormAndFrameworkUtilService {
         return filterCriteria;
     }
 
-    async changeChannelNameToId(filterCriteria) {
+    changeChannelNameToId(filterCriteria) {
         filterCriteria.facetFilters = filterCriteria.facetFilters.map(filter => {
             if (filter.name === 'channel') {
-                filter.values = filter.values.map(val => val.name = val.rootOrgId || val.name);
+                filter.values = filter.values.map(val => {
+                    val.name = val.rootOrgId || val.name;
+                    return val;
+                });
             }
             return filter;
         });
