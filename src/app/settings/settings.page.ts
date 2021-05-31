@@ -12,6 +12,7 @@ import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, Telem
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import {
   ApiService, AuthService,
+  DebuggingService,
   MergeServerProfilesRequest, ProfileService,
   SdkConfig, SharedPreferences,
   TelemetryImpressionRequest,
@@ -37,12 +38,14 @@ export class SettingsPage implements OnInit {
   public isUserLoggedIn$: Observable<boolean>;
   public isNotDefaultChannelProfile$: Observable<boolean>;
   backButtonFunc: Subscription;
+  debugmode: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
     @Inject('API_SERVICE') private apiService: ApiService,
+    @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
     private appVersion: AppVersion,
     private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
@@ -64,6 +67,7 @@ export class SettingsPage implements OnInit {
     this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile().pipe(
       map((isDefaultChannelProfile) => !isDefaultChannelProfile)
     );
+    this.enableDebugging();
   }
 
   ionViewWillEnter() {
@@ -181,7 +185,6 @@ export class SettingsPage implements OnInit {
       },
       cssClass: 'sb-popover primary',
     });
-
     await confirm.present();
   }
 
@@ -297,6 +300,89 @@ export class SettingsPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS, Environment.SETTINGS, false);
       this.location.back();
       this.backButtonFunc.unsubscribe();
+    });
+  }
+
+  async debugModeToggle() {
+      console.log('this.debugmode' ,this.debugmode);
+      if (this.debugmode) {
+        const confirm = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("Debugging Mode will start sending critical information to the server. Do you want to turn on Debugging Mode?"),
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('CANCEL'),
+                btnClass: 'popover-color popover-button-cancel'
+              },
+              {
+                btntext: this.commonUtilService.translateMessage('TURN ON'),
+                btnClass: 'popover-color popover-button-allow'
+              },
+            ],
+            icon: null,
+            handler: (selectedButton: string) => {
+              console.log(selectedButton);
+              if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
+                return false;
+              } else if (selectedButton === this.commonUtilService.translateMessage('TURN ON')) {
+                this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
+                this.enableDebugging();
+                this.commonUtilService.showToast('DEBUG MODE ON');
+              }
+            }
+            // metaInfo: this.content.contentData.name,
+          },
+          cssClass: 'sb-popover dw-active-downloads-popover',
+        });
+
+        await confirm.present();
+      } else {
+        const confirm = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("Debug Mode will be disabled, it'll stop sending information to the server!"),
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('CANCEL'),
+                btnClass: 'popover-color popover-button-cancel'
+              },
+              {
+                btntext: this.commonUtilService.translateMessage('TURN OFF'),
+                btnClass: 'popover-color popover-button-allow'
+              },
+            ],
+            icon: null,
+            handler: (selectedButton: string) => {
+              console.log(selectedButton);
+              if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
+                return false;
+              } else if (selectedButton === this.commonUtilService.translateMessage('TURN OFF')) {
+                this.debugginService.disableDebugging().subscribe((response) => {
+                  if (response) {
+                    this.commonUtilService.showToast('DEBUG MODE OFF');
+                    this.debugmode = false
+                  }
+                });
+              }
+            }
+          },
+          cssClass: 'sb-popover dw-active-downloads-popover',
+        });
+        await confirm.present();
+      }
+  }
+
+  async enableDebugging() {
+    this.debugginService.enableDebugging().subscribe((isDebugMode) => {
+      console.log('Debug Mode', isDebugMode);
+      if (isDebugMode) {
+        this.debugmode = true
+      } else if (!isDebugMode) {
+        this.debugmode = false;
+      }
     });
   }
 }

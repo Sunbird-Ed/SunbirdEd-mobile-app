@@ -33,6 +33,11 @@
       </ion-label>
     </ion-item>
 
+    <ion-item class="PT2 PB2" (click)="debugModeToggle()">
+      <ion-label>Debug Mode</ion-label>
+      <ion-toggle [(ngModel)]="debugmode"></ion-toggle>
+    </ion-item>
+
   </ion-list>
 
 </ion-content>

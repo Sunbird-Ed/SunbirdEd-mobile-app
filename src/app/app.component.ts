@@ -29,7 +29,7 @@ import {
   DeviceRegisterService, ErrorEventType, EventNamespace, EventsBusService,
   GetSystemSettingsRequest, NotificationService,
   Profile, ProfileService, ProfileType, SharedPreferences,
-  SunbirdSdk,
+  SunbirdSdk, DebuggingService,
   SystemSettings, SystemSettingsService, TelemetryAutoSyncService, TelemetryService
 } from 'sunbird-sdk';
 import {
@@ -91,6 +91,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('DEBUGGING_SERVICE') private debugginService: DebuggingService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -144,6 +145,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.receiveNotification();
       this.utilityService.getDeviceSpec()
         .then((deviceSpec) => {
+          this.debugginService.deviceId = deviceSpec.id;
           let devSpec = {
             id: deviceSpec.id,
             os: deviceSpec.os,
