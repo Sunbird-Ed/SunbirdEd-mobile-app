@@ -123,17 +123,34 @@ export class NotificationService {
 
     private setLocalNotification(triggerConfig) {
         try {
-            const trigger = this.triggerConfig(triggerConfig);
-            const title = JSON.parse(triggerConfig.title);
-            const message = JSON.parse(triggerConfig.msg);
-            this.localNotifications.schedule({
-                id: triggerConfig.id,
-                title: title[this.selectedLanguage] || title['en'],
-                text:  message[this.selectedLanguage] || message['en'],
-                icon: 'res://icon',
-                smallIcon: 'res://n_icon',
-                trigger
-            });
+            let title;
+            let message;
+            try {
+                title = JSON.parse(triggerConfig.title);
+                message = JSON.parse(triggerConfig.msg);
+            } catch (e) {
+                title = triggerConfig.title;
+                message = triggerConfig.msg;
+                console.log('Not a JSON valid string');
+            }
+            if (triggerConfig.start) {
+                const trigger = this.triggerConfig(triggerConfig);
+                this.localNotifications.schedule({
+                    id: triggerConfig.id,
+                    title: title[this.selectedLanguage] || title['en'],
+                    text:  message[this.selectedLanguage] || message['en'],
+                    icon: 'res://icon',
+                    smallIcon: 'res://n_icon',
+                    trigger
+                });
+            } else {
+                this.localNotifications.schedule({
+                    id: triggerConfig.id,
+                    title: triggerConfig.title,
+                    text: triggerConfig.msg,
+                    foreground: true
+                });
+            }
         } catch (e) {
             console.log('Error', e);
         }
