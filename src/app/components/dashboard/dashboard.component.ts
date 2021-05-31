@@ -1,6 +1,4 @@
-import {  Component, Inject, Input, OnInit, ElementRef, Output, EventEmitter } from '@angular/core';
-import { RouterLinks } from '@app/app/app.constant';
-
+import {  Component, Input, OnInit } from '@angular/core';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -17,15 +15,8 @@ export class DashboardComponent implements OnInit {
 }
 
   ngOnInit() {
-    //   this.fetchDashboardConfig();
-      console.log('dashletData in comp', this.dashletData); 
-      this.DashletRowData.values = this.dashletData.rows;
-      this.columnConfig.columnConfig = this.dashletData.columns;
-
+    this.DashletRowData.values = this.dashletData.rows;
+    this.columnConfig.columnConfig = this.dashletData.columns;
   }
-
-//   fetchDashboardConfig() {
-   
-//   }
 
 }

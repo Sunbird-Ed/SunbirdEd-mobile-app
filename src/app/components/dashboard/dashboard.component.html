@@ -1,7 +1,4 @@
 <div>
-    <!-- <sb-dashlet type="'table'" [data]="data" [config]="config" (rowClickHandler)="eventListener($click)"> 
-    </sb-dashlet> -->
-
     <sb-dashlet [type]="'table'" [data]="DashletRowData" [config]="columnConfig" #lib>
         <ng-template sbTemplateRef="header" let-config>
             <div role="alert">

@@ -3,10 +3,7 @@ import { AppHeaderService } from './../../../services/app-header.service';
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import {
-    Environment, ImpressionType, InteractSubtype,
-    InteractType, PageId
-} from '@app/services/telemetry-constants';
+import { Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
@@ -45,11 +42,11 @@ export class ActivityDashboardPage {
     }
 
     ionViewWillEnter() {
-        // this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
-        //     this.handleHeaderEvents(eventName);
-        // });
-        // this.headerService.showHeaderWithBackButton();
-        // this.handleDeviceBackButton();
+        this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+            this.handleHeaderEvents(eventName);
+        });
+        this.headerService.showHeaderWithBackButton();
+        this.handleDeviceBackButton();
         // this.selectedId = this.appGlobalService.selectedActivityCourseId;
         // this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
         //     '', PageId.ACTIVITY_TOC, Environment.GROUP,
