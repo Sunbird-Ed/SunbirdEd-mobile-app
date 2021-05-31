@@ -893,8 +893,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          this.loginHandlerService.signIn();
+          this.router.navigate([RouterLinks.SIGN_IN]);
         }
+        break;
     }
   }
 

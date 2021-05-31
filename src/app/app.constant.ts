@@ -394,6 +394,7 @@ export class SystemSettingsIds {
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
+    public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
 }
 
 export class StoreRating {
@@ -613,6 +614,8 @@ export class RouterLinks {
     public static readonly GENERIC_REPORT = 'generic-report';
     // sign-in page
     public static readonly SIGN_IN = 'sign-in';
+    // my-playlist page
+    public static readonly MY_PLAYLIST = 'my-playlist';
 }
 
 export class ShareItemType {

@@ -60,7 +60,7 @@ export class FormAndFrameworkUtilService {
         const request: FormRequest = {
             from: CachedItemRequestSourceFrom.SERVER,
             type: 'config',
-            subType: 'login',
+            subType: 'login_v2',
             action: 'get'
         };
 

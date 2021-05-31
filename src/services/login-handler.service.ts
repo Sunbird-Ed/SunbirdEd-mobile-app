@@ -39,7 +39,7 @@ export class LoginHandlerService {
     async signIn(skipNavigation?) {
         this.appGlobalService.resetSavedQuizContent();
         // clean the preferences to avoid unnecessary enrolment
-        if (!skipNavigation.fromEnrol) {
+        if (skipNavigation && !skipNavigation.fromEnrol) {
             this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
             this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
         }

@@ -12,12 +12,15 @@ import {
     WebviewSessionProviderConfig,
     WebviewLoginSessionProvider,
     NativeGoogleSessionProvider,
-    AuthService
+    AuthService,
+    SystemSettingsService,
+    SignInError
 } from 'sunbird-sdk';
 import {Router} from '@angular/router';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 import {GooglePlus} from '@ionic-native/google-plus/ngx';
+import {SystemSettingsIds} from '@app/app/app.constant';
 
 @Component({
     selector: 'app-sign-in',
@@ -28,10 +31,10 @@ import {GooglePlus} from '@ionic-native/google-plus/ngx';
 export class SignInPage implements OnInit {
     appName = '';
     skipNavigation: any;
-    userData: any = {};
 
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
+        @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
         private appHeaderService: AppHeaderService,
         private commonUtilService: CommonUtilService,
         private loginHandlerService: LoginHandlerService,
@@ -76,17 +79,20 @@ export class SignInPage implements OnInit {
     }
 
     async signInWithGoogle() {
+        const clientId = await this.systemSettingsService.getSystemSettings({id: SystemSettingsIds.GOOGLE_CLIENT_ID}).toPromise();
         this.googlePlusLogin.login({
-            webClientId: '525350998139-cjr1m4a2p1i296p588vff7qau924et79.apps.googleusercontent.com'
+            webClientId: clientId.value
         }).then(async (result) => {
-            this.userData = result;
+            await this.sbProgressLoader.show({id: 'login'});
             const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
             await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation);
-        }).catch(async (result) => {
-            // TODO handle the catch part
-            this.userData = result;
-            const nativeSessionGoogleProvider = new NativeGoogleSessionProvider(() => result);
-            await this.loginNavigationHandlerService.setSession(nativeSessionGoogleProvider, this.skipNavigation);
+        }).catch(async (err) => {
+            this.sbProgressLoader.hide({id: 'login'});
+            if (err instanceof SignInError) {
+                this.commonUtilService.showToast(err.message);
+            } else {
+                this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+            }
         });
     }
 
