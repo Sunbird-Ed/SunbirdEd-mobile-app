@@ -9,7 +9,7 @@ import {
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
-    TelemetryService, NotificationService,
+    TelemetryService, NotificationService, DebuggingService,
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
     TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from 'sunbird-sdk';
@@ -25,7 +25,7 @@ import {
 } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { of, Subject, EMPTY } from 'rxjs';
+import { of, Subject, EMPTY, Observable } from 'rxjs';
 import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -68,6 +68,10 @@ describe('AppComponent', () => {
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
     const mockProfileService: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn()
+    };
+    const mockDebuggingService: Partial<DebuggingService> = {
+        deviceId: 'someId',
+        enableDebugging: jest.fn(() => of(true))
     };
     const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
@@ -170,6 +174,7 @@ describe('AppComponent', () => {
             mockCodePushExperimentService as CodePushExperimentService,
             mockDeviceRegisterService as DeviceRegisterService,
             mockProfileService as ProfileService,
+            mockDebuggingService as DebuggingService,
             mockPlatform as Platform,
             mockStatusBar as StatusBar,
             mockTranslate as TranslateService,
@@ -263,6 +268,8 @@ describe('AppComponent', () => {
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
             mockNetworkService.netWorkCheck = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -412,6 +419,8 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockApiUtilService.initilizeML = jest.fn();
             mockDbService.createDb = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -567,6 +576,8 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
 
         afterEach(() => {
@@ -694,6 +705,8 @@ describe('AppComponent', () => {
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
 
         afterEach(() => {
@@ -812,6 +825,8 @@ describe('AppComponent', () => {
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
 
         afterEach(() => {
@@ -873,6 +888,8 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1046,6 +1063,8 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1149,6 +1168,8 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -1395,6 +1416,8 @@ describe('AppComponent', () => {
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
             mockApiUtilService.initilizeML = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2025,6 +2048,8 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2212,6 +2237,8 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2499,6 +2526,8 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();
@@ -2963,6 +2992,8 @@ describe('AppComponent', () => {
             jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
             mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockDebuggingService.deviceId = 'someId';
+            mockDebuggingService.enableDebugging = jest.fn(() => of(true));
         });
         afterEach(() => {
             jest.resetAllMocks();

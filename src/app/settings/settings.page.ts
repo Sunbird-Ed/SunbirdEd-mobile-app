@@ -20,6 +20,7 @@ import {
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../app.constant';
+import { Events } from '@app/util/events';
 
 @Component({
   selector: 'app-settings',
@@ -58,7 +59,8 @@ export class SettingsPage implements OnInit {
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private platform: Platform,
-    private location: Location
+    private location: Location,
+    private events: Events
   ) {
     this.isUserLoggedIn$ = this.authService.getSession().pipe(
       map((session) => !!session)
@@ -78,6 +80,8 @@ export class SettingsPage implements OnInit {
         this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
       });
     this.handleBackButton();
+    this.debugmode = this.debugginService.isDebugOn();
+    this.events.subscribe('debug_mode', (debugMode) => this.debugmode = debugMode);
   }
 
   ionViewWillLeave() {
@@ -309,27 +313,27 @@ export class SettingsPage implements OnInit {
         const confirm = await this.popoverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
-            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG MODE'),
-            sbPopoverMainTitle: this.commonUtilService.translateMessage("Debugging Mode will start sending critical information to the server. Do you want to turn on Debugging Mode?"),
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_ENABLE"),
             actionsButtons: [
               {
-                btntext: this.commonUtilService.translateMessage('CANCEL'),
+                btntext: this.commonUtilService.translateMessage('DISMISS'),
                 btnClass: 'popover-color popover-button-cancel'
               },
               {
-                btntext: this.commonUtilService.translateMessage('TURN ON'),
+                btntext: this.commonUtilService.translateMessage('DEBUG_ON'),
                 btnClass: 'popover-color popover-button-allow'
               },
             ],
             icon: null,
             handler: (selectedButton: string) => {
               console.log(selectedButton);
-              if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
+              if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
                 return false;
-              } else if (selectedButton === this.commonUtilService.translateMessage('TURN ON')) {
+              } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
                 this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
                 this.enableDebugging();
-                this.commonUtilService.showToast('DEBUG MODE ON');
+                this.commonUtilService.showToast('DEBUG_ON_MESSAGE');
               }
             }
             // metaInfo: this.content.contentData.name,
@@ -342,27 +346,27 @@ export class SettingsPage implements OnInit {
         const confirm = await this.popoverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
-            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG MODE'),
-            sbPopoverMainTitle: this.commonUtilService.translateMessage("Debug Mode will be disabled, it'll stop sending information to the server!"),
+            sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_DISABLE"),
             actionsButtons: [
               {
-                btntext: this.commonUtilService.translateMessage('CANCEL'),
+                btntext: this.commonUtilService.translateMessage('DISMISS'),
                 btnClass: 'popover-color popover-button-cancel'
               },
               {
-                btntext: this.commonUtilService.translateMessage('TURN OFF'),
+                btntext: this.commonUtilService.translateMessage('DEBUG_OFF'),
                 btnClass: 'popover-color popover-button-allow'
               },
             ],
             icon: null,
             handler: (selectedButton: string) => {
               console.log(selectedButton);
-              if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
+              if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
                 return false;
-              } else if (selectedButton === this.commonUtilService.translateMessage('TURN OFF')) {
+              } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_OFF')) {
                 this.debugginService.disableDebugging().subscribe((response) => {
                   if (response) {
-                    this.commonUtilService.showToast('DEBUG MODE OFF');
+                    this.commonUtilService.showToast('DEBUG_OFF_MESSAGE');
                     this.debugmode = false
                   }
                 });
