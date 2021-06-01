@@ -56,11 +56,11 @@ export class FormAndFrameworkUtilService {
         this.invokeUrlRegexFormApi();
     }
 
-    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
+    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate' | 'register' | 'state'): Promise<WebviewSessionProviderConfig> {
         const request: FormRequest = {
             from: CachedItemRequestSourceFrom.SERVER,
             type: 'config',
-            subType: 'login',
+            subType: 'login_v2',
             action: 'get'
         };
 

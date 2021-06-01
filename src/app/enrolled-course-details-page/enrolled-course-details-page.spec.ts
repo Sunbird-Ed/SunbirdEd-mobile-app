@@ -28,7 +28,7 @@ import {
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants, EventTopics, BatchConstants } from '../app.constant';
+import {PreferenceKey, ProfileConstants, EventTopics, BatchConstants, RouterLinks} from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType, InteractSubtype, ErrorType } from '../../services/telemetry-constants';
@@ -65,9 +65,6 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
-    };
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {
-        signIn: jest.fn()
     };
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
@@ -147,7 +144,7 @@ describe('EnrolledCourseDetailsPage', () => {
             restoreTags: jest.fn()
         }
     };
-    
+
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -159,7 +156,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockAuthService as AuthService,
             mockDownloadService as DownloadService,
             mockDiscussionService as DiscussionService,
-            mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
             mockFileSizePipe as FileSizePipe,
@@ -1383,7 +1379,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+            mockRouter.navigate = jest.fn();
             // act
             enrolledCourseDetailsPage.promptToLogin({});
             // assert
@@ -1440,7 +1436,7 @@ describe('EnrolledCourseDetailsPage', () => {
                     undefined
                 );
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });

@@ -211,7 +211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.LOCAL,   
+        InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
         undefined,
         corRelationList
@@ -464,13 +464,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
-        this.db.createDb()
+        this.db.createDb();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
+        this.segmentationTagService.getPersistedSegmentaion();
       }, 100);
     });
   }
@@ -892,8 +893,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          this.loginHandlerService.signIn();
+          this.router.navigate([RouterLinks.SIGN_IN]);
         }
+        break;
     }
   }
 

@@ -23,7 +23,6 @@ describe('MyGroupsPage', () => {
         showToast: jest.fn()
     };
     const mockHeaderService: Partial<AppHeaderService> = {};
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockRouter: Partial<Router> = {
@@ -55,7 +54,6 @@ describe('MyGroupsPage', () => {
             mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
-            mockLoginHandlerService as LoginHandlerService,
             mockCommonUtilService as CommonUtilService,
             mockPopoverCtrl as PopoverController,
             mockSbProgressLoader as SbProgressLoader,
@@ -518,7 +516,7 @@ describe('MyGroupsPage', () => {
     });
 
     it('should return loggedIn user', () => {
-        mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+        mockRouter.navigate = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         myGroupsPage.login();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
@@ -528,9 +526,10 @@ describe('MyGroupsPage', () => {
             PageId.MY_GROUP,
             undefined, undefined, undefined, undefined, undefined
         );
-        expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith(
-            { skipRootNavigation: true, redirectUrlAfterLogin: RouterLinks.MY_GROUPS }
-        );
+        expect(mockRouter.navigate).
+        toHaveBeenCalledWith([RouterLinks.SIGN_IN],
+            {state: {skipRootNavigation: true,
+                    redirectUrlAfterLogin: RouterLinks.MY_GROUPS}});
     });
 
     it('should navigate To GroupdetailsPage', () => {
