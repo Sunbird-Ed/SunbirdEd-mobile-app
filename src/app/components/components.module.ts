@@ -70,7 +70,7 @@ import { ContentViewerComponent } from './content-viewer/content-viewer.componen
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {DashletModule} from '@project-sunbird/sb-dashlet'
+// import {DashletModule} from '@project-sunbird/sb-dashlet'
 
 @NgModule({
   declarations: [
@@ -143,7 +143,7 @@ import {DashletModule} from '@project-sunbird/sb-dashlet'
     CommonConsumptionModule,
     IonicRatingModule,
     SunbirdVideoPlayerModule,
-    DashletModule,
+    // DashletModule,
     TranslateModule.forChild(),
   ],
   entryComponents: [
