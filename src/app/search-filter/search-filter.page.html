@@ -6,7 +6,7 @@
                 {{'RESET' | translate}}
             </ion-button>
         </div>
-        <div class="p-16">
+        <div class="p-16" *ngIf="searchResultFacets">
             <sb-search-facet-filter [baseSearchFilter]="baseSearchFilter"
                                     [searchResultFacets]="searchResultFacets"
                                     [filterFormTemplateConfig]="filterFormTemplateConfig"
