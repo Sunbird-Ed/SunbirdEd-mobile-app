@@ -39,7 +39,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SearchType
+  SearchType,
+  SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import {
   AudienceFilter,
@@ -63,6 +64,7 @@ import {SbSubjectListPopupComponent} from '@app/app/components/popups/sb-subject
 import {CategoryTerm, FrameworkCategory} from '@project-sunbird/client-services/models/channel';
 import { FrameworkSelectionDelegateService } from './../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Component({
   selector: 'app-user-home',
@@ -102,11 +104,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   newThemeTimeout: any;
   refresh: boolean;
   homeDataAvailable = false;
+  displayBanner: boolean;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -121,6 +125,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
     private translate: TranslateService,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
   ) {
   }
 
@@ -137,6 +142,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       if (data === '') {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
+    });
+    this.preferences.getBoolean('display_banner').toPromise().then((data) => {
+      this.displayBanner = data;
     });
   }
 
@@ -314,6 +322,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         };
         break;
     }
+
+    const values = new Map();
+    values['SectionName'] = JSON.parse(section.title)['en'];
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.VIEWALL_CLICKED,
+      Environment.HOME,
+      PageId.HOME, undefined,
+      values);
     const params: NavigationExtras = {
       state
     };
@@ -619,5 +635,33 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   tabViewWillEnter() {
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
     this.getUserProfileDetails();
+  }
+
+  navigateToSpecificLocation(event) {
+    console.log('banner', event);
+    switch (event.data.code) {
+      case 'banner_external_url':
+           this.commonUtilService.openLink(event.data.action.params.route);
+           break;
+      case 'banner_internal_url':
+            if (this.guestUser && event.data.action.params.route === RouterLinks.PROFILE) {
+              this.router.navigate([`/${RouterLinks.GUEST_PROFILE}`]);
+            } else {
+              this.router.navigate([event.data.action.params.route]);
+            }
+            break;
+      case 'banner_search':
+          const payload = {
+            data: {
+              request: event.data.action.params.filter
+            },
+            action: 'ACTION_SEARCH'
+          };
+          this.splaschreenDeeplinkActionHandlerDelegate.handleVendorAppAction(payload, event.data.code);
+          break;
+      case 'banner_content':
+           this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
+           break;
+    }
   }
 }

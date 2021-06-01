@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
+    public static readonly BANNER = 'banner';
 }
 
 export class ShareUrl {
@@ -555,6 +556,7 @@ export class RouterLinks {
     public static readonly ACTIVITY_TOC = 'activity-toc';
     public static readonly ADD_ACTIVITY_TO_GROUP = 'add-activity-to-group';
     public static readonly ACTIVITY_VIEW_MORE = 'activity-view-more';
+    public static readonly ACTIVITY_DASHBOARD = 'activity-dashboard';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';

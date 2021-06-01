@@ -24,6 +24,15 @@ import { CorrelationData } from '../../../../sunbird-mobile-sdk/src';
 describe('LanguageSettingsPage', () => {
     let languageSettingsPage: LanguageSettingsPage;
 
+    global.window.segmentation = {
+        init: jest.fn(),
+        SBTagService: {
+            pushTag: jest.fn(),
+            removeAllTags: jest.fn(),
+            restoreTags: jest.fn()
+        }
+    };
+
     const mockPreferences: Partial<SharedPreferences> = {
         putBoolean: jest.fn(() => of(undefined))
     };
