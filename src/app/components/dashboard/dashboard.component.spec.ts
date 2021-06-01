@@ -52,6 +52,19 @@ describe('DashboardComponent', () => {
         expect(dashboardComponent).toBeTruthy();
     });
 
+    describe('ngonInit', () => {
+        it('should assign values', () => {
+            //arrange
+            dashboardComponent.dashletData = {
+                rows : [{name: 'some_name'}],
+                columns: [{title: 'some_titile'}]
+            }
+            // act
+            dashboardComponent.ngOnInit();
+            // assert
+        })
+    })
+
     describe('exportCsv', () => {
         it('should call exportcsv from library', (done) => {
             // arrange
