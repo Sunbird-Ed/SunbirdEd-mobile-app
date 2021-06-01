@@ -3,7 +3,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Events } from '@app/util/events';
 import { Location } from '@angular/common';
-import { NotificationService, Notification, CorrelationData } from 'sunbird-sdk';
+import { Notification, CorrelationData } from 'sunbird-sdk';
 import { Observable, Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -17,6 +17,7 @@ import {
   ImpressionType
 } from '@app/services/telemetry-constants';
 import { map, tap } from 'rxjs/operators';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-notification',
@@ -25,14 +26,14 @@ import { map, tap } from 'rxjs/operators';
 })
 export class NotificationPage implements OnInit {
 
-  notificationList$: Observable<Notification[]>;
+  notificationList$: Observable<Notification[]> ;
   unreadNotificationList$: Observable<Notification[]>;
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;
   private loader?: any;
 
   constructor(
-    @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
+    private notificationService: NotificationService,
     private headerService: AppHeaderService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
@@ -52,9 +53,13 @@ export class NotificationPage implements OnInit {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.fetchNotificationList();
+  }
+
+  private async fetchNotificationList() {
     this.loader = await this.commonUtilService.getLoader();
-    this.notificationList$ = this.notificationService.notifications$.pipe(
+    this.notificationList$ = (this.notificationService.fetchNotificationList() as any).pipe(
       tap(() => {
         if (this.loader) {
           this.loader.dismiss();
@@ -64,7 +69,7 @@ export class NotificationPage implements OnInit {
     );
     const corRelationList: Array<CorrelationData> = [];
     this.unreadNotificationList$ = this.notificationList$.pipe(
-      map((notifications) => notifications.filter((n) => !n.isRead)),
+      map((notifications) => notifications.filter((n: any) => !n.data.isRead)),
         tap((notifications) => {
           corRelationList.push(
               {id: notifications.length.toString(),
@@ -85,10 +90,12 @@ export class NotificationPage implements OnInit {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
     }
-    this.notificationService.deleteAllNotifications().toPromise();
+
     const valuesMap = new Map();
     valuesMap['clearAllNotifications'] = true;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
+
+    await this.notificationService.clearAllNotifications();
   }
 
   async removeNotification(notification: Notification, swipeDirection: string) {
@@ -96,11 +103,13 @@ export class NotificationPage implements OnInit {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
     }
+
     const valuesMap = new Map();
     valuesMap['deleteNotificationId'] = notification.id;
     valuesMap['swipeDirection'] = swipeDirection;
     this.generateClickInteractEvent(valuesMap, InteractSubtype.CLEAR_NOTIFICATIONS_CLICKED);
-    this.notificationService.deleteNotification(notification).toPromise();
+
+    this.notificationService.deleteNotification({ event: {}, data: notification });
   }
 
   handleTelemetry(event) {
