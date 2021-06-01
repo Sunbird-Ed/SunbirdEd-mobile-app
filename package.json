@@ -13,6 +13,7 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
     "ionic-build": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova run android",
+    "ionic-build:debug": "ng build --eval--source-map --configuration=$npm_config_angular_configuration && cordova run android --debug --buildConfig ./buildConfig/build.json",
     "ionic-build:prod": "ionic cordova build android --configuration=$npm_config_angular_configuration --prod --release --buildConfig ./buildConfig/build.json",
     "ionic-serve": "ionic cordova run android --livereload --configuration=hmr",
     "sonar-scanner": "sonar-scanner",
