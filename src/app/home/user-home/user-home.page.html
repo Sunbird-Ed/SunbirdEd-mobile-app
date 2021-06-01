@@ -64,11 +64,11 @@
       </ng-container>
 
       <!--banner-->
-      <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-banner-card-hlist'">
+      <div class="heading-label" *ngIf="section?.title && section?.data?.length && section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
         <span>{{section?.title | translateJson}}</span>
         <hr>
       </div>
-      <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist'">
+      <ng-container *ngIf="section?.theme?.component === 'sb-banner-card-hlist' && displayBanner">
         <sb-banner-card-hlist [bannerList]="section?.data" (cardClick)="navigateToSpecificLocation($event)"></sb-banner-card-hlist>
       </ng-container>
 

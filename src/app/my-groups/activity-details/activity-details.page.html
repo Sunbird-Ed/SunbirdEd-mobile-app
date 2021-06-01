@@ -1,6 +1,8 @@
 <ion-content>
   <div class="ad-container">
     <div class="ad-card-container">
+      <!-- <button (click)="openDashboard()">activity dashboard</button> -->
+      <ion-icon src="assets/imgs/ic_chat.svg" class="dashboard-icon" *ngIf="isTrackable" (click)="openDashboard()"></ion-icon>
       <sb-course-card *ngIf="isTrackable" [section]="null"
         [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
       </sb-course-card>

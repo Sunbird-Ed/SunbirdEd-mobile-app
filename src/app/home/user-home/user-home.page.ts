@@ -39,7 +39,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SearchType
+  SearchType,
+  SharedPreferences
 } from '@project-sunbird/sunbird-sdk';
 import {
   AudienceFilter,
@@ -103,11 +104,13 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
   newThemeTimeout: any;
   refresh: boolean;
   homeDataAvailable = false;
+  displayBanner: boolean;
 
   constructor(
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public commonUtilService: CommonUtilService,
     private router: Router,
     private appGlobalService: AppGlobalService,
@@ -139,6 +142,9 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       if (data === '') {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
+    });
+    this.preferences.getBoolean('display_banner').toPromise().then((data) => {
+      this.displayBanner = data;
     });
   }
 

@@ -483,7 +483,6 @@ declare const sbutility;
     Network,
     AndroidPermissionsService,
     ComingSoonMessageService,
-    NotificationService,
     ActivePageService,
     CanvasPlayerService,
     SplashcreenTelemetryActionHandlerDelegate,
@@ -514,7 +513,8 @@ declare const sbutility;
     Chooser,
     PhotoViewer,
     StreamingMedia,
-    { provide: QuestionCursor, useClass: QumlPlayerService }
+    { provide: QuestionCursor, useClass: QumlPlayerService },
+    { provide: 'SB_NOTIFICATION_SERVICE', useClass: NotificationService }
   ],
   bootstrap: [AppComponent],
   schemas: [
