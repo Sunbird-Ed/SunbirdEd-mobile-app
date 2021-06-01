@@ -26,7 +26,8 @@ describe('DashboardComponent', () => {
     const mockFileOpener: Partial<FileOpener> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        showSettingsPageToast: jest.fn()
     };
     const mockStoragePermissionHandlerService: Partial<StoragePermissionHandlerService> = {};
     const mockAppVersion: Partial<AppVersion> = {
@@ -81,6 +82,24 @@ describe('DashboardComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockStoragePermissionHandlerService.checkForPermissions).toHaveBeenCalled();
+                done()
+            });
+        })
+        it('should call exportcsv from library', (done) => {
+            // arrange
+            dashboardComponent.collectionName = 'some name';
+            mockFileService.writeFile = jest.fn(() => Promise.resolve('path'));
+            dashboardComponent.lib = {
+                instance: {
+                    exportCsv: jest.fn(() => Promise.resolve('csv data'))
+                }
+            }
+            mockStoragePermissionHandlerService.checkForPermissions = jest.fn(() => Promise.resolve(undefined))
+            // act
+            dashboardComponent.exportCsv()
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalled();
                 done()
             });
         })
