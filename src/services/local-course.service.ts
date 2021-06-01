@@ -77,7 +77,9 @@ export class LocalCourseService {
             }
             await this.sbProgressLoader.hide({ id: 'login' });
             this.isConsentPopupDisplayed = true;
-            await this.consentService.showConsentPopup(enrollCourse);
+            if (!this.isMinor()) {
+              await this.consentService.showConsentPopup(enrollCourse);
+            }
            // this.preferences.putString(PreferenceKey.IS_CONSENT_POPUP_DISPLAY, 'true').toPromise();
 
             if (consentPopoverActionsDelegate) {
@@ -109,7 +111,9 @@ export class LocalCourseService {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
             if (enrollCourse.userConsent === UserConsent.YES) {
               await this.sbProgressLoader.hide({ id: 'login' });
-              await this.consentService.getConsent(enrollCourse);
+              if (!this.isMinor()) {
+                await this.consentService.getConsent(enrollCourse);
+              }
             }
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_ENROLLING_COURSE');
@@ -159,10 +163,16 @@ export class LocalCourseService {
     if (batchDetails && courseDetail) {
       this.userId = await this.appGlobalService.getActiveProfileUid();
 
-      if (JSON.parse(courseDetail).createdBy !== this.userId && isLoggedInUser) {
-        this.enrollBatchAfterlogin(JSON.parse(batchDetails), JSON.parse(courseDetail));
+      const batch = JSON.parse(batchDetails);
+      const course = JSON.parse(courseDetail);
+      if (course.createdBy !== this.userId && isLoggedInUser) {
+        this.enrollBatchAfterlogin(batch, course);
       } else {
-        this.events.publish('return_course');
+        this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+          batchId: batch.id,
+          courseId: batch.courseId
+        });
+        this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
       }
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
     }
@@ -379,6 +389,10 @@ export class LocalCourseService {
 
   setConsentPopupVisibility(status: boolean) {
     this.isConsentPopupDisplayed = status;
+  }
+
+  private isMinor(): boolean {
+    return this.appGlobalService.getCurrentUser().serverProfile.isMinor;
   }
 
 }

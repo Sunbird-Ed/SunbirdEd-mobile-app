@@ -242,6 +242,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   };
   batchRemaningTime: any;
   private batchRemaningTimingIntervalRef?: any;
+  isMinor: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -546,7 +547,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL,
         corRelationList: this.corRelationList,
-        objRollup: this.telemetryObject
+        objRollup: this.telemetryObject,
+        showUnenrollButton: this.showUnenrollButton
       },
     });
     await this.leaveTrainigPopover.present();
@@ -753,6 +755,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
       if (!this.didViewLoad) {
         this.generateImpressionEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
+        if (this.course.createdBy === this.userId) {
+          this.commonUtilService.showToast('FRMELEMNTS_MSG_ENROLLMENT_ERROR');
+        }
       }
       this.didViewLoad = true;
 
@@ -2165,32 +2170,34 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
   }
 
   async checkDataSharingStatus() {
-    const request: Consent = {
-      userId: this.courseCardData.userId,
-      consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
-      objectId: this.courseCardData.courseId
-    };
-    await this.profileService.getConsent(request).toPromise()
-      .then((data) => {
-        if (data) {
-          this.dataSharingStatus = data.consents[0].status;
-          this.lastUpdateOn = data.consents[0].lastUpdatedOn;
-          this.localCourseService.setConsentPopupVisibility(false);
-        }
-      })
-      .catch(async (e) => {
-        if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
-          && this.course.userConsent === UserConsent.YES) {
-          if (!this.isConsentPopUp) {
-            this.isConsentPopUp = true;
-            this.localCourseService.setConsentPopupVisibility(true);
-            await this.consentService.showConsentPopup(this.courseCardData);
-            await this.checkDataSharingStatus();
+    if (!this.isMinor) {
+      const request: Consent = {
+        userId: this.courseCardData.userId,
+        consumerId: this.courseCardData.content ? this.courseCardData.content.channel : this.course.channel,
+        objectId: this.courseCardData.courseId
+      };
+      await this.profileService.getConsent(request).toPromise()
+        .then((data) => {
+          if (data) {
+            this.dataSharingStatus = data.consents[0].status;
+            this.lastUpdateOn = data.consents[0].lastUpdatedOn;
+            this.localCourseService.setConsentPopupVisibility(false);
           }
-        } else if (e.code === 'NETWORK_ERROR') {
-          this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        }
-      });
+        })
+        .catch(async (e) => {
+          if (this.isAlreadyEnrolled && e.response && e.response.body && e.response.body.params.err === 'USER_CONSENT_NOT_FOUND'
+            && this.course.userConsent === UserConsent.YES) {
+            if (!this.isConsentPopUp) {
+              this.isConsentPopUp = true;
+              this.localCourseService.setConsentPopupVisibility(true);
+              await this.consentService.showConsentPopup(this.courseCardData);
+              await this.checkDataSharingStatus();
+            }
+          } else if (e.code === 'NETWORK_ERROR') {
+            this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+          }
+        });
+    }
   }
 
   onConsentPopoverShow() {
@@ -2342,6 +2349,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     }
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((p) => {
       this.createUserReq.username = p.serverProfile['userName'];
+      this.isMinor = p.serverProfile.isMinor;
     });
     this.appGlobalService.getActiveProfileUid()
       .then((uid) => {

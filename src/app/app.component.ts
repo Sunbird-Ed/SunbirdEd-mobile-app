@@ -45,7 +45,7 @@ import {
   PreferenceKey, ProfileConstants, RouterLinks, SystemSettingsIds
 } from './app.constant';
 import { EventParams } from './components/sign-in-card/event-params.interface';
-import { ApiUtilsService, DbService, LocalStorageService, NetworkService } from './manage-learn/core';
+import { ApiUtilsService, DbService, LoaderService, LocalStorageService, NetworkService } from './manage-learn/core';
 import { SBTagModule } from 'sb-tag-manager';
 import { SegmentationTagService, TagPrefixConstants } from '@app/services/segmentation-tag/segmentation-tag.service';
 
@@ -121,7 +121,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private localStorage: LocalStorageService,
     private db: DbService,
     private loginHandlerService: LoginHandlerService,
-    private segmentationTagService: SegmentationTagService
+    private segmentationTagService: SegmentationTagService,
+    private mlloader:LoaderService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -197,15 +198,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
+    })
+    cordova.plugins.notification.local.on("click", (notification) => {
+      var objects = notification.data;
+      // My data is now available in objects.heading, objects.subheading and so on.
+      this.segmentationTagService.localNotificationId = notification.id;
+      this.segmentationTagService.handleLocalNotificationTap();
     });
 
     if (cordova.plugins.notification && cordova.plugins.notification.local &&
       cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
-      const localNotificationId = cordova.plugins.notification.local.launchDetails.id;
-      corRelationList.push({ id: localNotificationId ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
+      this.segmentationTagService.localNotificationId = cordova.plugins.notification.local.launchDetails.id;
+
+      corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.LOCAL,
+        InteractType.LOCAL,   
         this.activePageService.computePageId(this.router.url),
         undefined,
         corRelationList
@@ -465,7 +473,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
-      }, 0);
+      }, 100);
     });
   }
 
@@ -538,6 +546,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.headerService.sidebarEvent('back');
       } else {
         if (this.location.back && !this.rootPageDisplayed) {
+          this.mlloader.stopLoader()
           this.location.back();
         }
       }
@@ -681,6 +690,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    window['segmentation'].SBTagService.pushTag([selectedLanguage], TagPrefixConstants.USER_LANG, true);
     if (selectedLanguage) {
       await this.translate.use(selectedLanguage);
     }
@@ -882,6 +892,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         }).catch((err) => {
           console.log('---------error------', err);
         });
+        break;
+      case 'LOGIN':
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+        } else {
+          this.loginHandlerService.signIn();
+        }
     }
   }
 

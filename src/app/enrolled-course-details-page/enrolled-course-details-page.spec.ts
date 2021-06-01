@@ -2275,6 +2275,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('checkDataSharingStatus', () => {
         it('should return conset details', (done) => {
             // arrange
+            enrolledCourseDetailsPage.isMinor = false;
             enrolledCourseDetailsPage.courseCardData = {
                 userId: 'sample-userId',
                 content: {

@@ -4,8 +4,9 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { TelemetryService, NotificationService as SdkNotificationService } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
+import { TelemetryGeneratorService } from './telemetry-generator.service';
 
 describe('LocalCourseService', () => {
   let notificationService: NotificationService;
@@ -22,16 +23,20 @@ describe('LocalCourseService', () => {
   const mockEvents: Partial<Events> = {
     publish: jest.fn()
   };
+  const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+  const mockSdkNotificationService: Partial<SdkNotificationService> = {};
 
   beforeAll(() => {
     notificationService = new NotificationService(
       mockTelemetryService as TelemetryService,
+      mockSdkNotificationService as SdkNotificationService,
       mockUtilityService as UtilityService,
       mockFormnFrameworkUtilService as FormAndFrameworkUtilService,
       mockAppVersion as AppVersion,
       mockLocalNotifications as LocalNotifications,
       mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
-      mockEvents as Events
+      mockEvents as Events,
+      mockTelemetryGeneratorService as TelemetryGeneratorService
     );
   });
 

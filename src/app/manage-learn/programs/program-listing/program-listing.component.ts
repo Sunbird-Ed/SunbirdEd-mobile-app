@@ -73,6 +73,7 @@ export class ProgramListingComponent implements OnInit {
         if (this.backButtonFunc) {
             this.backButtonFunc.unsubscribe();
         }
+        this.utils.closeProfileAlert();
     }
 
     private handleBackButton() {

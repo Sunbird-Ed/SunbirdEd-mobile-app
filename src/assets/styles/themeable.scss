@@ -218,7 +218,7 @@ html[data-theme="JOYFUL"]{
       border: none !important;
     }
     .sb--card--container{
-      margin: 0 1rem 0 0 !important;
+      margin: 2px 1rem 10px 10px !important;
     }
   }
 
@@ -329,7 +329,7 @@ html[data-theme="JOYFUL"]{
     }
 
     .qr-btn{
-      background-color: var(--app-primary) !important;
+      background-color: var(--app-white) !important;
     }
 
     .board-btn-text{
@@ -1525,6 +1525,13 @@ html[data-theme="JOYFUL"]{
     }
     ion-item-sliding{
       box-shadow: var(--block-style-shadow) !important;
+      sb-notification-card{
+        .sb-notification-list{
+          box-shadow: none !important;
+          margin-bottom: 0 !important;
+          border: none !important;
+        }
+      }
     }
     .oval-wrapper{
       h4{
@@ -1634,6 +1641,10 @@ html[data-theme="JOYFUL"]{
         }
       }
     }
+  }
+
+  table.dataTable.no-footer {
+    border-radius: 1.5rem;
   }
 
 }

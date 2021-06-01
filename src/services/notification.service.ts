@@ -1,18 +1,24 @@
+import { Environment, InteractType, PageId } from './telemetry-constants';
 import { Inject, Injectable } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
 import { ActionType } from '@app/app/app.constant';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { CorReleationDataType } from '.';
+import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { CorrelationData, TelemetryService } from '@project-sunbird/sunbird-sdk';
+import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
-
+import { EventNotification, SbNotificationService } from 'sb-notification';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { map } from 'rxjs/operators';
 declare const cordova;
 
-@Injectable()
-export class NotificationService {
+@Injectable({
+    providedIn: 'root'
+})
+export class NotificationService implements SbNotificationService {
 
     private selectedLanguage: string;
     private configData: any;
@@ -23,17 +29,80 @@ export class NotificationService {
     private _notificationId: string;
     private contentUrl: string;
     private _notificationPaylod: any;
+    notificationList$ = new BehaviorSubject([]);
+    showNotificationModel$ = new Subject<boolean>();
 
     constructor(
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+        @Inject('NOTIFICATION_SERVICE') private sdkNotificationService: SdkNotificationService,
         private utilityService: UtilityService,
         private formnFrameworkUtilService: FormAndFrameworkUtilService,
         private appVersion: AppVersion,
         private localNotifications: LocalNotifications,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-        private event: Events
+        private event: Events,
+        private telemetryGeneratorService: TelemetryGeneratorService,
     ) {
         this.getAppName();
+    }
+
+    fetchNotificationList() {
+        //In mobile fetchNotification is handled from SDK notifications$.
+        setTimeout(() => {
+            this.sdkNotificationService.getAllNotifications({notificationStatus: NotificationStatus.ALL});
+        }, 1000);
+        return this.sdkNotificationService.notifications$.pipe(
+            map((notifications) => {
+                const temp = notifications.map(n => {
+                    n['status'] = n['status'] || n.isRead ? UserFeedStatus.READ : UserFeedStatus.UNREAD;
+                    n['createdOn'] = n['createdOn'] || n['displayTime'];
+                    n.actionData['description'] = n.actionData['description'] || n.actionData['richText'] || n.actionData['ctaText'];
+                    n.actionData['thumbnail'] = n.actionData['thumbnail'] || n.actionData['appIcon'];
+                    return { data: n, createdOn: n['createdOn'] };
+                });
+                return temp as any;
+            })
+        ) as any;
+    }
+
+    async handleNotificationClick(notificationData: EventNotification): Promise<void> {
+        if (!notificationData || !notificationData.data || !notificationData.data.data) {
+            return;
+        }
+        const notification = notificationData.data.data;
+        const valuesMap = new Map();
+        valuesMap['notificationBody'] = notification.actionData;
+        if (notification.actionData.deepLink && notification.actionData.deepLink.length) {
+            valuesMap['notificationDeepLink'] = notification.actionData.deepLink;
+        }
+        this.generateClickInteractEvent(valuesMap, InteractSubtype.NOTIFICATION_READ);
+
+        notification.isRead = 1;
+        await this.sdkNotificationService.updateNotification(notification).toPromise();
+
+        this.notificationId = notification.id || '';
+        this.setNotificationParams(notification);
+        this.handleNotification();
+    }
+
+    async deleteNotification(notificationData: EventNotification): Promise<boolean> {
+        try {
+            await this.sdkNotificationService.deleteNotification(notificationData.data.data).toPromise();
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    }
+
+    async clearAllNotifications(notificationListData?: EventNotification): Promise<boolean> {
+        try {
+            await this.sdkNotificationService.deleteAllNotifications().toPromise();
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     }
 
     get notificationId(): string {
@@ -43,13 +112,13 @@ export class NotificationService {
     set notificationId(id) {
         this._notificationId = id;
     }
-    
+
     get notificationPayload() {
-      return this._notificationPaylod;
+        return this._notificationPaylod;
     }
 
     set notificationPayload(payload) {
-      this._notificationPaylod = payload;
+        this._notificationPaylod = payload;
     }
 
     setupLocalNotification(language?: string, payLoad?: any): any {
@@ -61,7 +130,7 @@ export class NotificationService {
             this.setTrigerConfig(payLoad);
         } else {
             this.formnFrameworkUtilService.getNotificationFormConfig().then(fields => {
-            this.setTrigerConfig(fields);
+                this.setTrigerConfig(fields);
             });
         }
     }
@@ -123,17 +192,34 @@ export class NotificationService {
 
     private setLocalNotification(triggerConfig) {
         try {
-            const trigger = this.triggerConfig(triggerConfig);
-            const title = JSON.parse(triggerConfig.title);
-            const message = JSON.parse(triggerConfig.msg);
-            this.localNotifications.schedule({
-                id: triggerConfig.id,
-                title: title[this.selectedLanguage] || title['en'],
-                text:  message[this.selectedLanguage] || message['en'],
-                icon: 'res://icon',
-                smallIcon: 'res://n_icon',
-                trigger
-            });
+            let title;
+            let message;
+            try {
+                title = JSON.parse(triggerConfig.title);
+                message = JSON.parse(triggerConfig.msg);
+            } catch (e) {
+                title = triggerConfig.title;
+                message = triggerConfig.msg;
+                console.log('Not a JSON valid string');
+            }
+            if (triggerConfig.start) {
+                const trigger = this.triggerConfig(triggerConfig);
+                this.localNotifications.schedule({
+                    id: triggerConfig.id,
+                    title: title[this.selectedLanguage] || title['en'],
+                    text: message[this.selectedLanguage] || message['en'],
+                    icon: 'res://icon',
+                    smallIcon: 'res://n_icon',
+                    trigger
+                });
+            } else {
+                this.localNotifications.schedule({
+                    id: triggerConfig.id,
+                    title: triggerConfig.title,
+                    text: triggerConfig.msg,
+                    foreground: true
+                });
+            }
         } catch (e) {
             console.log('Error', e);
         }
@@ -193,5 +279,15 @@ export class NotificationService {
         this.notificationId = undefined;
     }
 
+    private generateClickInteractEvent(valuesMap, interactSubType) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            interactSubType,
+            Environment.NOTIFICATION,
+            PageId.NOTIFICATION,
+            undefined,
+            valuesMap
+        );
+    }
 
 }

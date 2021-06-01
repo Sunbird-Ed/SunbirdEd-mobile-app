@@ -32,7 +32,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-sp
 import { CsClientStorage } from '@project-sunbird/client-services/core';
 import { ProfileType } from '@project-sunbird/sunbird-sdk';
 import { SegmentationTagService } from '../services/segmentation-tag/segmentation-tag.service';
-import { ApiUtilsService, LocalStorageService, NetworkService, DbService } from './manage-learn/core';
+import { ApiUtilsService, LocalStorageService, NetworkService, DbService, LoaderService } from './manage-learn/core';
 
 declare const supportfile;
 declare const plugins;
@@ -44,7 +44,8 @@ describe('AppComponent', () => {
             local: {
                 launchDetails: {
                     action: 'click'
-                }
+                },
+                on: jest.fn()
             }
         },
         InAppUpdateManager: {
@@ -163,6 +164,10 @@ describe('AppComponent', () => {
         getPersistedSegmentaion: jest.fn(),
         persistSegmentation: jest.fn()
     };
+    const mockMlLoader: Partial<LoaderService> = {
+       stopLoader: jest.fn(),
+       startLoader: jest.fn()
+    };
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -205,6 +210,7 @@ describe('AppComponent', () => {
             mockDbService as DbService,
             mockLoginHandlerService as LoginHandlerService,
             mockSegmentationTagService as SegmentationTagService,
+            mockMlLoader as LoaderService
         );
     });
 

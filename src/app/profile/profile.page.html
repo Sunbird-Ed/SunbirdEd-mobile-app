@@ -138,7 +138,7 @@
         </div>
     </div>
    </div>
-    <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && isCustodianOrgId">
+    <div class="self-declare-btn text-center" *ngIf="!profile?.declarations?.length && !profile?.isMinor && isCustodianOrgId">
         <ion-button shape="round" (click)="openSelfDeclareTeacherForm('add')">
             {{'SUBMIT_MY_DETAILS' | translate}}
         </ion-button>
@@ -245,7 +245,7 @@
                 <div class="flex-nowrap"
                     *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
-                        <div class="fw" (click)="openEnrolledCourse(training)">
+                        <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(training)">
                             {{training.courseName}}
                         </div>
                         <div class="batch-detail">
@@ -290,7 +290,7 @@
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
-                        <div class="fw" (click)="openEnrolledCourse(certificate)">
+                        <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
                         </div>
                         <div>
