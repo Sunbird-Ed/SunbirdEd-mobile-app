@@ -179,6 +179,10 @@ export const segmentationService = () => {
   return SunbirdSdk.instance.segmentationService;
 };
 
+export const debuggingService = () => {
+  return SunbirdSdk.instance.debuggingService;
+};
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -279,6 +283,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEGMENTATION_SERVICE',
     useFactory: segmentationService
+  }, {
+    provide: 'DEBUGGING_SERVICE',
+    useFactory: debuggingService
   }];
 }
 
