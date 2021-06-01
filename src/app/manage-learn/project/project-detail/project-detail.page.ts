@@ -559,7 +559,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   //open openBodh
   openBodh(link) {
     if(!this.networkFlag){
-      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+      this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
       return
     }
     this.loader.startLoader();
@@ -673,6 +673,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   startAssessment(task) {
+     if (!this.networkFlag) {
+       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+       return;
+     }
     if (this.project.entityId) {
       const config = {
         url: urlConstants.API_URLS.START_ASSESSMENT + `${this.project._id}?taskId=${task._id}`,
@@ -724,6 +728,9 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
     if (!taskIdArr.length) {
       return
+    }
+    if (!this.networkFlag) {
+       return;
     }
     const config = {
       url: urlConstants.API_URLS.PROJCET_TASK_STATUS + `${this.project._id}`,
@@ -780,6 +787,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   async checkReport(task) {
+     if (!this.networkFlag) {
+       this.toast.showMessage('FRMELEMNTS_MSG_YOU_ARE_WORKING_OFFLINE_TRY_AGAIN', 'danger');
+       return;
+     }
     if (this.project.entityId) {
       let payload = await this.utils.getProfileInfo();
       const config = {
