@@ -29,7 +29,9 @@ describe('DashboardComponent', () => {
         translateMessage: jest.fn()
     };
     const mockStoragePermissionHandlerService: Partial<StoragePermissionHandlerService> = {};
-
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn(() => Promise.resolve('sample_app_name'))
+    };
     beforeAll(() => {
         dashboardComponent = new DashboardComponent(
             mockStoragePermissionHandlerService as StoragePermissionHandlerService,
@@ -37,6 +39,7 @@ describe('DashboardComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockFileService as File,
             mockFileOpener as FileOpener,
+            mockAppVersion as AppVersion
         );
     });
 
@@ -48,6 +51,27 @@ describe('DashboardComponent', () => {
     it('should be create a instance of dashboardComponent', () => {
         expect(dashboardComponent).toBeTruthy();
     });
+
+    describe('exportCsv', () => {
+        it('should call exportcsv from library', (done) => {
+            // arrange
+            dashboardComponent.collectionName = 'some name';
+            mockFileService.writeFile = jest.fn(() => Promise.resolve('path'));
+            dashboardComponent.lib = {
+                instance: {
+                    exportCsv: jest.fn(() => Promise.resolve('csv data'))
+                }
+            }
+            mockStoragePermissionHandlerService.checkForPermissions = jest.fn(() => Promise.resolve(true))
+            // act
+            dashboardComponent.exportCsv()
+            // assert
+            setTimeout(() => {
+                expect(mockStoragePermissionHandlerService.checkForPermissions).toHaveBeenCalled();
+                done()
+            });
+        })
+    })
 
     describe('openCSV', () => {
         it('should open Intent for opening CSV', () => {

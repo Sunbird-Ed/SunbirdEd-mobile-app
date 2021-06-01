@@ -1,8 +1,9 @@
-import {  Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {  Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonUtilService, PageId, TelemetryGeneratorService } from '@app/services';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 @Component({
     selector: "dashboard-component",
     templateUrl: './dashboard.component.html',
@@ -22,7 +23,8 @@ export class DashboardComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private file: File,
-    private fileOpener: FileOpener
+    private fileOpener: FileOpener,
+    private appVersion: AppVersion
 ) {
    
 }
@@ -34,6 +36,7 @@ export class DashboardComponent implements OnInit {
 
 
   async exportCsv() {
+    const appName = await this.appVersion.getAppName();
     await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
       if (result) {
         // this.telemetryGeneratorService.generateInteractTelemetry(
@@ -58,12 +61,11 @@ export class DashboardComponent implements OnInit {
               console.log('writeFile err', err)
             });
         }).catch((err) => {
-    
+          console.log('checkForPermissions err', err);
         })
         
       } else{
-        console.log('eeeeeeeee');
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.ACTIVITY_DETAIL, true);
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', appName, PageId.ACTIVITY_DASHBOARD, true);
       }
     });
   }

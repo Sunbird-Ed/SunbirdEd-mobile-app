@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
-  Environment, InteractSubtype, InteractType, ID, PageId
+  Environment, InteractSubtype, InteractType, PageId
 } from '../telemetry-constants';
 import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
