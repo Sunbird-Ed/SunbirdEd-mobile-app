@@ -9,7 +9,7 @@ import { CorReleationDataType, InteractSubtype } from '.';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { CorrelationData, TelemetryService, NotificationService as SdkNotificationService, NotificationStatus, UserFeedStatus } from '@project-sunbird/sunbird-sdk';
 import { Events } from '@app/util/events';
-import { EventNotification, NotificationFeedEntry, SbNotificationService } from 'notification';
+import { EventNotification, SbNotificationService } from 'sb-notification';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { map } from 'rxjs/operators';
@@ -58,7 +58,7 @@ export class NotificationService implements SbNotificationService {
                     n['createdOn'] = n['createdOn'] || n['displayTime'];
                     n.actionData['description'] = n.actionData['description'] || n.actionData['richText'] || n.actionData['ctaText'];
                     n.actionData['thumbnail'] = n.actionData['thumbnail'] || n.actionData['appIcon'];
-                    return { data: n };
+                    return { data: n, createdOn: n['createdOn'] };
                 });
                 return temp as any;
             })
