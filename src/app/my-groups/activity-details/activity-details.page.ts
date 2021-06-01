@@ -383,7 +383,8 @@ export class ActivityDetailsPage implements OnInit, OnDestroy {
         },
         hierarchyData: this.courseData,
         activity: this.activity,
-        lastUpdatedOn: this.getActivityAggLastUpdatedOn()
+        lastUpdatedOn: this.getActivityAggLastUpdatedOn(),
+        collectionName: this.courseData.name
       }
     });
   }

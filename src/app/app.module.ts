@@ -81,6 +81,7 @@ import { PrintPdfService } from '@app/services/print-pdf/print-pdf.service';
 import {UpdateProfileService} from '@app/services/update-profile-service';
 import { SbSearchFilterModule } from 'common-form-elements';
 import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
+import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -511,6 +512,7 @@ declare const sbutility;
     SegmentationTagService,
     LoginNavigationHandlerService,
     GooglePlus,
+    StoragePermissionHandlerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

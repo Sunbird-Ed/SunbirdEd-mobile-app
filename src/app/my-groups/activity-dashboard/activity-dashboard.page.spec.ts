@@ -2,7 +2,7 @@ import { PageId, Environment, ImpressionType, InteractSubtype } from '../../../s
 import { ActivityDashboardPage } from './activity-dashboard.page';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services';
-import { AppHeaderService, AppGlobalService } from '../../../services';
+import { AppHeaderService, AppGlobalService, CommonUtilService } from '../../../services';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
@@ -44,6 +44,8 @@ describe('ActivityTocPage', () => {
         activityService: {
         }as any
     };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+    };
 
     beforeAll(() => {
         activityDashboardPage = new ActivityDashboardPage(
@@ -53,6 +55,7 @@ describe('ActivityTocPage', () => {
             mockPlatform as Platform,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockLocation as Location,
+            mockCommonUtilService as CommonUtilService
         );
     });
 

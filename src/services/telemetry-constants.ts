@@ -166,6 +166,7 @@ export enum PageId {
     NEW_EXPERIENCE_POPUP = 'new-experience-popup',
     MENU = 'menu',
     CERTIFICATE_VIEW = 'certificate-view',
+    ACTIVITY_DASHBOARD = 'activity-dashboard'
 }
 
 export enum LogType {
