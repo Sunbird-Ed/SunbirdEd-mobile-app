@@ -253,7 +253,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('DISCUSSION_SERVICE') private discussionService: DiscussionService,
-    private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
     private fileSizePipe: FileSizePipe,
@@ -1993,7 +1992,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy, ConsentPopo
         this.corRelationList
       );
       this.appGlobalService.resetSavedQuizContent();
-      this.loginHandlerService.signIn({navigateToCourse: true});
+      this.router.navigate([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
     }
   }
 

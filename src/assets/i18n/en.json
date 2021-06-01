@@ -1269,6 +1269,7 @@
   "FRMELEMNTS_LBL_IMPROVEMENT_REPORTS": "Improvement Reports",
   "FRMELEMNTS_LBL_SURVEY_DESC": "Provide information and feedback through quick and easy surveys",
   "FRMELEMNTS_LBL_REPORTS_DESC": "Make sense of data to enable your decision-making based on your programs with ease",
+  "FRMELEMNTS_LBL_SUBMIT": "Submit",
   "FRMELEMNTS_BTN_SUBMIT": "Submit",
   "FRMELEMNTS_LBL_CONTINUE": "Continue",
   "FRMELEMNTS_LBL_SELECT_STATUS_PLACEHOLDER": "Select Status",
@@ -1428,7 +1429,7 @@
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_TEXT": "The new design makes it easier for you to find content you need and adds a splash of joy to your learning experience",
   "FRMELEMNTS_LBL_NEW_EXPERIENCE_WARNING_TEXT": "If you want to go back to old design {{app_name}}, you can always do so from your preferences",
   "FRMELEMNTS_LBL_SWITCH_TO_NEW_EXPERIENCE": "Switch to new experience",
-  "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a shareable file.",
+  "FRMELEMNTS_LBL_SHARE_MSG":"We need to sync your data to generate a sharable file.",
   "FRMELEMNTS_BTN_DNTSYNC":"Dont Sync",
   "FRMELEMNTS_BTN_SYNCANDSHARE":"Sync & Share",
   "FRMELEMNTS_MSG_FILE_NOT_SHARED":"File not shared !",
@@ -1462,5 +1463,10 @@
   "FRMELEMENTS_LBL_SEARCH_SUB_HEADING": "Search {{appName}} for \"{{searchText}}\"",
   "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
   "FRMELEMNTS_MSG_ENROLLMENT_ERROR": "You can’t enroll to a course created by self",
-  "FRMELEMENTS_LBL_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?"
+  "FRMELEMENTS_LBL_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
+  "FRMELEMNTS_MSG_ENROLLMENT_ERROR": "You can’t enroll to a course created by self",
+  "STATE_LOGIN": "Login with state system",
+  "GOOGLE_LOGIN": "Sign in with Google",
+  "LOGIN_WITH": "Login with {{appName}}",
+  "LOGIN_TO": "Login to {{appName}}"
 }

@@ -186,7 +186,7 @@ html[data-theme="JOYFUL"]{
     background-color: var(--app-white) !important;
   }
 
-  .sb-btn-outline-secondary{  
+  .sb-btn-outline-secondary{
     background-color: var(--app-white) !important;
     color: var(--app-primary) !important;
   }
@@ -1647,4 +1647,18 @@ html[data-theme="JOYFUL"]{
     border-radius: 1.5rem;
   }
 
+  app-sign-in {
+    .sign-in-button {
+      margin: 1rem;
+      background-color: var(--app-white) !important;
+      width: 70%;
+      height: 3rem;
+      color: var(--app-gray) !important;
+      border-radius: 0.25rem !important;
+      position: relative;
+    }
+  }
+  ion-toolbar {
+    border-bottom-left-radius: 0 !important;
+  }
 }

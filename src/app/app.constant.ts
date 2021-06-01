@@ -234,6 +234,7 @@ export class PreferenceKey {
     public static readonly IS_JOYFUL_THEME_POPUP_DISPLAYED = 'is_joyful_theme_popup_displayed';
     public static readonly SELECTED_SWITCHABLE_TABS_CONFIG = 'selected_switchable_tabs_config';
     public static readonly IS_NEW_USER = 'is_new_user';
+    public static readonly NAVIGATION_SOURCE = 'navigation_source';
 }
 
 export enum SwitchableTabsConfig {
@@ -394,6 +395,7 @@ export class SystemSettingsIds {
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
     public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
     public static readonly GROUPS_TNC = 'groupsTnc';
+    public static readonly GOOGLE_CLIENT_ID = 'googleClientId';
 }
 
 export class StoreRating {
@@ -612,6 +614,10 @@ export class RouterLinks {
     public static readonly SEARCH_FILTER = 'search-filter';
     //assessment
     public static readonly GENERIC_REPORT = 'generic-report';
+    // sign-in page
+    public static readonly SIGN_IN = 'sign-in';
+    // my-playlist page
+    public static readonly MY_PLAYLIST = 'my-playlist';
 }
 
 export class ShareItemType {
