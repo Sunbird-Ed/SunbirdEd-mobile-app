@@ -287,7 +287,7 @@
 						<label *ngIf="isAlreadyEnrolled && isCertifiedCourse && certificateDescription">{{certificateDescription}}</label>
 						<div class="ion-margin-bottom mt-8">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>:
+								<strong>{{'FRMELEMNTS_LBL_TRAINING_IS_RELEVANT_TO_TEACHERS' | categoryKeyTranslate : course }}</strong>
 							</ion-card-title>
 							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
 							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
@@ -335,14 +335,14 @@
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom" style="padding-top: 10px;">
 										<strong>{{'FRMELEMNTS_LBL_UPDATE_DATA_SETTINGS' | translate}}</strong>
 									</ion-card-title>
-									<ion-list lines="none" style="margin-left: -4px;">
+									<ion-list lines="none" class="data-list">
 										<ion-radio-group [value]="dataSharingStatus">
-										  <ion-item class="ds-item" style="margin-bottom: -18px; margin-top: -18px; opacity: 1;" [disabled]="true">
+										  <ion-item class="ds-item" class="list-info" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_SHARE_PROFILE_INFORMATION' | translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'REVOKED'" slot="start" ></ion-radio>
 										  </ion-item>
 
-										  <ion-item class="ds-item" style="opacity: 1;" [disabled]="true">
+										  <ion-item class="ds-item" class="list-info" [disabled]="true">
 											<ion-label class="ds-m0">{{'FRMELEMNTS_LBL_DONOT_SHARE_PROFILE_INFO' |translate}}</ion-label>
 											<ion-radio class="ds-m0" [value]="'ACTIVE'" slot="start" ></ion-radio>
 										  </ion-item>
