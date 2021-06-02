@@ -366,8 +366,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
             componentProps: {
-                initialFilterCriteria: this.filterCriteria,
-                defaultFilterCriteria: this.initialFilterCriteria
+                initialFilterCriteria: JSON.parse(JSON.stringify(this.filterCriteria)),
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria))
             }
         });
         await openFiltersPage.present();
