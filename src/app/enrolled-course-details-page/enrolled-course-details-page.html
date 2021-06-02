@@ -311,10 +311,10 @@
 						<div class="ion-padding">
 							<div class="font-14-new view-credits" (click)="expandDataSettings()">
 								<span><strong>{{'FRMELEMNTS_LBL_DATA_SETTINGS' | translate}}</strong></span>
-								<span *ngIf="isDataShare">
+								<span *ngIf="isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-up"></ion-icon>
 								</span>
-								<span *ngIf="!isDataShare">
+								<span *ngIf="!isDataShare" class="consent-arrow">
 									<ion-icon name="arrow-down"></ion-icon>
 								</span>
 							</div>
