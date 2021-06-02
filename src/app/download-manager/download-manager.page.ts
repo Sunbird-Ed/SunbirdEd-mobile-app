@@ -141,7 +141,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     }
     await this.contentService.getContents(requestParams).toPromise()
       .then(async data => {
-        debugger
         if (shouldGenerateTelemetry) {
           this.generateInteractTelemetry(data.length, this.storageInfo.usedSpace, this.storageInfo.availableSpace);
         }
