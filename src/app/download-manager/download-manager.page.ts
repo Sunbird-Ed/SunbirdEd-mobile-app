@@ -141,6 +141,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     }
     await this.contentService.getContents(requestParams).toPromise()
       .then(async data => {
+        debugger
         if (shouldGenerateTelemetry) {
           this.generateInteractTelemetry(data.length, this.storageInfo.usedSpace, this.storageInfo.availableSpace);
         }
@@ -150,26 +151,25 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
             value.basePath, this.commonUtilService.networkInfo.isNetworkAvailable);
         });
         const query = {
-            selector: {
-           downloaded: true,
+          selector: {
+            downloaded: true,
           },
-        };  
-        if(!this.db.pdb){
-          let projectData: any = await this.db.customQuery(query);
-          if (projectData.docs) {
-            projectData.docs.sort(function (a, b) {
-                return  new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf() ;
-              });
-                projectData.docs.map(doc => {
-                  doc.contentData = { lastUpdatedOn: doc.updatedAt,name:doc.title };
-                  doc.type = 'project'
-                  doc.identifier=doc._id;
-                  data.push(doc)
-                  
-              })
+        };
+        this.db.customQuery(query).then(projectData => {
+          if (projectData['docs']) {
+            projectData['docs'].sort(function (a, b) {
+              return new Date(b.updatedAt || b.syncedAt).valueOf() - new Date(a.updatedAt || a.syncedAt).valueOf();
+            });
+            projectData['docs'].map(doc => {
+              doc.contentData = { lastUpdatedOn: doc.updatedAt, name: doc.title };
+              doc.type = 'project'
+              doc.identifier = doc._id;
+              data.push(doc)
+            })
           }
-        }
+        }).catch(error => {
 
+        })
         this.ngZone.run(async () => {
           this.downloadedContents = data;
         });
@@ -189,7 +189,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async deleteContents(emitedContents: EmitedContents) {
     const projectContents = emitedContents.selectedContents.filter((content) => (content['type'] == 'project'));
     emitedContents.selectedContents = emitedContents.selectedContents.filter((content) => !content['type'] || content['type'] != 'project');
-    
+
     if (!emitedContents.selectedContents.length) {
       this.deleteProjects(projectContents)
       return
@@ -394,16 +394,16 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   deleteProjects(contents) {
-    
-    contents.forEach(async(element) => {
+
+    contents.forEach(async (element) => {
       let project = await this.db.getById(element.contentId)
       project.downloaded = false
-      await this.db.delete(project._id,project._rev)
+      await this.db.delete(project._id, project._rev)
       this.events.publish('savedResources:update', {
         update: true,
       });
-       this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
-      
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
+
 
     });
   }
