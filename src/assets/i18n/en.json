@@ -258,7 +258,7 @@
   "DAYS_AGO": "{{%s}} days ago",
   "DAY_AGO": "{{%s}} day ago",
   "DEBUG_DISABLE": "Debug Mode will be disabled, it'll stop sending information to the server!",
-  "DEBUG_ENABLE": "Debugging Mode will start sending critical information to the server. Do you want to turn on Debugging Mode?",
+  "DEBUG_ENABLE": "This action will send critical information to {{%appName}} so that they can troubleshoot any bugs or issues you may be facing.",
   "DEBUG_MODE": "DEBUG MODE",
   "DEBUG_OFF": "TURN OFF",
   "DEBUG_OFF_MESSAGE": "DEBUG MODE OFF",

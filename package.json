@@ -73,7 +73,7 @@
     "@project-sunbird/sunbird-pdf-player-v8": "4.0.5",
     "@project-sunbird/sunbird-player-sdk-v8": "3.8.0",
     "@project-sunbird/sunbird-quml-player-v8": "4.0.3",
-    "@project-sunbird/sunbird-sdk": "4.0.6",
+    "@project-sunbird/sunbird-sdk": "4.0.7",
     "@project-sunbird/sunbird-video-player-v8": "4.0.2",
     "code-push": "^3.0.1",
     "com-sarriaroman-photoviewer": "^1.2.5",
