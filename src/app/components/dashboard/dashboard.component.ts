@@ -1,5 +1,5 @@
 import {  Component, Input, OnInit, ViewChild } from '@angular/core';
-import { CommonUtilService, PageId, TelemetryGeneratorService } from '@app/services';
+import { CommonUtilService, Environment, ID, InteractType, PageId, TelemetryGeneratorService } from '@app/services';
 import { StoragePermissionHandlerService } from '@app/services/storage-permission/storage-permission-handler.service';
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -36,6 +36,17 @@ export class DashboardComponent implements OnInit {
 
 
   async exportCsv() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.DOWNLOAD_CLICKED,
+      undefined,
+      Environment.GROUP,
+      PageId.ACTIVITY_DASHBOARD,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.DOWNLOAD_CLICKED
+    );
     const appName = await this.appVersion.getAppName();
     await this.storagePermissionHandlerService.checkForPermissions(PageId.ACTIVITY_DASHBOARD).then(async (result) => {
       if (result) {
