@@ -29,7 +29,7 @@ import {
   DeviceRegisterService, ErrorEventType, EventNamespace, EventsBusService,
   GetSystemSettingsRequest, NotificationService,
   Profile, ProfileService, ProfileType, SharedPreferences,
-  SunbirdSdk,
+  SunbirdSdk, DebuggingService,
   SystemSettings, SystemSettingsService, TelemetryAutoSyncService, TelemetryService
 } from 'sunbird-sdk';
 import {
@@ -91,6 +91,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('DEBUGGING_SERVICE') private debuggingService: DebuggingService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -145,6 +146,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.receiveNotification();
       this.utilityService.getDeviceSpec()
         .then((deviceSpec) => {
+          this.debuggingService.deviceId = deviceSpec.id;
           let devSpec = {
             id: deviceSpec.id,
             os: deviceSpec.os,
@@ -211,7 +213,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       corRelationList.push({ id: this.segmentationTagService.localNotificationId ? this.segmentationTagService.localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.LOCAL,   
+        InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
         undefined,
         corRelationList
@@ -464,13 +466,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
-        this.db.createDb()
+        this.db.createDb();
         this.events.publish('UPDATE_TABS', skipNavigation);
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
         } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
+        this.segmentationTagService.getPersistedSegmentaion();
       }, 100);
     });
   }
@@ -624,6 +627,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     //     window.document.body.classList.add('show-maintenance');
     //   }
     // });
+    this.debuggingService.enableDebugging().subscribe((isDebugMode) => {
+        this.events.publish('debug_mode', isDebugMode);
+    });
   }
 
   closeUnPlannedMaintenanceBanner() {
@@ -892,8 +898,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          this.loginHandlerService.signIn();
+          this.router.navigate([RouterLinks.SIGN_IN]);
         }
+        break;
     }
   }
 

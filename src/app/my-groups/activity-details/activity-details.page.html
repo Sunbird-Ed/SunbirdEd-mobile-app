@@ -1,6 +1,8 @@
 <ion-content>
   <div class="ad-container">
     <div class="ad-card-container">
+      <!-- <button (click)="openDashboard()">activity dashboard</button> -->
+      <ion-icon src="assets/imgs/dashboard-icon.svg" class="dashboard-icon" *ngIf="activityDetail && isTrackable" (click)="openDashboard()"></ion-icon>
       <sb-course-card *ngIf="isTrackable" [section]="null"
         [cardImg]="commonUtilService.getContentImg(activity)" [course]="activity">
       </sb-course-card>
@@ -30,8 +32,8 @@
       </div>
       <div class="ad-timestamp-container clearfix">
         <span *ngIf="isTrackable && isGroupCreatorOrAdmin && (!showCourseDropdownSection || (!selectedCourse || (selectedCourse?.name === activity?.name)))" (click)="downloadCsv()">
-          <img src="assets/imgs/ic_download_selected_joyful.svg" alt="">
-          <span>{{'DOWNLOAD_CSV' | translate}}</span>
+          <span class="ad-dw-csv">{{'DOWNLOAD_CSV' | translate}}</span>
+          <img src="assets/imgs/download-icon.svg" alt="">
         </span>
         <div *ngIf="getActivityAggLastUpdatedOn() > 0" class="ad-timestamp"
           [innerHTML]="'LAST_UPDATED' | translate:  {'%s': (getActivityAggLastUpdatedOn() | dateAgo: 'month' : 'M/d/yy') }">

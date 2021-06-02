@@ -37,7 +37,6 @@ import { ChildContentHandler } from '@app/services/content/child-content-handler
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { of, throwError, EMPTY, Subscription } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
-import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
     Environment,
     ImpressionType,
@@ -116,7 +115,6 @@ describe('ContentDetailsPage', () => {
     };
     const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockFileOpener: Partial<FileOpener> = {};
     const mockFileTransfer: Partial<FileTransfer> = {};
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
@@ -165,7 +163,6 @@ describe('ContentDetailsPage', () => {
             mockContentPlayerHandler as ContentPlayerHandler,
             mockChildContentHandler as ChildContentHandler,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockLoginHandlerService as LoginHandlerService,
             mockFileOpener as FileOpener,
             mockFileTransfer as FileTransfer,
             mockSbProgressLoader as SbProgressLoader,
@@ -2374,7 +2371,7 @@ describe('ContentDetailsPage', () => {
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'you must login');
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+            mockRouter.navigate = jest.fn();
             // act
             contentDetailsPage.promptToLogin();
             // assert
@@ -2399,7 +2396,7 @@ describe('ContentDetailsPage', () => {
                     { id: 'sample-id' }, undefined,
                     { l1: 'do_123', l2: 'do_123', l3: 'do_1' }, undefined
                 );
-                expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+                expect(mockRouter.navigate).toHaveBeenCalledWith([RouterLinks.SIGN_IN], {state: {navigateToCourse: true}});
                 done();
             }, 0);
         });

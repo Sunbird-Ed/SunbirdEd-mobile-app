@@ -155,4 +155,8 @@
     <plugin name="sb-cordova-plugin-sync" spec="https://github.com/project-sunbird/sb-cordova-plugin-sync.git#release-3.2.0" />
     <plugin name="cordova-plugin-inappupdatemanager" spec="https://github.com/subranil/cordova-plugin-inappupdatemanager.git" />
     <plugin name="cordova-sqlite-storage" spec="^6.0.0" />
+    <plugin name="cordova-plugin-googleplus" spec="^8.5.2">
+        <variable name="PLAY_SERVICES_VERSION" value="15.0.1" />
+    </plugin>
+    <engine name="android" spec="^9.0.0" />
 </widget>

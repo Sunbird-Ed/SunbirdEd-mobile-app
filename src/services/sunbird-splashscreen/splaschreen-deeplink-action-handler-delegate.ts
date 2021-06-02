@@ -60,6 +60,7 @@ import { ContentPlayerHandler } from '../content/player/content-player-handler';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { FormConstants } from '@app/app/form.constants';
 import {UpdateProfileService} from '@app/services/update-profile-service';
+import {LoginNavigationHandlerService} from '@app/services/login-navigation-handler.service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -99,7 +100,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private router: Router,
     private appVersion: AppVersion,
     private utilityService: UtilityService,
-    private loginHandlerService: LoginHandlerService,
+    private loginNavigationHandlerService: LoginNavigationHandlerService,
     public translateService: TranslateService,
     private qrScannerResultHandler: QRScannerResultHandler,
     private sbProgressLoader: SbProgressLoader,
@@ -529,7 +530,7 @@ private async upgradeAppPopover(requiredVersionCode) {
       setTimeout(async () => {
         this.appGlobalServices.setOnBoardingCompleted();
         // this.navigateToCourse(payload.courseId, payloadUrl);
-        this.loginHandlerService.setDefaultProfileDetails();
+        this.loginNavigationHandlerService.setDefaultProfileDetails();
       }, 1000);
 
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });

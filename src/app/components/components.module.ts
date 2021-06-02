@@ -69,6 +69,8 @@ import {YearOfBirthPopupComponent} from './popups/year-of-birth-popup/year-of-bi
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v8';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import {DashletModule} from '@project-sunbird/sb-dashlet'
 
 @NgModule({
   declarations: [
@@ -128,7 +130,8 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     JoyfulThemePopupComponent,
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    DashboardComponent
   ],
   imports: [
     CommonModule,
@@ -140,6 +143,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     CommonConsumptionModule,
     IonicRatingModule,
     SunbirdVideoPlayerModule,
+    DashletModule,
     TranslateModule.forChild(),
   ],
   entryComponents: [
@@ -244,7 +248,8 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     ShowVendorAppsComponent,
     NewExperiencePopupComponent,
     YearOfBirthPopupComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    DashboardComponent
   ],
   providers: [FileSizePipe, FilterPipe, Keyboard, ScreenOrientation]
 })

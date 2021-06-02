@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { NotificationPage } from './notification.page';
 import { ComponentsModule } from '../components/components.module';
+import { SbNotificationModule } from 'sb-notification';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     RouterModule.forChild(routes),
-    ComponentsModule
+    ComponentsModule,
+    SbNotificationModule
   ],
   declarations: [NotificationPage]
 })
