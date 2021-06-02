@@ -25,6 +25,7 @@ export class SearchFilterPage implements OnInit {
     public searchResultFacets: ContentSearchFilter[];
 
     private appliedFilterCriteria: ContentSearchCriteria;
+    private isPageLoadedFirstTime: boolean;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -39,6 +40,7 @@ export class SearchFilterPage implements OnInit {
     }
 
     ngOnInit() {
+        this.isPageLoadedFirstTime = true;
         this.initilizeSearchFilter();
     }
 
@@ -119,6 +121,11 @@ export class SearchFilterPage implements OnInit {
         if (!event) {
             return;
         }
+        if (this.isPageLoadedFirstTime) {
+            this.isPageLoadedFirstTime = false;
+            return;
+        }
+
         this.refreshForm(event);
     }
 }
