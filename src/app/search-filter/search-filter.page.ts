@@ -116,7 +116,7 @@ export class SearchFilterPage implements OnInit {
     }
 
     valueChanged(event) {
-        if (!event) {
+        if (!event || Object.values(event).every((x: any) => !x || !x.length)) {
             return;
         }
         this.refreshForm(event);
