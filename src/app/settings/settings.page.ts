@@ -69,7 +69,6 @@ export class SettingsPage implements OnInit {
     this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile().pipe(
       map((isDefaultChannelProfile) => !isDefaultChannelProfile)
     );
-    this.enableDebugging();
   }
 
   ionViewWillEnter() {
@@ -314,7 +313,7 @@ export class SettingsPage implements OnInit {
           component: SbPopoverComponent,
           componentProps: {
             sbPopoverHeading: this.commonUtilService.translateMessage('DEBUG_MODE'),
-            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_ENABLE"),
+            sbPopoverMainTitle: this.commonUtilService.translateMessage("DEBUG_ENABLE", { '%appName': this.appName }),
             actionsButtons: [
               {
                 btntext: this.commonUtilService.translateMessage('DISMISS'),
@@ -329,7 +328,7 @@ export class SettingsPage implements OnInit {
             handler: (selectedButton: string) => {
               console.log(selectedButton);
               if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
-                return false;
+                this.debugmode = false;
               } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_ON')) {
                 this.preferences.putString('debug_started_at', new Date().getTime().toString()).toPromise();
                 this.enableDebugging();
@@ -362,7 +361,7 @@ export class SettingsPage implements OnInit {
             handler: (selectedButton: string) => {
               console.log(selectedButton);
               if (selectedButton === this.commonUtilService.translateMessage('DISMISS')) {
-                return false;
+                this.debugmode = true;
               } else if (selectedButton === this.commonUtilService.translateMessage('DEBUG_OFF')) {
                 this.debugginService.disableDebugging().subscribe((response) => {
                   if (response) {
