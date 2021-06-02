@@ -35,7 +35,7 @@ export class ActivityDashboardPage {
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private location: Location,
-        private commonUtilService: CommonUtilService
+        public commonUtilService: CommonUtilService
     ) {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
