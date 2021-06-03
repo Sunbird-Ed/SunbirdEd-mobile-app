@@ -70,7 +70,8 @@ export class CategoryListPage implements OnInit, OnDestroy {
     };
     primaryFacetFilters: {
         code: string,
-        translations: string
+        translations: string,
+        sort: boolean
     }[];
     fromLibrary = false;
     sectionCode = '';
@@ -211,6 +212,9 @@ export class CategoryListPage implements OnInit, OnDestroy {
         if (this.primaryFacetFiltersFormGroup) {
             this.primaryFacetFiltersFormGroup.patchValue(
                 this.primaryFacetFilters.reduce((acc, p) => {
+                    if (p.sort) {
+                        this.initialFacetFilters[p.code].sort((a, b) => a.name > b.name && 1 || -1);
+                    }
                     acc[p.code] = this.facetFilters[p.code]
                         .filter(v => v.apply)
                         .map(v => {
