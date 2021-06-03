@@ -290,7 +290,8 @@ export enum InteractType {
     UPDATE_GROUP = 'update-group',
     SELECT_DEACTIVATE = 'select-deactivate',
     SELECT_DELETE = 'select-delete',
-    DOWNLOAD_CLICKED = 'download-clicked'
+    DOWNLOAD_CLICKED = 'download-clicked',
+    SELECT_ACTIVITY_DASHBOARD = "select-activity-dashboard"
 }
 
 export enum InteractSubtype {
@@ -603,7 +604,9 @@ export enum ID {
     SELECT_ACTIVITY = 'select-activity',
     UPDATE_GROUP = 'update-group',
     SELECT_DEACTIVATE = 'select-deactivate',
-    SELECT_DELETE = 'select-delete'
+    SELECT_DELETE = 'select-delete',
+    SELECT_ACTIVITY_DASHBOARD = "select-activity-dashboard",
+    DOWNLOAD_CLICKED = 'download-clicked',
 }
 
 export enum ActionButtonType {
