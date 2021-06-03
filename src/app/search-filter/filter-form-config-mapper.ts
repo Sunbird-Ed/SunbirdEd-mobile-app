@@ -79,7 +79,7 @@ export class FilterFormConfigMapper {
                         facet: key,
                         type: 'dropdown',
                         labelText: this.commonUtilService.translateMessage('SUBJECT'),
-                        placeholderText: 'Select Class',
+                        placeholderText: 'Select Subject',
                         multiple: true,
                     });
                     break;
