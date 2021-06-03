@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AppHeaderService } from "@app/services";
+import { AppHeaderService, CommonUtilService } from "@app/services";
 import { TranslateService } from "@ngx-translate/core";
 import { LoaderService, ToastService } from "../../core";
 import { DbService } from "../../core/services/db.service";
@@ -10,6 +10,7 @@ import { NavigationService } from '@app/services/navigation-handler.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
+
 var environment = {
   db: {
     projects: "project.db",
@@ -27,7 +28,10 @@ export class LearningResourcesPage implements OnInit {
   projectId;
   taskId: any;
   list;
+  networkFlag: boolean;
   private backButtonFunc: Subscription;
+  private _networkSubscription: Subscription;
+
   private _headerConfig = {
     showHeader: true,
     showBurgerMenu: false,
@@ -46,7 +50,9 @@ export class LearningResourcesPage implements OnInit {
     private navigateService: NavigationService,
     private platform: Platform,
     private location: Location,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private commonUtilService: CommonUtilService,
+
     // private openResources: OpenResourcesService
   ) {
     let data;
@@ -55,10 +61,19 @@ export class LearningResourcesPage implements OnInit {
       this.taskId = param.taskId;
       this.getProjectFromLocal(this.projectId);
     });
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      this.networkFlag = available;
+    })
   }
 
   ngOnInit() { }
 
+  ngOnDestroy() {
+    if(this._networkSubscription){
+      this._networkSubscription.unsubscribe();
+    }
+  }
 
   ionViewWillEnter() {
     let data;
@@ -69,7 +84,7 @@ export class LearningResourcesPage implements OnInit {
     this._headerConfig.actionButtons = [];
     this._headerConfig.showHeader = true;
     this._headerConfig.showBurgerMenu = false;
-    this._headerConfig.pageTitle =  data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
+    this._headerConfig.pageTitle = data["FRMELEMNTS_LBL_LEARNING_RESOURCES"];
     this.headerService.updatePageConfig(this._headerConfig);
     this.handleBackButton();
   }
@@ -96,6 +111,10 @@ export class LearningResourcesPage implements OnInit {
     );
   }
   openBodh(id) {
+    if (!this.networkFlag) {
+      this.toast.showMessage('FRMELEMNTS_MSG_OFFLINE_SHARE_PROJECT', 'danger');
+      return
+    }
     // let identifier = link.split("/").pop();
     const req: ContentDetailRequest = {
       contentId: id,
