@@ -83,8 +83,10 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   templateDetailsPayload;
   importProjectClicked: boolean = false;
   fromImportProject: boolean = false;
+  shareTaskId;
   networkFlag: boolean;
   private _networkSubscription: Subscription;
+
 
   constructor(
     public params: ActivatedRoute,
@@ -179,7 +181,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.db.query({ _id: this.projectId }).then(
         (success) => {
           if (success.docs.length) {
-
             this.categories = [];
             this.project = success.docs.length ? success.docs[0] : {};
             this.isNotSynced = this.project ? (this.project.isNew || this.project.isEdit) : false;
@@ -209,7 +210,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   async getProjectsApi() {
     this.loader.startLoader();
     let payload = this.projectType == 'assignedToMe' ? await this.utils.getProfileInfo() : '';
-    console.log(this.projectType, "projectType");
     const url = `${this.projectId ? '/' + this.projectId : ''}?${this.templateId ? 'templateId=' + this.templateId : ''}${this.solutionId ? ('&&solutionId=' + this.solutionId) : ''}`;
     const config = {
       url: urlConstants.API_URLS.GET_PROJECT + url,
@@ -469,6 +469,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
     this.translate.get(["FRMELEMNTS_LBL_SHARE_MSG", "FRMELEMNTS_BTN_DNTSYNC", "FRMELEMNTS_BTN_SYNCANDSHARE"]).subscribe((text) => {
       data = text;
     });
+    this.shareTaskId = taskId ? taskId : null;
     const alert = await this.alert.create({
       message: data["FRMELEMNTS_LBL_SHARE_MSG"],
       buttons: [
@@ -485,7 +486,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
           handler: () => {
             if (this.project.isEdit || this.project.isNew) {
               this.project.isNew
-                ? this.createNewProject()
+                ? this.createNewProject(true)
                 : this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], { queryParams: { projectId: this.projectId, taskId: taskId, share: true, fileName: name } });
             } else {
               type == 'shareTask' ? this.getPdfUrl(name, taskId) : this.getPdfUrl(this.project.title);
@@ -499,7 +500,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
 
   getPdfUrl(fileName, taskId?) {
     let task_id = taskId ? taskId : '';
-
     const config = {
       url: urlConstants.API_URLS.GET_SHARABLE_PDF + this.project._id + '?tasks=' + task_id,
     };
@@ -508,11 +508,11 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   // task and project delete permission.
   async askPermissionToDelete(type, id?) {
     let data;
-    this.translate.get(["FRMELEMNTS_LBL_DELETE_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
+    this.translate.get(["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION", "CANCEL", "BTN_SUBMIT"]).subscribe((text) => {
       data = text;
     });
     const alert = await this.alert.create({
-      message: data["FRMELEMNTS_LBL_DELETE_CONFIRMATION"],
+      message: data["FRMELEMNTS_MSG_DELETE_TASK_CONFIRMATION"],
       buttons: [
         {
           text: data["CANCEL"],
@@ -606,16 +606,53 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       })
       .catch((error) => { });
   }
-  createNewProject() {
+  createNewProject(isShare?) {
     this.loader.startLoader();
     const projectDetails = JSON.parse(JSON.stringify(this.project));
     this.syncServ
-      .createNewProject()
+      .createNewProject(true, projectDetails)
       .then((success) => {
-        projectDetails._id = success.result._id;
-        projectDetails.lastDownloadedAt = success.result.lastDownloadedAt;
-        this.doDbActions(projectDetails);
+        const { _id, _rev } = this.project;
+        this.project._id = success.result.projectId;
+        this.project.programId = success.result.programId;
+        this.project.lastDownloadedAt = success.result.lastDownloadedAt;
+        this.projectId = this.project._id;
+        this.project.isNew = false;
+        delete this.project._rev;
         this.loader.stopLoader();
+        this.db
+          .create(this.project)
+          .then((success) => {
+            this.project._rev = success.rev;
+            this.db
+              .delete(_id, _rev)
+              .then(res => {
+                setTimeout(() => {
+                  const queryParam =  {
+                    projectId: this.projectId,
+                    taskId: this.shareTaskId
+                  }
+                  if(isShare){
+                    queryParam['share'] = true
+                  }
+                  this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], {
+                    queryParams: queryParam
+                  })
+                }, 0)
+                this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
+                  queryParams: {
+                    projectId: this.project._id,
+                    programId: this.programId,
+                    solutionId: this.solutionId,
+                    fromImportPage: this.importProjectClicked
+                  }, replaceUrl: true
+                });
+              })
+              .catch(deleteError => {
+              })
+          })
+          .catch(error => {
+          })
       })
       .catch((error) => {
         this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_SOMETHING_WENT_WRONG"], "danger");
@@ -624,7 +661,7 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
   }
 
   doDbActions(projectDetails) {
-    const _rev = projectDetails._rev;
+    const _rev = this.project._rev;
     delete projectDetails._rev;
     const newObj = this.syncServ.removeKeys(projectDetails, ["isNew"]);
     this.db
@@ -832,7 +869,6 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         },
         (error) => {
           this.toast.showMessage(this.allStrings["FRMELEMNTS_MSG_CANNOT_GET_PROJECT_DETAILS"], "danger");
-          console.log(error);
         }
       );
     } else {
@@ -901,5 +937,4 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
       this.backButtonFunc.unsubscribe();
     });
   }
-
 }

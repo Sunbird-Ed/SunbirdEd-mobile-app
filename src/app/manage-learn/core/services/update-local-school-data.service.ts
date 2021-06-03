@@ -38,12 +38,16 @@ export class UpdateLocalSchoolDataService {
       });
   }
 
-  mapSubmissionDataToQuestion(schoolDetails, isObservation?: boolean): void {
+  mapSubmissionDataToQuestion(schoolDetails, isObservation?: boolean,isSurvey?:boolean): void {
     let mappedData;
 
     mappedData = this.updateSubmissionsOnLogin(schoolDetails);
     if (isObservation) {
       mappedData.observation = true;
+    }
+    
+    if(isSurvey){
+      mappedData.survey = true;
     }
 
     this.localStorage.setLocalStorage(
