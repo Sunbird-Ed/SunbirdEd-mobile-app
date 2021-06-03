@@ -112,7 +112,9 @@ export class SyncService {
 
 
   createNewProject(showLoader: boolean = false, project?): Promise<any> {
-    showLoader ? this.loader.startLoader() : null;
+    if(showLoader){
+      this.loader.startLoader()
+    }
     // const project = JSON.parse(JSON.stringify(project));
     const payload = this.removeKeys(project, ['isNew', 'isEdit']);
     delete payload._rev;
@@ -123,10 +125,14 @@ export class SyncService {
     }
     return new Promise((resolve, reject) => {
       this.unnatiServ.post(config).subscribe(success => {
-        showLoader ? this.loader.stopLoader() : null;
+        if(showLoader){
+          this.loader.stopLoader()
+        }
         resolve(success)
       }, error => {
-        showLoader ? this.loader.stopLoader() : null;
+        if(showLoader){
+          this.loader.stopLoader()
+        }
         reject(error);
       })
     })
