@@ -608,18 +608,20 @@ export class ProjectDetailPage implements OnInit, OnDestroy {
         this.db
           .create(this.project)
           .then((success) => {
-            debugger
             this.project._rev = success.rev;
             this.db
               .delete(_id, _rev)
               .then(res => {
-                debugger
                 setTimeout(() => {
-                  debugger
+                  const queryParam =  {
+                    projectId: this.projectId,
+                    taskId: this.shareTaskId
+                  }
+                  if(isShare){
+                    queryParam['share'] = true
+                  }
                   this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.SYNC}`], {
-                    queryParams: {
-                      projectId: this.projectId, share: isShare ? true : false, taskId: this.shareTaskId
-                    }
+                    queryParams: queryParam
                   })
                 }, 0)
                 this.router.navigate([`${RouterLinks.PROJECT}/${RouterLinks.DETAILS}`], {
