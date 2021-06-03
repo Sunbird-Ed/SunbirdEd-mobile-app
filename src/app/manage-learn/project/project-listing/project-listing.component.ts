@@ -101,7 +101,9 @@ export class ProjectListingComponent implements OnInit {
             },
             limit: 10 * this.offlineProjectPage,
         };
-        fields ? (query['fields'] = fields) : null;
+        if(fields){
+            query['fields'] = fields
+        }
         try {
             let data: any = await this.db.customQuery(query);
             return data.docs;
