@@ -1465,7 +1465,6 @@
   "FRMELEMENTS_LBL_SEE_MORE_COURSES": "See more courses and content",
   "FRMELEMNTS_MSG_ENROLLMENT_ERROR": "You can’t enroll to a course created by self",
   "FRMELEMENTS_LBL_SLOW_INTERNET": "You are connected to a slower data network. Image upload may take longer time. Do you want to continue?",
-  "FRMELEMNTS_MSG_ENROLLMENT_ERROR": "You can’t enroll to a course created by self",
   "STATE_LOGIN": "Login with state system",
   "GOOGLE_LOGIN": "Sign in with Google",
   "LOGIN_WITH": "Login with {{appName}}",
