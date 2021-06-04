@@ -1706,17 +1706,8 @@ sb-pills-grid{
     }
   }
 
-  .sb-label-grid.show-ellipsis--two .item label {
-    white-space: nowrap !important;
-    text-overflow: ellipsis !important;
-    overflow: hidden !important;
-  
-    @supports (-webkit-line-clamp: 2) {
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      white-space: initial !important;
-      display: -webkit-box !important;
-      -webkit-line-clamp: 2 !important;
+  .sb-label-grid.show-ellipsis .item label {
+    @supports (-webkit-box-orient: vertical) {
       -webkit-box-orient: vertical !important;
     }
   }
