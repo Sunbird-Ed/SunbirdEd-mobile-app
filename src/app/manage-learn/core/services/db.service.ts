@@ -24,24 +24,24 @@ export class DbService {
     const dbInfo = await db.info()
     let oldData;
     if (dbInfo.doc_count) {
-     oldData = await db.find({
+      oldData = await db.find({
         selector: {_id:{$ne:null}},
       });
 
       await db.destroy()
 
-     oldData.docs= oldData.docs.map(d => {
-       delete d._rev
-       return d
+      oldData.docs= oldData.docs.map(d => {
+        delete d._rev
+        return d
       })
     }
     this.appGlobalService.getActiveProfileUid().then((userId) => {
       let dbName= userId + 'projects';
       // let dbName=  'projects';
-       this.pdb = new PouchDB(dbName, {
-         adapter: 'cordova-sqlite',
-         location: 'default',
-       });
+      this.pdb = new PouchDB(dbName, {
+        adapter: 'cordova-sqlite',
+        location: 'default',
+      });
     }).then(res => {
       if (oldData && oldData.docs && oldData.docs.length) {
         this.bulkCreate(oldData.docs)
@@ -182,6 +182,18 @@ export class DbService {
       }).catch(error => {
         reject(error)
       })
+    })
+  }
+
+  getAllDocs(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.pdb.allDocs({ include_docs: true })
+        .then(docs => {
+          console.log(docs,"docs rrr");
+          resolve(docs);
+        }).catch(error => {
+          reject(error);
+        })
     })
   }
 }

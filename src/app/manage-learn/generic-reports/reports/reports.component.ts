@@ -148,15 +148,22 @@ export class ReportsComponent implements OnInit {
     });
   }
 
-  allEvidence(element) {
+  allEvidence(element:any):any {
+    const queryParams = {
+      submissionId: this.state.submissionId,
+      observationId: this.state.observationId,
+      entityId: this.state.entityId,
+      questionExternalId: element.order,
+      entityType: this.state.entityType,
+    };
+    if (this.state.survey) {
+      queryParams["surveyEvidence"] = true;
+    }
+    if (this.state.survey && this.state.solutionId) {
+      queryParams["solutionId"] = this.state.solutionId;
+    }
     this.router.navigate([RouterLinks.ALL_EVIDENCE], {
-      queryParams: {
-        submissionId: this.state.submissionId,
-        observationId: this.state.observationId,
-        entityId: this.state.entityId,
-        questionExternalId: element.order,
-        entityType: this.state.entityType,
-      },
+      queryParams:queryParams,
     });
   }
 
