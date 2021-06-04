@@ -102,7 +102,7 @@ table.dataTable.no-footer {
   background: transparent;
   border: 1px solid #ddd;
   text-transform: capitalize;
-  background-color: #fff !important;
+  background-color: $white !important;
 }
 
 table thead .sorting_asc {
