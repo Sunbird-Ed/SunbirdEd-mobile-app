@@ -363,11 +363,13 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
+        const resetData = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
             componentProps: {
-                initialFilterCriteria: JSON.parse(JSON.stringify(this.filterCriteria)),
-                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria))
+                initialFilterCriteria: resetData ? JSON.parse(JSON.stringify(this.initialFilterCriteria)) : JSON.parse(JSON.stringify(this.filterCriteria)),
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
+                resetData: resetData
             }
         });
         await openFiltersPage.present();
