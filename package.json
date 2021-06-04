@@ -70,7 +70,7 @@
     "chartjs-plugin-stacked100": "^0.7.1",
     "@project-sunbird/sunbird-epub-player-v8": "3.9.3",
     "@project-sunbird/sunbird-pdf-player-v8": "3.9.3",
-    "@project-sunbird/sunbird-quml-player-v8": "3.9.28",
+    "@project-sunbird/sunbird-quml-player-v8": "3.9.29",
     "@project-sunbird/sunbird-sdk": "3.9.10",
     "@project-sunbird/sunbird-video-player-v8": "3.9.5",
     "code-push": "^3.0.1",
