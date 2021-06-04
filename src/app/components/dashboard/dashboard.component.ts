@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit {
         const filename = this.collectionName.trim() + '_' + expTime + '.csv';
         const downloadDirectory = `${cordova.file.externalRootDirectory}Download/`;
         
-        this.lib.instance.exportCsv().then((csvData) => {
+        this.lib.instance.exportCsv({'strict': true}).then((csvData) => {
           console.log('exportCSVdata', csvData)
           this.file.writeFile(downloadDirectory, filename, csvData, {replace: true})
             .then((res)=> {

@@ -101,6 +101,8 @@ table.dataTable.no-footer {
   border-bottom: 0px !important;
   background: transparent;
   border: 1px solid #ddd;
+  text-transform: capitalize;
+  background-color: $white !important;
 }
 
 table thead .sorting_asc {
@@ -122,7 +124,7 @@ table.dataTable tbody td {
   padding: 8px 24px;
 }
 
-thead tr th {
+table.dataTable thead tr th {
   text-align: left;
 }
 
@@ -154,5 +156,3 @@ table.dataTable.display tbody td {
 table.dataTable tbody tr:nth-child(odd) {
   background-color: #f6f6f6 !important;
 }
-
-
