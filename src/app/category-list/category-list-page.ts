@@ -114,6 +114,17 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.formField = extrasState.formField;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
+            if (this.formField && this.formField.facet && this.formField.facet.toLowerCase() === 'course') {
+                if (!this.searchCriteria.impliedFiltersMap) {
+                    this.searchCriteria.impliedFiltersMap = [];
+                }
+                this.searchCriteria.impliedFiltersMap = this.searchCriteria.impliedFiltersMap.concat([{
+                    'batches.enrollmentType': 'open'
+                }, {
+                    'batches.status': 1
+                }
+                ]);
+            }
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
