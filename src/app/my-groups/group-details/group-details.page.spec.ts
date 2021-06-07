@@ -785,7 +785,7 @@ describe('GroupDetailsPage', () => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.TOUCH,
-                    InteractSubtype.LEAVE_GROUP_CLICKED,
+                    InteractSubtype.GROUP_KEBAB_MENU_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
@@ -793,31 +793,31 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LEAVE_GROUP');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'LEAVE_GROUP_POPUP_DESC',
                     { group_name: groupDetailsPage.groupDetails.name });
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                    InteractType.INITIATED,
-                    '',
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL,
-                    undefined,
-                    undefined,
-                    undefined,
-                    groupDetailsPage.corRelationList,
-                    ID.LEAVE_GROUP
-                );
+                // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                //     InteractType.INITIATED,
+                //     '',
+                //     Environment.GROUP,
+                //     PageId.GROUP_DETAIL,
+                //     undefined,
+                //     undefined,
+                //     undefined,
+                //     groupDetailsPage.corRelationList,
+                //     ID.LEAVE_GROUP
+                // );
                 expect(mockGroupService.removeMembers).toHaveBeenCalled();
                 expect(mockLocation.back).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('LEAVE_GROUP_SUCCESS_MSG');
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(3,
-                    InteractType.SUCCESS,
-                    '',
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL,
-                    undefined,
-                    undefined,
-                    undefined,
-                    groupDetailsPage.corRelationList,
-                    ID.LEAVE_GROUP
-                );
+                // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(3,
+                //     InteractType.SUCCESS,
+                //     '',
+                //     Environment.GROUP,
+                //     PageId.GROUP_DETAIL,
+                //     undefined,
+                //     undefined,
+                //     undefined,
+                //     groupDetailsPage.corRelationList,
+                //     ID.LEAVE_GROUP
+                // );
                 done();
             }, 0);
         });
@@ -855,7 +855,7 @@ describe('GroupDetailsPage', () => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.TOUCH,
-                    InteractSubtype.LEAVE_GROUP_CLICKED,
+                    InteractSubtype.GROUP_KEBAB_MENU_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
@@ -863,17 +863,17 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LEAVE_GROUP');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'LEAVE_GROUP_POPUP_DESC',
                     { group_name: groupDetailsPage.groupDetails.name });
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                    InteractType.INITIATED,
-                    '',
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL,
-                    undefined,
-                    undefined,
-                    undefined,
-                    groupDetailsPage.corRelationList,
-                    ID.LEAVE_GROUP
-                );
+                // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                //     InteractType.INITIATED,
+                //     '',
+                //     Environment.GROUP,
+                //     PageId.GROUP_DETAIL,
+                //     undefined,
+                //     undefined,
+                //     undefined,
+                //     groupDetailsPage.corRelationList,
+                //     ID.LEAVE_GROUP
+                // );
                 expect(mockGroupService.removeMembers).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('LEAVE_GROUP_ERROR_MSG');
                 done();
@@ -913,7 +913,7 @@ describe('GroupDetailsPage', () => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.TOUCH,
-                    InteractSubtype.LEAVE_GROUP_CLICKED,
+                    InteractSubtype.GROUP_KEBAB_MENU_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
@@ -921,17 +921,17 @@ describe('GroupDetailsPage', () => {
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(2, 'LEAVE_GROUP');
                 expect(mockCommonUtilService.translateMessage).toHaveBeenNthCalledWith(3, 'LEAVE_GROUP_POPUP_DESC',
                     { group_name: groupDetailsPage.groupDetails.name });
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
-                    InteractType.INITIATED,
-                    '',
-                    Environment.GROUP,
-                    PageId.GROUP_DETAIL,
-                    undefined,
-                    undefined,
-                    undefined,
-                    groupDetailsPage.corRelationList,
-                    ID.LEAVE_GROUP
-                );
+                // expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                //     InteractType.INITIATED,
+                //     '',
+                //     Environment.GROUP,
+                //     PageId.GROUP_DETAIL,
+                //     undefined,
+                //     undefined,
+                //     undefined,
+                //     groupDetailsPage.corRelationList,
+                //     ID.LEAVE_GROUP
+                // );
                 expect(mockGroupService.removeMembers).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('LEAVE_GROUP_ERROR_MSG');
                 expect(dismissFn).toHaveBeenCalled();
@@ -974,7 +974,7 @@ describe('GroupDetailsPage', () => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
                     InteractType.TOUCH,
-                    InteractSubtype.LEAVE_GROUP_CLICKED,
+                    InteractSubtype.GROUP_KEBAB_MENU_CLICKED,
                     Environment.GROUP,
                     PageId.GROUP_DETAIL,
                     undefined, undefined, undefined, groupDetailsPage.corRelationList, undefined);
@@ -2759,7 +2759,11 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.disableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req)
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(
+                    {
+                        cid: ['some_cid']
+                    }
+                )
                 done()
             });
         })
@@ -2776,7 +2780,11 @@ describe('GroupDetailsPage', () => {
             groupDetailsPage.disableDF()
             // assert
             setTimeout(() => {
-                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(req);
+                expect(mockDiscussionService.removeForum).toHaveBeenCalledWith(
+                    {
+                        cid: ['some_cid']
+                    }
+                );
                 expect(mockCommonUtilService.showToast).toHaveBeenCalled()
                 done()
             });

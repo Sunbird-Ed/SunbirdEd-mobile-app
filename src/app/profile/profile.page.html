@@ -107,7 +107,7 @@
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
         <div class="container MT10 MB10 edit-options">
-            <ion-button shape="round" (click)="onEditProfileClicked()" *ngIf="userLocation?.state"
+            <ion-button shape="round" (click)="onEditProfileClicked()"
                 class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
@@ -245,7 +245,7 @@
                 <div class="flex-nowrap"
                     *ngFor="let training of (mappedTrainingCertificates | slice : startLimit:myLearningLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
-                        <div class="fw" (click)="openEnrolledCourse(training)">
+                        <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(training)">
                             {{training.courseName}}
                         </div>
                         <div class="batch-detail">
@@ -290,7 +290,7 @@
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (learnerPassbook | slice : startLimit:learnerPassbookLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
-                        <div class="fw" (click)="openEnrolledCourse(certificate)">
+                        <div class="fw sb__ellipsis sb__ellipsis--two" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
                         </div>
                         <div>

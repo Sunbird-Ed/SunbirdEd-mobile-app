@@ -19,7 +19,7 @@ export class FilterFormConfigMapper {
         'medium',
         'gradeLevel',
         'subject',
-        'publisher',
+        'channel',
         'mimeType',
         'primaryCategory',
         'audience'
@@ -79,12 +79,12 @@ export class FilterFormConfigMapper {
                         facet: key,
                         type: 'dropdown',
                         labelText: this.commonUtilService.translateMessage('SUBJECT'),
-                        placeholderText: 'Select Class',
+                        placeholderText: 'Select Subject',
                         multiple: true,
                     });
                     break;
                 }
-                case 'publisher': {
+                case 'channel': {
                     defaults[key] = FilterFormConfigMapper.buildDefault(facetFilters[key], true);
                     config.push({
                         facet: key,

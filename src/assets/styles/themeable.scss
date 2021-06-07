@@ -1541,6 +1541,9 @@ html[data-theme="JOYFUL"]{
     .reply-btn {
       background-color: var(--app-lighter-gray);
     }
+    .df-reply-btn, .df-cancel-btn{
+      color:  map-get($colors, primary) !important;
+    }
     .discussion-start-modal{
       .discard-btn{
         color: map-get($colors, primary) !important;
@@ -1548,6 +1551,14 @@ html[data-theme="JOYFUL"]{
     }
     .openbtn{
       color: map-get($colors, primary) !important;
+    }
+    .sb-btn-disabled{
+      background-color: map-get($colors, gray_ba) !important;
+    }
+    .sb-btn-outline-primary{
+      background: none !important;
+      border: 1px solid map-get($colors, gray_ba) !important;
+      color: map-get($colors, black) !important;
     }
   }
   .df-btn-container{
@@ -1561,6 +1572,7 @@ html[data-theme="JOYFUL"]{
       padding: 0.5rem 1rem !important;
     }
   }
+  
 
   app-search-filter{
     sb-form{

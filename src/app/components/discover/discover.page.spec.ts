@@ -87,8 +87,6 @@ describe('DiscoverComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
-                expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -110,8 +108,6 @@ describe('DiscoverComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
-                expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-                expect(mockRouter.navigate).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -237,22 +233,22 @@ describe('DiscoverComponent', () => {
         expect(mockContentAggregatorHandler.newAggregate).toHaveBeenCalled();
     });
 
-    it('should call clearAllSubscription', () => {
+    it('should call clearAllSubscription on ionViewWillLeave', () => {
         // arrange
-        mockEvents.unsubscribe = jest.fn((_) => true);
+        discoverComponent.clearAllSubscriptions = jest.fn();
         // act
         discoverComponent.ionViewWillLeave();
         // assert
-        expect(mockEvents.unsubscribe).toHaveBeenCalled();
+        expect(discoverComponent.clearAllSubscriptions).toHaveBeenCalled();
     });
 
-    it('should call clearAllSubscription', () => {
+    it('should call clearAllSubscription on ngOnDestroy', () => {
         // arrange
-        mockEvents.unsubscribe = jest.fn((_) => true);
+        discoverComponent.clearAllSubscriptions = jest.fn();
         // act
         discoverComponent.ngOnDestroy();
         // assert
-        expect(mockEvents.unsubscribe).toHaveBeenCalled();
+        expect(discoverComponent.clearAllSubscriptions).toHaveBeenCalled();
     });
 
     it('should call doRefresh and call emit', () => {

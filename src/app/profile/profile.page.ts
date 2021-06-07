@@ -294,7 +294,7 @@ export class ProfilePage implements OnInit {
                 // ******* Segmentation
                 window['segmentation'].SBTagService.pushTag(profileData.framework, TagPrefixConstants.USER_ATRIBUTE, true);
                 let userLocation = [];
-                profileData['userLocations'].forEach(element => {
+                (profileData['userLocations'] || []).forEach(element => {
                   userLocation.push({ name: element.name, code: element.code });
                 });
                 window['segmentation'].SBTagService.pushTag({ location: userLocation }, TagPrefixConstants.USER_LOCATION, true);
@@ -549,20 +549,19 @@ export class ProfilePage implements OnInit {
     issuedCertificate?: CourseCertificate,
     status: number
   }) {
+    const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
+
+    const values = new Map();
+    values['courseId'] = course.courseId;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+      Environment.USER,
+      PageId.PROFILE,
+      telemetryObject,
+      values);
     await this.checkForPermissions().then(async (result) => {
       if (result) {
-        const telemetryObject: TelemetryObject = new TelemetryObject(course.courseId, 'Certificate', undefined);
-
-        const values = new Map();
-        values['courseId'] = course.courseId;
-
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-          Environment.USER, // env
-          PageId.PROFILE, // page name
-          telemetryObject,
-          values);
-
         if (course.issuedCertificate) {
           const request = { courseId: course.courseId, certificate: course.issuedCertificate };
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {

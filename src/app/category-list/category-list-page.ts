@@ -93,6 +93,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
     private pageId: string = PageId.CATEGORY_RESULTS;
     private fromPage: string = PageId.SEARCH;
     private env: string = Environment.SEARCH;
+    private initialFilterCriteria: ContentSearchCriteria;
 
     constructor(
         @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -113,6 +114,17 @@ export class CategoryListPage implements OnInit, OnDestroy {
             this.formField = extrasState.formField;
             this.sectionCode = extrasState.code;
             this.searchCriteria = JSON.parse(JSON.stringify(extrasState.formField.searchCriteria));
+            if (this.formField && this.formField.facet && this.formField.facet.toLowerCase() === 'course') {
+                if (!this.searchCriteria.impliedFiltersMap) {
+                    this.searchCriteria.impliedFiltersMap = [];
+                }
+                this.searchCriteria.impliedFiltersMap = this.searchCriteria.impliedFiltersMap.concat([{
+                    'batches.enrollmentType': 'open'
+                }, {
+                    'batches.status': 1
+                }
+                ]);
+            }
             this.primaryFacetFilters = extrasState.formField.primaryFacetFilters;
             this.fromLibrary = extrasState.fromLibrary;
             this.formField.facet = this.formField.facet.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
@@ -147,7 +159,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
             facets: this.supportedFacets,
             searchType: SearchType.SEARCH,
             limit: 100
-        });
+        }, true);
     }
 
     async ionViewWillEnter() {
@@ -165,7 +177,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
         );
     }
 
-    private async fetchAndSortData(searchCriteria) {
+    private async fetchAndSortData(searchCriteria, isInitialCall: boolean) {
         this.showSheenAnimation = true;
         const temp = ((await this.contentService.buildContentAggregator
             (this.formService, this.courseService, this.profileService)
@@ -198,9 +210,14 @@ export class CategoryListPage implements OnInit, OnDestroy {
             return acc;
         }, {});
 
+        if (isInitialCall) {
+            this.initialFilterCriteria = JSON.parse(JSON.stringify(this.filterCriteria));
+        }
+
         if (!this.initialFacetFilters) {
             this.initialFacetFilters = JSON.parse(JSON.stringify(this.facetFilters));
         }
+
 
         if (this.primaryFacetFiltersFormGroup) {
             this.primaryFacetFiltersFormGroup.patchValue(
@@ -357,10 +374,13 @@ export class CategoryListPage implements OnInit, OnDestroy {
     }
 
     async navigateToFilterFormPage() {
+        const resetData = (this.sectionGroup && this.sectionGroup.sections && this.sectionGroup.sections.length) ? false : true
         const openFiltersPage = await this.modalController.create({
             component: SearchFilterPage,
             componentProps: {
-                initialFilterCriteria: this.filterCriteria,
+                initialFilterCriteria: resetData ? JSON.parse(JSON.stringify(this.initialFilterCriteria)) : JSON.parse(JSON.stringify(this.filterCriteria)),
+                defaultFilterCriteria: JSON.parse(JSON.stringify(this.initialFilterCriteria)),
+                resetData: resetData
             }
         });
         await openFiltersPage.present();
@@ -402,7 +422,7 @@ export class CategoryListPage implements OnInit, OnDestroy {
                 }
             }
         });
-        await this.fetchAndSortData(tempSearchCriteria);
+        await this.fetchAndSortData(tempSearchCriteria, false);
     }
 
     ngOnDestroy() {
