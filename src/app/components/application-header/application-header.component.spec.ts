@@ -17,6 +17,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
 import {TncUpdateHandlerService} from '@app/services/handlers/tnc-update-handler.service';
 import {of} from 'rxjs';
+import { InteractType } from '@project-sunbird/sunbird-sdk';
+import { Environment, InteractSubtype } from '../../../services';
+import { EventTopics } from '../../app.constant';
 
 describe('ApplicationHeaderComponent', () => {
     let applicationHeaderComponent: ApplicationHeaderComponent;
@@ -129,4 +132,33 @@ describe('ApplicationHeaderComponent', () => {
             }, 0);
         });
     });
+
+    describe('setAppLogo', () => {
+        it('if part', (done) => {
+            //arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => ('false'));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve(''));
+            var appLogo = '';
+            //act
+            applicationHeaderComponent.setAppLogo();
+            //assert
+            setTimeout(() => {
+                done();
+            },0)
+        })
+  
+        it('else part', (done) => {
+            //arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => ('true'));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve(''));
+            var appLogo = '';
+            //act
+            applicationHeaderComponent.setAppLogo();
+            //assert
+            setTimeout(() => {
+                done();
+            })
+        })
+    })
+
 });
