@@ -125,14 +125,8 @@ export class SegmentationTagService {
                         this.exeCommands.push(cmdCriteria);
                         break;
                     case CommandFunctions.BANNER:
-                        if (revert) {
-                            this.preferences.putBoolean('display_banner', false).toPromise().then();
-                        } else {
-                            if (cmdCriteria.controlFunctionPayload && cmdCriteria.controlFunctionPayload.showBanner) {
-                                this.preferences.putBoolean('display_banner', cmdCriteria.controlFunctionPayload.showBanner)
-                                .toPromise().then();
-                                this.exeCommands.push(cmdCriteria);
-                            }
+                        if (cmdCriteria.controlFunctionPayload && cmdCriteria.controlFunctionPayload.showBanner && !revert) {
+                            this.exeCommands.push(cmdCriteria);
                         }
                         break;
                     default:

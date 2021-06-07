@@ -65,6 +65,7 @@ import {CategoryTerm, FrameworkCategory} from '@project-sunbird/client-services/
 import { FrameworkSelectionDelegateService } from './../../profile/framework-selection/framework-selection.page';
 import { TranslateService } from '@ngx-translate/core';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SegmentationTagService } from '@app/services/segmentation-tag/segmentation-tag.service';
 
 @Component({
   selector: 'app-user-home',
@@ -126,6 +127,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
     private frameworkSelectionDelegateService: FrameworkSelectionDelegateService,
     private translate: TranslateService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private segmentationTagService: SegmentationTagService
   ) {
   }
 
@@ -143,9 +145,6 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    this.preferences.getBoolean('display_banner').toPromise().then((data) => {
-      this.displayBanner = data;
-    });
   }
 
   async ionViewWillEnter() {
@@ -156,6 +155,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.isBannerDisplayed();
     this.getUserProfileDetails();
   }
 
@@ -634,6 +634,7 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
 
   tabViewWillEnter() {
     this.headerService.showHeaderWithHomeButton(['download', 'notification']);
+    this.isBannerDisplayed();
     this.getUserProfileDetails();
   }
 
@@ -663,5 +664,14 @@ export class UserHomePage implements OnInit, OnDestroy, OnTabViewWillEnter {
            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(event.data.action.params.identifier);
            break;
     }
+  }
+
+  isBannerDisplayed() {
+    const command = this.segmentationTagService.exeCommands.find((cmd) => {
+      if (cmd.controlFunction === 'BANNER_CONFIG') {
+        return cmd;
+      }
+    });
+    this.displayBanner = (command && command.controlFunctionPayload.showBanner) ? true : false;
   }
 }
